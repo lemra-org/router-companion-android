@@ -40,6 +40,9 @@ public class IPConntrack {
     public static final Splitter PARSER_SPLITTER = Splitter.on(" ").omitEmptyStrings().trimResults();
     public static final Splitter EQUALS_SPLITTER = Splitter.on("=");
 
+    @Nullable
+    private String rawLine;
+
     /**
      * Protocol name and number
      */
@@ -140,17 +143,29 @@ public class IPConntrack {
     private int icmpCode;
 
     @Nullable
-    public static IPConntrack parseIpConntrackRow(@NonNull final String row) {
-        if (Strings.isNullOrEmpty(row)) {
+    public String getRawLine() {
+        return rawLine;
+    }
+
+    public IPConntrack setRawLine(@Nullable String rawLine) {
+        this.rawLine = rawLine;
+        return this;
+    }
+
+    @Nullable
+    public static IPConntrack parseIpConntrackRow(@NonNull final String raw) {
+        if (Strings.isNullOrEmpty(raw)) {
             return null;
         }
 
-        final List<String> toList = PARSER_SPLITTER.splitToList(row);
+        final List<String> toList = PARSER_SPLITTER.splitToList(raw);
         if (toList == null || toList.isEmpty()) {
             return null;
         }
 
         final IPConntrack ipConntrack = new IPConntrack();
+
+        ipConntrack.rawLine = raw;
 
         try {
 
@@ -379,7 +394,7 @@ public class IPConntrack {
             }
 
         } catch (final Exception e) {
-            ReportingUtils.reportException(null, new IllegalStateException("Error when parsing IP Conntrack row: " + row,
+            ReportingUtils.reportException(null, new IllegalStateException("Error when parsing IP Conntrack raw: " + raw,
                     e));
             return null;
         }

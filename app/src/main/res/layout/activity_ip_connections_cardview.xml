@@ -20,780 +20,806 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/activity_ip_connections_card_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:clickable="true"
-    android:foreground="?android:attr/selectableItemBackground"
-    card_view:cardPreventCornerOverlap="true"
-    card_view:contentPaddingBottom="@dimen/activity_vertical_margin"
-    card_view:contentPaddingLeft="10dp"
-    card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin"
-    card_view:contentPaddingTop="@dimen/activity_vertical_margin">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/activity_ip_connections_first_glance_view"
+    <!--<android.support.v7.widget.CardView -->
+        <!--android:id="@+id/activity_ip_connections_card_view"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:clickable="true"-->
+        <!--android:foreground="?android:attr/selectableItemBackground"-->
+        <!--card_view:cardPreventCornerOverlap="true"-->
+        <!--card_view:contentPaddingBottom="@dimen/activity_vertical_margin"-->
+        <!--card_view:contentPaddingLeft="10dp"-->
+        <!--card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin"-->
+        <!--card_view:contentPaddingTop="@dimen/activity_vertical_margin">-->
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/activity_ip_connections_card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/activity_ip_connections_device_source_ip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_gravity="start"
-                android:scrollHorizontally="true"
-                android:textAppearance="?android:textAppearanceMedium" />
-
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/activity_ip_connections_device_proto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center_horizontal"
-                android:drawableEnd="@drawable/ic_arrow_forward"
-                android:drawableLeft="@drawable/ic_arrow_back"
-                android:drawableRight="@drawable/ic_arrow_forward"
-                android:drawableStart="@drawable/ic_arrow_back"
-                android:gravity="center"
-                android:scrollHorizontally="true"
-                android:textAppearance="?android:textAppearanceSmall" />
-
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/activity_ip_connections_device_dest_ip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_gravity="end"
-                android:scrollHorizontally="true"
-                android:textAppearance="?android:textAppearanceMedium" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_gravity="start"
-                android:scrollHorizontally="true">
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_source_ip_hostname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLength="15"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    android:visibility="invisible" />
-
-                <ProgressBar
-                    android:id="@+id/activity_ip_connections_source_ip_hostname_loading"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true" />
-            </RelativeLayout>
-
-            <TextView
-                android:textIsSelectable="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center"
-                android:scrollHorizontally="true"
-                android:text="@string/one_space"
-                android:textAppearance="?android:textAppearanceSmall" />
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_gravity="end"
-                android:scrollHorizontally="true">
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_dest_ip_org"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLength="15"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    android:visibility="invisible" />
-
-                <ProgressBar
-                    android:id="@+id/activity_ip_connections_dest_ip_org_loading"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true" />
-            </RelativeLayout>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/activity_ip_connections_sport"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_gravity="start"
-                android:scrollHorizontally="true"
-                android:textAppearance="?android:textAppearanceSmall" />
-
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/activity_ip_connections_tcp_connection_state"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center"
-                android:scrollHorizontally="true"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:visibility="gone" />
-
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/activity_ip_connections_dport"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_gravity="end"
-                android:scrollHorizontally="true"
-                android:textAppearance="?android:textAppearanceSmall" />
-                
-        </RelativeLayout>
-        
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/activity_ip_connections_destination_country_flag"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_gravity="end"/>
-
-        </RelativeLayout>
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:layout_marginStart="7dp"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="7dp"
+        android:layout_marginEnd="7dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        card_view:cardPreventCornerOverlap="true"
+        card_view:contentPaddingBottom="@dimen/activity_vertical_margin"
+        card_view:contentPaddingLeft="10dp"
+        card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin"
+        card_view:contentPaddingTop="@dimen/activity_vertical_margin">
 
         <LinearLayout
-            android:id="@+id/activity_ip_connections_details_placeholder"
+            android:id="@+id/activity_ip_connections_first_glance_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:orientation="vertical">
 
-            <GridLayout
-                android:id="@+id/activity_ip_connections_details_table"
-                android:layout_width="fill_parent"
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:textIsSelectable="true"
+                    android:id="@+id/activity_ip_connections_device_source_ip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_gravity="start"
+                    android:scrollHorizontally="true"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+                <TextView
+                    android:textIsSelectable="true"
+                    android:id="@+id/activity_ip_connections_device_proto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal"
+                    android:drawableEnd="@drawable/ic_arrow_forward"
+                    android:drawableLeft="@drawable/ic_arrow_back"
+                    android:drawableRight="@drawable/ic_arrow_forward"
+                    android:drawableStart="@drawable/ic_arrow_back"
+                    android:gravity="center"
+                    android:scrollHorizontally="true"
+                    android:textAppearance="?android:textAppearanceSmall" />
+
+                <TextView
+                    android:textIsSelectable="true"
+                    android:id="@+id/activity_ip_connections_device_dest_ip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_gravity="end"
+                    android:scrollHorizontally="true"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_gravity="start"
+                    android:scrollHorizontally="true">
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_source_ip_hostname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLength="15"
+                        android:textAppearance="?android:textAppearanceSmall"
+                        android:visibility="invisible" />
+
+                    <ProgressBar
+                        android:id="@+id/activity_ip_connections_source_ip_hostname_loading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true" />
+                </RelativeLayout>
+
+                <TextView
+                    android:textIsSelectable="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center"
+                    android:scrollHorizontally="true"
+                    android:text="@string/one_space"
+                    android:textAppearance="?android:textAppearanceSmall" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_gravity="end"
+                    android:scrollHorizontally="true">
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_dest_ip_org"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLength="15"
+                        android:textAppearance="?android:textAppearanceSmall"
+                        android:visibility="invisible" />
+
+                    <ProgressBar
+                        android:id="@+id/activity_ip_connections_dest_ip_org_loading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true" />
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:textIsSelectable="true"
+                    android:id="@+id/activity_ip_connections_sport"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_gravity="start"
+                    android:scrollHorizontally="true"
+                    android:textAppearance="?android:textAppearanceSmall" />
+
+                <TextView
+                    android:textIsSelectable="true"
+                    android:id="@+id/activity_ip_connections_tcp_connection_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center"
+                    android:scrollHorizontally="true"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:textIsSelectable="true"
+                    android:id="@+id/activity_ip_connections_dport"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_gravity="end"
+                    android:scrollHorizontally="true"
+                    android:textAppearance="?android:textAppearanceSmall" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/activity_ip_connections_destination_country_flag"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_gravity="end"/>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/activity_ip_connections_details_placeholder"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:columnCount="3"
-                android:stretchColumns="*">
+                android:orientation="vertical"
+                android:visibility="gone">
 
-                <!-- Transport Protocol -->
+                <GridLayout
+                    android:id="@+id/activity_ip_connections_details_table"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:columnCount="3"
+                    android:stretchColumns="*">
+
+                    <!-- Transport Protocol -->
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Protocol"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_protocol"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- TTL -->
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TTL"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_ttl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- TCP Connection State -->
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_tcp_connection_state_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TCP Connection State"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_tcp_connection_state_sep"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_tcp_connection_state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- ICMP ID -->
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_icmp_id_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ICMP ID"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_icmp_id_sep"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_icmp_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- ICMP Type -->
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_icmp_type_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ICMP Type"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_icmp_type_sep"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_icmp_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- ICMP Code -->
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_icmp_code_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ICMP Code"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_icmp_code_sep"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_icmp_code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- ICMP Control Message Description -->
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_icmp_ctrl_msg_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Control Message"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_icmp_ctrl_msg_sep"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_icmp_ctrl_msg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- Source IP -->
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Source IP"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_source_ip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- Source Hostname -->
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Source IP Host"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_source_host"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- Source Port -->
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Source Port"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_source_port"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- Destination IP -->
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Destination IP"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_destination_ip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- Destination WHOIS -->
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dest. IP WHOIS"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_destination_whois"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- Destination IP Country -->
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dest. IP Country"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_destination_whois_country"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- Destination IP Region -->
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dest. IP Region"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_destination_whois_region"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- Destination IP City -->
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dest. IP City"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_destination_whois_city"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- Destination Port -->
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Destination Port"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_destination_port"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- Packets -->
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Packets"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_packets"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- Bytes -->
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Bytes"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:textIsSelectable="true"
+                        android:id="@+id/activity_ip_connections_details_bytes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- Traffic in other dir. (Unreplied???) -->
+                    <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="One-way traffic"-->
+                    <!--android:textStyle="bold" />-->
+
+                    <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="center"-->
+                    <!--android:layout_marginLeft="8.0dip"-->
+                    <!--android:layout_marginRight="8.0dip"-->
+                    <!--android:text="@string/one_space" />-->
+
+                    <!--<TextView-->
+                    <!--android:id="@+id/activity_ip_connections_details_one_way_traffic"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="start"-->
+                    <!--android:layout_marginBottom="4dp"-->
+                    <!--android:ellipsize="end"-->
+                    <!--android:gravity="start"-->
+                    <!--android:singleLine="false"-->
+                    <!--android:text="@string/loading"/>-->
+
+                </GridLayout>
+
                 <TextView
                     android:textIsSelectable="true"
+                    android:id="@+id/activity_ip_connections_raw_line"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Protocol"
-                    android:textStyle="bold" />
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:textAppearance="?android:textAppearanceSmall" />
 
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_protocol"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- TTL -->
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TTL"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_ttl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- TCP Connection State -->
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_tcp_connection_state_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TCP Connection State"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_tcp_connection_state_sep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_tcp_connection_state"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- ICMP ID -->
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_icmp_id_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ICMP ID"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_icmp_id_sep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_icmp_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- ICMP Type -->
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_icmp_type_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ICMP Type"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_icmp_type_sep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_icmp_type"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- ICMP Code -->
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_icmp_code_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ICMP Code"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_icmp_code_sep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_icmp_code"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- ICMP Control Message Description -->
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_icmp_ctrl_msg_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Control Message"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_icmp_ctrl_msg_sep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_icmp_ctrl_msg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- Source IP -->
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Source IP"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_source_ip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- Source Hostname -->
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Source IP Host"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_source_host"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- Source Port -->
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Source Port"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_source_port"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- Destination IP -->
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Destination IP"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_destination_ip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- Destination WHOIS -->
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Dest. IP WHOIS"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_destination_whois"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- Destination IP Country -->
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Dest. IP Country"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_destination_whois_country"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- Destination IP Region -->
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Dest. IP Region"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_destination_whois_region"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- Destination IP City -->
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Dest. IP City"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_destination_whois_city"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- Destination Port -->
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Destination Port"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_destination_port"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- Packets -->
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Packets"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_packets"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- Bytes -->
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Bytes"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/activity_ip_connections_details_bytes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- Traffic in other dir. (Unreplied???) -->
-                <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="One-way traffic"-->
-                <!--android:textStyle="bold" />-->
-
-                <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:layout_marginLeft="8.0dip"-->
-                <!--android:layout_marginRight="8.0dip"-->
-                <!--android:text="@string/one_space" />-->
-
-                <!--<TextView-->
-                <!--android:id="@+id/activity_ip_connections_details_one_way_traffic"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="start"-->
-                <!--android:layout_marginBottom="4dp"-->
-                <!--android:ellipsize="end"-->
-                <!--android:gravity="start"-->
-                <!--android:singleLine="false"-->
-                <!--android:text="@string/loading"/>-->
-
-            </GridLayout>
-
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/activity_ip_connections_raw_line"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:textAppearance="?android:textAppearanceSmall" />
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+    </android.support.v7.widget.CardView>
 
-</android.support.v7.widget.CardView>
+</RelativeLayout>

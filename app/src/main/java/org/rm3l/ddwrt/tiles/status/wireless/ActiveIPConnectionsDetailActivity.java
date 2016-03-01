@@ -22,12 +22,10 @@
 package org.rm3l.ddwrt.tiles.status.wireless;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,28 +33,30 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v4.content.Loader;
 import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,10 +71,8 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
-import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Table;
 import com.google.common.io.Closeables;
 import com.google.gson.Gson;
@@ -93,6 +91,7 @@ import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
+import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -105,10 +104,11 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ConcurrentHashMap;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -116,9 +116,11 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 import static org.rm3l.ddwrt.utils.Utils.getEscapedFileName;
 
-public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
+public class ActiveIPConnectionsDetailActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     public static final String ACTIVE_IP_CONNECTIONS_OUTPUT = "ACTIVE_IP_CONNECTIONS_OUTPUT";
 
@@ -268,23 +270,31 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(40, 0, "Photuris, Security failures");
     }
 
-    private Map<IPConntrack, CardView> ipConntrackMap;
+//    private Map<IPConntrack, CardView> ipConntrackMap;
     private HashMap<String, String> mLocalIpToHostname;
     private ShareActionProvider mShareActionProvider;
     private String mRouterRemoteIp;
     private File mFileToShare;
-    private String[] mActiveIPConnections;
+    private List<IPConntrack> mActiveIPConnections;
     private String mActiveIPConnectionsMultiLine;
     private String mTitle;
     private String mObservationDate;
     private String mConnectedHost;
     private Menu optionsMenu;
-    private Multimap<String, String> mSourceIpToDestinationIp;
-    private Multimap<String, String> mDestinationIpToSourceIp;
-    private Map<String, String> mDestinationIpToCountry;
-    private ProgressBar mProgressBar;
-    private TextView mProgressBarDesc;
-    private AtomicInteger mCurrentProgress = new AtomicInteger(0);
+//    private Multimap<String, String> mSourceIpToDestinationIp;
+//    private Multimap<String, String> mDestinationIpToSourceIp;
+//    private Map<String, String> mDestinationIpToCountry;
+//    private ProgressBar mProgressBar;
+//    private TextView mProgressBarDesc;
+//    private AtomicInteger mCurrentProgress = new AtomicInteger(0);
+
+    private RecyclerViewEmptySupport mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
+    private Map<String, String> ipToHostResolvedMap;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -292,20 +302,100 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
         final Intent intent = getIntent();
 
-        handleIntent(intent);
-
-        mActiveIPConnections = intent.getStringArrayExtra(ACTIVE_IP_CONNECTIONS_OUTPUT);
-        if (mActiveIPConnections == null || mActiveIPConnections.length == 0) {
+        final String[] activeIpConnArray = intent.getStringArrayExtra(ACTIVE_IP_CONNECTIONS_OUTPUT);
+        if (activeIpConnArray == null || activeIpConnArray.length == 0) {
             Toast.makeText(ActiveIPConnectionsDetailActivity.this, "Internal Error - No Detailed Active IP Connections list available!",
                     Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        mDestinationIpToCountry = new HashMap<>();
-        mSourceIpToDestinationIp = ArrayListMultimap.create();
-        mDestinationIpToSourceIp = ArrayListMultimap.create();
-        ipConntrackMap = Maps.newHashMap();
+        mRouterRemoteIp = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+        mObservationDate = intent.getStringExtra(OBSERVATION_DATE);
+        mConnectedHost = intent.getStringExtra(CONNECTED_HOST);
+
+        final String connectedHostIp = intent.getStringExtra(CONNECTED_HOST_IP);
+
+        if (isNullOrEmpty(connectedHostIp)) {
+            //All Hosts
+            //noinspection unchecked
+            mLocalIpToHostname = (HashMap<String, String>) intent.getSerializableExtra(IP_TO_HOSTNAME_RESOLVER);
+        } else {
+            //Single host
+            mLocalIpToHostname = new HashMap<>();
+            mLocalIpToHostname.put(connectedHostIp, intent.getStringExtra(IP_TO_HOSTNAME_RESOLVER));
+        }
+
+        mActiveIPConnections = new ArrayList<>();
+        ipToHostResolvedMap = new ConcurrentHashMap<>();
+
+        String existingRecord;
+        for (final String activeIpConn : activeIpConnArray) {
+            try {
+                final IPConntrack ipConntrackRow = IPConntrack.parseIpConntrackRow(activeIpConn);
+                if (ipConntrackRow == null) {
+                    continue;
+                }
+                mActiveIPConnections.add(ipConntrackRow);
+                final String sourceAddressOriginalSide = ipConntrackRow.getSourceAddressOriginalSide();
+                existingRecord = ipToHostResolvedMap.get(sourceAddressOriginalSide);
+                if (isNullOrEmpty(existingRecord)) {
+                    //Set Source IP HostName
+                    final String srcIpHostnameResolved;
+                    if (mLocalIpToHostname == null) {
+                        srcIpHostnameResolved = "-";
+                    } else {
+                        final String val = mLocalIpToHostname.get(sourceAddressOriginalSide);
+                        if (isNullOrEmpty(val)) {
+                            srcIpHostnameResolved = "-";
+                        } else {
+                            srcIpHostnameResolved = val;
+                        }
+                    }
+                    ipToHostResolvedMap.put(sourceAddressOriginalSide, srcIpHostnameResolved);
+                }
+
+//                final String destinationAddressOriginalSide = ipConntrackRow.getDestinationAddressOriginalSide();
+//                existingRecord = ipToHostResolvedMap.get(destinationAddressOriginalSide);
+//                if (isNullOrEmpty(existingRecord)) {
+//                    final String dstIpWhoisResolved;
+//                    if (isNullOrEmpty(destinationAddressOriginalSide)) {
+//                        dstIpWhoisResolved = "-";
+//                    } else {
+////                        IPWhoisInfo ipWhoisInfo = null;
+////                        try {
+////                            ipWhoisInfo = mIPWhoisInfoCache.get(destinationAddressOriginalSide);
+////                        } catch (Exception e) {
+////                            e.printStackTrace();
+////                            Utils.reportException(null, e);
+////                        }
+////                        if (ipWhoisInfo != null && !isNullOrEmpty(ipWhoisInfo.getCountry())) {
+////                            mDestinationIpToCountry.put(destinationAddressOriginalSide, ipWhoisInfo.getCountry());
+////                        }
+////                        final String org;
+////                        if (ipWhoisInfo == null || (org = ipWhoisInfo.getOrganization()) == null || org.isEmpty()) {
+////                            dstIpWhoisResolved = "-";
+////                        } else {
+////                            dstIpWhoisResolved = org;
+////                            if (!mLocalIpToHostname.containsKey(destinationAddressOriginalSide)) {
+////                                mLocalIpToHostname.put(destinationAddressOriginalSide, org);
+////                            }
+////                        }
+//                    }
+//                    ipToHostResolvedMap.put(destinationAddressOriginalSide, dstIpWhoisResolved);
+//                }
+
+            } catch (final Exception e) {
+                Crashlytics.logException(e);
+            }
+        }
+
+        handleIntent(intent);
+
+//        mDestinationIpToCountry = new HashMap<>();
+//        mSourceIpToDestinationIp = ArrayListMultimap.create();
+//        mDestinationIpToSourceIp = ArrayListMultimap.create();
+//        ipConntrackMap = Maps.newHashMap();
 
         final boolean themeLight = ColorUtils.isThemeLight(this);
         if (themeLight) {
@@ -329,39 +419,6 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
         AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.tile_status_active_ip_connections_view_adView));
 
-        mProgressBar = (ProgressBar) findViewById(R.id.tile_status_active_ip_connections_list_container_loading);
-        /*
-        Multiplied by 2, because the doInBackground method first resolved WHOIS,
-        and the loadFinished() method handles the views
-         */
-        mProgressBar.setMax(mActiveIPConnections.length + 2);
-
-        mProgressBarDesc = (TextView) findViewById(R.id.tile_status_active_ip_connections_list_container_loading_desc);
-        if (themeLight) {
-            mProgressBarDesc.setTextColor(
-                    ContextCompat.getColor(this, R.color.black));
-        } else {
-            mProgressBarDesc.setTextColor(
-                    ContextCompat.getColor(this, R.color.white));
-        }
-        mProgressBarDesc.setText("Loading...\n\n");
-
-        mRouterRemoteIp = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
-        mObservationDate = intent.getStringExtra(OBSERVATION_DATE);
-        mConnectedHost = intent.getStringExtra(CONNECTED_HOST);
-
-        final String connectedHostIp = intent.getStringExtra(CONNECTED_HOST_IP);
-
-        if (isNullOrEmpty(connectedHostIp)) {
-            //All Hosts
-            //noinspection unchecked
-            mLocalIpToHostname = (HashMap<String, String>) intent.getSerializableExtra(IP_TO_HOSTNAME_RESOLVER);
-        } else {
-            //Single host
-            mLocalIpToHostname = new HashMap<>();
-            mLocalIpToHostname.put(connectedHostIp, intent.getStringExtra(IP_TO_HOSTNAME_RESOLVER));
-        }
-
         mActiveIPConnectionsMultiLine = Joiner.on("\n\n").join(mActiveIPConnections);
 
         final Toolbar mToolbar = (Toolbar) findViewById(R.id.tile_status_active_ip_connections_view_toolbar);
@@ -383,7 +440,38 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             actionBar.setHomeButtonEnabled(true);
         }
 
-        initLoaderTask();
+        mRecyclerView = (RecyclerViewEmptySupport)
+                findViewById(R.id.tile_status_active_ip_connections_recycler_view);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        // allows for optimizations if all items are of the same size:
+        mRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(this);
+        mLayoutManager.scrollToPosition(0);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        final TextView emptyView = (TextView) findViewById(R.id.empty_view);
+        if (themeLight) {
+            emptyView.setTextColor(ContextCompat.getColor(this, R.color.black));
+        } else {
+            emptyView.setTextColor(ContextCompat.getColor(this, R.color.white));
+        }
+        mRecyclerView.setEmptyView(emptyView);
+
+        // specify an adapter (see also next example)
+        mAdapter = new ActiveIPConnectionsDetailRecyclerViewAdapter(this)
+            .setActiveIPConnections(mActiveIPConnections);
+        mRecyclerView.setAdapter(mAdapter);
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
     }
 
@@ -393,454 +481,426 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
     }
 
     private void handleIntent(Intent intent) {
+
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             final String query = intent.getStringExtra(SearchManager.QUERY);
+            final ActiveIPConnectionsDetailRecyclerViewAdapter adapter =
+                    (ActiveIPConnectionsDetailRecyclerViewAdapter) mAdapter;
             if (Strings.isNullOrEmpty(query)) {
                 return;
             }
-            final LinearLayout containerLayout = (LinearLayout) findViewById(R.id.tile_status_active_ip_connections_list_container);
-            if (containerLayout == null) {
-                Toast.makeText(this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
-                Utils.reportException(this, new IllegalStateException("containerLayout == null"));
-                return;
-            }
-            containerLayout.removeAllViews();
-
-            final Map<IPConntrack, CardView> ipConntrackCardViewFilteredMap = Maps.filterKeys(ipConntrackMap, new Predicate<IPConntrack>() {
-                @Override
-                public boolean apply(IPConntrack input) {
-                    if (input == null) {
-                        return false;
-                    }
-                    //Filter on visible fields: source IP/port, dest. IP/port, transport protocol and TCP State, device name, dest. WHOIS
-                    return (containsIgnoreCase(input.getSourceAddressOriginalSide(), query) ||
-                            containsIgnoreCase("" + input.getSourcePortOriginalSide(), query) ||
-                            containsIgnoreCase("" + input.getDestinationAddressOriginalSide(), query) ||
-                            containsIgnoreCase("" + input.getDestinationPortOriginalSide(), query) ||
-                            containsIgnoreCase(input.getTransportProtocol(), query) ||
-                            containsIgnoreCase(input.getTcpConnectionState(), query) ||
-                            containsIgnoreCase(input.getSourceHostname(), query) ||
-                            containsIgnoreCase(input.getDestWhoisOrHostname(), query));
-                }
-            });
-            if (ipConntrackCardViewFilteredMap != null) {
-                for (final CardView cardView : ipConntrackCardViewFilteredMap.values()) {
-                    containerLayout.addView(cardView);
-                }
-            } else {
-                Toast.makeText(this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
-            }
+            adapter.getFilter().filter(query);
         }
     }
 
-    private void initLoaderTask() {
-        //Remove all views
-        final LinearLayout containerLayout = (LinearLayout) findViewById(R.id.tile_status_active_ip_connections_list_container);
-        containerLayout.removeAllViews();
-
-        final CardView.LayoutParams cardViewLayoutParams = new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT);
-        cardViewLayoutParams.rightMargin = R.dimen.marginRight;
-        cardViewLayoutParams.leftMargin = R.dimen.marginLeft;
-        cardViewLayoutParams.bottomMargin = R.dimen.activity_vertical_margin;
-
-        final boolean isThemeLight = ColorUtils.isThemeLight(ActiveIPConnectionsDetailActivity.this);
-        final Resources resources = getResources();
-
-        final LoaderManager supportLoaderManager = getSupportLoaderManager();
-
-        supportLoaderManager.initLoader(0, null, new LoaderManager.LoaderCallbacks<Map<String, String>>() {
-            @Override
-            public Loader<Map<String, String>> onCreateLoader(int id, Bundle args) {
-                final AsyncTaskLoader<Map<String, String>> asyncTaskLoader = new AsyncTaskLoader<Map<String, String>>(ActiveIPConnectionsDetailActivity.this) {
-                    @Override
-                    public Map<String, String> loadInBackground() {
-                        ipConntrackMap.clear();
-
-                        final Map<String, String> result = new HashMap<>();
-                        String existingRecord;
-
-                        final int totalLength = mActiveIPConnections.length;
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mProgressBarDesc.setText("Resolving IPs (0/" + totalLength + ")...\n\n");
-                            }
-                        });
-
-                        int i = 1;
-                        for (final String activeIPConnection : mActiveIPConnections) {
-                            final IPConntrack ipConntrackRow = IPConntrack.parseIpConntrackRow(activeIPConnection);
-                            if (ipConntrackRow == null) {
-                                continue;
-                            }
-
-                            final int j = (i++);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mProgressBarDesc.setText("Resolving IPs ( " + j + "/" + totalLength + ")...\n\n");
-                                }
-                            });
-
-                            final String sourceAddressOriginalSide = ipConntrackRow.getSourceAddressOriginalSide();
-                            existingRecord = result.get(sourceAddressOriginalSide);
-                            if (isNullOrEmpty(existingRecord)) {
-                                //Set Source IP HostName
-                                final String srcIpHostnameResolved;
-                                if (mLocalIpToHostname == null) {
-                                    srcIpHostnameResolved = "-";
-                                } else {
-                                    final String val = mLocalIpToHostname.get(sourceAddressOriginalSide);
-                                    if (isNullOrEmpty(val)) {
-                                        srcIpHostnameResolved = "-";
-                                    } else {
-                                        srcIpHostnameResolved = val;
-                                    }
-                                }
-                                result.put(sourceAddressOriginalSide, srcIpHostnameResolved);
-                            }
-
-                            final String destinationAddressOriginalSide = ipConntrackRow.getDestinationAddressOriginalSide();
-                            existingRecord = result.get(destinationAddressOriginalSide);
-                            if (isNullOrEmpty(existingRecord)) {
-                                final String dstIpWhoisResolved;
-                                if (isNullOrEmpty(destinationAddressOriginalSide)) {
-                                    dstIpWhoisResolved = "-";
-                                } else {
-                                    IPWhoisInfo ipWhoisInfo = null;
-                                    try {
-                                        ipWhoisInfo = mIPWhoisInfoCache.get(destinationAddressOriginalSide);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                        Utils.reportException(null, e);
-                                    }
-                                    if (ipWhoisInfo != null && !isNullOrEmpty(ipWhoisInfo.getCountry())) {
-                                        mDestinationIpToCountry.put(destinationAddressOriginalSide, ipWhoisInfo.getCountry());
-                                    }
-                                    final String org;
-                                    if (ipWhoisInfo == null || (org = ipWhoisInfo.getOrganization()) == null || org.isEmpty()) {
-                                        dstIpWhoisResolved = "-";
-                                    } else {
-                                        dstIpWhoisResolved = org;
-                                        if (!mLocalIpToHostname.containsKey(destinationAddressOriginalSide)) {
-                                            mLocalIpToHostname.put(destinationAddressOriginalSide, org);
-                                        }
-                                    }
-                                }
-                                result.put(destinationAddressOriginalSide, dstIpWhoisResolved);
-                            }
-
-                            mSourceIpToDestinationIp.put(sourceAddressOriginalSide, destinationAddressOriginalSide);
-                            mDestinationIpToSourceIp.put(destinationAddressOriginalSide, sourceAddressOriginalSide);
-
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mProgressBar.setProgress(mCurrentProgress.incrementAndGet());
-                                }
-                            });
-                        }
-
-                        return result;
-                    }
-                };
-                asyncTaskLoader.forceLoad();
-                return asyncTaskLoader;
-            }
-
-            @Override
-            public void onLoadFinished(Loader<Map<String, String>> loader, Map<String, String> ipToHostResolvedMap) {
-                int i = 0;
-
-                if (optionsMenu != null) {
-                    optionsMenu.findItem(R.id.tile_status_active_ip_connections_stats).setVisible(true);
-                    optionsMenu.findItem(R.id.tile_status_active_ip_connections_search).setVisible(true);
-                }
-
-                mProgressBarDesc.setText("Building Views...\n\n");
-
-                for (final String activeIPConnection : mActiveIPConnections) {
-                    final IPConntrack ipConntrackRow = IPConntrack.parseIpConntrackRow(activeIPConnection);
-                    if (ipConntrackRow == null) {
-                        continue;
-                    }
-                    final CardView cardView = (CardView) getLayoutInflater()
-                            .inflate(R.layout.activity_ip_connections_cardview, null);
-
-                    //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
-                    cardView.setPreventCornerOverlap(true);
-                    //Add padding in API v21+ as well to have the same measurements with previous versions.
-                    cardView.setUseCompatPadding(true);
-
-                    if (isThemeLight) {
-                        //Light
-                        cardView.setCardBackgroundColor(
-                                ContextCompat.getColor(ActiveIPConnectionsDetailActivity.this,
-                                        R.color.cardview_light_background));
-                    } else {
-                        //Default is Dark
-                        cardView.setCardBackgroundColor(
-                                ContextCompat.getColor(ActiveIPConnectionsDetailActivity.this,
-                                        R.color.cardview_dark_background));
-                    }
-
-                    //Highlight CardView
-//                    cardView.setCardElevation(20f);
-
-                    final String sourceAddressOriginalSide = ipConntrackRow.getSourceAddressOriginalSide();
-                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_device_source_ip))
-                            .setText(sourceAddressOriginalSide);
-                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_source_ip))
-                            .setText(sourceAddressOriginalSide);
-
-                    final long ttl = ipConntrackRow.getTimeout();
-                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_ttl))
-                            .setText(ttl > 0 ? String.valueOf(ttl) : "-");
-
-                    final long packets = ipConntrackRow.getPackets();
-                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_packets))
-                            .setText(packets > 0 ? String.valueOf(packets) : "-");
-
-                    final long bytes = ipConntrackRow.getBytes();
-                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_bytes))
-                            .setText(bytes > 0 ? String.valueOf(bytes) : "-");
-
-                    final String destinationAddressOriginalSide = ipConntrackRow.getDestinationAddressOriginalSide();
-                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_device_dest_ip))
-                            .setText(destinationAddressOriginalSide);
-                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_ip))
-                            .setText(destinationAddressOriginalSide);
-
-                    final String protocol = ipConntrackRow.getTransportProtocol();
-                    final TextView proto = (TextView) cardView.findViewById(R.id.activity_ip_connections_device_proto);
-                    proto.setText(isNullOrEmpty(protocol) ? "-" : protocol.toUpperCase());
-                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_protocol))
-                            .setText(isNullOrEmpty(protocol) ? "-" : protocol.toUpperCase());
-
-                    final String tcpConnectionState = ipConntrackRow.getTcpConnectionState();
-                    final TextView tcpConnectionStateView = (TextView) cardView.findViewById(R.id.activity_ip_connections_tcp_connection_state);
-                    final TextView tcpConnectionStateDetailedView = (TextView) cardView.findViewById(R.id.activity_ip_connections_details_tcp_connection_state);
-
-                    if (!isNullOrEmpty(tcpConnectionState)) {
-                        tcpConnectionStateView.setText(tcpConnectionState);
-                        tcpConnectionStateDetailedView.setText(tcpConnectionState);
-                        tcpConnectionStateView.setVisibility(View.VISIBLE);
-                    } else {
-                        tcpConnectionStateView.setVisibility(View.GONE);
-                        tcpConnectionStateDetailedView.setText("-");
-                    }
-
-                    final View tcpConnectionStateDetailedViewSep = cardView
-                            .findViewById(R.id.activity_ip_connections_details_tcp_connection_state_sep);
-                    final View tcpConnectionStateDetailedViewTitle = cardView.findViewById(R.id.activity_ip_connections_details_tcp_connection_state_title);
-                    if ("TCP".equalsIgnoreCase(protocol)) {
-                        tcpConnectionStateDetailedView.setVisibility(View.VISIBLE);
-                        tcpConnectionStateDetailedViewSep
-                                .setVisibility(View.VISIBLE);
-                        tcpConnectionStateDetailedViewTitle
-                                .setVisibility(View.VISIBLE);
-                    } else {
-                        tcpConnectionStateDetailedView.setVisibility(View.GONE);
-                        tcpConnectionStateDetailedViewSep
-                                .setVisibility(View.GONE);
-                        tcpConnectionStateDetailedViewTitle
-                                .setVisibility(View.GONE);
-                    }
-
-                    //ICMP
-                    //ID
-                    final View icmpIdTitle = cardView
-                            .findViewById(R.id.activity_ip_connections_details_icmp_id_title);
-                    final View icmpIdSep = cardView
-                            .findViewById(R.id.activity_ip_connections_details_icmp_id_sep);
-                    final TextView icmpId = (TextView) cardView
-                            .findViewById(R.id.activity_ip_connections_details_icmp_id);
-                    //Type
-                    final View icmpTypeTitle = cardView
-                            .findViewById(R.id.activity_ip_connections_details_icmp_type_title);
-                    final View icmpTypeSep = cardView
-                            .findViewById(R.id.activity_ip_connections_details_icmp_type_sep);
-                    final TextView icmpType = (TextView) cardView
-                            .findViewById(R.id.activity_ip_connections_details_icmp_type);
-                    //Code
-                    final View icmpCodeTitle = cardView
-                            .findViewById(R.id.activity_ip_connections_details_icmp_code_title);
-                    final View icmpCodeSep = cardView
-                            .findViewById(R.id.activity_ip_connections_details_icmp_code_sep);
-                    final TextView icmpCode = (TextView) cardView
-                            .findViewById(R.id.activity_ip_connections_details_icmp_code);
-                    //Ctrl Message
-                    final View icmpCtrlMsgTitle = cardView
-                            .findViewById(R.id.activity_ip_connections_details_icmp_ctrl_msg_title);
-                    final View icmpCtrlMsgSep = cardView
-                            .findViewById(R.id.activity_ip_connections_details_icmp_ctrl_msg_sep);
-                    final TextView icmpCtrlMsg = (TextView) cardView
-                            .findViewById(R.id.activity_ip_connections_details_icmp_ctrl_msg);
-
-                    final View[] icmpViews = new View[]{
-                            icmpIdTitle, icmpIdSep, icmpId,
-                            icmpTypeTitle, icmpTypeSep, icmpType,
-                            icmpCodeTitle, icmpCodeSep, icmpCode,
-                            icmpCtrlMsgTitle, icmpCtrlMsgSep, icmpCtrlMsg
-                    };
-
-                    if ("ICMP".equalsIgnoreCase(protocol)) {
-                        final int ipConntrackRowIcmpType = ipConntrackRow.getIcmpType();
-                        final int ipConntrackRowIcmpCode = ipConntrackRow.getIcmpCode();
-                        icmpId.setText(isNullOrEmpty(ipConntrackRow.getIcmpId()) ?
-                                "-" : ipConntrackRow.getIcmpId());
-                        icmpType.setText((ipConntrackRowIcmpType < 0) ?
-                                "-" : String.valueOf(ipConntrackRowIcmpType));
-                        icmpCode.setText((ipConntrackRowIcmpCode < 0) ?
-                                "-" : String.valueOf(ipConntrackRowIcmpCode));
-
-                        final String ctrlMsg = ICMP_TYPE_CODE_DESCRIPTION_TABLE.get(ipConntrackRowIcmpType, ipConntrackRowIcmpCode);
-                        icmpCtrlMsg.setText(isNullOrEmpty(ctrlMsg) ? "-" : ctrlMsg);
-
-                        for (final View icmpView : icmpViews) {
-                            icmpView.setVisibility(View.VISIBLE);
-                        }
-                    } else {
-                        for (final View icmpView : icmpViews) {
-                            icmpView.setVisibility(View.GONE);
-                        }
-                    }
-
-                    final int sourcePortOriginalSide = ipConntrackRow.getSourcePortOriginalSide();
-                    final String srcPortToDisplay = sourcePortOriginalSide > 0 ? String.valueOf(sourcePortOriginalSide) : "-";
-                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_sport))
-                            .setText(srcPortToDisplay);
-                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_source_port))
-                            .setText(srcPortToDisplay);
-
-                    final int destinationPortOriginalSide = ipConntrackRow.getDestinationPortOriginalSide();
-                    final String dstPortToDisplay = destinationPortOriginalSide > 0 ? String.valueOf(destinationPortOriginalSide) : "-";
-                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_dport))
-                            .setText(dstPortToDisplay);
-                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_port))
-                            .setText(dstPortToDisplay);
-
-                    final TextView rawLineView = (TextView) cardView.findViewById(R.id.activity_ip_connections_raw_line);
-                    rawLineView.setText(activeIPConnection);
-
-                    if (i == 0) {
-                        rawLineView.setVisibility(View.VISIBLE);
-                    }
-                    i++;
-
-                    cardView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            final View placeholderView = cardView.findViewById(R.id.activity_ip_connections_details_placeholder);
-                            if (placeholderView.getVisibility() == View.VISIBLE) {
-                                placeholderView.setVisibility(View.GONE);
-                            } else {
-                                placeholderView.setVisibility(View.VISIBLE);
-                            }
-                        }
-                    });
-
-                    final ImageView destCountryFlag = (ImageView) cardView.findViewById(R.id.activity_ip_connections_destination_country_flag);
-                    try {
-                        final IPWhoisInfo whoisInfo;
-                        if (destinationAddressOriginalSide == null ||
-                                (whoisInfo = mIPWhoisInfoCache
-                                        .getIfPresent(destinationAddressOriginalSide)) == null) {
-                            destCountryFlag.setVisibility(View.GONE);
-                        } else {
-                            final String countryCode = whoisInfo.getCountry_code();
-                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_whois_country))
-                                    .setText(String.format("%s (%s)", whoisInfo.getCountry(), countryCode));
-                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_whois_region))
-                                    .setText(whoisInfo.getRegion());
-                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_whois_city))
-                                    .setText(whoisInfo.getCity());
-
-                            if (isNullOrEmpty(countryCode)) {
-                                destCountryFlag.setVisibility(View.GONE);
-                            }  else {
-                                ImageUtils.downloadImageFromUrl(ActiveIPConnectionsDetailActivity.this,
-                                        String.format("%s/%s.png",
-                                                DDWRTCompanionConstants.COUNTRY_API_SERVER_FLAG,
-                                                countryCode),
-                                        destCountryFlag,
-                                        null,
-                                        null,
-                                        new Callback() {
-                                            @Override
-                                            public void onSuccess() {
-                                                destCountryFlag.setVisibility(View.VISIBLE);
-                                            }
-
-                                            @Override
-                                            public void onError() {
-                                                destCountryFlag.setVisibility(View.GONE);
-                                            }
-                                        });
-                            }
-
-                        }
-                    } catch (final Exception e) {
-                        Crashlytics.logException(e);
-                        destCountryFlag.setVisibility(View.GONE);
-                        //No worries
-                    }
-
-
-                    containerLayout.addView(cardView);
-
-                    final TextView srcIpHostname = (TextView) cardView.findViewById(R.id.activity_ip_connections_source_ip_hostname);
-                    final TextView srcIpHostnameDetails = (TextView) cardView.findViewById(R.id.activity_ip_connections_details_source_host);
-                    final ProgressBar srcIpHostnameLoading = (ProgressBar) cardView.findViewById(R.id.activity_ip_connections_source_ip_hostname_loading);
-                    //Set Source IP HostName
-                    if (ipToHostResolvedMap == null) {
-                        srcIpHostname.setText("");
-                        srcIpHostnameDetails.setText("-");
-                    } else {
-                        final String srcIpHostnameResolved = ipToHostResolvedMap.get(sourceAddressOriginalSide);
-                        srcIpHostname.setText(isNullOrEmpty(srcIpHostnameResolved) ? "" : srcIpHostnameResolved);
-                        srcIpHostnameDetails.setText(isNullOrEmpty(srcIpHostnameResolved) ? "-" : srcIpHostnameResolved);
-                        ipConntrackRow.setSourceHostname(srcIpHostnameResolved);
-                    }
-                    srcIpHostname.setVisibility(View.VISIBLE);
-                    srcIpHostnameLoading.setVisibility(View.GONE);
-
-                    //... and Destination IP Address Organization (if available)
-                    final TextView destIpOrg = (TextView) cardView.findViewById(R.id.activity_ip_connections_dest_ip_org);
-                    final TextView destIpOrgDetails = (TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_whois);
-                    final ProgressBar destIpOrgLoading = (ProgressBar) cardView.findViewById(R.id.activity_ip_connections_dest_ip_org_loading);
-                    if (ipToHostResolvedMap == null) {
-                        destIpOrg.setText("");
-                        srcIpHostnameDetails.setText("-");
-                    } else {
-                        final String dstIpHostnameResolved = ipToHostResolvedMap.get(destinationAddressOriginalSide);
-                        destIpOrg.setText(isNullOrEmpty(dstIpHostnameResolved) ? "" : dstIpHostnameResolved);
-                        destIpOrgDetails.setText(isNullOrEmpty(dstIpHostnameResolved) ? "" : dstIpHostnameResolved);
-                        ipConntrackRow.setDestWhoisOrHostname(dstIpHostnameResolved);
-                    }
-
-                    destIpOrg.setVisibility(View.VISIBLE);
-                    destIpOrgLoading.setVisibility(View.GONE);
-
-//                    mProgressBar.setProgress(mCurrentProgress.incrementAndGet());
-                    ipConntrackMap.put(ipConntrackRow, cardView);
-                }
-
-                mProgressBar.setVisibility(View.GONE);
-                mProgressBarDesc.setVisibility(View.GONE);
-                containerLayout.setVisibility(View.VISIBLE);
-
-            }
-
-            @Override
-            public void onLoaderReset(Loader<Map<String, String>> loader) {
-                //Nothing to do
-            }
-        });
-    }
+//    private void initLoaderTask() {
+//        //Remove all views
+//        final LinearLayout containerLayout = (LinearLayout) findViewById(R.id.tile_status_active_ip_connections_list_container);
+//        containerLayout.removeAllViews();
+//
+//        final CardView.LayoutParams cardViewLayoutParams = new FrameLayout.LayoutParams(
+//                FrameLayout.LayoutParams.MATCH_PARENT,
+//                FrameLayout.LayoutParams.WRAP_CONTENT);
+//        cardViewLayoutParams.rightMargin = R.dimen.marginRight;
+//        cardViewLayoutParams.leftMargin = R.dimen.marginLeft;
+//        cardViewLayoutParams.bottomMargin = R.dimen.activity_vertical_margin;
+//
+//        final boolean isThemeLight = ColorUtils.isThemeLight(ActiveIPConnectionsDetailActivity.this);
+//        final Resources resources = getResources();
+//
+//        final LoaderManager supportLoaderManager = getSupportLoaderManager();
+//
+//        supportLoaderManager.initLoader(0, null, new LoaderManager.LoaderCallbacks<Map<String, String>>() {
+//            @Override
+//            public Loader<Map<String, String>> onCreateLoader(int id, Bundle args) {
+//                final AsyncTaskLoader<Map<String, String>> asyncTaskLoader = new AsyncTaskLoader<Map<String, String>>(ActiveIPConnectionsDetailActivity.this) {
+//                    @Override
+//                    public Map<String, String> loadInBackground() {
+//                        ipConntrackMap.clear();
+//
+//                        final Map<String, String> result = new HashMap<>();
+//                        String existingRecord;
+//
+//                        final int totalLength = mActiveIPConnections.length;
+//
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                mProgressBarDesc.setText("Resolving IPs (0/" + totalLength + ")...\n\n");
+//                            }
+//                        });
+//
+//                        int i = 1;
+//                        for (final String activeIPConnection : mActiveIPConnections) {
+//                            final IPConntrack ipConntrackRow = IPConntrack.parseIpConntrackRow(activeIPConnection);
+//                            if (ipConntrackRow == null) {
+//                                continue;
+//                            }
+//
+//                            final int j = (i++);
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    mProgressBarDesc.setText("Resolving IPs ( " + j + "/" + totalLength + ")...\n\n");
+//                                }
+//                            });
+//
+//                            final String sourceAddressOriginalSide = ipConntrackRow.getSourceAddressOriginalSide();
+//                            existingRecord = result.get(sourceAddressOriginalSide);
+//                            if (isNullOrEmpty(existingRecord)) {
+//                                //Set Source IP HostName
+//                                final String srcIpHostnameResolved;
+//                                if (mLocalIpToHostname == null) {
+//                                    srcIpHostnameResolved = "-";
+//                                } else {
+//                                    final String val = mLocalIpToHostname.get(sourceAddressOriginalSide);
+//                                    if (isNullOrEmpty(val)) {
+//                                        srcIpHostnameResolved = "-";
+//                                    } else {
+//                                        srcIpHostnameResolved = val;
+//                                    }
+//                                }
+//                                result.put(sourceAddressOriginalSide, srcIpHostnameResolved);
+//                            }
+//
+//                            final String destinationAddressOriginalSide = ipConntrackRow.getDestinationAddressOriginalSide();
+//                            existingRecord = result.get(destinationAddressOriginalSide);
+//                            if (isNullOrEmpty(existingRecord)) {
+//                                final String dstIpWhoisResolved;
+//                                if (isNullOrEmpty(destinationAddressOriginalSide)) {
+//                                    dstIpWhoisResolved = "-";
+//                                } else {
+//                                    IPWhoisInfo ipWhoisInfo = null;
+//                                    try {
+//                                        ipWhoisInfo = mIPWhoisInfoCache.get(destinationAddressOriginalSide);
+//                                    } catch (Exception e) {
+//                                        e.printStackTrace();
+//                                        Utils.reportException(null, e);
+//                                    }
+//                                    if (ipWhoisInfo != null && !isNullOrEmpty(ipWhoisInfo.getCountry())) {
+//                                        mDestinationIpToCountry.put(destinationAddressOriginalSide, ipWhoisInfo.getCountry());
+//                                    }
+//                                    final String org;
+//                                    if (ipWhoisInfo == null || (org = ipWhoisInfo.getOrganization()) == null || org.isEmpty()) {
+//                                        dstIpWhoisResolved = "-";
+//                                    } else {
+//                                        dstIpWhoisResolved = org;
+//                                        if (!mLocalIpToHostname.containsKey(destinationAddressOriginalSide)) {
+//                                            mLocalIpToHostname.put(destinationAddressOriginalSide, org);
+//                                        }
+//                                    }
+//                                }
+//                                result.put(destinationAddressOriginalSide, dstIpWhoisResolved);
+//                            }
+//
+//                            mSourceIpToDestinationIp.put(sourceAddressOriginalSide, destinationAddressOriginalSide);
+//                            mDestinationIpToSourceIp.put(destinationAddressOriginalSide, sourceAddressOriginalSide);
+//
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    mProgressBar.setProgress(mCurrentProgress.incrementAndGet());
+//                                }
+//                            });
+//                        }
+//
+//                        return result;
+//                    }
+//                };
+//                asyncTaskLoader.forceLoad();
+//                return asyncTaskLoader;
+//            }
+//
+//            @Override
+//            public void onLoadFinished(Loader<Map<String, String>> loader, Map<String, String> ipToHostResolvedMap) {
+//                int i = 0;
+//
+//                if (optionsMenu != null) {
+//                    optionsMenu.findItem(R.id.tile_status_active_ip_connections_stats).setVisible(true);
+//                    optionsMenu.findItem(R.id.tile_status_active_ip_connections_search).setVisible(true);
+//                }
+//
+//                mProgressBarDesc.setText("Building Views...\n\n");
+//
+//                for (final String activeIPConnection : mActiveIPConnections) {
+//                    final IPConntrack ipConntrackRow = IPConntrack.parseIpConntrackRow(activeIPConnection);
+//                    if (ipConntrackRow == null) {
+//                        continue;
+//                    }
+//                    final CardView cardView = (CardView) getLayoutInflater()
+//                            .inflate(R.layout.activity_ip_connections_cardview, null);
+//
+//                    //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
+//                    cardView.setPreventCornerOverlap(true);
+//                    //Add padding in API v21+ as well to have the same measurements with previous versions.
+//                    cardView.setUseCompatPadding(true);
+//
+//                    if (isThemeLight) {
+//                        //Light
+//                        cardView.setCardBackgroundColor(
+//                                ContextCompat.getColor(ActiveIPConnectionsDetailActivity.this,
+//                                        R.color.cardview_light_background));
+//                    } else {
+//                        //Default is Dark
+//                        cardView.setCardBackgroundColor(
+//                                ContextCompat.getColor(ActiveIPConnectionsDetailActivity.this,
+//                                        R.color.cardview_dark_background));
+//                    }
+//
+//                    //Highlight CardView
+////                    cardView.setCardElevation(20f);
+//
+//                    final String sourceAddressOriginalSide = ipConntrackRow.getSourceAddressOriginalSide();
+//                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_device_source_ip))
+//                            .setText(sourceAddressOriginalSide);
+//                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_source_ip))
+//                            .setText(sourceAddressOriginalSide);
+//
+//                    final long ttl = ipConntrackRow.getTimeout();
+//                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_ttl))
+//                            .setText(ttl > 0 ? String.valueOf(ttl) : "-");
+//
+//                    final long packets = ipConntrackRow.getPackets();
+//                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_packets))
+//                            .setText(packets > 0 ? String.valueOf(packets) : "-");
+//
+//                    final long bytes = ipConntrackRow.getBytes();
+//                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_bytes))
+//                            .setText(bytes > 0 ? String.valueOf(bytes) : "-");
+//
+//                    final String destinationAddressOriginalSide = ipConntrackRow.getDestinationAddressOriginalSide();
+//                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_device_dest_ip))
+//                            .setText(destinationAddressOriginalSide);
+//                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_ip))
+//                            .setText(destinationAddressOriginalSide);
+//
+//                    final String protocol = ipConntrackRow.getTransportProtocol();
+//                    final TextView proto = (TextView) cardView.findViewById(R.id.activity_ip_connections_device_proto);
+//                    proto.setText(isNullOrEmpty(protocol) ? "-" : protocol.toUpperCase());
+//                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_protocol))
+//                            .setText(isNullOrEmpty(protocol) ? "-" : protocol.toUpperCase());
+//
+//                    final String tcpConnectionState = ipConntrackRow.getTcpConnectionState();
+//                    final TextView tcpConnectionStateView = (TextView) cardView.findViewById(R.id.activity_ip_connections_tcp_connection_state);
+//                    final TextView tcpConnectionStateDetailedView = (TextView) cardView.findViewById(R.id.activity_ip_connections_details_tcp_connection_state);
+//
+//                    if (!isNullOrEmpty(tcpConnectionState)) {
+//                        tcpConnectionStateView.setText(tcpConnectionState);
+//                        tcpConnectionStateDetailedView.setText(tcpConnectionState);
+//                        tcpConnectionStateView.setVisibility(View.VISIBLE);
+//                    } else {
+//                        tcpConnectionStateView.setVisibility(View.GONE);
+//                        tcpConnectionStateDetailedView.setText("-");
+//                    }
+//
+//                    final View tcpConnectionStateDetailedViewSep = cardView
+//                            .findViewById(R.id.activity_ip_connections_details_tcp_connection_state_sep);
+//                    final View tcpConnectionStateDetailedViewTitle = cardView.findViewById(R.id.activity_ip_connections_details_tcp_connection_state_title);
+//                    if ("TCP".equalsIgnoreCase(protocol)) {
+//                        tcpConnectionStateDetailedView.setVisibility(View.VISIBLE);
+//                        tcpConnectionStateDetailedViewSep
+//                                .setVisibility(View.VISIBLE);
+//                        tcpConnectionStateDetailedViewTitle
+//                                .setVisibility(View.VISIBLE);
+//                    } else {
+//                        tcpConnectionStateDetailedView.setVisibility(View.GONE);
+//                        tcpConnectionStateDetailedViewSep
+//                                .setVisibility(View.GONE);
+//                        tcpConnectionStateDetailedViewTitle
+//                                .setVisibility(View.GONE);
+//                    }
+//
+//                    //ICMP
+//                    //ID
+//                    final View icmpIdTitle = cardView
+//                            .findViewById(R.id.activity_ip_connections_details_icmp_id_title);
+//                    final View icmpIdSep = cardView
+//                            .findViewById(R.id.activity_ip_connections_details_icmp_id_sep);
+//                    final TextView icmpId = (TextView) cardView
+//                            .findViewById(R.id.activity_ip_connections_details_icmp_id);
+//                    //Type
+//                    final View icmpTypeTitle = cardView
+//                            .findViewById(R.id.activity_ip_connections_details_icmp_type_title);
+//                    final View icmpTypeSep = cardView
+//                            .findViewById(R.id.activity_ip_connections_details_icmp_type_sep);
+//                    final TextView icmpType = (TextView) cardView
+//                            .findViewById(R.id.activity_ip_connections_details_icmp_type);
+//                    //Code
+//                    final View icmpCodeTitle = cardView
+//                            .findViewById(R.id.activity_ip_connections_details_icmp_code_title);
+//                    final View icmpCodeSep = cardView
+//                            .findViewById(R.id.activity_ip_connections_details_icmp_code_sep);
+//                    final TextView icmpCode = (TextView) cardView
+//                            .findViewById(R.id.activity_ip_connections_details_icmp_code);
+//                    //Ctrl Message
+//                    final View icmpCtrlMsgTitle = cardView
+//                            .findViewById(R.id.activity_ip_connections_details_icmp_ctrl_msg_title);
+//                    final View icmpCtrlMsgSep = cardView
+//                            .findViewById(R.id.activity_ip_connections_details_icmp_ctrl_msg_sep);
+//                    final TextView icmpCtrlMsg = (TextView) cardView
+//                            .findViewById(R.id.activity_ip_connections_details_icmp_ctrl_msg);
+//
+//                    final View[] icmpViews = new View[]{
+//                            icmpIdTitle, icmpIdSep, icmpId,
+//                            icmpTypeTitle, icmpTypeSep, icmpType,
+//                            icmpCodeTitle, icmpCodeSep, icmpCode,
+//                            icmpCtrlMsgTitle, icmpCtrlMsgSep, icmpCtrlMsg
+//                    };
+//
+//                    if ("ICMP".equalsIgnoreCase(protocol)) {
+//                        final int ipConntrackRowIcmpType = ipConntrackRow.getIcmpType();
+//                        final int ipConntrackRowIcmpCode = ipConntrackRow.getIcmpCode();
+//                        icmpId.setText(isNullOrEmpty(ipConntrackRow.getIcmpId()) ?
+//                                "-" : ipConntrackRow.getIcmpId());
+//                        icmpType.setText((ipConntrackRowIcmpType < 0) ?
+//                                "-" : String.valueOf(ipConntrackRowIcmpType));
+//                        icmpCode.setText((ipConntrackRowIcmpCode < 0) ?
+//                                "-" : String.valueOf(ipConntrackRowIcmpCode));
+//
+//                        final String ctrlMsg = ICMP_TYPE_CODE_DESCRIPTION_TABLE.get(ipConntrackRowIcmpType, ipConntrackRowIcmpCode);
+//                        icmpCtrlMsg.setText(isNullOrEmpty(ctrlMsg) ? "-" : ctrlMsg);
+//
+//                        for (final View icmpView : icmpViews) {
+//                            icmpView.setVisibility(View.VISIBLE);
+//                        }
+//                    } else {
+//                        for (final View icmpView : icmpViews) {
+//                            icmpView.setVisibility(View.GONE);
+//                        }
+//                    }
+//
+//                    final int sourcePortOriginalSide = ipConntrackRow.getSourcePortOriginalSide();
+//                    final String srcPortToDisplay = sourcePortOriginalSide > 0 ? String.valueOf(sourcePortOriginalSide) : "-";
+//                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_sport))
+//                            .setText(srcPortToDisplay);
+//                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_source_port))
+//                            .setText(srcPortToDisplay);
+//
+//                    final int destinationPortOriginalSide = ipConntrackRow.getDestinationPortOriginalSide();
+//                    final String dstPortToDisplay = destinationPortOriginalSide > 0 ? String.valueOf(destinationPortOriginalSide) : "-";
+//                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_dport))
+//                            .setText(dstPortToDisplay);
+//                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_port))
+//                            .setText(dstPortToDisplay);
+//
+//                    final TextView rawLineView = (TextView) cardView.findViewById(R.id.activity_ip_connections_raw_line);
+//                    rawLineView.setText(activeIPConnection);
+//
+//                    if (i == 0) {
+//                        rawLineView.setVisibility(View.VISIBLE);
+//                    }
+//                    i++;
+//
+//                    cardView.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            final View placeholderView = cardView.findViewById(R.id.activity_ip_connections_details_placeholder);
+//                            if (placeholderView.getVisibility() == View.VISIBLE) {
+//                                placeholderView.setVisibility(View.GONE);
+//                            } else {
+//                                placeholderView.setVisibility(View.VISIBLE);
+//                            }
+//                        }
+//                    });
+//
+//                    final ImageView destCountryFlag = (ImageView) cardView.findViewById(R.id.activity_ip_connections_destination_country_flag);
+//                    try {
+//                        final IPWhoisInfo whoisInfo;
+//                        if (destinationAddressOriginalSide == null ||
+//                                (whoisInfo = mIPWhoisInfoCache
+//                                        .getIfPresent(destinationAddressOriginalSide)) == null) {
+//                            destCountryFlag.setVisibility(View.GONE);
+//                        } else {
+//                            final String countryCode = whoisInfo.getCountry_code();
+//                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_whois_country))
+//                                    .setText(String.format("%s (%s)", whoisInfo.getCountry(), countryCode));
+//                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_whois_region))
+//                                    .setText(whoisInfo.getRegion());
+//                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_whois_city))
+//                                    .setText(whoisInfo.getCity());
+//
+//                            if (isNullOrEmpty(countryCode)) {
+//                                destCountryFlag.setVisibility(View.GONE);
+//                            }  else {
+//                                ImageUtils.downloadImageFromUrl(ActiveIPConnectionsDetailActivity.this,
+//                                        String.format("%s/%s.png",
+//                                                DDWRTCompanionConstants.COUNTRY_API_SERVER_FLAG,
+//                                                countryCode),
+//                                        destCountryFlag,
+//                                        null,
+//                                        null,
+//                                        new Callback() {
+//                                            @Override
+//                                            public void onSuccess() {
+//                                                destCountryFlag.setVisibility(View.VISIBLE);
+//                                            }
+//
+//                                            @Override
+//                                            public void onError() {
+//                                                destCountryFlag.setVisibility(View.GONE);
+//                                            }
+//                                        });
+//                            }
+//
+//                        }
+//                    } catch (final Exception e) {
+//                        Crashlytics.logException(e);
+//                        destCountryFlag.setVisibility(View.GONE);
+//                        //No worries
+//                    }
+//
+//
+//                    containerLayout.addView(cardView);
+//
+//                    final TextView srcIpHostname = (TextView) cardView.findViewById(R.id.activity_ip_connections_source_ip_hostname);
+//                    final TextView srcIpHostnameDetails = (TextView) cardView.findViewById(R.id.activity_ip_connections_details_source_host);
+//                    final ProgressBar srcIpHostnameLoading = (ProgressBar) cardView.findViewById(R.id.activity_ip_connections_source_ip_hostname_loading);
+//                    //Set Source IP HostName
+//                    if (ipToHostResolvedMap == null) {
+//                        srcIpHostname.setText("");
+//                        srcIpHostnameDetails.setText("-");
+//                    } else {
+//                        final String srcIpHostnameResolved = ipToHostResolvedMap.get(sourceAddressOriginalSide);
+//                        srcIpHostname.setText(isNullOrEmpty(srcIpHostnameResolved) ? "" : srcIpHostnameResolved);
+//                        srcIpHostnameDetails.setText(isNullOrEmpty(srcIpHostnameResolved) ? "-" : srcIpHostnameResolved);
+//                        ipConntrackRow.setSourceHostname(srcIpHostnameResolved);
+//                    }
+//                    srcIpHostname.setVisibility(View.VISIBLE);
+//                    srcIpHostnameLoading.setVisibility(View.GONE);
+//
+//                    //... and Destination IP Address Organization (if available)
+//                    final TextView destIpOrg = (TextView) cardView.findViewById(R.id.activity_ip_connections_dest_ip_org);
+//                    final TextView destIpOrgDetails = (TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_whois);
+//                    final ProgressBar destIpOrgLoading = (ProgressBar) cardView.findViewById(R.id.activity_ip_connections_dest_ip_org_loading);
+//                    if (ipToHostResolvedMap == null) {
+//                        destIpOrg.setText("");
+//                        srcIpHostnameDetails.setText("-");
+//                    } else {
+//                        final String dstIpHostnameResolved = ipToHostResolvedMap.get(destinationAddressOriginalSide);
+//                        destIpOrg.setText(isNullOrEmpty(dstIpHostnameResolved) ? "" : dstIpHostnameResolved);
+//                        destIpOrgDetails.setText(isNullOrEmpty(dstIpHostnameResolved) ? "" : dstIpHostnameResolved);
+//                        ipConntrackRow.setDestWhoisOrHostname(dstIpHostnameResolved);
+//                    }
+//
+//                    destIpOrg.setVisibility(View.VISIBLE);
+//                    destIpOrgLoading.setVisibility(View.GONE);
+//
+////                    mProgressBar.setProgress(mCurrentProgress.incrementAndGet());
+//                    ipConntrackMap.put(ipConntrackRow, cardView);
+//                }
+//
+//                mProgressBar.setVisibility(View.GONE);
+//                mProgressBarDesc.setVisibility(View.GONE);
+//                containerLayout.setVisibility(View.VISIBLE);
+//
+//            }
+//
+//            @Override
+//            public void onLoaderReset(Loader<Map<String, String>> loader) {
+//                //Nothing to do
+//            }
+//        });
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -933,12 +993,12 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     //Reset views
-                    final LinearLayout containerLayout = (LinearLayout) findViewById(R.id.tile_status_active_ip_connections_list_container);
-                    containerLayout.removeAllViews();
+//                    final LinearLayout containerLayout = (LinearLayout) findViewById(R.id.tile_status_active_ip_connections_list_container);
+//                    containerLayout.removeAllViews();
 
-                    for (final CardView cardView : ipConntrackMap.values()) {
-                        containerLayout.addView(cardView);
-                    }
+//                    for (final CardView cardView : ipConntrackMap.values()) {
+//                        containerLayout.addView(cardView);
+//                    }
                     //Hide it now
                     searchView.setIconified(true);
                 }
@@ -1037,102 +1097,102 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
 
-            case R.id.tile_status_active_ip_connections_stats_by_source_ip: {
-                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null,
-                        "Loading Pie Chart (distribution by Source IPs)...", false, false);
-                alertDialog.show();
-                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        final HashMap<String, Integer> connectionsCountBySourceIp = new HashMap<>();
-                        for (final Map.Entry<String, Collection<String>> entry : mSourceIpToDestinationIp.asMap().entrySet()) {
-                            final Collection<String> value = entry.getValue();
-                            if (value == null) {
-                                continue;
-                            }
-                            connectionsCountBySourceIp.put(entry.getKey(), value.size());
-                        }
-                        final Intent srcStatsIntent = new Intent(ActiveIPConnectionsDetailActivity.this,
-                                ActiveIPConnectionsDetailStatsActivity.class);
-                        srcStatsIntent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, mObservationDate);
-                        srcStatsIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterRemoteIp);
-                        srcStatsIntent.putExtra(IP_TO_HOSTNAME_RESOLVER, mLocalIpToHostname);
-                        srcStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.BY, ActiveIPConnectionsDetailStatsActivity.ByFilter.SOURCE);
-                        srcStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.CONNECTIONS_COUNT_MAP, connectionsCountBySourceIp);
-                        startActivity(srcStatsIntent);
-                        alertDialog.cancel();
-                    }
-                }, 1000l);
-            }
-
-                return true;
-
-            case R.id.tile_status_active_ip_connections_stats_by_destination_ip: {
-                final AlertDialog alertDialog2 = Utils.buildAlertDialog(this, null,
-                        "Loading Pie Chart (distribution by Destination IPs)...", false, false);
-                alertDialog2.show();
-                ((TextView) alertDialog2.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        final HashMap<String, Integer> connectionsCountByDestinationIp = new HashMap<>();
-                        for (final Map.Entry<String, Collection<String>> entry : mDestinationIpToSourceIp.asMap().entrySet()) {
-                            final Collection<String> value = entry.getValue();
-                            if (value == null) {
-                                continue;
-                            }
-                            connectionsCountByDestinationIp.put(entry.getKey(), value.size());
-                        }
-                        final Intent destStatsIntent = new Intent(ActiveIPConnectionsDetailActivity.this,
-                                ActiveIPConnectionsDetailStatsActivity.class);
-                        destStatsIntent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, mObservationDate);
-                        destStatsIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterRemoteIp);
-                        destStatsIntent.putExtra(IP_TO_HOSTNAME_RESOLVER, mLocalIpToHostname);
-                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.BY, ActiveIPConnectionsDetailStatsActivity.ByFilter.DESTINATION_IP);
-                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.CONNECTIONS_COUNT_MAP, connectionsCountByDestinationIp);
-                        startActivity(destStatsIntent);
-                        alertDialog2.cancel();
-                    }
-                }, 1000l);
-            }
-
-                return true;
-
-            case R.id.tile_status_active_ip_connections_stats_by_destination_country: {
-                final AlertDialog alertDialog2 = Utils.buildAlertDialog(this, null,
-                        "Loading Pie Chart (distribution by Destination IP Country)...", false, false);
-                alertDialog2.show();
-                ((TextView) alertDialog2.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        final HashMap<String, Integer> connectionsCountByDestinationIpCountry = new HashMap<>();
-                        final Collection<String> countries = mDestinationIpToCountry.values();
-                        for (final String country : countries) {
-                            if (isNullOrEmpty(country)) {
-                                continue;
-                            }
-                            Integer count = connectionsCountByDestinationIpCountry.get(country);
-                            if (count == null) {
-                                count = 0;
-                            }
-                            connectionsCountByDestinationIpCountry.put(country, count + 1);
-                        }
-
-                        final Intent destStatsIntent = new Intent(ActiveIPConnectionsDetailActivity.this,
-                                ActiveIPConnectionsDetailStatsActivity.class);
-                        destStatsIntent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, mObservationDate);
-                        destStatsIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterRemoteIp);
-                        destStatsIntent.putExtra(IP_TO_HOSTNAME_RESOLVER, mLocalIpToHostname);
-                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.BY, ActiveIPConnectionsDetailStatsActivity.ByFilter.DESTINATION_COUNTRY);
-                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.CONNECTIONS_COUNT_MAP, connectionsCountByDestinationIpCountry);
-                        startActivity(destStatsIntent);
-                        alertDialog2.cancel();
-                    }
-                }, 1000l);
-            }
-            return true;
+//            case R.id.tile_status_active_ip_connections_stats_by_source_ip: {
+//                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null,
+//                        "Loading Pie Chart (distribution by Source IPs)...", false, false);
+//                alertDialog.show();
+//                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        final HashMap<String, Integer> connectionsCountBySourceIp = new HashMap<>();
+//                        for (final Map.Entry<String, Collection<String>> entry : mSourceIpToDestinationIp.asMap().entrySet()) {
+//                            final Collection<String> value = entry.getValue();
+//                            if (value == null) {
+//                                continue;
+//                            }
+//                            connectionsCountBySourceIp.put(entry.getKey(), value.size());
+//                        }
+//                        final Intent srcStatsIntent = new Intent(ActiveIPConnectionsDetailActivity.this,
+//                                ActiveIPConnectionsDetailStatsActivity.class);
+//                        srcStatsIntent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, mObservationDate);
+//                        srcStatsIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterRemoteIp);
+//                        srcStatsIntent.putExtra(IP_TO_HOSTNAME_RESOLVER, mLocalIpToHostname);
+//                        srcStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.BY, ActiveIPConnectionsDetailStatsActivity.ByFilter.SOURCE);
+//                        srcStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.CONNECTIONS_COUNT_MAP, connectionsCountBySourceIp);
+//                        startActivity(srcStatsIntent);
+//                        alertDialog.cancel();
+//                    }
+//                }, 1000l);
+//            }
+//
+//                return true;
+//
+//            case R.id.tile_status_active_ip_connections_stats_by_destination_ip: {
+//                final AlertDialog alertDialog2 = Utils.buildAlertDialog(this, null,
+//                        "Loading Pie Chart (distribution by Destination IPs)...", false, false);
+//                alertDialog2.show();
+//                ((TextView) alertDialog2.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        final HashMap<String, Integer> connectionsCountByDestinationIp = new HashMap<>();
+//                        for (final Map.Entry<String, Collection<String>> entry : mDestinationIpToSourceIp.asMap().entrySet()) {
+//                            final Collection<String> value = entry.getValue();
+//                            if (value == null) {
+//                                continue;
+//                            }
+//                            connectionsCountByDestinationIp.put(entry.getKey(), value.size());
+//                        }
+//                        final Intent destStatsIntent = new Intent(ActiveIPConnectionsDetailActivity.this,
+//                                ActiveIPConnectionsDetailStatsActivity.class);
+//                        destStatsIntent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, mObservationDate);
+//                        destStatsIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterRemoteIp);
+//                        destStatsIntent.putExtra(IP_TO_HOSTNAME_RESOLVER, mLocalIpToHostname);
+//                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.BY, ActiveIPConnectionsDetailStatsActivity.ByFilter.DESTINATION_IP);
+//                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.CONNECTIONS_COUNT_MAP, connectionsCountByDestinationIp);
+//                        startActivity(destStatsIntent);
+//                        alertDialog2.cancel();
+//                    }
+//                }, 1000l);
+//            }
+//
+//                return true;
+//
+//            case R.id.tile_status_active_ip_connections_stats_by_destination_country: {
+//                final AlertDialog alertDialog2 = Utils.buildAlertDialog(this, null,
+//                        "Loading Pie Chart (distribution by Destination IP Country)...", false, false);
+//                alertDialog2.show();
+//                ((TextView) alertDialog2.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        final HashMap<String, Integer> connectionsCountByDestinationIpCountry = new HashMap<>();
+//                        final Collection<String> countries = mDestinationIpToCountry.values();
+//                        for (final String country : countries) {
+//                            if (isNullOrEmpty(country)) {
+//                                continue;
+//                            }
+//                            Integer count = connectionsCountByDestinationIpCountry.get(country);
+//                            if (count == null) {
+//                                count = 0;
+//                            }
+//                            connectionsCountByDestinationIpCountry.put(country, count + 1);
+//                        }
+//
+//                        final Intent destStatsIntent = new Intent(ActiveIPConnectionsDetailActivity.this,
+//                                ActiveIPConnectionsDetailStatsActivity.class);
+//                        destStatsIntent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, mObservationDate);
+//                        destStatsIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterRemoteIp);
+//                        destStatsIntent.putExtra(IP_TO_HOSTNAME_RESOLVER, mLocalIpToHostname);
+//                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.BY, ActiveIPConnectionsDetailStatsActivity.ByFilter.DESTINATION_COUNTRY);
+//                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.CONNECTIONS_COUNT_MAP, connectionsCountByDestinationIpCountry);
+//                        startActivity(destStatsIntent);
+//                        alertDialog2.cancel();
+//                    }
+//                }, 1000l);
+//            }
+//            return true;
 
             default:
                 break;
@@ -1192,6 +1252,451 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             mFileToShare.delete();
         }
         super.onDestroy();
+    }
+
+    @Override
+    public void onRefresh() {
+        mSwipeRefreshLayout.setEnabled(false);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ((ActiveIPConnectionsDetailRecyclerViewAdapter) ActiveIPConnectionsDetailActivity.this.mAdapter)
+                            .setActiveIPConnections(mActiveIPConnections);
+                    ActiveIPConnectionsDetailActivity.this.mAdapter.notifyDataSetChanged();
+                } finally {
+                    mSwipeRefreshLayout.setEnabled(true);
+                }
+            }
+        }, 1000);
+    }
+
+    class ActiveIPConnectionsDetailRecyclerViewAdapter
+            extends RecyclerView.Adapter<ActiveIPConnectionsDetailRecyclerViewAdapter.ViewHolder>
+            implements Filterable {
+
+        private final ActiveIPConnectionsDetailActivity activity;
+        private final Filter mFilter;
+        private List<IPConntrack> mActiveIPConnections;
+
+        public ActiveIPConnectionsDetailRecyclerViewAdapter(ActiveIPConnectionsDetailActivity activity) {
+            this.activity = activity;
+            this.mFilter = new Filter() {
+                @Override
+                protected FilterResults performFiltering(final CharSequence constraint) {
+                    final FilterResults oReturn = new FilterResults();
+                    if (mActiveIPConnections == null || mActiveIPConnections.isEmpty()) {
+                        return oReturn;
+                    }
+                    if (TextUtils.isEmpty(constraint)) {
+                        oReturn.values = mActiveIPConnections;
+                    } else {
+                        //Filter list
+                        oReturn.values = FluentIterable.from(mActiveIPConnections)
+                                .filter(new Predicate<IPConntrack>() {
+                                    @Override
+                                    public boolean apply(IPConntrack input) {
+                                        if (input == null) {
+                                            return false;
+                                        }
+                                        //Filter on visible fields: source IP/port, dest. IP/port, transport protocol and TCP State, device name, dest. WHOIS
+                                        return (containsIgnoreCase(input.getSourceAddressOriginalSide(), constraint) ||
+                                                containsIgnoreCase("" + input.getSourcePortOriginalSide(), constraint) ||
+                                                containsIgnoreCase("" + input.getDestinationAddressOriginalSide(), constraint) ||
+                                                containsIgnoreCase("" + input.getDestinationPortOriginalSide(), constraint) ||
+                                                containsIgnoreCase(input.getTransportProtocol(), constraint) ||
+                                                containsIgnoreCase(input.getTcpConnectionState(), constraint) ||
+                                                containsIgnoreCase(input.getSourceHostname(), constraint) ||
+                                                containsIgnoreCase(input.getDestWhoisOrHostname(), constraint));
+                                    }
+                                }).toList();
+                    }
+                    return oReturn;
+                }
+
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    final Object values = results.values;
+                    if (values instanceof List) {
+                        //noinspection unchecked
+                        setActiveIPConnections((List<IPConntrack>) values);
+                        notifyDataSetChanged();
+                    }
+                }
+            };
+        }
+
+        public ActiveIPConnectionsDetailRecyclerViewAdapter setActiveIPConnections(List<IPConntrack> activeIPConnections) {
+            this.mActiveIPConnections = activeIPConnections;
+            return this;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            final View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.activity_ip_connections_cardview, parent, false);
+            final long currentTheme = activity
+                    .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                    .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
+            final CardView cardView = (CardView) v.findViewById(R.id.activity_ip_connections_card_view);
+            if (currentTheme == ColorUtils.LIGHT_THEME) {
+                //Light
+                cardView.setCardBackgroundColor(ContextCompat
+                        .getColor(activity, R.color.cardview_light_background));
+            } else {
+                //Default is Dark
+                cardView.setCardBackgroundColor(ContextCompat
+                        .getColor(activity, R.color.cardview_dark_background));
+            }
+
+//        return new ViewHolder(this.context,
+//                RippleViewCreator.addRippleToView(v));
+            return new ViewHolder(this.activity, v);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            if (position < 0 || position >= mActiveIPConnections.size()) {
+                Utils.reportException(null, new IllegalStateException());
+                Toast.makeText(activity,
+                        "Internal Error. Please try again later",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            final CardView cardView = holder.cardView;
+            final IPConntrack ipConntrackRow = mActiveIPConnections.get(position);
+            if (ipConntrackRow == null) {
+                Crashlytics.log(Log.ERROR, LOG_TAG,
+                        "Invalid active IP Connection @ " + position);
+                cardView.setVisibility(View.GONE);
+                return;
+            }
+
+            final boolean isThemeLight = ColorUtils.isThemeLight(activity);
+
+            cardView.setVisibility(View.VISIBLE);
+
+            //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
+            cardView.setPreventCornerOverlap(true);
+            //Add padding in API v21+ as well to have the same measurements with previous versions.
+            cardView.setUseCompatPadding(true);
+
+            if (isThemeLight) {
+                //Light
+                cardView.setCardBackgroundColor(
+                        ContextCompat.getColor(activity,
+                                R.color.cardview_light_background));
+            } else {
+                //Default is Dark
+                cardView.setCardBackgroundColor(
+                        ContextCompat.getColor(activity,
+                                R.color.cardview_dark_background));
+            }
+
+            //Highlight CardView
+//                    cardView.setCardElevation(20f);
+
+            final String sourceAddressOriginalSide = ipConntrackRow.getSourceAddressOriginalSide();
+            ((TextView) cardView.findViewById(R.id.activity_ip_connections_device_source_ip))
+                    .setText(sourceAddressOriginalSide);
+            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_source_ip))
+                    .setText(sourceAddressOriginalSide);
+
+            final long ttl = ipConntrackRow.getTimeout();
+            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_ttl))
+                    .setText(ttl > 0 ? String.valueOf(ttl) : "-");
+
+            final long packets = ipConntrackRow.getPackets();
+            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_packets))
+                    .setText(packets > 0 ? String.valueOf(packets) : "-");
+
+            final long bytes = ipConntrackRow.getBytes();
+            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_bytes))
+                    .setText(bytes > 0 ? String.valueOf(bytes) : "-");
+
+            final String destinationAddressOriginalSide = ipConntrackRow.getDestinationAddressOriginalSide();
+            ((TextView) cardView.findViewById(R.id.activity_ip_connections_device_dest_ip))
+                    .setText(destinationAddressOriginalSide);
+            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_ip))
+                    .setText(destinationAddressOriginalSide);
+
+            final String protocol = ipConntrackRow.getTransportProtocol();
+            final TextView proto = (TextView) cardView.findViewById(R.id.activity_ip_connections_device_proto);
+            proto.setText(isNullOrEmpty(protocol) ? "-" : protocol.toUpperCase());
+            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_protocol))
+                    .setText(isNullOrEmpty(protocol) ? "-" : protocol.toUpperCase());
+
+            final String tcpConnectionState = ipConntrackRow.getTcpConnectionState();
+            final TextView tcpConnectionStateView = (TextView) cardView.findViewById(R.id.activity_ip_connections_tcp_connection_state);
+            final TextView tcpConnectionStateDetailedView = (TextView) cardView.findViewById(R.id.activity_ip_connections_details_tcp_connection_state);
+
+            if (!isNullOrEmpty(tcpConnectionState)) {
+                tcpConnectionStateView.setText(tcpConnectionState);
+                tcpConnectionStateDetailedView.setText(tcpConnectionState);
+                tcpConnectionStateView.setVisibility(View.VISIBLE);
+            } else {
+                tcpConnectionStateView.setVisibility(View.GONE);
+                tcpConnectionStateDetailedView.setText("-");
+            }
+
+            final View tcpConnectionStateDetailedViewSep = cardView
+                    .findViewById(R.id.activity_ip_connections_details_tcp_connection_state_sep);
+            final View tcpConnectionStateDetailedViewTitle = cardView.findViewById(R.id.activity_ip_connections_details_tcp_connection_state_title);
+            if ("TCP".equalsIgnoreCase(protocol)) {
+                tcpConnectionStateDetailedView.setVisibility(View.VISIBLE);
+                tcpConnectionStateDetailedViewSep
+                        .setVisibility(View.VISIBLE);
+                tcpConnectionStateDetailedViewTitle
+                        .setVisibility(View.VISIBLE);
+            } else {
+                tcpConnectionStateDetailedView.setVisibility(View.GONE);
+                tcpConnectionStateDetailedViewSep
+                        .setVisibility(View.GONE);
+                tcpConnectionStateDetailedViewTitle
+                        .setVisibility(View.GONE);
+            }
+
+            //ICMP
+            //ID
+            final View icmpIdTitle = cardView
+                    .findViewById(R.id.activity_ip_connections_details_icmp_id_title);
+            final View icmpIdSep = cardView
+                    .findViewById(R.id.activity_ip_connections_details_icmp_id_sep);
+            final TextView icmpId = (TextView) cardView
+                    .findViewById(R.id.activity_ip_connections_details_icmp_id);
+            //Type
+            final View icmpTypeTitle = cardView
+                    .findViewById(R.id.activity_ip_connections_details_icmp_type_title);
+            final View icmpTypeSep = cardView
+                    .findViewById(R.id.activity_ip_connections_details_icmp_type_sep);
+            final TextView icmpType = (TextView) cardView
+                    .findViewById(R.id.activity_ip_connections_details_icmp_type);
+            //Code
+            final View icmpCodeTitle = cardView
+                    .findViewById(R.id.activity_ip_connections_details_icmp_code_title);
+            final View icmpCodeSep = cardView
+                    .findViewById(R.id.activity_ip_connections_details_icmp_code_sep);
+            final TextView icmpCode = (TextView) cardView
+                    .findViewById(R.id.activity_ip_connections_details_icmp_code);
+            //Ctrl Message
+            final View icmpCtrlMsgTitle = cardView
+                    .findViewById(R.id.activity_ip_connections_details_icmp_ctrl_msg_title);
+            final View icmpCtrlMsgSep = cardView
+                    .findViewById(R.id.activity_ip_connections_details_icmp_ctrl_msg_sep);
+            final TextView icmpCtrlMsg = (TextView) cardView
+                    .findViewById(R.id.activity_ip_connections_details_icmp_ctrl_msg);
+
+            final View[] icmpViews = new View[]{
+                    icmpIdTitle, icmpIdSep, icmpId,
+                    icmpTypeTitle, icmpTypeSep, icmpType,
+                    icmpCodeTitle, icmpCodeSep, icmpCode,
+                    icmpCtrlMsgTitle, icmpCtrlMsgSep, icmpCtrlMsg
+            };
+
+            if ("ICMP".equalsIgnoreCase(protocol)) {
+                final int ipConntrackRowIcmpType = ipConntrackRow.getIcmpType();
+                final int ipConntrackRowIcmpCode = ipConntrackRow.getIcmpCode();
+                icmpId.setText(isNullOrEmpty(ipConntrackRow.getIcmpId()) ?
+                        "-" : ipConntrackRow.getIcmpId());
+                icmpType.setText((ipConntrackRowIcmpType < 0) ?
+                        "-" : String.valueOf(ipConntrackRowIcmpType));
+                icmpCode.setText((ipConntrackRowIcmpCode < 0) ?
+                        "-" : String.valueOf(ipConntrackRowIcmpCode));
+
+                final String ctrlMsg = ICMP_TYPE_CODE_DESCRIPTION_TABLE.get(ipConntrackRowIcmpType, ipConntrackRowIcmpCode);
+                icmpCtrlMsg.setText(isNullOrEmpty(ctrlMsg) ? "-" : ctrlMsg);
+
+                for (final View icmpView : icmpViews) {
+                    icmpView.setVisibility(View.VISIBLE);
+                }
+            } else {
+                for (final View icmpView : icmpViews) {
+                    icmpView.setVisibility(View.GONE);
+                }
+            }
+
+            final int sourcePortOriginalSide = ipConntrackRow.getSourcePortOriginalSide();
+            final String srcPortToDisplay = sourcePortOriginalSide > 0 ? String.valueOf(sourcePortOriginalSide) : "-";
+            ((TextView) cardView.findViewById(R.id.activity_ip_connections_sport))
+                    .setText(srcPortToDisplay);
+            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_source_port))
+                    .setText(srcPortToDisplay);
+
+            final int destinationPortOriginalSide = ipConntrackRow.getDestinationPortOriginalSide();
+            final String dstPortToDisplay = destinationPortOriginalSide > 0 ? String.valueOf(destinationPortOriginalSide) : "-";
+            ((TextView) cardView.findViewById(R.id.activity_ip_connections_dport))
+                    .setText(dstPortToDisplay);
+            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_port))
+                    .setText(dstPortToDisplay);
+
+            final TextView rawLineView = (TextView) cardView.findViewById(R.id.activity_ip_connections_raw_line);
+            rawLineView.setText(ipConntrackRow.getRawLine());
+
+//            if (i == 0) {
+//                rawLineView.setVisibility(View.VISIBLE);
+//            }
+//            i++;
+
+            cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final View placeholderView = cardView.findViewById(R.id.activity_ip_connections_details_placeholder);
+                    if (placeholderView.getVisibility() == View.VISIBLE) {
+                        placeholderView.setVisibility(View.GONE);
+                    } else {
+                        placeholderView.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+
+            final ImageView destCountryFlag = (ImageView) cardView.findViewById(R.id.activity_ip_connections_destination_country_flag);
+            try {
+                final IPWhoisInfo whoisInfo;
+                if (destinationAddressOriginalSide == null ||
+                        (whoisInfo = mIPWhoisInfoCache
+                                .getIfPresent(destinationAddressOriginalSide)) == null) {
+                    destCountryFlag.setVisibility(View.GONE);
+                } else {
+                    final String countryCode = whoisInfo.getCountry_code();
+                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_whois_country))
+                            .setText(String.format("%s (%s)", whoisInfo.getCountry(), countryCode));
+                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_whois_region))
+                            .setText(whoisInfo.getRegion());
+                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_whois_city))
+                            .setText(whoisInfo.getCity());
+
+                    if (isNullOrEmpty(countryCode)) {
+                        destCountryFlag.setVisibility(View.GONE);
+                    }  else {
+                        ImageUtils.downloadImageFromUrl(activity,
+                                String.format("%s/%s.png",
+                                        DDWRTCompanionConstants.COUNTRY_API_SERVER_FLAG,
+                                        countryCode),
+                                destCountryFlag,
+                                null,
+                                null,
+                                new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        destCountryFlag.setVisibility(View.VISIBLE);
+                                    }
+
+                                    @Override
+                                    public void onError() {
+                                        destCountryFlag.setVisibility(View.GONE);
+                                    }
+                                });
+                    }
+
+                }
+            } catch (final Exception e) {
+                Crashlytics.logException(e);
+                destCountryFlag.setVisibility(View.GONE);
+                //No worries
+            }
+
+            final TextView srcIpHostname = (TextView) cardView.findViewById(R.id.activity_ip_connections_source_ip_hostname);
+            final TextView srcIpHostnameDetails = (TextView) cardView.findViewById(R.id.activity_ip_connections_details_source_host);
+            final ProgressBar srcIpHostnameLoading = (ProgressBar) cardView.findViewById(R.id.activity_ip_connections_source_ip_hostname_loading);
+            //Set Source IP HostName
+            if (ipToHostResolvedMap == null) {
+                srcIpHostname.setText("");
+                srcIpHostnameDetails.setText("-");
+            } else {
+                final String srcIpHostnameResolved = ipToHostResolvedMap.get(sourceAddressOriginalSide);
+                srcIpHostname.setText(isNullOrEmpty(srcIpHostnameResolved) ? "" : srcIpHostnameResolved);
+                srcIpHostnameDetails.setText(isNullOrEmpty(srcIpHostnameResolved) ? "-" : srcIpHostnameResolved);
+                ipConntrackRow.setSourceHostname(srcIpHostnameResolved);
+            }
+            srcIpHostname.setVisibility(View.VISIBLE);
+            srcIpHostnameLoading.setVisibility(View.GONE);
+
+            //... and Destination IP Address Organization (if available)
+            final TextView destIpOrg = (TextView) cardView.findViewById(R.id.activity_ip_connections_dest_ip_org);
+            final TextView destIpOrgDetails = (TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_whois);
+            final ProgressBar destIpOrgLoading = (ProgressBar) cardView.findViewById(R.id.activity_ip_connections_dest_ip_org_loading);
+            if (ipToHostResolvedMap == null) {
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        final String destinationAddressOriginalSide = ipConntrackRow.getDestinationAddressOriginalSide();
+                        final String dstIpWhoisResolved;
+                        if (isNullOrEmpty(destinationAddressOriginalSide)) {
+                            dstIpWhoisResolved = "-";
+                        } else {
+                            IPWhoisInfo ipWhoisInfo = null;
+                            try {
+                                ipWhoisInfo = mIPWhoisInfoCache.get(destinationAddressOriginalSide);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Utils.reportException(null, e);
+                            }
+//                            if (ipWhoisInfo != null && !isNullOrEmpty(ipWhoisInfo.getCountry())) {
+//                                mDestinationIpToCountry.put(destinationAddressOriginalSide, ipWhoisInfo.getCountry());
+//                            }
+                            final String org;
+                            if (ipWhoisInfo == null || (org = ipWhoisInfo.getOrganization()) == null || org.isEmpty()) {
+                                dstIpWhoisResolved = "-";
+                            } else {
+                                dstIpWhoisResolved = org;
+                                if (!mLocalIpToHostname.containsKey(destinationAddressOriginalSide)) {
+                                    mLocalIpToHostname.put(destinationAddressOriginalSide, org);
+                                }
+                            }
+                        }
+                        ipToHostResolvedMap.put(destinationAddressOriginalSide, dstIpWhoisResolved);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                final String dstIpHostnameResolved = ipToHostResolvedMap.get(destinationAddressOriginalSide);
+                                destIpOrg.setText(isNullOrEmpty(dstIpHostnameResolved) ? "" : dstIpHostnameResolved);
+                                destIpOrgDetails.setText(isNullOrEmpty(dstIpHostnameResolved) ? "" : dstIpHostnameResolved);
+                                ipConntrackRow.setDestWhoisOrHostname(dstIpHostnameResolved);
+                            }
+                        });
+                    }
+                });
+            } else {
+                final String dstIpHostnameResolved = ipToHostResolvedMap.get(destinationAddressOriginalSide);
+                destIpOrg.setText(isNullOrEmpty(dstIpHostnameResolved) ? "" : dstIpHostnameResolved);
+                destIpOrgDetails.setText(isNullOrEmpty(dstIpHostnameResolved) ? "" : dstIpHostnameResolved);
+                ipConntrackRow.setDestWhoisOrHostname(dstIpHostnameResolved);
+            }
+
+            destIpOrg.setVisibility(View.VISIBLE);
+            destIpOrgLoading.setVisibility(View.GONE);
+
+//                    mProgressBar.setProgress(mCurrentProgress.incrementAndGet());
+            //TODO
+        }
+
+        @Override
+        public int getItemCount() {
+            return mActiveIPConnections.size();
+        }
+
+        @Override
+        public Filter getFilter() {
+            return mFilter;
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+
+            final View itemView;
+
+            final Context mContext;
+
+            final CardView cardView;
+
+            public ViewHolder(Context context, View itemView) {
+                super(itemView);
+                this.mContext = context;
+                this.itemView = itemView;
+                this.cardView = (CardView) itemView
+                        .findViewById(R.id.activity_ip_connections_card_view);
+            }
+        }
+
     }
 
 }
