@@ -1190,7 +1190,34 @@ public class DDWRTMainActivity extends AppCompatActivity
                 Utils.displayUpgradeMessageForAdsRemoval(this);
                 return true;
             case R.id.action_ddwrt_actions_open_webinterface:
-                //TODO Open Dialog allowing user to set port (defaulting to what we loaded from the Router)
+            {
+                new AlertDialog.Builder(this)
+                        .setCancelable(true)
+                        .setTitle("Pick Listening Network Interface")
+                        .setSingleChoiceItems(new CharSequence[]{"LAN", "WAN"}, 1,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //TODO Open webview activity
+                                        Toast.makeText(DDWRTMainActivity.this,
+                                                "[TODO] Open WebView activity for web management interface: " + which,
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+//                        .setPositiveButton("Go", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//
+//                            }
+//                        })
+//                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                //Nothing to do
+//                            }
+//                        })
+                        .create().show();
+            }
                 return true;
             case R.id.main_add_shortcut: {
                 mRouter.addHomeScreenShortcut(this);
