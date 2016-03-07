@@ -176,7 +176,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:id="@+id/action_ddwrt_actions_open_webinterface"
                 android:alphabeticShortcut="W"
                 android:orderInCategory="99"
-                android:visible="false"
+                android:visible="true"
                 android:title="Open Web Interface"
                 app:showAsAction="ifRoom" />
 

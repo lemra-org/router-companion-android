@@ -37,7 +37,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -120,7 +119,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFER
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 import static org.rm3l.ddwrt.utils.Utils.getEscapedFileName;
 
-public class ActiveIPConnectionsDetailActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
     public static final String ACTIVE_IP_CONNECTIONS_OUTPUT = "ACTIVE_IP_CONNECTIONS_OUTPUT";
 
@@ -291,7 +290,6 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity impleme
     private RecyclerViewEmptySupport mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private Map<String, String> ipToHostResolvedMap;
 
@@ -465,14 +463,6 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity impleme
         mAdapter = new ActiveIPConnectionsDetailRecyclerViewAdapter(this)
             .setActiveIPConnections(mActiveIPConnections);
         mRecyclerView.setAdapter(mAdapter);
-
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
-
     }
 
     @Override
@@ -1252,23 +1242,6 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity impleme
             mFileToShare.delete();
         }
         super.onDestroy();
-    }
-
-    @Override
-    public void onRefresh() {
-        mSwipeRefreshLayout.setEnabled(false);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    ((ActiveIPConnectionsDetailRecyclerViewAdapter) ActiveIPConnectionsDetailActivity.this.mAdapter)
-                            .setActiveIPConnections(mActiveIPConnections);
-                    ActiveIPConnectionsDetailActivity.this.mAdapter.notifyDataSetChanged();
-                } finally {
-                    mSwipeRefreshLayout.setEnabled(true);
-                }
-            }
-        }, 1000);
     }
 
     class ActiveIPConnectionsDetailRecyclerViewAdapter
