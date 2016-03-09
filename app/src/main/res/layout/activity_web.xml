@@ -76,6 +76,29 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             app:layout_anchorGravity="bottom|right|end"
             android:visibility="gone"/>
 
+        <!-- Error message placeholder -->
+        <TextView
+            android:textIsSelectable="true"
+            android:id="@+id/error_placeholder"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/error_placeholder"
+            android:textColor="@color/ddwrt_purple"
+            android:textStyle="bold"
+            android:visibility="gone"/>
+
+        <ProgressBar
+            android:id="@+id/loading_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:indeterminate="false"
+            android:visibility="gone"/>
+
     </RelativeLayout>
 
 </LinearLayout>

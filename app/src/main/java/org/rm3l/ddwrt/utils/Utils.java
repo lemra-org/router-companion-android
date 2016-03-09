@@ -27,6 +27,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ApplicationErrorReport;
 import android.app.backup.BackupManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -44,6 +45,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.customtabs.CustomTabsClient;
+import android.support.customtabs.CustomTabsServiceConnection;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -856,6 +859,35 @@ public final class Utils {
             return Pair.create(exceptionMessage, exceptionMessage);
         }
         return Pair.create(rootCauseMessage, ExceptionUtils.getRootCauseMessage(exception));
+    }
+
+    /**
+     * Check if Chrome CustomTabs are supported.
+     * Some devices don't have Chrome or it may not be
+     * updated to a version where custom tabs is supported.
+     *
+     * @param context the context
+     * @return whether custom tabs are supported
+     */
+    public static boolean isChromeCustomTabsSupported(@NonNull final Context context) {
+        final Intent serviceIntent = new Intent("android.support.customtabs.action.CustomTabsService");
+        serviceIntent.setPackage("com.android.chrome");
+
+        final CustomTabsServiceConnection serviceConnection = new CustomTabsServiceConnection() {
+            @Override
+            public void onCustomTabsServiceConnected(final ComponentName componentName,
+                                                     final CustomTabsClient customTabsClient) { }
+
+            @Override
+            public void onServiceDisconnected(final ComponentName name) { }
+        };
+
+        final boolean customTabsSupported =
+                context.bindService(serviceIntent, serviceConnection,
+                        Context.BIND_AUTO_CREATE | Context.BIND_WAIVE_PRIORITY);
+        context.unbindService(serviceConnection);
+
+        return customTabsSupported;
     }
 
 }

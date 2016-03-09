@@ -176,6 +176,8 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String HTTPS_ENABLE = "https_enable";
     public static final String REMOTE_MGT_HTTPS = "remote_mgt_https";
     public static final String WAN_DNS = "wan_dns";
+    public static final String HTTP_USERNAME = "http_username";
+    public static final String HTTP_PASSWD = "http_passwd";
 
     /**
      * Default constructor: initialized an empty Properties set

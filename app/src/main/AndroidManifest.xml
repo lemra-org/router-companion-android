@@ -478,6 +478,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name="org.rm3l.ddwrt.deeplinks.RouterActionsDeepLinkActivity"
             android:theme="@android:style/Theme.NoDisplay"/>
 
+        <activity
+            android:name=".actions.activity.OpenWebManagementPageActivity"
+            android:excludeFromRecents="true"
+            android:label="Web Interface"
+            android:launchMode="singleInstance"
+            android:windowSoftInputMode="adjustResize" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="bf40a9722838d1959a1a770881926ee96e4b94f1" />

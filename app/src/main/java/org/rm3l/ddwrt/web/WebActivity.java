@@ -146,7 +146,10 @@ public abstract class WebActivity extends AppCompatActivity {
             }
         });
 
-        mWebview.loadUrl(this.getUrl());
+        final String url = this.getUrl();
+        if (!TextUtils.isEmpty(url)) {
+            mWebview.loadUrl(url);
+        }
     }
 
     protected abstract CharSequence getTitleStr();
@@ -221,7 +224,7 @@ public abstract class WebActivity extends AppCompatActivity {
 
     }
 
-    class WebException extends DDWRTCompanionException {
+    public static class WebException extends DDWRTCompanionException {
 
         public WebException(@Nullable String detailMessage) {
             super(detailMessage);

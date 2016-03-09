@@ -118,6 +118,7 @@ import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.RouterActions;
 import org.rm3l.ddwrt.actions.RouterRestoreDialogListener;
+import org.rm3l.ddwrt.actions.activity.OpenWebManagementPageActivity;
 import org.rm3l.ddwrt.actions.activity.SpeedTestActivity;
 import org.rm3l.ddwrt.exceptions.StorageException;
 import org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment;
@@ -1191,32 +1192,35 @@ public class DDWRTMainActivity extends AppCompatActivity
                 return true;
             case R.id.action_ddwrt_actions_open_webinterface:
             {
-                new AlertDialog.Builder(this)
-                        .setCancelable(true)
-                        .setTitle("Pick Listening Network Interface")
-                        .setSingleChoiceItems(new CharSequence[]{"LAN", "WAN"}, 1,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        //TODO Open webview activity
-                                        Toast.makeText(DDWRTMainActivity.this,
-                                                "[TODO] Open WebView activity for web management interface: " + which,
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-                                })
-//                        .setPositiveButton("Go", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//
-//                            }
-//                        })
-//                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                //Nothing to do
-//                            }
-//                        })
-                        .create().show();
+                final Intent webManagementIntent = new Intent(this, OpenWebManagementPageActivity.class);
+                webManagementIntent.putExtra(ROUTER_SELECTED, this.mRouterUuid);
+                this.startActivity(webManagementIntent);
+//                new AlertDialog.Builder(this)
+//                        .setCancelable(true)
+//                        .setTitle("Pick Listening Network Interface")
+//                        .setSingleChoiceItems(new CharSequence[]{"LAN", "WAN"}, 1,
+//                                new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int which) {
+//                                        //TODO Open webview activity
+//                                        Toast.makeText(DDWRTMainActivity.this,
+//                                                "[TODO] Open WebView activity for web management interface: " + which,
+//                                                Toast.LENGTH_SHORT).show();
+//                                    }
+//                                })
+////                        .setPositiveButton("Go", new DialogInterface.OnClickListener() {
+////                            @Override
+////                            public void onClick(DialogInterface dialog, int which) {
+////
+////                            }
+////                        })
+////                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+////                            @Override
+////                            public void onClick(DialogInterface dialog, int which) {
+////                                //Nothing to do
+////                            }
+////                        })
+//                        .create().show();
             }
                 return true;
             case R.id.main_add_shortcut: {
