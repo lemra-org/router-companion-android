@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+DD-WRT Companion is a mobile app that lets you connect to,
+monitor and manage your DD-WRT routers on the go.
+
+Copyright (C) 2014  Armel Soro
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
+-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/http_auth_prompt_notification_viewgroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+    <ScrollView
+        android:id="@+id/http_auth_prompt_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/http_auth_prompt_username_input_layout"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:selectAllOnFocus="true"
+                    android:id="@+id/http_auth_prompt_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:maxLines="1"
+                    android:inputType="text"
+                    android:hint="HTTP Username"
+                    android:imeOptions="flagNoExtractUi"
+                    android:text="root"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:id="@+id/http_auth_prompt_password_hdr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="HTTP Password" />
+
+            <EditText
+                android:selectAllOnFocus="true"
+                android:id="@+id/http_auth_prompt_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="textPassword"
+                android:maxLines="1"/>
+
+            <CheckBox
+                android:id="@+id/http_auth_prompt_password_show_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="4dp"
+                android:checked="false"
+                android:text="Show Password"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
