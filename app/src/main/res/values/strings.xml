@@ -533,5 +533,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="dashboard_network">Network</string>
     <string name="dashboard_bandwidth">Bandwidth</string>
     <string name="dashboard_system">System</string>
+    <string name="wizard_previous"><![CDATA[< PREVIOUS]]></string>
+    <string name="wizard_next"><![CDATA[NEXT >]]></string>
 
 </resources>

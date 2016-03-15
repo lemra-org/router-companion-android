@@ -254,3 +254,6 @@
 
 -dontwarn okio.**
 
+#Wizardroid
+-keepnames class * { @org.codepond.android.wizardroid.ContextVariable *;}
+

@@ -76,6 +76,7 @@ import org.rm3l.ddwrt.help.HelpActivity;
 import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
+import org.rm3l.ddwrt.mgmt.register.AddRouterFragmentActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterManagementSettingsActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
@@ -105,7 +106,6 @@ public class RouterManagementActivity
         extends AppCompatActivity
         implements View.OnClickListener,
         RouterMgmtDialogListener,
-//        RecyclerView.OnItemTouchListener,
         SearchView.OnQueryTextListener,
         SwipeRefreshLayout.OnRefreshListener {
 
@@ -115,11 +115,7 @@ public class RouterManagementActivity
     public static final String UPDATE_ROUTER_FRAGMENT_TAG = "update_router";
     private static final String LOG_TAG = RouterManagementActivity.class.getSimpleName();
     public static final String COPY_ROUTER = "copy_router";
-//    @Nullable
-//    ActionMode actionMode;
-//    GestureDetectorCompat gestureDetector;
-//    int itemCount;
-    FloatingActionButton addNewButton;
+    private FloatingActionButton addNewButton;
     private long mCurrentTheme;
     private DDWRTCompanionDAO dao;
     private RecyclerViewEmptySupport mRecyclerView;
@@ -363,10 +359,10 @@ public class RouterManagementActivity
     }
 
     private void openAddRouterForm() {
-        final Fragment addRouter = getSupportFragmentManager().findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
-        if (addRouter instanceof DialogFragment) {
-            ((DialogFragment) addRouter).dismiss();
-        }
+//        final Fragment addRouter = getSupportFragmentManager().findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
+//        if (addRouter instanceof DialogFragment) {
+//            ((DialogFragment) addRouter).dismiss();
+//        }
 
         //Display Donate Message if trying to add more than the max routers for Free version
         final List<Router> allRouters = dao.getAllRouters();
@@ -378,8 +374,9 @@ public class RouterManagementActivity
             return;
         }
 
-        final DialogFragment addFragment = new RouterAddDialogFragment();
-        addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);
+//        final DialogFragment addFragment = new RouterAddDialogFragment();
+//        addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);
+        startActivity(new Intent(this, AddRouterFragmentActivity.class));
     }
 
     private void openUpdateRouterForm(@Nullable Router router) {

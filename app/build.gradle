@@ -461,4 +461,6 @@ dependencies {
      */
     compile 'com.airbnb:deeplinkdispatch:1.5.0'
     apt 'com.airbnb:deeplinkdispatch-processor:1.5.0'
+
+    compile 'org.codepond:wizardroid:1.3.1'
 }

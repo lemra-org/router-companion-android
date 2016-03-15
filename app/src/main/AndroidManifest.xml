@@ -485,6 +485,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustResize" />
 
+        <activity
+            android:name=".mgmt.register.AddRouterFragmentActivity"
+            android:label="Add Router"
+            android:parentActivityName=".mgmt.RouterManagementActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|screenSize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".mgmt.RouterManagementActivity" />
+        </activity>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="bf40a9722838d1959a1a770881926ee96e4b94f1" />
