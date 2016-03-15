@@ -28,7 +28,7 @@ buildscript {
         maven { url 'http://www.tracepot.com/maven' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.0.0-beta6'
+        classpath 'com.android.tools.build:gradle:2.1.0-alpha1'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.7'
         classpath 'com.tracepot.plugins.gradle:tracepot:1.+'
         classpath 'com.github.triplet.gradle:play-publisher:1.1.4'
