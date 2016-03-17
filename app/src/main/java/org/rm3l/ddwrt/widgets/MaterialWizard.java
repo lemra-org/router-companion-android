@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
 
 import org.codepond.wizardroid.WizardFlow;
@@ -24,6 +25,7 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
 
     private Button nextButton;
     private Button previousButton;
+    private Button cancelButton;
 
     //You must have an empty constructor according to Fragment documentation
     public MaterialWizard() {
@@ -47,6 +49,9 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
         }
         previousButton.setOnClickListener(this);
 
+        cancelButton = (Button) wizardLayout.findViewById(R.id.wizard_cancel_button);
+        cancelButton.setOnClickListener(this);
+
         return wizardLayout;
     }
 
@@ -62,8 +67,7 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
                 if (stepClass == null || stepClass.first == null) {
                     continue;
                 }
-                wizardFlowBuilder.addStep(stepClass.first,
-                        stepClass.second != null && stepClass.second);
+                wizardFlowBuilder.addStep(stepClass.first);
             }
         }
         return wizardFlowBuilder.create();
@@ -91,6 +95,7 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
 
     @Override
     public final void onClick(View v) {
+        Crashlytics.log("onclick:");
         switch(v.getId()) {
             case R.id.wizard_next_button:
                 //Tell the wizard to go to next step
@@ -100,6 +105,8 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
                 //Tell the wizard to go back one step
                 wizard.goBack();
                 break;
+            case R.id.wizard_cancel_button:
+                getActivity().finish();
         }
     }
 
@@ -116,8 +123,11 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
         this.previousButton.setEnabled(!this.wizard.isFirstStep());
         if (!Strings.isNullOrEmpty(this.getPreviousButtonLabel())) {
             this.previousButton.setText(this.getPreviousButtonLabel());
+        } else {
+            this.previousButton.setText(R.string.wizard_previous);
         }
-        this.nextButton.setEnabled(this.wizard.canGoNext());
+//        this.nextButton.setEnabled(this.wizard.canGoNext());
+        this.nextButton.setEnabled(true);
         if (this.wizard.isLastStep()) {
             if (!Strings.isNullOrEmpty(this.getFinishButtonLabel())) {
                 this.nextButton.setText(this.getFinishButtonLabel());
@@ -128,7 +138,7 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
             if (!Strings.isNullOrEmpty(this.getNextButtonLabel())) {
                 this.nextButton.setText(this.getNextButtonLabel());
             } else {
-                this.nextButton.setText(R.string.action_next);
+                this.nextButton.setText(R.string.wizard_next);
             }
         }
     }

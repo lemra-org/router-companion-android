@@ -28,6 +28,15 @@
             style="?android:attr/buttonBarButtonStyle"/>
 
         <Button
+            android:id="@+id/wizard_cancel_button"
+            android:text="@string/cancel"
+            android:enabled="false"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            style="?android:attr/buttonBarButtonStyle"/>
+
+        <Button
             android:id="@+id/wizard_next_button"
             android:text="@string/wizard_next"
             android:layout_width="0dp"
@@ -47,6 +56,7 @@
         android:id="@id/step_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="16dp"
         android:layout_above="@id/wizard_button_bar"/>
 
 </RelativeLayout>
