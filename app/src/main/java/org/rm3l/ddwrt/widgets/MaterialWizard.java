@@ -51,6 +51,7 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
 
         cancelButton = (Button) wizardLayout.findViewById(R.id.wizard_cancel_button);
         cancelButton.setOnClickListener(this);
+        this.cancelButton.setEnabled(true);
 
         return wizardLayout;
     }
@@ -120,6 +121,8 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
      * Updates the UI according to current step position
      */
     private void updateWizardControls() {
+        this.cancelButton.setEnabled(true);
+
         this.previousButton.setEnabled(!this.wizard.isFirstStep());
         if (!Strings.isNullOrEmpty(this.getPreviousButtonLabel())) {
             this.previousButton.setText(this.getPreviousButtonLabel());
