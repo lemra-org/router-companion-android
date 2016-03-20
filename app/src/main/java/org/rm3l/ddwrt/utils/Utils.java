@@ -726,6 +726,18 @@ public final class Utils {
         inputMethodManager.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
     }
 
+    public static void openKeyboard(@Nullable final Activity activity, @Nullable  final View view) {
+        if (activity == null || view == null) {
+            return;
+        }
+        final InputMethodManager imm = (InputMethodManager)
+                activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            // only will trigger it if no physical keyboard is open
+            imm.showSoftInput(view, 0);
+        }
+    }
+
     protected static final class BugReportException extends DDWRTCompanionException {
 
         public BugReportException() {

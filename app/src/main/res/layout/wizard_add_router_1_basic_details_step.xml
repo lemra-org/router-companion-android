@@ -1,79 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
+    android:layout_width="match_parent"
     android:layout_margin="20dp">
 
-    <!-- UUID -->
-    <TextView
-        android:id="@+id/router_add_uuid"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/router_add_name_input_layout"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginBottom="4dp"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <EditText
-            android:selectAllOnFocus="true"
-            android:id="@+id/router_add_name"
+
+        <!-- UUID -->
+        <TextView
+            android:id="@+id/router_add_uuid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Router Name, e.g., 'Living Room Router'"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="text"
-            android:maxLines="1"/>
-    </android.support.design.widget.TextInputLayout>
+            android:visibility="gone" />
 
-    <!-- IP / DNS -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="Router IP Address or DNS name" />
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/router_add_name_input_layout"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:selectAllOnFocus="true"
+                android:id="@+id/router_add_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Router Name, e.g., 'Living Room Router'"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="text"
+                android:maxLines="1"/>
+        </android.support.design.widget.TextInputLayout>
 
-    <TextView
-        android:id="@+id/router_add_ip_demo_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:textAppearanceSmall"
-        android:textStyle="italic"
-        android:text="Enter '%PACKAGE_NAME%' for a demo" />
+        <!-- IP / DNS -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="Router IP Address or DNS name" />
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/router_add_ip_input_layout"
-        android:layout_marginBottom="4dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <EditText
-            android:selectAllOnFocus="true"
-            android:id="@+id/router_add_ip"
+        <TextView
+            android:id="@+id/router_add_ip_demo_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="e.g., 192.168.1.254 or myrouter.dns.com"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textStyle="italic"
+            android:text="Enter '%PACKAGE_NAME%' for a demo" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/router_add_ip_input_layout"
+            android:layout_marginBottom="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:selectAllOnFocus="true"
+                android:id="@+id/router_add_ip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="e.g., 192.168.1.254 or myrouter.dns.com"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="text"
+                android:maxLines="1"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <!-- Firmware -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="Router Firmware" />
+
+        <Spinner
+            android:id="@+id/router_add_firmware"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:entries="@array/router_firmwares_array"
+            android:entryValues="@array/router_firmwares_array_values"
             android:imeOptions="flagNoExtractUi"
-            android:inputType="text"
-            android:maxLines="1"/>
-    </android.support.design.widget.TextInputLayout>
+            android:prompt="@string/router_firmware_select"/>
 
-    <!-- Firmware -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="Router Firmware" />
+    </LinearLayout>
 
-    <Spinner
-        android:id="@+id/router_add_firmware"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:entries="@array/router_firmwares_array"
-        android:entryValues="@array/router_firmwares_array_values"
-        android:imeOptions="flagNoExtractUi"
-        android:prompt="@string/router_firmware_select"/>
-
-</LinearLayout>
+</ScrollView>
