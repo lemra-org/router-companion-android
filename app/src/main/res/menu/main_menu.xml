@@ -34,6 +34,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <menu>
 
             <item
+                android:id="@+id/action_ddwrt_actions_ssh_router"
+                android:orderInCategory="1"
+                android:title="Open SSH Console"
+                app:showAsAction="ifRoom" />
+
+            <item
                 android:id="@+id/action_ddwrt_actions_reboot_router"
                 android:alphabeticShortcut="R"
                 android:orderInCategory="1"

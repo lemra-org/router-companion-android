@@ -1228,6 +1228,11 @@ public class DDWRTMainActivity extends AppCompatActivity
             }
                 return true;
 
+            case R.id.action_ddwrt_actions_ssh_router: {
+                Router.openSSHConsole(mRouter, this);
+            }
+                return true;
+
             case R.id.action_ddwrt_actions_reboot_router:
 
                 new AlertDialog.Builder(this)

@@ -22,6 +22,7 @@
 
 package org.rm3l.ddwrt.mgmt.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -591,6 +592,7 @@ public class RouterListRecycleViewAdapter extends
             this.mRouter = router;
         }
 
+        @SuppressLint("DefaultLocale")
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
             final Integer itemPos = findRouterPosition(mRouter.getUuid());
@@ -598,6 +600,11 @@ public class RouterListRecycleViewAdapter extends
             switch (menuItem.getItemId()) {
                 case R.id.menu_router_item_open: {
                     doOpenRouterDetails(mRouter);
+                }
+                    return true;
+                case R.id.action_actions_ssh_router: {
+                    //Open an SSH Client app, if any
+                    Router.openSSHConsole(mRouter, context);
                 }
                     return true;
                 case R.id.action_actions_reboot_routers: {

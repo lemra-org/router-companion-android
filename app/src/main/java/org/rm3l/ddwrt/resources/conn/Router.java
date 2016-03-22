@@ -22,13 +22,17 @@
 
 package org.rm3l.ddwrt.resources.conn;
 
+import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -1167,6 +1171,42 @@ public class Router implements Serializable {
                 //No worries
                 Utils.reportException(contextForshortcut, e);
             }
+        }
+    }
+
+    @SuppressLint("DefaultLocale")
+    public static void openSSHConsole(@Nullable final Router router, @Nullable final Context context) {
+        if (router == null || context == null) {
+            Crashlytics.log(Log.DEBUG, TAG, "Internal Error: either router or context are null");
+            Toast.makeText(context, "Internal Error", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        final Router.LocalSSIDLookup effectiveLocalSSIDLookup =
+                Router.getEffectiveLocalSSIDLookup(router, context);
+        String ipAddress = router.getRemoteIpAddress();
+        int remotePort = router.getRemotePort();
+        if (effectiveLocalSSIDLookup != null) {
+            final String reachableAddr = effectiveLocalSSIDLookup.getReachableAddr();
+            if (!TextUtils.isEmpty(reachableAddr)) {
+                ipAddress = reachableAddr;
+            }
+            final int port = effectiveLocalSSIDLookup.getPort();
+            if (port > 0) {
+                remotePort = port;
+            }
+        }
+        try {
+            context.startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(
+                            String.format("ssh://%s@%s:%d/#%s",
+                                    router.getUsernamePlain(),
+                                    ipAddress, remotePort,
+                                    router.getCanonicalHumanReadableName()))));
+        } catch (final ActivityNotFoundException anfe) {
+            Toast.makeText(context,
+                    "No SSH client found! Please install one to get this feature.",
+                    Toast.LENGTH_SHORT)
+                    .show();
         }
     }
 
