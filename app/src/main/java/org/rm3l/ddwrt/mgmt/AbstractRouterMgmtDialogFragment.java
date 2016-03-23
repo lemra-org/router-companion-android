@@ -933,7 +933,7 @@ public abstract class AbstractRouterMgmtDialogFragment
     @Nullable
     protected abstract Router onPositiveButtonClickHandler(@NonNull final Router router);
 
-    protected class CheckRouterConnectionAsyncTask extends AsyncTask<AlertDialog, Void, CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router>> {
+    public  class CheckRouterConnectionAsyncTask extends AsyncTask<AlertDialog, Void, CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router>> {
 
         private final String routerIpOrDns;
         private AlertDialog checkingConnectionDialog = null;

@@ -82,7 +82,7 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
      * Overriding this method is optional.
      */
     @Override
-    public final void onWizardComplete() {
+    public void onWizardComplete() {
         super.onWizardComplete();
 //        //Do whatever you want to do once the Wizard is complete
 //        //in this case I just close the activity, which causes Android
