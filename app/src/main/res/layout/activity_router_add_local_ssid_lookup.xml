@@ -53,6 +53,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <!--android:text="Local Wireless Network SSID" />-->
 
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/router_add_local_ssid_lookup_ssid_til"
                 android:layout_marginLeft="4dp"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -72,15 +73,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             </android.support.design.widget.TextInputLayout>
 
             <!-- IP / DNS -->
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginLeft="4dp"-->
-                <!--android:layout_marginStart="4dp"-->
-                <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
-                <!--android:text="Alternate IP Address or DNS name" />-->
-
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/router_add_local_ssid_lookup_ip_til"
                 android:layout_marginLeft="4dp"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -101,15 +95,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             </android.support.design.widget.TextInputLayout>
 
             <!-- SSH Port -->
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginLeft="4dp"-->
-                <!--android:layout_marginStart="4dp"-->
-                <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
-                <!--android:text="Alternate SSH Port" />-->
-
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/router_add_local_ssid_lookup_port_til"
                 android:layout_marginLeft="4dp"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="@dimen/activity_vertical_margin"

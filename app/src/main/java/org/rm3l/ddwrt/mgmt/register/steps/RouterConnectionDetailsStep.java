@@ -38,12 +38,12 @@ import org.codepond.wizardroid.persistence.ContextVariable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.ViewGroupUtils;
 
 import java.io.IOException;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_PRIVKEY_SIZE_BYTES;
-import static org.rm3l.ddwrt.utils.Utils.openKeyboard;
 import static org.rm3l.ddwrt.utils.Utils.toHumanReadableByteCount;
 
 /**
@@ -58,39 +58,44 @@ public class RouterConnectionDetailsStep extends WizardStep {
     private View rootView;
 
     @ContextVariable
-    private String username;
-
-    private EditText usernameEt;
+    private String connectionProtocol;
 
     @ContextVariable
     private String port;
 
-    private EditText portEt;
+    @ContextVariable
+    private String username;
 
     @ContextVariable
-    private String connectionProtocol;
-
-    private Spinner connectionProtocolView;
+    private int checkedAuthMethodRadioButtonId;
 
     @ContextVariable
     private String password;
 
-    private EditText pwdView;
-
     @ContextVariable
-    private Integer checkedAuthMethodRadioButtonId;
-
-    private RadioGroup authMethodRg;
+    private String privkeyButtonHint;
 
     @ContextVariable
     private String privkeyErrorMsg;
+
     @ContextVariable
     private String privkeyPath;
+
+
+    private Spinner connectionProtocolView;
+
+    private EditText usernameEt;
+
+    private EditText portEt;
+
+    private RadioGroup authMethodRg;
+
+    private EditText pwdView;
+
     private TextView privkeyErrorMsgView;
     private TextView privkeyPathView;
-    @ContextVariable
-    private String privkeyButtonHint;
     private Button privkeyButtonView;
+
 
     //Wire the layout to the step
     public RouterConnectionDetailsStep() {
@@ -100,21 +105,20 @@ public class RouterConnectionDetailsStep extends WizardStep {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         rootView = inflater.inflate(
                 R.layout.wizard_add_router_2_router_connection_details_step, container, false);
 
         usernameEt = (EditText) rootView.findViewById(R.id.router_add_username);
-
         portEt = (EditText) rootView.findViewById(R.id.router_add_port);
-
         connectionProtocolView = (Spinner) rootView.findViewById(R.id.router_add_proto);
-
         authMethodRg = (RadioGroup) rootView.findViewById(R.id.router_add_ssh_auth_method);
 
-        authMethodRg.check(checkedAuthMethodRadioButtonId != null ?
-                checkedAuthMethodRadioButtonId : R.id.router_add_ssh_auth_method_password);
+
+        authMethodRg.check(checkedAuthMethodRadioButtonId);
 
         pwdView = (EditText) rootView.findViewById(R.id.router_add_password);
+
         final CheckBox pwdShowCheckBox = (CheckBox) rootView.findViewById(R.id.router_add_password_show_checkbox);
 
         pwdShowCheckBox
@@ -143,16 +147,15 @@ public class RouterConnectionDetailsStep extends WizardStep {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
                 if (TextUtils.isEmpty(s)) {
                     privkeyErrorMsgView.setVisibility(View.GONE);
                 } else {
                     privkeyErrorMsgView.setVisibility(View.VISIBLE);
                 }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
             }
         });
 
@@ -246,8 +249,6 @@ public class RouterConnectionDetailsStep extends WizardStep {
         privkeyPathView.setText(privkeyPath);
         privkeyErrorMsgView.setText(privkeyErrorMsg);
 
-        //TODO Set Spinner
-
         final TextWatcher textWatcherFormValidator = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -256,12 +257,11 @@ public class RouterConnectionDetailsStep extends WizardStep {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                validateFields();
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                validateFields();
             }
         };
         final View.OnFocusChangeListener focusChangeListenerFormValidator = new View.OnFocusChangeListener() {
@@ -275,6 +275,12 @@ public class RouterConnectionDetailsStep extends WizardStep {
         pwdView.setOnFocusChangeListener(focusChangeListenerFormValidator);
         privkeyPathView.setOnFocusChangeListener(focusChangeListenerFormValidator);
         privkeyPathView.addTextChangedListener(textWatcherFormValidator);
+
+        if (connectionProtocol != null) {
+            connectionProtocolView.setSelection(
+                    ViewGroupUtils.getSpinnerIndex(connectionProtocolView, connectionProtocol),
+                    true);
+        }
 
         return rootView;
     }
@@ -307,6 +313,7 @@ public class RouterConnectionDetailsStep extends WizardStep {
         privkeyErrorMsg = privkeyErrorMsgView.getText().toString();
         privkeyPath = privkeyPathView.getText().toString();
         privkeyButtonHint = privkeyButtonView.getHint().toString();
+        connectionProtocol = connectionProtocolView.getSelectedItem().toString();
     }
 
     /**
@@ -421,8 +428,8 @@ public class RouterConnectionDetailsStep extends WizardStep {
             portInputLayout.setError(getString(R.string.router_add_port_invalid));
             Utils.scrollToView(contentScrollView, portEt);
             portEt.requestFocus();
-            openKeyboard(activity, portEt);
-            notifyIncomplete();
+//            openKeyboard(activity, portEt);
+//            notifyIncomplete();
             return;
         }
         portInputLayout.setErrorEnabled(false);
@@ -434,8 +441,8 @@ public class RouterConnectionDetailsStep extends WizardStep {
             sshLoginInputLayout.setError(getString(R.string.router_add_username_invalid));
             Utils.scrollToView(contentScrollView, usernameEt);
             usernameEt.requestFocus();
-            openKeyboard(activity, usernameEt);
-            notifyIncomplete();
+//            openKeyboard(activity, usernameEt);
+//            notifyIncomplete();
             return;
         }
         sshLoginInputLayout.setErrorEnabled(false);
@@ -451,8 +458,8 @@ public class RouterConnectionDetailsStep extends WizardStep {
                     pwdInputLayout.setError("Password required");
                     Utils.scrollToView(contentScrollView, pwdView);
                     pwdView.requestFocus();
-                    openKeyboard(activity, pwdView);
-                    notifyIncomplete();
+//                    openKeyboard(activity, pwdView);
+//                    notifyIncomplete();
                     return;
                 }
                 pwdInputLayout.setErrorEnabled(false);
@@ -462,8 +469,8 @@ public class RouterConnectionDetailsStep extends WizardStep {
                 //Check privkey
                 if (isNullOrEmpty(privkeyPathView.getText().toString())) {
                     privkeyErrorMsgView.setText(getString(R.string.router_add_privkey_invalid));
-                    privkeyButtonView.requestFocus();
-                    notifyIncomplete();
+//                    privkeyButtonView.requestFocus();
+//                    notifyIncomplete();
                     return;
                 }
             }
@@ -472,6 +479,6 @@ public class RouterConnectionDetailsStep extends WizardStep {
                 break;
         }
 
-        notifyCompleted();
+//        notifyCompleted();
     }
 }

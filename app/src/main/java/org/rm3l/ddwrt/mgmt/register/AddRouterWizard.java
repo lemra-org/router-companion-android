@@ -4,6 +4,8 @@ import android.support.annotation.Nullable;
 
 import org.codepond.wizardroid.WizardStep;
 import org.rm3l.ddwrt.mgmt.register.steps.BasicDetailsStep;
+import org.rm3l.ddwrt.mgmt.register.steps.LocalSSIDLookupStep;
+import org.rm3l.ddwrt.mgmt.register.steps.ReviewStep;
 import org.rm3l.ddwrt.mgmt.register.steps.RouterConnectionDetailsStep;
 import org.rm3l.ddwrt.utils.tuple.Pair;
 import org.rm3l.ddwrt.widgets.MaterialWizard;
@@ -27,8 +29,14 @@ public class AddRouterWizard extends MaterialWizard {
     @Override
     protected List<Pair<Class<? extends WizardStep>, Boolean>> getStepClasses() {
         return Arrays.asList(
-                Pair.<Class<? extends WizardStep>, Boolean> create(BasicDetailsStep.class, true),
-                Pair.<Class<? extends WizardStep>, Boolean>  create(RouterConnectionDetailsStep.class, true)
+                Pair. <Class<? extends WizardStep>, Boolean>
+                        create(BasicDetailsStep.class, false),
+                Pair. <Class<? extends WizardStep>, Boolean>
+                        create(RouterConnectionDetailsStep.class, false),
+                Pair. <Class<? extends WizardStep>, Boolean>
+                        create(LocalSSIDLookupStep.class, false),
+                Pair. <Class<? extends WizardStep>, Boolean>
+                        create(ReviewStep.class, true)
         );
     }
 }

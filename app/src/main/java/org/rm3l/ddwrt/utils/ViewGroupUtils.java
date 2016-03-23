@@ -28,6 +28,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Android ViewGroup Utilities
@@ -114,6 +119,29 @@ public final class ViewGroupUtils {
         final float[] dst = new float[]{0, 0, view.getWidth(), 0, 0, view.getHeight(), view.getWidth(), view.getHeight()};
         view.getMatrix().mapPoints(src, dst);
         return new PointF(view.getX() + src[6], view.getY() + src[7]);
+    }
+
+    public static int getSpinnerIndex(@NonNull final Spinner spinner, @NonNull final String value) {
+        int index = 0;
+
+        for (int i = 0; i < spinner.getCount(); i++){
+            if (value.equals(spinner.getItemAtPosition(i).toString())) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+
+    @NonNull
+    public static List<View> getLinearLayoutChildren(@Nullable final LinearLayout linearLayout) {
+        final List<View> views = new ArrayList<>();
+        if (linearLayout != null) {
+            for (int i = 0; i < linearLayout.getChildCount(); i++) {
+                views.add(linearLayout.getChildAt(i));
+            }
+        }
+        return views;
     }
 
 }
