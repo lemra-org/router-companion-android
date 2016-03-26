@@ -36,6 +36,7 @@ import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.ViewGroupUtils;
+import org.rm3l.ddwrt.widgets.wizard.WizardStepVerifiable;
 
 import java.util.List;
 
@@ -45,7 +46,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 /**
  * Created by rm3l on 21/03/16.
  */
-public class LocalSSIDLookupStep extends WizardStep {
+public class LocalSSIDLookupStep extends WizardStep implements WizardStepVerifiable {
 
     @ContextVariable
     private String port;
@@ -322,5 +323,11 @@ public class LocalSSIDLookupStep extends WizardStep {
                 .getLinearLayoutChildren(localSSIDLookupDetailedView);
         //TODO
 
+    }
+
+    @Override
+    public boolean validateStep() {
+        //Always validated, as this is a optional step
+        return true;
     }
 }

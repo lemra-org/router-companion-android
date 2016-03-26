@@ -11,7 +11,6 @@ import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -39,6 +38,7 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.ViewGroupUtils;
+import org.rm3l.ddwrt.widgets.wizard.WizardStepVerifiable;
 
 import java.io.IOException;
 
@@ -49,7 +49,7 @@ import static org.rm3l.ddwrt.utils.Utils.toHumanReadableByteCount;
 /**
  * Created by rm3l on 15/03/16.
  */
-public class RouterConnectionDetailsStep extends WizardStep {
+public class RouterConnectionDetailsStep extends WizardStep implements WizardStepVerifiable {
 
     private static final String LOG_TAG = RouterConnectionDetailsStep.class.getSimpleName();
 
@@ -67,7 +67,7 @@ public class RouterConnectionDetailsStep extends WizardStep {
     private String username;
 
     @ContextVariable
-    private int checkedAuthMethodRadioButtonId;
+    private String checkedAuthMethodRadioButtonId;
 
     @ContextVariable
     private String password;
@@ -114,9 +114,6 @@ public class RouterConnectionDetailsStep extends WizardStep {
         connectionProtocolView = (Spinner) rootView.findViewById(R.id.router_add_proto);
         authMethodRg = (RadioGroup) rootView.findViewById(R.id.router_add_ssh_auth_method);
 
-
-        authMethodRg.check(checkedAuthMethodRadioButtonId);
-
         pwdView = (EditText) rootView.findViewById(R.id.router_add_password);
 
         final CheckBox pwdShowCheckBox = (CheckBox) rootView.findViewById(R.id.router_add_password_show_checkbox);
@@ -138,6 +135,8 @@ public class RouterConnectionDetailsStep extends WizardStep {
                 });
 
         privkeyErrorMsgView = (TextView) rootView.findViewById(R.id.router_add_privkey_error_msg);
+        privkeyButtonView = (Button) rootView.findViewById(R.id.router_add_privkey);
+        privkeyPathView = (TextView) rootView.findViewById(R.id.router_add_privkey_path);
 
         privkeyErrorMsgView.addTextChangedListener(new TextWatcher() {
             @Override
@@ -159,11 +158,15 @@ public class RouterConnectionDetailsStep extends WizardStep {
             }
         });
 
+        if (checkedAuthMethodRadioButtonId != null) {
+            try {
+                authMethodRg.check(Integer.valueOf(checkedAuthMethodRadioButtonId));
+            } catch (final NumberFormatException e) {
+                Crashlytics.logException(e);
+            }
+        }
+
         final View privkeyHdrView = rootView.findViewById(R.id.router_add_privkey_hdr);
-        privkeyButtonView = (Button) rootView.findViewById(R.id.router_add_privkey);
-        privkeyPathView = (TextView) rootView.findViewById(R.id.router_add_privkey_path);
-//                        final EditText pwdView = (EditText) rootView.findViewById(R.id.router_add_password);
-//                        final CheckBox pwdShowCheckBox = (CheckBox) rootView.findViewById(R.id.router_add_password_show_checkbox);
         final TextInputLayout pwdInputLayout =
                 (TextInputLayout) rootView.findViewById(R.id.router_add_password_input_layout);
 
@@ -182,7 +185,6 @@ public class RouterConnectionDetailsStep extends WizardStep {
                                 pwdView.setVisibility(View.GONE);
                                 pwdShowCheckBox.setVisibility(View.GONE);
                                 pwdInputLayout.setErrorEnabled(false);
-                                validateFields();
                                 break;
                             case R.id.router_add_ssh_auth_method_password:
                                 privkeyPathView.setText(null);
@@ -192,6 +194,7 @@ public class RouterConnectionDetailsStep extends WizardStep {
                                 pwdView.setVisibility(View.VISIBLE);
                                 pwdView.setHint("e.g., 'default' (may be empty) ");
                                 pwdShowCheckBox.setVisibility(View.VISIBLE);
+                                pwdInputLayout.setErrorEnabled(false);
                                 break;
                             case R.id.router_add_ssh_auth_method_privkey:
                                 pwdView.setText(null);
@@ -245,36 +248,11 @@ public class RouterConnectionDetailsStep extends WizardStep {
 
         if (privkeyButtonHint != null) {
             privkeyButtonView.setHint(privkeyButtonHint);
+        } else {
+            privkeyButtonView.setHint("Select SSH Private Key (if any)");
         }
         privkeyPathView.setText(privkeyPath);
         privkeyErrorMsgView.setText(privkeyErrorMsg);
-
-        final TextWatcher textWatcherFormValidator = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                validateFields();
-            }
-        };
-        final View.OnFocusChangeListener focusChangeListenerFormValidator = new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                validateFields();
-            }
-        };
-        portEt.setOnFocusChangeListener(focusChangeListenerFormValidator);
-        usernameEt.setOnFocusChangeListener(focusChangeListenerFormValidator);
-        pwdView.setOnFocusChangeListener(focusChangeListenerFormValidator);
-        privkeyPathView.setOnFocusChangeListener(focusChangeListenerFormValidator);
-        privkeyPathView.addTextChangedListener(textWatcherFormValidator);
 
         if (connectionProtocol != null) {
             connectionProtocolView.setSelection(
@@ -309,7 +287,7 @@ public class RouterConnectionDetailsStep extends WizardStep {
         username = usernameEt.getText().toString();
         password = pwdView.getText().toString();
         port = portEt.getText().toString();
-        checkedAuthMethodRadioButtonId = authMethodRg.getCheckedRadioButtonId();
+        checkedAuthMethodRadioButtonId = Integer.toString(authMethodRg.getCheckedRadioButtonId());
         privkeyErrorMsg = privkeyErrorMsgView.getText().toString();
         privkeyPath = privkeyPathView.getText().toString();
         privkeyButtonHint = privkeyButtonView.getHint().toString();
@@ -408,8 +386,9 @@ public class RouterConnectionDetailsStep extends WizardStep {
         super.onActivityResult(requestCode, resultCode, resultData);
     }
 
-    private void validateFields() {
-        final FragmentActivity activity = getActivity();
+    @Override
+    public boolean validateStep() {
+//        final FragmentActivity activity = getActivity();
         final ScrollView contentScrollView = (ScrollView) rootView
                 .findViewById(R.id.router_add_content_scroll_view);
 
@@ -429,8 +408,7 @@ public class RouterConnectionDetailsStep extends WizardStep {
             Utils.scrollToView(contentScrollView, portEt);
             portEt.requestFocus();
 //            openKeyboard(activity, portEt);
-//            notifyIncomplete();
-            return;
+            return false;
         }
         portInputLayout.setErrorEnabled(false);
 
@@ -442,8 +420,7 @@ public class RouterConnectionDetailsStep extends WizardStep {
             Utils.scrollToView(contentScrollView, usernameEt);
             usernameEt.requestFocus();
 //            openKeyboard(activity, usernameEt);
-//            notifyIncomplete();
-            return;
+            return false;
         }
         sshLoginInputLayout.setErrorEnabled(false);
 
@@ -459,26 +436,24 @@ public class RouterConnectionDetailsStep extends WizardStep {
                     Utils.scrollToView(contentScrollView, pwdView);
                     pwdView.requestFocus();
 //                    openKeyboard(activity, pwdView);
-//                    notifyIncomplete();
-                    return;
+                    return false;
                 }
                 pwdInputLayout.setErrorEnabled(false);
             }
-                break;
+            break;
             case R.id.router_add_ssh_auth_method_privkey: {
                 //Check privkey
                 if (isNullOrEmpty(privkeyPathView.getText().toString())) {
                     privkeyErrorMsgView.setText(getString(R.string.router_add_privkey_invalid));
 //                    privkeyButtonView.requestFocus();
-//                    notifyIncomplete();
-                    return;
+                    return false;
                 }
             }
-                break;
+            break;
             default:
                 break;
         }
 
-//        notifyCompleted();
+        return true;
     }
 }

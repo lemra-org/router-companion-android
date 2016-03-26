@@ -7,8 +7,8 @@ import org.rm3l.ddwrt.mgmt.register.steps.BasicDetailsStep;
 import org.rm3l.ddwrt.mgmt.register.steps.LocalSSIDLookupStep;
 import org.rm3l.ddwrt.mgmt.register.steps.ReviewStep;
 import org.rm3l.ddwrt.mgmt.register.steps.RouterConnectionDetailsStep;
-import org.rm3l.ddwrt.utils.tuple.Pair;
-import org.rm3l.ddwrt.widgets.MaterialWizard;
+import org.rm3l.ddwrt.widgets.wizard.MaterialWizard;
+import org.rm3l.ddwrt.widgets.wizard.WizardStepVerifiable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,18 +25,15 @@ public class AddRouterWizard extends MaterialWizard {
         super();
     }
 
+    @SuppressWarnings("unchecked")
     @Nullable
     @Override
-    protected List<Pair<Class<? extends WizardStep>, Boolean>> getStepClasses() {
+    protected <T extends WizardStep & WizardStepVerifiable> List<Class<T>> getStepClasses() {
         return Arrays.asList(
-                Pair. <Class<? extends WizardStep>, Boolean>
-                        create(BasicDetailsStep.class, false),
-                Pair. <Class<? extends WizardStep>, Boolean>
-                        create(RouterConnectionDetailsStep.class, false),
-                Pair. <Class<? extends WizardStep>, Boolean>
-                        create(LocalSSIDLookupStep.class, false),
-                Pair. <Class<? extends WizardStep>, Boolean>
-                        create(ReviewStep.class, true)
+                (Class<T>) BasicDetailsStep.class,
+                (Class<T>) RouterConnectionDetailsStep.class,
+                (Class<T>) LocalSSIDLookupStep.class,
+                (Class<T>) ReviewStep.class
         );
     }
 

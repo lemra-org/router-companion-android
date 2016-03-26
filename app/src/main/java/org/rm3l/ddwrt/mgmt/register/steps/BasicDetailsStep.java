@@ -1,9 +1,11 @@
 package org.rm3l.ddwrt.mgmt.register.steps;
 
+import android.content.Context;
+import android.net.DhcpInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,14 +18,16 @@ import org.codepond.wizardroid.WizardStep;
 import org.codepond.wizardroid.persistence.ContextVariable;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.ViewGroupUtils;
+import org.rm3l.ddwrt.widgets.wizard.WizardStepVerifiable;
 
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
 /**
  * Created by rm3l on 15/03/16.
  */
-public class BasicDetailsStep extends WizardStep {
+public class BasicDetailsStep extends WizardStep implements WizardStepVerifiable {
 
     /**
      * Tell WizarDroid that these are context variables.
@@ -69,30 +73,6 @@ public class BasicDetailsStep extends WizardStep {
         routerIpOrDnsEt = (EditText) v.findViewById(R.id.router_add_ip);
         routerIpTil = (TextInputLayout)
                 v.findViewById(R.id.router_add_ip_input_layout);
-        routerIpOrDnsEt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                final String routerReachableAddr = routerIpOrDnsEt.getText().toString();
-                if (isDemoRouter(routerReachableAddr)
-                        || Patterns.IP_ADDRESS.matcher(routerReachableAddr).matches()
-                        || Patterns.DOMAIN_NAME.matcher(routerReachableAddr).matches()) {
-                    routerIpTil.setErrorEnabled(false);
-                } else {
-                    routerIpTil.setErrorEnabled(true);
-                    routerIpTil.setError(getString(R.string.router_add_dns_or_ip_invalid));
-                }
-            }
-        });
 
         final TextView demoText = (TextView) v.findViewById(R.id.router_add_ip_demo_text);
         demoText.setText(demoText.getText().toString()
@@ -103,6 +83,17 @@ public class BasicDetailsStep extends WizardStep {
         routerNameEt.setText(routerName);
         if (routerIpOrDns != null) {
             routerIpOrDnsEt.setText(routerIpOrDns);
+        } else {
+            if (TextUtils.isEmpty(routerIpOrDnsEt.getText())) {
+                //Do this only if nothing has been filled in the EditText by the user
+                final WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+                if (wifiManager != null) {
+                    final DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
+                    if (dhcpInfo != null) {
+                        routerIpOrDnsEt.setText(Utils.intToIp(dhcpInfo.gateway));
+                    }
+                }
+            }
         }
 
         routerFirmwareSpinner = (Spinner) v.findViewById(R.id.router_add_firmware);
@@ -137,5 +128,22 @@ public class BasicDetailsStep extends WizardStep {
         routerName = routerNameEt.getText().toString();
         routerIpOrDns = routerIpOrDnsEt.getText().toString();
         routerFirmware = routerFirmwareSpinner.getSelectedItem().toString();
+    }
+
+    @Override
+    public boolean validateStep() {
+        final String routerReachableAddr = routerIpOrDnsEt.getText().toString();
+        final boolean stepValidated;
+        if (isDemoRouter(routerReachableAddr)
+                || Patterns.IP_ADDRESS.matcher(routerReachableAddr).matches()
+                || Patterns.DOMAIN_NAME.matcher(routerReachableAddr).matches()) {
+            routerIpTil.setErrorEnabled(false);
+            stepValidated = true;
+        } else {
+            routerIpTil.setErrorEnabled(true);
+            routerIpTil.setError(getString(R.string.router_add_dns_or_ip_invalid));
+            stepValidated = false;
+        }
+        return stepValidated;
     }
 }

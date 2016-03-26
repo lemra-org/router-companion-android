@@ -1,4 +1,4 @@
-package org.rm3l.ddwrt.widgets;
+package org.rm3l.ddwrt.widgets.wizard;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,7 +14,6 @@ import org.codepond.wizardroid.WizardFlow;
 import org.codepond.wizardroid.WizardFragment;
 import org.codepond.wizardroid.WizardStep;
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.utils.tuple.Pair;
 
 import java.util.List;
 
@@ -59,18 +58,19 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
 
     //You must override this method and create a wizard flow by
     //using WizardFlow.Builder as shown in this example
+    @SuppressWarnings("unchecked")
     @Override
     public final WizardFlow onSetup() {
 
         final WizardFlow.Builder wizardFlowBuilder = new WizardFlow.Builder();
-        final List<Pair<Class<? extends WizardStep>, Boolean>> stepClasses = getStepClasses();
+        final List<?> stepClasses = getStepClasses();
         if (stepClasses != null) {
-            for (final Pair<Class<? extends WizardStep>, Boolean> stepClass : stepClasses) {
-                if (stepClass == null || stepClass.first == null) {
+            for (final Object stepClass : stepClasses) {
+                if (stepClass == null ||
+                        !Class.class.isAssignableFrom(stepClass.getClass())) {
                     continue;
                 }
-                wizardFlowBuilder.addStep(stepClass.first,
-                        stepClass.second != null && stepClass.second);
+                wizardFlowBuilder.addStep((Class<? extends WizardStep>) stepClass, false);
             }
         }
         return wizardFlowBuilder.create();
@@ -102,13 +102,22 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
         switch(v.getId()) {
             case R.id.wizard_next_button:
                 //Tell the wizard to go to next step
-                wizard.goNext();
+                final WizardStep currentStep = wizard.getCurrentStep();
+                final boolean stepValidated =
+                        !(currentStep instanceof WizardStepVerifiable) ||
+                                ((WizardStepVerifiable) currentStep).validateStep();
+                Crashlytics.log("stepValidated: " + stepValidated);
+                if (stepValidated) {
+                    wizard.goNext();
+                }
+                //Maybe provide a 'denial' animation
                 break;
             case R.id.wizard_previous_button:
                 //Tell the wizard to go back one step
                 wizard.goBack();
                 break;
             case R.id.wizard_cancel_button:
+                //Close wizard
                 getActivity().finish();
         }
     }
@@ -154,7 +163,7 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
     }
 
     @Nullable
-    protected abstract List<Pair<Class<? extends WizardStep>, Boolean>> getStepClasses();
+    protected abstract <T extends WizardStep & WizardStepVerifiable> List<Class<T>> getStepClasses();
 
 
     //Override to define custom labels

@@ -14,8 +14,8 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.widgets.wizard.WizardStepVerifiable;
 
-import java.io.IOException;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -23,7 +23,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 /**
  * Created by rm3l on 21/03/16.
  */
-public class ReviewStep extends WizardStep {
+public class ReviewStep extends WizardStep implements WizardStepVerifiable {
 
     @ContextVariable
     private String uuid;
@@ -91,7 +91,7 @@ public class ReviewStep extends WizardStep {
         //TODO
 
         //Validate form and check connection
-        notifyCompleted();
+//        notifyCompleted();
 //        boolean validForm = validateForm(d);
 
 //        if (validForm) {
@@ -106,7 +106,7 @@ public class ReviewStep extends WizardStep {
         return v;
     }
 
-    private Router buildRouter() throws IOException {
+    private Router buildRouter()  {
         final Router router = new Router(getContext());
         if (!isNullOrEmpty(uuid)) {
             router.setUuid(uuid);
@@ -115,8 +115,11 @@ public class ReviewStep extends WizardStep {
         }
         router.setName(routerName);
         router.setRemoteIpAddress(routerIpOrDns);
-        router.setRemotePort(Integer.parseInt(port));
-        router.setRouterConnectionProtocol(Router.RouterConnectionProtocol.valueOf(connectionProtocol));
+        router.setRemotePort(port != null ? Integer.parseInt(port) : 22);
+        router.setRouterConnectionProtocol(
+                connectionProtocol != null ?
+                        Router.RouterConnectionProtocol.valueOf(connectionProtocol) :
+                        Router.RouterConnectionProtocol.SSH);
 //        final int pos = (((Spinner) d.findViewById(R.id.router_add_firmware))).getSelectedItemPosition();
 //        final String[] fwStringArray = d.getContext().getResources().getStringArray(R.array.router_firmwares_array_values);
 //        if (fwStringArray != null && pos < fwStringArray.length) {
@@ -214,4 +217,9 @@ public class ReviewStep extends WizardStep {
         }
     }
 
+    @Override
+    public boolean validateStep() {
+        router = buildRouter();
+        return (router != null);
+    }
 }
