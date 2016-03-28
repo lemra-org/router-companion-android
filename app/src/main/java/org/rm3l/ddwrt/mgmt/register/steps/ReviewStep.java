@@ -1,21 +1,30 @@
 package org.rm3l.ddwrt.mgmt.register.steps;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.google.common.base.Splitter;
 
-import org.codepond.wizardroid.WizardStep;
-import org.codepond.wizardroid.persistence.ContextVariable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.resources.Encrypted;
 import org.rm3l.ddwrt.resources.conn.Router;
-import org.rm3l.ddwrt.widgets.wizard.WizardStepVerifiable;
+import org.rm3l.ddwrt.widgets.wizard.MaterialWizard;
+import org.rm3l.ddwrt.widgets.wizard.MaterialWizardStep;
 
+import java.util.Map;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -23,52 +32,49 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 /**
  * Created by rm3l on 21/03/16.
  */
-public class ReviewStep extends WizardStep implements WizardStepVerifiable {
+public class ReviewStep extends MaterialWizardStep {
 
-    @ContextVariable
     private String uuid;
+    private TextView uuidView;
 
-    @ContextVariable
     private String routerName;
+    private TextView routerNameView;
 
-    @ContextVariable
     private String routerIpOrDns;
+    private TextView routerIpOrDnsView;
 
-    @ContextVariable
     private String routerFirmware;
+    private TextView routerFirmwareView;
 
-    @ContextVariable
     private String connectionProtocol;
+    private TextView connectionProtocolView;
 
-    @ContextVariable
     private String port;
+    private TextView portView;
 
-    @ContextVariable
     private String username;
+    private TextView usernameView;
 
-    @ContextVariable
-    private int checkedAuthMethodRadioButtonId;
+    private Integer authMethod;
+    private RadioGroup authMethodRg;
 
-    @ContextVariable
     private String password;
+    private EditText passwordView;
 
-    @ContextVariable
     private String privkeyButtonHint;
+    private TextView privkeyButtonHintView;
 
-    @ContextVariable
-    private String privkeyErrorMsg;
-
-    @ContextVariable
     private String privkeyPath;
+    private TextView privkeyPathView;
 
-    @ContextVariable
     private boolean fallBackToPrimary;
+    private TextView fallBackToPrimaryView;
 
-    @ContextVariable
     private boolean useLocalSSIDLookup;
+    private TextView useLocalSSIDLookupView;
 
-    @ContextVariable
     private String localSSIDLookupDetails; //JSON
+    private TextView localSSIDLookupDetailsView;
 
     private Router router;
 
@@ -83,27 +89,163 @@ public class ReviewStep extends WizardStep implements WizardStepVerifiable {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        final Context context = getContext();
+        this.dao = RouterManagementActivity.getDao(context);
+        
         final View v = inflater.inflate(
                 R.layout.wizard_add_router_4_review,
                 container, false);
 
-        this.dao = RouterManagementActivity.getDao(getContext());
-        //TODO
+        uuidView = (TextView) v.findViewById(R.id.wizard_add_router_review_router_uuid);
+        routerNameView = (TextView) v.findViewById(R.id.wizard_add_router_review_router_name);
+        routerIpOrDnsView = (TextView) v.findViewById(R.id.wizard_add_router_review_router_ip_dns);
+        routerFirmwareView = (TextView) v.findViewById(R.id.wizard_add_router_review_router_firmware);
+        connectionProtocolView = (TextView) v.findViewById(R.id.wizard_add_router_review_router_conn_proto);
+        portView = (TextView) v.findViewById(R.id.wizard_add_router_review_router_conn_proto_ssh_port);
+        usernameView = (TextView) v.findViewById(R.id.wizard_add_router_review_router_conn_proto_ssh_username);
+        authMethodRg = (RadioGroup) v.findViewById(R.id.wizard_add_router_review_ssh_auth_method);
+        privkeyButtonHintView = (TextView) v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_privkey_path);
+        passwordView = (EditText) v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_password_value);
 
-        //Validate form and check connection
-//        notifyCompleted();
-//        boolean validForm = validateForm(d);
+        final CheckBox showPasswordCheckBox = (CheckBox) v.findViewById(R.id.wizard_add_router_review_password_show_checkbox);
+        showPasswordCheckBox
+                .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (!isChecked) {
+                            passwordView.setInputType(
+                                    InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        } else {
+                            passwordView.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                        }
+                        passwordView.setEnabled(false);
+                    }
+                });
+        authMethodRg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                final TextView privkeyHdrView = (TextView)
+                        v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_privkey_hdr);
+                final TextView passwordHdrView = (TextView)
+                        v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_password_hdr);
+                switch (checkedId) {
+                    case R.id.router_add_ssh_auth_method_none:
+                        privkeyHdrView.setVisibility(View.GONE);
+                        privkeyButtonHintView.setText(null);
+                        privkeyButtonHintView.setVisibility(View.GONE);
 
-//        if (validForm) {
-//            // Now check actual connection to router ...
-//            new CheckRouterConnectionAsyncTask(
-//                    routerIpOrDns,
-//                    getActivity().getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-//                            .getBoolean(ALWAYS_CHECK_CONNECTION_PREF_KEY, true))
-//                    .execute(d);
-//        }
+                        passwordHdrView.setVisibility(View.GONE);
+                        passwordView.setText(null);
+                        showPasswordCheckBox.setVisibility(View.GONE);
+                        break;
+                    case R.id.router_add_ssh_auth_method_password:
+                        privkeyHdrView.setVisibility(View.GONE);
+                        privkeyButtonHintView.setText(null);
+                        privkeyButtonHintView.setVisibility(View.GONE);
+
+                        passwordHdrView.setVisibility(View.VISIBLE);
+                        passwordView.setText(password);
+                        showPasswordCheckBox.setVisibility(View.VISIBLE);
+                        break;
+                    case R.id.router_add_ssh_auth_method_privkey:
+                        privkeyHdrView.setVisibility(View.VISIBLE);
+                        privkeyButtonHintView.setText(privkeyButtonHint);
+                        privkeyButtonHintView.setVisibility(View.VISIBLE);
+
+                        passwordHdrView.setVisibility(View.GONE);
+                        passwordView.setText(null);
+                        showPasswordCheckBox.setVisibility(View.GONE);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
+        if (!isViewShown) {
+            loadFromWizardContext();
+        }
 
         return v;
+    }
+
+    @Override
+    protected void onVisibleToUser() {
+        //Load from context
+        loadFromWizardContext();
+        if (isViewShown) {
+            uuidView.setText(uuid);
+            routerNameView.setText(isNullOrEmpty(routerName) ? "-" : routerName);
+            routerIpOrDnsView.setText(isNullOrEmpty(routerIpOrDns) ? "-" : routerIpOrDns );
+            routerFirmwareView.setText(isNullOrEmpty(routerFirmware) ? "-" : routerFirmware );
+            connectionProtocolView.setText(isNullOrEmpty(connectionProtocol) ? "-" : connectionProtocol );
+            portView.setText(isNullOrEmpty(port) ? "-" : port );
+            usernameView.setText(isNullOrEmpty(username) ? "-" : username );
+            passwordView.setText(isNullOrEmpty(password) ? "-" : password );
+            privkeyButtonHintView.setText(isNullOrEmpty(privkeyButtonHint) ? "-" : privkeyButtonHint );
+            if (authMethod != null) {
+                switch (authMethod) {
+                    case Router.SSHAuthenticationMethod_NONE:
+                        authMethodRg.check(R.id.router_add_ssh_auth_method_none);
+                        break;
+                    case Router.SSHAuthenticationMethod_PASSWORD:
+                        authMethodRg.check(R.id.router_add_ssh_auth_method_password);
+                        break;
+                    case Router.SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY:
+                        authMethodRg.check(R.id.router_add_ssh_auth_method_privkey);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    private void loadFromWizardContext() {
+        final Map wizardContext = MaterialWizard.getWizardContext(getContext());
+
+        final Object uuidObj = wizardContext.get("uuid");
+        uuid = uuidObj != null ? uuidObj.toString() : "-";
+
+        final Object routerNameObj = wizardContext.get("routerName");
+        routerName = routerNameObj != null ? routerNameObj.toString() : "-";
+
+        final Object routerIpOrDnsObj = wizardContext.get("routerIpOrDns");
+        routerIpOrDns = routerIpOrDnsObj != null ? routerIpOrDnsObj.toString() : "-";
+
+        final Object routerFirmwareObj = wizardContext.get("routerFirmware");
+        routerFirmware = routerFirmwareObj != null ? routerFirmwareObj.toString() : "-";
+
+        final Object connectionProtocolObj = wizardContext.get("connectionProtocol");
+        connectionProtocol = connectionProtocolObj != null ?
+                connectionProtocolObj.toString() : "-";
+
+        final Object portObj = wizardContext.get("port");
+        port = portObj != null ? portObj.toString() : "-";
+
+        final Object usernameObj = wizardContext.get("username");
+        username = usernameObj != null ? usernameObj.toString() : "-";
+
+        final Object passwordObj = wizardContext.get("password");
+        password = passwordObj != null ? Encrypted.d(passwordObj.toString()) : "-";
+
+        final Object privkeyButtonHintObj = wizardContext.get("privkeyButtonHint");
+        privkeyButtonHint = privkeyButtonHintObj != null ? privkeyButtonHintObj.toString() : "-";
+
+        final Object privkeyPathObj = wizardContext.get("privkeyPath");
+        if (privkeyPathObj != null) {
+            privkeyPath = privkeyPathObj.toString();
+        }
+
+        final Object authMethodObj = wizardContext.get("authMethod");
+        if (authMethodObj != null) {
+            try {
+                authMethod = Integer.parseInt(authMethodObj.toString());
+            } catch (final NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     private Router buildRouter()  {
@@ -200,20 +342,12 @@ public class ReviewStep extends WizardStep implements WizardStepVerifiable {
         return router;
     }
 
-    /**
-     * Called whenever the wizard proceeds to the next step or goes back to the previous step
-     */
-
     @Override
-    public void onExit(int exitCode) {
-        switch (exitCode) {
-            case WizardStep.EXIT_NEXT: {
-                this.dao.insertRouter(router);
-            }
-                break;
-            case WizardStep.EXIT_PREVIOUS:
-                //Do nothing...
-                break;
+    protected void onExitNext() {
+        if (TextUtils.isEmpty(router.getUuid())) {
+            this.dao.insertRouter(router);
+        } else {
+            this.dao.updateRouter(router);
         }
     }
 

@@ -70,15 +70,4 @@
 
     </RelativeLayout>
 
-    <!--<Button-->
-        <!--android:id="@+id/router_add_local_ssid_skip_button"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_weight="1"-->
-        <!--android:text="Skip"-->
-        <!--android:textColor="@color/white"-->
-        <!--android:background="@color/win8_brown"-->
-        <!--android:layout_gravity="bottom|end"-->
-        <!--android:layout_marginBottom="16dp"/>-->
-
 </LinearLayout>

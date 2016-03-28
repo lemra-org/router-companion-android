@@ -32,15 +32,15 @@ import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
 
 import org.apache.commons.io.IOUtils;
-import org.codepond.wizardroid.WizardStep;
 import org.codepond.wizardroid.persistence.ContextVariable;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.ViewGroupUtils;
-import org.rm3l.ddwrt.widgets.wizard.WizardStepVerifiable;
-
-import java.io.IOException;
+import org.rm3l.ddwrt.widgets.wizard.MaterialWizardStep;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_PRIVKEY_SIZE_BYTES;
@@ -49,7 +49,7 @@ import static org.rm3l.ddwrt.utils.Utils.toHumanReadableByteCount;
 /**
  * Created by rm3l on 15/03/16.
  */
-public class RouterConnectionDetailsStep extends WizardStep implements WizardStepVerifiable {
+public class RouterConnectionDetailsStep extends MaterialWizardStep {
 
     private static final String LOG_TAG = RouterConnectionDetailsStep.class.getSimpleName();
 
@@ -67,7 +67,7 @@ public class RouterConnectionDetailsStep extends WizardStep implements WizardSte
     private String username;
 
     @ContextVariable
-    private String checkedAuthMethodRadioButtonId;
+    private Integer authMethod;
 
     @ContextVariable
     private String password;
@@ -95,6 +95,7 @@ public class RouterConnectionDetailsStep extends WizardStep implements WizardSte
     private TextView privkeyErrorMsgView;
     private TextView privkeyPathView;
     private Button privkeyButtonView;
+    private DDWRTCompanionDAO dao;
 
 
     //Wire the layout to the step
@@ -105,6 +106,8 @@ public class RouterConnectionDetailsStep extends WizardStep implements WizardSte
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        this.dao = RouterManagementActivity.getDao(getContext());
 
         rootView = inflater.inflate(
                 R.layout.wizard_add_router_2_router_connection_details_step, container, false);
@@ -158,14 +161,6 @@ public class RouterConnectionDetailsStep extends WizardStep implements WizardSte
             }
         });
 
-        if (checkedAuthMethodRadioButtonId != null) {
-            try {
-                authMethodRg.check(Integer.valueOf(checkedAuthMethodRadioButtonId));
-            } catch (final NumberFormatException e) {
-                Crashlytics.logException(e);
-            }
-        }
-
         final View privkeyHdrView = rootView.findViewById(R.id.router_add_privkey_hdr);
         final TextInputLayout pwdInputLayout =
                 (TextInputLayout) rootView.findViewById(R.id.router_add_password_input_layout);
@@ -181,10 +176,12 @@ public class RouterConnectionDetailsStep extends WizardStep implements WizardSte
                                 privkeyPathView.setText(null);
                                 privkeyHdrView.setVisibility(View.GONE);
                                 privkeyButtonView.setVisibility(View.GONE);
+                                privkeyErrorMsgView.setVisibility(View.GONE);
                                 pwdView.setText(null);
                                 pwdView.setVisibility(View.GONE);
                                 pwdShowCheckBox.setVisibility(View.GONE);
                                 pwdInputLayout.setErrorEnabled(false);
+                                privkeyErrorMsgView.setText(null);
                                 break;
                             case R.id.router_add_ssh_auth_method_password:
                                 privkeyPathView.setText(null);
@@ -192,7 +189,7 @@ public class RouterConnectionDetailsStep extends WizardStep implements WizardSte
                                 privkeyButtonView.setVisibility(View.GONE);
                                 privkeyErrorMsgView.setText(null);
                                 pwdView.setVisibility(View.VISIBLE);
-                                pwdView.setHint("e.g., 'default' (may be empty) ");
+//                                pwdView.setHint("e.g., 'default' (may be empty) ");
                                 pwdShowCheckBox.setVisibility(View.VISIBLE);
                                 pwdInputLayout.setErrorEnabled(false);
                                 break;
@@ -200,7 +197,7 @@ public class RouterConnectionDetailsStep extends WizardStep implements WizardSte
                                 pwdView.setText(null);
                                 privkeyButtonView.setHint(getString(R.string.router_add_path_to_privkey));
                                 pwdView.setVisibility(View.VISIBLE);
-                                pwdView.setHint("Key passphrase, if applicable");
+//                                pwdView.setHint("Key passphrase, if applicable");
                                 pwdShowCheckBox.setVisibility(View.VISIBLE);
                                 privkeyHdrView.setVisibility(View.VISIBLE);
                                 privkeyButtonView.setVisibility(View.VISIBLE);
@@ -238,8 +235,23 @@ public class RouterConnectionDetailsStep extends WizardStep implements WizardSte
             }
         });
 
-
         //and set default values by using Context Variables
+        if (authMethod != null) {
+            switch (authMethod) {
+                case Router.SSHAuthenticationMethod_NONE:
+                    authMethodRg.check(R.id.router_add_ssh_auth_method_none);
+                    break;
+                case Router.SSHAuthenticationMethod_PASSWORD:
+                    authMethodRg.check(R.id.router_add_ssh_auth_method_password);
+                    break;
+                case Router.SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY:
+                    authMethodRg.check(R.id.router_add_ssh_auth_method_privkey);
+                    break;
+                default:
+                    break;
+            }
+        }
+
         usernameEt.setText(username != null ? username : "root");
         portEt.setText(port != null ? port : "22");
         if (password != null) {
@@ -263,31 +275,31 @@ public class RouterConnectionDetailsStep extends WizardStep implements WizardSte
         return rootView;
     }
 
-    /**
-     * Called whenever the wizard proceeds to the next step or goes back to the previous step
-     */
-
     @Override
-    public void onExit(int exitCode) {
-        switch (exitCode) {
-            case WizardStep.EXIT_NEXT:
-                bindDataFields();
-                break;
-            case WizardStep.EXIT_PREVIOUS:
-                //Do nothing...
-                break;
-        }
+    protected void onVisibleToUser() {
+        //Nothing to do - we are not re-using any context variable field from previous steps
     }
 
-    private void bindDataFields() {
-        //TODO Do some work
-        //...
+    protected void onExitNext() {
         //The values of these fields will be automatically stored in the wizard context
         //and will be populated in the next steps only if the same field names are used.
         username = usernameEt.getText().toString();
         password = pwdView.getText().toString();
         port = portEt.getText().toString();
-        checkedAuthMethodRadioButtonId = Integer.toString(authMethodRg.getCheckedRadioButtonId());
+        final int checkedRadioButtonId = authMethodRg.getCheckedRadioButtonId();
+        switch (checkedRadioButtonId) {
+            case R.id.router_add_ssh_auth_method_none:
+                authMethod = Router.SSHAuthenticationMethod_NONE;
+                break;
+            case R.id.router_add_ssh_auth_method_password:
+                authMethod = Router.SSHAuthenticationMethod_PASSWORD;
+                break;
+            case R.id.router_add_ssh_auth_method_privkey:
+                authMethod = Router.SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY;
+                break;
+            default:
+                break;
+        }
         privkeyErrorMsg = privkeyErrorMsgView.getText().toString();
         privkeyPath = privkeyPathView.getText().toString();
         privkeyButtonHint = privkeyButtonView.getHint().toString();
@@ -365,8 +377,10 @@ public class RouterConnectionDetailsStep extends WizardStep implements WizardSte
 
                     //Set file actual content in hidden field
                     try {
-                        privkeyPathView.setText(IOUtils.toString(contentResolver.openInputStream(uri)));
-                    } catch (IOException e) {
+                        privkeyPathView.setText(IOUtils
+                                .toString(contentResolver.openInputStream(uri)));
+                        privkeyErrorMsgView.setText(null);
+                    } catch (final Exception e) {
                         e.printStackTrace();
                         privkeyErrorMsgView.setText("Error: " + e.getMessage());
                         privkeyButtonView.setHint(fileSelectorOriginalHint);
@@ -406,7 +420,7 @@ public class RouterConnectionDetailsStep extends WizardStep implements WizardSte
         if (!validPort) {
             portInputLayout.setError(getString(R.string.router_add_port_invalid));
             Utils.scrollToView(contentScrollView, portEt);
-            portEt.requestFocus();
+//            portEt.requestFocus();
 //            openKeyboard(activity, portEt);
             return false;
         }
@@ -418,7 +432,7 @@ public class RouterConnectionDetailsStep extends WizardStep implements WizardSte
             sshLoginInputLayout.setErrorEnabled(true);
             sshLoginInputLayout.setError(getString(R.string.router_add_username_invalid));
             Utils.scrollToView(contentScrollView, usernameEt);
-            usernameEt.requestFocus();
+//            usernameEt.requestFocus();
 //            openKeyboard(activity, usernameEt);
             return false;
         }
@@ -426,21 +440,21 @@ public class RouterConnectionDetailsStep extends WizardStep implements WizardSte
 
         final int checkedAuthMethodRadioButtonId = authMethodRg.getCheckedRadioButtonId();
         switch (checkedAuthMethodRadioButtonId) {
-            case R.id.router_add_ssh_auth_method_password: {
-                //Check password
-                final TextInputLayout pwdInputLayout =
-                        (TextInputLayout) rootView.findViewById(R.id.router_add_password_input_layout);
-                if (isNullOrEmpty(pwdView.getText().toString())) {
-                    pwdInputLayout.setErrorEnabled(true);
-                    pwdInputLayout.setError("Password required");
-                    Utils.scrollToView(contentScrollView, pwdView);
-                    pwdView.requestFocus();
-//                    openKeyboard(activity, pwdView);
-                    return false;
-                }
-                pwdInputLayout.setErrorEnabled(false);
-            }
-            break;
+//            case R.id.router_add_ssh_auth_method_password: {
+//                //Check password
+//                final TextInputLayout pwdInputLayout =
+//                        (TextInputLayout) rootView.findViewById(R.id.router_add_password_input_layout);
+//                if (isNullOrEmpty(pwdView.getText().toString())) {
+//                    pwdInputLayout.setErrorEnabled(true);
+//                    pwdInputLayout.setError("Password required");
+//                    Utils.scrollToView(contentScrollView, pwdView);
+////                    pwdView.requestFocus();
+////                    openKeyboard(activity, pwdView);
+//                    return false;
+//                }
+//                pwdInputLayout.setErrorEnabled(false);
+//            }
+//            break;
             case R.id.router_add_ssh_auth_method_privkey: {
                 //Check privkey
                 if (isNullOrEmpty(privkeyPathView.getText().toString())) {

@@ -1,10 +1,227 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/router_add_content_scroll_view"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/wizard_add_router_review_content_scroll_view"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_margin="20dp"
-    android:orientation="vertical">
+    android:layout_margin="20dp">
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:orientation="vertical">
+
+        <!-- Router UUID -->
+        <TextView
+            android:id="@+id/wizard_add_router_review_router_uuid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:singleLine="false"
+            android:visibility="gone"/>
+
+        <!-- Router Name -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Router Name"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:textAppearance="?android:textAppearanceMedium"/>
+        <TextView
+            android:textIsSelectable="true"
+            android:id="@+id/wizard_add_router_review_router_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:singleLine="false"
+            android:text="-" />
+
+        <!-- Router IP / DNS -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="IP or DNS Name"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:textAppearance="?android:textAppearanceMedium"/>
+        <TextView
+            android:textIsSelectable="true"
+            android:id="@+id/wizard_add_router_review_router_ip_dns"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:singleLine="false"
+            android:text="-" />
+
+        <!-- Router Firmware -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Firmware"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:textAppearance="?android:textAppearanceMedium"/>
+        <TextView
+            android:textIsSelectable="true"
+            android:id="@+id/wizard_add_router_review_router_firmware"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:singleLine="false"
+            android:text="-" />
+
+        <!-- Router Connection Proto -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Connection Protocol"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:textAppearance="?android:textAppearanceMedium"/>
+        <TextView
+            android:textIsSelectable="true"
+            android:id="@+id/wizard_add_router_review_router_conn_proto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:singleLine="false"
+            android:text="-" />
+
+        <!-- SSH Port -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SSH Port"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:textAppearance="?android:textAppearanceMedium"/>
+        <TextView
+            android:textIsSelectable="true"
+            android:id="@+id/wizard_add_router_review_router_conn_proto_ssh_port"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:singleLine="false"
+            android:text="-" />
+
+        <!-- SSH Username -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SSH Username"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:textAppearance="?android:textAppearanceMedium"/>
+        <TextView
+            android:textIsSelectable="true"
+            android:id="@+id/wizard_add_router_review_router_conn_proto_ssh_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:singleLine="false"
+            android:text="-" />
+
+        <!-- SSH Authentication Method -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SSH Authentication Method"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:textAppearance="?android:textAppearanceMedium"/>
+        <RadioGroup
+            android:id="@+id/wizard_add_router_review_ssh_auth_method"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/wizard_add_router_review_ssh_auth_method_none"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="None"
+                android:enabled="false"/>
+            <RadioButton
+                android:id="@+id/wizard_add_router_review_ssh_auth_method_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Password"
+                android:enabled="false"/>
+
+            <RadioButton
+                android:id="@+id/wizard_add_router_review_ssh_auth_method_privkey"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Private key"
+                android:enabled="false"/>
+        </RadioGroup>
+
+        <!-- Private key -->
+        <TextView
+            android:id="@+id/wizard_add_router_review_ssh_auth_method_privkey_hdr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Private Key"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:textAppearance="?android:textAppearanceMedium"/>
+        <TextView
+            android:textIsSelectable="true"
+            android:id="@+id/wizard_add_router_review_ssh_auth_method_privkey_path"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:singleLine="false"
+            android:text="-" />
+
+        <!-- Password / Passphrase -->
+        <TextView
+            android:id="@+id/wizard_add_router_review_ssh_auth_method_password_hdr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Password / Passphrase"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:textAppearance="?android:textAppearanceMedium"/>
+        <EditText
+            android:selectAllOnFocus="true"
+            android:id="@+id/wizard_add_router_review_ssh_auth_method_password_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:imeOptions="flagNoExtractUi"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:focusable="false"
+            android:enabled="false"/>
+
+        <CheckBox
+            android:id="@+id/wizard_add_router_review_password_show_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="4dp"
+            android:checked="false"
+            android:text="Show Password"/>
+
+    </LinearLayout>
+</ScrollView>

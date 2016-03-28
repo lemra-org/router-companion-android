@@ -30,13 +30,14 @@ import android.widget.TextView;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 
-import org.codepond.wizardroid.WizardStep;
 import org.codepond.wizardroid.persistence.ContextVariable;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.ViewGroupUtils;
-import org.rm3l.ddwrt.widgets.wizard.WizardStepVerifiable;
+import org.rm3l.ddwrt.widgets.wizard.MaterialWizardStep;
 
 import java.util.List;
 
@@ -46,7 +47,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 /**
  * Created by rm3l on 21/03/16.
  */
-public class LocalSSIDLookupStep extends WizardStep implements WizardStepVerifiable {
+public class LocalSSIDLookupStep extends MaterialWizardStep {
 
     @ContextVariable
     private String port;
@@ -65,6 +66,7 @@ public class LocalSSIDLookupStep extends WizardStep implements WizardStepVerifia
     private CheckBox useLocalSSIDLookupCb;
 
     private LinearLayout localSSIDLookupDetailedView;
+    private DDWRTCompanionDAO dao;
 
     //Wire the layout to the step
     public LocalSSIDLookupStep() {
@@ -75,17 +77,11 @@ public class LocalSSIDLookupStep extends WizardStep implements WizardStepVerifia
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
 
+        this.dao = RouterManagementActivity.getDao(getContext());
+
         final View v = inflater.inflate(
                 R.layout.wizard_add_router_3_advanced_options_1_local_ssid_lookup_step,
                 container, false);
-
-//        v.findViewById(R.id.router_add_local_ssid_skip_button)
-//                .setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        //TODO Move to next section right away
-//                    }
-//                });
 
         fallBackToPrimaryCb = (CheckBox) v.findViewById(R.id.router_add_fallback_to_primary);
         useLocalSSIDLookupCb = (CheckBox) v.findViewById(R.id.router_add_local_ssid_lookup);
@@ -94,6 +90,8 @@ public class LocalSSIDLookupStep extends WizardStep implements WizardStepVerifia
 
         final RelativeLayout localSSIDLookupDetail = (RelativeLayout)
                 v.findViewById(R.id.router_add_local_ssid_section);
+
+        final View addButton = v.findViewById(R.id.router_add_local_ssid_button);
 
         localSSIDLookupDetailedView = (LinearLayout)
                 v.findViewById(R.id.router_add_local_ssid_container);
@@ -104,9 +102,15 @@ public class LocalSSIDLookupStep extends WizardStep implements WizardStepVerifia
         useLocalSSIDLookupCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                localSSIDLookupDetail.setVisibility(isChecked ?
-                    View.VISIBLE : View.INVISIBLE);
-                fallBackToPrimaryCb.setChecked(!isChecked);
+                if (isChecked) {
+                    addButton.setVisibility(View.VISIBLE);
+                    localSSIDLookupDetail.setVisibility(View.VISIBLE);
+                    fallBackToPrimaryCb.setChecked(false);
+                } else {
+                    addButton.setVisibility(View.GONE);
+                    localSSIDLookupDetail.setVisibility(View.INVISIBLE);
+                    fallBackToPrimaryCb.setChecked(true);
+                }
             }
         });
 
@@ -114,7 +118,7 @@ public class LocalSSIDLookupStep extends WizardStep implements WizardStepVerifia
 
         final FragmentActivity activity = getActivity();
 
-        v.findViewById(R.id.router_add_local_ssid_button)
+        addButton
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -297,23 +301,12 @@ public class LocalSSIDLookupStep extends WizardStep implements WizardStepVerifia
         return v;
     }
 
-    /**
-     * Called whenever the wizard proceeds to the next step or goes back to the previous step
-     */
-
     @Override
-    public void onExit(int exitCode) {
-        switch (exitCode) {
-            case WizardStep.EXIT_NEXT:
-                bindDataFields();
-                break;
-            case WizardStep.EXIT_PREVIOUS:
-                //Do nothing...
-                break;
-        }
+    protected void onVisibleToUser() {
+        //Nothing to do
     }
 
-    private void bindDataFields() {
+    protected void onExitNext() {
         //The values of these fields will be automatically stored in the wizard context
         //and will be populated in the next steps only if the same field names are used.
         useLocalSSIDLookup = useLocalSSIDLookupCb.isChecked();

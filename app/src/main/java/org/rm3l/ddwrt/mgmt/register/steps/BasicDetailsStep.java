@@ -14,20 +14,21 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import org.codepond.wizardroid.WizardStep;
 import org.codepond.wizardroid.persistence.ContextVariable;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.ViewGroupUtils;
-import org.rm3l.ddwrt.widgets.wizard.WizardStepVerifiable;
+import org.rm3l.ddwrt.widgets.wizard.MaterialWizardStep;
 
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
 /**
  * Created by rm3l on 15/03/16.
  */
-public class BasicDetailsStep extends WizardStep implements WizardStepVerifiable {
+public class BasicDetailsStep extends MaterialWizardStep {
 
     /**
      * Tell WizarDroid that these are context variables.
@@ -47,7 +48,6 @@ public class BasicDetailsStep extends WizardStep implements WizardStepVerifiable
     @ContextVariable
     private String routerFirmware;
 
-
     private TextView uuidTv;
 
     private EditText routerNameEt;
@@ -56,6 +56,7 @@ public class BasicDetailsStep extends WizardStep implements WizardStepVerifiable
     private TextInputLayout routerIpTil;
 
     private Spinner routerFirmwareSpinner;
+    private DDWRTCompanionDAO dao;
 
     //Wire the layout to the step
     public BasicDetailsStep() {
@@ -65,6 +66,9 @@ public class BasicDetailsStep extends WizardStep implements WizardStepVerifiable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        final Context context = getContext();
+        this.dao = RouterManagementActivity.getDao(context);
 
         final View v = inflater.inflate(R.layout.wizard_add_router_1_basic_details_step, container, false);
         uuidTv = (TextView) v.findViewById(R.id.router_add_uuid);
@@ -105,23 +109,12 @@ public class BasicDetailsStep extends WizardStep implements WizardStepVerifiable
         return v;
     }
 
-    /**
-     * Called whenever the wizard proceeds to the next step or goes back to the previous step
-     */
-
     @Override
-    public void onExit(int exitCode) {
-        switch (exitCode) {
-            case WizardStep.EXIT_NEXT:
-                bindDataFields();
-                break;
-            case WizardStep.EXIT_PREVIOUS:
-                //Do nothing...
-                break;
-        }
+    protected void onVisibleToUser() {
+        //Nothing to do - we are not reusing any context variable from previous steps
     }
 
-    private void bindDataFields() {
+    protected void onExitNext() {
         //The values of these fields will be automatically stored in the wizard context
         //and will be populated in the next steps only if the same field names are used.
         uuid = uuidTv.getText().toString();

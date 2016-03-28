@@ -535,5 +535,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="dashboard_system">System</string>
     <string name="wizard_previous"><![CDATA[< PREVIOUS]]></string>
     <string name="wizard_next"><![CDATA[NEXT >]]></string>
+    <string name="password_or_passphrase_hint">Password or passphrase. May be empty.</string>
 
 </resources>
