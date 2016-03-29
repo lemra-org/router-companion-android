@@ -84,6 +84,11 @@ public class ReviewStep extends MaterialWizardStep {
     public ReviewStep() {
     }
 
+    @Override
+    public String getWizardStepTitle() {
+        return "Review";
+    }
+
     //Set your layout here
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

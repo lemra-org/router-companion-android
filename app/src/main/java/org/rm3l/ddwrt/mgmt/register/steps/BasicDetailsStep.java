@@ -62,6 +62,11 @@ public class BasicDetailsStep extends MaterialWizardStep {
     public BasicDetailsStep() {
     }
 
+    @Override
+    public String getWizardStepTitle() {
+        return "Basic xxx";
+    }
+
     //Set your layout here
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

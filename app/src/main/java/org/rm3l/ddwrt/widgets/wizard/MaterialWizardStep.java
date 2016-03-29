@@ -44,6 +44,10 @@ public abstract class MaterialWizardStep extends WizardStep implements WizardSte
         }
     }
 
+    public String getWizardStepTitle() {
+        return null;
+    }
+
     /**
      * Called whenever the wizard proceeds to the next step or goes back to the previous step
      */

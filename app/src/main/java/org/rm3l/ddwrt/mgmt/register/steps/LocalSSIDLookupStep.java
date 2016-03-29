@@ -72,6 +72,11 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
     public LocalSSIDLookupStep() {
     }
 
+    @Override
+    public String getWizardStepTitle() {
+        return "Local SSID Lookup";
+    }
+
     //Set your layout here
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,

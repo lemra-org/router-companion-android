@@ -101,6 +101,11 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
     public RouterConnectionDetailsStep() {
     }
 
+    @Override
+    public String getWizardStepTitle() {
+        return "Connection Details";
+    }
+
     //Set your layout here
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

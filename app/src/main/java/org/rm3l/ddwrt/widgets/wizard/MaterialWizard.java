@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
@@ -39,6 +40,8 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
     private Button previousButton;
     private Button cancelButton;
 
+    private TextView mCurrentStepTitle;
+
     //You must have an empty constructor according to Fragment documentation
     public MaterialWizard() {
     }
@@ -48,7 +51,8 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View mWizardLayout = inflater.inflate(R.layout.wizard, container, false);
+        final View mWizardLayout = inflater.inflate(R.layout.wizard, container, false);
+        mCurrentStepTitle = (TextView) mWizardLayout.findViewById(R.id.wizard_current_step_title);
         mPager = (ViewPagerWithAllowedSwipeDirection) mWizardLayout.findViewById(R.id.step_container);
         mPager.setAllowedSwipeDirection(ViewPagerWithAllowedSwipeDirection.SwipeDirection.LEFT);
         mPager.setOffscreenPageLimit(1);
@@ -144,6 +148,7 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
                 if (stepValidated) {
                     currentStep.onExitSynchronous(WizardStep.EXIT_NEXT);
                     wizard.goNext();
+                    mCurrentStepTitle.setText(currentStep.getWizardStepTitle());
                 }
                 //Maybe provide a 'denial' animation
                 break;
@@ -151,6 +156,7 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
                 //Tell the wizard to go back one step
                 currentStep.onExitSynchronous(WizardStep.EXIT_PREVIOUS);
                 wizard.goBack();
+                mCurrentStepTitle.setText(currentStep.getWizardStepTitle());
                 break;
             case R.id.wizard_cancel_button:
                 final SharedPreferences globalPrefs = this.getContext()

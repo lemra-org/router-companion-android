@@ -3,7 +3,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:fitsSystemWindows="true">
 
     <View
         android:id="@+id/horizontal_line"
@@ -73,7 +74,7 @@
                 android:id="@+id/backdrop"
                 android:src="@drawable/bg_add_router"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="250dp"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax" />
@@ -86,12 +87,29 @@
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 android:title="Toolbar Title">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Application Title"
-                    android:textColor="#fff"
-                    android:textSize="18sp" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Register a Router\n"
+                        android:textColor="#fff"
+                        android:textAppearance="?android:textAppearanceLarge"
+                        android:textStyle="bold"
+                        android:layout_gravity="start"/>
+
+                    <TextView
+                        android:id="@+id/wizard_current_step_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="-"
+                        android:textColor="#fff"
+                        android:layout_gravity="end"/>
+
+                </LinearLayout>
 
             </android.support.v7.widget.Toolbar>
 
