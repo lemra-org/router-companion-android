@@ -227,10 +227,10 @@ public class ReviewStep extends MaterialWizardStep {
         username = usernameObj != null ? usernameObj.toString() : "-";
 
         final Object passwordObj = wizardContext.get("password");
-        password = passwordObj != null ? Encrypted.d(passwordObj.toString()) : "-";
+        password = passwordObj != null ? Encrypted.d(passwordObj.toString()) : null;
 
         final Object privkeyButtonHintObj = wizardContext.get("privkeyButtonHint");
-        privkeyButtonHint = privkeyButtonHintObj != null ? privkeyButtonHintObj.toString() : "-";
+        privkeyButtonHint = privkeyButtonHintObj != null ? privkeyButtonHintObj.toString() : null;
 
         final Object privkeyPathObj = wizardContext.get("privkeyPath");
         if (privkeyPathObj != null) {

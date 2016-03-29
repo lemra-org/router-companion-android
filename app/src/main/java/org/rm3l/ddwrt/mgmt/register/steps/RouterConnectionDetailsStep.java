@@ -11,6 +11,7 @@ import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -24,7 +25,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioGroup;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -38,7 +38,6 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ReportingUtils;
-import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.ViewGroupUtils;
 import org.rm3l.ddwrt.widgets.wizard.MaterialWizardStep;
 
@@ -67,7 +66,7 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
     private String username;
 
     @ContextVariable
-    private Integer authMethod;
+    private int authMethod;
 
     @ContextVariable
     private String password;
@@ -236,20 +235,18 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
         });
 
         //and set default values by using Context Variables
-        if (authMethod != null) {
-            switch (authMethod) {
-                case Router.SSHAuthenticationMethod_NONE:
-                    authMethodRg.check(R.id.router_add_ssh_auth_method_none);
-                    break;
-                case Router.SSHAuthenticationMethod_PASSWORD:
-                    authMethodRg.check(R.id.router_add_ssh_auth_method_password);
-                    break;
-                case Router.SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY:
-                    authMethodRg.check(R.id.router_add_ssh_auth_method_privkey);
-                    break;
-                default:
-                    break;
-            }
+        switch (authMethod) {
+            case Router.SSHAuthenticationMethod_NONE:
+                authMethodRg.check(R.id.router_add_ssh_auth_method_none);
+                break;
+            case Router.SSHAuthenticationMethod_PASSWORD:
+                authMethodRg.check(R.id.router_add_ssh_auth_method_password);
+                break;
+            case Router.SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY:
+                authMethodRg.check(R.id.router_add_ssh_auth_method_privkey);
+                break;
+            default:
+                break;
         }
 
         usernameEt.setText(username != null ? username : "root");
@@ -403,7 +400,7 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
     @Override
     public boolean validateStep() {
 //        final FragmentActivity activity = getActivity();
-        final ScrollView contentScrollView = (ScrollView) rootView
+        final NestedScrollView contentScrollView = (NestedScrollView) rootView
                 .findViewById(R.id.router_add_content_scroll_view);
 
         boolean validPort;
@@ -419,7 +416,7 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
         portInputLayout.setErrorEnabled(!validPort);
         if (!validPort) {
             portInputLayout.setError(getString(R.string.router_add_port_invalid));
-            Utils.scrollToView(contentScrollView, portEt);
+//            Utils.scrollToView(contentScrollView, portEt);
 //            portEt.requestFocus();
 //            openKeyboard(activity, portEt);
             return false;
@@ -431,7 +428,7 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
         if (isNullOrEmpty(usernameEt.getText().toString())) {
             sshLoginInputLayout.setErrorEnabled(true);
             sshLoginInputLayout.setError(getString(R.string.router_add_username_invalid));
-            Utils.scrollToView(contentScrollView, usernameEt);
+//            Utils.scrollToView(contentScrollView, usernameEt);
 //            usernameEt.requestFocus();
 //            openKeyboard(activity, usernameEt);
             return false;

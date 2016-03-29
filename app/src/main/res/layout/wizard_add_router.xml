@@ -4,17 +4,17 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:layout_gravity="center|top"
-        android:textColor="@color/white"
-        android:text="Register a Router"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textStyle="bold"
-        android:gravity="center"/>
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="?attr/colorPrimary"-->
+        <!--android:minHeight="?attr/actionBarSize"-->
+        <!--android:layout_gravity="center|top"-->
+        <!--android:textColor="@color/white"-->
+        <!--android:text="Register a Router"-->
+        <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
+        <!--android:textStyle="bold"-->
+        <!--android:gravity="center"/>-->
 
     <fragment
         android:id="@+id/wizard_add_router_fragment"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView
+<android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/wizard_add_router_review_content_scroll_view"
     android:layout_height="match_parent"
@@ -224,4 +224,4 @@
             android:text="Show Password"/>
 
     </LinearLayout>
-</ScrollView>
+</android.support.v4.widget.NestedScrollView>
