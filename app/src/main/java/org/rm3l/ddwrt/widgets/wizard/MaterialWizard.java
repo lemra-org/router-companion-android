@@ -3,7 +3,12 @@ package org.rm3l.ddwrt.widgets.wizard;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +19,15 @@ import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import org.codepond.wizardroid.WizardFlow;
 import org.codepond.wizardroid.WizardFragment;
 import org.codepond.wizardroid.WizardStep;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.events.bus.BusSingleton;
+import org.rm3l.ddwrt.events.wizard.WizardStepVisibleToUserEvent;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.widgets.ViewPagerWithAllowedSwipeDirection;
 
@@ -26,10 +35,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import me.relex.circleindicator.CircleIndicator;
+
 /**
  * Created by rm3l on 14/03/16.
  */
 public abstract class MaterialWizard extends WizardFragment implements View.OnClickListener {
+
+    private static final String LOG_TAG = MaterialWizard.class.getSimpleName();
 
     public static final GsonBuilder GSON_BUILDER = new GsonBuilder();
     public static final String CURRENT_WIZARD_CONTEXT_PREF_KEY = \"fake-key\";
@@ -40,22 +53,46 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
     private Button previousButton;
     private Button cancelButton;
 
-    private TextView mCurrentStepTitle;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
+    private TextView wizardSubTitle;
+    private CircleIndicator indicator;
 
     //You must have an empty constructor according to Fragment documentation
     public MaterialWizard() {
     }
+
+    @NonNull
+    protected abstract String getWizardTitle();
 
     /**
      * Binding the layout and setting buttons hooks
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final Context context = getContext();
+
         final View mWizardLayout = inflater.inflate(R.layout.wizard, container, false);
-        mCurrentStepTitle = (TextView) mWizardLayout.findViewById(R.id.wizard_current_step_title);
+
+        wizardSubTitle = (TextView) mWizardLayout.findViewById(R.id.wizard_subtitle);
+
+        collapsingToolbarLayout = (CollapsingToolbarLayout) mWizardLayout.findViewById(R.id.htab_collapse_toolbar);
+        collapsingToolbarLayout.setTitleEnabled(true);
+        collapsingToolbarLayout.setCollapsedTitleTextColor(
+                ContextCompat.getColor(getContext(), R.color.white));
+        collapsingToolbarLayout.setExpandedTitleColor(
+                ContextCompat.getColor(getContext(), R.color.white));
+        String wizardTitle = getWizardTitle();
+        if (TextUtils.isEmpty(wizardTitle)) {
+            wizardTitle = "Wizard";
+        }
+        collapsingToolbarLayout.setTitle(wizardTitle);
+
         mPager = (ViewPagerWithAllowedSwipeDirection) mWizardLayout.findViewById(R.id.step_container);
-        mPager.setAllowedSwipeDirection(ViewPagerWithAllowedSwipeDirection.SwipeDirection.LEFT);
+        mPager.setAllowedSwipeDirection(ViewPagerWithAllowedSwipeDirection.SwipeDirection.NONE);
         mPager.setOffscreenPageLimit(1);
+
+        indicator = (CircleIndicator) mWizardLayout.findViewById(R.id.indicator);
+
         nextButton = (Button) mWizardLayout.findViewById(R.id.wizard_next_button);
         if (!Strings.isNullOrEmpty(getNextButtonLabel())) {
             nextButton.setText(getNextButtonLabel());
@@ -75,6 +112,27 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
         return mWizardLayout;
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        indicator.setViewPager(mPager);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        final Bus busInstance = BusSingleton.getBusInstance();
+        Crashlytics.log(Log.DEBUG, LOG_TAG, "onStart: Register on bus (" + busInstance + ")");
+        busInstance.register(this);
+    }
+
+    @Override
+    public void onStop() {
+        final Bus busInstance = BusSingleton.getBusInstance();
+        Crashlytics.log(Log.DEBUG, LOG_TAG, "onStop: Unregister from bus (" + busInstance + ")");
+        busInstance.unregister(this);
+        super.onStop();
+    }
 
     //You must override this method and create a wizard flow by
     //using WizardFlow.Builder as shown in this example
@@ -141,7 +199,6 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
         Crashlytics.log("onclick");
         final MaterialWizardStep currentStep = (MaterialWizardStep) wizard.getCurrentStep();
         switch(v.getId()) {
-            //FIXME Set wizard subtitle in each step (onVisibleToUser), rather than here
             case R.id.wizard_next_button:
                 //Tell the wizard to go to next step
                 final boolean stepValidated = currentStep.validateStep();
@@ -149,7 +206,6 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
                 if (stepValidated) {
                     currentStep.onExitSynchronous(WizardStep.EXIT_NEXT);
                     wizard.goNext();
-                    mCurrentStepTitle.setText(currentStep.getWizardStepTitle());
                 }
                 //Maybe provide a 'denial' animation
                 break;
@@ -157,7 +213,6 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
                 //Tell the wizard to go back one step
                 currentStep.onExitSynchronous(WizardStep.EXIT_PREVIOUS);
                 wizard.goBack();
-                mCurrentStepTitle.setText(currentStep.getWizardStepTitle());
                 break;
             case R.id.wizard_cancel_button:
                 final SharedPreferences globalPrefs = this.getContext()
@@ -170,9 +225,18 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
         }
     }
 
+    @Subscribe
+    public void wizardStepVisibleToUser(final WizardStepVisibleToUserEvent event) {
+        final String eventStepTitle = event.getStepTitle();
+        Crashlytics.log(Log.DEBUG, LOG_TAG, "wizardStepVisibleToUser(" + eventStepTitle + ")");
+        wizardSubTitle.setText(eventStepTitle);
+    }
+
     @Override
     public void onStepChanged() {
         super.onStepChanged();
+        final MaterialWizardStep currentStep = (MaterialWizardStep) wizard.getCurrentStep();
+        wizardSubTitle.setText(currentStep.getWizardStepTitle());
         this.updateWizardControls();
     }
 

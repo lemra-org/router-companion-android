@@ -6,10 +6,14 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Produce;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codepond.wizardroid.WizardStep;
 import org.codepond.wizardroid.persistence.ContextVariable;
+import org.rm3l.ddwrt.events.bus.BusSingleton;
+import org.rm3l.ddwrt.events.wizard.WizardStepVisibleToUserEvent;
 import org.rm3l.ddwrt.resources.Encrypted;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
@@ -23,6 +27,10 @@ import static org.rm3l.ddwrt.widgets.wizard.MaterialWizard.CURRENT_WIZARD_CONTEX
  * Created by rm3l on 28/03/16.
  */
 public abstract class MaterialWizardStep extends WizardStep implements WizardStepVerifiable {
+
+    private static final String LOG_TAG = MaterialWizardStep.class.getSimpleName();
+
+    protected final Bus busInstance = BusSingleton.getBusInstance();
 
     // create boolean for fetching data
     protected boolean isViewShown = false;
@@ -53,18 +61,6 @@ public abstract class MaterialWizardStep extends WizardStep implements WizardSte
      */
     @Override
     public final void onExit(int exitCode) {
-//        throw new UnsupportedOperationException("Use onExitSynchronous() instead");
-//        switch (exitCode) {
-//            case WizardStep.EXIT_NEXT:
-//                Log.d(this.getClass().getSimpleName(), "onExit( NEXT> )");
-//                this.onExitNext();
-//                this.doPersistContextVariableFields();
-//                break;
-//            case WizardStep.EXIT_PREVIOUS:
-//                Log.d(this.getClass().getSimpleName(), "onExit( <PREVIOUS )");
-//                //Do nothing...
-//                break;
-//        }
     }
 
     @Override
@@ -75,15 +71,37 @@ public abstract class MaterialWizardStep extends WizardStep implements WizardSte
         if (getView() != null) {
             isViewShown = true;
             if (isVisibleToUser) {
-                //FIXME Set wizard title here (rather than in Wizard#onClick)
+                busInstance.register(this);
                 this.onVisibleToUser();
+                Crashlytics.log(Log.DEBUG, LOG_TAG,
+                        "POST event wizardStepVisibleToUser(" + getWizardStepTitle() + ") on bus " +
+                                busInstance);
+                busInstance.post(
+                        new WizardStepVisibleToUserEvent(this.getWizardStepTitle()));
+            } else {
+                busInstance.unregister(this);
+                onHiddenToUser();
             }
         } else {
+            busInstance.unregister(this);
             isViewShown = false;
+            onHiddenToUser();
         }
     }
 
-    protected abstract void onVisibleToUser();
+    /**
+     * Override this if needed
+     */
+    protected void onVisibleToUser() {
+
+    }
+
+    /**
+     * Override this if needed
+     */
+    protected void onHiddenToUser() {
+
+    }
 
     /**
      * Override this to enable persist context variable fields
@@ -130,4 +148,10 @@ public abstract class MaterialWizardStep extends WizardStep implements WizardSte
             Crashlytics.logException(e);
         }
     }
+
+    @Produce
+    public WizardStepVisibleToUserEvent produceInitialEvent() {
+        return new WizardStepVisibleToUserEvent(this.getWizardStepTitle());
+    }
+
 }

@@ -1,73 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/router_add_content_scroll_view"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_margin="20dp"
-    android:orientation="vertical"
-    android:weightSum="8">
+    android:layout_margin="20dp">
 
-    <CheckBox
-        android:id="@+id/router_add_local_ssid_lookup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_weight="1"
-        android:text="Use local SSID Lookup"/>
-
-    <!-- Hidden - not really relevant -->
-    <CheckBox
-        android:id="@+id/router_add_fallback_to_primary"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Fallback to primary IP/DNS if needed"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_weight="1"
-        android:visibility="gone"/>
-
-
-    <RelativeLayout
-        android:id="@+id/router_add_local_ssid_section"
-        android:layout_marginTop="4dp"
-        android:layout_width="match_parent"
+    <LinearLayout android:id="@+id/router_add_content_scroll_view"
         android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_margin="20dp"
         android:orientation="vertical"
-        android:visibility="visible"
-        android:layout_marginBottom="12dp"
-        android:layout_weight="5">
+        android:weightSum="8">
 
-        <android.support.v4.widget.NestedScrollView
+        <CheckBox
+            android:id="@+id/router_add_local_ssid_lookup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="none">
-            <LinearLayout
-                android:id="@+id/router_add_local_ssid_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"/>
-        </android.support.v4.widget.NestedScrollView>
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_weight="1"
+            android:text="Use local SSID Lookup"/>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/router_add_local_ssid_button"
-            android:contentDescription="Add local SSID"
-            android:src="@android:drawable/ic_input_add"
-            android:tint="@android:color/white"
+        <!-- Hidden - not really relevant -->
+        <CheckBox
+            android:id="@+id/router_add_fallback_to_primary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            app:elevation="6dp"
-            app:pressedTranslationZ="12dp"
-            app:layout_anchorGravity="bottom|right|end"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:text="Fallback to primary IP/DNS if needed"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_weight="1"
+            android:visibility="gone"/>
 
-    </RelativeLayout>
 
-</LinearLayout>
+        <RelativeLayout
+            android:id="@+id/router_add_local_ssid_section"
+            android:layout_marginTop="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="visible"
+            android:layout_marginBottom="12dp"
+            android:layout_weight="5">
+
+            <android.support.v4.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none">
+                <LinearLayout
+                    android:id="@+id/router_add_local_ssid_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"/>
+            </android.support.v4.widget.NestedScrollView>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/router_add_local_ssid_button"
+                android:contentDescription="Add local SSID"
+                android:src="@android:drawable/ic_input_add"
+                android:tint="@android:color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                app:elevation="6dp"
+                app:pressedTranslationZ="12dp"
+                app:layout_anchorGravity="bottom|right|end"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

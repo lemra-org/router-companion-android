@@ -245,12 +245,11 @@ public class ReviewStep extends MaterialWizardStep {
         final Object authMethodObj = wizardContext.get("authMethod");
         if (authMethodObj != null) {
             try {
-                authMethod = Integer.parseInt(authMethodObj.toString());
+                authMethod = Float.valueOf(authMethodObj.toString()).intValue();
             } catch (final NumberFormatException e) {
                 e.printStackTrace();
             }
         }
-
     }
 
     private Router buildRouter()  {

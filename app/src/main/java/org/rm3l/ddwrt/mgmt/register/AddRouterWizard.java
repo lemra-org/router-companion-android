@@ -1,5 +1,6 @@
 package org.rm3l.ddwrt.mgmt.register;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.codepond.wizardroid.WizardStep;
@@ -23,6 +24,12 @@ public class AddRouterWizard extends MaterialWizard {
      */
     public AddRouterWizard() {
         super();
+    }
+
+    @NonNull
+    @Override
+    protected String getWizardTitle() {
+        return "Register a Router";
     }
 
     @SuppressWarnings("unchecked")

@@ -10,6 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <LinearLayout android:focusable="true"
+            android:focusableInTouchMode="true" android:layout_width="0px"
+            android:layout_height="0px" />
+
         <!-- UUID -->
         <TextView
             android:id="@+id/router_add_uuid"
