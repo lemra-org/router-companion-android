@@ -82,10 +82,20 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="100dp"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                android:title="Toolbar Title">
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                <!-- Used to be ?attr/actionBarSize for the height -->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/wizard_current_step_title"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="Register Router"-->
+                    <!--android:textColor="#fff"-->
+                    <!--android:textAppearance="?android:textAppearanceMedium"-->
+                    <!--android:layout_gravity="end"-->
+                    <!--android:gravity="end"/>-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -93,21 +103,23 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Register a Router\n"
                         android:textColor="#fff"
                         android:textAppearance="?android:textAppearanceLarge"
                         android:textStyle="bold"
-                        android:layout_gravity="start"/>
+                        android:layout_gravity="start"
+                        android:gravity="start"/>
 
                     <TextView
                         android:id="@+id/wizard_current_step_title"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="-"
                         android:textColor="#fff"
-                        android:layout_gravity="end"/>
+                        android:layout_gravity="end"
+                        android:gravity="end"/>
 
                 </LinearLayout>
 
