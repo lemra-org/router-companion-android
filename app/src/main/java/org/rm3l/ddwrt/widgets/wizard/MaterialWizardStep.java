@@ -75,6 +75,7 @@ public abstract class MaterialWizardStep extends WizardStep implements WizardSte
         if (getView() != null) {
             isViewShown = true;
             if (isVisibleToUser) {
+                //FIXME Set wizard title here (rather than in Wizard#onClick)
                 this.onVisibleToUser();
             }
         } else {

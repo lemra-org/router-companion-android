@@ -141,6 +141,7 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
         Crashlytics.log("onclick");
         final MaterialWizardStep currentStep = (MaterialWizardStep) wizard.getCurrentStep();
         switch(v.getId()) {
+            //FIXME Set wizard subtitle in each step (onVisibleToUser), rather than here
             case R.id.wizard_next_button:
                 //Tell the wizard to go to next step
                 final boolean stepValidated = currentStep.validateStep();
