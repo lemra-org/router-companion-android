@@ -489,7 +489,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".mgmt.register.AddRouterFragmentActivity"
             android:label="Add Router"
             android:parentActivityName=".mgmt.RouterManagementActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             android:configChanges="orientation|screenSize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
