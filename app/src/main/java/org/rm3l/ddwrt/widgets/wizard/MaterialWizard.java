@@ -7,12 +7,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
@@ -35,12 +38,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import me.relex.circleindicator.CircleIndicator;
-
 /**
  * Created by rm3l on 14/03/16.
  */
-public abstract class MaterialWizard extends WizardFragment implements View.OnClickListener {
+public abstract class MaterialWizard extends WizardFragment implements View.OnClickListener, ViewPager.OnPageChangeListener {
 
     private static final String LOG_TAG = MaterialWizard.class.getSimpleName();
 
@@ -51,11 +52,14 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
 
     private Button nextButton;
     private Button previousButton;
-    private Button cancelButton;
+//    private Button cancelButton;
 
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private TextView wizardSubTitle;
-    private CircleIndicator indicator;
+
+    private LinearLayout pager_indicator;
+    private int dotsCount;
+    private ImageView[] dots;
 
     //You must have an empty constructor according to Fragment documentation
     public MaterialWizard() {
@@ -63,6 +67,11 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
 
     @NonNull
     protected abstract String getWizardTitle();
+
+    @Nullable
+    protected String getFirstStepWizardSubTitle() {
+        return null;
+    }
 
     /**
      * Binding the layout and setting buttons hooks
@@ -74,6 +83,8 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
         final View mWizardLayout = inflater.inflate(R.layout.wizard, container, false);
 
         wizardSubTitle = (TextView) mWizardLayout.findViewById(R.id.wizard_subtitle);
+
+        pager_indicator = (LinearLayout) mWizardLayout.findViewById(R.id.viewPagerCountDots);
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) mWizardLayout.findViewById(R.id.htab_collapse_toolbar);
         collapsingToolbarLayout.setTitleEnabled(true);
@@ -87,11 +98,11 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
         }
         collapsingToolbarLayout.setTitle(wizardTitle);
 
+        wizardSubTitle.setText(getFirstStepWizardSubTitle());
+
         mPager = (ViewPagerWithAllowedSwipeDirection) mWizardLayout.findViewById(R.id.step_container);
         mPager.setAllowedSwipeDirection(ViewPagerWithAllowedSwipeDirection.SwipeDirection.NONE);
         mPager.setOffscreenPageLimit(1);
-
-        indicator = (CircleIndicator) mWizardLayout.findViewById(R.id.indicator);
 
         nextButton = (Button) mWizardLayout.findViewById(R.id.wizard_next_button);
         if (!Strings.isNullOrEmpty(getNextButtonLabel())) {
@@ -100,22 +111,50 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
         nextButton.setOnClickListener(this);
 
         previousButton = (Button) mWizardLayout.findViewById(R.id.wizard_previous_button);
-        if (!Strings.isNullOrEmpty(getPreviousButtonLabel())) {
-            previousButton.setText(getPreviousButtonLabel());
-        }
+//        if (!Strings.isNullOrEmpty(getPreviousButtonLabel())) {
+//            previousButton.setText(getPreviousButtonLabel());
+//        }
         previousButton.setOnClickListener(this);
 
-        cancelButton = (Button) mWizardLayout.findViewById(R.id.wizard_cancel_button);
-        cancelButton.setOnClickListener(this);
-        this.cancelButton.setEnabled(true);
+        mPager.addOnPageChangeListener(this);
+
+//        cancelButton = (Button) mWizardLayout.findViewById(R.id.wizard_cancel_button);
+//        cancelButton.setOnClickListener(this);
+//        this.cancelButton.setEnabled(true);
 
         return mWizardLayout;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        indicator.setViewPager(mPager);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setUiPageViewController();
+    }
+
+    private void setUiPageViewController() {
+
+        dotsCount = mPager.getAdapter().getCount();
+        dots = new ImageView[dotsCount];
+
+        final Context context = getContext();
+
+        for (int i = 0; i < dotsCount; i++) {
+            dots[i] = new ImageView(context);
+            dots[i].setImageDrawable(ContextCompat.getDrawable(context,
+                    R.drawable.nonselecteditem_dot));
+
+            final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+
+            params.setMargins(4, 0, 4, 0);
+
+            pager_indicator.addView(dots[i], params);
+        }
+
+        dots[0].setImageDrawable(ContextCompat.getDrawable(context,
+                R.drawable.selecteditem_dot));
     }
 
     @Override
@@ -198,6 +237,7 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
     public final void onClick(View v) {
         Crashlytics.log("onclick");
         final MaterialWizardStep currentStep = (MaterialWizardStep) wizard.getCurrentStep();
+
         switch(v.getId()) {
             case R.id.wizard_next_button:
                 //Tell the wizard to go to next step
@@ -214,14 +254,14 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
                 currentStep.onExitSynchronous(WizardStep.EXIT_PREVIOUS);
                 wizard.goBack();
                 break;
-            case R.id.wizard_cancel_button:
-                final SharedPreferences globalPrefs = this.getContext()
-                        .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                                Context.MODE_PRIVATE);
-                globalPrefs.edit().remove(CURRENT_WIZARD_CONTEXT_PREF_KEY).apply();
-                //Close wizard
-                getActivity().finish();
-                break;
+//            case R.id.wizard_cancel_button:
+//                final SharedPreferences globalPrefs = this.getContext()
+//                        .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+//                                Context.MODE_PRIVATE);
+//                globalPrefs.edit().remove(CURRENT_WIZARD_CONTEXT_PREF_KEY).apply();
+//                //Close wizard
+//                getActivity().finish();
+//                break;
         }
     }
 
@@ -244,7 +284,7 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
      * Updates the UI according to current step position
      */
     private void updateWizardControls() {
-        this.cancelButton.setEnabled(true);
+//        this.cancelButton.setEnabled(true);
 
         final boolean previousButtonEnabled = !this.wizard.isFirstStep();
         this.previousButton.setEnabled(previousButtonEnabled);
@@ -295,4 +335,24 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
         return null;
     }
 
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        final Context context = getContext();
+        for (int i = 0; i < dotsCount; i++) {
+            dots[i].setImageDrawable(ContextCompat.getDrawable(context,
+                    R.drawable.nonselecteditem_dot));
+        }
+        dots[position].setImageDrawable(ContextCompat.getDrawable(context,
+                R.drawable.selecteditem_dot));
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
 }

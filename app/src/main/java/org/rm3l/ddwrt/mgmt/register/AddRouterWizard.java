@@ -32,6 +32,12 @@ public class AddRouterWizard extends MaterialWizard {
         return "Register a Router";
     }
 
+    @Nullable
+    @Override
+    protected String getFirstStepWizardSubTitle() {
+        return BasicDetailsStep.getTitle();
+    }
+
     @SuppressWarnings("unchecked")
     @Nullable
     @Override

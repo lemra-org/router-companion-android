@@ -62,9 +62,13 @@ public class BasicDetailsStep extends MaterialWizardStep {
     public BasicDetailsStep() {
     }
 
+    public static String getTitle() {
+        return "Basic xxx";
+    }
+
     @Override
     public String getWizardStepTitle() {
-        return "Basic xxx";
+        return getTitle();
     }
 
     //Set your layout here
