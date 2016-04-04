@@ -1,26 +1,40 @@
 package org.rm3l.ddwrt.mgmt.register.steps;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;
+import com.google.common.base.Throwables;
 
+import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.Encrypted;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.ReportingUtils;
+import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.widgets.wizard.MaterialWizard;
 import org.rm3l.ddwrt.widgets.wizard.MaterialWizardStep;
 
@@ -28,11 +42,14 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
 /**
  * Created by rm3l on 21/03/16.
  */
 public class ReviewStep extends MaterialWizardStep {
+
+    private static final String TAG = ReviewStep.class.getSimpleName();
 
     private String uuid;
     private TextView uuidView;
@@ -55,9 +72,10 @@ public class ReviewStep extends MaterialWizardStep {
     private String username;
     private TextView usernameView;
 
-    private Integer authMethod;
-    private RadioGroup authMethodRg;
+    private String authMethod;
+    private TextView authMethodView;
 
+    private TextView authMethodHidden;
     private String password;
     private EditText passwordView;
 
@@ -86,7 +104,7 @@ public class ReviewStep extends MaterialWizardStep {
 
     @Override
     public String getWizardStepTitle() {
-        return "Review";
+        return "Review your changes";
     }
 
     //Set your layout here
@@ -108,7 +126,8 @@ public class ReviewStep extends MaterialWizardStep {
         connectionProtocolView = (TextView) v.findViewById(R.id.wizard_add_router_review_router_conn_proto);
         portView = (TextView) v.findViewById(R.id.wizard_add_router_review_router_conn_proto_ssh_port);
         usernameView = (TextView) v.findViewById(R.id.wizard_add_router_review_router_conn_proto_ssh_username);
-        authMethodRg = (RadioGroup) v.findViewById(R.id.wizard_add_router_review_ssh_auth_method);
+        authMethodView = (TextView) v.findViewById(R.id.wizard_add_router_review_ssh_auth_method);
+        authMethodHidden = (TextView) v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_hidden);
         privkeyButtonHintView = (TextView) v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_privkey_path);
         passwordView = (EditText) v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_password_value);
 
@@ -126,43 +145,80 @@ public class ReviewStep extends MaterialWizardStep {
                         passwordView.setEnabled(false);
                     }
                 });
-        authMethodRg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+        authMethodView.setVisibility(View.VISIBLE);
+
+        authMethodHidden.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                final TextView privkeyHdrView = (TextView)
-                        v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_privkey_hdr);
-                final TextView passwordHdrView = (TextView)
-                        v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_password_hdr);
-                switch (checkedId) {
-                    case R.id.router_add_ssh_auth_method_none:
-                        privkeyHdrView.setVisibility(View.GONE);
-                        privkeyButtonHintView.setText(null);
-                        privkeyButtonHintView.setVisibility(View.GONE);
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-                        passwordHdrView.setVisibility(View.GONE);
-                        passwordView.setText(null);
-                        showPasswordCheckBox.setVisibility(View.GONE);
-                        break;
-                    case R.id.router_add_ssh_auth_method_password:
-                        privkeyHdrView.setVisibility(View.GONE);
-                        privkeyButtonHintView.setText(null);
-                        privkeyButtonHintView.setVisibility(View.GONE);
+            }
 
-                        passwordHdrView.setVisibility(View.VISIBLE);
-                        passwordView.setText(password);
-                        showPasswordCheckBox.setVisibility(View.VISIBLE);
-                        break;
-                    case R.id.router_add_ssh_auth_method_privkey:
-                        privkeyHdrView.setVisibility(View.VISIBLE);
-                        privkeyButtonHintView.setText(privkeyButtonHint);
-                        privkeyButtonHintView.setVisibility(View.VISIBLE);
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                        passwordHdrView.setVisibility(View.GONE);
-                        passwordView.setText(null);
-                        showPasswordCheckBox.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                final String valueString = s.toString();
+                try {
+                    final TextView privkeyHdrView = (TextView)
+                            v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_privkey_hdr);
+                    final TextView passwordHdrView = (TextView)
+                            v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_password_hdr);
+                    switch (Integer.parseInt(valueString)) {
+                        case Router.SSHAuthenticationMethod_PASSWORD: {
+                            authMethodView.setText("Password");
+                            privkeyHdrView.setVisibility(View.GONE);
+                            privkeyButtonHintView.setText(null);
+                            privkeyButtonHintView.setVisibility(View.GONE);
+
+                            passwordHdrView.setVisibility(View.VISIBLE);
+                            passwordView.setText(password);
+                            passwordView.setVisibility(View.VISIBLE);
+                            showPasswordCheckBox.setVisibility(View.VISIBLE);
+                        }
+                            break;
+                        case Router.SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY: {
+                            authMethodView.setText("Private Key");
+                            privkeyHdrView.setVisibility(View.VISIBLE);
+                            privkeyButtonHintView.setText(privkeyButtonHint);
+                            privkeyButtonHintView.setVisibility(View.VISIBLE);
+
+                            final Map wizardContext = MaterialWizard.getWizardContext(getContext());
+                            final Object passwordObj = wizardContext.get("password");
+                            final String unencryptedPassword;
+                            if (passwordObj == null || (unencryptedPassword =
+                                    Encrypted.d(passwordObj.toString())) == null
+                                    || unencryptedPassword.isEmpty()) {
+                                passwordHdrView.setVisibility(View.GONE);
+                                passwordView.setVisibility(View.GONE);
+                                passwordView.setText(null);
+                                showPasswordCheckBox.setVisibility(View.GONE);
+                            } else {
+                                passwordHdrView.setVisibility(View.VISIBLE);
+                                passwordView.setVisibility(View.VISIBLE);
+                                passwordView.setText(unencryptedPassword);
+                                showPasswordCheckBox.setVisibility(View.VISIBLE);
+                            }
+                        }
+                            break;
+                        case Router.SSHAuthenticationMethod_NONE:
+                        default: {
+                            authMethodView.setText("None");
+                            privkeyHdrView.setVisibility(View.GONE);
+                            privkeyButtonHintView.setText(null);
+                            privkeyButtonHintView.setVisibility(View.GONE);
+                            passwordHdrView.setVisibility(View.GONE);
+                            passwordView.setVisibility(View.GONE);
+                            passwordView.setText(null);
+                            showPasswordCheckBox.setVisibility(View.GONE);
+                        }
                         break;
-                    default:
-                        break;
+                    }
+                } catch (final NumberFormatException nfe) {
+                    nfe.printStackTrace();
                 }
             }
         });
@@ -188,20 +244,9 @@ public class ReviewStep extends MaterialWizardStep {
             usernameView.setText(isNullOrEmpty(username) ? "-" : username );
             passwordView.setText(isNullOrEmpty(password) ? "-" : password );
             privkeyButtonHintView.setText(isNullOrEmpty(privkeyButtonHint) ? "-" : privkeyButtonHint );
+            Crashlytics.log(Log.DEBUG, TAG, "authMethod: [" + authMethod + "]");
             if (authMethod != null) {
-                switch (authMethod) {
-                    case Router.SSHAuthenticationMethod_NONE:
-                        authMethodRg.check(R.id.router_add_ssh_auth_method_none);
-                        break;
-                    case Router.SSHAuthenticationMethod_PASSWORD:
-                        authMethodRg.check(R.id.router_add_ssh_auth_method_password);
-                        break;
-                    case Router.SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY:
-                        authMethodRg.check(R.id.router_add_ssh_auth_method_privkey);
-                        break;
-                    default:
-                        break;
-                }
+                authMethodHidden.setText(authMethod);
             }
         }
     }
@@ -243,9 +288,10 @@ public class ReviewStep extends MaterialWizardStep {
         }
 
         final Object authMethodObj = wizardContext.get("authMethod");
+        Crashlytics.log(Log.DEBUG, TAG, "authMethodObj: " + authMethodObj);
         if (authMethodObj != null) {
             try {
-                authMethod = Float.valueOf(authMethodObj.toString()).intValue();
+                authMethod = authMethodObj.toString();
             } catch (final NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -358,6 +404,169 @@ public class ReviewStep extends MaterialWizardStep {
     @Override
     public boolean validateStep() {
         router = buildRouter();
+        //TODO
         return (router != null);
+    }
+
+    @Nullable
+    private Router doCheckConnectionToRouter() throws Exception {
+        if (isDemoRouter(router)) {
+//            router.setName(DDWRTCompanionConstants.DEMO);
+            return router;
+        }
+
+        //This will throw an exception if connection could not be established!
+        SSHUtils.checkConnection(getActivity(),
+                getContext().getSharedPreferences(
+                        DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                        Context.MODE_PRIVATE), router, 10000);
+
+        return router;
+    }
+
+    public  class CheckRouterConnectionAsyncTask extends AsyncTask<Void, Void, CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router>> {
+
+        private final String routerIpOrDns;
+        private AlertDialog checkingConnectionDialog = null;
+        private boolean checkActualConnection;
+
+        public CheckRouterConnectionAsyncTask(String routerIpOrDns, boolean checkActualConnection) {
+            this.routerIpOrDns = routerIpOrDns;
+            //Disabling 'checkActualConnection' setting, as we are now trying to detect the firmware used
+//            this.checkActualConnection = checkActualConnection;
+            this.checkActualConnection = true;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            if (checkActualConnection) {
+                checkingConnectionDialog = Utils.buildAlertDialog(getActivity(), null,
+                        String.format("Hold on - checking connection to router '%s'...", routerIpOrDns), false, false);
+                checkingConnectionDialog.show();
+            }
+        }
+
+        @Nullable
+        @Override
+        protected CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router> doInBackground(Void... voids) {
+            if (!checkActualConnection) {
+                return new CheckRouterConnectionAsyncTaskResult<>(router, null);
+            }
+            Router result = null;
+            Exception exception = null;
+            try {
+                result = doCheckConnectionToRouter();
+            } catch (Exception e) {
+                e.printStackTrace();
+                exception = e;
+            }
+
+            return new CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<>(result, exception);
+        }
+
+        @Override
+        protected void onPostExecute(@NonNull CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router> result) {
+            if (checkingConnectionDialog != null) {
+                checkingConnectionDialog.cancel();
+            }
+
+            final Exception e = result.getException();
+            Router router = result.getResult();
+            if (e != null) {
+                final Throwable rootCause = Throwables.getRootCause(e);
+                Utils.buildAlertDialog(getActivity(), "Error", getString(R.string.router_add_connection_unsuccessful) +
+                        ": " + (rootCause != null ? rootCause.getMessage() : e.getMessage()), true, true).show();
+                if (StringUtils.containsIgnoreCase(
+                        e.getMessage(),
+                        "End of IO Stream Read")
+                        ||
+                        (rootCause != null &&
+//                          (rootCause instanceof IOException) &&
+                                StringUtils.containsIgnoreCase(
+                                        rootCause.getMessage(),
+                                        "End of IO Stream Read"))) {
+                    //Common issue with some routers
+                    Utils.buildAlertDialog(getActivity(),
+                            "SSH Error: End of IO Stream Read",
+                            "Some firmware builds (like DD-WRT r21061) reportedly have non-working SSH server versions " +
+                                    "(e.g., 'dropbear_2013.56'). \n" +
+                                    "This might be the cause of this error. \n" +
+                                    "Make sure you can manually SSH into the router from a computer, " +
+                                    "using the same credentials you provided to the app. \n" +
+                                    "If the error persists, we recommend you upgrade or downgrade " +
+                                    "your router to a build " +
+                                    "with a working SSH server, then try again.\n\n" +
+                                    "Please reach out to us at apps@rm3l.org for assistance.",
+                            true, true).show();
+                }
+                ReportingUtils.reportException(
+                        null, new DDWRTCompanionExceptionForConnectionChecksException(
+                                router != null ?
+                                        router.toString() : e.getMessage(), e));
+            } else {
+//                if (router != null) {
+//                    AlertDialog daoAlertDialog = null;
+//                    try {
+//                        //Register or update router
+//                        daoAlertDialog = Utils.buildAlertDialog(getActivity(), null,
+//                                String.format("Registering (or updating) router '%s'...", routerIpOrDns), false, false);
+//                        daoAlertDialog.show();
+//                    } finally {
+//                        if (daoAlertDialog != null) {
+//                            daoAlertDialog.cancel();
+//                        }
+//                    }
+//                } else {
+//                    displayMessage(getString(R.string.router_add_internal_error), Style.ALERT);
+//                }
+            }
+
+//            if (AbstractRouterMgmtDialogFragment.this.mListener != null) {
+//                AbstractRouterMgmtDialogFragment.this.onPositiveButtonActionSuccess(
+//                        AbstractRouterMgmtDialogFragment.this.mListener, router, e != null);
+//            }
+
+        }
+
+        @Override
+        protected void onCancelled(CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router> router) {
+            super.onCancelled(router);
+            if (checkingConnectionDialog != null) {
+                checkingConnectionDialog.cancel();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            if (checkingConnectionDialog != null) {
+                checkingConnectionDialog.cancel();
+            }
+        }
+
+        class CheckRouterConnectionAsyncTaskResult<T> {
+            private final T result;
+            private final Exception exception;
+
+            private CheckRouterConnectionAsyncTaskResult(T result, Exception exception) {
+                this.result = result;
+                this.exception = exception;
+            }
+
+            public T getResult() {
+                return result;
+            }
+
+            public Exception getException() {
+                return exception;
+            }
+        }
+
+    }
+
+    private class DDWRTCompanionExceptionForConnectionChecksException extends DDWRTCompanionException {
+        private DDWRTCompanionExceptionForConnectionChecksException(@Nullable String detailMessage, @Nullable Throwable throwable) {
+            super(detailMessage, throwable);
+        }
     }
 }

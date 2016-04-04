@@ -66,7 +66,7 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
     private String username;
 
     @ContextVariable
-    private int authMethod;
+    private String authMethod;
 
     @ContextVariable
     private String password;
@@ -240,18 +240,22 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
         });
 
         //and set default values by using Context Variables
-        switch (authMethod) {
-            case Router.SSHAuthenticationMethod_NONE:
-                authMethodRg.check(R.id.router_add_ssh_auth_method_none);
-                break;
-            case Router.SSHAuthenticationMethod_PASSWORD:
-                authMethodRg.check(R.id.router_add_ssh_auth_method_password);
-                break;
-            case Router.SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY:
-                authMethodRg.check(R.id.router_add_ssh_auth_method_privkey);
-                break;
-            default:
-                break;
+        try {
+            switch (Integer.parseInt(authMethod)) {
+                case Router.SSHAuthenticationMethod_NONE:
+                    authMethodRg.check(R.id.router_add_ssh_auth_method_none);
+                    break;
+                case Router.SSHAuthenticationMethod_PASSWORD:
+                    authMethodRg.check(R.id.router_add_ssh_auth_method_password);
+                    break;
+                case Router.SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY:
+                    authMethodRg.check(R.id.router_add_ssh_auth_method_privkey);
+                    break;
+                default:
+                    break;
+            }
+        } catch (final NumberFormatException nfe) {
+            nfe.printStackTrace();
         }
 
         usernameEt.setText(username != null ? username : "root");
@@ -291,13 +295,13 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
         final int checkedRadioButtonId = authMethodRg.getCheckedRadioButtonId();
         switch (checkedRadioButtonId) {
             case R.id.router_add_ssh_auth_method_none:
-                authMethod = Router.SSHAuthenticationMethod_NONE;
+                authMethod = Integer.toString(Router.SSHAuthenticationMethod_NONE);
                 break;
             case R.id.router_add_ssh_auth_method_password:
-                authMethod = Router.SSHAuthenticationMethod_PASSWORD;
+                authMethod = Integer.toString(Router.SSHAuthenticationMethod_PASSWORD);
                 break;
             case R.id.router_add_ssh_auth_method_privkey:
-                authMethod = Router.SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY;
+                authMethod = Integer.toString(Router.SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY);
                 break;
             default:
                 break;

@@ -74,7 +74,8 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
 
     @Override
     public String getWizardStepTitle() {
-        return "Local SSID Lookup";
+        return "Define alternate IP or DNS names to use, " +
+                "when connected to a network with the specified names.";
     }
 
     //Set your layout here
@@ -189,10 +190,8 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
                         portEditText.setText(port, EDITABLE);
 
                         final AlertDialog addLocalSsidLookupDialog = addLocalSsidLookupDialogBuilder
-                                .setTitle("Add Local SSID Lookup")
-                                .setMessage("This allows you to define an alternate IP or DNS name to use for this router, " +
-                                        "when connected to a network with the specified name.\n" +
-                                        "For example, you may want to set a local IP address when connected to your home network, " +
+                                .setTitle("Add alt. IP / DNS per WiFi")
+                                .setMessage("For example, you may want to set a local IP address when connected to your home network, " +
                                         "and by default use an external DNS name. " +
                                         "This would speed up router data retrieval from the app when at home.")
                                 .setView(addLocalSsidLookupDialogView)

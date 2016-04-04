@@ -145,31 +145,26 @@
             android:textStyle="bold"
             android:layout_marginTop="10dp"
             android:textAppearance="?android:textAppearanceMedium"/>
-        <RadioGroup
+        <TextView
+            android:textIsSelectable="true"
             android:id="@+id/wizard_add_router_review_ssh_auth_method"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <RadioButton
-                android:id="@+id/wizard_add_router_review_ssh_auth_method_none"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="None"
-                android:enabled="false"/>
-            <RadioButton
-                android:id="@+id/wizard_add_router_review_ssh_auth_method_password"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Password"
-                android:enabled="false"/>
-
-            <RadioButton
-                android:id="@+id/wizard_add_router_review_ssh_auth_method_privkey"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Private key"
-                android:enabled="false"/>
-        </RadioGroup>
+            android:layout_gravity="start"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:singleLine="false"
+            android:text="-" />
+        <TextView
+            android:textIsSelectable="true"
+            android:id="@+id/wizard_add_router_review_ssh_auth_method_hidden"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:singleLine="false"
+            android:visibility="gone" />
 
         <!-- Private key -->
         <TextView
