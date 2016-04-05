@@ -24,11 +24,11 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
+import com.google.gson.Gson;
 
 import org.codepond.wizardroid.persistence.ContextVariable;
 import org.rm3l.ddwrt.BuildConfig;
@@ -37,8 +37,10 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.ViewGroupUtils;
+import org.rm3l.ddwrt.widgets.wizard.MaterialWizard;
 import org.rm3l.ddwrt.widgets.wizard.MaterialWizardStep;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.widget.TextView.BufferType.EDITABLE;
@@ -68,6 +70,8 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
     private LinearLayout localSSIDLookupDetailedView;
     private DDWRTCompanionDAO dao;
 
+    private final Gson gson = MaterialWizard.GSON_BUILDER.create();
+
     //Wire the layout to the step
     public LocalSSIDLookupStep() {
     }
@@ -94,15 +98,55 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
 
         fallBackToPrimaryCb.setChecked(fallBackToPrimary);
 
-        final RelativeLayout localSSIDLookupDetail = (RelativeLayout)
-                v.findViewById(R.id.router_add_local_ssid_section);
-
         final View addButton = v.findViewById(R.id.router_add_local_ssid_button);
+
+        localSSIDLookupDetailedView.removeAllViews();
 
         localSSIDLookupDetailedView = (LinearLayout)
                 v.findViewById(R.id.router_add_local_ssid_container);
         if (!TextUtils.isEmpty(localSSIDLookupDetails)) {
-            //TODO Restore state from @ContextVariable
+            final List list = gson.fromJson(localSSIDLookupDetails, List.class);
+            if (list != null) {
+                for (final Object obj : list) {
+                    if (obj == null) {
+                        continue;
+                    }
+                    final TextView localSsidView = new TextView(getContext());
+                    localSsidView.setLayoutParams(new ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT));
+                    localSsidView
+                            .setCompoundDrawablesWithIntrinsicBounds(
+                                    0, 0, android.R.drawable.ic_menu_close_clear_cancel, 0);
+
+                    localSsidView.setText(obj.toString());
+                    localSsidView.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            final int DRAWABLE_RIGHT = 2;
+
+                            if (event.getAction() == MotionEvent.ACTION_UP) {
+                                if (event.getRawX() >= (localSsidView.getRight() -
+                                        localSsidView.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+
+                                    //Remove view from container layout
+                                    final ViewParent parent = localSsidView.getParent();
+                                    if (parent instanceof LinearLayout) {
+                                        ((LinearLayout)parent).removeView(localSsidView);
+                                    }
+                                }
+                            }
+                            return true;
+                        }
+                    });
+
+                    localSSIDLookupDetailedView.addView(localSsidView);
+                    final View lineView = Utils.getLineView(getContext());
+                    if (lineView != null) {
+                        localSSIDLookupDetailedView.addView(lineView);
+                    }
+                }
+            }
         }
 
         useLocalSSIDLookupCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -110,11 +154,11 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     addButton.setVisibility(View.VISIBLE);
-                    localSSIDLookupDetail.setVisibility(View.VISIBLE);
+                    localSSIDLookupDetailedView.setVisibility(View.VISIBLE);
                     fallBackToPrimaryCb.setChecked(false);
                 } else {
-                    addButton.setVisibility(View.GONE);
-                    localSSIDLookupDetail.setVisibility(View.INVISIBLE);
+                    addButton.setVisibility(View.INVISIBLE);
+                    localSSIDLookupDetailedView.setVisibility(View.INVISIBLE);
                     fallBackToPrimaryCb.setChecked(true);
                 }
             }
@@ -316,10 +360,20 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
         useLocalSSIDLookup = useLocalSSIDLookupCb.isChecked();
         fallBackToPrimary = fallBackToPrimaryCb.isChecked();
 
+        final List<CharSequence> localSsidList = new ArrayList<>();
         final List<View> children = ViewGroupUtils
                 .getLinearLayoutChildren(localSSIDLookupDetailedView);
-        //TODO
-
+        for (final View child : children) {
+            if (!(child instanceof TextView)) {
+                continue;
+            }
+            final CharSequence localSsidView = ((TextView) child).getText();
+            if (TextUtils.isEmpty(localSsidView)) {
+                continue;
+            }
+            localSsidList.add(localSsidView);
+        }
+        localSSIDLookupDetails = gson.toJson(localSsidList);
     }
 
     @Override

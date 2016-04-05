@@ -22,6 +22,7 @@
 
 package org.rm3l.ddwrt.utils;
 
+import android.content.Context;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
@@ -142,6 +143,16 @@ public final class ViewGroupUtils {
             }
         }
         return views;
+    }
+
+    @Nullable
+    public static Float dpFromPx(final Context context, final float px) {
+        final float density = context.getResources().getDisplayMetrics().density;
+        return (density != 0 ? (px / density) : null);
+    }
+
+    public static float pxFromDp(final Context context, final float dp) {
+        return dp * context.getResources().getDisplayMetrics().density;
     }
 
 }

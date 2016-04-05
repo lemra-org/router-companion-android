@@ -24,6 +24,7 @@ import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
@@ -38,6 +39,8 @@ import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.widgets.wizard.MaterialWizard;
 import org.rm3l.ddwrt.widgets.wizard.MaterialWizardStep;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -83,16 +86,9 @@ public class ReviewStep extends MaterialWizardStep {
     private TextView privkeyButtonHintView;
 
     private String privkeyPath;
-    private TextView privkeyPathView;
-
-    private boolean fallBackToPrimary;
-    private TextView fallBackToPrimaryView;
 
     private boolean useLocalSSIDLookup;
-    private TextView useLocalSSIDLookupView;
-
-    private String localSSIDLookupDetails; //JSON
-    private TextView localSSIDLookupDetailsView;
+    private List<Router.LocalSSIDLookup> lookups;
 
     private Router router;
 
@@ -296,6 +292,30 @@ public class ReviewStep extends MaterialWizardStep {
                 e.printStackTrace();
             }
         }
+
+        final Object useLocalSSIDLookupObj = wizardContext.get("useLocalSSIDLookup");
+        if (useLocalSSIDLookupObj != null) {
+            useLocalSSIDLookup = BooleanUtils.toBoolean(useLocalSSIDLookupObj.toString());
+        }
+
+        final Object localSSIDLookupDetailsObj = wizardContext.get("localSSIDLookupDetails");
+        lookups = new ArrayList<>();
+        if (localSSIDLookupDetailsObj != null) {
+            final Splitter splitter = Splitter.on("\n").omitEmptyStrings();
+            final List<String> strings = splitter.splitToList(localSSIDLookupDetailsObj.toString());
+            if (strings.size() >= 3) {
+                final Router.LocalSSIDLookup localSSIDLookup = new Router.LocalSSIDLookup();
+                localSSIDLookup.setNetworkSsid(strings.get(0));
+                localSSIDLookup.setReachableAddr(strings.get(1));
+                try {
+                    localSSIDLookup.setPort(Integer.parseInt(strings.get(2)));
+                } catch (final Exception e) {
+                    ReportingUtils.reportException(null, e);
+                    localSSIDLookup.setPort(22); //default SSH port
+                }
+                lookups.add(localSSIDLookup);
+            }
+        }
     }
 
     private Router buildRouter()  {
@@ -358,36 +378,9 @@ public class ReviewStep extends MaterialWizardStep {
         router.setUseLocalSSIDLookup(activity,
                 useLocalSSIDLookup);
         router.setFallbackToPrimaryAddr(activity,
-                fallBackToPrimary);
+                !useLocalSSIDLookup);
 
-        final Splitter splitter = Splitter.on("\n").omitEmptyStrings();
-
-        //Now build SSID data
-//        final LinearLayout container = (LinearLayout) d.findViewById(R.id.router_add_local_ssid_container);
-//        final int childCount = container.getChildCount();
-//        final List<Router.LocalSSIDLookup> lookups = new ArrayList<>();
-//        for (int i = 0; i < childCount; i++){
-//            final View view = container.getChildAt(i);
-//            if (!(view instanceof TextView)) {
-//                continue;
-//            }
-//            final String textViewString = ((TextView) view).getText().toString();
-//            final List<String> strings = splitter.splitToList(textViewString);
-//            if (strings.size() < 3) {
-//                continue;
-//            }
-//            final Router.LocalSSIDLookup localSSIDLookup = new Router.LocalSSIDLookup();
-//            localSSIDLookup.setNetworkSsid(strings.get(0));
-//            localSSIDLookup.setReachableAddr(strings.get(1));
-//            try {
-//                localSSIDLookup.setPort(Integer.parseInt(strings.get(2)));
-//            } catch (final Exception e) {
-//                ReportingUtils.reportException(null, e);
-//                localSSIDLookup.setPort(22); //default SSH port
-//            }
-//            lookups.add(localSSIDLookup);
-//        }
-//        router.setLocalSSIDLookupData(activity, lookups);
+        router.setLocalSSIDLookupData(activity, lookups);
 
         return router;
     }

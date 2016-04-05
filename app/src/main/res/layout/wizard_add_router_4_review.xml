@@ -186,6 +186,7 @@
             android:singleLine="false"
             android:text="-" />
 
+
         <!-- Password / Passphrase -->
         <TextView
             android:id="@+id/wizard_add_router_review_ssh_auth_method_password_hdr"
