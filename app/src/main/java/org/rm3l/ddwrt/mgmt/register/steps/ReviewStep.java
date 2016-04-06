@@ -247,7 +247,11 @@ public class ReviewStep extends MaterialWizardStep {
             if (authMethod != null) {
                 authMethodHidden.setText(authMethod);
             }
-            useLocalSSIDLookupView.setText(BooleanUtils.toStringYesNo(useLocalSSIDLookup));
+            String useLocalSSIDText = BooleanUtils.toStringYesNo(useLocalSSIDLookup);
+            if (useLocalSSIDLookup) {
+                useLocalSSIDText += (" (" + lookups.size() + " lookup entries)");
+            }
+            useLocalSSIDLookupView.setText(useLocalSSIDText);
         }
     }
 
