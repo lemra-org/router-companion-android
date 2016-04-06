@@ -100,10 +100,11 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
 
         final View addButton = v.findViewById(R.id.router_add_local_ssid_button);
 
-        localSSIDLookupDetailedView.removeAllViews();
-
         localSSIDLookupDetailedView = (LinearLayout)
                 v.findViewById(R.id.router_add_local_ssid_container);
+
+        localSSIDLookupDetailedView.removeAllViews();
+
         if (!TextUtils.isEmpty(localSSIDLookupDetails)) {
             final List list = gson.fromJson(localSSIDLookupDetails, List.class);
             if (list != null) {
