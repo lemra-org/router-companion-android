@@ -88,6 +88,8 @@ public class ReviewStep extends MaterialWizardStep {
     private String privkeyPath;
 
     private boolean useLocalSSIDLookup;
+    private TextView useLocalSSIDLookupView;
+
     private List<Router.LocalSSIDLookup> lookups;
 
     private Router router;
@@ -126,6 +128,7 @@ public class ReviewStep extends MaterialWizardStep {
         authMethodHidden = (TextView) v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_hidden);
         privkeyButtonHintView = (TextView) v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_privkey_path);
         passwordView = (EditText) v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_password_value);
+        useLocalSSIDLookupView = (TextView) v.findViewById(R.id.wizard_add_router_review_use_local_ssid_lookup_yes_no);
 
         final CheckBox showPasswordCheckBox = (CheckBox) v.findViewById(R.id.wizard_add_router_review_password_show_checkbox);
         showPasswordCheckBox
@@ -244,6 +247,7 @@ public class ReviewStep extends MaterialWizardStep {
             if (authMethod != null) {
                 authMethodHidden.setText(authMethod);
             }
+            useLocalSSIDLookupView.setText(BooleanUtils.toStringYesNo(useLocalSSIDLookup));
         }
     }
 
