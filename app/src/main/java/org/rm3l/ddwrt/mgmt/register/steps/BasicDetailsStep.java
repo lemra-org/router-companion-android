@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
 import android.util.Patterns;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import org.codepond.wizardroid.Wizard;
 import org.codepond.wizardroid.persistence.ContextVariable;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -133,7 +135,7 @@ public class BasicDetailsStep extends MaterialWizardStep {
     }
 
     @Override
-    public boolean validateStep() {
+    public Boolean validateStep(@Nullable final Wizard wizard) {
         final String routerReachableAddr = routerIpOrDnsEt.getText().toString();
         final boolean stepValidated;
         if (isDemoRouter(routerReachableAddr)

@@ -30,6 +30,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.gson.Gson;
 
+import org.codepond.wizardroid.Wizard;
 import org.codepond.wizardroid.persistence.ContextVariable;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -378,7 +379,7 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
     }
 
     @Override
-    public boolean validateStep() {
+    public Boolean validateStep(@Nullable final Wizard wizard) {
         //Always validated, as this is a optional step
         return true;
     }

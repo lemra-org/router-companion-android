@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.InputType;
@@ -23,26 +24,30 @@ import android.widget.TextView;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
+import com.google.gson.Gson;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.codepond.wizardroid.Wizard;
+import org.codepond.wizardroid.WizardStep;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.Encrypted;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.service.tasks.RouterModelUpdaterServiceTask;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 import org.rm3l.ddwrt.widgets.wizard.MaterialWizard;
 import org.rm3l.ddwrt.widgets.wizard.MaterialWizardStep;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
@@ -53,6 +58,8 @@ import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 public class ReviewStep extends MaterialWizardStep {
 
     private static final String TAG = ReviewStep.class.getSimpleName();
+
+    private final Gson gson = MaterialWizard.GSON_BUILDER.create();
 
     private String uuid;
     private TextView uuidView;
@@ -85,7 +92,7 @@ public class ReviewStep extends MaterialWizardStep {
     private String privkeyButtonHint;
     private TextView privkeyButtonHintView;
 
-    private String privkeyPath;
+    private String privkeyContent;
 
     private boolean useLocalSSIDLookup;
     private TextView useLocalSSIDLookupView;
@@ -247,7 +254,8 @@ public class ReviewStep extends MaterialWizardStep {
             if (authMethod != null) {
                 authMethodHidden.setText(authMethod);
             }
-            String useLocalSSIDText = BooleanUtils.toStringYesNo(useLocalSSIDLookup);
+            String useLocalSSIDText = StringUtils.capitalize(
+                    BooleanUtils.toStringYesNo(useLocalSSIDLookup).toLowerCase());
             if (useLocalSSIDLookup) {
                 useLocalSSIDText += (" (" + lookups.size() + " lookup entries)");
             }
@@ -286,9 +294,9 @@ public class ReviewStep extends MaterialWizardStep {
         final Object privkeyButtonHintObj = wizardContext.get("privkeyButtonHint");
         privkeyButtonHint = privkeyButtonHintObj != null ? privkeyButtonHintObj.toString() : null;
 
-        final Object privkeyPathObj = wizardContext.get("privkeyPath");
-        if (privkeyPathObj != null) {
-            privkeyPath = privkeyPathObj.toString();
+        final Object privkeyContentObj = wizardContext.get("privkeyPath");
+        if (privkeyContentObj != null) {
+            privkeyContent = privkeyContentObj.toString();
         }
 
         final Object authMethodObj = wizardContext.get("authMethod");
@@ -309,19 +317,28 @@ public class ReviewStep extends MaterialWizardStep {
         final Object localSSIDLookupDetailsObj = wizardContext.get("localSSIDLookupDetails");
         lookups = new ArrayList<>();
         if (localSSIDLookupDetailsObj != null) {
-            final Splitter splitter = Splitter.on("\n").omitEmptyStrings();
-            final List<String> strings = splitter.splitToList(localSSIDLookupDetailsObj.toString());
-            if (strings.size() >= 3) {
-                final Router.LocalSSIDLookup localSSIDLookup = new Router.LocalSSIDLookup();
-                localSSIDLookup.setNetworkSsid(strings.get(0));
-                localSSIDLookup.setReachableAddr(strings.get(1));
-                try {
-                    localSSIDLookup.setPort(Integer.parseInt(strings.get(2)));
-                } catch (final Exception e) {
-                    ReportingUtils.reportException(null, e);
-                    localSSIDLookup.setPort(22); //default SSH port
+            final String localSSIDLookupDetailsStr = localSSIDLookupDetailsObj.toString();
+            final List list = gson.fromJson(localSSIDLookupDetailsStr, List.class);
+            if (list != null) {
+                final Splitter splitter = Splitter.on("\n").omitEmptyStrings();
+                for (final Object obj : list) {
+                    if (obj == null) {
+                        continue;
+                    }
+                    final List<String> strings = splitter.splitToList(obj.toString());
+                    if (strings.size() >= 3) {
+                        final Router.LocalSSIDLookup localSSIDLookup = new Router.LocalSSIDLookup();
+                        localSSIDLookup.setNetworkSsid(strings.get(0));
+                        localSSIDLookup.setReachableAddr(strings.get(1));
+                        try {
+                            localSSIDLookup.setPort(Integer.parseInt(strings.get(2)));
+                        } catch (final Exception e) {
+                            ReportingUtils.reportException(null, e);
+                            localSSIDLookup.setPort(22); //default SSH port
+                        }
+                        lookups.add(localSSIDLookup);
+                    }
                 }
-                lookups.add(localSSIDLookup);
             }
         }
     }
@@ -330,8 +347,6 @@ public class ReviewStep extends MaterialWizardStep {
         final Router router = new Router(getContext());
         if (!isNullOrEmpty(uuid)) {
             router.setUuid(uuid);
-        } else {
-            router.setUuid(UUID.randomUUID().toString());
         }
         router.setName(routerName);
         router.setRemoteIpAddress(routerIpOrDns);
@@ -357,7 +372,7 @@ public class ReviewStep extends MaterialWizardStep {
         if (!isNullOrEmpty(password)) {
             router.setPassword(password, true);
         }
-        if (!isNullOrEmpty(privkeyPath)) {
+        if (!isNullOrEmpty(privkeyContent)) {
 
 //            //Convert privkey into a format accepted by JSCh
             //Causes a build issue with SpongyCastle
@@ -379,7 +394,7 @@ public class ReviewStep extends MaterialWizardStep {
 //            pemWriter.writeObject(privateKey);
 //            pemWriter.close();
 
-            router.setPrivKey(privkeyPath, true);
+            router.setPrivKey(privkeyContent, true);
         }
 
         final FragmentActivity activity = getActivity();
@@ -388,7 +403,9 @@ public class ReviewStep extends MaterialWizardStep {
         router.setFallbackToPrimaryAddr(activity,
                 !useLocalSSIDLookup);
 
-        router.setLocalSSIDLookupData(activity, lookups);
+        if (lookups != null && !lookups.isEmpty()) {
+            router.setLocalSSIDLookupData(activity, lookups);
+        }
 
         return router;
     }
@@ -403,10 +420,11 @@ public class ReviewStep extends MaterialWizardStep {
     }
 
     @Override
-    public boolean validateStep() {
+    public Boolean validateStep(Wizard wizard) {
         router = buildRouter();
-        //TODO
-        return (router != null);
+        new CheckRouterConnectionAsyncTask(wizard, true).execute();
+        //We are returning null to indicate that this step will take care of updating the wizard
+        return null;
     }
 
     @Nullable
@@ -425,14 +443,14 @@ public class ReviewStep extends MaterialWizardStep {
         return router;
     }
 
-    public  class CheckRouterConnectionAsyncTask extends AsyncTask<Void, Void, CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router>> {
+    public class CheckRouterConnectionAsyncTask extends AsyncTask<Void, Void, CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router>> {
 
-        private final String routerIpOrDns;
+        private final Wizard wizard;
         private AlertDialog checkingConnectionDialog = null;
         private boolean checkActualConnection;
 
-        public CheckRouterConnectionAsyncTask(String routerIpOrDns, boolean checkActualConnection) {
-            this.routerIpOrDns = routerIpOrDns;
+        public CheckRouterConnectionAsyncTask(Wizard wizard, boolean checkActualConnection) {
+            this.wizard = wizard;
             //Disabling 'checkActualConnection' setting, as we are now trying to detect the firmware used
 //            this.checkActualConnection = checkActualConnection;
             this.checkActualConnection = true;
@@ -442,7 +460,8 @@ public class ReviewStep extends MaterialWizardStep {
         protected void onPreExecute() {
             if (checkActualConnection) {
                 checkingConnectionDialog = Utils.buildAlertDialog(getActivity(), null,
-                        String.format("Hold on - checking connection to router '%s'...", routerIpOrDns), false, false);
+                        String.format("Hold on - checking connection to router '%s'...",
+                                router.getRemoteIpAddress()), false, false);
                 checkingConnectionDialog.show();
             }
         }
@@ -457,6 +476,7 @@ public class ReviewStep extends MaterialWizardStep {
             Exception exception = null;
             try {
                 result = doCheckConnectionToRouter();
+                new RouterModelUpdaterServiceTask(getContext()).runBackgroundServiceTask(router);
             } catch (Exception e) {
                 e.printStackTrace();
                 exception = e;
@@ -475,8 +495,12 @@ public class ReviewStep extends MaterialWizardStep {
             Router router = result.getResult();
             if (e != null) {
                 final Throwable rootCause = Throwables.getRootCause(e);
-                Utils.buildAlertDialog(getActivity(), "Error", getString(R.string.router_add_connection_unsuccessful) +
-                        ": " + (rootCause != null ? rootCause.getMessage() : e.getMessage()), true, true).show();
+                SnackbarUtils.buildSnackbar(getContext(),
+                        getView(), getString(R.string.router_add_connection_unsuccessful) +
+                                ": " + (rootCause != null ? rootCause.getMessage() : e.getMessage()),
+                        null, Snackbar.LENGTH_LONG, null, null, true);
+//                Utils.buildAlertDialog(getActivity(), "Error", getString(R.string.router_add_connection_unsuccessful) +
+//                        ": " + (rootCause != null ? rootCause.getMessage() : e.getMessage()), true, true).show();
                 if (StringUtils.containsIgnoreCase(
                         e.getMessage(),
                         "End of IO Stream Read")
@@ -505,6 +529,12 @@ public class ReviewStep extends MaterialWizardStep {
                                 router != null ?
                                         router.toString() : e.getMessage(), e));
             } else {
+                if (wizard == null) {
+                    Crashlytics.logException(new IllegalStateException("wizard == NULL"));
+                } else {
+                    onExitSynchronous(WizardStep.EXIT_NEXT);
+                    wizard.goNext();
+                }
 //                if (router != null) {
 //                    AlertDialog daoAlertDialog = null;
 //                    try {

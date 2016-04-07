@@ -376,8 +376,10 @@ public class RouterManagementActivity
 
 //        final DialogFragment addFragment = new RouterAddDialogFragment();
 //        addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);
-        startActivity(new Intent(this, AddRouterFragmentActivity.class));
+        startActivityForResult(new Intent(this, AddRouterFragmentActivity.class), NEW_ROUTER_ADDED);
     }
+
+    public static final int NEW_ROUTER_ADDED = 1;
 
     private void openUpdateRouterForm(@Nullable Router router) {
         if (router != null) {
@@ -611,7 +613,7 @@ public class RouterManagementActivity
         }
         // Check which request we're responding to
         switch (requestCode) {
-            case ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE:
+            case ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE: {
                 // Make sure the request was successful and reload U if necessary
                 if (resultCode == RESULT_OK) {
                     //Reset Crashlytics user email addr
@@ -638,7 +640,14 @@ public class RouterManagementActivity
                         }, 2000);
                     }
                 }
+            }
                 break;
+            case NEW_ROUTER_ADDED: {
+                // Make sure the request was successful and reload U if necessary
+                if (resultCode == RESULT_OK) {
+                    onRouterAdd();
+                }
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -871,6 +880,10 @@ public class RouterManagementActivity
             //Request Backup
             Utils.requestBackup(this);
         }
+    }
+
+    private void onRouterAdd() {
+        onRouterAdd(null, null, false);
     }
 
     @Override

@@ -224,7 +224,7 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
 //        //Do whatever you want to do once the Wizard is complete
 //        //in this case I just close the activity, which causes Android
 //        //to go back to the previous activity.
-//        getActivity().finish();
+        getActivity().finish();
     }
 
     @Override
@@ -241,9 +241,9 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
         switch(v.getId()) {
             case R.id.wizard_next_button:
                 //Tell the wizard to go to next step
-                final boolean stepValidated = currentStep.validateStep();
+                final Boolean stepValidated = currentStep.validateStep(wizard);
                 Crashlytics.log("stepValidated: " + stepValidated);
-                if (stepValidated) {
+                if (stepValidated != null && stepValidated) {
                     currentStep.onExitSynchronous(WizardStep.EXIT_NEXT);
                     wizard.goNext();
                 }

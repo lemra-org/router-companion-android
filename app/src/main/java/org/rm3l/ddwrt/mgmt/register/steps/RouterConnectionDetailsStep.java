@@ -32,6 +32,7 @@ import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
 
 import org.apache.commons.io.IOUtils;
+import org.codepond.wizardroid.Wizard;
 import org.codepond.wizardroid.persistence.ContextVariable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
@@ -407,7 +408,7 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
     }
 
     @Override
-    public boolean validateStep() {
+    public Boolean validateStep(Wizard wizard) {
 //        final FragmentActivity activity = getActivity();
         final NestedScrollView contentScrollView = (NestedScrollView) rootView
                 .findViewById(R.id.router_add_content_scroll_view);
