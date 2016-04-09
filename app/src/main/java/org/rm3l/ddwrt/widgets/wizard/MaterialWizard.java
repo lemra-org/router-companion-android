@@ -1,11 +1,13 @@
 package org.rm3l.ddwrt.widgets.wizard;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -37,6 +39,8 @@ import org.rm3l.ddwrt.widgets.ViewPagerWithAllowedSwipeDirection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by rm3l on 14/03/16.
@@ -224,7 +228,10 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
 //        //Do whatever you want to do once the Wizard is complete
 //        //in this case I just close the activity, which causes Android
 //        //to go back to the previous activity.
-        getActivity().finish();
+        final Intent data = new Intent();
+        final FragmentActivity activity = getActivity();
+        activity.setResult(RESULT_OK, data);
+        activity.finish();
     }
 
     @Override

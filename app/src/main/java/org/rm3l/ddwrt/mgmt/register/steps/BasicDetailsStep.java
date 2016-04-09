@@ -50,6 +50,9 @@ public class BasicDetailsStep extends MaterialWizardStep {
     @ContextVariable
     private String routerFirmware;
 
+    @ContextVariable
+    private String isDemoModeStr;
+
     private TextView uuidTv;
 
     private EditText routerNameEt;
@@ -132,6 +135,7 @@ public class BasicDetailsStep extends MaterialWizardStep {
         routerName = routerNameEt.getText().toString();
         routerIpOrDns = routerIpOrDnsEt.getText().toString();
         routerFirmware = routerFirmwareSpinner.getSelectedItem().toString();
+        isDemoModeStr = Boolean.toString(Utils.isDemoRouter(routerIpOrDns));
     }
 
     @Override

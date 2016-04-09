@@ -80,7 +80,7 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
     @Override
     public String getWizardStepTitle() {
         return "Define alternate IP or DNS names to use, " +
-                "when connected to a network with the specified names.";
+                "when connected to WiFi networks with the specified names.";
     }
 
     //Set your layout here

@@ -115,6 +115,9 @@ public class RouterManagementActivity
     public static final String UPDATE_ROUTER_FRAGMENT_TAG = "update_router";
     private static final String LOG_TAG = RouterManagementActivity.class.getSimpleName();
     public static final String COPY_ROUTER = "copy_router";
+
+    public static final int NEW_ROUTER_ADDED = 1;
+
     private FloatingActionButton addNewButton;
     private long mCurrentTheme;
     private DDWRTCompanionDAO dao;
@@ -378,8 +381,6 @@ public class RouterManagementActivity
 //        addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);
         startActivityForResult(new Intent(this, AddRouterFragmentActivity.class), NEW_ROUTER_ADDED);
     }
-
-    public static final int NEW_ROUTER_ADDED = 1;
 
     private void openUpdateRouterForm(@Nullable Router router) {
         if (router != null) {

@@ -2,6 +2,7 @@ package org.rm3l.ddwrt.mgmt.register.steps;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -243,7 +244,13 @@ public class ReviewStep extends MaterialWizardStep {
         if (isViewShown) {
             uuidView.setText(uuid);
             routerNameView.setText(isNullOrEmpty(routerName) ? "-" : routerName);
-            routerIpOrDnsView.setText(isNullOrEmpty(routerIpOrDns) ? "-" : routerIpOrDns );
+
+            if (Utils.isDemoRouter(routerIpOrDns)) {
+                routerIpOrDnsView.setText(DDWRTCompanionConstants.DEMO);
+            } else {
+                routerIpOrDnsView.setText(isNullOrEmpty(routerIpOrDns) ? "-" : routerIpOrDns);
+            }
+
             routerFirmwareView.setText(isNullOrEmpty(routerFirmware) ? "-" : routerFirmware );
             connectionProtocolView.setText(isNullOrEmpty(connectionProtocol) ? "-" : connectionProtocol );
             portView.setText(isNullOrEmpty(port) ? "-" : port );
@@ -254,12 +261,17 @@ public class ReviewStep extends MaterialWizardStep {
             if (authMethod != null) {
                 authMethodHidden.setText(authMethod);
             }
-            String useLocalSSIDText = StringUtils.capitalize(
-                    BooleanUtils.toStringYesNo(useLocalSSIDLookup).toLowerCase());
-            if (useLocalSSIDLookup) {
-                useLocalSSIDText += (" (" + lookups.size() + " lookup entries)");
+
+            if (Utils.isDemoRouter(routerIpOrDns)) {
+                useLocalSSIDLookupView.setText("N/A");
+            } else {
+                String useLocalSSIDText = StringUtils.capitalize(
+                        BooleanUtils.toStringYesNo(useLocalSSIDLookup).toLowerCase());
+                if (useLocalSSIDLookup) {
+                    useLocalSSIDText += (" (" + lookups.size() + " lookup entries)");
+                }
+                useLocalSSIDLookupView.setText(useLocalSSIDText);
             }
-            useLocalSSIDLookupView.setText(useLocalSSIDText);
         }
     }
 
@@ -403,7 +415,7 @@ public class ReviewStep extends MaterialWizardStep {
         router.setFallbackToPrimaryAddr(activity,
                 !useLocalSSIDLookup);
 
-        if (lookups != null && !lookups.isEmpty()) {
+        if (!isDemoRouter(router) && lookups != null && !lookups.isEmpty()) {
             router.setLocalSSIDLookupData(activity, lookups);
         }
 
@@ -476,7 +488,9 @@ public class ReviewStep extends MaterialWizardStep {
             Exception exception = null;
             try {
                 result = doCheckConnectionToRouter();
-                new RouterModelUpdaterServiceTask(getContext()).runBackgroundServiceTask(router);
+                if (!Utils.isDemoRouter(router)) {
+                    new RouterModelUpdaterServiceTask(getContext()).runBackgroundServiceTask(router);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 exception = e;
@@ -496,9 +510,12 @@ public class ReviewStep extends MaterialWizardStep {
             if (e != null) {
                 final Throwable rootCause = Throwables.getRootCause(e);
                 SnackbarUtils.buildSnackbar(getContext(),
-                        getView(), getString(R.string.router_add_connection_unsuccessful) +
+                        getView(), Color.RED,
+                        getString(R.string.router_add_connection_unsuccessful) +
                                 ": " + (rootCause != null ? rootCause.getMessage() : e.getMessage()),
-                        null, Snackbar.LENGTH_LONG, null, null, true);
+                        Color.WHITE,
+                        null, Color.YELLOW,
+                        Snackbar.LENGTH_LONG, null, null, true);
 //                Utils.buildAlertDialog(getActivity(), "Error", getString(R.string.router_add_connection_unsuccessful) +
 //                        ": " + (rootCause != null ? rootCause.getMessage() : e.getMessage()), true, true).show();
                 if (StringUtils.containsIgnoreCase(
