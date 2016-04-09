@@ -235,11 +235,27 @@ public class RouterListRecycleViewAdapter extends
         } else {
             holder.routerName.setText(routerAtName);
         }
-        holder.routerIp.setText(routerAt.getRemoteIpAddress() + ":" + routerAt.getRemotePort());
+        final String remoteIpAddress = routerAt.getRemoteIpAddress();
+        final boolean isDemoRouter = Utils.isDemoRouter(remoteIpAddress);
+
+        holder.routerIp.setText(isDemoRouter ?
+                DDWRTCompanionConstants.DEMO :
+                (remoteIpAddress + ":" + routerAt.getRemotePort()));
         holder.routerConnProto.setText(routerAt.getRouterConnectionProtocol().toString());
         holder.routerUsername.setText(routerAt.getUsernamePlain());
-        final Router.RouterFirmware routerFirmware = routerAt.getRouterFirmware();
-        holder.routerFirmware.setText("Firmware: " + (routerFirmware != null ? routerFirmware.getDisplayName() : "-"));
+        if (isDemoRouter) {
+            holder.routerFirmware.setVisibility(View.GONE);
+        } else {
+            holder.routerFirmware.setVisibility(View.VISIBLE);
+            final Router.RouterFirmware routerFirmware = routerAt.getRouterFirmware();
+            holder.routerFirmware.setText("Firmware: " + (routerFirmware != null ? routerFirmware.getDisplayName() : "-"));
+        }
+
+        if (isDemoRouter) {
+            holder.routerUsernameAndProtoView.setVisibility(View.GONE);
+        } else {
+            holder.routerUsernameAndProtoView.setVisibility(View.VISIBLE);
+        }
 
         final String routerModelStr = Router.getRouterModel(context, routerAt);
         if (Strings.isNullOrEmpty(routerModelStr) || "-".equals(routerModelStr)) {
@@ -557,6 +573,9 @@ public class RouterListRecycleViewAdapter extends
         @NonNull
         private ImageView routerAvatarImage;
 
+        @NonNull
+        private View routerUsernameAndProtoView;
+
         private final View itemView;
 
         private final View routerViewParent;
@@ -580,6 +599,8 @@ public class RouterListRecycleViewAdapter extends
             this.routerOpenButton = (ImageButton) this.itemView.findViewById(R.id.router_go);
 
             this.routerAvatarImage = (ImageView) this.itemView.findViewById(R.id.router_avatar);
+
+            this.routerUsernameAndProtoView = this.itemView.findViewById(R.id.router_username_and_proto);
         }
 
     }
