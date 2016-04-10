@@ -10,6 +10,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,6 +41,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 /**
@@ -101,6 +103,16 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
             wizardTitle = "Wizard";
         }
         collapsingToolbarLayout.setTitle(wizardTitle);
+
+        final Toolbar toolbar = (Toolbar) mWizardLayout.findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_close_white_24dp);
+        toolbar.setNavigationContentDescription("Close");
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeWizard(RESULT_CANCELED);
+            }
+        });
 
         wizardSubTitle.setText(getFirstStepWizardSubTitle());
 
@@ -228,10 +240,25 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
 //        //Do whatever you want to do once the Wizard is complete
 //        //in this case I just close the activity, which causes Android
 //        //to go back to the previous activity.
-        final Intent data = new Intent();
+        closeWizard(RESULT_OK);
+    }
+
+    private void closeWizard(Integer resultCode) {
         final FragmentActivity activity = getActivity();
-        activity.setResult(RESULT_OK, data);
+        if (resultCode != null) {
+            final Intent data = getActivityIntentToReturnUponClose();
+            if (data == null) {
+                activity.setResult(resultCode);
+            } else {
+                activity.setResult(resultCode, data);
+            }
+        }
         activity.finish();
+    }
+
+    @Nullable
+    protected Intent getActivityIntentToReturnUponClose() {
+        return new Intent();
     }
 
     @Override
