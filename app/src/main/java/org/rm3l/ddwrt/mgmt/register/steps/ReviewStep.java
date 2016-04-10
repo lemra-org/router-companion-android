@@ -35,6 +35,7 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.mgmt.register.AddRouterWizard;
 import org.rm3l.ddwrt.resources.Encrypted;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.service.tasks.RouterModelUpdaterServiceTask;
@@ -51,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
 /**
@@ -424,10 +426,18 @@ public class ReviewStep extends MaterialWizardStep {
 
     @Override
     protected void onExitNext() {
+        final Router dbRouter;
         if (TextUtils.isEmpty(router.getUuid())) {
-            this.dao.insertRouter(router);
+            dbRouter = this.dao.insertRouter(router);
         } else {
-            this.dao.updateRouter(router);
+            dbRouter = this.dao.updateRouter(router);
+        }
+        if (dbRouter != null) {
+            getContext().getSharedPreferences(
+                    DEFAULT_SHARED_PREFERENCES_KEY,
+                    Context.MODE_PRIVATE).edit()
+                    .putString(AddRouterWizard.class.getSimpleName(), dbRouter.getUuid())
+                    .apply();
         }
     }
 
@@ -449,7 +459,7 @@ public class ReviewStep extends MaterialWizardStep {
         //This will throw an exception if connection could not be established!
         SSHUtils.checkConnection(getActivity(),
                 getContext().getSharedPreferences(
-                        DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                        DEFAULT_SHARED_PREFERENCES_KEY,
                         Context.MODE_PRIVATE), router, 10000);
 
         return router;

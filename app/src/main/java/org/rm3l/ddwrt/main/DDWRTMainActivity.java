@@ -124,10 +124,10 @@ import org.rm3l.ddwrt.exceptions.StorageException;
 import org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment;
 import org.rm3l.ddwrt.help.ChangelogActivity;
 import org.rm3l.ddwrt.help.HelpActivity;
-import org.rm3l.ddwrt.mgmt.RouterAddDialogFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.RouterMgmtDialogListener;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.mgmt.register.AddRouterFragmentActivity;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterSettingsActivity;
@@ -155,6 +155,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.NEW_ROUTER_ADDED;
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.ddwrt.resources.conn.Router.RouterFirmware;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AUTO_REFRESH_INTERVAL_SECONDS_PREF;
@@ -1032,10 +1033,10 @@ public class DDWRTMainActivity extends AppCompatActivity
     }
 
     private void openAddRouterForm() {
-        final Fragment addRouter = getSupportFragmentManager().findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
-        if (addRouter instanceof DialogFragment) {
-            ((DialogFragment) addRouter).dismiss();
-        }
+//        final Fragment addRouter = getSupportFragmentManager().findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
+//        if (addRouter instanceof DialogFragment) {
+//            ((DialogFragment) addRouter).dismiss();
+//        }
 
         //Display Donate Message if trying to add more than the max routers for Free version
         final List<Router> allRouters = dao.getAllRouters();
@@ -1047,8 +1048,11 @@ public class DDWRTMainActivity extends AppCompatActivity
             return;
         }
 
-        final DialogFragment addFragment = new RouterAddDialogFragment();
-        addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);
+        startActivityForResult(new Intent(this, AddRouterFragmentActivity.class),
+                NEW_ROUTER_ADDED);
+
+//        final DialogFragment addFragment = new RouterAddDialogFragment();
+//        addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);
     }
 
     @Override
@@ -1595,6 +1599,15 @@ public class DDWRTMainActivity extends AppCompatActivity
                     }
                 }
                 break;
+            case NEW_ROUTER_ADDED: {
+                //TODO Refresh the menu list
+                final String newRouterUuid = data.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+                Router newRouter = null;
+                final boolean error = (newRouterUuid == null ||
+                        (newRouter = dao.getRouter(newRouterUuid)) == null);
+                onRouterAdd(null, newRouter, error);
+            }
+            break;
         }
 
         super.onActivityResult(requestCode, resultCode, data);

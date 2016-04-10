@@ -1,13 +1,17 @@
 package org.rm3l.ddwrt.mgmt.register;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.codepond.wizardroid.WizardStep;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.register.steps.BasicDetailsStep;
 import org.rm3l.ddwrt.mgmt.register.steps.LocalSSIDLookupStep;
 import org.rm3l.ddwrt.mgmt.register.steps.ReviewStep;
 import org.rm3l.ddwrt.mgmt.register.steps.RouterConnectionDetailsStep;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.widgets.wizard.MaterialWizard;
 import org.rm3l.ddwrt.widgets.wizard.WizardStepVerifiable;
 
@@ -50,4 +54,17 @@ public class AddRouterWizard extends MaterialWizard {
         );
     }
 
+    @Nullable
+    @Override
+    protected Intent getActivityIntentToReturnUponClose() {
+        final Intent intent = new Intent();
+        final String wizardRouter = getContext()
+                .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                    Context.MODE_PRIVATE)
+                .getString(AddRouterWizard.class.getSimpleName(), null);
+        if (wizardRouter != null && !wizardRouter.isEmpty()) {
+            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, wizardRouter);
+        }
+        return intent;
+    }
 }

@@ -116,7 +116,7 @@ public class RouterManagementActivity
     private static final String LOG_TAG = RouterManagementActivity.class.getSimpleName();
     public static final String COPY_ROUTER = "copy_router";
 
-    public static final int NEW_ROUTER_ADDED = 1;
+    public static final int NEW_ROUTER_ADDED = 987;
 
     private FloatingActionButton addNewButton;
     private long mCurrentTheme;
