@@ -32,14 +32,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Rect;
-import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -74,11 +70,10 @@ import org.rm3l.ddwrt.actions.RebootRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.main.DDWRTMainActivity;
-import org.rm3l.ddwrt.mgmt.RouterAddDialogFragment;
-import org.rm3l.ddwrt.mgmt.RouterDuplicateDialogFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
-import org.rm3l.ddwrt.mgmt.RouterUpdateDialogFragment;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.mgmt.register.ManageRouterFragmentActivity;
+import org.rm3l.ddwrt.mgmt.register.resources.RouterWizardAction;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
@@ -92,14 +87,12 @@ import org.rm3l.ddwrt.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
-import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ADD_ROUTER_FRAGMENT_TAG;
-import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.COPY_ROUTER;
+import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.NEW_ROUTER_ADDED;
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
-import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.UPDATE_ROUTER_FRAGMENT_TAG;
+import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_UPDATED;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERSION;
@@ -846,13 +839,13 @@ public class RouterListRecycleViewAdapter extends
             return;
         }
         final FragmentActivity activity = (FragmentActivity) context;
-        final FragmentManager fragmentManager = activity.getSupportFragmentManager();
+//        final FragmentManager fragmentManager = activity.getSupportFragmentManager();
 
-        final Fragment addRouter = fragmentManager
-                .findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
-        if (addRouter instanceof DialogFragment) {
-            ((DialogFragment) addRouter).dismiss();
-        }
+//        final Fragment addRouter = fragmentManager
+//                .findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
+//        if (addRouter instanceof DialogFragment) {
+//            ((DialogFragment) addRouter).dismiss();
+//        }
 
         //Display Donate Message if trying to add more than the max routers for Free version
         final List<Router> allRouters = dao.getAllRouters();
@@ -864,8 +857,12 @@ public class RouterListRecycleViewAdapter extends
             return;
         }
 
-        final DialogFragment addFragment = new RouterAddDialogFragment();
-        addFragment.show(fragmentManager, ADD_ROUTER_FRAGMENT_TAG);
+//        final DialogFragment addFragment = new RouterAddDialogFragment();
+//        addFragment.show(fragmentManager, ADD_ROUTER_FRAGMENT_TAG);
+
+        final Intent intent = new Intent(context, ManageRouterFragmentActivity.class);
+        intent.putExtra(RouterWizardAction.ROUTER_WIZARD_ACTION, RouterWizardAction.ADD);
+        activity.startActivityForResult(intent, NEW_ROUTER_ADDED);
     }
 
     private void openUpdateRouterForm(@Nullable Router router) {
@@ -874,17 +871,24 @@ public class RouterListRecycleViewAdapter extends
             return;
         }
         final FragmentActivity activity = (FragmentActivity) context;
-        final FragmentManager fragmentManager = activity.getSupportFragmentManager();
+//        final FragmentManager fragmentManager = activity.getSupportFragmentManager();
 
         if (router != null) {
-            final DialogFragment updateFragment = new RouterUpdateDialogFragment();
-            final Bundle args = new Bundle();
-            args.putString(ROUTER_SELECTED, router.getUuid());
-            updateFragment.setArguments(args);
-            updateFragment.show(fragmentManager, UPDATE_ROUTER_FRAGMENT_TAG);
+//            final DialogFragment updateFragment = new RouterUpdateDialogFragment();
+//            final Bundle args = new Bundle();
+//            args.putString(ROUTER_SELECTED, router.getUuid());
+//            updateFragment.setArguments(args);
+//            updateFragment.show(fragmentManager, UPDATE_ROUTER_FRAGMENT_TAG);
+
+            final Intent intent = new Intent(context, ManageRouterFragmentActivity.class);
+            intent.putExtra(ROUTER_SELECTED, router.getUuid());
+            intent.putExtra(RouterWizardAction.ROUTER_WIZARD_ACTION, RouterWizardAction.EDIT);
+            activity.startActivityForResult(intent, ROUTER_UPDATED);
+
         } else {
-            Crouton.makeText(activity, "Entry no longer exists!", Style.ALERT).show();
+            Toast.makeText(context, "Entry no longer exists", Toast.LENGTH_SHORT).show();
         }
+
     }
 
     private void openDuplicateRouterForm(@Nullable Router router) {
@@ -893,7 +897,7 @@ public class RouterListRecycleViewAdapter extends
             return;
         }
         final FragmentActivity activity = (FragmentActivity) context;
-        final FragmentManager fragmentManager = activity.getSupportFragmentManager();
+//        final FragmentManager fragmentManager = activity.getSupportFragmentManager();
 
         //Display Donate Message if trying to add more than the max routers for Free version
         final List<Router> allRouters = dao.getAllRouters();
@@ -906,13 +910,17 @@ public class RouterListRecycleViewAdapter extends
         }
 
         if (router != null) {
-            final DialogFragment copyFragment = new RouterDuplicateDialogFragment();
-            final Bundle args = new Bundle();
-            args.putString(ROUTER_SELECTED, router.getUuid());
-            copyFragment.setArguments(args);
-            copyFragment.show(fragmentManager, COPY_ROUTER);
+//            final DialogFragment copyFragment = new RouterDuplicateDialogFragment();
+//            final Bundle args = new Bundle();
+//            args.putString(ROUTER_SELECTED, router.getUuid());
+//            copyFragment.setArguments(args);
+//            copyFragment.show(fragmentManager, COPY_ROUTER);
+            final Intent intent = new Intent(context, ManageRouterFragmentActivity.class);
+            intent.putExtra(ROUTER_SELECTED, router.getUuid());
+            intent.putExtra(RouterWizardAction.ROUTER_WIZARD_ACTION, RouterWizardAction.COPY);
+            activity.startActivityForResult(intent, NEW_ROUTER_ADDED);
         } else {
-            Crouton.makeText(activity, "Entry no longer exists!", Style.ALERT).show();
+            Toast.makeText(context, "Entry no longer exists", Toast.LENGTH_SHORT).show();
         }
     }
 

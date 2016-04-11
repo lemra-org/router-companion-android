@@ -27,7 +27,7 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.ImageView;
 
@@ -35,6 +35,7 @@ import com.airbnb.deeplinkdispatch.DeepLinkActivity;
 import com.crashlytics.android.Crashlytics;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
+import com.squareup.leakcanary.LeakCanary;
 import com.squareup.picasso.Picasso;
 
 import org.acra.ACRA;
@@ -87,6 +88,7 @@ public class DDWRTApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        LeakCanary.install(this);
 
         final IntentFilter intentFilter = new IntentFilter(DeepLinkActivity.ACTION);
         LocalBroadcastManager.getInstance(this)
@@ -119,11 +121,7 @@ public class DDWRTApplication extends Application {
                 if (ctx == null) {
                     return null;
                 }
-                final int routerDrawable = R.drawable.router;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    return ctx.getResources().getDrawable(routerDrawable, getTheme());
-                }
-                return ctx.getResources().getDrawable(routerDrawable);
+                return ContextCompat.getDrawable(ctx, R.drawable.router);
             }
         });
 

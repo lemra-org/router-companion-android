@@ -11,7 +11,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,7 +34,8 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
-import org.rm3l.ddwrt.mgmt.register.AddRouterWizard;
+import org.rm3l.ddwrt.mgmt.register.ManageRouterWizard;
+import org.rm3l.ddwrt.mgmt.register.resources.RouterWizardAction;
 import org.rm3l.ddwrt.resources.Encrypted;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.service.tasks.RouterModelUpdaterServiceTask;
@@ -105,6 +105,8 @@ public class ReviewStep extends MaterialWizardStep {
     private Router router;
 
     private DDWRTCompanionDAO dao;
+    private int action;
+    private Router routerSelected;
 
     //Wire the layout to the step
     public ReviewStep() {
@@ -122,9 +124,22 @@ public class ReviewStep extends MaterialWizardStep {
 
         final Context context = getContext();
         this.dao = RouterManagementActivity.getDao(context);
-        
+
+        final Object tag = container.getTag();
+        if (tag != null) {
+            try {
+                final RouterWizardAction routerWizardAction = RouterWizardAction.GSON_BUILDER.create()
+                        .fromJson(tag.toString(), RouterWizardAction.class);
+                this.routerSelected = dao.getRouter(routerWizardAction.getRouterUuid());
+                this.action = routerWizardAction.getAction();
+            } catch (final Exception e) {
+                //No worries
+                e.printStackTrace();
+            }
+        }
+
         final View v = inflater.inflate(
-                R.layout.wizard_add_router_4_review,
+                R.layout.wizard_manage_router_4_review,
                 container, false);
 
         uuidView = (TextView) v.findViewById(R.id.wizard_add_router_review_router_uuid);
@@ -427,17 +442,24 @@ public class ReviewStep extends MaterialWizardStep {
     @Override
     protected void onExitNext() {
         final Router dbRouter;
-        if (TextUtils.isEmpty(router.getUuid())) {
+        if (routerSelected == null ||
+                action == RouterWizardAction.ADD ||
+                action == RouterWizardAction.COPY) {
+            //This is a new router to add
+            router.setUuid("");
             dbRouter = this.dao.insertRouter(router);
         } else {
+            router.setUuid(routerSelected.getUuid());
             dbRouter = this.dao.updateRouter(router);
         }
         if (dbRouter != null) {
-            getContext().getSharedPreferences(
+            final Context context = getContext();
+            context.getSharedPreferences(
                     DEFAULT_SHARED_PREFERENCES_KEY,
                     Context.MODE_PRIVATE).edit()
-                    .putString(AddRouterWizard.class.getSimpleName(), dbRouter.getUuid())
+                    .putString(ManageRouterWizard.class.getSimpleName(), dbRouter.getUuid())
                     .apply();
+            Utils.requestBackup(context);
         }
     }
 

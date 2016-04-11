@@ -37,6 +37,7 @@ import org.codepond.wizardroid.persistence.ContextVariable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.mgmt.register.resources.RouterWizardAction;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.ViewGroupUtils;
@@ -96,7 +97,7 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
     private TextView privkeyPathView;
     private Button privkeyButtonView;
     private DDWRTCompanionDAO dao;
-
+    private Router routerSelected;
 
     //Wire the layout to the step
     public RouterConnectionDetailsStep() {
@@ -114,8 +115,22 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
 
         this.dao = RouterManagementActivity.getDao(getContext());
 
+        final Object tag = container.getTag();
+        if (tag != null) {
+            try {
+                final RouterWizardAction routerWizardAction = RouterWizardAction.GSON_BUILDER.create()
+                        .fromJson(tag.toString(), RouterWizardAction.class);
+                routerSelected = dao.getRouter(routerWizardAction.getRouterUuid());
+            } catch (final Exception e) {
+                //No worries
+                e.printStackTrace();
+            }
+        }
+
+        load();
+
         rootView = inflater.inflate(
-                R.layout.wizard_add_router_2_router_connection_details_step, container, false);
+                R.layout.wizard_manage_router_2_router_connection_details_step, container, false);
 
         usernameEt = (EditText) rootView.findViewById(R.id.router_add_username);
         portEt = (EditText) rootView.findViewById(R.id.router_add_port);
@@ -282,9 +297,57 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
         return rootView;
     }
 
+    private void load() {
+        if (routerSelected != null) {
+            this.connectionProtocol = routerSelected.getRouterConnectionProtocol().toString();
+            this.username = routerSelected.getUsernamePlain();
+            this.password = routerSelected.getPasswordPlain();
+            this.port = Integer.toString(routerSelected.getRemotePort());
+            this.privkeyPath = routerSelected.getPrivKeyPlain();
+            this.privkeyButtonHint = "File selected";
+        }
+    }
+
     @Override
     protected void onVisibleToUser() {
         //Nothing to do - we are not re-using any context variable field from previous steps
+        load();
+        if (isViewShown) {
+            try {
+                switch (Integer.parseInt(authMethod)) {
+                    case Router.SSHAuthenticationMethod_NONE:
+                        authMethodRg.check(R.id.router_add_ssh_auth_method_none);
+                        break;
+                    case Router.SSHAuthenticationMethod_PASSWORD:
+                        authMethodRg.check(R.id.router_add_ssh_auth_method_password);
+                        break;
+                    case Router.SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY:
+                        authMethodRg.check(R.id.router_add_ssh_auth_method_privkey);
+                        break;
+                    default:
+                        break;
+                }
+            } catch (final NumberFormatException nfe) {
+                nfe.printStackTrace();
+            }
+            usernameEt.setText(username != null ? username : "root");
+            portEt.setText(port != null ? port : "22");
+            if (password != null) {
+                pwdView.setText(password);
+            }
+            if (privkeyButtonHint != null) {
+                privkeyButtonView.setHint(privkeyButtonHint);
+            } else {
+                privkeyButtonView.setHint("Select SSH Private Key (if any)");
+            }
+            privkeyPathView.setText(privkeyPath);
+            privkeyErrorMsgView.setText(privkeyErrorMsg);
+            if (connectionProtocol != null) {
+                connectionProtocolView.setSelection(
+                        ViewGroupUtils.getSpinnerIndex(connectionProtocolView, connectionProtocol),
+                        true);
+            }
+        }
     }
 
     protected void onExitNext() {

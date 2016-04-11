@@ -126,7 +126,7 @@ import org.rm3l.ddwrt.help.HelpActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.RouterMgmtDialogListener;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
-import org.rm3l.ddwrt.mgmt.register.AddRouterFragmentActivity;
+import org.rm3l.ddwrt.mgmt.register.ManageRouterFragmentActivity;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterSettingsActivity;
@@ -1049,7 +1049,7 @@ public class DDWRTMainActivity extends AppCompatActivity
             return;
         }
 
-        startActivityForResult(new Intent(this, AddRouterFragmentActivity.class),
+        startActivityForResult(new Intent(this, ManageRouterFragmentActivity.class),
                 NEW_ROUTER_ADDED);
 
 //        final DialogFragment addFragment = new RouterAddDialogFragment();

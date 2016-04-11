@@ -34,6 +34,8 @@ import org.codepond.wizardroid.WizardStep;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.events.bus.BusSingleton;
 import org.rm3l.ddwrt.events.wizard.WizardStepVisibleToUserEvent;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.mgmt.register.resources.RouterWizardAction;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.widgets.ViewPagerWithAllowedSwipeDirection;
 
@@ -43,6 +45,7 @@ import java.util.Map;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
+import static org.rm3l.ddwrt.mgmt.register.resources.RouterWizardAction.ROUTER_WIZARD_ACTION;
 
 /**
  * Created by rm3l on 14/03/16.
@@ -133,6 +136,15 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
         previousButton.setOnClickListener(this);
 
         mPager.addOnPageChangeListener(this);
+
+        final Bundle arguments = getArguments();
+        if (arguments != null) {
+            final String routerUuid = arguments.getString(RouterManagementActivity.ROUTER_SELECTED);
+            final int routerWizardAction = arguments.getInt(ROUTER_WIZARD_ACTION, RouterWizardAction.ADD);
+            Crashlytics.log(routerUuid);
+            mPager.setTag(RouterWizardAction.GSON_BUILDER.create().toJson(new RouterWizardAction()
+                    .setAction(routerWizardAction).setRouterUuid(routerUuid)));
+        }
 
 //        cancelButton = (Button) mWizardLayout.findViewById(R.id.wizard_cancel_button);
 //        cancelButton.setOnClickListener(this);

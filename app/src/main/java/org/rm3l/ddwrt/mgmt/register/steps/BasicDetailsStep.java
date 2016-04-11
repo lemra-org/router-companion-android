@@ -21,6 +21,8 @@ import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.mgmt.register.resources.RouterWizardAction;
+import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.ViewGroupUtils;
 import org.rm3l.ddwrt.widgets.wizard.MaterialWizardStep;
@@ -63,6 +65,8 @@ public class BasicDetailsStep extends MaterialWizardStep {
     private Spinner routerFirmwareSpinner;
     private DDWRTCompanionDAO dao;
 
+    private Router routerSelected = null;
+
     //Wire the layout to the step
     public BasicDetailsStep() {
     }
@@ -84,7 +88,21 @@ public class BasicDetailsStep extends MaterialWizardStep {
         final Context context = getContext();
         this.dao = RouterManagementActivity.getDao(context);
 
-        final View v = inflater.inflate(R.layout.wizard_add_router_1_basic_details_step, container, false);
+        final Object tag = container.getTag();
+        if (tag != null) {
+            try {
+                final RouterWizardAction routerWizardAction = RouterWizardAction.GSON_BUILDER.create()
+                        .fromJson(tag.toString(), RouterWizardAction.class);
+                routerSelected = dao.getRouter(routerWizardAction.getRouterUuid());
+            } catch (final Exception e) {
+                //No worries
+                e.printStackTrace();
+            }
+        }
+
+        load();
+
+        final View v = inflater.inflate(R.layout.wizard_manage_router_1_basic_details_step, container, false);
         uuidTv = (TextView) v.findViewById(R.id.router_add_uuid);
         routerNameEt = (EditText) v.findViewById(R.id.router_add_name);
 
@@ -123,9 +141,31 @@ public class BasicDetailsStep extends MaterialWizardStep {
         return v;
     }
 
+    private void load() {
+        if (routerSelected != null) {
+            this.uuid = routerSelected.getUuid();
+            routerName = routerSelected.getName();
+            routerIpOrDns = routerSelected.getRemoteIpAddress();
+            if (routerSelected.getRouterFirmware() != null) {
+                routerFirmware = routerSelected.getRouterFirmware().toString();
+            }
+            isDemoModeStr = Boolean.toString(Utils.isDemoRouter(routerSelected));
+        }
+    }
+
     @Override
     protected void onVisibleToUser() {
         //Nothing to do - we are not reusing any context variable from previous steps
+        load();
+        if (isViewShown) {
+            uuidTv.setText(uuid);
+            routerNameEt.setText(routerName);
+            routerIpOrDnsEt.setText(routerIpOrDns);
+            if (routerFirmware != null) {
+                routerFirmwareSpinner.setSelection(
+                        ViewGroupUtils.getSpinnerIndex(routerFirmwareSpinner, routerFirmware), true);
+            }
+        }
     }
 
     protected void onExitNext() {

@@ -6,11 +6,11 @@ import org.rm3l.ddwrt.widgets.wizard.MaterialWizardFragmentActivity;
 /**
  * Created by rm3l on 15/03/16.
  */
-public class AddRouterFragmentActivity extends MaterialWizardFragmentActivity {
+public class ManageRouterFragmentActivity extends MaterialWizardFragmentActivity {
 
     @Override
     protected int getContentView() {
-        return R.layout.wizard_add_router;
+        return R.layout.wizard_manage_router;
     }
 
 }

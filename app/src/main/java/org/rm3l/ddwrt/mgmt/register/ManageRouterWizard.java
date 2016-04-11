@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 
 import org.codepond.wizardroid.WizardStep;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.mgmt.register.resources.RouterWizardAction;
 import org.rm3l.ddwrt.mgmt.register.steps.BasicDetailsStep;
 import org.rm3l.ddwrt.mgmt.register.steps.LocalSSIDLookupStep;
 import org.rm3l.ddwrt.mgmt.register.steps.ReviewStep;
@@ -21,19 +22,35 @@ import java.util.List;
 /**
  * Created by rm3l on 14/03/16.
  */
-public class AddRouterWizard extends MaterialWizard {
+public class ManageRouterWizard extends MaterialWizard {
+
+    private int action;
 
     /**
      * Note that initially MaterialWizard inherits from {@link android.support.v4.app.Fragment} and therefore you must have an empty constructor
      */
-    public AddRouterWizard() {
+    public ManageRouterWizard() {
         super();
+    }
+
+    public int getAction() {
+        return action;
+    }
+
+    public ManageRouterWizard setAction(int action) {
+        this.action = action;
+        return this;
     }
 
     @NonNull
     @Override
     protected String getWizardTitle() {
-        return "Register a Router";
+        switch (action) {
+            case RouterWizardAction.EDIT:
+                return "Edit Router";
+            default:
+                return "Register a Router";
+        }
     }
 
     @Nullable
@@ -61,7 +78,7 @@ public class AddRouterWizard extends MaterialWizard {
         final String wizardRouter = getContext()
                 .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                     Context.MODE_PRIVATE)
-                .getString(AddRouterWizard.class.getSimpleName(), null);
+                .getString(ManageRouterWizard.class.getSimpleName(), null);
         if (wizardRouter != null && !wizardRouter.isEmpty()) {
             intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, wizardRouter);
         }

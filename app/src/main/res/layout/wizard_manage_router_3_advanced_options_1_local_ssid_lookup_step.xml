@@ -54,7 +54,7 @@
                 app:layout_anchorGravity="right|end"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:visibility="invisible"/>
+                android:visibility="visible"/>
 
         </RelativeLayout>
 

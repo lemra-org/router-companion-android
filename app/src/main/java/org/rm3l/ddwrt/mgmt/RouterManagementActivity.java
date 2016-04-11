@@ -76,7 +76,7 @@ import org.rm3l.ddwrt.help.HelpActivity;
 import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
-import org.rm3l.ddwrt.mgmt.register.AddRouterFragmentActivity;
+import org.rm3l.ddwrt.mgmt.register.ManageRouterFragmentActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterManagementSettingsActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
@@ -116,6 +116,7 @@ public class RouterManagementActivity
     public static final String COPY_ROUTER = "copy_router";
 
     public static final int NEW_ROUTER_ADDED = 987;
+    public static final int ROUTER_UPDATED = 876;
 
     private FloatingActionButton addNewButton;
     private long mCurrentTheme;
@@ -378,7 +379,7 @@ public class RouterManagementActivity
 
 //        final DialogFragment addFragment = new RouterAddDialogFragment();
 //        addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);
-        startActivityForResult(new Intent(this, AddRouterFragmentActivity.class), NEW_ROUTER_ADDED);
+        startActivityForResult(new Intent(this, ManageRouterFragmentActivity.class), NEW_ROUTER_ADDED);
     }
 
     @Override
@@ -614,6 +615,14 @@ public class RouterManagementActivity
                     onRouterAdd();
                 }
             }
+                break;
+            case ROUTER_UPDATED: {
+                if (resultCode == RESULT_OK) {
+                    doRefreshRoutersListWithSpinner(RoutersListRefreshCause.DATA_SET_CHANGED, null);
+                }
+            }
+                break;
+
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

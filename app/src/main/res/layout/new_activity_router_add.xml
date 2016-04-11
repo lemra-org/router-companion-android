@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    tools:context=".mgmt.register.AddRouterWizard">
+    tools:context=".mgmt.register.ManageRouterWizard">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/addRouterToolbar"
