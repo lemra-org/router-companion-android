@@ -60,6 +60,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
@@ -197,7 +198,7 @@ public class RouterListRecycleViewAdapter extends
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.router_list_layout, parent, false);
+                .inflate(R.layout.router_mgmt_layout_row_view, parent, false);
         // set the view's size, margins, paddings and layout parameters
         // ...
         final long currentTheme = context.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
@@ -287,7 +288,7 @@ public class RouterListRecycleViewAdapter extends
 
         if (Strings.isNullOrEmpty(routerModelStr) || Utils.isDemoRouter(routerAt)) {
             if (Strings.isNullOrEmpty(routerModelStr)) {
-                //FIXME Router Model could not be detected - report exception
+                Crashlytics.log("Router Model could not be detected");
             }
             holder.routerAvatarImage.setImageResource(
                     Utils.isDemoRouter(routerAt) ?

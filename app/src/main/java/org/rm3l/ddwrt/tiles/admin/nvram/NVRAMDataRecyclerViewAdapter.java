@@ -106,7 +106,7 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.tile_admin_nvram_list_layout, parent, false);
+                .inflate(R.layout.tile_admin_nvram_row_view, parent, false);
         // set the view's size, margins, paddings and layout parameters
         // ...
         final ViewHolder vh = new ViewHolder(this.context, this.fragmentManager, v);

@@ -20,227 +20,220 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/access_restriction_policy_cardview"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:layout_marginStart="7dp"
+    android:layout_marginLeft="7dp"
+    android:layout_marginRight="7dp"
+    android:layout_marginEnd="7dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="5dp"
+    card_view:cardPreventCornerOverlap="true"
+    card_view:contentPaddingBottom="@dimen/activity_vertical_margin"
+    card_view:contentPaddingLeft="10dp"
+    card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin"
+    card_view:contentPaddingTop="@dimen/activity_vertical_margin">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/access_restriction_policy_cardview"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:layout_marginStart="7dp"
-        android:layout_marginLeft="7dp"
-        android:layout_marginRight="7dp"
-        android:layout_marginEnd="7dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="5dp"
-        card_view:cardPreventCornerOverlap="true"
-        card_view:contentPaddingBottom="@dimen/activity_vertical_margin"
-        card_view:contentPaddingLeft="10dp"
-        card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin"
-        card_view:contentPaddingTop="@dimen/activity_vertical_margin">
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:layout_weight="3.5">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="3.5">
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:text="#"
+                    android:textAppearance="?android:textAppearanceSmall"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="#"
-                        android:textAppearance="?android:textAppearanceSmall"/>
-
-                    <TextView
-                        android:textIsSelectable="true"
-                        android:id="@+id/access_restriction_policy_cardview_number"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginEnd="10dp"/>
-
-                    <TextView
-                        android:textIsSelectable="true"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/access_restriction_policy_cardview_name"
-                        android:textAppearance="?android:textAppearanceLarge"/>
-
-                </LinearLayout>
-
-                <TableLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:textIsSelectable="true"
+                    android:id="@+id/access_restriction_policy_cardview_number"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:stretchColumns="*"
-                    android:layout_marginRight="25dp"
-                    android:layout_marginEnd="25dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp">
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"/>
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/access_restriction_policy_cardview_days_sunday"
-                            android:text="Sun"
-                            android:background="@drawable/table_border"
-                            android:gravity="center_horizontal"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/access_restriction_policy_cardview_days_monday"
-                            android:text="Mon"
-                            android:background="@drawable/table_border"
-                            android:gravity="center_horizontal"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/access_restriction_policy_cardview_days_tuesday"
-                            android:text="Tue"
-                            android:background="@drawable/table_border"
-                            android:gravity="center_horizontal"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/access_restriction_policy_cardview_days_wednesday"
-                            android:text="Wed"
-                            android:background="@drawable/table_border"
-                            android:gravity="center_horizontal"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/access_restriction_policy_cardview_days_thursday"
-                            android:text="Thu"
-                            android:background="@drawable/table_border"
-                            android:gravity="center_horizontal"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/access_restriction_policy_cardview_days_friday"
-                            android:text="Fri"
-                            android:background="@drawable/table_border"
-                            android:gravity="center_horizontal"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/access_restriction_policy_cardview_days_saturday"
-                            android:text="Sat"
-                            android:background="@drawable/table_border"
-                            android:gravity="center_horizontal"/>
-
-                    </TableRow>
-                </TableLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:textIsSelectable="true"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Time of Day: "
-                        android:layout_marginRight="5dp"
-                        android:layout_marginEnd="5dp"/>
-                    <TextView
-                        android:textIsSelectable="true"
-                        android:id="@+id/access_restriction_policy_cardview_hours"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Internet Access Policy: "
-                        android:layout_marginRight="5dp"
-                        android:layout_marginEnd="5dp"/>
-                    <TextView
-                        android:textIsSelectable="true"
-                        android:id="@+id/access_restriction_policy_cardview_internet_policy"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
+                    android:id="@+id/access_restriction_policy_cardview_name"
+                    android:textAppearance="?android:textAppearanceLarge"/>
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:layout_width="wrap_content"
+            <TableLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_gravity="end">
+                android:orientation="horizontal"
+                android:stretchColumns="*"
+                android:layout_marginRight="25dp"
+                android:layout_marginEnd="25dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="35dp">
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                    <android.support.v7.widget.SwitchCompat
-                        android:id="@+id/access_restriction_policy_cardview_status"
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        android:layout_marginRight="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:textOff="OFF"
-                        android:textOn="ON"/>
+                        android:id="@+id/access_restriction_policy_cardview_days_sunday"
+                        android:text="Sun"
+                        android:background="@drawable/table_border"
+                        android:gravity="center_horizontal"/>
 
-                    <ImageButton
-                        android:id="@+id/access_restriction_policy_cardview_menu"
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:contentDescription="@string/menu"
-                        android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"/>
+                        android:id="@+id/access_restriction_policy_cardview_days_monday"
+                        android:text="Mon"
+                        android:background="@drawable/table_border"
+                        android:gravity="center_horizontal"/>
 
-                </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/access_restriction_policy_cardview_days_tuesday"
+                        android:text="Tue"
+                        android:background="@drawable/table_border"
+                        android:gravity="center_horizontal"/>
 
-                <ImageButton
-                    android:id="@+id/access_restriction_policy_remove_btn"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/access_restriction_policy_cardview_days_wednesday"
+                        android:text="Wed"
+                        android:background="@drawable/table_border"
+                        android:gravity="center_horizontal"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/access_restriction_policy_cardview_days_thursday"
+                        android:text="Thu"
+                        android:background="@drawable/table_border"
+                        android:gravity="center_horizontal"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/access_restriction_policy_cardview_days_friday"
+                        android:text="Fri"
+                        android:background="@drawable/table_border"
+                        android:gravity="center_horizontal"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/access_restriction_policy_cardview_days_saturday"
+                        android:text="Sat"
+                        android:background="@drawable/table_border"
+                        android:gravity="center_horizontal"/>
+
+                </TableRow>
+            </TableLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end|bottom"
-                    android:src="@drawable/ic_action_action_delete"
-                    android:background="?android:selectableItemBackground"
-                    android:contentDescription="Remove" />
+                    android:text="Time of Day: "
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"/>
+                <TextView
+                    android:textIsSelectable="true"
+                    android:id="@+id/access_restriction_policy_cardview_hours"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Internet Access Policy: "
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"/>
+                <TextView
+                    android:textIsSelectable="true"
+                    android:id="@+id/access_restriction_policy_cardview_internet_policy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
 
         </LinearLayout>
 
-    </android.support.v7.widget.CardView>
+        <LinearLayout
+            android:layout_weight="0.5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="end">
 
-</RelativeLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="35dp">
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/access_restriction_policy_cardview_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:textOff="OFF"
+                    android:textOn="ON"/>
+
+                <ImageButton
+                    android:id="@+id/access_restriction_policy_cardview_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/menu"
+                    android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"/>
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/access_restriction_policy_remove_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:src="@drawable/ic_action_action_delete"
+                android:background="?android:selectableItemBackground"
+                android:contentDescription="Remove" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

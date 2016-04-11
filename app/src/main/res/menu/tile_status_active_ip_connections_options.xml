@@ -28,7 +28,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:icon="@drawable/ic_search_white_24dp"
         android:orderInCategory="1"
         android:title="@string/action_search"
-        android:visible="false"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom" />
 
@@ -37,7 +36,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:icon="@drawable/ic_action_action_trending_up"
         android:orderInCategory="2"
         android:title="@string/stats"
-        android:visible="false"
         app:showAsAction="never">
         <menu>
             <item

@@ -89,7 +89,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
@@ -380,40 +379,6 @@ public class RouterManagementActivity
 //        final DialogFragment addFragment = new RouterAddDialogFragment();
 //        addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);
         startActivityForResult(new Intent(this, AddRouterFragmentActivity.class), NEW_ROUTER_ADDED);
-    }
-
-    private void openUpdateRouterForm(@Nullable Router router) {
-        if (router != null) {
-            final DialogFragment updateFragment = new RouterUpdateDialogFragment();
-            final Bundle args = new Bundle();
-            args.putString(ROUTER_SELECTED, router.getUuid());
-            updateFragment.setArguments(args);
-            updateFragment.show(getSupportFragmentManager(), UPDATE_ROUTER_FRAGMENT_TAG);
-        } else {
-            Crouton.makeText(this, "Entry no longer exists!", Style.ALERT).show();
-        }
-    }
-
-    private void openDuplicateRouterForm(@Nullable Router router) {
-        //Display Donate Message if trying to add more than the max routers for Free version
-        final List<Router> allRouters = dao.getAllRouters();
-        //noinspection PointlessBooleanExpression,ConstantConditions
-        if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS) &&
-                allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
-            //Download the full version to unlock this version
-            Utils.displayUpgradeMessage(this, "Duplicate Router");
-            return;
-        }
-
-        if (router != null) {
-            final DialogFragment copyFragment = new RouterDuplicateDialogFragment();
-            final Bundle args = new Bundle();
-            args.putString(ROUTER_SELECTED, router.getUuid());
-            copyFragment.setArguments(args);
-            copyFragment.show(getSupportFragmentManager(), COPY_ROUTER);
-        } else {
-            Crouton.makeText(this, "Entry no longer exists!", Style.ALERT).show();
-        }
     }
 
     @Override

@@ -98,7 +98,6 @@ import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
-import com.mikepenz.materialdrawer.util.RecyclerViewCacheUtil;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
@@ -165,6 +164,8 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERS
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_SECONDS;
+
+//import com.mikepenz.materialdrawer.util.RecyclerViewCacheUtil;
 
 /**
  * Main Android Activity
@@ -505,14 +506,14 @@ public class DDWRTMainActivity extends AppCompatActivity
                             Toast.makeText(DDWRTMainActivity.this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
                             return false;
                         }
-                        final int profileIdentifier = profile.getIdentifier();
+                        final long profileIdentifier = profile.getIdentifier();
                         Crashlytics.log(Log.DEBUG,  TAG, "OnAccountHeaderListener: " + profileIdentifier);
                         if (profileIdentifier == ADD_NEW_ROUTER ||
                                 profileIdentifier == MANAGE_ROUTERS) {
                             //Already handled
                             return true;
                         }
-                        final Router daoRouter = dao.getRouter(profileIdentifier);
+                        final Router daoRouter = dao.getRouter(Long.valueOf(profileIdentifier).intValue());
 
                         if (daoRouter == null) {
                             Toast.makeText(DDWRTMainActivity.this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
@@ -685,7 +686,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                             ReportingUtils.reportException(DDWRTMainActivity.this, new IllegalStateException("drawerItem == null"));
                             return false;
                         }
-                        final int identifier = drawerItem.getIdentifier();
+                        final int identifier = Long.valueOf(drawerItem.getIdentifier()).intValue();
                         if (identifier < 0) {
                             ReportingUtils.reportException(DDWRTMainActivity.this, new IllegalStateException("identifier < 0"));
                             return false;
@@ -729,7 +730,7 @@ public class DDWRTMainActivity extends AppCompatActivity
 
         //if you have many different types of DrawerItems you can magically pre-cache those items to get a better scroll performance
         //make sure to init the cache after the DrawerBuilder was created as this will first clear the cache to make sure no old elements are in
-        RecyclerViewCacheUtil.getInstance().withCacheSize(3).init(mDrawerResult);
+//        RecyclerViewCacheUtil.getInstance().withCacheSize(3).init(mDrawerResult);
 
         final Integer savedPosition;
         int position = intent.getIntExtra(SAVE_ITEM_SELECTED, 1);
@@ -1600,10 +1601,10 @@ public class DDWRTMainActivity extends AppCompatActivity
                 }
                 break;
             case NEW_ROUTER_ADDED: {
-                //TODO Refresh the menu list
-                final String newRouterUuid = data.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+                final String newRouterUuid;
                 Router newRouter = null;
-                final boolean error = (newRouterUuid == null ||
+                final boolean error = (data == null ||
+                        (newRouterUuid = data.getStringExtra(RouterManagementActivity.ROUTER_SELECTED)) == null ||
                         (newRouter = dao.getRouter(newRouterUuid)) == null);
                 onRouterAdd(null, newRouter, error);
             }
