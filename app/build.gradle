@@ -467,4 +467,9 @@ dependencies {
     //Otto EventBus
     compile 'com.squareup:otto:1.3.8'
 
+    //LeakCanary - to detect memory leaks (only in debug flavor)
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
+
 }
