@@ -305,6 +305,17 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
             this.port = Integer.toString(routerSelected.getRemotePort());
             this.privkeyPath = routerSelected.getPrivKeyPlain();
             this.privkeyButtonHint = "File selected";
+            switch (routerSelected.getSshAuthenticationMethod()) {
+                case NONE:
+                    authMethod = Integer.toString(Router.SSHAuthenticationMethod_NONE);
+                    break;
+                case PASSWORD:
+                    authMethod = Integer.toString(Router.SSHAuthenticationMethod_PASSWORD);
+                    break;
+                case PUBLIC_PRIVATE_KEY:
+                    authMethod = Integer.toString(Router.SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY);
+                    break;
+            }
         }
     }
 
