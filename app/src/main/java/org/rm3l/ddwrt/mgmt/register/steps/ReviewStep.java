@@ -50,6 +50,7 @@ import org.rm3l.ddwrt.widgets.wizard.MaterialWizardStep;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
@@ -137,6 +138,8 @@ public class ReviewStep extends MaterialWizardStep {
                 e.printStackTrace();
             }
         }
+        Crashlytics.log(Log.DEBUG, TAG,
+                "<routerSelected=" + routerSelected + ",action=" + action + ">");
 
         final View v = inflater.inflate(
                 R.layout.wizard_manage_router_4_review,
@@ -374,8 +377,12 @@ public class ReviewStep extends MaterialWizardStep {
 
     private Router buildRouter()  {
         final Router router = new Router(getContext());
-        if (!isNullOrEmpty(uuid)) {
-            router.setUuid(uuid);
+        if (routerSelected != null &&
+                action != RouterWizardAction.ADD &&
+                action != RouterWizardAction.COPY) {
+            router.setUuid(routerSelected.getUuid());
+        } else {
+            router.setUuid(UUID.randomUUID().toString());
         }
         router.setName(routerName);
         router.setRemoteIpAddress(routerIpOrDns);
@@ -384,6 +391,8 @@ public class ReviewStep extends MaterialWizardStep {
                 connectionProtocol != null ?
                         Router.RouterConnectionProtocol.valueOf(connectionProtocol) :
                         Router.RouterConnectionProtocol.SSH);
+        //FIXME To change when we will support other formwares
+        router.setRouterFirmware(Router.RouterFirmware.DDWRT);
 //        final int pos = (((Spinner) d.findViewById(R.id.router_add_firmware))).getSelectedItemPosition();
 //        final String[] fwStringArray = d.getContext().getResources().getStringArray(R.array.router_firmwares_array_values);
 //        if (fwStringArray != null && pos < fwStringArray.length) {
@@ -442,15 +451,13 @@ public class ReviewStep extends MaterialWizardStep {
     @Override
     protected void onExitNext() {
         final Router dbRouter;
-        if (routerSelected == null ||
-                action == RouterWizardAction.ADD ||
-                action == RouterWizardAction.COPY) {
-            //This is a new router to add
-            router.setUuid("");
-            dbRouter = this.dao.insertRouter(router);
-        } else {
-            router.setUuid(routerSelected.getUuid());
+        if (routerSelected != null &&
+                action != RouterWizardAction.ADD &&
+                action != RouterWizardAction.COPY) {
             dbRouter = this.dao.updateRouter(router);
+        } else {
+            //This is a new router to add
+            dbRouter = this.dao.insertRouter(router);
         }
         if (dbRouter != null) {
             final Context context = getContext();
@@ -466,7 +473,35 @@ public class ReviewStep extends MaterialWizardStep {
     @Override
     public Boolean validateStep(Wizard wizard) {
         router = buildRouter();
-        new CheckRouterConnectionAsyncTask(wizard, true).execute();
+        boolean checkActualConnection = true;
+        if (routerSelected != null &&
+                action != RouterWizardAction.ADD &&
+                action != RouterWizardAction.COPY) {
+            //This is an update - check whether any of the connection parameters have changed
+            if (StringUtils.equals(routerSelected.getRemoteIpAddress(), router.getRemoteIpAddress()) &&
+                    routerSelected.getRouterFirmware() == router.getRouterFirmware() &&
+                    routerSelected.getRouterConnectionProtocol() == router.getRouterConnectionProtocol() &&
+                    routerSelected.getRemotePort() == router.getRemotePort() &&
+                    StringUtils.equals(routerSelected.getUsernamePlain(), router.getUsernamePlain()) &&
+                    routerSelected.getSshAuthenticationMethod() == router.getSshAuthenticationMethod()) {
+
+                //Check actual password and privkey
+                switch (routerSelected.getSshAuthenticationMethod()) {
+                    case PASSWORD:
+                        checkActualConnection = !StringUtils.equals(routerSelected.getPasswordPlain(),
+                                router.getPasswordPlain());
+                        break;
+                    case PUBLIC_PRIVATE_KEY:
+                        checkActualConnection = !StringUtils.equals(routerSelected.getPrivKeyPlain(),
+                                router.getPrivKeyPlain());
+                        break;
+                    default:
+                        checkActualConnection = false;
+                        break;
+                }
+            }
+        }
+        new CheckRouterConnectionAsyncTask(wizard, checkActualConnection).execute();
         //We are returning null to indicate that this step will take care of updating the wizard
         return null;
     }
@@ -495,9 +530,7 @@ public class ReviewStep extends MaterialWizardStep {
 
         public CheckRouterConnectionAsyncTask(Wizard wizard, boolean checkActualConnection) {
             this.wizard = wizard;
-            //Disabling 'checkActualConnection' setting, as we are now trying to detect the firmware used
-//            this.checkActualConnection = checkActualConnection;
-            this.checkActualConnection = true;
+            this.checkActualConnection = checkActualConnection;
         }
 
         @Override
@@ -584,28 +617,7 @@ public class ReviewStep extends MaterialWizardStep {
                     onExitSynchronous(WizardStep.EXIT_NEXT);
                     wizard.goNext();
                 }
-//                if (router != null) {
-//                    AlertDialog daoAlertDialog = null;
-//                    try {
-//                        //Register or update router
-//                        daoAlertDialog = Utils.buildAlertDialog(getActivity(), null,
-//                                String.format("Registering (or updating) router '%s'...", routerIpOrDns), false, false);
-//                        daoAlertDialog.show();
-//                    } finally {
-//                        if (daoAlertDialog != null) {
-//                            daoAlertDialog.cancel();
-//                        }
-//                    }
-//                } else {
-//                    displayMessage(getString(R.string.router_add_internal_error), Style.ALERT);
-//                }
             }
-
-//            if (AbstractRouterMgmtDialogFragment.this.mListener != null) {
-//                AbstractRouterMgmtDialogFragment.this.onPositiveButtonActionSuccess(
-//                        AbstractRouterMgmtDialogFragment.this.mListener, router, e != null);
-//            }
-
         }
 
         @Override

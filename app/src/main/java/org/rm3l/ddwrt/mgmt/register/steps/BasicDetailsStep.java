@@ -67,6 +67,8 @@ public class BasicDetailsStep extends MaterialWizardStep {
 
     private Router routerSelected = null;
 
+    private boolean alreadyFilled;
+
     //Wire the layout to the step
     public BasicDetailsStep() {
     }
@@ -142,7 +144,7 @@ public class BasicDetailsStep extends MaterialWizardStep {
     }
 
     private void load() {
-        if (routerSelected != null) {
+        if (routerSelected != null && !alreadyFilled) {
             this.uuid = routerSelected.getUuid();
             routerName = routerSelected.getName();
             routerIpOrDns = routerSelected.getRemoteIpAddress();
@@ -157,7 +159,7 @@ public class BasicDetailsStep extends MaterialWizardStep {
     protected void onVisibleToUser() {
         //Nothing to do - we are not reusing any context variable from previous steps
         load();
-        if (isViewShown) {
+        if (isViewShown && !alreadyFilled) {
             uuidTv.setText(uuid);
             routerNameEt.setText(routerName);
             routerIpOrDnsEt.setText(routerIpOrDns);
@@ -165,6 +167,7 @@ public class BasicDetailsStep extends MaterialWizardStep {
                 routerFirmwareSpinner.setSelection(
                         ViewGroupUtils.getSpinnerIndex(routerFirmwareSpinner, routerFirmware), true);
             }
+            alreadyFilled = true;
         }
     }
 

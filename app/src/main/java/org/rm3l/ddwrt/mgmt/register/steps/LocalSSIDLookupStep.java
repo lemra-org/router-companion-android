@@ -76,6 +76,7 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
 
     private final Gson gson = MaterialWizard.GSON_BUILDER.create();
     private Router routerSelected;
+    private boolean alreadyFilled;
 
     //Wire the layout to the step
     public LocalSSIDLookupStep() {
@@ -362,7 +363,7 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
     }
 
     private void load() {
-        if (routerSelected != null) {
+        if (routerSelected != null && !alreadyFilled) {
             final Context context = getContext();
             this.useLocalSSIDLookup = routerSelected.isUseLocalSSIDLookup(context);
             this.fallBackToPrimary = !this.useLocalSSIDLookup;
@@ -384,7 +385,8 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
     @Override
     protected void onVisibleToUser() {
         //Nothing to do
-        if (isViewShown) {
+        if (isViewShown && !alreadyFilled) {
+            alreadyFilled = true;
             localSSIDLookupDetailedView.removeAllViews();
 
             if (!TextUtils.isEmpty(localSSIDLookupDetails)) {

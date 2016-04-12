@@ -298,7 +298,7 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
     }
 
     private void load() {
-        if (routerSelected != null) {
+        if (routerSelected != null && !alreadyFilled) {
             this.connectionProtocol = routerSelected.getRouterConnectionProtocol().toString();
             this.username = routerSelected.getUsernamePlain();
             this.password = routerSelected.getPasswordPlain();
@@ -308,11 +308,14 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
         }
     }
 
+    private boolean alreadyFilled;
+
     @Override
     protected void onVisibleToUser() {
         //Nothing to do - we are not re-using any context variable field from previous steps
         load();
-        if (isViewShown) {
+        if (isViewShown && !alreadyFilled) {
+            alreadyFilled = true;
             try {
                 switch (Integer.parseInt(authMethod)) {
                     case Router.SSHAuthenticationMethod_NONE:
