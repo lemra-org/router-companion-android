@@ -65,8 +65,7 @@
         android:orientation="vertical"
         android:clickable="true"
         android:focusable="false"
-        android:id="@+id/active_ip_connections_stats"
-        android:background="@color/DarkGray">
+        android:id="@+id/active_ip_connections_stats">
 
         <RelativeLayout
             android:layout_width="match_parent"

@@ -56,6 +56,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -466,6 +467,14 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
 
         //Stats
+        final LinearLayout slidingUpPanel = (LinearLayout)
+                findViewById(R.id.active_ip_connections_stats);
+        if (themeLight) {
+            slidingUpPanel.setBackgroundColor(ContextCompat.getColor(this, R.color.white));
+        } else {
+            slidingUpPanel.setBackgroundColor(ContextCompat.getColor(this, R.color.black));
+        }
+
         mStatsRecyclerView = (RecyclerViewEmptySupport)
                 findViewById(R.id.tile_status_active_ip_connections_stats_recycler_view);
         // use this setting to improve performance if you know that changes
