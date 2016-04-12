@@ -645,8 +645,10 @@ public class RouterManagementActivity
                             break;
                         case REMOVED:
                             RouterManagementActivity.this.mAdapter.notifyItemRemoved(position);
+                            break;
                         case UPDATED:
                             RouterManagementActivity.this.mAdapter.notifyItemChanged(position);
+                            break;
                     }
                 } finally {
                     setRefreshActionButtonState(false);
