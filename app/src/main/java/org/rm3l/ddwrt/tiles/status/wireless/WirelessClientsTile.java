@@ -1603,7 +1603,6 @@ public class WirelessClientsTile
                 activeIpConnectionsNumView
                         .setText(numActiveIPConnections >= 0 ? String.valueOf(numActiveIPConnections) : EMPTY_VALUE_TO_DISPLAY);
 
-                mProgressBarDesc.setText("RM >>> numActiveIPConnections: " + numActiveIPConnections + " <<< ");
                 if (numActiveIPConnections > 0) {
                     activeIpConnectionsNumView.setMovementMethod(LinkMovementMethod.getInstance());
                     final Spannable spans = (Spannable) activeIpConnectionsNumView.getText();

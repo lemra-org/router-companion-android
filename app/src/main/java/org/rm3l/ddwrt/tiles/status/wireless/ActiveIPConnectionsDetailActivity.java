@@ -83,6 +83,7 @@ import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.IPConntrack;
 import org.rm3l.ddwrt.resources.IPWhoisInfo;
+import org.rm3l.ddwrt.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -291,8 +292,12 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private Map<String, String> ipToHostResolvedMap;
 
+    private RecyclerViewEmptySupport mStatsRecyclerView;
+    private RecyclerView.Adapter mStatsAdapter;
+    private RecyclerView.LayoutManager mStatsLayoutManager;
+
+    private Map<String, String> ipToHostResolvedMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -440,17 +445,14 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
         mRecyclerView = (RecyclerViewEmptySupport)
                 findViewById(R.id.tile_status_active_ip_connections_recycler_view);
-
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         // allows for optimizations if all items are of the same size:
         mRecyclerView.setHasFixedSize(true);
-
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
         mLayoutManager.scrollToPosition(0);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
         final TextView emptyView = (TextView) findViewById(R.id.empty_view);
         if (themeLight) {
             emptyView.setTextColor(ContextCompat.getColor(this, R.color.black));
@@ -458,11 +460,40 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             emptyView.setTextColor(ContextCompat.getColor(this, R.color.white));
         }
         mRecyclerView.setEmptyView(emptyView);
-
         // specify an adapter (see also next example)
         mAdapter = new ActiveIPConnectionsDetailRecyclerViewAdapter(this)
             .setActiveIPConnections(mActiveIPConnections);
         mRecyclerView.setAdapter(mAdapter);
+
+        //Stats
+        mStatsRecyclerView = (RecyclerViewEmptySupport)
+                findViewById(R.id.tile_status_active_ip_connections_stats_recycler_view);
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        // allows for optimizations if all items are of the same size:
+        mStatsRecyclerView.setHasFixedSize(true);
+        // use a linear layout manager
+        mStatsLayoutManager = new LinearLayoutManager(this);
+        mStatsLayoutManager.scrollToPosition(0);
+        mStatsRecyclerView.setLayoutManager(mStatsLayoutManager);
+        final TextView statsEmptyView = (TextView)
+                findViewById(R.id.tile_status_active_ip_connections_stats_recycler_view_empty_view);
+        if (themeLight) {
+            statsEmptyView.setTextColor(ContextCompat.getColor(this, R.color.black));
+        } else {
+            statsEmptyView.setTextColor(ContextCompat.getColor(this, R.color.white));
+        }
+        mStatsRecyclerView.setEmptyView(statsEmptyView);
+//        // specify an adapter (see also next example)
+        mStatsAdapter = new ActiveIPConnectionsStatsAdapter(this);
+
+        //FIXME Just for testing
+        final Map<Integer, Object> statsMap = new HashMap<>();
+        statsMap.put(ActiveIPConnectionsStatsAdapter.BY_SOURCE, new Object());
+        statsMap.put(ActiveIPConnectionsStatsAdapter.BY_DESTINATION_IP, new Object());
+        statsMap.put(ActiveIPConnectionsStatsAdapter.BY_DESTINATION_IP_COUNTRY, new Object());
+        ((ActiveIPConnectionsStatsAdapter) mStatsAdapter).setItems(statsMap);
+        mStatsRecyclerView.setAdapter(mStatsAdapter);
     }
 
     @Override
