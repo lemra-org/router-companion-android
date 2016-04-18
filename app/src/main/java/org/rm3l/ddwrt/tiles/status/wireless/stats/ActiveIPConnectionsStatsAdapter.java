@@ -134,10 +134,15 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
         final TextView stats6OtherText;
         final ProgressBar stats6OtherProgressBar;
 
+        final ProgressBar statsLoadingView;
+
         public ViewHolder(final Context context, View itemView) {
             super(itemView);
             this.mContext = context;
             this.mItemView = itemView;
+
+            this.statsLoadingView = (ProgressBar)
+                    itemView.findViewById(R.id.activity_ip_connections_stats_loading_view);
 
             this.title = (TextView) itemView.findViewById(R.id.activity_ip_connections_stats_title);
 

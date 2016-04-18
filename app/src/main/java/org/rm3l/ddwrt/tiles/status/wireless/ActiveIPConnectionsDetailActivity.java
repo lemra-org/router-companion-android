@@ -294,6 +294,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
 
 
+    private View slidingUpPanelLoading;
     private RecyclerViewEmptySupport mStatsRecyclerView;
     private RecyclerView.Adapter mStatsAdapter;
     private RecyclerView.LayoutManager mStatsLayoutManager;
@@ -469,11 +470,13 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         //Stats
         final LinearLayout slidingUpPanel = (LinearLayout)
                 findViewById(R.id.active_ip_connections_stats);
-        if (themeLight) {
-            slidingUpPanel.setBackgroundColor(ContextCompat.getColor(this, R.color.white));
-        } else {
-            slidingUpPanel.setBackgroundColor(ContextCompat.getColor(this, R.color.black));
-        }
+//        if (themeLight) {
+//            slidingUpPanel.setBackgroundColor(ContextCompat.getColor(this, R.color.white));
+//        } else {
+//            slidingUpPanel.setBackgroundColor(ContextCompat.getColor(this, R.color.black));
+//        }
+
+        this.slidingUpPanelLoading = findViewById(R.id.activity_ip_connections_stats_loading);
 
         mStatsRecyclerView = (RecyclerViewEmptySupport)
                 findViewById(R.id.tile_status_active_ip_connections_stats_recycler_view);

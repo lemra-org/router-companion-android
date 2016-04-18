@@ -82,9 +82,15 @@
                 android:text="Stats"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textColor="@color/primaryColor"
-                android:textStyle="bold"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"/>
+
+            <ProgressBar
+                android:id="@+id/activity_ip_connections_stats_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
 
         </RelativeLayout>
 
