@@ -307,4 +307,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <color name="arcprogress_finished">#FFFFFF</color>
     <color name="arcprogress_unfinished">#486AB0</color>
 
+    <color name="black_semi_transparent">#70000000</color>
+    <color name="white_semi_transparent">#70ffffff</color>
+
 </resources>
