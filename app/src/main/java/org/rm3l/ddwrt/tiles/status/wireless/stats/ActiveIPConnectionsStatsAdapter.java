@@ -31,13 +31,18 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
     private final ActiveIPConnectionsDetailActivity activity;
 
     public static final int BY_SOURCE = 0;
-    public static final int BY_DESTINATION_IP = 1;
-    public static final int BY_DESTINATION_IP_COUNTRY = 2;
+    public static final int BY_PROTOCOL = 1;
+    public static final int BY_DESTINATION_IP = 2;
+    public static final int BY_DESTINATION_IP_COUNTRY = 3;
+    public static final int BY_DESTINATION_IP_PORT = 4;
 
     private Map<Integer, Object> items = new HashMap<>();
+    private final boolean singleHost;
 
-    public ActiveIPConnectionsStatsAdapter(final ActiveIPConnectionsDetailActivity activity) {
+    public ActiveIPConnectionsStatsAdapter(final ActiveIPConnectionsDetailActivity activity,
+                                           final boolean singleHost) {
         this.activity = activity;
+        this.singleHost = singleHost;
     }
 
     public Map<Integer, Object> getItems() {
@@ -74,17 +79,25 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        final Object itemsAt = items.get(position);
-        switch (position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
+        final Object itemsAt = (position >= 0 && position < items.size()) ?
+                items.get(position) : null;
+        final int newPosition = position + (singleHost ? 1 : 0);
+        switch (newPosition) {
             case BY_SOURCE:
                 holder.title.setText("Source");
                 break;
             case BY_DESTINATION_IP:
-                holder.title.setText("Destination IP");
+                holder.title.setText("Destination");
                 break;
             case BY_DESTINATION_IP_COUNTRY:
                 holder.title.setText("Destination Country");
+                break;
+            case BY_PROTOCOL:
+                holder.title.setText("Protocol");
+                break;
+            case BY_DESTINATION_IP_PORT:
+                holder.title.setText("Destination Port");
                 break;
             default:
                 Toast.makeText(activity, "Internal Error", Toast.LENGTH_SHORT).show();
@@ -94,7 +107,15 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
 
     @Override
     public int getItemCount() {
-        return (items != null ? items.keySet().size() : 0);
+        if (items != null) {
+            if (singleHost) {
+                return Math.max(items.keySet().size() - 1, 0);
+            } else {
+                return items.keySet().size();
+            }
+        } else {
+            return 0;
+        }
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

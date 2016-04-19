@@ -40,21 +40,43 @@
             ads:adSize="BANNER"
             ads:adUnitId="@string/banner_ad_unit_id_active_ip_connections" />
 
-        <org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport
-            android:id="@+id/tile_status_active_ip_connections_recycler_view"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical"/>
+            android:layout_height="match_parent">
 
-        <TextView
-            android:textIsSelectable="true"
-            android:id="@+id/empty_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="No IP Connection" />
+            <ProgressBar
+                android:id="@+id/tile_status_active_ip_connections_view_loadingview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="visible"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:id="@+id/tile_status_active_ip_connections_view_recyclerview_linearlayout"
+                android:visibility="gone">
+
+                <org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport
+                    android:id="@+id/tile_status_active_ip_connections_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scrollbars="vertical"
+                    android:layout_marginBottom="63dp"/>
+
+                <TextView
+                    android:textIsSelectable="true"
+                    android:id="@+id/empty_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="No IP Connection" />
+            </LinearLayout>
+
+        </RelativeLayout>
 
     </LinearLayout>
 
