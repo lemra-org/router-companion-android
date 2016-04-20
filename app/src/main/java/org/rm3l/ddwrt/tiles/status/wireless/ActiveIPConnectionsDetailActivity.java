@@ -455,9 +455,9 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         this.slidingUpPanel = (LinearLayout)
                 findViewById(R.id.active_ip_connections_stats);
         if (themeLight) {
-            slidingUpPanel.setBackgroundColor(ContextCompat.getColor(this, R.color.white_semi_transparent));
-        } else {
             slidingUpPanel.setBackgroundColor(ContextCompat.getColor(this, R.color.black_semi_transparent));
+        } else {
+            slidingUpPanel.setBackgroundColor(ContextCompat.getColor(this, R.color.white_semi_transparent));
         }
 
         this.slidingUpPanelStatsTitle = (TextView) findViewById(R.id.active_ip_connections_stats_title);
