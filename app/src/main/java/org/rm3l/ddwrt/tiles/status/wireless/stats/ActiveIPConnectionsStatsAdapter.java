@@ -12,12 +12,18 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Ordering;
+import com.google.common.collect.SortedSetMultimap;
+import com.google.common.collect.Table;
+import com.google.common.collect.TreeMultimap;
+
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.tiles.status.wireless.ActiveIPConnectionsDetailActivity;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.Map;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
@@ -32,11 +38,11 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
 
     public static final int BY_SOURCE = 0;
     public static final int BY_PROTOCOL = 1;
-    public static final int BY_DESTINATION_IP = 2;
-    public static final int BY_DESTINATION_IP_COUNTRY = 3;
-    public static final int BY_DESTINATION_IP_PORT = 4;
+    public static final int BY_DESTINATION_COUNTRY = 2;
+    public static final int BY_DESTINATION = 3;
+    public static final int BY_DESTINATION_PORT = 4;
 
-    private Map<Integer, Object> items = new HashMap<>();
+    private Table<Integer, String, Integer> statsTable = HashBasedTable.create();
     private final boolean singleHost;
 
     public ActiveIPConnectionsStatsAdapter(final ActiveIPConnectionsDetailActivity activity,
@@ -45,12 +51,12 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
         this.singleHost = singleHost;
     }
 
-    public Map<Integer, Object> getItems() {
-        return items;
+    public Table<Integer, String, Integer> getStatsTable() {
+        return statsTable;
     }
 
-    public ActiveIPConnectionsStatsAdapter setItems(Map<Integer, Object> items) {
-        this.items = items;
+    public ActiveIPConnectionsStatsAdapter setStatsTable(Table<Integer, String, Integer> statsTable) {
+        this.statsTable = statsTable;
         return this;
     }
 
@@ -80,38 +86,93 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final Object itemsAt = (position >= 0 && position < items.size()) ?
-                items.get(position) : null;
+        final Map<String, Integer> statsAt = (position >= 0 && position < statsTable.rowKeySet().size()) ?
+                statsTable.row(position) : null;
         final int newPosition = position + (singleHost ? 1 : 0);
         switch (newPosition) {
             case BY_SOURCE:
                 holder.title.setText("Source");
                 break;
-            case BY_DESTINATION_IP:
-                holder.title.setText("Destination");
-                break;
-            case BY_DESTINATION_IP_COUNTRY:
+            case BY_DESTINATION_COUNTRY:
                 holder.title.setText("Destination Country");
                 break;
             case BY_PROTOCOL:
                 holder.title.setText("Protocol");
                 break;
-            case BY_DESTINATION_IP_PORT:
+            case BY_DESTINATION:
+                holder.title.setText("Destination");
+                break;
+            case BY_DESTINATION_PORT:
                 holder.title.setText("Destination Port");
                 break;
             default:
                 Toast.makeText(activity, "Internal Error", Toast.LENGTH_SHORT).show();
                 break;
         }
+
+        holder.statsLoadingView.setVisibility(View.GONE);
+        holder.statsErrorView.setVisibility(View.GONE);
+
+        if (statsAt == null) {
+            holder.statsErrorView.setVisibility(View.VISIBLE);
+            holder.statsErrorView.setText("No stats!");
+            return;
+        }
+
+        //Recompute with actual percentages
+        int totalSize = 0;
+        for (final Integer value : statsAt.values()) {
+            totalSize += (value == null ? 0 : value);
+        }
+        if (totalSize == 0) {
+            holder.statsErrorView.setVisibility(View.VISIBLE);
+            holder.statsErrorView.setText("E500. Internal Error. Please try again later.");
+            return;
+        }
+        final SortedSetMultimap<Integer, String> percentages = TreeMultimap.create(
+                Ordering.<Integer>natural().reverse(), Ordering.<String>natural());
+        for (final Map.Entry<String, Integer> statsAtEntry : statsAt.entrySet()) {
+            percentages.put(100 * statsAtEntry.getValue() / totalSize, statsAtEntry.getKey());
+        }
+        //Now rank based upon percentage values
+        int i = 0;
+        for (final Map.Entry<Integer, Collection<String>> percentageEntry : percentages.asMap().entrySet()) {
+            for (final String item : percentageEntry.getValue()) {
+                i++;
+                final Integer percentage = percentageEntry.getKey();
+                final String percentageValueText = ("\n" + percentage + "%");
+                if (i == 1) {
+                    holder.stats1PercentValue.setText(percentageValueText);
+                    holder.stats1Text.setText(item);
+                    holder.stats1ProgressBar.setProgress(percentage);
+                } else if (i == 2) {
+                    holder.stats2PercentValue.setText(percentageValueText);
+                    holder.stats2Text.setText(item);
+                    holder.stats2ProgressBar.setProgress(percentage);
+                } else if (i == 3) {
+                    holder.stats3PercentValue.setText(percentageValueText);
+                    holder.stats3Text.setText(item);
+                    holder.stats3ProgressBar.setProgress(percentage);
+                } else if (i == 4) {
+                    holder.stats4PercentValue.setText(percentageValueText);
+                    holder.stats4Text.setText(item);
+                    holder.stats4ProgressBar.setProgress(percentage);
+                } else if (i == 5) {
+                    holder.stats5PercentValue.setText(percentageValueText);
+                    holder.stats5Text.setText(item);
+                    holder.stats5ProgressBar.setProgress(percentage);
+                }
+            }
+        }
     }
 
     @Override
     public int getItemCount() {
-        if (items != null) {
+        if (statsTable != null) {
             if (singleHost) {
-                return Math.max(items.keySet().size() - 1, 0);
+                return Math.max(statsTable.rowKeySet().size() - 1, 0);
             } else {
-                return items.keySet().size();
+                return statsTable.rowKeySet().size();
             }
         } else {
             return 0;
@@ -150,12 +211,13 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
         final TextView stats5Text;
         final ProgressBar stats5ProgressBar;
 
-        final View stats6Other;
-        final TextView stats6OtherPercentValue;
-        final TextView stats6OtherText;
-        final ProgressBar stats6OtherProgressBar;
+//        final View stats6Other;
+//        final TextView stats6OtherPercentValue;
+//        final TextView stats6OtherText;
+//        final ProgressBar stats6OtherProgressBar;
 
         final ProgressBar statsLoadingView;
+        final TextView statsErrorView;
 
         public ViewHolder(final Context context, View itemView) {
             super(itemView);
@@ -207,13 +269,16 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
             this.stats5ProgressBar = (ProgressBar)
                     this.stats5.findViewById(R.id.activity_ip_connections_stats_5_progressbar);
 
-            this.stats6Other = itemView.findViewById(R.id.activity_ip_connections_stats_6_other);
-            this.stats6OtherPercentValue = (TextView)
-                    this.stats6Other.findViewById(R.id.activity_ip_connections_stats_6_other_percent);
-            this.stats6OtherText = (TextView)
-                    this.stats6Other.findViewById(R.id.activity_ip_connections_stats_6_other_text);
-            this.stats6OtherProgressBar = (ProgressBar)
-                    this.stats6Other.findViewById(R.id.activity_ip_connections_stats_6_other_progressbar);
+            this.statsErrorView = (TextView)
+                    itemView.findViewById(R.id.activity_ip_connections_stats_error);
+
+//            this.stats6Other = itemView.findViewById(R.id.activity_ip_connections_stats_6_other);
+//            this.stats6OtherPercentValue = (TextView)
+//                    this.stats6Other.findViewById(R.id.activity_ip_connections_stats_6_other_percent);
+//            this.stats6OtherText = (TextView)
+//                    this.stats6Other.findViewById(R.id.activity_ip_connections_stats_6_other_text);
+//            this.stats6OtherProgressBar = (ProgressBar)
+//                    this.stats6Other.findViewById(R.id.activity_ip_connections_stats_6_other_progressbar);
         }
     }
 

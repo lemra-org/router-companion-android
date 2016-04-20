@@ -65,6 +65,21 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:id="@+id/activity_ip_connections_stats_title"
                 android:layout_marginBottom="5dp"/>
 
+            <!-- Error message placeholder -->
+            <TextView
+                android:textIsSelectable="true"
+                android:id="@+id/activity_ip_connections_stats_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="@string/error_placeholder"
+                android:textColor="@color/ddwrt_purple"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
             <!-- 1 -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -266,7 +281,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_height="wrap_content"
                 android:id="@+id/activity_ip_connections_stats_6_other"
                 android:orientation="vertical"
-                android:layout_marginBottom="15dp">
+                android:layout_marginBottom="15dp"
+                android:visibility="gone">
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

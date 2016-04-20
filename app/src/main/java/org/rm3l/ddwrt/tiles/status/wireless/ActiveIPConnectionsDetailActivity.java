@@ -27,6 +27,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -121,6 +122,11 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
+import static org.rm3l.ddwrt.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION;
+import static org.rm3l.ddwrt.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_COUNTRY;
+import static org.rm3l.ddwrt.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_PORT;
+import static org.rm3l.ddwrt.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_PROTOCOL;
+import static org.rm3l.ddwrt.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_SOURCE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 import static org.rm3l.ddwrt.utils.Utils.getEscapedFileName;
@@ -301,6 +307,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
     private ProgressBar loadingView;
     private LinearLayout contentView;
     private HashMap<String, String> mDestinationIpToCountry;
+    private TextView slidingUpPanelStatsTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -452,9 +459,12 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         } else {
             slidingUpPanel.setBackgroundColor(ContextCompat.getColor(this, R.color.black_semi_transparent));
         }
-        this.slidingUpPanel.setVisibility(View.GONE);
+
+        this.slidingUpPanelStatsTitle = (TextView) findViewById(R.id.active_ip_connections_stats_title);
 
         this.slidingUpPanelLoading = findViewById(R.id.activity_ip_connections_stats_loading);
+        this.slidingUpPanelLoading.setVisibility(View.VISIBLE);
+        this.slidingUpPanelStatsTitle.setText("Computing stats...");
 
         mStatsRecyclerView = (RecyclerViewEmptySupport)
                 findViewById(R.id.tile_status_active_ip_connections_stats_recycler_view);
@@ -478,8 +488,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         mStatsAdapter = new ActiveIPConnectionsStatsAdapter(this, singleHost);
         mStatsRecyclerView.setAdapter(mStatsAdapter);
 
-        initBgTask();
-
+        new BgAsyncTask().execute();
     }
 
     @Override
@@ -500,84 +509,131 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void initBgTask() {
-        final LoaderManager supportLoaderManager = getSupportLoaderManager();
-        supportLoaderManager.initLoader(0, null, new LoaderManager.LoaderCallbacks<Object>() {
-            @Override
-            public Loader<Object> onCreateLoader(int id, Bundle args) {
-                final AsyncTaskLoader<Object> asyncTaskLoader = new AsyncTaskLoader<Object>(ActiveIPConnectionsDetailActivity.this) {
-                    @Override
-                    public Object loadInBackground() {
-                        return new AsyncTaskLoader<Void>(ActiveIPConnectionsDetailActivity.this) {
+    class BgAsyncTask extends AsyncTask<Void, Void, AsyncTaskResult<?>> {
 
-                            @Override
-                            public Void loadInBackground() {
-                                String existingRecord;
-                                for (final IPConntrack ipConntrackRow : mActiveIPConnections) {
-                                    if (ipConntrackRow == null) {
-                                        continue;
-                                    }
-                                    final String sourceAddressOriginalSide = ipConntrackRow.getSourceAddressOriginalSide();
-                                    existingRecord = ipToHostResolvedMap.get(sourceAddressOriginalSide);
-                                    if (isNullOrEmpty(existingRecord)) {
-                                        //Set Source IP HostName
-                                        final String srcIpHostnameResolved;
-                                        if (mLocalIpToHostname == null) {
-                                            srcIpHostnameResolved = "-";
-                                        } else {
-                                            final String val = mLocalIpToHostname.get(sourceAddressOriginalSide);
-                                            if (isNullOrEmpty(val)) {
-                                                srcIpHostnameResolved = "-";
-                                            } else {
-                                                srcIpHostnameResolved = val;
-                                            }
-                                        }
-                                        ipToHostResolvedMap.put(sourceAddressOriginalSide, srcIpHostnameResolved);
-                                    }
+        final Table<Integer, String, Integer> statsTable = HashBasedTable.create();
 
-                                    final String destinationAddressOriginalSide = ipConntrackRow.getDestinationAddressOriginalSide();
-                                    existingRecord = ipToHostResolvedMap.get(destinationAddressOriginalSide);
-                                    if (isNullOrEmpty(existingRecord)) {
-                                        final String dstIpWhoisResolved;
-                                        if (isNullOrEmpty(destinationAddressOriginalSide)) {
-                                            dstIpWhoisResolved = "-";
-                                        } else {
-                                            IPWhoisInfo ipWhoisInfo = null;
-                                            try {
-                                                ipWhoisInfo = mIPWhoisInfoCache.get(destinationAddressOriginalSide);
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                                Utils.reportException(null, e);
-                                            }
-                                            if (ipWhoisInfo != null && !isNullOrEmpty(ipWhoisInfo.getCountry())) {
-                                                mDestinationIpToCountry.put(destinationAddressOriginalSide, ipWhoisInfo.getCountry());
-                                            }
-                                            final String org;
-                                            if (ipWhoisInfo == null || (org = ipWhoisInfo.getOrganization()) == null || org.isEmpty()) {
-                                                dstIpWhoisResolved = "-";
-                                            } else {
-                                                dstIpWhoisResolved = org;
-                                                if (!mLocalIpToHostname.containsKey(destinationAddressOriginalSide)) {
-                                                    mLocalIpToHostname.put(destinationAddressOriginalSide, org);
-                                                }
-                                            }
-                                        }
-                                        ipToHostResolvedMap.put(destinationAddressOriginalSide, dstIpWhoisResolved);
-                                    }
-                                }
-                                //TODO
-                                return null;
-                            }
-                        };
+        @Override
+        protected AsyncTaskResult<?> doInBackground(Void... params) {
+            Exception exception = null;
+            try {
+                String existingRecord;
+                for (final IPConntrack ipConntrackRow : mActiveIPConnections) {
+                    if (ipConntrackRow == null) {
+                        continue;
                     }
-                };
-                asyncTaskLoader.forceLoad();
-                return asyncTaskLoader;
+                    final String sourceAddressOriginalSide = ipConntrackRow.getSourceAddressOriginalSide();
+                    existingRecord = ipToHostResolvedMap.get(sourceAddressOriginalSide);
+                    if (isNullOrEmpty(existingRecord)) {
+                        //Set Source IP HostName
+                        final String srcIpHostnameResolved;
+                        if (mLocalIpToHostname == null) {
+                            srcIpHostnameResolved = "-";
+                        } else {
+                            final String val = mLocalIpToHostname.get(sourceAddressOriginalSide);
+                            if (isNullOrEmpty(val)) {
+                                srcIpHostnameResolved = "-";
+                            } else {
+                                srcIpHostnameResolved = val;
+                            }
+                        }
+                        ipToHostResolvedMap.put(sourceAddressOriginalSide, srcIpHostnameResolved);
+                    }
+
+                    final String destinationAddressOriginalSide = ipConntrackRow.getDestinationAddressOriginalSide();
+                    existingRecord = ipToHostResolvedMap.get(destinationAddressOriginalSide);
+                    if (isNullOrEmpty(existingRecord)) {
+                        final String dstIpWhoisResolved;
+                        if (isNullOrEmpty(destinationAddressOriginalSide)) {
+                            dstIpWhoisResolved = "-";
+                        } else {
+                            IPWhoisInfo ipWhoisInfo = null;
+                            try {
+                                ipWhoisInfo = mIPWhoisInfoCache.get(destinationAddressOriginalSide);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Utils.reportException(null, e);
+                            }
+                            if (ipWhoisInfo != null) {
+                                final String country = ipWhoisInfo.getCountry();
+                                if (!isNullOrEmpty(country)) {
+                                    mDestinationIpToCountry.put(destinationAddressOriginalSide, country);
+                                    Integer countryStats = statsTable.get(BY_DESTINATION_COUNTRY, country);
+                                    if (countryStats == null) {
+                                        countryStats = 0;
+                                    }
+                                    statsTable.put(BY_DESTINATION_COUNTRY, country, countryStats + 1);
+                                }
+                            }
+                            final String org;
+                            if (ipWhoisInfo == null || (org = ipWhoisInfo.getOrganization()) == null || org.isEmpty()) {
+                                dstIpWhoisResolved = "-";
+                            } else {
+                                dstIpWhoisResolved = org;
+                                if (!mLocalIpToHostname.containsKey(destinationAddressOriginalSide)) {
+                                    mLocalIpToHostname.put(destinationAddressOriginalSide, org);
+                                }
+                            }
+                        }
+                        ipToHostResolvedMap.put(destinationAddressOriginalSide, dstIpWhoisResolved);
+                    }
+
+                    //TODO As an enhancement, we can resolve the port to a known service (e.g, HTTP, SSH, ...)
+                    final String destinationPortOriginalSide = Integer.toString(
+                            ipConntrackRow.getDestinationPortOriginalSide());
+                    Integer destPortStats = statsTable.get(BY_DESTINATION_PORT, destinationPortOriginalSide);
+                    if (destPortStats == null) {
+                        destPortStats = 0;
+                    }
+                    statsTable.put(BY_DESTINATION_PORT, destinationPortOriginalSide, destPortStats + 1);
+
+                    final String transportProtocol = ipConntrackRow.getTransportProtocol();
+                    if (transportProtocol != null) {
+                        Integer protoStats = statsTable.get(BY_PROTOCOL, transportProtocol);
+                        if (protoStats == null) {
+                            protoStats = 0;
+                        }
+                        statsTable.put(BY_PROTOCOL, transportProtocol, protoStats + 1);
+                    }
+
+                    final String sourceInStats = String.format("%s\n%s",
+                            sourceAddressOriginalSide, ipToHostResolvedMap.get(sourceAddressOriginalSide));
+                    Integer sourceStats = statsTable.get(BY_SOURCE, sourceInStats);
+                    if (sourceStats == null) {
+                        sourceStats = 0;
+                    }
+                    statsTable.put(BY_SOURCE, sourceInStats, sourceStats + 1);
+
+                    final String destinationInStats = String.format("%s\n%s",
+                            destinationAddressOriginalSide, ipToHostResolvedMap.get(destinationAddressOriginalSide));
+                    Integer destinationStats = statsTable.get(BY_DESTINATION, destinationInStats);
+                    if (destinationStats == null) {
+                        destinationStats = 0;
+                    }
+                    statsTable.put(BY_DESTINATION, destinationInStats, destinationStats + 1);
+
+                }
+            } catch (final Exception e) {
+                exception = e;
             }
+            return new AsyncTaskResult<>(null, exception);
+        }
 
-            @Override
-            public void onLoadFinished(Loader<Object> loader, Object data) {
-
+        @Override
+        protected void onPostExecute(AsyncTaskResult<?> result) {
+            super.onPostExecute(result);
+            Exception exception = null;
+            if (result == null || (exception = result.getException()) != null) {
+                //Error - hide stats sliding layout
+                Crashlytics.log(Log.DEBUG, LOG_TAG, "Error: " + (exception != null ?
+                        exception.getMessage() : "No data or Result is NULL"));
+                if (exception != null) {
+                    exception.printStackTrace();
+                }
+                slidingUpPanel.setVisibility(View.GONE);
+            } else {
+                //No error
+                slidingUpPanel.setVisibility(View.VISIBLE);
                 loadingView.setVisibility(View.GONE);
 
                 ((ActiveIPConnectionsDetailRecyclerViewAdapter) mAdapter)
@@ -586,27 +642,35 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
                 contentView.setVisibility(View.VISIBLE);
 
-                //FIXME Just for testing
-                final Map<Integer, Object> statsMap = new HashMap<>();
-                statsMap.put(ActiveIPConnectionsStatsAdapter.BY_SOURCE, new Object());
-                statsMap.put(ActiveIPConnectionsStatsAdapter.BY_DESTINATION_IP, new Object());
-                statsMap.put(ActiveIPConnectionsStatsAdapter.BY_DESTINATION_IP_COUNTRY, new Object());
-                statsMap.put(ActiveIPConnectionsStatsAdapter.BY_PROTOCOL, new Object());
-                statsMap.put(ActiveIPConnectionsStatsAdapter.BY_DESTINATION_IP_PORT, new Object());
-
-                ((ActiveIPConnectionsStatsAdapter) mStatsAdapter).setItems(statsMap);
+                ((ActiveIPConnectionsStatsAdapter) mStatsAdapter).setStatsTable(statsTable);
                 mStatsAdapter.notifyDataSetChanged();
 
                 slidingUpPanel.setVisibility(View.VISIBLE);
-            }
 
-            @Override
-            public void onLoaderReset(Loader<Object> loader) {
-
+                slidingUpPanelLoading.setVisibility(View.GONE);
+                slidingUpPanelStatsTitle.setText("Stats");
             }
-        });
+        }
+
     }
 
+    static class AsyncTaskResult<T>  {
+        private final T result;
+        private final Exception exception;
+
+        public AsyncTaskResult(T result, Exception exception) {
+            this.result = result;
+            this.exception = exception;
+        }
+
+        public T getResult() {
+            return result;
+        }
+
+        public Exception getException() {
+            return exception;
+        }
+    }
 
 //    private void initLoaderTask() {
 //        //Remove all views
@@ -1749,7 +1813,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                 public void onLoaderReset(Loader<Void> loader) {
 
                 }
-            });
+            }).forceLoad();
 
             final TextView srcIpHostname = (TextView) cardView.findViewById(R.id.activity_ip_connections_source_ip_hostname);
             final TextView srcIpHostnameDetails = (TextView) cardView.findViewById(R.id.activity_ip_connections_details_source_host);
