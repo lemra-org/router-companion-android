@@ -38,7 +38,7 @@ import groovy.swing.SwingBuilder
 apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
 apply plugin: 'io.fabric'
-apply plugin: 'tracepot'
+//apply plugin: 'tracepot'
 apply plugin: 'com.github.triplet.play'
 
 final homePath = System.properties['user.home']
@@ -140,13 +140,13 @@ android {
     //FIXME This is for Doorbell, still using Legacy Apache HTTP, the support of which has been dropped in Android 6
     useLibrary 'org.apache.http.legacy'
 
-    tracepotConfig {
-        apiGroupKey "26ccfd6824334b879a2ed6a1f87b7891"
-        enabledFor "release", "google", "fdroid", "amazon",
-                "googleFreeWithAds", "amazonFreeWithAds",
-                "samsung", "samsungFreeWithAds",
-                "amazonUnderground", "blackberry", "blackberryFreeWithAds"
-    }
+//    tracepotConfig {
+//        apiGroupKey "26ccfd6824334b879a2ed6a1f87b7891"
+//        enabledFor "release", "google", "fdroid", "amazon",
+//                "googleFreeWithAds", "amazonFreeWithAds",
+//                "samsung", "samsungFreeWithAds",
+//                "amazonUnderground", "blackberry", "blackberryFreeWithAds"
+//    }
 
     signingConfigs {
         release {
