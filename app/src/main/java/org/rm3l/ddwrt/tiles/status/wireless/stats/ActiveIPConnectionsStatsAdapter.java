@@ -86,9 +86,9 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final Map<String, Integer> statsAt = (position >= 0 && position < statsTable.rowKeySet().size()) ?
-                statsTable.row(position) : null;
         final int newPosition = position + (singleHost ? 1 : 0);
+        final Map<String, Integer> statsAt = (newPosition >= 0 && newPosition < statsTable.rowKeySet().size()) ?
+                statsTable.row(newPosition) : null;
         switch (newPosition) {
             case BY_SOURCE:
                 holder.title.setText("Source");
