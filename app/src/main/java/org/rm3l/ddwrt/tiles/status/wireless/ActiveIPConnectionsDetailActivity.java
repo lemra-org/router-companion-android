@@ -597,7 +597,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     }
 
                     final String sourceInStats = String.format("%s\n%s",
-                            sourceAddressOriginalSide, ipToHostResolvedMap.get(sourceAddressOriginalSide));
+                            ipToHostResolvedMap.get(sourceAddressOriginalSide), sourceAddressOriginalSide);
                     Integer sourceStats = statsTable.get(BY_SOURCE, sourceInStats);
                     if (sourceStats == null) {
                         sourceStats = 0;
@@ -605,7 +605,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     statsTable.put(BY_SOURCE, sourceInStats, sourceStats + 1);
 
                     final String destinationInStats = String.format("%s\n%s",
-                            destinationAddressOriginalSide, ipToHostResolvedMap.get(destinationAddressOriginalSide));
+                            ipToHostResolvedMap.get(destinationAddressOriginalSide), destinationAddressOriginalSide);
                     Integer destinationStats = statsTable.get(BY_DESTINATION, destinationInStats);
                     if (destinationStats == null) {
                         destinationStats = 0;
