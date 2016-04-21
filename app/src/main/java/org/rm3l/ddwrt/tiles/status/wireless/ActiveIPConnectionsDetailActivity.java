@@ -77,7 +77,9 @@ import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.RowSortedTable;
 import com.google.common.collect.Table;
+import com.google.common.collect.TreeBasedTable;
 import com.google.common.io.Closeables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -168,6 +170,8 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                         Crashlytics.log(Log.DEBUG, LOG_TAG, "--> GET " + urlStr);
                         final URL url = new URL(urlStr);
                         final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                        //FIXME Add a user-preference
+                        urlConnection.setConnectTimeout(7000);
                         try {
                             final int statusCode = urlConnection.getResponseCode();
                             if (statusCode == 200) {
@@ -511,7 +515,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
     class BgAsyncTask extends AsyncTask<Void, Void, AsyncTaskResult<?>> {
 
-        final Table<Integer, String, Integer> statsTable = HashBasedTable.create();
+        final RowSortedTable<Integer, String, Integer> statsTable = TreeBasedTable.create();
 
         @Override
         protected AsyncTaskResult<?> doInBackground(Void... params) {

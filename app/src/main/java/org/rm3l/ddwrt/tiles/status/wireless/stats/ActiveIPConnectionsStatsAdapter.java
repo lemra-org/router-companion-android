@@ -13,10 +13,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Ordering;
+import com.google.common.collect.RowSortedTable;
 import com.google.common.collect.SortedSetMultimap;
-import com.google.common.collect.Table;
+import com.google.common.collect.TreeBasedTable;
 import com.google.common.collect.TreeMultimap;
 
 import org.rm3l.ddwrt.R;
@@ -45,7 +45,7 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
     public static final int BY_DESTINATION = 3;
     public static final int BY_DESTINATION_PORT = 4;
 
-    private Table<Integer, String, Integer> statsTable = HashBasedTable.create();
+    private RowSortedTable<Integer, String, Integer> statsTable = TreeBasedTable.create();
     private final boolean singleHost;
 
     public ActiveIPConnectionsStatsAdapter(final ActiveIPConnectionsDetailActivity activity,
@@ -54,11 +54,11 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
         this.singleHost = singleHost;
     }
 
-    public Table<Integer, String, Integer> getStatsTable() {
+    public RowSortedTable<Integer, String, Integer> getStatsTable() {
         return statsTable;
     }
 
-    public ActiveIPConnectionsStatsAdapter setStatsTable(Table<Integer, String, Integer> statsTable) {
+    public ActiveIPConnectionsStatsAdapter setStatsTable(RowSortedTable<Integer, String, Integer> statsTable) {
         this.statsTable = statsTable;
         return this;
     }
