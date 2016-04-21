@@ -29,38 +29,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:orderInCategory="1"
         android:title="@string/action_search"
         app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="collapseActionView|ifRoom" />
-
-    <item
-        android:id="@+id/tile_status_active_ip_connections_stats"
-        android:icon="@drawable/ic_action_action_trending_up"
-        android:orderInCategory="2"
-        android:title="@string/stats"
-        app:showAsAction="never">
-        <menu>
-            <item
-                android:id="@+id/tile_status_active_ip_connections_stats_by_source_ip"
-                android:orderInCategory="1"
-                android:title="@string/by_source"
-                app:showAsAction="never" />
-            <item
-                android:id="@+id/tile_status_active_ip_connections_stats_by_destination_ip"
-                android:orderInCategory="2"
-                android:title="By Destination IP"
-                app:showAsAction="never" />
-
-            <item
-                android:id="@+id/tile_status_active_ip_connections_stats_by_destination_country"
-                android:orderInCategory="3"
-                android:title="By Destination IP Country"
-                app:showAsAction="never" />
-        </menu>
-
-    </item>
+        app:showAsAction="collapseActionView|ifRoom"
+        android:visible="false"/>
 
     <item
         android:id="@+id/tile_status_active_ip_connections_share"
-        android:enabled="true"
+        android:visible="false"
         android:icon="@drawable/ic_share_white_24dp"
         android:orderInCategory="3"
         android:title="@string/share"

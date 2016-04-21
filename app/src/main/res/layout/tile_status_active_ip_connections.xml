@@ -44,12 +44,31 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <TextView
+                android:id="@+id/tile_status_active_ip_connections_view_loadingview_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:textStyle="italic"
+                android:layout_above="@+id/tile_status_active_ip_connections_view_loadingview"/>
+
             <ProgressBar
                 android:id="@+id/tile_status_active_ip_connections_view_loadingview"
-                android:layout_width="wrap_content"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:indeterminate="false"
+                android:indeterminateOnly="false"
+                android:progress="0"
+                android:max="100"
+                android:visibility="visible"
                 android:layout_centerInParent="true"
-                android:visibility="visible"/>
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
