@@ -29,6 +29,7 @@ import org.rm3l.ddwrt.tiles.status.wireless.ActiveIPConnectionsDetailActivity;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.ViewGroupUtils;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -250,6 +251,9 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
                 final File file = new File(activity.getCacheDir(),
                         Utils.getEscapedFileName(String.format("IP Connections Stats By %s",
                                 holder.title.getText())) + ".png");
+                holder.shareImageButton.setVisibility(View.GONE);
+                ViewGroupUtils.exportViewToFile(activity, holder.itemView, file);
+                holder.shareImageButton.setVisibility(View.VISIBLE);
                 final Uri uriForFile = FileProvider
                         .getUriForFile(activity, DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY, file);
                 final Intent sendIntent = new Intent();
