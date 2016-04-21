@@ -201,6 +201,8 @@ public class OpenWebManagementPageActivity extends WebActivity {
                 } else {
                     urlConnection = (HttpURLConnection) url.openConnection();
                 }
+                //FIXME Add a user-preference
+                urlConnection.setConnectTimeout(5000);
                 final int statusCode = urlConnection.getResponseCode();
                 String wwwAuthenticateHeaderField = urlConnection
                         .getHeaderField("WWW-Authenticate");

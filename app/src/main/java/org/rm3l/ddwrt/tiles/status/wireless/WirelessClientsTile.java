@@ -223,6 +223,8 @@ public class WirelessClientsTile
                         Crashlytics.log(Log.DEBUG, LOG_TAG, "--> GET " + urlStr);
                         final URL url = new URL(urlStr);
                         final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                        //FIXME Add a user-preference
+                        urlConnection.setConnectTimeout(5000);
                         try {
                             final int statusCode = urlConnection.getResponseCode();
                             if (statusCode == 200) {
