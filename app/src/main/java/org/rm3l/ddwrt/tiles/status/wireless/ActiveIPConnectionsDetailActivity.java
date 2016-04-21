@@ -458,13 +458,14 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         //Stats
         this.slidingUpPanel = (LinearLayout)
                 findViewById(R.id.active_ip_connections_stats);
+        this.slidingUpPanelStatsTitle = (TextView) findViewById(R.id.active_ip_connections_stats_title);
         if (themeLight) {
             slidingUpPanel.setBackgroundColor(ContextCompat.getColor(this, R.color.black_semi_transparent));
+            this.slidingUpPanelStatsTitle.setTextColor(ContextCompat.getColor(this, R.color.white));
         } else {
             slidingUpPanel.setBackgroundColor(ContextCompat.getColor(this, R.color.white_semi_transparent));
+            this.slidingUpPanelStatsTitle.setTextColor(ContextCompat.getColor(this, R.color.black));
         }
-
-        this.slidingUpPanelStatsTitle = (TextView) findViewById(R.id.active_ip_connections_stats_title);
 
         this.slidingUpPanelLoading = findViewById(R.id.activity_ip_connections_stats_loading);
         this.slidingUpPanelLoading.setVisibility(View.VISIBLE);
