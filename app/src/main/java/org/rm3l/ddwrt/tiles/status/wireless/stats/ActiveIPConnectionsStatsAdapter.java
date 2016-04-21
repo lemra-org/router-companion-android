@@ -180,8 +180,8 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
         if (totalPercentagesSum < 100) {
             final int otherPercentage = (100 - totalPercentagesSum);
             holder.stats6Other.setVisibility(View.VISIBLE);
-            holder.stats5PercentValue.setText(otherPercentage + "%");
-            holder.stats5ProgressBar.setProgress(otherPercentage);
+            holder.stats6OtherPercentValue.setText(otherPercentage + "%");
+            holder.stats6OtherProgressBar.setProgress(otherPercentage);
             viewsSet.add(6);
         } else {
             holder.stats6Other.setVisibility(View.GONE);
