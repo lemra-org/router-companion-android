@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.SortedSetMultimap;
@@ -23,7 +24,9 @@ import org.rm3l.ddwrt.tiles.status.wireless.ActiveIPConnectionsDetailActivity;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
@@ -135,35 +138,62 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
             percentages.put(100 * statsAtEntry.getValue() / totalSize, statsAtEntry.getKey());
         }
         //Now rank based upon percentage values
+        final List<Integer> viewsSet = new ArrayList<>();
         int i = 0;
+        int totalPercentagesSum = 0;
         for (final Map.Entry<Integer, Collection<String>> percentageEntry : percentages.asMap().entrySet()) {
             for (final String item : percentageEntry.getValue()) {
                 i++;
                 final Integer percentage = percentageEntry.getKey();
-                final String percentageValueText = ("\n" + percentage + "%");
+                totalPercentagesSum += percentage;
+                final String percentageValueText =
+                        ((Strings.nullToEmpty(item).contains("\n") ? "\n" : "") + percentage + "%");
                 if (i == 1) {
                     holder.stats1PercentValue.setText(percentageValueText);
                     holder.stats1Text.setText(item);
                     holder.stats1ProgressBar.setProgress(percentage);
+                    viewsSet.add(i);
                 } else if (i == 2) {
                     holder.stats2PercentValue.setText(percentageValueText);
                     holder.stats2Text.setText(item);
                     holder.stats2ProgressBar.setProgress(percentage);
+                    viewsSet.add(i);
                 } else if (i == 3) {
                     holder.stats3PercentValue.setText(percentageValueText);
                     holder.stats3Text.setText(item);
                     holder.stats3ProgressBar.setProgress(percentage);
+                    viewsSet.add(i);
                 } else if (i == 4) {
                     holder.stats4PercentValue.setText(percentageValueText);
                     holder.stats4Text.setText(item);
                     holder.stats4ProgressBar.setProgress(percentage);
+                    viewsSet.add(i);
                 } else if (i == 5) {
                     holder.stats5PercentValue.setText(percentageValueText);
                     holder.stats5Text.setText(item);
                     holder.stats5ProgressBar.setProgress(percentage);
+                    viewsSet.add(i);
                 }
             }
         }
+
+        if (totalPercentagesSum < 100) {
+            final int otherPercentage = (100 - totalPercentagesSum);
+            holder.stats6Other.setVisibility(View.VISIBLE);
+            holder.stats5PercentValue.setText(otherPercentage + "%");
+            holder.stats5ProgressBar.setProgress(otherPercentage);
+            viewsSet.add(6);
+        } else {
+            holder.stats6Other.setVisibility(View.GONE);
+        }
+
+        //Final pass to remove anything that is not set
+        holder.stats1.setVisibility(viewsSet.contains(1) ? View.VISIBLE : View.GONE);
+        holder.stats2.setVisibility(viewsSet.contains(2) ? View.VISIBLE : View.GONE);
+        holder.stats3.setVisibility(viewsSet.contains(3) ? View.VISIBLE : View.GONE);
+        holder.stats4.setVisibility(viewsSet.contains(4) ? View.VISIBLE : View.GONE);
+        holder.stats5.setVisibility(viewsSet.contains(5) ? View.VISIBLE : View.GONE);
+        holder.stats6Other.setVisibility(viewsSet.contains(6) ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -211,10 +241,10 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
         final TextView stats5Text;
         final ProgressBar stats5ProgressBar;
 
-//        final View stats6Other;
-//        final TextView stats6OtherPercentValue;
-//        final TextView stats6OtherText;
-//        final ProgressBar stats6OtherProgressBar;
+        final View stats6Other;
+        final TextView stats6OtherPercentValue;
+        final TextView stats6OtherText;
+        final ProgressBar stats6OtherProgressBar;
 
         final ProgressBar statsLoadingView;
         final TextView statsErrorView;
@@ -272,13 +302,13 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
             this.statsErrorView = (TextView)
                     itemView.findViewById(R.id.activity_ip_connections_stats_error);
 
-//            this.stats6Other = itemView.findViewById(R.id.activity_ip_connections_stats_6_other);
-//            this.stats6OtherPercentValue = (TextView)
-//                    this.stats6Other.findViewById(R.id.activity_ip_connections_stats_6_other_percent);
-//            this.stats6OtherText = (TextView)
-//                    this.stats6Other.findViewById(R.id.activity_ip_connections_stats_6_other_text);
-//            this.stats6OtherProgressBar = (ProgressBar)
-//                    this.stats6Other.findViewById(R.id.activity_ip_connections_stats_6_other_progressbar);
+            this.stats6Other = itemView.findViewById(R.id.activity_ip_connections_stats_6_other);
+            this.stats6OtherPercentValue = (TextView)
+                    this.stats6Other.findViewById(R.id.activity_ip_connections_stats_6_other_percent);
+            this.stats6OtherText = (TextView)
+                    this.stats6Other.findViewById(R.id.activity_ip_connections_stats_6_other_text);
+            this.stats6OtherProgressBar = (ProgressBar)
+                    this.stats6Other.findViewById(R.id.activity_ip_connections_stats_6_other_progressbar);
         }
     }
 
