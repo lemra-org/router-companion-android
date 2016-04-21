@@ -1,7 +1,10 @@
 package org.rm3l.ddwrt.tiles.status.wireless.stats;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
@@ -26,6 +29,7 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -139,6 +143,7 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
             holder.statsErrorView.setText("E500. Internal Error. Please try again later.");
             return;
         }
+
         final SortedSetMultimap<Double, String> percentages = TreeMultimap.create(
                 Ordering.<Double>natural().reverse(), Ordering.<String>natural());
         for (final Map.Entry<String, Integer> statsAtEntry : statsAt.entrySet()) {
@@ -233,6 +238,31 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
         holder.stats4.setVisibility(viewsSet.contains(4) ? View.VISIBLE : View.GONE);
         holder.stats5.setVisibility(viewsSet.contains(5) ? View.VISIBLE : View.GONE);
         holder.stats6Other.setVisibility(viewsSet.contains(6) ? View.VISIBLE : View.GONE);
+
+        holder.shareImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final File file = new File(activity.getCacheDir(),
+                        Utils.getEscapedFileName(String.format("IP Connections Stats By %s",
+                                holder.title.getText())) + ".png");
+                final Uri uriForFile = FileProvider
+                        .getUriForFile(activity, DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY, file);
+                final Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+                sendIntent.setType("text/html");
+                sendIntent.putExtra(Intent.EXTRA_SUBJECT,
+                        String.format("IP Connections Stats By %s",
+                                holder.title.getText()));
+
+                sendIntent.setData(uriForFile);
+//        sendIntent.setType("image/png");
+                sendIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                activity.startActivity(Intent.createChooser(sendIntent,
+                        "Share"));
+            }
+        });
     }
 
     @Override
@@ -288,10 +318,14 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
         final ProgressBar statsLoadingView;
         final TextView statsErrorView;
 
+        final View shareImageButton;
+
         public ViewHolder(final Context context, View itemView) {
             super(itemView);
             this.mContext = context;
             this.mItemView = itemView;
+
+            this.shareImageButton = itemView.findViewById(R.id.activity_ip_connections_stats_share);
 
             this.statsLoadingView = (ProgressBar)
                     itemView.findViewById(R.id.activity_ip_connections_stats_loading_view);

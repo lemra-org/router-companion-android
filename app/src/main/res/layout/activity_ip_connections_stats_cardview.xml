@@ -56,14 +56,33 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:orientation="vertical"
             android:layout_margin="7dp">
 
-            <TextView
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textStyle="bold"
-                android:textColor="@color/primaryColor"
-                android:id="@+id/activity_ip_connections_stats_title"
-                android:layout_marginBottom="5dp"/>
+                android:layout_marginBottom="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textStyle="bold"
+                    android:textColor="@color/primaryColor"
+                    android:id="@+id/activity_ip_connections_stats_title"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
+
+                <ImageButton
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:id="@+id/activity_ip_connections_stats_share"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/ic_share_black_24dp"
+                    android:contentDescription="Share"
+                    android:background="?android:selectableItemBackground"/>
+
+            </RelativeLayout>
 
             <!-- Error message placeholder -->
             <TextView

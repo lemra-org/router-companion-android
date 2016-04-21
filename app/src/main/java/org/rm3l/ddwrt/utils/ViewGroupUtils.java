@@ -23,6 +23,8 @@
 package org.rm3l.ddwrt.utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
@@ -31,7 +33,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import org.rm3l.ddwrt.R;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +49,10 @@ import java.util.List;
  * Android ViewGroup Utilities
  */
 public final class ViewGroupUtils {
+
+    public static final int COMPRESSION_QUALITY = 100;
+    public static final int DEFAULT_BITMAP_WIDTH = 640;
+    public static final int DEFAULT_BITMAP_HEIGHT = 480;
 
     private ViewGroupUtils() {
     }
@@ -153,6 +167,48 @@ public final class ViewGroupUtils {
 
     public static float pxFromDp(final Context context, final float dp) {
         return dp * context.getResources().getDisplayMetrics().density;
+    }
+
+    @Nullable
+    public static Bitmap toBitmap(@Nullable final View view) {
+        if (view == null) {
+            return null;
+        }
+        final int width = view.getWidth();
+        final int height = view.getHeight();
+        final Bitmap bitmapToExport = Bitmap
+                .createBitmap(width > 0 ? width : DEFAULT_BITMAP_WIDTH,
+                        height > 0 ? height : DEFAULT_BITMAP_HEIGHT,
+                        Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(bitmapToExport);
+        view.draw(canvas);
+        return bitmapToExport;
+    }
+
+    public static void exportViewToFile(@NonNull final Context context,
+                                        @NonNull final View view, @NonNull final File file) {
+        final Bitmap bitmap = toBitmap(view);
+        if (bitmap == null) {
+            return;
+        }
+        OutputStream outputStream = null;
+        try {
+            outputStream = new BufferedOutputStream(new FileOutputStream(file, false));
+            bitmap.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY, outputStream);
+            outputStream.flush();
+        } catch (final IOException e) {
+            e.printStackTrace();
+            Toast.makeText(context, context.getString(R.string.internal_error_please_try_again), Toast.LENGTH_SHORT).show();
+        } finally {
+            try {
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                //No Worries
+            }
+        }
     }
 
 }
