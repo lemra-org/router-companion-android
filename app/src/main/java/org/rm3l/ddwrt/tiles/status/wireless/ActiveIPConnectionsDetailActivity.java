@@ -129,6 +129,7 @@ import static org.rm3l.ddwrt.tiles.status.wireless.stats.ActiveIPConnectionsStat
 import static org.rm3l.ddwrt.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_PORT;
 import static org.rm3l.ddwrt.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_PROTOCOL;
 import static org.rm3l.ddwrt.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_SOURCE;
+import static org.rm3l.ddwrt.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.SEPARATOR;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 import static org.rm3l.ddwrt.utils.Utils.getEscapedFileName;
@@ -601,16 +602,18 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                         statsTable.put(BY_PROTOCOL, transportProtocol, protoStats + 1);
                     }
 
-                    final String sourceInStats = String.format("%s\n%s",
-                            ipToHostResolvedMap.get(sourceAddressOriginalSide), sourceAddressOriginalSide);
+                    final String sourceInStats = String.format("%s%s%s",
+                            ipToHostResolvedMap.get(sourceAddressOriginalSide),
+                            SEPARATOR, sourceAddressOriginalSide);
                     Integer sourceStats = statsTable.get(BY_SOURCE, sourceInStats);
                     if (sourceStats == null) {
                         sourceStats = 0;
                     }
                     statsTable.put(BY_SOURCE, sourceInStats, sourceStats + 1);
 
-                    final String destinationInStats = String.format("%s\n%s",
-                            ipToHostResolvedMap.get(destinationAddressOriginalSide), destinationAddressOriginalSide);
+                    final String destinationInStats = String.format("%s%s%s",
+                            ipToHostResolvedMap.get(destinationAddressOriginalSide),
+                            SEPARATOR, destinationAddressOriginalSide);
                     Integer destinationStats = statsTable.get(BY_DESTINATION, destinationInStats);
                     if (destinationStats == null) {
                         destinationStats = 0;

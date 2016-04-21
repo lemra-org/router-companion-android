@@ -902,4 +902,20 @@ public final class Utils {
         return customTabsSupported;
     }
 
+    @Nullable
+    public static String truncateText(@Nullable final String str,
+                                      final int maxLen, final int lenFromEnd) {
+        int len;
+        if (str != null && (len = str.length()) > maxLen) {
+            return str.substring(0, maxLen - lenFromEnd - 3) + "..." +
+                    str.substring(len - lenFromEnd, len);
+        }
+        return str;
+    }
+
+    @Nullable
+    public static String truncateText(@Nullable final String str, final int maxLen) {
+        return truncateText(str, maxLen, 0);
+    }
+
 }

@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.RowSortedTable;
@@ -23,7 +24,9 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.tiles.status.wireless.ActiveIPConnectionsDetailActivity;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.Utils;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -37,6 +40,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
  */
 public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnectionsStatsAdapter.ViewHolder> {
 
+    public static final DecimalFormat PERCENTAGE_DECIMAL_FORMAT = new DecimalFormat("#.##");
     private final ActiveIPConnectionsDetailActivity activity;
 
     public static final int BY_SOURCE = 0;
@@ -47,6 +51,9 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
 
     private RowSortedTable<Integer, String, Integer> statsTable = TreeBasedTable.create();
     private final boolean singleHost;
+
+    public static final String SEPARATOR = ("__" + ActiveIPConnectionsStatsAdapter.class.getSimpleName() + "__");
+    public static final Splitter SPLITTER = Splitter.on(SEPARATOR).omitEmptyStrings();
 
     public ActiveIPConnectionsStatsAdapter(final ActiveIPConnectionsDetailActivity activity,
                                            final boolean singleHost) {
@@ -123,7 +130,7 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
         }
 
         //Recompute with actual percentages
-        int totalSize = 0;
+        double totalSize = 0;
         for (final Integer value : statsAt.values()) {
             totalSize += (value == null ? 0 : value);
         }
@@ -132,56 +139,88 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
             holder.statsErrorView.setText("E500. Internal Error. Please try again later.");
             return;
         }
-        final SortedSetMultimap<Integer, String> percentages = TreeMultimap.create(
-                Ordering.<Integer>natural().reverse(), Ordering.<String>natural());
+        final SortedSetMultimap<Double, String> percentages = TreeMultimap.create(
+                Ordering.<Double>natural().reverse(), Ordering.<String>natural());
         for (final Map.Entry<String, Integer> statsAtEntry : statsAt.entrySet()) {
             percentages.put(100 * statsAtEntry.getValue() / totalSize, statsAtEntry.getKey());
         }
         //Now rank based upon percentage values
         final List<Integer> viewsSet = new ArrayList<>();
         int i = 0;
-        int totalPercentagesSum = 0;
-        for (final Map.Entry<Integer, Collection<String>> percentageEntry : percentages.asMap().entrySet()) {
+        double totalPercentagesSum = 0;
+        for (final Map.Entry<Double, Collection<String>> percentageEntry : percentages.asMap().entrySet()) {
             for (final String item : percentageEntry.getValue()) {
                 i++;
-                final Integer percentage = percentageEntry.getKey();
+                final List<String> itemComponents = SPLITTER.splitToList(item);
+                if (itemComponents == null || itemComponents.isEmpty()) {
+                    continue;
+                }
+                final String host = itemComponents.get(0);
+                final String itemTitle;
+                final String itemTitleForToast;
+                if (itemComponents.size() == 1) {
+                    itemTitle = Utils.truncateText(host, 20);
+                    itemTitleForToast = host;
+                } else {
+                    final String ip = itemComponents.get(1);
+                    itemTitle = String.format("%s\n(%s)",
+                            Utils.truncateText(host, 20), ip);
+                    itemTitleForToast = String.format("%s\n(%s)", host, ip);
+                }
+
+                final View.OnClickListener clickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(activity, itemTitleForToast, Toast.LENGTH_SHORT).show();
+                    }
+                };
+
+                final Double percentage = percentageEntry.getKey();
                 totalPercentagesSum += percentage;
                 final String percentageValueText =
-                        ((Strings.nullToEmpty(item).contains("\n") ? "\n" : "") + percentage + "%");
+                        ((Strings.nullToEmpty(itemTitle).contains("\n") ? "\n" : "")
+                                + PERCENTAGE_DECIMAL_FORMAT.format(percentage) + "%");
+                final int percentageProgress = percentage.intValue();
                 if (i == 1) {
                     holder.stats1PercentValue.setText(percentageValueText);
-                    holder.stats1Text.setText(item);
-                    holder.stats1ProgressBar.setProgress(percentage);
+                    holder.stats1Text.setText(itemTitle);
+                    holder.stats1Text.setOnClickListener(clickListener);
+                    holder.stats1ProgressBar.setProgress(percentageProgress);
                     viewsSet.add(i);
                 } else if (i == 2) {
                     holder.stats2PercentValue.setText(percentageValueText);
-                    holder.stats2Text.setText(item);
-                    holder.stats2ProgressBar.setProgress(percentage);
+                    holder.stats2Text.setText(itemTitle);
+                    holder.stats2Text.setOnClickListener(clickListener);
+                    holder.stats2ProgressBar.setProgress(percentageProgress);
                     viewsSet.add(i);
                 } else if (i == 3) {
                     holder.stats3PercentValue.setText(percentageValueText);
-                    holder.stats3Text.setText(item);
-                    holder.stats3ProgressBar.setProgress(percentage);
+                    holder.stats3Text.setText(itemTitle);
+                    holder.stats3Text.setOnClickListener(clickListener);
+                    holder.stats3ProgressBar.setProgress(percentageProgress);
                     viewsSet.add(i);
                 } else if (i == 4) {
                     holder.stats4PercentValue.setText(percentageValueText);
-                    holder.stats4Text.setText(item);
-                    holder.stats4ProgressBar.setProgress(percentage);
+                    holder.stats4Text.setText(itemTitle);
+                    holder.stats4Text.setOnClickListener(clickListener);
+                    holder.stats4ProgressBar.setProgress(percentageProgress);
                     viewsSet.add(i);
                 } else if (i == 5) {
                     holder.stats5PercentValue.setText(percentageValueText);
-                    holder.stats5Text.setText(item);
-                    holder.stats5ProgressBar.setProgress(percentage);
+                    holder.stats5Text.setText(itemTitle);
+                    holder.stats5Text.setOnClickListener(clickListener);
+                    holder.stats5ProgressBar.setProgress(percentageProgress);
                     viewsSet.add(i);
                 }
             }
         }
 
         if (totalPercentagesSum < 100) {
-            final int otherPercentage = (100 - totalPercentagesSum);
+            final Double otherPercentage = (100 - totalPercentagesSum);
             holder.stats6Other.setVisibility(View.VISIBLE);
-            holder.stats6OtherPercentValue.setText(otherPercentage + "%");
-            holder.stats6OtherProgressBar.setProgress(otherPercentage);
+            holder.stats6OtherPercentValue.setText(
+                    PERCENTAGE_DECIMAL_FORMAT.format(otherPercentage) + "%");
+            holder.stats6OtherProgressBar.setProgress(otherPercentage.intValue());
             viewsSet.add(6);
         } else {
             holder.stats6Other.setVisibility(View.GONE);
