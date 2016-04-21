@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -239,6 +240,10 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
         holder.stats5.setVisibility(viewsSet.contains(5) ? View.VISIBLE : View.GONE);
         holder.stats6Other.setVisibility(viewsSet.contains(6) ? View.VISIBLE : View.GONE);
 
+        holder.shareImageButton.setImageDrawable(ContextCompat.getDrawable(activity,
+                ColorUtils.isThemeLight(activity) ?
+                        R.drawable.ic_share_black_24dp : R.drawable.ic_share_white_24dp));
+
         holder.shareImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -318,14 +323,14 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
         final ProgressBar statsLoadingView;
         final TextView statsErrorView;
 
-        final View shareImageButton;
+        final ImageButton shareImageButton;
 
         public ViewHolder(final Context context, View itemView) {
             super(itemView);
             this.mContext = context;
             this.mItemView = itemView;
 
-            this.shareImageButton = itemView.findViewById(R.id.activity_ip_connections_stats_share);
+            this.shareImageButton = (ImageButton) itemView.findViewById(R.id.activity_ip_connections_stats_share);
 
             this.statsLoadingView = (ProgressBar)
                     itemView.findViewById(R.id.activity_ip_connections_stats_loading_view);
