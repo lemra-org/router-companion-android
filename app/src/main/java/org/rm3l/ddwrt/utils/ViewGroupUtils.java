@@ -191,6 +191,11 @@ public final class ViewGroupUtils {
         if (bitmap == null) {
             return;
         }
+        exportBitmapToFile(context, bitmap, file);
+    }
+
+    public static void exportBitmapToFile(@NonNull final Context context,
+                                        @NonNull final Bitmap bitmap, @NonNull final File file) {
         OutputStream outputStream = null;
         try {
             outputStream = new BufferedOutputStream(new FileOutputStream(file, false));
