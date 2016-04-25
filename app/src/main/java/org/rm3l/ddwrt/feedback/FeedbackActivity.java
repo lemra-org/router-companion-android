@@ -234,12 +234,14 @@ public class FeedbackActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(email.getText())) {
                     emailInputLayout.setErrorEnabled(true);
                     emailInputLayout.setError("Must not be blank");
+                    return false;
                 } else {
                     emailInputLayout.setErrorEnabled(false);
                 }
                 if (TextUtils.isEmpty(content.getText())) {
                     contentInputLayout.setErrorEnabled(true);
                     contentInputLayout.setError("Must not be blank");
+                    return false;
                 } else {
                     contentInputLayout.setErrorEnabled(false);
                 }

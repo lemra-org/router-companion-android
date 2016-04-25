@@ -5,6 +5,8 @@ import org.rm3l.ddwrt.BuildConfig;
 import java.util.Map;
 
 import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -21,13 +23,13 @@ public interface DoorbellService {
             "User-Agent: " + BuildConfig.APPLICATION_ID + " v" + BuildConfig.VERSION_NAME
     })
     @POST("/applications/{id}/open")
-    void openApplication(@Path("id") final int applicationId, @Query("key") final String key);
+    Call<Response> openApplication(@Path("id") final int applicationId, @Query("key") final String key);
 
     @Headers({
             "User-Agent: " + BuildConfig.APPLICATION_ID + " v" + BuildConfig.VERSION_NAME
     })
     @POST("/applications/{id}/submit")
-    void submitFeedbackForm(@Path("id") final int applicationId,
+    Call<Response> submitFeedbackForm(@Path("id") final int applicationId,
                             @Query("key") final String key,
                             @Query("email") final String email,
                             @Query("message") final String message,
