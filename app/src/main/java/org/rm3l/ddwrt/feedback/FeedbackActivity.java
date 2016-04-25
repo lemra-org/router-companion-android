@@ -256,6 +256,9 @@ public class FeedbackActivity extends AppCompatActivity {
                     return false;
                 }
                 final boolean includeScreenshot = includeScreenshotAndLogs.isChecked();
+                final String emailText = email.getText().toString();
+                final String contentText = content.getText().toString();
+
                 final ProgressDialog alertDialog = ProgressDialog.show(this,
                         "Submitting Feedback", "Please hold on - submitting feedback...", true);
                 new AsyncTask<Void, Void, Void>() {
@@ -276,13 +279,18 @@ public class FeedbackActivity extends AppCompatActivity {
                                         MediaType.parse("image/png"),
                                         new File(screenshotFilePath));
                                 //TODO Add logs???
-                                attachments = mDoorbellService.upload(DOORBELL_APPID, DOORBELL_APIKEY, requestBody, null);
+                                attachments = mDoorbellService
+                                        .upload(DOORBELL_APPID, DOORBELL_APIKEY, requestBody, null)
+                                        .execute().body();
                             }
                             if (attachments == null) {
                                 attachments = new String[0];
                             }
-                            //TODO
 
+                            //TODO Error handling
+                            mDoorbellService.submitFeedbackForm(DOORBELL_APPID, DOORBELL_APIKEY,
+                                    emailText, contentText, null, null, attachments)
+                                    .execute();
                         } catch (final Exception e) {
                             e.printStackTrace();
                         }
@@ -293,6 +301,9 @@ public class FeedbackActivity extends AppCompatActivity {
                     @Override
                     protected void onPostExecute(Void aVoid) {
                         alertDialog.dismiss();
+                        Toast.makeText(FeedbackActivity.this,
+                                getResources().getString(R.string.feedback_toast_msg),
+                                Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 }.execute();

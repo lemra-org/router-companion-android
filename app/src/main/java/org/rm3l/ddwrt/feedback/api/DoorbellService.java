@@ -6,7 +6,6 @@ import java.util.Map;
 
 import okhttp3.RequestBody;
 import retrofit2.Call;
-import retrofit2.Response;
 import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -23,13 +22,13 @@ public interface DoorbellService {
             "User-Agent: " + BuildConfig.APPLICATION_ID + " v" + BuildConfig.VERSION_NAME
     })
     @POST("/applications/{id}/open")
-    Call<Response> openApplication(@Path("id") final int applicationId, @Query("key") final String key);
+    Call<String> openApplication(@Path("id") final int applicationId, @Query("key") final String key);
 
     @Headers({
             "User-Agent: " + BuildConfig.APPLICATION_ID + " v" + BuildConfig.VERSION_NAME
     })
     @POST("/applications/{id}/submit")
-    Call<Response> submitFeedbackForm(@Path("id") final int applicationId,
+    Call<String> submitFeedbackForm(@Path("id") final int applicationId,
                             @Query("key") final String key,
                             @Query("email") final String email,
                             @Query("message") final String message,
@@ -42,7 +41,7 @@ public interface DoorbellService {
     })
     @Multipart
     @POST("/applications/{id}/upload")
-    String[] upload(@Path("id") final int applicationId,
+    Call<String[]> upload(@Path("id") final int applicationId,
                             @Query("key") final String key,
                             @Part("screenshot") final RequestBody screenshot,
                             @Part("logs") final RequestBody logs);
