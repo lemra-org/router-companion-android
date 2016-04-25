@@ -63,6 +63,7 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.AbstractRouterAction;
 import org.rm3l.ddwrt.actions.PingFromRouterAction;
 import org.rm3l.ddwrt.exceptions.SpeedTestException;
+import org.rm3l.ddwrt.feedback.FeedbackActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.SpeedTestResult;
@@ -75,6 +76,7 @@ import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.ViewGroupUtils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
@@ -1237,6 +1239,16 @@ public class SpeedTestActivity extends AppCompatActivity
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                return true;
+
+            case R.id.action_feedback:
+                final Intent intent = new Intent(SpeedTestActivity.this, FeedbackActivity.class);
+                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mOriginalRouter.getUuid());
+                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
+                ViewGroupUtils.exportViewToFile(SpeedTestActivity.this, getWindow().getDecorView(), screenshotFile);
+                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+                startActivity(intent);
+//                Utils.buildFeedbackDialog(this, true);
                 return true;
 
             case R.id.router_speedtest_refresh:

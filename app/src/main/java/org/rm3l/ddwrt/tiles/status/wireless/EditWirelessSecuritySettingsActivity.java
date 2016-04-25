@@ -18,6 +18,7 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -37,6 +38,7 @@ import com.google.common.collect.HashBiMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.feedback.FeedbackActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
@@ -44,7 +46,9 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.ViewGroupUtils;
 
+import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
@@ -841,6 +845,23 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
+
+
+            case R.id.action_feedback:
+                final Intent intent = new Intent(EditWirelessSecuritySettingsActivity.this,
+                        FeedbackActivity.class);
+                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
+                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
+                ViewGroupUtils.exportViewToFile(EditWirelessSecuritySettingsActivity.this,
+                        getWindow().getDecorView(), screenshotFile);
+                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+                startActivity(intent);
+//                Utils.buildFeedbackDialog(this, true);
+                return true;
+
+            default:
+                break;
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -1291,6 +1312,12 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
             setResult(RESULT_CANCELED, data);
             super.finish();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_activity_edit_wireless_security_settings, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
 }

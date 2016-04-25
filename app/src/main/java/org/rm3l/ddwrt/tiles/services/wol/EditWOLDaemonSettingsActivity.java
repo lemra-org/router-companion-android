@@ -34,6 +34,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -47,13 +48,16 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.feedback.FeedbackActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.ViewGroupUtils;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -294,11 +298,32 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_activity_edit_wol_daemon_settings, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
                 return true;
+
+
+            case R.id.action_feedback:
+                final Intent intent = new Intent(EditWOLDaemonSettingsActivity.this, FeedbackActivity.class);
+                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
+                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
+                ViewGroupUtils.exportViewToFile(EditWOLDaemonSettingsActivity.this,
+                        getWindow().getDecorView(), screenshotFile);
+                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+                startActivity(intent);
+//                Utils.buildFeedbackDialog(this, true);
+                return true;
+
+            default:
+                break;
         }
 
         return super.onOptionsItemSelected(item);
