@@ -38,6 +38,7 @@ import org.rm3l.ddwrt.mgmt.register.ManageRouterWizard;
 import org.rm3l.ddwrt.mgmt.register.resources.RouterWizardAction;
 import org.rm3l.ddwrt.resources.Encrypted;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.service.tasks.RouterInfoForFeedbackServiceTask;
 import org.rm3l.ddwrt.service.tasks.RouterModelUpdaterServiceTask;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ReportingUtils;
@@ -554,7 +555,9 @@ public class ReviewStep extends MaterialWizardStep {
             try {
                 result = doCheckConnectionToRouter();
                 if (!Utils.isDemoRouter(router)) {
-                    new RouterModelUpdaterServiceTask(getContext()).runBackgroundServiceTask(router);
+                    final Context context = getContext();
+                    new RouterModelUpdaterServiceTask(context).runBackgroundServiceTask(router);
+                    new RouterInfoForFeedbackServiceTask(context).runBackgroundServiceTask(router);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

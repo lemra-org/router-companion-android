@@ -16,6 +16,7 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.service.tasks.AbstractBackgroundServiceTask;
 import org.rm3l.ddwrt.service.tasks.ConnectedHostsServiceTask;
 import org.rm3l.ddwrt.service.tasks.PublicIPChangesServiceTask;
+import org.rm3l.ddwrt.service.tasks.RouterInfoForFeedbackServiceTask;
 import org.rm3l.ddwrt.service.tasks.RouterModelUpdaterServiceTask;
 import org.rm3l.ddwrt.service.tasks.RouterWebInterfaceParametersUpdaterServiceTask;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -72,6 +73,7 @@ public class BackgroundService extends IntentService {
             //Do the actual work - no need to do so in a separate thread
             final List<AbstractBackgroundServiceTask> tasks = new ArrayList<>();
             tasks.add(new RouterModelUpdaterServiceTask(BackgroundService.this));
+            tasks.add(new RouterInfoForFeedbackServiceTask(BackgroundService.this));
             tasks.add(new RouterWebInterfaceParametersUpdaterServiceTask(BackgroundService.this));
             //According to user preference
             final Set<String> notificationsChoiceSet =

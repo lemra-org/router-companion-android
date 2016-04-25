@@ -54,6 +54,7 @@ import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.service.tasks.RouterInfoForFeedbackServiceTask;
 import org.rm3l.ddwrt.service.tasks.RouterModelUpdaterServiceTask;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -114,6 +115,7 @@ public abstract class DDWRTTile<T>
     private InterstitialAd mTileClickInterstitialAd;
 
     protected final RouterModelUpdaterServiceTask routerModelUpdaterServiceTask;
+    protected final RouterInfoForFeedbackServiceTask routerInfoForFeedbackServiceTask;
 
     public DDWRTTile(@NonNull final Fragment parentFragment, @NonNull final Bundle arguments, @Nullable Router router) {
         this.mParentFragment = parentFragment;
@@ -137,6 +139,8 @@ public abstract class DDWRTTile<T>
         });
         this.routerModelUpdaterServiceTask =
                 new RouterModelUpdaterServiceTask(mParentFragmentActivity);
+        this.routerInfoForFeedbackServiceTask =
+                new RouterInfoForFeedbackServiceTask(mParentFragmentActivity);
     }
 
     public DDWRTTile(@NonNull final Fragment parentFragment, @NonNull final Bundle arguments,

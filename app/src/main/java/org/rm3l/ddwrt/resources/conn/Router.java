@@ -886,8 +886,10 @@ public class Router implements Serializable {
         if (context == null || routerAt == null) {
             return null;
         }
-        return context.getSharedPreferences(routerAt.getUuid(), Context.MODE_PRIVATE)
+        final String model = context.getSharedPreferences(routerAt.getUuid(), Context.MODE_PRIVATE)
                 .getString(NVRAMInfo.MODEL, routerAt.routerModel);
+        routerAt.setRouterModel(model);
+        return model;
     }
 
     public static String getRouterAvatarUrl(@Nullable final String routerModel,

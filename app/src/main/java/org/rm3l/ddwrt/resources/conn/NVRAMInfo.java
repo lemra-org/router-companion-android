@@ -178,6 +178,8 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String WAN_DNS = "wan_dns";
     public static final String HTTP_USERNAME = "http_username";
     public static final String HTTP_PASSWD = "http_passwd";
+    public static final String REVISION = "rev";
+    public static final String LOGIN_PROMPT = "login_prompt";
 
     /**
      * Default constructor: initialized an empty Properties set
