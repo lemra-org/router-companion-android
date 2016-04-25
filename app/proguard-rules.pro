@@ -268,3 +268,9 @@
 -keep class org.eclipse.mat.** { *; }
 -keep class com.squareup.leakcanary.** { *; }
 -dontwarn com.squareup.leakcanary.**
+
+#Retrofit (from Square)
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-keepattributes Signature
+-keepattributes Exceptions
