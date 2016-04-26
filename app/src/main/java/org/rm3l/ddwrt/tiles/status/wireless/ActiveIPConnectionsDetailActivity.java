@@ -87,6 +87,7 @@ import com.squareup.picasso.Callback;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
+import org.rm3l.ddwrt.feedback.FeedbackActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.IPConntrack;
 import org.rm3l.ddwrt.resources.IPWhoisInfo;
@@ -96,6 +97,7 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.ViewGroupUtils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
@@ -889,6 +891,18 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
+
+        case R.id.action_feedback:
+                 final Intent intent = new Intent(ActiveIPConnectionsDetailActivity.this, FeedbackActivity.class);
+                 //FIXME Router UUID should also be available
+                 //intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
+                 final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
+                 ViewGroupUtils.exportViewToFile(ActiveIPConnectionsDetailActivity.this, getWindow().getDecorView(), screenshotFile);
+                 intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+	
+                 startActivity(intent);
+ //                Utils.buildFeedbackDialog(this, true);
+                 return true;
 
 //            case R.id.tile_status_active_ip_connections_stats_by_source_ip: {
 //                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null,
