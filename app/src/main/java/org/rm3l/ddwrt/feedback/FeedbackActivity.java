@@ -52,11 +52,14 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.ReportingUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -128,11 +131,14 @@ public class FeedbackActivity extends AppCompatActivity {
     private static final String PROPERTY_APP_VERSION_CODE = "App Version Code";
     private Map<String, Object> mProperties;
 
+    private Map<String, Object> eventMap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mProperties = new HashMap<>();
+        eventMap = new HashMap<>();
 
         final OkHttpClient.Builder builder = new OkHttpClient().newBuilder();
         builder.readTimeout(10, TimeUnit.SECONDS);
@@ -278,6 +284,10 @@ public class FeedbackActivity extends AppCompatActivity {
             //No worries
         }
 
+        final String feedbackUniqueId = UUID.randomUUID().toString();
+
+        this.addProperty("FEEDBACK_UUID", feedbackUniqueId);
+
         //Also add build related properties
         this.addProperty("BUILD_DEBUG", BuildConfig.DEBUG);
         this.addProperty("BUILD_APPLICATION_ID", BuildConfig.APPLICATION_ID);
@@ -297,6 +307,15 @@ public class FeedbackActivity extends AppCompatActivity {
             this.addProperty("Router CPU Cores", routerPrefs.getString(NVRAMInfo.CPU_CORES_COUNT, "-"));
         }
 
+        eventMap.put("BUILD_APPLICATION_ID", BuildConfig.APPLICATION_ID);
+        eventMap.put("BUILD_FLAVOR", BuildConfig.FLAVOR);
+        eventMap.put("BUILD_TYPE", BuildConfig.BUILD_TYPE);
+        eventMap.put("BUILD_VERSION_NAME", BuildConfig.VERSION_NAME);
+
+        eventMap.put("FEEDBACK_UUID", feedbackUniqueId);
+
+        eventMap.put("Status", "Displayed");
+        ReportingUtils.reportEvent(ReportingUtils.EVENT_FEEDBACK, eventMap);
     }
 
     private void buildProperties() {
@@ -365,6 +384,9 @@ public class FeedbackActivity extends AppCompatActivity {
             @NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                eventMap.put("Status", "Canceled");
+                ReportingUtils.reportEvent(ReportingUtils.EVENT_FEEDBACK, eventMap);
+                Utils.displayRatingBarIfNeeded(this);
                 onBackPressed();
                 return true;
             case R.id.feedback_send: {
@@ -402,6 +424,7 @@ public class FeedbackActivity extends AppCompatActivity {
                 new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... params) {
+
                         try {
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -417,13 +440,11 @@ public class FeedbackActivity extends AppCompatActivity {
                                 return null;
                             }
 
-                            //TODO
                             String[] attachments = null;
                             if (includeScreenshot) {
                                 final RequestBody requestBody = RequestBody.create(
                                         MediaType.parse("image/png"),
                                         new File(screenshotFilePath));
-                                //TODO Add logs???
                                 final Response<String[]> uploadResponse = mDoorbellService
                                         .upload(DOORBELL_APPID, DOORBELL_APIKEY, requestBody)
                                         .execute();
@@ -452,6 +473,9 @@ public class FeedbackActivity extends AppCompatActivity {
                                     .execute();
 
                             if (response.code() == 201) {
+                                eventMap.put("Status", "Sent");
+                                ReportingUtils.reportEvent(ReportingUtils.EVENT_FEEDBACK, eventMap);
+
                                 final String responseStr = response.body().string();
                                 runOnUiThread(new Runnable() {
                                     @Override
