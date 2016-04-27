@@ -649,7 +649,7 @@ public final class Utils {
 
         AppRate
                 .with(activity)
-                .fromTop(true)
+                .fromTop(false)
                 .debug(BuildConfig.DEBUG)
                 .initialLaunchCount(DDWRTCompanionConstants.RATING_INITIAL_LAUNCH_COUNT)
                 .retryPolicy(RetryPolicy.EXPONENTIAL)
