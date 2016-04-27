@@ -31,6 +31,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,6 +42,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.GsonBuilder;
 
 import org.rm3l.ddwrt.BuildConfig;
@@ -144,7 +146,13 @@ public class FeedbackActivity extends AppCompatActivity {
         builder.readTimeout(10, TimeUnit.SECONDS);
         builder.connectTimeout(10, TimeUnit.SECONDS);
         if (BuildConfig.DEBUG) {
-            final HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            final HttpLoggingInterceptor interceptor =
+                    new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+                @Override
+                public void log(String message) {
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, message);
+                }
+            });
             interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
             builder.addInterceptor(interceptor);
         }
