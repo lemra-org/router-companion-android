@@ -145,7 +145,7 @@ public class FeedbackActivity extends AppCompatActivity {
         builder.connectTimeout(10, TimeUnit.SECONDS);
         if (BuildConfig.DEBUG) {
             final HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
             builder.addInterceptor(interceptor);
         }
 
