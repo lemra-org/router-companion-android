@@ -8,13 +8,20 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.SupplicantState;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
@@ -23,6 +30,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +41,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.gson.GsonBuilder;
+
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.feedback.api.DoorbellService;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
@@ -43,9 +54,17 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import java.io.File;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -61,7 +80,10 @@ public class FeedbackActivity extends AppCompatActivity {
     private static final String LOG_TAG = FeedbackActivity.class.getSimpleName();
 
     public static final String SCREENSHOT_FILE = "SCREENSHOT_FILE";
+    public static final String CALLER_ACTIVITY = "CALLER_ACTIVITY";
     public static final String FEEDBACK_API_BASE_URL = "https://doorbell.io/api/";
+
+    private static final GsonBuilder GSON_BUILDER = new GsonBuilder();
 
     private boolean mIsThemeLight;
 
@@ -95,13 +117,36 @@ public class FeedbackActivity extends AppCompatActivity {
     private DoorbellService mDoorbellService;
     private String screenshotFilePath;
 
+    private static final String PROPERTY_MODEL = "Model";
+    private static final String PROPERTY_ANDROID_VERSION = "Android Version";
+    private static final String PROPERTY_WI_FI_ENABLED = "WiFi enabled";
+    private static final String PROPERTY_MOBILE_DATA_ENABLED = "Mobile Data enabled";
+    private static final String PROPERTY_GPS_ENABLED = "GPS enabled";
+    private static final String PROPERTY_SCREEN_RESOLUTION = "Screen Resolution";
+    private static final String PROPERTY_CALLER_ACTIVITY = "CAller Activity";
+    private static final String PROPERTY_APP_VERSION_NAME = "App Version Name";
+    private static final String PROPERTY_APP_VERSION_CODE = "App Version Code";
+    private Map<String, Object> mProperties;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mProperties = new HashMap<>();
+
+        final OkHttpClient.Builder builder = new OkHttpClient().newBuilder();
+        builder.readTimeout(10, TimeUnit.SECONDS);
+        builder.connectTimeout(10, TimeUnit.SECONDS);
+        if (BuildConfig.DEBUG) {
+            final HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            builder.addInterceptor(interceptor);
+        }
+
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(FEEDBACK_API_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(builder.build())
                 .build();
         mDoorbellService = retrofit.create(DoorbellService.class);
 
@@ -220,6 +265,99 @@ public class FeedbackActivity extends AppCompatActivity {
             screenshotAndLogsContentView.setVisibility(View.GONE);
         }
 
+        this.buildProperties();
+
+        // Set app related properties
+        final PackageManager manager = getPackageManager();
+        try {
+            final PackageInfo info = manager.getPackageInfo(getPackageName(), 0);
+
+            this.addProperty(PROPERTY_APP_VERSION_NAME, info.versionName);
+            this.addProperty(PROPERTY_APP_VERSION_CODE, info.versionCode);
+        } catch (PackageManager.NameNotFoundException e) {
+            //No worries
+        }
+
+        //Also add build related properties
+        this.addProperty("BUILD_DEBUG", BuildConfig.DEBUG);
+        this.addProperty("BUILD_APPLICATION_ID", BuildConfig.APPLICATION_ID);
+        this.addProperty("BUILD_VERSION_CODE", BuildConfig.VERSION_CODE);
+        this.addProperty("BUILD_FLAVOR", BuildConfig.FLAVOR);
+        this.addProperty("BUILD_TYPE", BuildConfig.BUILD_TYPE);
+        this.addProperty("BUILD_VERSION_NAME", BuildConfig.VERSION_NAME);
+
+        if (mRouter != null) {
+            final SharedPreferences routerPrefs =
+                    getSharedPreferences(mRouter.getUuid(), Context.MODE_PRIVATE);
+
+            this.addProperty("Router Model", Router.getRouterModel(this, mRouter));
+            this.addProperty("Router Firmware", routerPrefs.getString(NVRAMInfo.LOGIN_PROMPT, "-"));
+            this.addProperty("Router Kernel", routerPrefs.getString(NVRAMInfo.KERNEL, "-"));
+            this.addProperty("Router CPU Model", routerPrefs.getString(NVRAMInfo.CPU_MODEL, "-"));
+            this.addProperty("Router CPU Cores", routerPrefs.getString(NVRAMInfo.CPU_CORES_COUNT, "-"));
+        }
+
+    }
+
+    private void buildProperties() {
+        // Set phone related properties
+        // this.addProperty("Brand", Build.BRAND); // mobile phone carrier
+        this.addProperty(PROPERTY_MODEL, Build.MODEL);
+        this.addProperty(PROPERTY_ANDROID_VERSION, Build.VERSION.RELEASE);
+
+        try {
+            SupplicantState supState;
+            WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+            supState = wifiInfo.getSupplicantState();
+
+            this.addProperty(PROPERTY_WI_FI_ENABLED, supState);
+        } catch (Exception e) {
+
+        }
+
+
+        boolean mobileDataEnabled = false; // Assume disabled
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        try {
+            Class cmClass = Class.forName(cm.getClass().getName());
+            Method method = cmClass.getDeclaredMethod("getMobileDataEnabled");
+            method.setAccessible(true); // Make the method callable
+            // get the setting for "mobile data"
+            mobileDataEnabled = (Boolean) method.invoke(cm);
+        } catch (Exception e) {
+            // Some problem accessible private API
+            // TODO do whatever error handling you want here
+        }
+        this.addProperty(PROPERTY_MOBILE_DATA_ENABLED, mobileDataEnabled);
+
+        try {
+            final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            boolean gpsEnabled = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+            this.addProperty(PROPERTY_GPS_ENABLED, gpsEnabled);
+        } catch (Exception e) {
+
+        }
+
+        try {
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            String resolution = Integer.toString(metrics.widthPixels) + "x" + Integer.toString(metrics.heightPixels);
+            this.addProperty(PROPERTY_SCREEN_RESOLUTION, resolution);
+        } catch (Exception e) {
+
+        }
+
+        try {
+            String activityName = getClass().getSimpleName();
+            this.addProperty(PROPERTY_CALLER_ACTIVITY, getIntent().getStringExtra(CALLER_ACTIVITY));
+        } catch (Exception e) {
+        }
+    }
+
+    public void addProperty(String key, Object value) {
+        this.mProperties.put(key, value);
     }
 
     @Override
@@ -271,7 +409,14 @@ public class FeedbackActivity extends AppCompatActivity {
                                     alertDialog.show();
                                 }
                             });
-                            mDoorbellService.openApplication(DOORBELL_APPID, DOORBELL_APIKEY);
+                            final Response<ResponseBody> openResponse = mDoorbellService.openApplication(DOORBELL_APPID, DOORBELL_APIKEY)
+                                    .execute();
+                            if (openResponse.code() != 201) {
+                                Toast.makeText(FeedbackActivity.this, "Error: " + openResponse.message(),
+                                        Toast.LENGTH_SHORT).show();
+                                return null;
+                            }
+
                             //TODO
                             String[] attachments = null;
                             if (includeScreenshot) {
@@ -279,18 +424,45 @@ public class FeedbackActivity extends AppCompatActivity {
                                         MediaType.parse("image/png"),
                                         new File(screenshotFilePath));
                                 //TODO Add logs???
-                                attachments = mDoorbellService
-                                        .upload(DOORBELL_APPID, DOORBELL_APIKEY, requestBody, null)
-                                        .execute().body();
+                                final Response<String[]> uploadResponse = mDoorbellService
+                                        .upload(DOORBELL_APPID, DOORBELL_APIKEY, requestBody)
+                                        .execute();
+                                if (uploadResponse.code() != 201) {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(FeedbackActivity.this, "Error: " + openResponse.message(),
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                    return null;
+                                }
+                                attachments = uploadResponse.body();
                             }
                             if (attachments == null) {
                                 attachments = new String[0];
                             }
 
-                            //TODO Error handling
-                            mDoorbellService.submitFeedbackForm(DOORBELL_APPID, DOORBELL_APIKEY,
-                                    emailText, contentText, null, null, attachments)
+                            final Response<ResponseBody> response = mDoorbellService
+                                    .submitFeedbackForm(
+                                            DOORBELL_APPID, DOORBELL_APIKEY,
+                                            emailText, contentText, null,
+                                            GSON_BUILDER.create().toJson(mProperties),
+                                            attachments)
                                     .execute();
+
+                            if (response.code() == 201) {
+                                final String responseStr = response.body().string();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(FeedbackActivity.this,
+                                                responseStr,
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                            return null;
                         } catch (final Exception e) {
                             e.printStackTrace();
                         }
@@ -301,9 +473,6 @@ public class FeedbackActivity extends AppCompatActivity {
                     @Override
                     protected void onPostExecute(Void aVoid) {
                         alertDialog.dismiss();
-                        Toast.makeText(FeedbackActivity.this,
-                                getResources().getString(R.string.feedback_toast_msg),
-                                Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 }.execute();
