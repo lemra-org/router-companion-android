@@ -34,6 +34,7 @@ import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.IPWhoisInfo;
 import org.rm3l.ddwrt.resources.None;
 import org.rm3l.ddwrt.resources.PublicIPInfo;
@@ -152,6 +153,7 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                 }
                 final Intent intent = new Intent(mParentFragmentActivity, IPGeoActivity.class);
                 intent.putExtra(IPGeoActivity.PUBLIC_IP_TO_DISPLAY, mWanPublicIP);
+                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
                 mParentFragmentActivity.startActivity(intent);
                 mParentFragmentActivity.overridePendingTransition(
                         R.anim.zoom_enter, R.anim.zoom_exit);

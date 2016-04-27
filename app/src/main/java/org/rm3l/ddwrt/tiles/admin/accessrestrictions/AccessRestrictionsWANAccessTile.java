@@ -239,6 +239,17 @@ public class AccessRestrictionsWANAccessTile extends
                         filter_rule5=
                         filter_rule6=
                         filter_rule7=$STAT:1$NAME:myPolicy7$DENY:1$$
+
+                        filter_rule1=$STAT:1$NAME:Only allow preset IP-addresses$DENY:1$$
+                        filter_rule2=$STAT:1$NAME:Inget internet p▒ natten$DENY:1$$
+                        filter_rule3=$STAT:1$NAME:Paus mitt p▒ dagen$DENY:1$$
+                        filter_rule4=$STAT:1$NAME:Skoldag$DENY:1$$
+                        filter_rule5=
+                        filter_rule6=
+                        filter_rule7=
+                        filter_rule8=
+                        filter_rule9=
+                        filter_rule10=
                          */
                         NVRAMInfo nvramInfo =
                                 SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity,
@@ -560,7 +571,7 @@ public class AccessRestrictionsWANAccessTile extends
 
             //Disable switch button listener
             holder.statusSwitchButton.setEnabled(true);
-            final String status = Strings.nullToEmpty(wanAccessPolicy.getStatus());
+            final String status = Strings.nullToEmpty(wanAccessPolicy.getStatus()).trim();
             switch (status) {
                 case "0":
                 case "$STAT:0":

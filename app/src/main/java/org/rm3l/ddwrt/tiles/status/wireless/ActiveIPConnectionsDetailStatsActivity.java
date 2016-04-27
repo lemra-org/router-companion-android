@@ -87,6 +87,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 
+@Deprecated
 public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = ActiveIPConnectionsDetailStatsActivity.class.getSimpleName();

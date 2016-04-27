@@ -35,6 +35,7 @@ import org.osmdroid.views.overlay.TilesOverlay;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.feedback.FeedbackActivity;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.IPWhoisInfo;
 import org.rm3l.ddwrt.tiles.status.wireless.ActiveIPConnectionsDetailActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
@@ -66,6 +67,8 @@ public class IPGeoActivity extends AppCompatActivity {
     private File mFileToShare;
     private ShareActionProvider mShareActionProvider;
     private Menu optionsMenu;
+
+    private String mRouterUuid;
 
     @Nullable
     private InterstitialAd mInterstitialAd;
@@ -102,6 +105,8 @@ public class IPGeoActivity extends AppCompatActivity {
             finish();
             return;
         }
+
+        mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
 
         AdUtils.buildAndDisplayAdViewIfNeeded(this, 
                 (AdView) findViewById(R.id.activity_ip_geo_adView));
@@ -313,9 +318,11 @@ public class IPGeoActivity extends AppCompatActivity {
 
             case R.id.action_feedback:
                 final Intent intent = new Intent(IPGeoActivity.this, FeedbackActivity.class);
+                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
                 final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
                 ViewGroupUtils.exportViewToFile(IPGeoActivity.this, getWindow().getDecorView(), screenshotFile);
                 intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
                 startActivity(intent);
 //                Utils.buildFeedbackDialog(this, true);
                 return true;

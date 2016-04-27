@@ -712,6 +712,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                     final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
                                     ViewGroupUtils.exportViewToFile(DDWRTMainActivity.this, getWindow().getDecorView(), screenshotFile);
                                     intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+                                    intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
                                     startActivity(intent);
 //                                    Utils.buildFeedbackDialog(DDWRTMainActivity.this, true);
                                     break;
@@ -1203,6 +1204,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                 final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
                 ViewGroupUtils.exportViewToFile(DDWRTMainActivity.this, getWindow().getDecorView(), screenshotFile);
                 intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
                 startActivity(intent);
 //                Utils.buildFeedbackDialog(this, true);
                 return true;

@@ -441,7 +441,8 @@ public class WirelessClientsTile
                         public boolean onMenuItemClick(MenuItem item) {
                             final Intent intent = new Intent(mParentFragmentActivity, ActiveIPConnectionsDetailActivity.class);
                             intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT, activeIPConnections);
-                            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getRemoteIpAddress());
+                            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
+                            intent.putExtra(ActiveIPConnectionsDetailActivity.ROUTER_REMOTE_IP, mRouter.getRemoteIpAddress());
                             intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, new Date().toString());
 
                             final HashMap<String, String> currentIpToHostNameResolverMap = new HashMap<String, String>();
@@ -1614,7 +1615,8 @@ public class WirelessClientsTile
                         public void onClick(View widget) {
                             final Intent intent = new Intent(mParentFragmentActivity, ActiveIPConnectionsDetailActivity.class);
                             intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT, activeIPConnections);
-                            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getRemoteIpAddress());
+                            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
+                            intent.putExtra(ActiveIPConnectionsDetailActivity.ROUTER_REMOTE_IP, mRouter.getRemoteIpAddress());
                             intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, new Date().toString());
 
                             final HashMap<String, String> currentIpToHostNameResolverMap = new HashMap<String, String>();
@@ -1910,7 +1912,9 @@ public class WirelessClientsTile
                                     final Intent intent = new Intent(mParentFragmentActivity, ActiveIPConnectionsDetailActivity.class);
                                     intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT, deviceActiveIpConnections
                                             .toArray(new String[deviceActiveIpConnections.size()]));
-                                    intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getRemoteIpAddress());
+                                    intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
+                                    intent.putExtra(ActiveIPConnectionsDetailActivity.ROUTER_REMOTE_IP,
+                                            mRouter.getRemoteIpAddress());
                                     intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST,
                                             "'" + name + "' (" + macAddress + " - " + device.getIpAddress() + ")");
                                     intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, new Date().toString());
@@ -2307,7 +2311,8 @@ public class WirelessClientsTile
                                         final Intent intent = new Intent(mParentFragmentActivity, ActiveIPConnectionsDetailActivity.class);
                                         intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT, deviceActiveIpConnections
                                                 .toArray(new String[deviceActiveIpConnections.size()]));
-                                        intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getRemoteIpAddress());
+                                        intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
+                                        intent.putExtra(ActiveIPConnectionsDetailActivity.ROUTER_REMOTE_IP, mRouter.getRemoteIpAddress());
                                         intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST,
                                                 "'" + name + "' (" + macAddress + " - " + device.getIpAddress() + ")");
                                         intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST_IP, device.getIpAddress());

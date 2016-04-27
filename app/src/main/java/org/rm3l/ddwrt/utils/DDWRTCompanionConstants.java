@@ -73,6 +73,7 @@ public final class DDWRTCompanionConstants {
 
     public static final int DOORBELL_APPID = 0;
     public static final String DOORBELL_APIKEY = \"fake-api-key\";
+    public static final String DOORBELL_APIKEY_UPLOAD = \"fake-api-key\";
 
     //FIXME Update prior to release
     public static final boolean TEST_MODE = false;

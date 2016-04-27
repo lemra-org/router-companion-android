@@ -138,6 +138,7 @@ import static org.rm3l.ddwrt.utils.Utils.getEscapedFileName;
 
 public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
+    public static final String ROUTER_REMOTE_IP = "ROUTER_REMOTE_IP";
     public static final String ACTIVE_IP_CONNECTIONS_OUTPUT = "ACTIVE_IP_CONNECTIONS_OUTPUT";
 
     public static final String IP_TO_HOSTNAME_RESOLVER = "IP_TO_HOSTNAME_RESOLVER";
@@ -317,6 +318,8 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
     private TextView slidingUpPanelStatsTitle;
     private TextView loadingViewText;
 
+    private String mRouterUuid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -331,7 +334,8 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             return;
         }
 
-        mRouterRemoteIp = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+        mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+        mRouterRemoteIp = intent.getStringExtra(ROUTER_REMOTE_IP);
         mObservationDate = intent.getStringExtra(OBSERVATION_DATE);
         mConnectedHost = intent.getStringExtra(CONNECTED_HOST);
 
@@ -895,111 +899,14 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         case R.id.action_feedback:
                  final Intent intent = new Intent(ActiveIPConnectionsDetailActivity.this, FeedbackActivity.class);
                  //FIXME Router UUID should also be available
-                 //intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
+                 intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
                  final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
                  ViewGroupUtils.exportViewToFile(ActiveIPConnectionsDetailActivity.this, getWindow().getDecorView(), screenshotFile);
                  intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+                 intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
 	
                  startActivity(intent);
- //                Utils.buildFeedbackDialog(this, true);
                  return true;
-
-//            case R.id.tile_status_active_ip_connections_stats_by_source_ip: {
-//                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null,
-//                        "Loading Pie Chart (distribution by Source IPs)...", false, false);
-//                alertDialog.show();
-//                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        final HashMap<String, Integer> connectionsCountBySourceIp = new HashMap<>();
-//                        for (final Map.Entry<String, Collection<String>> entry : mSourceIpToDestinationIp.asMap().entrySet()) {
-//                            final Collection<String> value = entry.getValue();
-//                            if (value == null) {
-//                                continue;
-//                            }
-//                            connectionsCountBySourceIp.put(entry.getKey(), value.size());
-//                        }
-//                        final Intent srcStatsIntent = new Intent(ActiveIPConnectionsDetailActivity.this,
-//                                ActiveIPConnectionsDetailStatsActivity.class);
-//                        srcStatsIntent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, mObservationDate);
-//                        srcStatsIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterRemoteIp);
-//                        srcStatsIntent.putExtra(IP_TO_HOSTNAME_RESOLVER, mLocalIpToHostname);
-//                        srcStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.BY, ActiveIPConnectionsDetailStatsActivity.ByFilter.SOURCE);
-//                        srcStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.CONNECTIONS_COUNT_MAP, connectionsCountBySourceIp);
-//                        startActivity(srcStatsIntent);
-//                        alertDialog.cancel();
-//                    }
-//                }, 1000l);
-//            }
-//
-//                return true;
-//
-//            case R.id.tile_status_active_ip_connections_stats_by_destination_ip: {
-//                final AlertDialog alertDialog2 = Utils.buildAlertDialog(this, null,
-//                        "Loading Pie Chart (distribution by Destination IPs)...", false, false);
-//                alertDialog2.show();
-//                ((TextView) alertDialog2.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        final HashMap<String, Integer> connectionsCountByDestinationIp = new HashMap<>();
-//                        for (final Map.Entry<String, Collection<String>> entry : mDestinationIpToSourceIp.asMap().entrySet()) {
-//                            final Collection<String> value = entry.getValue();
-//                            if (value == null) {
-//                                continue;
-//                            }
-//                            connectionsCountByDestinationIp.put(entry.getKey(), value.size());
-//                        }
-//                        final Intent destStatsIntent = new Intent(ActiveIPConnectionsDetailActivity.this,
-//                                ActiveIPConnectionsDetailStatsActivity.class);
-//                        destStatsIntent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, mObservationDate);
-//                        destStatsIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterRemoteIp);
-//                        destStatsIntent.putExtra(IP_TO_HOSTNAME_RESOLVER, mLocalIpToHostname);
-//                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.BY, ActiveIPConnectionsDetailStatsActivity.ByFilter.DESTINATION_IP);
-//                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.CONNECTIONS_COUNT_MAP, connectionsCountByDestinationIp);
-//                        startActivity(destStatsIntent);
-//                        alertDialog2.cancel();
-//                    }
-//                }, 1000l);
-//            }
-//
-//                return true;
-//
-//            case R.id.tile_status_active_ip_connections_stats_by_destination_country: {
-//                final AlertDialog alertDialog2 = Utils.buildAlertDialog(this, null,
-//                        "Loading Pie Chart (distribution by Destination IP Country)...", false, false);
-//                alertDialog2.show();
-//                ((TextView) alertDialog2.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        final HashMap<String, Integer> connectionsCountByDestinationIpCountry = new HashMap<>();
-//                        final Collection<String> countries = mDestinationIpToCountry.values();
-//                        for (final String country : countries) {
-//                            if (isNullOrEmpty(country)) {
-//                                continue;
-//                            }
-//                            Integer count = connectionsCountByDestinationIpCountry.get(country);
-//                            if (count == null) {
-//                                count = 0;
-//                            }
-//                            connectionsCountByDestinationIpCountry.put(country, count + 1);
-//                        }
-//
-//                        final Intent destStatsIntent = new Intent(ActiveIPConnectionsDetailActivity.this,
-//                                ActiveIPConnectionsDetailStatsActivity.class);
-//                        destStatsIntent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, mObservationDate);
-//                        destStatsIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterRemoteIp);
-//                        destStatsIntent.putExtra(IP_TO_HOSTNAME_RESOLVER, mLocalIpToHostname);
-//                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.BY, ActiveIPConnectionsDetailStatsActivity.ByFilter.DESTINATION_COUNTRY);
-//                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.CONNECTIONS_COUNT_MAP, connectionsCountByDestinationIpCountry);
-//                        startActivity(destStatsIntent);
-//                        alertDialog2.cancel();
-//                    }
-//                }, 1000l);
-//            }
-//            return true;
 
             default:
                 break;

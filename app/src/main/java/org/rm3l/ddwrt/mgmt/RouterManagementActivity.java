@@ -469,6 +469,7 @@ public class RouterManagementActivity
                 final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
                 ViewGroupUtils.exportViewToFile(this, getWindow().getDecorView(), screenshotFile);
                 intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
                 startActivity(intent);
 //                Utils.buildFeedbackDialog(this, true);
             }

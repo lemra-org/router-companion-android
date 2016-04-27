@@ -49,6 +49,7 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.AbstractRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterStreamActionListener;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.None;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -126,6 +127,7 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                 }
 
                 final Intent intent = new Intent(mParentFragmentActivity, IPGeoActivity.class);
+                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
                 intent.putExtra(IPGeoActivity.PUBLIC_IP_TO_DISPLAY, textToFind);
                 mParentFragmentActivity.startActivity(intent);
                 mParentFragmentActivity.overridePendingTransition(

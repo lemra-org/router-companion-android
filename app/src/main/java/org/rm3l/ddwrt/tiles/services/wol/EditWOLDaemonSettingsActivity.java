@@ -318,6 +318,7 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
                 ViewGroupUtils.exportViewToFile(EditWOLDaemonSettingsActivity.this,
                         getWindow().getDecorView(), screenshotFile);
                 intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
                 startActivity(intent);
 //                Utils.buildFeedbackDialog(this, true);
                 return true;
