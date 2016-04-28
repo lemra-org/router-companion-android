@@ -57,6 +57,12 @@ public abstract class AbstractRouterSettingsActivity extends AbstractDDWRTSettin
     @Nullable
     protected Router mRouter;
 
+    @Nullable
+    @Override
+    protected String getRouterUuid() {
+        return mRouterUuid;
+    }
+
     @Override
     public SharedPreferences getSharedPreferences(String name, int mode) {
         if (isNullOrEmpty(this.mRouterUuid)) {
