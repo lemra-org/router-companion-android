@@ -80,7 +80,7 @@ public class RouterInfoForFeedbackServiceTask extends AbstractBackgroundServiceT
             prefsEdited = true;
         }
         if (!(DEFAULT_VALUE.equals(cpuModel) || cpuModelFromPrefs.equals(cpuModel))) {
-            editor.putString(NVRAMInfo.CPU_MODEL, kernel);
+            editor.putString(NVRAMInfo.CPU_MODEL, cpuModel);
             prefsEdited = true;
         }
         if (!(DEFAULT_VALUE.equals(cpuCoresCount) || cpuCoresCountFromPrefs.equals(cpuCoresCount))) {
