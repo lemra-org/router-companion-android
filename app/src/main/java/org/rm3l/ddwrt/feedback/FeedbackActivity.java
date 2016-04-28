@@ -89,6 +89,12 @@ public class FeedbackActivity extends AppCompatActivity {
     public static final String FEEDBACK_API_BASE_URL = "https://doorbell.io/api/";
 
     private static final GsonBuilder GSON_BUILDER = new GsonBuilder();
+    public static final String PROPERTY_BUILD_DEBUG = "BUILD_DEBUG";
+    public static final String PROPERTY_BUILD_APPLICATION_ID = "BUILD_APPLICATION_ID";
+    public static final String PROPERTY_BUILD_VERSION_CODE = "BUILD_VERSION_CODE";
+    public static final String PROPERTY_BUILD_FLAVOR = "BUILD_FLAVOR";
+    public static final String PROPERTY_BUILD_TYPE = "BUILD_TYPE";
+    public static final String PROPERTY_BUILD_VERSION_NAME = "BUILD_VERSION_NAME";
 
     private boolean mIsThemeLight;
 
@@ -128,12 +134,13 @@ public class FeedbackActivity extends AppCompatActivity {
     private static final String PROPERTY_MOBILE_DATA_ENABLED = "Mobile Data enabled";
     private static final String PROPERTY_GPS_ENABLED = "GPS enabled";
     private static final String PROPERTY_SCREEN_RESOLUTION = "Screen Resolution";
-    private static final String PROPERTY_CALLER_ACTIVITY = "CAller Activity";
+    private static final String PROPERTY_CALLER_ACTIVITY = "Caller Activity";
     private static final String PROPERTY_APP_VERSION_NAME = "App Version Name";
     private static final String PROPERTY_APP_VERSION_CODE = "App Version Code";
     private Map<String, Object> mProperties;
 
     private Map<String, Object> eventMap;
+    private String mFeedbackUniqueId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -292,17 +299,15 @@ public class FeedbackActivity extends AppCompatActivity {
             //No worries
         }
 
-        final String feedbackUniqueId = UUID.randomUUID().toString();
-
-        this.addProperty("FEEDBACK_UUID", feedbackUniqueId);
+        mFeedbackUniqueId = UUID.randomUUID().toString();
 
         //Also add build related properties
-        this.addProperty("BUILD_DEBUG", BuildConfig.DEBUG);
-        this.addProperty("BUILD_APPLICATION_ID", BuildConfig.APPLICATION_ID);
-        this.addProperty("BUILD_VERSION_CODE", BuildConfig.VERSION_CODE);
-        this.addProperty("BUILD_FLAVOR", BuildConfig.FLAVOR);
-        this.addProperty("BUILD_TYPE", BuildConfig.BUILD_TYPE);
-        this.addProperty("BUILD_VERSION_NAME", BuildConfig.VERSION_NAME);
+        this.addProperty(PROPERTY_BUILD_DEBUG, BuildConfig.DEBUG);
+        this.addProperty(PROPERTY_BUILD_APPLICATION_ID, BuildConfig.APPLICATION_ID);
+        this.addProperty(PROPERTY_BUILD_VERSION_CODE, BuildConfig.VERSION_CODE);
+        this.addProperty(PROPERTY_BUILD_FLAVOR, BuildConfig.FLAVOR);
+        this.addProperty(PROPERTY_BUILD_TYPE, BuildConfig.BUILD_TYPE);
+        this.addProperty(PROPERTY_BUILD_VERSION_NAME, BuildConfig.VERSION_NAME);
 
         if (mRouter != null) {
             final SharedPreferences routerPrefs =
@@ -315,12 +320,10 @@ public class FeedbackActivity extends AppCompatActivity {
             this.addProperty("Router CPU Cores", routerPrefs.getString(NVRAMInfo.CPU_CORES_COUNT, "-"));
         }
 
-        eventMap.put("BUILD_APPLICATION_ID", BuildConfig.APPLICATION_ID);
-        eventMap.put("BUILD_FLAVOR", BuildConfig.FLAVOR);
-        eventMap.put("BUILD_TYPE", BuildConfig.BUILD_TYPE);
-        eventMap.put("BUILD_VERSION_NAME", BuildConfig.VERSION_NAME);
-
-        eventMap.put("FEEDBACK_UUID", feedbackUniqueId);
+        eventMap.put(PROPERTY_BUILD_APPLICATION_ID, BuildConfig.APPLICATION_ID);
+        eventMap.put(PROPERTY_BUILD_FLAVOR, BuildConfig.FLAVOR);
+        eventMap.put(PROPERTY_BUILD_TYPE, BuildConfig.BUILD_TYPE);
+        eventMap.put(PROPERTY_BUILD_VERSION_NAME, BuildConfig.VERSION_NAME);
 
         eventMap.put("Status", "Displayed");
         ReportingUtils.reportEvent(ReportingUtils.EVENT_FEEDBACK, eventMap);
@@ -340,7 +343,7 @@ public class FeedbackActivity extends AppCompatActivity {
 
             this.addProperty(PROPERTY_WI_FI_ENABLED, supState);
         } catch (Exception e) {
-
+            //No worries
         }
 
 
@@ -348,6 +351,7 @@ public class FeedbackActivity extends AppCompatActivity {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         try {
             Class cmClass = Class.forName(cm.getClass().getName());
+            @SuppressWarnings("unchecked")
             Method method = cmClass.getDeclaredMethod("getMobileDataEnabled");
             method.setAccessible(true); // Make the method callable
             // get the setting for "mobile data"
@@ -364,7 +368,7 @@ public class FeedbackActivity extends AppCompatActivity {
 
             this.addProperty(PROPERTY_GPS_ENABLED, gpsEnabled);
         } catch (Exception e) {
-
+            //No worries
         }
 
         try {
@@ -373,13 +377,14 @@ public class FeedbackActivity extends AppCompatActivity {
             String resolution = Integer.toString(metrics.widthPixels) + "x" + Integer.toString(metrics.heightPixels);
             this.addProperty(PROPERTY_SCREEN_RESOLUTION, resolution);
         } catch (Exception e) {
-
+            //No worries
         }
 
         try {
             String activityName = getClass().getSimpleName();
             this.addProperty(PROPERTY_CALLER_ACTIVITY, getIntent().getStringExtra(CALLER_ACTIVITY));
         } catch (Exception e) {
+            //No worries
         }
     }
 
@@ -426,6 +431,7 @@ public class FeedbackActivity extends AppCompatActivity {
                 final boolean includeScreenshot = includeScreenshotAndLogs.isChecked();
                 final String emailText = email.getText().toString();
                 final String contentText = content.getText().toString();
+                final String routerInfoText = routerInfo.getText().toString();
 
                 final ProgressDialog alertDialog = ProgressDialog.show(this,
                         "Submitting Feedback", "Please hold on - submitting feedback...", true);
@@ -475,13 +481,15 @@ public class FeedbackActivity extends AppCompatActivity {
                             final Response<ResponseBody> response = mDoorbellService
                                     .submitFeedbackForm(
                                             DOORBELL_APPID, DOORBELL_APIKEY,
-                                            emailText, 
-                                            contentText + 
-                                                "\n\n-------\n" + 
-                                                "- Feedback UUID: " + eventMap.get("FEEDBACK_UUID") + "\n\n" + 
-                                                (TextUtils.isEmpty(routerInfo.getText()) ? 
-                                                    "" : routerInfo.getText()) + 
-                                                "-------", 
+                                            emailText,
+                                            String.format("\n\n" +
+                                                    "-------\n" +
+                                                    "- Feedback UUID: %s\n" +
+                                                    "%s" +
+                                                    "-------",
+                                                    mFeedbackUniqueId,
+                                                    TextUtils.isEmpty(routerInfoText) ?
+                                                            "" : routerInfoText),
                                             null,
                                             GSON_BUILDER.create().toJson(mProperties),
                                             attachments)
