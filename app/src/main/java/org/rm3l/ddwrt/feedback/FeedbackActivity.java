@@ -475,7 +475,12 @@ public class FeedbackActivity extends AppCompatActivity {
                             final Response<ResponseBody> response = mDoorbellService
                                     .submitFeedbackForm(
                                             DOORBELL_APPID, DOORBELL_APIKEY,
-                                            emailText, contentText, null,
+                                            emailText, 
+                                            contentText + 
+                                                (TextUtils.isEmpty(routerInfo.getText()) ? 
+                                                    "" : 
+                                                    ("\n\n-------" + routerInfo.getText() + "\n-------")), 
+                                            null,
                                             GSON_BUILDER.create().toJson(mProperties),
                                             attachments)
                                     .execute();
