@@ -477,9 +477,11 @@ public class FeedbackActivity extends AppCompatActivity {
                                             DOORBELL_APPID, DOORBELL_APIKEY,
                                             emailText, 
                                             contentText + 
+                                                "\n\n-------\n" + 
+                                                "- Feedback UUID: " + eventMap.get("FEEDBACK_UUID") + "\n\n" + 
                                                 (TextUtils.isEmpty(routerInfo.getText()) ? 
-                                                    "" : 
-                                                    ("\n\n-------\n" + routerInfo.getText() + "-------")), 
+                                                    "" : routerInfo.getText()) + 
+                                                "-------", 
                                             null,
                                             GSON_BUILDER.create().toJson(mProperties),
                                             attachments)
