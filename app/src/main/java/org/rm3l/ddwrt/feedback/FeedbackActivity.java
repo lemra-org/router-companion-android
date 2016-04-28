@@ -479,7 +479,7 @@ public class FeedbackActivity extends AppCompatActivity {
                                             contentText + 
                                                 (TextUtils.isEmpty(routerInfo.getText()) ? 
                                                     "" : 
-                                                    ("\n\n-------" + routerInfo.getText() + "\n-------")), 
+                                                    ("\n\n-------\n" + routerInfo.getText() + "-------")), 
                                             null,
                                             GSON_BUILDER.create().toJson(mProperties),
                                             attachments)
