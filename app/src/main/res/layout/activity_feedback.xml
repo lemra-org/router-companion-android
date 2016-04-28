@@ -61,11 +61,8 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/activity_feedback_content"
                         android:inputType="textCapSentences|textMultiLine"
-                        android:lines="5"
-                        android:minLines="1"
-                        android:autoLink="all"
-                        android:maxLines="10"
-                        android:scrollbars="none"
+                        android:minLines="5"
+                        android:isScrollContainer="true"
                         android:hint="Write your feedback here."/>
                 </android.support.design.widget.TextInputLayout>
 
@@ -84,11 +81,8 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/activity_feedback_router_information_content"
                         android:inputType="textCapSentences|textMultiLine"
-                        android:lines="5"
-                        android:minLines="1"
-                        android:autoLink="all"
-                        android:maxLines="10"
-                        android:scrollbars="none"
+                        android:minLines="10"
+                        android:isScrollContainer="true"
                         android:hint="If you are reporting a bug, please specify (unless auto-detected) your Router model and DD-WRT Build Number."/>
                 </LinearLayout>
 
@@ -153,7 +147,7 @@
                 android:id="@+id/activity_feedback_include_screenshot_and_logs_content_screenshot_expanded"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="invisible"
+                android:visibility="gone"
                 android:contentDescription="Screenshot" />
 
         </FrameLayout>
