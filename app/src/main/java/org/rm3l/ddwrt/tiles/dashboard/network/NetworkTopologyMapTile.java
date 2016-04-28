@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -265,18 +267,10 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                                     if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
                                         nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
 
-                                        try {
-                                            routerModelUpdaterServiceTask
-                                                    .runBackgroundServiceTask(mRouter);
-                                        } catch (final Exception e) {
-                                            Utils.reportException(mParentFragmentActivity, e);
-                                            //No worries
-                                        } finally {
-                                            PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
-                                                    mRouterCopy, mParentFragmentPreferences,
-                                                    wanPublicIpCmdStatus,
-                                                    nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
-                                        }
+                                        PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
+                                                mRouterCopy, mParentFragmentPreferences,
+                                                wanPublicIpCmdStatus,
+                                                nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
 
                                     } else {
                                         nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
@@ -286,6 +280,21 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                         } catch (final Exception e) {
                             e.printStackTrace();
                             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
+                        } finally {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        routerModelUpdaterServiceTask
+                                                .runBackgroundServiceTask(mRouter);
+                                        routerInfoForFeedbackServiceTask
+                                                .runBackgroundServiceTask(mRouter);
+                                    } catch (final Exception e) {
+                                        //No worries
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
                         }
                     }
 

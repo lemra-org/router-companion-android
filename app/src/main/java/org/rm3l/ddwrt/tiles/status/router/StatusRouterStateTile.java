@@ -25,6 +25,8 @@ package org.rm3l.ddwrt.tiles.status.router;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -265,18 +267,10 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                                         if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
                                             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
 
-                                            try {
-                                                routerModelUpdaterServiceTask
-                                                        .runBackgroundServiceTask(mRouter);
-                                            } catch (final Exception e) {
-                                                Utils.reportException(mParentFragmentActivity, e);
-                                                //No worries
-                                            } finally {
-                                                PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
-                                                        mRouter, mParentFragmentPreferences,
-                                                        wanPublicIpCmdStatus,
-                                                        nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
-                                            }
+                                            PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
+                                                    mRouter, mParentFragmentPreferences,
+                                                    wanPublicIpCmdStatus,
+                                                    nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
 
                                         } else {
                                             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
@@ -286,6 +280,21 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                             } catch (final Exception e) {
                                 e.printStackTrace();
                                 nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
+                            } finally {
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            routerModelUpdaterServiceTask
+                                                    .runBackgroundServiceTask(mRouter);
+                                            routerInfoForFeedbackServiceTask
+                                                    .runBackgroundServiceTask(mRouter);
+                                        } catch (final Exception e) {
+                                            //No worries
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
                             }
                         }
                         updateProgressBarViewSeparator(90);

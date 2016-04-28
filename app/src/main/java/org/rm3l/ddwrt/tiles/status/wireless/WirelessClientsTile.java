@@ -36,6 +36,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -1164,20 +1165,20 @@ public class WirelessClientsTile
                                     }
                                 }
 
-                                mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mProgressBarDesc.setText("Resolving MAC Addresses (" +
-                                                v + "/" + outputLen +
-                                                ")...");
-                                    }
-                                });
-                                try {
-                                    device.setMacouiVendorDetails(mMacOuiVendorLookupCache.get(macAddress));
-                                } catch (final Exception e) {
-                                    e.printStackTrace();
-                                    Utils.reportException(mParentFragmentActivity, e);
-                                }
+//                                mParentFragmentActivity.runOnUiThread(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        mProgressBarDesc.setText("Resolving MAC Addresses (" +
+//                                                v + "/" + outputLen +
+//                                                ")...");
+//                                    }
+//                                });
+//                                try {
+//                                    device.setMacouiVendorDetails(mMacOuiVendorLookupCache.get(macAddress));
+//                                } catch (final Exception e) {
+//                                    e.printStackTrace();
+//                                    Utils.reportException(mParentFragmentActivity, e);
+//                                }
 
                                 macToDeviceOutput.put(macAddress, device);
                             }
@@ -1482,16 +1483,8 @@ public class WirelessClientsTile
                         }
                     });
 
-                    try {
-                        routerModelUpdaterServiceTask
-                                .runBackgroundServiceTask(mRouter);
-                    } catch (final Exception e) {
-                        Utils.reportException(mParentFragmentActivity, e);
-                        //No worries
-                    } finally {
-                        ConnectedHostsServiceTask.generateConnectedHostsNotification(mParentFragmentActivity,
-                                mParentFragmentPreferences, mRouter, deviceCollection);
-                    }
+                    ConnectedHostsServiceTask.generateConnectedHostsNotification(mParentFragmentActivity,
+                            mParentFragmentPreferences, mRouter, deviceCollection);
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Discovered a total of " + devices.getDevicesCount() + " device(s)!");
 
@@ -1500,6 +1493,21 @@ public class WirelessClientsTile
                 } catch (@NonNull final Exception e) {
                     Log.e(LOG_TAG, e.getMessage() + ": " + Throwables.getStackTraceAsString(e));
                     return new ClientDevices().setException(e);
+                } finally {
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                routerModelUpdaterServiceTask
+                                        .runBackgroundServiceTask(mRouter);
+                                routerInfoForFeedbackServiceTask
+                                        .runBackgroundServiceTask(mRouter);
+                            } catch (final Exception e) {
+                                //No worries
+                                e.printStackTrace();
+                            }
+                        }
+                    });
                 }
             }
         };
@@ -2159,16 +2167,35 @@ public class WirelessClientsTile
                     //OUI Addr
                     final TextView ouiVendorRowView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_oui_addr);
                     final TextView nicManufacturerView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_nic_manufacturer);
-                    final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
-                    final String company;
-                    if (macouiVendorDetails == null || (company = macouiVendorDetails.getCompany()) == null || company.isEmpty()) {
-                        ouiVendorRowView.setText(EMPTY_VALUE_TO_DISPLAY);
-                        nicManufacturerView.setVisibility(View.GONE);
-                    } else {
-                        ouiVendorRowView.setText(company);
-                        nicManufacturerView.setText(company);
-                        nicManufacturerView.setVisibility(View.VISIBLE);
-                    }
+
+                    new android.os.AsyncTask<Void, Void, Void>() {
+
+                        @Override
+                        protected Void doInBackground(Void... params) {
+                            try {
+                                device.setMacouiVendorDetails(mMacOuiVendorLookupCache.get(macAddress));
+                            } catch (final Exception e) {
+                                Crashlytics.logException(e);
+                                e.printStackTrace();
+                            }
+                            return null;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Void aVoid) {
+                            final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
+                            final String company;
+                            if (macouiVendorDetails == null || (company = macouiVendorDetails.getCompany()) == null || company.isEmpty()) {
+                                ouiVendorRowView.setText(EMPTY_VALUE_TO_DISPLAY);
+                                nicManufacturerView.setVisibility(View.GONE);
+                            } else {
+                                ouiVendorRowView.setText(company);
+                                nicManufacturerView.setText(company);
+                                nicManufacturerView.setVisibility(View.VISIBLE);
+                            }
+                        }
+
+                    }.execute();
 
                     final RelativeTimeTextView lastSeenRowView = (RelativeTimeTextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_lastseen);
                     final long lastSeen = device.getLastSeen();

@@ -53,7 +53,8 @@ public class BackgroundService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         try {
         // check the global background data setting
-            final SharedPreferences sharedPreferences = getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+            final SharedPreferences sharedPreferences =
+                    getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
             sharedPreferences.edit()
                     .putLong(DDWRTCompanionConstants.BG_SERVICE_LAST_HANDLE, System.currentTimeMillis())
                     .apply();
@@ -103,7 +104,8 @@ public class BackgroundService extends IntentService {
                     if (backgroundServiceTask == null) {
                         continue;
                     }
-                    Crashlytics.log(Log.DEBUG,  TAG, ">>> Running task: " + backgroundServiceTask.getClass() + " on router " + router);
+                    Crashlytics.log(Log.DEBUG,  TAG, ">>> Running task: " +
+                            backgroundServiceTask.getClass() + " on router " + router);
                     try {
                         backgroundServiceTask.runBackgroundServiceTask(router);
                     } catch (Exception e) {

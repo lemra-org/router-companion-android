@@ -24,6 +24,8 @@ package org.rm3l.ddwrt.tiles.status.wan;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -301,18 +303,10 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                                         if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
                                             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
 
-                                            try {
-                                                routerModelUpdaterServiceTask
-                                                        .runBackgroundServiceTask(mRouter);
-                                            } catch (final Exception e) {
-                                                Utils.reportException(mParentFragmentActivity, e);
-                                                //No worries
-                                            } finally {
-                                                PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
-                                                        mRouter, mParentFragmentPreferences,
-                                                        wanPublicIpCmdStatus,
-                                                        nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
-                                            }
+                                            PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
+                                                    mRouter, mParentFragmentPreferences,
+                                                    wanPublicIpCmdStatus,
+                                                    nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
 
                                         } else {
                                             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
@@ -324,6 +318,21 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                                 e.printStackTrace();
                                 nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
                             } finally {
+
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            routerModelUpdaterServiceTask
+                                                    .runBackgroundServiceTask(mRouter);
+                                            routerInfoForFeedbackServiceTask
+                                                    .runBackgroundServiceTask(mRouter);
+                                        } catch (final Exception e) {
+                                            //No worries
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
 
                                 //Get Reverse DNS Record (PTR) as well
                                 try {

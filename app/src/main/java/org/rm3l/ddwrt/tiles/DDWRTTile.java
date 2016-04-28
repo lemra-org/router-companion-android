@@ -74,11 +74,11 @@ public abstract class DDWRTTile<T>
 
     private static final String LOG_TAG = DDWRTTile.class.getSimpleName();
     @NonNull
-    protected final FragmentActivity mParentFragmentActivity;
+    public final FragmentActivity mParentFragmentActivity;
     @Nullable
-    protected final SharedPreferences mParentFragmentPreferences;
+    public final SharedPreferences mParentFragmentPreferences;
     @NonNull
-    protected final SharedPreferences mGlobalPreferences;
+    public final SharedPreferences mGlobalPreferences;
     @NonNull
     protected final Fragment mParentFragment;
     @NonNull
@@ -114,8 +114,8 @@ public abstract class DDWRTTile<T>
     @Nullable
     private InterstitialAd mTileClickInterstitialAd;
 
-    protected final RouterModelUpdaterServiceTask routerModelUpdaterServiceTask;
-    protected final RouterInfoForFeedbackServiceTask routerInfoForFeedbackServiceTask;
+    public final RouterModelUpdaterServiceTask routerModelUpdaterServiceTask;
+    public final RouterInfoForFeedbackServiceTask routerInfoForFeedbackServiceTask;
 
     public DDWRTTile(@NonNull final Fragment parentFragment, @NonNull final Bundle arguments, @Nullable Router router) {
         this.mParentFragment = parentFragment;

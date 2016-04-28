@@ -10,6 +10,8 @@ import android.graphics.Typeface;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -393,17 +395,25 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
             }
 
             if (wakeOnLanTile != null) {
-                try {
-                    wakeOnLanTile
-                            .routerModelUpdaterServiceTask
-                            .runBackgroundServiceTask(mRouter);
-                } catch (final Exception e) {
-                    Utils.reportException(mParentFragmentActivity, e);
-                    //No worries
-                } finally {
-                    ConnectedHostsServiceTask.generateConnectedHostsNotification(mParentFragmentActivity,
-                            mParentFragmentPreferences, mRouter, macToDevice.values());
-                }
+                final DDWRTTile tile = wakeOnLanTile;
+                final Router router = mRouter;
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            tile.routerModelUpdaterServiceTask
+                                    .runBackgroundServiceTask(router);
+                            tile.routerInfoForFeedbackServiceTask
+                                    .runBackgroundServiceTask(router);
+                        } catch (final Exception e) {
+                            //No worries
+                            e.printStackTrace();
+                        } finally {
+                            ConnectedHostsServiceTask.generateConnectedHostsNotification(tile.mParentFragmentActivity,
+                                    tile.mParentFragmentPreferences, router, macToDevice.values());
+                        }
+                    }
+                });
             }
 
             //Load user-defined hosts
