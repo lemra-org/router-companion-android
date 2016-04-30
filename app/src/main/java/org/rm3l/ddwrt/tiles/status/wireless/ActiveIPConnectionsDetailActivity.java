@@ -517,21 +517,26 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
                 final int totalConnectionsCount = mActiveIPConnections.size();
                 int index = 1;
-                int i = 5;
                 String existingRecord;
                 for (final IPConntrack ipConntrackRow : mActiveIPConnections) {
                     if (ipConntrackRow == null) {
                         continue;
                     }
-                    //total=200, i=100 => 50% = (1- (200 - 100)/200)
-                    //i=0 => (1-(200-0)/200) => 0%
+                    //total=200,
+                    //i=100 => 50% = (1- (200 - 100)/200)
+                    //i=0 => (1-(200-0)/200) = 0%
                     //i=50 => (1- (200 - 50)/200) => 25%
-                    final int newValueForI = (i++);
-                    final int progress = 100 * (totalConnectionsCount > 100 ?
-                            ((1- ((totalConnectionsCount - newValueForI) / totalConnectionsCount))) :
-                            (newValueForI / totalConnectionsCount));
-                    final String sourceAddressOriginalSide = ipConntrackRow.getSourceAddressOriginalSide();
+                    //
+                    //total = 50
+                    //i = 25 => 25/50 => 50%
+                    //i = 50 => 50/50 = 1%
                     final int currentIdx = (index++);
+                    final int progress = Double.valueOf(100 * (totalConnectionsCount > 100 ?
+                            (1 - ((double) (totalConnectionsCount - currentIdx) / (double) totalConnectionsCount)) :
+                            ((double) currentIdx / (double) totalConnectionsCount))).intValue();
+                    Crashlytics.log(Log.DEBUG, LOG_TAG,
+                            String.format("<currentIdx=%d , totalConnectionsCount=%d , progress=%d%%>",
+                                    currentIdx, totalConnectionsCount, progress));
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -540,6 +545,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                                     currentIdx, totalConnectionsCount));
                         }
                     });
+                    final String sourceAddressOriginalSide = ipConntrackRow.getSourceAddressOriginalSide();
                     existingRecord = ipToHostResolvedMap.get(sourceAddressOriginalSide);
                     if (isNullOrEmpty(existingRecord)) {
                         //Set Source IP HostName
