@@ -204,15 +204,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:value=".main.DDWRTMainActivity" />
         </activity>
         <activity
-            android:name=".tiles.status.wireless.ActiveIPConnectionsDetailStatsActivity"
-            android:label="IP Connections Pie Chart"
-            android:parentActivityName=".main.DDWRTMainActivity"
-            android:windowSoftInputMode="adjustResize" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".main.DDWRTMainActivity" />
-        </activity>
-        <activity
             android:name=".settings.RouterSettingsActivity"
             android:label="@string/title_activity_router_settings"
             android:parentActivityName=".main.DDWRTMainActivity"
