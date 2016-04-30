@@ -117,7 +117,6 @@ public abstract class DDWRTTile<T>
 
     public final RouterModelUpdaterServiceTask routerModelUpdaterServiceTask;
     public final RouterInfoForFeedbackServiceTask routerInfoForFeedbackServiceTask;
-    private AsyncTask<Void, Void, Void> bgServiceTaskAsync;
 
     public DDWRTTile(@NonNull final Fragment parentFragment, @NonNull final Bundle arguments, @Nullable Router router) {
         this.mParentFragment = parentFragment;
@@ -143,8 +142,19 @@ public abstract class DDWRTTile<T>
                 new RouterModelUpdaterServiceTask(mParentFragmentActivity);
         this.routerInfoForFeedbackServiceTask =
                 new RouterInfoForFeedbackServiceTask(mParentFragmentActivity);
+    }
 
-        bgServiceTaskAsync = new AsyncTask<Void, Void, Void>() {
+    public DDWRTTile(@NonNull final Fragment parentFragment, @NonNull final Bundle arguments,
+                     @Nullable final Router router, @Nullable final Integer layoutId, @Nullable final Integer toggleRefreshButtonId) {
+        this(parentFragment, arguments, router);
+        this.layoutId = layoutId;
+        if (layoutId != null) {
+            this.layout = (ViewGroup) this.mParentFragment.getLayoutInflater(arguments).inflate(layoutId, null);
+        }
+    }
+
+    protected void runBgServiceTaskAsync() {
+        new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
@@ -158,20 +168,7 @@ public abstract class DDWRTTile<T>
                 }
                 return null;
             }
-        };
-    }
-
-    public DDWRTTile(@NonNull final Fragment parentFragment, @NonNull final Bundle arguments,
-                     @Nullable final Router router, @Nullable final Integer layoutId, @Nullable final Integer toggleRefreshButtonId) {
-        this(parentFragment, arguments, router);
-        this.layoutId = layoutId;
-        if (layoutId != null) {
-            this.layout = (ViewGroup) this.mParentFragment.getLayoutInflater(arguments).inflate(layoutId, null);
-        }
-    }
-
-    protected void runBgServiceTaskAsync() {
-        bgServiceTaskAsync.execute();
+        }.execute();
     }
 
     public long getNbRunsLoader() {
