@@ -24,8 +24,6 @@ package org.rm3l.ddwrt.tiles.status.wan;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -319,20 +317,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                                 nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
                             } finally {
 
-                                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            routerModelUpdaterServiceTask
-                                                    .runBackgroundServiceTask(mRouter);
-                                            routerInfoForFeedbackServiceTask
-                                                    .runBackgroundServiceTask(mRouter);
-                                        } catch (final Exception e) {
-                                            //No worries
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                });
+                                runBgServiceTaskAsync();
 
                                 //Get Reverse DNS Record (PTR) as well
                                 try {

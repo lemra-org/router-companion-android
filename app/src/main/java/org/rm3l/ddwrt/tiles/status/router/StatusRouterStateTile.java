@@ -25,8 +25,6 @@ package org.rm3l.ddwrt.tiles.status.router;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -281,20 +279,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                                 e.printStackTrace();
                                 nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
                             } finally {
-                                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            routerModelUpdaterServiceTask
-                                                    .runBackgroundServiceTask(mRouter);
-                                            routerInfoForFeedbackServiceTask
-                                                    .runBackgroundServiceTask(mRouter);
-                                        } catch (final Exception e) {
-                                            //No worries
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                });
+                                runBgServiceTaskAsync();
                             }
                         }
                         updateProgressBarViewSeparator(90);

@@ -10,8 +10,6 @@ import android.graphics.Typeface;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -395,25 +393,26 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
             }
 
             if (wakeOnLanTile != null) {
-                final DDWRTTile tile = wakeOnLanTile;
-                final Router router = mRouter;
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            tile.routerModelUpdaterServiceTask
-                                    .runBackgroundServiceTask(router);
-                            tile.routerInfoForFeedbackServiceTask
-                                    .runBackgroundServiceTask(router);
-                        } catch (final Exception e) {
-                            //No worries
-                            e.printStackTrace();
-                        } finally {
-                            ConnectedHostsServiceTask.generateConnectedHostsNotification(tile.mParentFragmentActivity,
-                                    tile.mParentFragmentPreferences, router, macToDevice.values());
-                        }
-                    }
-                });
+                wakeOnLanTile.runBgServiceTaskAsync();
+                ConnectedHostsServiceTask.generateConnectedHostsNotification(wakeOnLanTile.mParentFragmentActivity,
+                        wakeOnLanTile.mParentFragmentPreferences, mRouter, macToDevice.values());
+//                new Handler(Looper.getMainLooper()).post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            tile.routerModelUpdaterServiceTask
+//                                    .runBackgroundServiceTask(router);
+//                            tile.routerInfoForFeedbackServiceTask
+//                                    .runBackgroundServiceTask(router);
+//                        } catch (final Exception e) {
+//                            //No worries
+//                            e.printStackTrace();
+//                        } finally {
+//                            ConnectedHostsServiceTask.generateConnectedHostsNotification(tile.mParentFragmentActivity,
+//                                    tile.mParentFragmentPreferences, router, macToDevice.values());
+//                        }
+//                    }
+//                });
             }
 
             //Load user-defined hosts

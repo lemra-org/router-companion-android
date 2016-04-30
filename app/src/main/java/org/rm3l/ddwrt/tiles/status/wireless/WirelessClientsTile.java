@@ -36,7 +36,6 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -1494,20 +1493,7 @@ public class WirelessClientsTile
                     Log.e(LOG_TAG, e.getMessage() + ": " + Throwables.getStackTraceAsString(e));
                     return new ClientDevices().setException(e);
                 } finally {
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                routerModelUpdaterServiceTask
-                                        .runBackgroundServiceTask(mRouter);
-                                routerInfoForFeedbackServiceTask
-                                        .runBackgroundServiceTask(mRouter);
-                            } catch (final Exception e) {
-                                //No worries
-                                e.printStackTrace();
-                            }
-                        }
-                    });
+                    runBgServiceTaskAsync();
                 }
             }
         };

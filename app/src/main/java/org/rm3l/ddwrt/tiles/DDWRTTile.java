@@ -26,6 +26,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -116,6 +117,7 @@ public abstract class DDWRTTile<T>
 
     public final RouterModelUpdaterServiceTask routerModelUpdaterServiceTask;
     public final RouterInfoForFeedbackServiceTask routerInfoForFeedbackServiceTask;
+    private AsyncTask<Void, Void, Void> bgServiceTaskAsync;
 
     public DDWRTTile(@NonNull final Fragment parentFragment, @NonNull final Bundle arguments, @Nullable Router router) {
         this.mParentFragment = parentFragment;
@@ -141,6 +143,22 @@ public abstract class DDWRTTile<T>
                 new RouterModelUpdaterServiceTask(mParentFragmentActivity);
         this.routerInfoForFeedbackServiceTask =
                 new RouterInfoForFeedbackServiceTask(mParentFragmentActivity);
+
+        bgServiceTaskAsync = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    routerModelUpdaterServiceTask
+                            .runBackgroundServiceTask(mRouter);
+                    routerInfoForFeedbackServiceTask
+                            .runBackgroundServiceTask(mRouter);
+                } catch (final Exception e) {
+                    //No worries
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        };
     }
 
     public DDWRTTile(@NonNull final Fragment parentFragment, @NonNull final Bundle arguments,
@@ -150,6 +168,10 @@ public abstract class DDWRTTile<T>
         if (layoutId != null) {
             this.layout = (ViewGroup) this.mParentFragment.getLayoutInflater(arguments).inflate(layoutId, null);
         }
+    }
+
+    protected void runBgServiceTaskAsync() {
+        bgServiceTaskAsync.execute();
     }
 
     public long getNbRunsLoader() {
