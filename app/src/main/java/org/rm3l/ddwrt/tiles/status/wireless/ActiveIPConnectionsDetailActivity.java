@@ -523,7 +523,13 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     if (ipConntrackRow == null) {
                         continue;
                     }
-                    final int progress = Math.min(95, i++);
+                    //total=200, i=100 => 50% = (1- (200 - 100)/200)
+                    //i=0 => (1-(200-0)/200) => 0%
+                    //i=50 => (1- (200 - 50)/200) => 25%
+                    final int newValueForI = (i++);
+                    final int progress = 100 * (totalConnectionsCount > 100 ?
+                            ((1- ((totalConnectionsCount - newValueForI) / totalConnectionsCount))) :
+                            (newValueForI / totalConnectionsCount));
                     final String sourceAddressOriginalSide = ipConntrackRow.getSourceAddressOriginalSide();
                     final int currentIdx = (index++);
                     runOnUiThread(new Runnable() {
@@ -634,14 +640,6 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     statsTable.put(BY_DESTINATION, destinationInStats, destinationStats + 1);
 
                 }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadingView.setProgress(99);
-                        loadingViewText.setText("Done - preparing views...");
-                    }
-                });
 
             } catch (final Exception e) {
                 exception = e;
