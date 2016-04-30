@@ -174,13 +174,30 @@ public class WirelessIfacesTile extends IfacesTile {
 
                         Crashlytics.log(Log.DEBUG, TAG, "Building view for iface " + mWirelessIfaceTile.getIface());
                         try {
-                            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                            new android.os.AsyncTask<Void, Void, NVRAMInfo>() {
+
                                 @Override
-                                public void run() {
-                                    mWirelessIfaceTile.buildView(
-                                            mWirelessIfaceTileLoader.loadInBackground());
+                                protected NVRAMInfo doInBackground(Void... params) {
+                                    return mWirelessIfaceTileLoader.loadInBackground();
                                 }
-                            });
+
+                                @Override
+                                protected void onPostExecute(NVRAMInfo result) {
+                                    super.onPostExecute(result);
+                                    if (result == null) {
+                                        return;
+                                    }
+                                    mWirelessIfaceTile.buildView(result);
+                                }
+                            }.execute();
+
+//                            mParentFragmentActivity.runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    mWirelessIfaceTile.buildView(
+//                                            mWirelessIfaceTileLoader.loadInBackground());
+//                                }
+//                            });
                             allViewsBuilt &= true;
                         } catch (final Exception e) {
                             Utils.reportException(null, e);
