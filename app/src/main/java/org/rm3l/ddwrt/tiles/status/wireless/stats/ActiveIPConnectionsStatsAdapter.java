@@ -131,7 +131,7 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
 
         if (statsAt == null) {
             holder.statsErrorView.setVisibility(View.VISIBLE);
-            holder.statsErrorView.setText("No stats!");
+            holder.statsErrorView.setText("No data!");
             return;
         }
 
@@ -142,7 +142,7 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
         }
         if (totalSize == 0) {
             holder.statsErrorView.setVisibility(View.VISIBLE);
-            holder.statsErrorView.setText("E500. Internal Error. Please try again later.");
+            holder.statsErrorView.setText("No data!");
             return;
         }
 
