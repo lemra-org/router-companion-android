@@ -1172,6 +1172,10 @@ public class DDWRTMainActivity extends AppCompatActivity
                 onBackPressed();
                 return true;
 
+            case R.id.close:
+                finish();
+                return true;
+
             case R.id.help:
                 this.startActivity(new Intent(this, HelpActivity.class));
                 eventMap.put("Menu Item", "Help");

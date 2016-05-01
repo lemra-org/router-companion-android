@@ -428,6 +428,11 @@ public class RouterManagementActivity
             case android.R.id.home:
                 onBackPressed();
                 return true;
+
+            case R.id.exit:
+                finish();
+                return true;
+
             case R.id.help:
                 this.startActivity(new Intent(this, HelpActivity.class));
                 return true;
