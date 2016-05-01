@@ -381,7 +381,7 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                         .setColorFilter(isThemeLight ?
                                 null : TilesOverlay.INVERT_COLORS);
 
-                map.setBuiltInZoomControls(true);
+                map.setBuiltInZoomControls(false);
                 map.setMultiTouchControls(false);
 
                 //Act according to user-defined data usage control setting
