@@ -43,6 +43,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.GsonBuilder;
 
 import org.rm3l.ddwrt.BuildConfig;
@@ -162,6 +163,9 @@ public class FeedbackActivity extends AppCompatActivity {
             });
             interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
             builder.addInterceptor(interceptor);
+
+            //Stetho
+            builder.addNetworkInterceptor(new StethoInterceptor());
         }
 
         final Retrofit retrofit = new Retrofit.Builder()

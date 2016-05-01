@@ -33,6 +33,7 @@ import android.widget.ImageView;
 
 import com.airbnb.deeplinkdispatch.DeepLinkActivity;
 import com.crashlytics.android.Crashlytics;
+import com.facebook.stetho.Stetho;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.leakcanary.LeakCanary;
@@ -87,7 +88,11 @@ public class DDWRTApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        LeakCanary.install(this);
+
+        if (BuildConfig.DEBUG) {
+            LeakCanary.install(this);
+            Stetho.initializeWithDefaults(this);
+        }
 
         final IntentFilter intentFilter = new IntentFilter(DeepLinkActivity.ACTION);
         LocalBroadcastManager.getInstance(this)
