@@ -46,7 +46,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -900,7 +899,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         final View rootView =
                 inflater
                         .inflate(R.layout.base_tiles_container_recyclerview,
-                                new RelativeLayout(activity));
+                                null);
 
         final int rootViewType = getRootViewType();
         final RecyclerViewEmptySupport recyclerView = (RecyclerViewEmptySupport) rootView
@@ -931,14 +930,21 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
                         final FrameLayout.LayoutParams cardViewLayoutParams = new FrameLayout.LayoutParams(
                                 FrameLayout.LayoutParams.MATCH_PARENT,
-                                FrameLayout.LayoutParams.WRAP_CONTENT);
-                        cardViewLayoutParams.rightMargin = R.dimen.marginRight;
-                        cardViewLayoutParams.leftMargin = R.dimen.marginLeft;
+                                FrameLayout.LayoutParams.MATCH_PARENT);
+                        cardViewLayoutParams.rightMargin = R.dimen.cardview_margin_right;
+                        cardViewLayoutParams.leftMargin = R.dimen.cardview_margin_left;
                         cardViewLayoutParams.topMargin = R.dimen.cardview_margin_top;
                         cardViewLayoutParams.bottomMargin = R.dimen.cardview_margin_bottom;
 
                         final CardView cardView = new CardView(activity);
                         cardView.setLayoutParams(cardViewLayoutParams);
+                        cardView.setFocusable(true);
+                        cardView.setClickable(true);
+                        cardView.setContentPadding(
+                                R.dimen.cardview_contentPadding,
+                                R.dimen.cardview_contentPadding,
+                                R.dimen.cardview_contentPadding,
+                                R.dimen.cardview_contentPadding);
 
                         //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
                         cardView.setPreventCornerOverlap(true);
