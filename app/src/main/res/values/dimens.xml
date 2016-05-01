@@ -31,7 +31,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <dimen name="cardview_padding_left">10dp</dimen>
 
     <dimen name="cardview_margin_top">8dp</dimen>
-    <dimen name="cardview_margin_bottom">8dp</dimen>
+    <dimen name="cardview_margin_bottom">7dp</dimen>
+
+    <dimen name="cardview_margin_left">7dp</dimen>
+    <dimen name="cardview_margin_right">7dp</dimen>
+
+    <dimen name="cardview_contentPadding">5dp</dimen>
 
     <dimen name="elevation_toolbar">4dp</dimen>
 

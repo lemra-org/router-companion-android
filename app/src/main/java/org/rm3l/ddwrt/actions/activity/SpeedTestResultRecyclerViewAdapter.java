@@ -1,7 +1,6 @@
 package org.rm3l.ddwrt.actions.activity;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
@@ -21,7 +20,6 @@ import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.SpeedTestResult;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ColorUtils;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.List;
@@ -30,8 +28,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.actions.activity.SpeedTestActivity.PER_SEC;
 import static org.rm3l.ddwrt.actions.activity.SpeedTestActivity.getServerLocationDisplayFromCountryCode;
 import static org.rm3l.ddwrt.actions.activity.SpeedTestActivity.refreshServerLocationFlag;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 /**
  * Created by rm3l on 18/01/16.
@@ -67,12 +63,9 @@ public class SpeedTestResultRecyclerViewAdapter extends RecyclerView.Adapter<Spe
                 .inflate(R.layout.speed_test_result_list_layout, parent, false);
         // set the view's size, margins, paddings and layout parameters
         // ...
-        final long currentTheme = activity
-                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
         final CardView cardView = (CardView) v.findViewById(R.id.speed_test_result_item_cardview);
         final ImageButton deleteImageButton = (ImageButton) cardView.findViewById(R.id.speedtest_result_delete);
-        if (currentTheme == ColorUtils.LIGHT_THEME) {
+        if (ColorUtils.isThemeLight(activity)) {
             //Light
             cardView.setCardBackgroundColor(ContextCompat
                     .getColor(activity, R.color.cardview_light_background));

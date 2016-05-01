@@ -22,24 +22,19 @@
 
 package org.rm3l.ddwrt.donate;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.view.MenuItem;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.ColorUtils;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.sufficientlysecure.donations.DonationsFragment;
 
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 /**
  * Donation Activity: leverages the <a href="https://github.com/dschuermann/android-donations-lib" target="_blank">android-donations-lib</a> library.
@@ -84,15 +79,12 @@ public class DonateActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final long currentTheme = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
-        if (currentTheme == ColorUtils.LIGHT_THEME) {
+        if (ColorUtils.isThemeLight(this)) {
             //Light
             setTheme(R.style.AppThemeLight);
-            getWindow().getDecorView()
-                    .setBackgroundColor(ContextCompat.getColor(this,
-                            android.R.color.white));
-
+//            getWindow().getDecorView()
+//                    .setBackgroundColor(ContextCompat.getColor(this,
+//                            android.R.color.white));
         } else {
             //Default is Dark
             setTheme(R.style.AppThemeDark);

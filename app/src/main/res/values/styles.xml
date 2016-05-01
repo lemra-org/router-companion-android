@@ -38,7 +38,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>
         <item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
-        <item name="android:fitsSystemWindows">true</item>
+        <!--<item name="android:fitsSystemWindows">true</item>-->
     </style>
 
     <style name="AppThemeLight" parent="Theme.AppCompat.Light.NoActionBar">
@@ -48,6 +48,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="colorPrimaryDark">@color/primaryColorDark</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="textColor">#0F0F0F</item>
+        <item name="android:windowBackground">@color/windowBackgroundLight</item>
+        <item name="android:colorBackground">@color/windowBackgroundLight</item>
+
         <item name="actionModeBackground">@color/holo_green_dark</item>
         <item name="dropDownListViewStyle">@style/MyDropDownListView</item>
         <item name="spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
@@ -73,21 +76,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="material_drawer_divider">@color/material_drawer_divider</item>
         <item name="material_drawer_selected">@color/material_drawer_selected</item>
         <item name="material_drawer_selected_text">@color/material_drawer_selected_text</item>
-        <item name="material_drawer_header_selection_text">
-            @color/material_drawer_header_selection_text
-        </item>
-    </style>
-
-    <style name="SCV_Custom_semi_transparent" parent="ShowcaseView.Light">
-        <!--<item name="sv_backgroundColor">#3333B5E5</item>-->
-        <!--<item name="sv_showcaseColor">#25467A</item> &lt;!&ndash;you can customize it&ndash;&gt;-->
-        <item name="sv_buttonText">Got it!</item> <!--you can customize it-->
-        <!--<item name="sv_backgroundColor">#3300A621</item>-->
-        <item name="sv_backgroundColor">@color/material_drawer_primary_dark</item>
-        <item name="sv_showcaseColor">#00801A</item>
-        <item name="sv_tintButtonColor">false</item>
-        <item name="sv_titleTextAppearance">@style/CustomTitle2</item>
-        <item name="sv_detailTextAppearance">@style/CustomText2</item>
+        <item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text</item>
     </style>
 
     <style name="AppThemeDark" parent="Theme.AppCompat.NoActionBar">
@@ -98,6 +87,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:textColor">#F0F0F0</item>
+        <item name="android:windowBackground">@color/windowBackgroundDark</item>
+        <item name="android:colorBackground">@color/windowBackgroundDark</item>
+
         <item name="android:actionModeBackground">@color/holo_green_dark</item>
         <item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>
         <item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
@@ -124,6 +116,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             @color/material_drawer_header_selection_text
         </item>
 
+    </style>
+
+    <style name="SCV_Custom_semi_transparent" parent="ShowcaseView.Light">
+        <!--<item name="sv_backgroundColor">#3333B5E5</item>-->
+        <!--<item name="sv_showcaseColor">#25467A</item> &lt;!&ndash;you can customize it&ndash;&gt;-->
+        <item name="sv_buttonText">Got it!</item> <!--you can customize it-->
+        <!--<item name="sv_backgroundColor">#3300A621</item>-->
+        <item name="sv_backgroundColor">@color/material_drawer_primary_dark</item>
+        <item name="sv_showcaseColor">#00801A</item>
+        <item name="sv_tintButtonColor">false</item>
+        <item name="sv_titleTextAppearance">@style/CustomTitle2</item>
+        <item name="sv_detailTextAppearance">@style/CustomText2</item>
     </style>
 
     <style name="SCV_Custom_semi_transparent.Dark" parent="ShowcaseView">

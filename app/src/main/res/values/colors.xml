@@ -36,7 +36,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <color name="accent_pressed">#C2185B</color>
 
     <color name="primaryColor">#2196F3</color>
-    <color name="primaryColorDark">#0D47A1</color>
+    <!--<color name="primaryColorDark">#0D47A1</color>-->
+    <color name="primaryColorDark">#1565C0</color>
+
+    <color name="navigationBarColor">#1565C0</color>
+    <color name="windowBackgroundDark">#37474F</color>
+    <color name="windowBackgroundLight">#CFD8DC</color>
 
     <color name="control_highlight_color">#40000000</color>
     <color name="control_highlight_color_dark">#40ffffff</color>

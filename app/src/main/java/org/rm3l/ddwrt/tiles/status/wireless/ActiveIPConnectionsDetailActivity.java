@@ -132,8 +132,6 @@ import static org.rm3l.ddwrt.tiles.status.wireless.stats.ActiveIPConnectionsStat
 import static org.rm3l.ddwrt.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_PROTOCOL;
 import static org.rm3l.ddwrt.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_SOURCE;
 import static org.rm3l.ddwrt.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.SEPARATOR;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 import static org.rm3l.ddwrt.utils.Utils.getEscapedFileName;
 
 public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
@@ -1041,11 +1039,8 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             final View v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.activity_ip_connections_cardview, parent, false);
-            final long currentTheme = activity
-                    .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                    .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
             final CardView cardView = (CardView) v.findViewById(R.id.activity_ip_connections_card_view);
-            if (currentTheme == ColorUtils.LIGHT_THEME) {
+            if (ColorUtils.isThemeLight(activity)) {
                 //Light
                 cardView.setCardBackgroundColor(ContextCompat
                         .getColor(activity, R.color.cardview_light_background));

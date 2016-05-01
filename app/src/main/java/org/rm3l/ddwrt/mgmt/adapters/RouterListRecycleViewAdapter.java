@@ -97,7 +97,6 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACC
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERSION;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OPENED_AT_LEAST_ONCE_PREF_KEY;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.getClientsUsageDataFile;
 
 public class RouterListRecycleViewAdapter extends
@@ -194,10 +193,8 @@ public class RouterListRecycleViewAdapter extends
                 .inflate(R.layout.router_mgmt_layout_row_view, parent, false);
         // set the view's size, margins, paddings and layout parameters
         // ...
-        final long currentTheme = context.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
         final CardView cardView = (CardView) v.findViewById(R.id.router_item_cardview);
-        if (currentTheme == ColorUtils.LIGHT_THEME) {
+        if (ColorUtils.isThemeLight(context)) {
             //Light
             cardView.setCardBackgroundColor(ContextCompat
                     .getColor(context, R.color.cardview_light_background));

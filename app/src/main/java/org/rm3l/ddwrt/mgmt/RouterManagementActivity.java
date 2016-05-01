@@ -175,35 +175,21 @@ public class RouterManagementActivity
 
         mPreferences = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         mCurrentTheme = mPreferences.getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
-        if (mCurrentTheme == ColorUtils.LIGHT_THEME) {
+        if (ColorUtils.isThemeLight(this)) {
             //Light
             setTheme(R.style.AppThemeLight);
-            getWindow().getDecorView()
-                    .setBackgroundColor(ContextCompat.getColor(this,
-                            R.color.GhostWhite));
+//            getWindow().getDecorView()
+//                    .setBackgroundColor(ContextCompat.getColor(this,
+//                            R.color.GhostWhite));
         } else {
             //Default is Dark
             setTheme(R.style.AppThemeDark);
         }
 
         mBackgroundServiceEnabled = mPreferences.getBoolean(NOTIFICATIONS_BG_SERVICE_ENABLE, false);
-        mBackgroundServiceFrequency = mPreferences.getLong(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1l);
+        mBackgroundServiceFrequency = mPreferences.getLong(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1);
 
         setContentView(R.layout.activity_router_management);
-
-//        final Button removeAdsButton = (Button) findViewById(R.id.router_list_remove_ads);
-//        final View.OnClickListener adsOnClickListener = new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    Utils.displayUpgradeMessageForAdsRemoval(RouterManagementActivity.this);
-//                }
-//            };
-//        if (BuildConfig.WITH_ADS) {
-//            removeAdsButton.setVisibility(View.VISIBLE);
-//            removeAdsButton.setOnClickListener(adsOnClickListener);
-//        } else {
-//            removeAdsButton.setVisibility(View.INVISIBLE);
-//        }
 
         AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.router_list_adView));
 

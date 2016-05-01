@@ -31,7 +31,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,13 +44,10 @@ import com.cocosw.undobar.UndoBarController;
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.ColorUtils;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 
 import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
 
@@ -85,14 +81,12 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
 
         final FragmentActivity fragmentActivity = getActivity();
 
-        final long currentTheme = fragmentActivity.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
-        if (currentTheme == ColorUtils.LIGHT_THEME) {
+        if (ColorUtils.isThemeLight(fragmentActivity)) {
             //Light
             fragmentActivity.setTheme(R.style.AppThemeLight);
-            fragmentActivity.getWindow().getDecorView()
-                    .setBackgroundColor(ContextCompat.getColor(fragmentActivity,
-                            android.R.color.white));
+//            fragmentActivity.getWindow().getDecorView()
+//                    .setBackgroundColor(ContextCompat.getColor(fragmentActivity,
+//                            android.R.color.white));
         } else {
             //Default is Dark
             fragmentActivity.setTheme(R.style.AppThemeDark);

@@ -58,7 +58,6 @@ import io.fabric.sdk.android.Fabric;
 import static org.rm3l.ddwrt.BuildConfig.DEBUG;
 import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TRACEPOT_DEVELOP_MODE;
 import static org.rm3l.ddwrt.utils.Utils.isFirstLaunch;
 
@@ -161,9 +160,7 @@ public class DDWRTApplication extends Application {
             ReportingUtils.reportEvent(ReportingUtils.EVENT_FIRST_LAUNCH, eventMap);
         }
 
-        final long currentTheme = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
-        if (currentTheme == ColorUtils.LIGHT_THEME) {
+        if (ColorUtils.isThemeLight(getApplicationContext())) {
             //Light
             setTheme(R.style.AppThemeLight);
         } else {

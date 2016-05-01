@@ -378,26 +378,27 @@ public class DDWRTMainActivity extends AppCompatActivity
         this.mCurrentSortingStrategy = mPreferences.getString(SORTING_STRATEGY_PREF, "");
         this.mCurrentSyncInterval = mPreferences.getLong(AUTO_REFRESH_INTERVAL_SECONDS_PREF, -10l);
 
-        final long mCurrentTheme = this.mGlobalPreferences.getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
-        if (mCurrentTheme == ColorUtils.LIGHT_THEME) {
+        mIsThemeLight = ColorUtils.isThemeLight(this);
+        if (mIsThemeLight) {
             //Light
             setTheme(R.style.AppThemeLight);
-            getWindow().getDecorView()
-                    .setBackgroundColor(ContextCompat.getColor(this,
-                            R.color.GhostWhite));
+//            getWindow().getDecorView()
+//                    .setBackgroundColor(ContextCompat.getColor(this,
+//                            R.color.GhostWhite));
         } else {
             //Default is Dark
             setTheme(R.style.AppThemeDark);
         }
+
         // Inherit theme for router - this is for SettingsActivity,
         // because we are overriding the getSharedPreferences() method
+        final long mCurrentTheme = this.mGlobalPreferences.getLong(THEMING_PREF,
+                DDWRTCompanionConstants.DEFAULT_THEME);
         mPreferences.edit()
                 .putLong(THEMING_PREF, mCurrentTheme)
                 .apply();
 
         setContentView(R.layout.activity_main);
-
-        mIsThemeLight = ColorUtils.isThemeLight(this);
 
         mInterstitialAd = AdUtils.requestNewInterstitial(this,
                 R.string.interstitial_ad_unit_id_router_list_to_router_main);

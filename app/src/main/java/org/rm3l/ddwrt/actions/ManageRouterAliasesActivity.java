@@ -97,8 +97,6 @@ import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.rm3l.ddwrt.main.DDWRTMainActivity.IMPORT_ALIASES_FRAGMENT_TAG;
 import static org.rm3l.ddwrt.main.DDWRTMainActivity.MAIN_ACTIVITY_ACTION;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 /**
  * Created by rm3l on 13/12/15.
@@ -906,15 +904,12 @@ public class ManageRouterAliasesActivity
                     .inflate(R.layout.router_aliases_list_layout, parent, false);
             // set the view's size, margins, paddings and layout parameters
             // ...
-            final long currentTheme = context
-                    .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                    .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
             final CardView cardView = (CardView) v.findViewById(R.id.router_alias_item_cardview);
-            if (currentTheme == ColorUtils.LIGHT_THEME) {
+            if (ColorUtils.isThemeLight(context)) {
                 //Light
                 cardView.setCardBackgroundColor(ContextCompat
                         .getColor(context, R.color.cardview_light_background));
-            } else {
+            } else  {
                 //Default is Dark
                 cardView.setCardBackgroundColor(ContextCompat
                         .getColor(context, R.color.cardview_dark_background));
@@ -1197,15 +1192,12 @@ public class ManageRouterAliasesActivity
 
             final FragmentActivity fragmentActivity = getActivity();
 
-            final long currentTheme = fragmentActivity
-                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                    .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
-            if (currentTheme == ColorUtils.LIGHT_THEME) {
+            if (ColorUtils.isThemeLight(fragmentActivity)) {
                 //Light
                 fragmentActivity.setTheme(R.style.AppThemeLight);
-                fragmentActivity.getWindow().getDecorView()
-                        .setBackgroundColor(ContextCompat.getColor(fragmentActivity,
-                                android.R.color.white));
+//                fragmentActivity.getWindow().getDecorView()
+//                        .setBackgroundColor(ContextCompat.getColor(fragmentActivity,
+//                                android.R.color.white));
             } else {
                 //Default is Dark
                 fragmentActivity.setTheme(R.style.AppThemeDark);

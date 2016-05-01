@@ -38,9 +38,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
-
 /**
  * Created by rm3l on 12/04/16.
  */
@@ -80,12 +77,9 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.activity_ip_connections_stats_cardview, parent, false);
-        final long currentTheme = activity
-                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
         final CardView cardView = (CardView)
                 v.findViewById(R.id.activity_ip_connections_stats_card_view);
-        if (currentTheme == ColorUtils.LIGHT_THEME) {
+        if (ColorUtils.isThemeLight(activity)) {
             //Light
             cardView.setCardBackgroundColor(ContextCompat
                     .getColor(activity, R.color.cardview_light_background));
