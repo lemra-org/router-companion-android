@@ -53,17 +53,17 @@ public class AccessRestrictionsWANAccessFragment extends AbstractBaseFragment {
 
     @NonNull
     protected int getRootViewType() {
-        return RootViewType_LINEAR_LAYOUT;
+        return RootViewType_RECYCLER_VIEW;
     }
-
-    @Override
-    protected boolean canChildScrollUp() {
-        final List<DDWRTTile> tiles = this.getTiles(null);
-        if (tiles == null || tiles.isEmpty()) {
-            return false;
-        }
-        final DDWRTTile tile = tiles.get(0);
-        return (tile instanceof AccessRestrictionsWANAccessTile &&
-                ((AccessRestrictionsWANAccessTile) tile).canChildScrollUp());
-    }
+//
+//    @Override
+//    protected boolean canChildScrollUp() {
+//        final List<DDWRTTile> tiles = this.getTiles(null);
+//        if (tiles == null || tiles.isEmpty()) {
+//            return false;
+//        }
+//        final DDWRTTile tile = tiles.get(0);
+//        return (tile instanceof AccessRestrictionsWANAccessTile &&
+//                ((AccessRestrictionsWANAccessTile) tile).canChildScrollUp());
+//    }
 }
