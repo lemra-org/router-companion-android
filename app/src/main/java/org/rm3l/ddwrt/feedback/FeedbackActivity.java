@@ -57,6 +57,7 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.ViewGroupUtils;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -142,6 +143,7 @@ public class FeedbackActivity extends AppCompatActivity {
 
     private Map<String, Object> eventMap;
     private String mFeedbackUniqueId;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,18 +193,18 @@ public class FeedbackActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_feedback);
 
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.activity_feedback_toolbar);
-        if (toolbar != null) {
-            toolbar.setTitle("Send Feedback");
-            toolbar.setTitleTextAppearance(getApplicationContext(),
+        mToolbar = (Toolbar) findViewById(R.id.activity_feedback_toolbar);
+        if (mToolbar != null) {
+            mToolbar.setTitle("Send Feedback");
+            mToolbar.setTitleTextAppearance(getApplicationContext(),
                     R.style.ToolbarTitle);
-            toolbar.setSubtitleTextAppearance(getApplicationContext(),
+            mToolbar.setSubtitleTextAppearance(getApplicationContext(),
                     R.style.ToolbarSubtitle);
-            toolbar.setTitleTextColor(ContextCompat.getColor(this,
+            mToolbar.setTitleTextColor(ContextCompat.getColor(this,
                     R.color.white));
-            toolbar.setSubtitleTextColor(ContextCompat.getColor(this,
+            mToolbar.setSubtitleTextColor(ContextCompat.getColor(this,
                     R.color.white));
-            setSupportActionBar(toolbar);
+            setSupportActionBar(mToolbar);
         }
 
         final ActionBar actionBar = getSupportActionBar();
@@ -279,6 +281,7 @@ public class FeedbackActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         zoomImageFromThumb(screenshotThumb, mBitmap);
+                        ViewGroupUtils.hideToolbar(mToolbar);
                     }
                 });
             } else {
@@ -397,6 +400,16 @@ public class FeedbackActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        if (screenshotExpanded.getVisibility() == View.VISIBLE) {
+            //Unzoom
+            screenshotExpanded.performClick();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(
             @NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -406,6 +419,7 @@ public class FeedbackActivity extends AppCompatActivity {
                 Utils.displayRatingBarIfNeeded(this);
                 onBackPressed();
                 return true;
+
             case R.id.feedback_send: {
                 //Validate form
                 if (TextUtils.isEmpty(email.getText())) {
@@ -486,11 +500,12 @@ public class FeedbackActivity extends AppCompatActivity {
                                     .submitFeedbackForm(
                                             DOORBELL_APPID, DOORBELL_APIKEY,
                                             emailText,
-                                            String.format("\n\n" +
+                                            String.format("%s\n\n" +
                                                     "-------\n" +
                                                     "- Feedback UUID: %s\n" +
                                                     "%s" +
                                                     "-------",
+                                                    contentText,
                                                     mFeedbackUniqueId,
                                                     TextUtils.isEmpty(routerInfoText) ?
                                                             "" : routerInfoText),
@@ -678,6 +693,8 @@ public class FeedbackActivity extends AppCompatActivity {
                 });
                 set.start();
                 mCurrentAnimator = set;
+
+                ViewGroupUtils.showToolbar(mToolbar);
             }
         });
     }

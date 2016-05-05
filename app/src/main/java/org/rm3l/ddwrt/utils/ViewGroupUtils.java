@@ -29,8 +29,11 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -214,6 +217,24 @@ public final class ViewGroupUtils {
                 //No Worries
             }
         }
+    }
+
+    public static void hideToolbar(@Nullable final Toolbar toolbar) {
+        if (toolbar == null) {
+            return;
+        }
+        toolbar.animate()
+                .translationY(-toolbar.getHeight())
+                .setInterpolator(new AccelerateInterpolator(2));
+    }
+
+    public static void showToolbar(@Nullable final Toolbar toolbar) {
+        if (toolbar == null) {
+            return;
+        }
+        toolbar.animate()
+                .translationY(0)
+                .setInterpolator(new DecelerateInterpolator(2));
     }
 
 }

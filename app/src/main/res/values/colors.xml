@@ -315,4 +315,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <color name="black_semi_transparent">#70000000</color>
     <color name="white_semi_transparent">#70ffffff</color>
 
+    <color name="normal_opaque_black">#000000</color>
+    <color name="transparent_full">#00000000</color>
+    <color name="opaque_full">#FF000000</color>
+    <color name="transparent_semi">#80000000</color>
+
 </resources>
