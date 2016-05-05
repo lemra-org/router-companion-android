@@ -65,6 +65,7 @@ import com.google.common.collect.ImmutableList;
 import org.json.JSONObject;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.StorageException;
+import org.rm3l.ddwrt.feedback.FeedbackActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.MACOUIVendor;
 import org.rm3l.ddwrt.resources.RecyclerViewRefreshCause;
@@ -75,6 +76,7 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.StorageUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.ViewGroupUtils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
@@ -506,6 +508,17 @@ public class ManageRouterAliasesActivity
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                return true;
+
+            case R.id.action_feedback:
+                final Intent intent = new Intent(ManageRouterAliasesActivity.this, FeedbackActivity.class);
+                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
+                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
+                ViewGroupUtils.exportViewToFile(ManageRouterAliasesActivity.this, getWindow().getDecorView(), screenshotFile);
+                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
+                startActivity(intent);
+//                Utils.buildFeedbackDialog(this, true);
                 return true;
 
             case R.id.router_aliases_add:
