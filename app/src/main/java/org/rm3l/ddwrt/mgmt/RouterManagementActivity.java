@@ -453,7 +453,7 @@ public class RouterManagementActivity
                         new Intent(this, RouterManagementSettingsActivity.class), ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE);
                 return true;
             case R.id.router_list_feedback: {
-                Utils.openFeedbackForm(this, null);
+                Utils.openFeedbackForm(this, "");
 //                final Intent intent = new Intent(this, FeedbackActivity.class);
 //                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
 //                ViewGroupUtils.exportViewToFile(this, getWindow().getDecorView(), screenshotFile);
