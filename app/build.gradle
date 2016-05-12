@@ -379,6 +379,10 @@ repositories {
     }
     mavenCentral()
     maven { url 'https://maven.fabric.io/public' }
+    //FIXME Removed once JCenter submission is accepted
+    maven {
+        url 'https://dl.bintray.com/rm3l/maven'
+    }
 }
 
 /*
@@ -471,6 +475,8 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
     compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
+
+    compile 'org.rm3l:maoni:1.0@aar'
 
     //LeakCanary - to detect memory leaks (only in debug flavor)
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'

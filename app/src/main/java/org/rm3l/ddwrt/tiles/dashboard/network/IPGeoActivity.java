@@ -34,7 +34,6 @@ import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.TilesOverlay;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
-import org.rm3l.ddwrt.feedback.FeedbackActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.IPWhoisInfo;
 import org.rm3l.ddwrt.tiles.status.wireless.ActiveIPConnectionsDetailActivity;
@@ -42,7 +41,6 @@ import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
-import org.rm3l.ddwrt.utils.ViewGroupUtils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 import org.rm3l.ddwrt.widgets.map.MyOwnItemizedOverlay;
@@ -317,14 +315,15 @@ public class IPGeoActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_feedback:
-                final Intent intent = new Intent(IPGeoActivity.this, FeedbackActivity.class);
-                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
-                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
-                ViewGroupUtils.exportViewToFile(IPGeoActivity.this, getWindow().getDecorView(), screenshotFile);
-                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
-                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
-                startActivity(intent);
-//                Utils.buildFeedbackDialog(this, true);
+                Utils.openFeedbackForm(this, mRouterUuid);
+//                final Intent intent = new Intent(IPGeoActivity.this, FeedbackActivity.class);
+//                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
+//                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
+//                ViewGroupUtils.exportViewToFile(IPGeoActivity.this, getWindow().getDecorView(), screenshotFile);
+//                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+//                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
+//                startActivity(intent);
+////                Utils.buildFeedbackDialog(this, true);
                 return true;
 
             default:

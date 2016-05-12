@@ -81,9 +81,12 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.donate.DonateActivity;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.exceptions.DDWRTDataSyncOnMobileNetworkNotAllowedException;
+import org.rm3l.ddwrt.feedback.maoni.MaoniFeedbackHandler;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
+import org.rm3l.maoni.MaoniBuilder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -553,6 +556,20 @@ public final class Utils {
         } finally {
             Utils.reportException(null, bugReportException);
         }
+    }
+
+    public static void openFeedbackForm(final Activity activity, final Router router) {
+        final MaoniFeedbackHandler handlerForMaoni = new MaoniFeedbackHandler(activity, router);
+        new MaoniBuilder()
+                .windowTitle("Send Feedback") //Set to an empty string to clear it
+                .message(null) //Use the default. Set to an empty string to clear it
+                .extraLayout(R.layout.activity_feedback_maoni)
+                .handler(handlerForMaoni)
+                .start(activity);
+    }
+
+    public static void openFeedbackForm(final Activity activity, final String routerUuid) {
+        openFeedbackForm(activity, RouterManagementActivity.getDao(activity).getRouter(routerUuid));
     }
 
     public static AlertDialog.Builder buildFeedbackDialog(final Activity activity,

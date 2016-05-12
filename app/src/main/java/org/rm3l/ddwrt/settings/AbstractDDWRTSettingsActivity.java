@@ -22,7 +22,6 @@
 package org.rm3l.ddwrt.settings;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -48,14 +47,10 @@ import android.view.MenuItem;
 import com.google.common.base.Strings;
 
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.feedback.FeedbackActivity;
-import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.Utils;
-import org.rm3l.ddwrt.utils.ViewGroupUtils;
 import org.rm3l.ddwrt.widgets.NumberPickerPreference;
 
-import java.io.File;
 import java.util.Map;
 import java.util.Set;
 
@@ -160,17 +155,18 @@ public abstract class AbstractDDWRTSettingsActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_feedback:
-                final Intent intent = new Intent(AbstractDDWRTSettingsActivity.this, FeedbackActivity.class);
-                final String routerUuid = getRouterUuid();
-                if (routerUuid != null) {
-                    intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
-                }
-                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
-                ViewGroupUtils.exportViewToFile(AbstractDDWRTSettingsActivity.this, getWindow().getDecorView(), screenshotFile);
-                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
-                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
-                startActivity(intent);
-                return true;
+                Utils.openFeedbackForm(this, getRouterUuid());
+//                final Intent intent = new Intent(AbstractDDWRTSettingsActivity.this, FeedbackActivity.class);
+//                final String routerUuid = getRouterUuid();
+//                if (routerUuid != null) {
+//                    intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
+//                }
+//                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
+//                ViewGroupUtils.exportViewToFile(AbstractDDWRTSettingsActivity.this, getWindow().getDecorView(), screenshotFile);
+//                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+//                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
+//                startActivity(intent);
+//                return true;
         }
 
         return super.onOptionsItemSelected(item);

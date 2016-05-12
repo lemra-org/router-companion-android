@@ -49,13 +49,11 @@ import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Joiner;
 
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.feedback.FeedbackActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
-import org.rm3l.ddwrt.utils.ViewGroupUtils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 
@@ -325,14 +323,15 @@ public class RouterMemInfoActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_feedback:
-                final Intent intent = new Intent(RouterMemInfoActivity.this, FeedbackActivity.class);
-                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
-                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
-                ViewGroupUtils.exportViewToFile(RouterMemInfoActivity.this, getWindow().getDecorView(), screenshotFile);
-                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
-                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
-                startActivity(intent);
-//                Utils.buildFeedbackDialog(this, true);
+                Utils.openFeedbackForm(this, mRouter);
+//                final Intent intent = new Intent(RouterMemInfoActivity.this, FeedbackActivity.class);
+//                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
+//                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
+//                ViewGroupUtils.exportViewToFile(RouterMemInfoActivity.this, getWindow().getDecorView(), screenshotFile);
+//                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+//                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
+//                startActivity(intent);
+////                Utils.buildFeedbackDialog(this, true);
                 return true;
 
             default:

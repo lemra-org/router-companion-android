@@ -71,7 +71,6 @@ import org.rm3l.ddwrt.about.AboutDialog;
 import org.rm3l.ddwrt.actions.RebootRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
-import org.rm3l.ddwrt.feedback.FeedbackActivity;
 import org.rm3l.ddwrt.help.ChangelogActivity;
 import org.rm3l.ddwrt.help.HelpActivity;
 import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
@@ -84,10 +83,8 @@ import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
-import org.rm3l.ddwrt.utils.ViewGroupUtils;
 import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -456,12 +453,13 @@ public class RouterManagementActivity
                         new Intent(this, RouterManagementSettingsActivity.class), ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE);
                 return true;
             case R.id.router_list_feedback: {
-                final Intent intent = new Intent(this, FeedbackActivity.class);
-                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
-                ViewGroupUtils.exportViewToFile(this, getWindow().getDecorView(), screenshotFile);
-                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
-                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
-                startActivity(intent);
+                Utils.openFeedbackForm(this, null);
+//                final Intent intent = new Intent(this, FeedbackActivity.class);
+//                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
+//                ViewGroupUtils.exportViewToFile(this, getWindow().getDecorView(), screenshotFile);
+//                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+//                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
+//                startActivity(intent);
 //                Utils.buildFeedbackDialog(this, true);
             }
                 return true;

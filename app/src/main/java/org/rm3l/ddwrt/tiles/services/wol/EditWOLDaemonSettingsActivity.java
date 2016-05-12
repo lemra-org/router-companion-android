@@ -48,16 +48,14 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.feedback.FeedbackActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
-import org.rm3l.ddwrt.utils.ViewGroupUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -312,15 +310,16 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
 
 
             case R.id.action_feedback:
-                final Intent intent = new Intent(EditWOLDaemonSettingsActivity.this, FeedbackActivity.class);
-                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
-                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
-                ViewGroupUtils.exportViewToFile(EditWOLDaemonSettingsActivity.this,
-                        getWindow().getDecorView(), screenshotFile);
-                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
-                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
-                startActivity(intent);
-//                Utils.buildFeedbackDialog(this, true);
+                Utils.openFeedbackForm(this, mRouterUuid);
+//                final Intent intent = new Intent(EditWOLDaemonSettingsActivity.this, FeedbackActivity.class);
+//                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
+//                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
+//                ViewGroupUtils.exportViewToFile(EditWOLDaemonSettingsActivity.this,
+//                        getWindow().getDecorView(), screenshotFile);
+//                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+//                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
+//                startActivity(intent);
+////                Utils.buildFeedbackDialog(this, true);
                 return true;
 
             default:

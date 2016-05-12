@@ -120,7 +120,6 @@ import org.rm3l.ddwrt.actions.RouterRestoreDialogListener;
 import org.rm3l.ddwrt.actions.activity.OpenWebManagementPageActivity;
 import org.rm3l.ddwrt.actions.activity.SpeedTestActivity;
 import org.rm3l.ddwrt.exceptions.StorageException;
-import org.rm3l.ddwrt.feedback.FeedbackActivity;
 import org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment;
 import org.rm3l.ddwrt.help.ChangelogActivity;
 import org.rm3l.ddwrt.help.HelpActivity;
@@ -139,7 +138,6 @@ import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.StorageUtils;
 import org.rm3l.ddwrt.utils.Utils;
-import org.rm3l.ddwrt.utils.ViewGroupUtils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 
@@ -708,14 +706,15 @@ public class DDWRTMainActivity extends AppCompatActivity
                                     break;
                                 case 1003:
                                     //Feedback
-                                    final Intent intent = new Intent(DDWRTMainActivity.this, FeedbackActivity.class);
-                                    intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
-                                    final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
-                                    ViewGroupUtils.exportViewToFile(DDWRTMainActivity.this, getWindow().getDecorView(), screenshotFile);
-                                    intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
-                                    intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
-                                    startActivity(intent);
-//                                    Utils.buildFeedbackDialog(DDWRTMainActivity.this, true);
+                                    Utils.openFeedbackForm(DDWRTMainActivity.this, mRouter);
+//                                    final Intent intent = new Intent(DDWRTMainActivity.this, FeedbackActivity.class);
+//                                    intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
+//                                    final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
+//                                    ViewGroupUtils.exportViewToFile(DDWRTMainActivity.this, getWindow().getDecorView(), screenshotFile);
+//                                    intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+//                                    intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
+//                                    startActivity(intent);
+////                                    Utils.buildFeedbackDialog(DDWRTMainActivity.this, true);
                                     break;
                                 case 1004:
                                     //About
@@ -1204,14 +1203,15 @@ public class DDWRTMainActivity extends AppCompatActivity
                 ReportingUtils.reportEvent(ReportingUtils.EVENT_MENU_ITEM, eventMap);
                 return true;
             case R.id.action_feedback:
-                final Intent intent = new Intent(DDWRTMainActivity.this, FeedbackActivity.class);
-                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
-                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
-                ViewGroupUtils.exportViewToFile(DDWRTMainActivity.this, getWindow().getDecorView(), screenshotFile);
-                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
-                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
-                startActivity(intent);
-//                Utils.buildFeedbackDialog(this, true);
+                Utils.openFeedbackForm(this, mRouter);
+//                final Intent intent = new Intent(DDWRTMainActivity.this, FeedbackActivity.class);
+//                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
+//                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
+//                ViewGroupUtils.exportViewToFile(DDWRTMainActivity.this, getWindow().getDecorView(), screenshotFile);
+//                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+//                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
+//                startActivity(intent);
+////                Utils.buildFeedbackDialog(this, true);
                 return true;
             case R.id.action_remove_ads:
                 Utils.displayUpgradeMessageForAdsRemoval(this);
