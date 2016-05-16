@@ -25,7 +25,7 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.NetworkUtils;
-import org.rm3l.maoni.MaoniConfiguration;
+import org.rm3l.maoni.Maoni;
 import org.rm3l.maoni.model.Feedback;
 
 import java.util.Map;
@@ -45,7 +45,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DOORBELL_APPID;
 /**
  * Created by rm3l on 13/05/16.
  */
-public class MaoniFeedbackHandler implements MaoniConfiguration.Handler {
+public class MaoniFeedbackHandler implements Maoni.Handler {
 
     public static final String FEEDBACK_API_BASE_URL = "https://doorbell.io/api/";
 

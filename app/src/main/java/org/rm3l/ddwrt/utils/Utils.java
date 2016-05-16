@@ -86,7 +86,7 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
-import org.rm3l.maoni.MaoniBuilder;
+import org.rm3l.maoni.Maoni;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -560,11 +560,12 @@ public final class Utils {
 
     public static void openFeedbackForm(final Activity activity, final Router router) {
         final MaoniFeedbackHandler handlerForMaoni = new MaoniFeedbackHandler(activity, router);
-        new MaoniBuilder()
+        new Maoni.Builder()
                 .windowTitle("Send Feedback") //Set to an empty string to clear it
                 .message(null) //Use the default. Set to an empty string to clear it
                 .extraLayout(R.layout.activity_feedback_maoni)
                 .handler(handlerForMaoni)
+                .build()
                 .start(activity);
     }
 

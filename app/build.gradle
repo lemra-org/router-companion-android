@@ -384,7 +384,7 @@ repositories {
     }
     mavenCentral()
     maven { url 'https://maven.fabric.io/public' }
-    //FIXME Removed once JCenter submission is accepted
+    //FIXME To remove once JCenter submission is accepted
     maven {
         url 'https://dl.bintray.com/rm3l/maven'
     }
