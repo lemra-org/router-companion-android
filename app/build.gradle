@@ -448,7 +448,6 @@ dependencies {
     compile 'com.google.zxing:core:3.2.1'
     compile 'com.github.curioustechizen.android-ago:library:1.3.0'
     compile 'com.github.danielemaddaluno.androidupdatechecker:library:1.0.2'
-    compile 'io.doorbell:android-sdk:0.2.6@aar'
     compile 'com.google.android.gms:play-services-ads:8.4.0'
     compile 'fr.nicolaspomepuy:discreetapprate:2.0.3@aar'
     compile 'com.squareup.picasso:picasso:2.5.2'
@@ -481,7 +480,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
     compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
 
-    compile ('org.rm3l:maoni:1.0@aar') {
+    compile ('org.rm3l:maoni:1.0.2@aar') {
         //Force Gradle to re-download the dependency
         changing = true
     }

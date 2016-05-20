@@ -216,14 +216,6 @@
     public *;
 }
 
--keep enum io.doorbell.android.** {
-    *;
-}
-
--keep public class io.doorbell.android.** {
-    public *;
-}
-
 -dontwarn **CanvasView
 -keep public class * extends com.samsung.** { *; }
 -keep public class com.samsung.** {

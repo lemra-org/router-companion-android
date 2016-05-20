@@ -47,7 +47,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryColorDark</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
-        <item name="textColor">#0F0F0F</item>
+        <item name="textColor">@color/black</item>
         <item name="android:windowBackground">@color/windowBackgroundLight</item>
         <item name="android:colorBackground">@color/windowBackgroundLight</item>
 
@@ -55,7 +55,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="dropDownListViewStyle">@style/MyDropDownListView</item>
         <item name="spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="android:textColor">#0F0F0F</item>
+        <item name="android:textColor">@color/black</item>
         <item name="android:actionModeBackground">@color/holo_green_dark</item>
         <item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>
         <item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
@@ -86,14 +86,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="colorPrimaryDark">@color/primaryColorDark</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="android:textColor">#F0F0F0</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:windowBackground">@color/windowBackgroundDark</item>
         <item name="android:colorBackground">@color/windowBackgroundDark</item>
 
         <item name="android:actionModeBackground">@color/holo_green_dark</item>
         <item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>
         <item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
-        <item name="textColor">#F0F0F0</item>
+        <item name="textColor">@color/white</item>
         <item name="actionModeBackground">@color/holo_green_dark</item>
         <item name="dropDownListViewStyle">@style/MyDropDownListView</item>
         <item name="spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
@@ -226,6 +226,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </style>
     <style name="ToolbarSubtitle" parent="Base.TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
         <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+    </style>
+
+    <style name="Feedback.Theme.Light" parent="Maoni_AppTheme">
+        <item name="textColor">@color/black</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:colorBackground">@color/white</item>
+    </style>
+
+    <style name="Feedback.Theme.Dark" parent="Maoni_AppTheme">
+        <item name="textColor">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:windowBackground">@color/windowBackgroundDark</item>
+        <item name="android:colorBackground">@color/windowBackgroundDark</item>
     </style>
 
 </resources>

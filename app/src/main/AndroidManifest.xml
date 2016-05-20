@@ -477,14 +477,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".feedback.FeedbackActivity"
-            android:excludeFromRecents="true"
-            android:label="Send Feedback"
-            android:launchMode="singleInstance"
-            android:windowSoftInputMode="stateHidden|adjustResize"
-            android:configChanges="orientation|screenSize" />
-
-        <activity
             android:name=".mgmt.register.ManageRouterFragmentActivity"
             android:label="Add Router"
             android:parentActivityName=".mgmt.RouterManagementActivity"

@@ -104,7 +104,6 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import fr.nicolaspomepuy.discreetapprate.AppRate;
 import fr.nicolaspomepuy.discreetapprate.AppRateTheme;
 import fr.nicolaspomepuy.discreetapprate.RetryPolicy;
-import io.doorbell.android.Doorbell;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.util.TypedValue.COMPLEX_UNIT_DIP;
@@ -114,8 +113,6 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static de.keyboardsurfer.android.widget.crouton.Crouton.makeText;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AD_FREE_APP_APPLICATION_ID;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DOORBELL_APIKEY;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DOORBELL_APPID;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.FIRST_APP_LAUNCH_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.IS_FIRST_LAUNCH_PREF_KEY;
@@ -561,6 +558,8 @@ public final class Utils {
     public static void openFeedbackForm(final Activity activity, final Router router) {
         final MaoniFeedbackHandler handlerForMaoni = new MaoniFeedbackHandler(activity, router);
         new Maoni.Builder()
+                .style(ColorUtils.isThemeLight(activity) ?
+                        R.style.Feedback_Theme_Light : R.style.Feedback_Theme_Dark)
                 .windowTitle("Send Feedback") //Set to an empty string to clear it
                 .message(null) //Use the default. Set to an empty string to clear it
                 .extraLayout(R.layout.activity_feedback_maoni)
@@ -571,85 +570,6 @@ public final class Utils {
 
     public static void openFeedbackForm(final Activity activity, final String routerUuid) {
         openFeedbackForm(activity, RouterManagementActivity.getDao(activity).getRouter(routerUuid));
-    }
-
-    public static AlertDialog.Builder buildFeedbackDialog(final Activity activity,
-                                                          final boolean showDialog) {
-        final Doorbell doorbellDialog = new Doorbell(activity,
-                DOORBELL_APPID, DOORBELL_APIKEY); // Create the Doorbell object
-        doorbellDialog.setPoweredByVisibility(View.GONE); // Hide the "Powered by Doorbell.io" text
-        doorbellDialog.setTitle(R.string.send_feedback);
-        doorbellDialog.setMessage(R.string.feedback_dialog_text);
-        doorbellDialog.setEmailHint("Your email address");
-        //Set user-defined email if any
-        final String acraEmailAddr = activity
-                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE)
-                .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
-        doorbellDialog.setEmail(acraEmailAddr);
-        doorbellDialog.setEmailFieldVisibility(View.VISIBLE);
-        doorbellDialog.setMessageHint(R.string.feedback_dialog_comments_text);
-        doorbellDialog.setPositiveButtonText(R.string.feedback_send);
-        doorbellDialog.setNegativeButtonText(R.string.feedback_cancel);
-
-        // Optionally add some properties
-        doorbellDialog.addProperty("BUILD_DEBUG", BuildConfig.DEBUG);
-        doorbellDialog.addProperty("BUILD_APPLICATION_ID", BuildConfig.APPLICATION_ID);
-        doorbellDialog.addProperty("BUILD_VERSION_CODE", BuildConfig.VERSION_CODE);
-        doorbellDialog.addProperty("BUILD_FLAVOR", BuildConfig.FLAVOR);
-        doorbellDialog.addProperty("BUILD_TYPE", BuildConfig.BUILD_TYPE);
-        doorbellDialog.addProperty("BUILD_VERSION_NAME", BuildConfig.VERSION_NAME);
-
-        final Map<String, Object> eventMap = new HashMap<>();
-        eventMap.put("BUILD_APPLICATION_ID", BuildConfig.APPLICATION_ID);
-        eventMap.put("BUILD_FLAVOR", BuildConfig.FLAVOR);
-        eventMap.put("BUILD_TYPE", BuildConfig.BUILD_TYPE);
-        eventMap.put("BUILD_VERSION_NAME", BuildConfig.VERSION_NAME);
-
-        // Callback for when a message is successfully sent
-        doorbellDialog.setOnFeedbackSentCallback(new io.doorbell.android.callbacks.OnFeedbackSentCallback() {
-            @Override
-            public void handle(final String message) {
-                try {
-                    eventMap.put("Status", "Sent");
-                    ReportingUtils.reportEvent(ReportingUtils.EVENT_FEEDBACK, eventMap);
-                    Toast.makeText(activity, R.string.feedback_toast_msg, Toast.LENGTH_LONG).show();
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        // Callback for when the dialog is shown
-        doorbellDialog.setOnShowCallback(new io.doorbell.android.callbacks.OnShowCallback() {
-            @Override
-            public void handle() {
-                try {
-                    eventMap.put("Status", "Displayed");
-                    ReportingUtils.reportEvent(ReportingUtils.EVENT_FEEDBACK, eventMap);
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        doorbellDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                try {
-                    eventMap.put("Status", "Canceled");
-                    ReportingUtils.reportEvent(ReportingUtils.EVENT_FEEDBACK, eventMap);
-                    Utils.displayRatingBarIfNeeded(activity);
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        if (showDialog) {
-            doorbellDialog.show();
-        }
-
-        return doorbellDialog;
     }
 
     public static boolean isDemoRouter(@Nullable final Router router) {
