@@ -142,11 +142,13 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
             }
         }
 
+        final View mapThumbnailView = layout.findViewById(R.id.tile_public_ip_geo_container);
+
         zoomMapButton = (ImageButton)
                 layout.findViewById(R.id.tile_public_ip_geo_title_zoom);
         zoomMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View zoomMapButtonView) {
                 //Open IPGeoActivity with zoom effect
                 if (isNullOrEmpty(mWanPublicIP)) {
                     Toast.makeText(mParentFragmentActivity,
@@ -157,7 +159,9 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                 intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
 
                 final ActivityOptionsCompat options = ActivityOptionsCompat
-                        .makeScaleUpAnimation(v, 0, 0,v.getWidth(), v.getHeight());
+                        .makeScaleUpAnimation(mapThumbnailView, 0, 0,
+                                mapThumbnailView.getWidth(),
+                                mapThumbnailView.getHeight());
                 ActivityCompat.startActivity(mParentFragmentActivity, intent, options.toBundle());
 
 //                mParentFragmentActivity.startActivity(intent);
