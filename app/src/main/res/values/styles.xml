@@ -228,18 +228,4 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
     </style>
 
-    <style name="Feedback.Theme.Light" parent="Maoni_AppTheme">
-        <item name="textColor">@color/black</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:windowBackground">@color/white</item>
-        <item name="android:colorBackground">@color/white</item>
-    </style>
-
-    <style name="Feedback.Theme.Dark" parent="Maoni_AppTheme">
-        <item name="textColor">@color/white</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:windowBackground">@color/windowBackgroundDark</item>
-        <item name="android:colorBackground">@color/windowBackgroundDark</item>
-    </style>
-
 </resources>

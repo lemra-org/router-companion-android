@@ -557,13 +557,13 @@ public final class Utils {
 
     public static void openFeedbackForm(final Activity activity, final Router router) {
         final MaoniFeedbackHandler handlerForMaoni = new MaoniFeedbackHandler(activity, router);
-        new Maoni.Builder()
-                .style(ColorUtils.isThemeLight(activity) ?
-                        R.style.Feedback_Theme_Light : R.style.Feedback_Theme_Dark)
-                .windowTitle("Send Feedback") //Set to an empty string to clear it
-                .message(null) //Use the default. Set to an empty string to clear it
-                .extraLayout(R.layout.activity_feedback_maoni)
-                .handler(handlerForMaoni)
+        new Maoni.Builder(DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY)
+                .withTheme(ColorUtils.isThemeLight(activity) ?
+                        org.rm3l.maoni.R.style.Maoni_AppTheme_Light :
+                        org.rm3l.maoni.R.style.Maoni_AppTheme_Dark)
+                .withWindowTitle("Send Feedback")
+                .withExtraLayout(R.layout.activity_feedback_maoni)
+                .withHandler(handlerForMaoni)
                 .build()
                 .start(activity);
     }
