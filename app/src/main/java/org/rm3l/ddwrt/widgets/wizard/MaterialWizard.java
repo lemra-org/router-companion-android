@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -37,6 +38,7 @@ import org.rm3l.ddwrt.events.wizard.WizardStepVisibleToUserEvent;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.register.resources.RouterWizardAction;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.widgets.ViewPagerWithAllowedSwipeDirection;
 
 import java.util.Collections;
@@ -114,6 +116,21 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
             @Override
             public void onClick(View v) {
                 closeWizard(RESULT_CANCELED);
+            }
+        });
+        toolbar.inflateMenu(R.menu.menu_material_wizard);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_feedback:
+                        Utils.openFeedbackForm(MaterialWizard.this.getActivity(), "");
+                        return true;
+
+                    default:
+                        break;
+                }
+                return false;
             }
         });
 
