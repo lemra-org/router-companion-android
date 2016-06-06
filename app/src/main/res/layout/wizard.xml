@@ -3,18 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <!--<ImageView-->
-        <!--android:layout_width="50dp"-->
-        <!--android:layout_height="50dp"-->
-        <!--android:src="@drawable/ic_arrow_back_white_24dp"-->
-        <!--android:contentDescription="Back"-->
-        <!--android:layout_alignParentLeft="true"-->
-        <!--android:layout_alignParentStart="true"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:layout_marginLeft="5dp"-->
-        <!--android:layout_marginStart="5dp"/>-->
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <View
         android:id="@+id/horizontal_line"
@@ -27,12 +17,13 @@
         android:id="@+id/htab_maincontent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/wizard_button_bar">
+        android:layout_above="@+id/wizard_button_bar"
+        android:fitsSystemWindows="true">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/htab_appbar"
             android:layout_width="match_parent"
-            android:layout_height="190dp"
+            android:layout_height="192dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
             <android.support.design.widget.CollapsingToolbarLayout
@@ -50,8 +41,11 @@
                     android:src="@drawable/bg_add_router"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:fitsSystemWindows="true"
                     android:scaleType="centerCrop"
-                    app:layout_collapseMode="parallax" />
+                    app:layout_collapseMode="parallax"
+                    app:layout_collapseParallaxMultiplier="0.7"
+                    app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed" />
 
                 <TextView
                     android:id="@+id/wizard_subtitle"
@@ -70,11 +64,10 @@
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:gravity="top"
                     android:minHeight="?attr/actionBarSize"
                     app:layout_collapseMode="pin"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                    app:titleMarginTop="13dp"/>
+                    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
             </android.support.design.widget.CollapsingToolbarLayout>
 
@@ -103,17 +96,6 @@
         android:layout_alignParentBottom="true"
         style="?android:attr/buttonBarStyle">
 
-        <!--<ImageButton-->
-            <!--android:id="@+id/wizard_previous_button"-->
-            <!--android:layout_width="42dip"-->
-            <!--android:layout_height="42dip"-->
-            <!--android:layout_alignParentLeft="true"-->
-            <!--android:layout_alignParentStart="true"-->
-            <!--android:layout_marginLeft="15dip"-->
-            <!--android:layout_marginStart="15dip"-->
-            <!--android:background="@drawable/btn_round_semitransperant"-->
-            <!--android:src="@mipmap/ic_navigation_arrow_backward"-->
-            <!--android:contentDescription="@string/wizard_previous" />-->
         <Button
             android:id="@+id/wizard_previous_button"
             android:text="@string/wizard_previous"
@@ -131,17 +113,6 @@
             android:layout_weight="1"
             android:orientation="horizontal" />
 
-        <!--<ImageButton-->
-            <!--android:id="@+id/wizard_next_button"-->
-            <!--android:layout_width="42dip"-->
-            <!--android:layout_height="42dip"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_alignParentEnd="true"-->
-            <!--android:layout_marginRight="15dip"-->
-            <!--android:layout_marginEnd="15dip"-->
-            <!--android:background="@drawable/btn_round_semitransperant"-->
-            <!--android:src="@mipmap/ic_navigation_arrow_forward"-->
-            <!--android:contentDescription="@string/wizard_next" />-->
         <Button
             android:id="@+id/wizard_next_button"
             android:text="@string/wizard_next"
@@ -151,41 +122,5 @@
             style="?android:attr/buttonBarButtonStyle"/>
 
     </LinearLayout>
-
-    <!--<LinearLayout-->
-        <!--android:id="@+id/wizard_button_bar"-->
-        <!--android:orientation="horizontal"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--style="?android:attr/buttonBarStyle">-->
-
-        <!--<Button-->
-            <!--android:id="@+id/wizard_previous_button"-->
-            <!--android:text="@string/wizard_previous"-->
-            <!--android:enabled="false"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--style="?android:attr/buttonBarButtonStyle"/>-->
-
-        <!--<Button-->
-            <!--android:id="@+id/wizard_cancel_button"-->
-            <!--android:text="@string/cancel"-->
-            <!--android:enabled="false"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--style="?android:attr/buttonBarButtonStyle"/>-->
-
-        <!--<Button-->
-            <!--android:id="@+id/wizard_next_button"-->
-            <!--android:text="@string/wizard_next"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--style="?android:attr/buttonBarButtonStyle"/>-->
-
-    <!--</LinearLayout>-->
 
 </RelativeLayout>

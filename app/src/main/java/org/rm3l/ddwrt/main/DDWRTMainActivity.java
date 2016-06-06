@@ -379,13 +379,13 @@ public class DDWRTMainActivity extends AppCompatActivity
         mIsThemeLight = ColorUtils.isThemeLight(this);
         if (mIsThemeLight) {
             //Light
-            setTheme(R.style.AppThemeLight);
+            setTheme(R.style.AppThemeLight_StatusBarTransparent);
 //            getWindow().getDecorView()
 //                    .setBackgroundColor(ContextCompat.getColor(this,
 //                            R.color.GhostWhite));
         } else {
             //Default is Dark
-            setTheme(R.style.AppThemeDark);
+            setTheme(R.style.AppThemeDark_StatusBarTransparent);
         }
 
         // Inherit theme for router - this is for SettingsActivity,

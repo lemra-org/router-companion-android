@@ -538,5 +538,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="password_or_passphrase_hint">Password or passphrase. May be empty.</string>
     <string name="exit">Exit</string>
     <string name="close">Close</string>
+    <string name="background">Background</string>
 
 </resources>

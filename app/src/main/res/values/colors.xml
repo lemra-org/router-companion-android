@@ -21,8 +21,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <resources>
 
-    <color name="lightTheme_primary">#009688</color>
-    <color name="lightTheme_primary_dark">#00796B</color>
+    <color name="lightTheme_primary">#3F51B5</color>
+    <color name="lightTheme_primary_dark">#303F9F</color>
     <color name="lightTheme_primary_light">#B2DFDB</color>
     <color name="lightTheme_text_icons">#FFFFFF</color>
     <color name="lightTheme_accent">#FF9800</color>

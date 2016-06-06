@@ -41,33 +41,47 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!--<item name="android:fitsSystemWindows">true</item>-->
     </style>
 
+    <!--<style name="Maoni_AppTheme_Base" parent="Theme.AppCompat.Light.DarkActionBar">-->
+        <!--<item name="colorPrimary">@color/maoni_colorPrimary</item>-->
+        <!--<item name="colorPrimaryDark">@color/maoni_colorPrimaryDark</item>-->
+        <!--<item name="colorAccent">@color/maoni_colorAccent</item>-->
+        <!--<item name="windowActionBar">false</item>-->
+        <!--<item name="windowNoTitle">true</item>-->
+        <!--<item name="android:windowDrawsSystemBarBackgrounds">true</item>-->
+        <!--<item name="android:statusBarColor">@android:color/transparent</item>-->
+    <!--</style>-->
+
     <style name="AppThemeLight" parent="Theme.AppCompat.Light.NoActionBar">
         <!--<item name="windowNoTitle">true</item>-->
         <!--<item name="windowActionBar">false</item>-->
         <item name="colorPrimary">@color/lightTheme_primary</item>
         <item name="colorPrimaryDark">@color/lightTheme_primary_dark</item>
 
-        <item name="android:textColorPrimary">@color/lightTheme_text_icons</item>
+        <!--<item name="android:textColorPrimary">@color/lightTheme_text_icons</item>-->
 
-        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="windowActionBar">false</item>
+        <item name="colorAccent">@color/lightTheme_accent</item>
+
+        <!--<item name="drawerArrowStyle">@style/DrawerArrowStyle</item>-->
         <item name="textColor">@color/lightTheme_primary_text</item>
         <item name="android:windowBackground">@color/lightTheme_windowBgColor</item>
 
-        <item name="android:colorBackground">@color/lightTheme_windowBgColor</item>
+        <!--<item name="android:colorBackground">@color/lightTheme_windowBgColor</item>-->
 
-        <item name="actionModeBackground">@color/holo_green_dark</item>
-        <item name="dropDownListViewStyle">@style/MyDropDownListView</item>
-        <item name="spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
+        <!--<item name="actionModeBackground">@color/holo_green_dark</item>-->
+        <!--<item name="dropDownListViewStyle">@style/MyDropDownListView</item>-->
+        <!--<item name="spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
         <item name="android:windowNoTitle">true</item>
+        <item name="windowNoTitle">true</item>
 
         <item name="android:textColor">@color/lightTheme_primary_text</item>
 
-        <item name="android:actionModeBackground">@color/holo_green_dark</item>
-        <item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>
-        <item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
+        <!--<item name="android:actionModeBackground">@color/holo_green_dark</item>-->
+        <!--<item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>-->
+        <!--<item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
         <!--<item name="android:fitsSystemWindows">true</item>-->
 
-        <item name="android:windowActionBarOverlay">true</item>
+        <!--<item name="android:windowActionBarOverlay">true</item>-->
 
         <!--<item name="android:windowBackground">@android:color/background_light</item>-->
         <!--<item name="android:colorBackground">@android:color/background_light</item>-->
@@ -90,25 +104,29 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!--<item name="windowActionBar">false</item>-->
         <item name="colorPrimary">@color/darkTheme_primary</item>
         <item name="colorPrimaryDark">@color/darkTheme_primary_dark</item>
-        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <!--<item name="drawerArrowStyle">@style/DrawerArrowStyle</item>-->
         <item name="android:windowNoTitle">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+
+        <item name="colorAccent">@color/darkTheme_accent</item>
 
         <item name="android:textColor">@color/darkTheme_primary_text</item>
 
         <item name="android:windowBackground">@color/darkTheme_windowBgColor</item>
 
-        <item name="android:colorBackground">@color/darkTheme_windowBgColor</item>
+        <!--<item name="android:colorBackground">@color/darkTheme_windowBgColor</item>-->
 
-        <item name="android:actionModeBackground">@color/holo_green_dark</item>
-        <item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>
-        <item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
+        <!--<item name="android:actionModeBackground">@color/holo_green_dark</item>-->
+        <!--<item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>-->
+        <!--<item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
         <item name="textColor">@color/darkTheme_primary_text</item>
-        <item name="actionModeBackground">@color/holo_green_dark</item>
-        <item name="dropDownListViewStyle">@style/MyDropDownListView</item>
-        <item name="spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
+        <!--<item name="actionModeBackground">@color/holo_green_dark</item>-->
+        <!--<item name="dropDownListViewStyle">@style/MyDropDownListView</item>-->
+        <!--<item name="spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
         <!--<item name="android:fitsSystemWindows">true</item>-->
 
-        <item name="android:windowActionBarOverlay">true</item>
+        <!--<item name="android:windowActionBarOverlay">true</item>-->
 
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_background">@color/material_drawer_dark_background</item>
@@ -123,6 +141,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text</item>
 
     </style>
+
+    <style name="AppThemeLight.StatusBarTransparent" parent="AppThemeLight"/>
+
+    <style name="AppThemeDark.StatusBarTransparent" parent="AppThemeDark"/>
 
     <style name="SCV_Custom_semi_transparent" parent="ShowcaseView.Light">
         <!--<item name="sv_backgroundColor">#3333B5E5</item>-->
