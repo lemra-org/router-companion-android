@@ -559,8 +559,8 @@ public final class Utils {
         final MaoniFeedbackHandler handlerForMaoni = new MaoniFeedbackHandler(activity, router);
         new Maoni.Builder(DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY)
                 .withTheme(ColorUtils.isThemeLight(activity) ?
-                        org.rm3l.maoni.R.style.Maoni_AppTheme_Light :
-                        org.rm3l.maoni.R.style.Maoni_AppTheme_Dark)
+                        R.style.AppThemeLight_StatusBarTransparent :
+                        R.style.AppThemeDark_StatusBarTransparent)
                 .withWindowTitle("Send Feedback")
                 .withExtraLayout(R.layout.activity_feedback_maoni)
                 .withHandler(handlerForMaoni)
