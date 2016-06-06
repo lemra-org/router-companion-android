@@ -107,7 +107,7 @@ public class MaoniFeedbackHandler implements Handler {
     }
 
     @Override
-    public void onSendButtonClicked(@NonNull final Feedback feedback) {
+    public boolean onSendButtonClicked(@NonNull final Feedback feedback) {
         //Check that device is actually connected to the internet prior to going any further
         final ConnectivityManager connMgr = (ConnectivityManager)
                 mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -115,7 +115,7 @@ public class MaoniFeedbackHandler implements Handler {
         if (networkInfo == null || !networkInfo.isConnected()) {
             Toast.makeText(mContext,
                     "An Internet connection is needed to send feedbacks.", Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
 
         final boolean includeScreenshot = feedback.includeScreenshot;
@@ -210,6 +210,7 @@ public class MaoniFeedbackHandler implements Handler {
                 alertDialog.dismiss();
             }
         }.execute();
+        return true;
     }
 
     @Override

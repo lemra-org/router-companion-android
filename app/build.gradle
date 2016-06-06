@@ -380,6 +380,10 @@ repositories {
     }
     mavenCentral()
     maven { url 'https://maven.fabric.io/public' }
+    //FIXME TO REMOVE ONCE JCENTER IS OK WITH maoni-common
+    maven {
+        url  "http://dl.bintray.com/rm3l/maven"
+    }
 }
 
 /*
@@ -472,7 +476,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
     compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
 
-    compile ('org.rm3l:maoni:1.2.0@aar') {
+    compile ('org.rm3l:maoni:1.3.0@aar') {
         transitive = true;
         //Force Gradle to re-download the dependency
         changing = true;
