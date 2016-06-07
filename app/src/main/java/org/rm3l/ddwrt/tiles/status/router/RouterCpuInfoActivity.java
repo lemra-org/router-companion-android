@@ -92,9 +92,9 @@ public class RouterCpuInfoActivity extends AppCompatActivity {
         if (themeLight) {
             //Light
             setTheme(R.style.AppThemeLight);
-            getWindow().getDecorView()
-                    .setBackgroundColor(ContextCompat.getColor(this,
-                            android.R.color.white));
+//            getWindow().getDecorView()
+//                    .setBackgroundColor(ContextCompat.getColor(this,
+//                            android.R.color.white));
         } else {
             //Default is Dark
             setTheme(R.style.AppThemeDark);
@@ -104,14 +104,14 @@ public class RouterCpuInfoActivity extends AppCompatActivity {
 
         if (themeLight) {
             final Resources resources = getResources();
-            getWindow().getDecorView()
-                    .setBackgroundColor(
-                            ContextCompat.getColor(this,
-                                    android.R.color.white));
-            ((TextView) findViewById(R.id.tile_status_router_cpuinfo))
-                    .setTextColor(
-                            ContextCompat.getColor(this,
-                                    R.color.black));
+//            getWindow().getDecorView()
+//                    .setBackgroundColor(
+//                            ContextCompat.getColor(this,
+//                                    android.R.color.white));
+//            ((TextView) findViewById(R.id.tile_status_router_cpuinfo))
+//                    .setTextColor(
+//                            ContextCompat.getColor(this,
+//                                    R.color.black));
         }
 
         final Intent intent = getIntent();

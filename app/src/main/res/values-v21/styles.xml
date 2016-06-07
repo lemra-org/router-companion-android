@@ -22,56 +22,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
 <resources>
 
-    <style name="AppThemeDark" parent="Theme.AppCompat.NoActionBar">
-        <!--<item name="windowNoTitle">true</item>-->
-        <!--<item name="windowActionBar">false</item>-->
-        <item name="colorPrimary">@color/darkTheme_primary</item>
-        <item name="colorPrimaryDark">@color/darkTheme_primary_dark</item>
-        <!--<item name="drawerArrowStyle">@style/DrawerArrowStyle</item>-->
-        <item name="android:windowNoTitle">true</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-
-        <item name="colorAccent">@color/darkTheme_accent</item>
-
-        <item name="android:textColor">@color/darkTheme_primary_text</item>
-
-        <item name="android:windowBackground">@color/darkTheme_windowBgColor</item>
-
-        <!--<item name="android:colorBackground">@color/darkTheme_windowBgColor</item>-->
-
-        <!--<item name="android:actionModeBackground">@color/holo_green_dark</item>-->
-        <!--<item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>-->
-        <!--<item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
-        <item name="textColor">@color/darkTheme_primary_text</item>
-        <!--<item name="actionModeBackground">@color/holo_green_dark</item>-->
-        <!--<item name="dropDownListViewStyle">@style/MyDropDownListView</item>-->
-        <!--<item name="spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
-        <!--<item name="android:fitsSystemWindows">true</item>-->
-
-        <!--<item name="android:windowActionBarOverlay">true</item>-->
-
-
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/darkTheme_primary_dark</item>
-
-        <!-- MaterialDrawer specific values -->
-        <item name="material_drawer_background">@color/material_drawer_dark_background</item>
-        <item name="material_drawer_primary_text">@color/material_drawer_dark_primary_text</item>
-        <item name="material_drawer_primary_icon">@color/material_drawer_dark_primary_icon</item>
-        <item name="material_drawer_secondary_text">@color/material_drawer_dark_secondary_text
-        </item>
-        <item name="material_drawer_hint_text">@color/material_drawer_dark_hint_text</item>
-        <item name="material_drawer_hint_icon">@color/material_drawer_dark_hint_icon</item>
-        <item name="material_drawer_divider">@color/material_drawer_dark_divider</item>
-        <item name="material_drawer_selected">@color/material_drawer_dark_selected</item>
-        <item name="material_drawer_selected_text">@color/material_drawer_dark_selected_text</item>
-        <item name="material_drawer_header_selection_text">
-            @color/material_drawer_header_selection_text
-        </item>
-
-    </style>
-
     <style name="AppThemeLight" parent="Theme.AppCompat.Light.NoActionBar">
         <!--<item name="windowNoTitle">true</item>-->
         <!--<item name="windowActionBar">false</item>-->
@@ -81,7 +31,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!--<item name="android:textColorPrimary">@color/lightTheme_text_icons</item>-->
 
         <item name="windowActionBar">false</item>
-        <item name="colorAccent">@color/lightTheme_accent</item>
+        <item name="colorAccent">@color/color_accent</item>
 
         <!--<item name="drawerArrowStyle">@style/DrawerArrowStyle</item>-->
         <item name="textColor">@color/lightTheme_primary_text</item>
@@ -124,6 +74,56 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="material_drawer_header_selection_text">
             @color/material_drawer_header_selection_text
         </item>
+    </style>
+
+    <style name="AppThemeDark" parent="Theme.AppCompat.NoActionBar">
+        <!--<item name="windowNoTitle">true</item>-->
+        <!--<item name="windowActionBar">false</item>-->
+        <item name="colorPrimary">@color/darkTheme_primary</item>
+        <item name="colorPrimaryDark">@color/darkTheme_primary_dark</item>
+        <!--<item name="drawerArrowStyle">@style/DrawerArrowStyle</item>-->
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+
+        <item name="colorAccent">@color/color_accent</item>
+
+        <item name="android:textColor">@color/darkTheme_primary_text</item>
+
+        <item name="android:windowBackground">@color/darkTheme_windowBgColor</item>
+
+        <!--<item name="android:colorBackground">@color/darkTheme_windowBgColor</item>-->
+
+        <!--<item name="android:actionModeBackground">@color/holo_green_dark</item>-->
+        <!--<item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>-->
+        <!--<item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
+        <item name="textColor">@color/darkTheme_primary_text</item>
+        <!--<item name="actionModeBackground">@color/holo_green_dark</item>-->
+        <!--<item name="dropDownListViewStyle">@style/MyDropDownListView</item>-->
+        <!--<item name="spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
+        <!--<item name="android:fitsSystemWindows">true</item>-->
+
+        <!--<item name="android:windowActionBarOverlay">true</item>-->
+
+
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/darkTheme_primary_dark</item>
+
+        <!-- MaterialDrawer specific values -->
+        <item name="material_drawer_background">@color/material_drawer_dark_background</item>
+        <item name="material_drawer_primary_text">@color/material_drawer_dark_primary_text</item>
+        <item name="material_drawer_primary_icon">@color/material_drawer_dark_primary_icon</item>
+        <item name="material_drawer_secondary_text">@color/material_drawer_dark_secondary_text
+        </item>
+        <item name="material_drawer_hint_text">@color/material_drawer_dark_hint_text</item>
+        <item name="material_drawer_hint_icon">@color/material_drawer_dark_hint_icon</item>
+        <item name="material_drawer_divider">@color/material_drawer_dark_divider</item>
+        <item name="material_drawer_selected">@color/material_drawer_dark_selected</item>
+        <item name="material_drawer_selected_text">@color/material_drawer_dark_selected_text</item>
+        <item name="material_drawer_header_selection_text">
+            @color/material_drawer_header_selection_text
+        </item>
+
     </style>
 
 

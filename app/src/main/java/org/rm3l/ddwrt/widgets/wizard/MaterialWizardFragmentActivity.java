@@ -6,7 +6,6 @@ import android.support.annotation.LayoutRes;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -37,8 +36,8 @@ public abstract class MaterialWizardFragmentActivity extends FragmentActivity {
         if (ColorUtils.isThemeLight(this)) {
             //Light
             setTheme(R.style.AppThemeLight);
-            getWindow().getDecorView()
-                    .setBackgroundColor(ContextCompat.getColor(this, R.color.GhostWhite));
+//            getWindow().getDecorView()
+//                    .setBackgroundColor(ContextCompat.getColor(this, R.color.GhostWhite));
         } else {
             //Default is Dark
             setTheme(R.style.AppThemeDark);

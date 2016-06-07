@@ -179,9 +179,9 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
         if (themeLight) {
             //Light
             setTheme(R.style.AppThemeLight);
-            getWindow().getDecorView()
-                    .setBackgroundColor(ContextCompat.getColor(this,
-                            android.R.color.white));
+//            getWindow().getDecorView()
+//                    .setBackgroundColor(ContextCompat.getColor(this,
+//                            android.R.color.white));
         } else {
             //Default is Dark
             setTheme(R.style.AppThemeDark);
@@ -190,9 +190,9 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
         setContentView(R.layout.tile_status_wireless_iface_qrcode);
 
         if (themeLight) {
-            getWindow().getDecorView()
-                    .setBackgroundColor(
-                            ContextCompat.getColor(this, android.R.color.white));
+//            getWindow().getDecorView()
+//                    .setBackgroundColor(
+//                            ContextCompat.getColor(this, android.R.color.white));
         }
 
         mInterstitialAd = AdUtils.requestNewInterstitial(this,

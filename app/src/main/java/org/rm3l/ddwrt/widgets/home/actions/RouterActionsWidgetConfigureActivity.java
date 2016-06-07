@@ -142,9 +142,9 @@ public class RouterActionsWidgetConfigureActivity extends AppCompatActivity impl
         if (themeLight) {
             //Light
             setTheme(R.style.AppThemeLight);
-            getWindow().getDecorView()
-                    .setBackgroundColor(ContextCompat.getColor(this,
-                            android.R.color.white));
+//            getWindow().getDecorView()
+//                    .setBackgroundColor(ContextCompat.getColor(this,
+//                            android.R.color.white));
         } else {
             //Default is Dark
             setTheme(R.style.AppThemeDark);
@@ -156,9 +156,9 @@ public class RouterActionsWidgetConfigureActivity extends AppCompatActivity impl
                 (AdView) findViewById(R.id.widget_configure_adView));
 
         if (themeLight) {
-            getWindow().getDecorView()
-                    .setBackgroundColor(
-                            ContextCompat.getColor(this, android.R.color.white));
+//            getWindow().getDecorView()
+//                    .setBackgroundColor(
+//                            ContextCompat.getColor(this, android.R.color.white));
         }
 
         final Toolbar mToolbar = (Toolbar) findViewById(R.id.actions_widget_configure_toolbar);

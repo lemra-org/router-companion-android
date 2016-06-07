@@ -372,9 +372,9 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         if (themeLight) {
             //Light
             setTheme(R.style.AppThemeLight);
-            getWindow().getDecorView()
-                    .setBackgroundColor(ContextCompat.getColor(this,
-                            android.R.color.white));
+//            getWindow().getDecorView()
+//                    .setBackgroundColor(ContextCompat.getColor(this,
+//                            android.R.color.white));
         } else {
             //Default is Dark
             setTheme(R.style.AppThemeDark);
@@ -383,9 +383,9 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         setContentView(R.layout.tile_status_active_ip_connections);
 
         if (themeLight) {
-            getWindow().getDecorView()
-                    .setBackgroundColor(
-                            ContextCompat.getColor(this, android.R.color.white));
+//            getWindow().getDecorView()
+//                    .setBackgroundColor(
+//                            ContextCompat.getColor(this, android.R.color.white));
         }
 
         AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.tile_status_active_ip_connections_view_adView));

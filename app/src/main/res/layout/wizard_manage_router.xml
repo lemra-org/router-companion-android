@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/wizard_add_router_fragment_container"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-
-    <!--<fragment-->
-        <!--android:id="@+id/wizard_add_router_fragment"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:name="org.rm3l.ddwrt.mgmt.register.ManageRouterWizardard" />-->
-
-</RelativeLayout>
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".widgets.wizard.MaterialWizardFragmentActivity">
+</android.support.design.widget.CoordinatorLayout>

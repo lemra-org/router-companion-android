@@ -60,7 +60,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!--<item name="android:textColorPrimary">@color/lightTheme_text_icons</item>-->
 
         <item name="windowActionBar">false</item>
-        <item name="colorAccent">@color/lightTheme_accent</item>
+        <item name="colorAccent">@color/color_accent</item>
 
         <!--<item name="drawerArrowStyle">@style/DrawerArrowStyle</item>-->
         <item name="textColor">@color/lightTheme_primary_text</item>
@@ -109,7 +109,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
 
-        <item name="colorAccent">@color/darkTheme_accent</item>
+        <item name="colorAccent">@color/color_accent</item>
 
         <item name="android:textColor">@color/darkTheme_primary_text</item>
 
