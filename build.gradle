@@ -29,7 +29,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.0'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.7'
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
 //        classpath 'com.tracepot.plugins.gradle:tracepot:1.+'
         classpath 'com.github.triplet.gradle:play-publisher:1.1.4'
 
