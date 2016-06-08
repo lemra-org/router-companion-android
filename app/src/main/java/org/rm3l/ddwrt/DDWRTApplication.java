@@ -31,7 +31,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.ImageView;
 
-import com.airbnb.deeplinkdispatch.DeepLinkActivity;
+import com.airbnb.deeplinkdispatch.DeepLinkHandler;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
@@ -93,7 +93,7 @@ public class DDWRTApplication extends Application {
             Stetho.initializeWithDefaults(this);
         }
 
-        final IntentFilter intentFilter = new IntentFilter(DeepLinkActivity.ACTION);
+        final IntentFilter intentFilter = new IntentFilter(DeepLinkHandler.ACTION);
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(new DeepLinkReceiver(), intentFilter);
 

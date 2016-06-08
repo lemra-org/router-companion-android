@@ -61,6 +61,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -848,6 +849,11 @@ public class DDWRTMainActivity extends AppCompatActivity
                                                                     public void onShowcaseViewShow(ShowcaseView showcaseView) {
 
                                                                     }
+
+                                                                    @Override
+                                                                    public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
+
+                                                                    }
                                                                 })
                                                                 .build();
 
@@ -872,6 +878,11 @@ public class DDWRTMainActivity extends AppCompatActivity
                                                 public void onShowcaseViewShow(ShowcaseView showcaseView) {
 
                                                 }
+
+                                                @Override
+                                                public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
+
+                                                }
                                             })
                                             .build();
                                 } catch (final Exception e) {
@@ -883,6 +894,11 @@ public class DDWRTMainActivity extends AppCompatActivity
 
                             @Override
                             public void onShowcaseViewShow(ShowcaseView showcaseView) {
+
+                            }
+
+                            @Override
+                            public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
 
                             }
                         })

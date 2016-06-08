@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.airbnb.deeplinkdispatch.DeepLinkActivity;
+import com.airbnb.deeplinkdispatch.DeepLinkHandler;
 import com.crashlytics.android.Crashlytics;
 
 /**
@@ -17,14 +17,14 @@ public class DeepLinkReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        final String deepLinkUri = intent.getStringExtra(DeepLinkActivity.EXTRA_URI);
+        final String deepLinkUri = intent.getStringExtra(DeepLinkHandler.EXTRA_URI);
 
-        if (intent.getBooleanExtra(DeepLinkActivity.EXTRA_SUCCESSFUL, false)) {
+        if (intent.getBooleanExtra(DeepLinkHandler.EXTRA_SUCCESSFUL, false)) {
             Crashlytics.log(Log.INFO, LOG_TAG, "Success with deep linking: " + deepLinkUri);
         } else {
             Crashlytics.log(Log.ERROR, LOG_TAG,
                     "Error with deep linking: " + deepLinkUri + " , with error message: " +
-                            intent.getStringExtra(DeepLinkActivity.EXTRA_ERROR_MESSAGE));
+                            intent.getStringExtra(DeepLinkHandler.EXTRA_ERROR_MESSAGE));
         }
     }
 }
