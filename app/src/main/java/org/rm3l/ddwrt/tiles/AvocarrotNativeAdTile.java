@@ -180,7 +180,7 @@ public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
                             avocarrotCustom.loadIcon(ad, imageIconView);
 
                             // Bind view
-                            avocarrotCustom.bindView(ad, layout);
+                            avocarrotCustom.bindView(ad, layout, null);
 
                             // Set click listener
                             final View.OnClickListener clickListener = new View.OnClickListener() {
