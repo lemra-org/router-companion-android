@@ -430,7 +430,7 @@ dependencies {
     compile 'commons-net:commons-net:3.5'
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'commons-codec:commons-codec:1.10'
-    compile 'com.jcraft:jsch:0.1.51'
+    compile 'com.jcraft:jsch:0.1.53'
     compile 'ch.acra:acra:4.9.0'
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.android.support:design:23.4.0'
