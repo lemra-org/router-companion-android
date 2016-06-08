@@ -37,7 +37,6 @@ import org.rm3l.ddwrt.events.bus.BusSingleton;
 import org.rm3l.ddwrt.events.wizard.WizardStepVisibleToUserEvent;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.register.resources.RouterWizardAction;
-import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.widgets.ViewPagerWithAllowedSwipeDirection;
@@ -111,9 +110,6 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
         collapsingToolbarLayout.setTitle(wizardTitle);
 
         final Toolbar toolbar = (Toolbar) mWizardLayout.findViewById(R.id.toolbar);
-        toolbar.setBackgroundColor(ContextCompat.getColor(context,
-                ColorUtils.isThemeLight(context) ?
-                        R.color.lightTheme_windowBgColor : R.color.darkTheme_windowBgColor));
         toolbar.setNavigationIcon(R.drawable.ic_close_white_24dp);
         toolbar.setNavigationContentDescription("Close");
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
