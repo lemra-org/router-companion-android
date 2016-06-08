@@ -717,7 +717,8 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                         }
 
                         updateProgressBarViewSeparator(35);
-                        final String[] nvramSize = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences, "/usr/sbin/nvram show 2>&1 1>/dev/null");
+                        final String[] nvramSize = SSHUtils.getManualProperty(mParentFragmentActivity,
+                                mRouter, mGlobalPreferences, "/usr/sbin/nvram show 2>&1 1>/dev/null");
                         if (nvramSize != null && nvramSize.length > 0) {
                             final List<String> nvramUsageList = StatusRouterSpaceUsageTile.NVRAM_SIZE_SPLITTER
                                     .splitToList(nvramSize[0]);
