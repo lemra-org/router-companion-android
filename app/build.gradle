@@ -379,10 +379,8 @@ repositories {
         url 'http://dl.bintray.com/amulyakhare/maven'
     }
     mavenCentral()
-    maven { url 'https://maven.fabric.io/public' }
-    //FIXME TO REMOVE ONCE JCENTER IS OK WITH maoni-common
     maven {
-        url  "http://dl.bintray.com/rm3l/maven"
+        url 'https://maven.fabric.io/public'
     }
 }
 
