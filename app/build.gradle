@@ -25,6 +25,7 @@
  */
 buildscript {
     repositories {
+        mavenCentral()
         maven { url 'https://maven.fabric.io/public' }
     }
 
@@ -36,6 +37,7 @@ buildscript {
 import groovy.swing.SwingBuilder
 
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'android-apt'
 apply plugin: 'io.fabric'
 //apply plugin: 'tracepot'
@@ -148,6 +150,11 @@ android {
 //                "samsung", "samsungFreeWithAds",
 //                "amazonUnderground", "blackberry", "blackberryFreeWithAds"
 //    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     signingConfigs {
         release {
@@ -394,6 +401,10 @@ play {
 
 //Dependencies
 dependencies {
+
+    // Latest one on maven central
+    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:+'
+
     compile fileTree(include: '*.jar', dir: 'libs')
     //Crouton notification lib (cf. #125 - replace with Android SnackBar)
     compile('de.keyboardsurfer.android.widget:crouton:1.8.5@aar') {
