@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
@@ -18,9 +17,12 @@ import android.widget.Toast;
 
 import com.google.gson.GsonBuilder;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.feedback.api.DoorbellService;
+import org.rm3l.ddwrt.multithreading.MultiThreadingManager;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -28,9 +30,11 @@ import org.rm3l.ddwrt.utils.NetworkUtils;
 import org.rm3l.maoni.common.contract.Handler;
 import org.rm3l.maoni.common.model.Feedback;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import needle.UiRelatedProgressTask;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -124,92 +128,140 @@ public class MaoniFeedbackHandler implements Handler {
         final String routerInfoText = mRouterInfo.getText().toString();
 
         final ProgressDialog alertDialog = ProgressDialog.show(mContext,
-                "Submitting Feedback", "Please hold on - submitting feedback...", true);
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
+                "Please hold on", "Submitting feedback...", true);
+        MultiThreadingManager.getFeedbackExecutor()
+                .execute(new UiRelatedProgressTask
+                        <ImmutablePair<Response<ResponseBody>, ? extends Exception>, Integer>() {
 
-                try {
-                    mContext.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            alertDialog.show();
+                    private static final int STARTED = 1;
+                    private static final int OPENING_APPLICATION = 2;
+                    private static final int UPLOADING_ATTACHMENT = 3;
+                    private static final int SUBMITTING_FEEDBACK = 4;
+
+                    @Override
+                    protected ImmutablePair<Response<ResponseBody>, ? extends Exception> doWork() {
+                        publishProgress(STARTED);
+                        try {
+                            publishProgress(OPENING_APPLICATION);
+                            final Response<ResponseBody> openResponse = mDoorbellService
+                                    .openApplication(DOORBELL_APPID, DOORBELL_APIKEY)
+                                    .execute();
+
+                            if (openResponse.code() != 201) {
+                                return ImmutablePair.of(openResponse, new IllegalStateException());
+                            }
+
+                            String[] attachments = null;
+                            if (includeScreenshot) {
+                                publishProgress(UPLOADING_ATTACHMENT);
+                                final RequestBody requestBody = RequestBody.create(
+                                        MediaType.parse("image/png"),
+                                        feedback.screenshotFile);
+                                final Response<String[]> uploadResponse = mDoorbellService
+                                        .upload(DOORBELL_APPID, DOORBELL_APIKEY, requestBody)
+                                        .execute();
+                                if (uploadResponse.code() != 201) {
+                                    return ImmutablePair.of(openResponse, new IllegalStateException());
+                                }
+                                attachments = uploadResponse.body();
+                            }
+                            if (attachments == null) {
+                                attachments = new String[0];
+                            }
+
+                            publishProgress(SUBMITTING_FEEDBACK);
+                            final Response<ResponseBody> response = mDoorbellService
+                                    .submitFeedbackForm(
+                                            DOORBELL_APPID, DOORBELL_APIKEY,
+                                            emailText,
+                                            String.format("%s\n\n" +
+                                                            "-------\n" +
+                                                            "- Feedback UUID: %s\n" +
+                                                            "%s" +
+                                                            "-------",
+                                                    contentText,
+                                                    feedback.id,
+                                                    TextUtils.isEmpty(routerInfoText) ?
+                                                            "" : routerInfoText),
+                                            null,
+                                            GSON_BUILDER.create().toJson(mProperties),
+                                            attachments)
+                                    .execute();
+
+                            return ImmutablePair.of(response, null);
+
+                        } catch (final Exception e) {
+                            return ImmutablePair.of(null, e);
                         }
-                    });
-                    final Response<ResponseBody> openResponse = mDoorbellService.openApplication(DOORBELL_APPID, DOORBELL_APIKEY)
-                            .execute();
-                    if (openResponse.code() != 201) {
-                        Toast.makeText(mContext, "Error: " + openResponse.message(),
-                                Toast.LENGTH_SHORT).show();
-                        return null;
                     }
 
-                    String[] attachments = null;
-                    if (includeScreenshot) {
-                        final RequestBody requestBody = RequestBody.create(
-                                MediaType.parse("image/png"),
-                                feedback.screenshotFile);
-                        final Response<String[]> uploadResponse = mDoorbellService
-                                .upload(DOORBELL_APPID, DOORBELL_APIKEY, requestBody)
-                                .execute();
-                        if (uploadResponse.code() != 201) {
-                            mContext.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(mContext, "Error: " + openResponse.message(),
+                    @Override
+                    protected void thenDoUiRelatedWork(ImmutablePair<Response<ResponseBody>, ? extends Exception> result) {
+                        try {
+                            if (result == null) {
+                                return;
+                            }
+                            final Response<ResponseBody> response = result.left;
+                            final Exception exception = result.right;
+
+                            if (exception != null) {
+                                String errorMsg = null;
+                                if (response != null) {
+                                    errorMsg = response.message();
+                                }
+                                if (TextUtils.isEmpty(errorMsg)) {
+                                    errorMsg = ExceptionUtils.getRootCauseMessage(exception);
+                                }
+                                Toast.makeText(mContext, "Error: " + errorMsg,
+                                        Toast.LENGTH_LONG).show();
+                                return;
+                            }
+
+                            if (response != null) {
+                                if (response.code() == 201) {
+                                    try {
+                                        Toast.makeText(mContext,
+                                                response.body().string(),
+                                                Toast.LENGTH_SHORT).show();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    Toast.makeText(mContext,
+                                            "Error: " + response.body().toString(),
                                             Toast.LENGTH_SHORT).show();
                                 }
-                            });
-                            return null;
-                        }
-                        attachments = uploadResponse.body();
-                    }
-                    if (attachments == null) {
-                        attachments = new String[0];
-                    }
-
-                    final Response<ResponseBody> response = mDoorbellService
-                            .submitFeedbackForm(
-                                    DOORBELL_APPID, DOORBELL_APIKEY,
-                                    emailText,
-                                    String.format("%s\n\n" +
-                                                    "-------\n" +
-                                                    "- Feedback UUID: %s\n" +
-                                                    "%s" +
-                                                    "-------",
-                                            contentText,
-                                            feedback.id,
-                                            TextUtils.isEmpty(routerInfoText) ?
-                                                    "" : routerInfoText),
-                                    null,
-                                    GSON_BUILDER.create().toJson(mProperties),
-                                    attachments)
-                            .execute();
-
-                    if (response.code() == 201) {
-                        final String responseStr = response.body().string();
-                        mContext.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(mContext,
-                                        responseStr,
-                                        Toast.LENGTH_SHORT).show();
                             }
-                        });
+
+                        } finally {
+                            alertDialog.dismiss();
+                        }
                     }
-                    return null;
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                }
 
-                return null;
-            }
+                    @Override
+                    protected void onProgressUpdate(Integer progress) {
+                        if (progress == null) {
+                            return;
+                        }
+                        switch (progress) {
+                            case STARTED:
+                                alertDialog.show();
+                                break;
+                            case OPENING_APPLICATION:
+                                alertDialog.setMessage("Connecting to the remote feedback service...");
+                                break;
+                            case UPLOADING_ATTACHMENT:
+                                alertDialog.setMessage("Uploading attachment...");
+                                break;
+                            case SUBMITTING_FEEDBACK:
+                                alertDialog.setMessage("Submitting your helpful feedback...");
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
 
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                alertDialog.dismiss();
-            }
-        }.execute();
         return true;
     }
 

@@ -37,7 +37,7 @@ buildscript {
 import groovy.swing.SwingBuilder
 
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
+//apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'android-apt'
 apply plugin: 'io.fabric'
 //apply plugin: 'tracepot'
@@ -152,8 +152,8 @@ android {
 //    }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 
     signingConfigs {
@@ -403,7 +403,7 @@ play {
 dependencies {
 
     // Latest one on maven central
-    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:+'
+//    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:+'
 
     compile fileTree(include: '*.jar', dir: 'libs')
     //Crouton notification lib (cf. #125 - replace with Android SnackBar)
@@ -501,4 +501,6 @@ dependencies {
 
     compile 'io.reactivex:rxandroid:1.2.0'
     compile 'io.reactivex:rxjava:1.1.5'
+
+    compile 'com.zsoltsafrany:needle:1.0.0'
 }
