@@ -26,23 +26,25 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.rm3l.ddwrt.resources.conn.Router;
+
 public class PingFromRouterAction extends ExecStreamableCommandRouterAction {
 
     public static final int MAX_PING_PACKETS_TO_SEND = 5;
     public static final String PING_CMD_TO_FORMAT = "/bin/ping -c %d %s 2>&1";
 
-    public PingFromRouterAction(@NonNull Context context, @Nullable RouterStreamActionListener listener,
+    public PingFromRouterAction(Router router, @NonNull Context context, @Nullable RouterStreamActionListener listener,
                                 @NonNull final SharedPreferences globalSharedPreferences,
                                 @NonNull final String hostToPing) {
-        this(context, listener, globalSharedPreferences, hostToPing, MAX_PING_PACKETS_TO_SEND);
+        this(router, context, listener, globalSharedPreferences, hostToPing, MAX_PING_PACKETS_TO_SEND);
     }
 
-    public PingFromRouterAction(@NonNull Context context, @Nullable RouterStreamActionListener listener,
+    public PingFromRouterAction(Router router, @NonNull Context context, @Nullable RouterStreamActionListener listener,
                                 @NonNull final SharedPreferences globalSharedPreferences,
                                 @NonNull final String hostToPing,
-                                @Nullable  final Integer packetsCount) {
-        super(RouterAction.PING, context, listener, globalSharedPreferences,
-                String.format(PING_CMD_TO_FORMAT, (packetsCount == null || packetsCount <=0) ?
+                                @Nullable final Integer packetsCount) {
+        super(router, RouterAction.PING, context, listener, globalSharedPreferences,
+                String.format(PING_CMD_TO_FORMAT, (packetsCount == null || packetsCount <= 0) ?
                         MAX_PING_PACKETS_TO_SEND : packetsCount, hostToPing));
     }
 

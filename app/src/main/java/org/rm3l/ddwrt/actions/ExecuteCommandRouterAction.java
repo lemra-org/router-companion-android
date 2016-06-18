@@ -24,18 +24,18 @@ public class ExecuteCommandRouterAction extends AbstractRouterAction<String[]> {
 
     private Map<String, String[]> mResultMap = new ConcurrentHashMap<>();
 
-    public ExecuteCommandRouterAction(@NonNull Context context,
+    public ExecuteCommandRouterAction(Router router, @NonNull Context context,
                                       @Nullable RouterActionListener listener,
-                                        @NonNull final SharedPreferences globalSharedPreferences,
+                                      @NonNull final SharedPreferences globalSharedPreferences,
                                       @NonNull final String... cmd) {
-        super(listener, RouterAction.EXEC_CMD, globalSharedPreferences);
+        super(router, listener, RouterAction.EXEC_CMD, globalSharedPreferences);
         this.mContext = context;
         this.mCmd = cmd;
     }
 
     @NonNull
     @Override
-    protected RouterActionResult<String[]> doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<String[]> doActionInBackground() {
         Exception exception = null;
         String[] resultForRouter = null;
         try {

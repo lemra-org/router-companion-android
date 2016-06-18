@@ -35,15 +35,15 @@ public class MACOUILookupAction extends AbstractRouterAction<Void> {
     @NonNull
     private final String mMacAddress;
 
-    public MACOUILookupAction(@NonNull Context context, @Nullable RouterActionListener listener,
+    public MACOUILookupAction(Router router, @NonNull Context context, @Nullable RouterActionListener listener,
                               @NonNull final SharedPreferences globalSharedPreferences, @NonNull final String macAddr) {
-        super(listener, RouterAction.MAC_OUI_LOOKUP, globalSharedPreferences);
+        super(router, listener, RouterAction.MAC_OUI_LOOKUP, globalSharedPreferences);
         this.mMacAddress = macAddr;
     }
 
     @NonNull
     @Override
-    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground() {
         final RouterStreamActionListener routerStreamActionListener = (listener instanceof RouterStreamActionListener) ?
                 (RouterStreamActionListener) listener : null;
         Exception exception = null;

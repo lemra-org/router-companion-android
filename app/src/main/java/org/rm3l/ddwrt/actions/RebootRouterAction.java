@@ -34,14 +34,14 @@ public class RebootRouterAction extends AbstractRouterAction<Void> {
     @NonNull
     private final Context mContext;
 
-    public RebootRouterAction(@NonNull Context context, @Nullable RouterActionListener listener, @NonNull final SharedPreferences globalSharedPreferences) {
-        super(listener, RouterAction.REBOOT, globalSharedPreferences);
+    public RebootRouterAction(Router router, @NonNull Context context, @Nullable RouterActionListener listener, @NonNull final SharedPreferences globalSharedPreferences) {
+        super(router, listener, RouterAction.REBOOT, globalSharedPreferences);
         this.mContext = context;
     }
 
     @NonNull
     @Override
-    protected RouterActionResult<Void> doActionInBackground(@NonNull final Router router) {
+    protected RouterActionResult<Void> doActionInBackground() {
 
         Exception exception = null;
         try {

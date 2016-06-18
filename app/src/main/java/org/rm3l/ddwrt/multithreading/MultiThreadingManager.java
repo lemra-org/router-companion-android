@@ -11,13 +11,21 @@ public final class MultiThreadingManager {
 
     private static final String FEEDBACKS_TASK_TYPE = "Feedback";
 
-    private MultiThreadingManager() {}
+    private MultiThreadingManager() {
+    }
 
     public static Executor getFeedbackExecutor() {
         return Needle
                 .onBackgroundThread()
                 .withTaskType("Feedback")
-                .withThreadPoolSize(1) //Has to be executed serially, one thread at a time
+                //Has to be executed serially, one thread at a time
                 .serially();
+    }
+
+    public static Executor getActionExecutor() {
+        return Needle
+                .onBackgroundThread()
+                .withTaskType("Action")
+                .withThreadPoolSize(3);
     }
 }

@@ -40,22 +40,22 @@ public class ManageHTTPdRouterAction extends AbstractRouterAction<Void> {
 
     private final int mHTTPdAction;
 
-    public ManageHTTPdRouterAction(@NonNull Context context,
+    public ManageHTTPdRouterAction(Router router, @NonNull Context context,
                                    @Nullable RouterActionListener listener,
                                    @NonNull final SharedPreferences globalSharedPreferences,
                                    final int httpdAction) {
-        super(listener, httpdAction == START ?
+        super(router, listener, httpdAction == START ?
                 RouterAction.START_HTTPD :
                 httpdAction == STOP ? RouterAction.STOP_HTTPD :
-                httpdAction == RESTART ? RouterAction.RESTART_HTTPD :
-                        RouterAction.HTTPD_UNKNOWN_ACTION, globalSharedPreferences);
+                        httpdAction == RESTART ? RouterAction.RESTART_HTTPD :
+                                RouterAction.HTTPD_UNKNOWN_ACTION, globalSharedPreferences);
         this.mContext = context;
         this.mHTTPdAction = httpdAction;
     }
 
     @NonNull
     @Override
-    protected RouterActionResult<Void> doActionInBackground(@NonNull final Router router) {
+    protected RouterActionResult<Void> doActionInBackground() {
 
         Exception exception = null;
         try {

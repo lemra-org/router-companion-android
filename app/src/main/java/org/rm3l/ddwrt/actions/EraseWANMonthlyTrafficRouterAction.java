@@ -22,15 +22,15 @@ public class EraseWANMonthlyTrafficRouterAction extends AbstractRouterAction<Voi
     @NonNull
     private final Context mContext;
 
-    public EraseWANMonthlyTrafficRouterAction(@NonNull Context context, @Nullable RouterActionListener listener,
-                                               @NonNull final SharedPreferences globalSharedPreferences) {
-        super(listener, RouterAction.DELETE_WAN_TRAFF, globalSharedPreferences);
+    public EraseWANMonthlyTrafficRouterAction(Router router, @NonNull Context context, @Nullable RouterActionListener listener,
+                                              @NonNull final SharedPreferences globalSharedPreferences) {
+        super(router, listener, RouterAction.DELETE_WAN_TRAFF, globalSharedPreferences);
         this.mContext = context;
     }
 
     @NonNull
     @Override
-    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground() {
         Exception exception = null;
         try {
 

@@ -30,11 +30,11 @@ public class ToggleWANAccessPolicyRouterAction extends AbstractRouterAction<Void
     private final int mEnableStatus;
 
 
-    public ToggleWANAccessPolicyRouterAction(@NonNull Context context, @Nullable RouterActionListener listener,
+    public ToggleWANAccessPolicyRouterAction(Router router, @NonNull Context context, @Nullable RouterActionListener listener,
                                              @NonNull SharedPreferences globalSharedPreferences,
                                              @NonNull WANAccessPolicy wanAccessPolicy,
                                              int enableStatus) {
-        super(listener,
+        super(router, listener,
                 enableStatus == 0 ?
                         RouterAction.DISABLE_WAN_ACCESS_POLICY : RouterAction.ENABLE_WAN_ACCESS_POLICY,
                 globalSharedPreferences);
@@ -45,7 +45,7 @@ public class ToggleWANAccessPolicyRouterAction extends AbstractRouterAction<Void
 
     @NonNull
     @Override
-    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground() {
         Exception exception = null;
         try {
             if (mWanAccessPolicy.getNumber() <= 0) {
@@ -67,8 +67,8 @@ public class ToggleWANAccessPolicyRouterAction extends AbstractRouterAction<Void
             final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router,
                     String.format(Locale.US,
                             "/usr/sbin/nvram set filter_rule%d=\"%s\"" +
-                            " && /sbin/stopservice firewall" +
-                            " && /sbin/startservice firewall",
+                                    " && /sbin/stopservice firewall" +
+                                    " && /sbin/startservice firewall",
                             mWanAccessPolicy.getNumber(), filterRuleValue));
             if (exitStatus != 0) {
                 throw new IllegalStateException();

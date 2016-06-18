@@ -128,7 +128,7 @@ public class MaoniFeedbackHandler implements Handler {
         final String routerInfoText = mRouterInfo.getText().toString();
 
         final ProgressDialog alertDialog = ProgressDialog.show(mContext,
-                "Please hold on", "Submitting feedback...", true);
+                "Please hold on...", "Submitting feedback...", true);
         MultiThreadingManager.getFeedbackExecutor()
                 .execute(new UiRelatedProgressTask
                         <ImmutablePair<Response<ResponseBody>, ? extends Exception>, Integer>() {

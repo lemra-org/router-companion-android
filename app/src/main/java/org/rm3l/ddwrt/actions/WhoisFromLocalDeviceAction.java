@@ -35,15 +35,15 @@ public class WhoisFromLocalDeviceAction extends AbstractRouterAction<Void> {
     @NonNull
     private final String mHostOrIp;
 
-    public WhoisFromLocalDeviceAction(@NonNull Context context, @Nullable RouterActionListener listener,
+    public WhoisFromLocalDeviceAction(Router router, @NonNull Context context, @Nullable RouterActionListener listener,
                                       @NonNull final SharedPreferences globalSharedPreferences, @NonNull final String hostOrIp) {
-        super(listener, RouterAction.WHOIS, globalSharedPreferences);
+        super(router, listener, RouterAction.WHOIS, globalSharedPreferences);
         this.mHostOrIp = hostOrIp;
     }
 
     @NonNull
     @Override
-    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground() {
         final RouterStreamActionListener routerStreamActionListener = (listener instanceof RouterStreamActionListener) ?
                 (RouterStreamActionListener) listener : null;
         Exception exception = null;

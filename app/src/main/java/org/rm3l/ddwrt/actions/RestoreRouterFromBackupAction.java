@@ -23,22 +23,21 @@ import java.util.Date;
  */
 public class RestoreRouterFromBackupAction extends AbstractRouterAction<Void> {
 
+    private static final String TO_REMOTE_PATH = "/tmp/.DDWRTCompanion_nvrambak_torestore.bin";
     private final Context mContext;
     private final InputStream mBackupFileInputStream;
 
-    private static final String TO_REMOTE_PATH = "/tmp/.DDWRTCompanion_nvrambak_torestore.bin";
-
-    public RestoreRouterFromBackupAction(@NonNull Context context, @Nullable RouterActionListener listener,
-                              @NonNull final SharedPreferences globalSharedPreferences,
+    public RestoreRouterFromBackupAction(Router router, @NonNull Context context, @Nullable RouterActionListener listener,
+                                         @NonNull final SharedPreferences globalSharedPreferences,
                                          @NonNull final InputStream backupFileInputStream) {
-        super(listener, RouterAction.RESTORE, globalSharedPreferences);
+        super(router, listener, RouterAction.RESTORE, globalSharedPreferences);
         this.mContext = context;
         this.mBackupFileInputStream = backupFileInputStream;
     }
 
     @NonNull
     @Override
-    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground() {
         Exception exception = null;
         File tempFile = null;
         try {

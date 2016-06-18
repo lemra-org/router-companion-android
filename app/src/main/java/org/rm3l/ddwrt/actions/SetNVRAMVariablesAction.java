@@ -61,12 +61,12 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
     @NonNull
     private final ImmutableList<String> commandsToRunAfterCommit;
 
-    public SetNVRAMVariablesAction(@NonNull Context context, @NonNull NVRAMInfo nvramInfo,
+    public SetNVRAMVariablesAction(Router router, @NonNull Context context, @NonNull NVRAMInfo nvramInfo,
                                    boolean withReboot,
                                    @Nullable RouterActionListener listener,
                                    @NonNull SharedPreferences globalSharedPreferences,
                                    @Nullable String... commandsToRunAfterCommit) {
-        super(listener, RouterAction.SET_NVRAM_VARIABLES, globalSharedPreferences);
+        super(router, listener, RouterAction.SET_NVRAM_VARIABLES, globalSharedPreferences);
         this.mContext = context;
         this.nvramInfo = nvramInfo;
         this.withReboot = withReboot;
@@ -76,17 +76,6 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
         } else {
             this.commandsToRunAfterCommit = ImmutableList.of();
         }
-    }
-
-    @NonNull
-    @Override
-    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
-        return getRouterActionResult(mContext,
-                globalSharedPreferences,
-                router,
-                nvramInfo,
-                withReboot,
-                this.commandsToRunAfterCommit);
     }
 
     public static RouterActionResult<Void> getRouterActionResult(@NonNull final Context mContext,
@@ -119,7 +108,7 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
             }
 
             if (globalSharedPreferences.getBoolean(DEBUG_MODE, false)) {
-                Crashlytics.log(Log.DEBUG,  LOG_TAG, "cmdList: " + cmdList);
+                Crashlytics.log(Log.DEBUG, LOG_TAG, "cmdList: " + cmdList);
             }
 
             // Seems there is a limit on the number of characters we can pass to the SSH server console
@@ -162,6 +151,17 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
         }
 
         return new RouterActionResult<>(null, exception);
+    }
+
+    @NonNull
+    @Override
+    protected RouterActionResult<Void> doActionInBackground() {
+        return getRouterActionResult(mContext,
+                globalSharedPreferences,
+                router,
+                nvramInfo,
+                withReboot,
+                this.commandsToRunAfterCommit);
     }
 
     @Nullable

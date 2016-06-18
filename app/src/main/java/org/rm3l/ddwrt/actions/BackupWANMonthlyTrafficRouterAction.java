@@ -46,24 +46,21 @@ public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<St
 
     @NonNull
     private final Context mContext;
-
+    private final int mBackupFileType;
     private File mLocalBackupFilePath = null;
-
     private Date mBackupDate = null;
 
-    private final int mBackupFileType;
-
-    public BackupWANMonthlyTrafficRouterAction(@NonNull final int backupFileType,
+    public BackupWANMonthlyTrafficRouterAction(Router router, @NonNull final int backupFileType,
                                                @NonNull Context context, @Nullable RouterActionListener listener,
                                                @NonNull final SharedPreferences globalSharedPreferences) {
-        super(listener, RouterAction.BACKUP_WAN_TRAFF, globalSharedPreferences);
+        super(router, listener, RouterAction.BACKUP_WAN_TRAFF, globalSharedPreferences);
         this.mContext = context;
         this.mBackupFileType = backupFileType;
     }
 
     @NonNull
     @Override
-    protected RouterActionResult<String> doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<String> doActionInBackground() {
         Exception exception = null;
         try {
             mBackupDate = new Date();
@@ -81,22 +78,22 @@ public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<St
 
             //{year: month: {day: [in, out], ...}, ...}
             final ImmutableTable.Builder<Long, Integer, Multimap<Integer, Long>> traffDataTableBuilder
-                    = ImmutableTable.<Long, Integer, Multimap<Integer, Long>> builder()
-                        .orderRowsBy(new Comparator<Long>() {
-                            @Override
-                            public int compare(Long o, Long t1) {
-                                if (o == t1) {
-                                    return 0;
-                                }
-                                if (o == null) {
-                                    return -1;
-                                }
-                                if (t1 == null) {
-                                    return 1;
-                                }
-                                return o.compareTo(t1);
+                    = ImmutableTable.<Long, Integer, Multimap<Integer, Long>>builder()
+                    .orderRowsBy(new Comparator<Long>() {
+                        @Override
+                        public int compare(Long o, Long t1) {
+                            if (o == t1) {
+                                return 0;
                             }
-                        }).orderColumnsBy(new Comparator<Integer>() {
+                            if (o == null) {
+                                return -1;
+                            }
+                            if (t1 == null) {
+                                return 1;
+                            }
+                            return o.compareTo(t1);
+                        }
+                    }).orderColumnsBy(new Comparator<Integer>() {
                         @Override
                         public int compare(Integer integer, Integer t1) {
                             if (integer == t1) {
@@ -218,13 +215,13 @@ public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<St
                             }
                             final Long[] traffDataForDay = inAndOut.toArray(new Long[inAndOut.size()]);
                             Files.append(String.format("%d,%d,%d,%d,%s,%d,%s\n",
-                                            year,
-                                            month,
-                                            day,
-                                            traffDataForDay[0],
-                                            FileUtils.byteCountToDisplaySize(traffDataForDay[0]),
-                                            traffDataForDay[1],
-                                            FileUtils.byteCountToDisplaySize(traffDataForDay[1])),
+                                    year,
+                                    month,
+                                    day,
+                                    traffDataForDay[0],
+                                    FileUtils.byteCountToDisplaySize(traffDataForDay[0]),
+                                    traffDataForDay[1],
+                                    FileUtils.byteCountToDisplaySize(traffDataForDay[1])),
                                     mLocalBackupFilePath, CHARSET);
                         }
 
@@ -255,6 +252,6 @@ public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<St
     @Nullable
     @Override
     protected Object getDataToReturnOnSuccess() {
-        return new Object[] {mBackupDate, mLocalBackupFilePath};
+        return new Object[]{mBackupDate, mLocalBackupFilePath};
     }
 }

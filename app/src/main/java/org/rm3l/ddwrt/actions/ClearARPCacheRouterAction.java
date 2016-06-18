@@ -34,16 +34,16 @@ public class ClearARPCacheRouterAction extends AbstractRouterAction<Void> {
     @NonNull
     private final Context mContext;
 
-    public ClearARPCacheRouterAction(@NonNull Context context,
+    public ClearARPCacheRouterAction(Router router, @NonNull Context context,
                                      @Nullable RouterActionListener listener,
                                      @NonNull final SharedPreferences globalSharedPreferences) {
-        super(listener, RouterAction.CLEAR_ARP_CACHE, globalSharedPreferences);
+        super(router, listener, RouterAction.CLEAR_ARP_CACHE, globalSharedPreferences);
         this.mContext = context;
     }
 
     @NonNull
     @Override
-    protected RouterActionResult<Void> doActionInBackground(@NonNull final Router router) {
+    protected RouterActionResult<Void> doActionInBackground() {
 
         Exception exception = null;
         try {

@@ -50,16 +50,16 @@ public class WakeOnLANRouterAction extends AbstractRouterAction<Void> {
 
     private final Context context;
 
-    public WakeOnLANRouterAction(@NonNull Context context, @Nullable RouterActionListener listener,
+    public WakeOnLANRouterAction(Router router, @NonNull Context context, @Nullable RouterActionListener listener,
                                  @NonNull SharedPreferences globalSharedPreferences,
                                  @NonNull Device device, @Nullable String... broadcastAddressCandidates) {
-        this(context, listener, globalSharedPreferences, device, device.getWolPort(), broadcastAddressCandidates);
+        this(router, context, listener, globalSharedPreferences, device, device.getWolPort(), broadcastAddressCandidates);
     }
 
-    public WakeOnLANRouterAction(@NonNull Context ctx, @Nullable RouterActionListener listener,
+    public WakeOnLANRouterAction(Router router, @NonNull Context ctx, @Nullable RouterActionListener listener,
                                  @NonNull SharedPreferences globalSharedPreferences,
                                  @NonNull Device device, int port, @Nullable String... broadcastAddressCandidates) {
-        super(listener, WAKE_ON_LAN, globalSharedPreferences);
+        super(router, listener, WAKE_ON_LAN, globalSharedPreferences);
         this.context = ctx;
         if (broadcastAddressCandidates != null) {
             this.mBroadcastAddressCandidates = Arrays.asList(broadcastAddressCandidates);
@@ -72,7 +72,7 @@ public class WakeOnLANRouterAction extends AbstractRouterAction<Void> {
 
     @NonNull
     @Override
-    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground() {
         Exception exception = null;
         try {
             if (mBroadcastAddressCandidates.isEmpty()) {

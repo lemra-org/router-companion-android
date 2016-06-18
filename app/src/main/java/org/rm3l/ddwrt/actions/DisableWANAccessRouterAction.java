@@ -40,17 +40,17 @@ public class DisableWANAccessRouterAction extends AbstractRouterAction<Void> {
     @NonNull
     private final Context mContext;
 
-    public DisableWANAccessRouterAction(@NonNull Context context, @Nullable RouterActionListener listener,
+    public DisableWANAccessRouterAction(Router router, @NonNull Context context, @Nullable RouterActionListener listener,
                                         @NonNull SharedPreferences globalSharedPreferences,
                                         @NonNull Device device) {
-        super(listener, RouterAction.DISABLE_WAN_ACCESS, globalSharedPreferences);
+        super(router, listener, RouterAction.DISABLE_WAN_ACCESS, globalSharedPreferences);
         this.mContext = context;
         this.mDevice = device;
     }
 
     @NonNull
     @Override
-    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground() {
         Exception exception = null;
         try {
             final String macAddr = mDevice.getMacAddress();

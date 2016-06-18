@@ -40,14 +40,14 @@ public class RestoreRouterDefaultsAction extends AbstractRouterAction<Void> {
     @NonNull
     private final Context mContext;
 
-    public RestoreRouterDefaultsAction(@NonNull Context context, @Nullable RouterActionListener listener, @NonNull final SharedPreferences globalSharedPreferences) {
-        super(listener, RouterAction.RESTORE_FACTORY_DEFAULTS, globalSharedPreferences);
+    public RestoreRouterDefaultsAction(Router router, @NonNull Context context, @Nullable RouterActionListener listener, @NonNull final SharedPreferences globalSharedPreferences) {
+        super(router, listener, RouterAction.RESTORE_FACTORY_DEFAULTS, globalSharedPreferences);
         this.mContext = context;
     }
 
     @NonNull
     @Override
-    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground() {
         Exception exception = null;
         try {
             final int exitStatus = SSHUtils

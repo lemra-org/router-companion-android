@@ -72,14 +72,11 @@ public class ImportAliasesDialogFragment extends DialogFragment {
 
     private static final String LOG_TAG = ImportAliasesDialogFragment.class.getSimpleName();
     private static final int READ_REQUEST_CODE = 52;
-
+    File tempFile = null;
     private Router mRouter;
     private ManageRouterAliasesActivity mListener = null;
     private InputStream mSelectedBackupInputStream = null;
     private SharedPreferences mRouterPreferences;
-    File tempFile = null;
-
-
     private Cursor mUriCursor = null;
 
     public static ImportAliasesDialogFragment newInstance(@NonNull final String routerUuid) {
@@ -147,7 +144,7 @@ public class ImportAliasesDialogFragment extends DialogFragment {
                                 "- Aliases in the backup file will overwrite those already defined.",
                         mRouter.getDisplayName(), mRouter.getRemoteIpAddress()))
                 .setView(view)
-                        // Add action buttons
+                // Add action buttons
                 .setPositiveButton("Got it! Proceed!", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
@@ -164,26 +161,26 @@ public class ImportAliasesDialogFragment extends DialogFragment {
 
         if (activity instanceof DDWRTMainActivity) {
             builder
-                .setNeutralButton("*Backup*", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dismiss();
+                    .setNeutralButton("*Backup*", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dismiss();
 
-                        final Bundle token = new Bundle();
-                        token.putInt(MAIN_ACTIVITY_ACTION, RouterActions.EXPORT_ALIASES);
-                        token.putInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_MAX_RETRIES, 3);
-                        token.putInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_NB_RETRIES, 0);
+                            final Bundle token = new Bundle();
+                            token.putInt(MAIN_ACTIVITY_ACTION, RouterActions.EXPORT_ALIASES);
+                            token.putInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_MAX_RETRIES, 3);
+                            token.putInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_NB_RETRIES, 0);
 
-                        SnackbarUtils.buildSnackbar(activity,
-                                String.format("Going to start exporting aliases for '%s' (%s)...",
-                                        mRouter.getDisplayName(), mRouter.getRemoteIpAddress()),
-                                "Undo",
-                                Snackbar.LENGTH_SHORT,
-                                (DDWRTMainActivity) activity,
-                                token,
-                                true);
-                    }
-            });
+                            SnackbarUtils.buildSnackbar(activity,
+                                    String.format("Going to start exporting aliases for '%s' (%s)...",
+                                            mRouter.getDisplayName(), mRouter.getRemoteIpAddress()),
+                                    "Undo",
+                                    Snackbar.LENGTH_SHORT,
+                                    (DDWRTMainActivity) activity,
+                                    token,
+                                    true);
+                        }
+                    });
         }
 
         return builder.create();
@@ -280,7 +277,7 @@ public class ImportAliasesDialogFragment extends DialogFragment {
                     final TextView backupFilePath = (TextView) d.findViewById(R.id.router_import_aliases_path);
                     if (!Strings.isNullOrEmpty(filename)) {
                         fileSelectorButton.setHint(filename + " (" +
-                            Utils.toHumanReadableByteCount(fileSize) + ")");
+                                Utils.toHumanReadableByteCount(fileSize) + ")");
                         backupFilePath.setText(filename);
                     } else {
                         backupFilePath.setText(null);
@@ -475,7 +472,7 @@ public class ImportAliasesDialogFragment extends DialogFragment {
                                             //Check whether 'Clear' switch button is checked
                                             final boolean isClearChecked =
                                                     ((SwitchCompat) d.findViewById(R.id.router_import_aliases_clear_aliases))
-                                                    .isChecked();
+                                                            .isChecked();
                                             if (isClearChecked) {
                                                 final Map<String, ?> allRouterPrefs = mRouterPreferences.getAll();
                                                 if (allRouterPrefs == null || allRouterPrefs.isEmpty()) {
@@ -507,9 +504,9 @@ public class ImportAliasesDialogFragment extends DialogFragment {
                                             editor.apply();
 
                                             Utils.displayMessage(activity,
-                                            String.format("Action 'Import Aliases' executed successfully on host '%s'",
-                                                    mRouter.getRemoteIpAddress()),
-                                            Style.CONFIRM);
+                                                    String.format("Action 'Import Aliases' executed successfully on host '%s'",
+                                                            mRouter.getRemoteIpAddress()),
+                                                    Style.CONFIRM);
 
                                             if (mListener != null) {
                                                 mListener.onRefresh();

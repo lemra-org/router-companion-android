@@ -37,15 +37,15 @@ public class ResetBandwidthMonitoringCountersRouterAction extends AbstractRouter
     @NonNull
     private final Context mContext;
 
-    public ResetBandwidthMonitoringCountersRouterAction(@NonNull Context context, @Nullable RouterActionListener listener,
+    public ResetBandwidthMonitoringCountersRouterAction(Router router, @NonNull Context context, @Nullable RouterActionListener listener,
                                                         @NonNull SharedPreferences globalSharedPreferences) {
-        super(listener, RESET_COUNTERS, globalSharedPreferences);
+        super(router, listener, RESET_COUNTERS, globalSharedPreferences);
         this.mContext = context;
     }
 
     @NonNull
     @Override
-    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground() {
         Exception exception = null;
         try {
             final String[] exitStatus = SSHUtils.getManualProperty(mContext, router, globalSharedPreferences,

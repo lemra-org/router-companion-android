@@ -38,26 +38,26 @@ public class ExecStreamableCommandRouterAction extends AbstractRouterAction<Void
     @NonNull
     private final String mCmd;
 
-    protected ExecStreamableCommandRouterAction(@NonNull final RouterAction routerAction, @NonNull Context context, @Nullable RouterStreamActionListener listener,
+    protected ExecStreamableCommandRouterAction(Router router, @NonNull final RouterAction routerAction, @NonNull Context context, @Nullable RouterStreamActionListener listener,
                                                 @NonNull final SharedPreferences globalSharedPreferences,
                                                 @NonNull final String cmd) {
-        super(listener, routerAction, globalSharedPreferences);
+        super(router, listener, routerAction, globalSharedPreferences);
         this.mContext = context;
         this.mCmd = cmd;
     }
 
-    public ExecStreamableCommandRouterAction(@NonNull Context context, @Nullable RouterStreamActionListener listener,
+    public ExecStreamableCommandRouterAction(Router router, @NonNull Context context, @Nullable RouterStreamActionListener listener,
                                              @NonNull final SharedPreferences globalSharedPreferences,
                                              @NonNull final String cmd) {
-        this(RouterAction.CMD_SHELL, context, listener, globalSharedPreferences, cmd);
+        this(router, RouterAction.CMD_SHELL, context, listener, globalSharedPreferences, cmd);
     }
 
     @NonNull
     @Override
-    protected final RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
+    protected final RouterActionResult<Void> doActionInBackground() {
         Exception exception = null;
         try {
-            if (isCancelled()) {
+            if (isCanceled()) {
                 throw new InterruptedException();
             }
             final int exitStatus = SSHUtils.execStreamableCommand(mContext, router, globalSharedPreferences,

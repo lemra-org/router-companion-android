@@ -36,18 +36,18 @@ public class ToggleWirelessRadioRouterAction extends AbstractRouterAction<Void> 
 
     private final boolean mEnable;
 
-    public ToggleWirelessRadioRouterAction(@NonNull Context context,
+    public ToggleWirelessRadioRouterAction(Router router, @NonNull Context context,
                                            @Nullable RouterActionListener listener,
                                            @NonNull final SharedPreferences globalSharedPreferences,
                                            final boolean mEnable) {
-        super(listener, RouterAction.TOGGLE_WL_RADIO, globalSharedPreferences);
+        super(router, listener, RouterAction.TOGGLE_WL_RADIO, globalSharedPreferences);
         this.mContext = context;
         this.mEnable = mEnable;
     }
 
     @NonNull
     @Override
-    protected RouterActionResult<Void> doActionInBackground(@NonNull final Router router) {
+    protected RouterActionResult<Void> doActionInBackground() {
 
         Exception exception = null;
         try {

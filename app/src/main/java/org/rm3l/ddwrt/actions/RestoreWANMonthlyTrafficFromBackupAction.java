@@ -28,17 +28,17 @@ public class RestoreWANMonthlyTrafficFromBackupAction extends AbstractRouterActi
     private final Context mContext;
     private final InputStream mBackupFileInputStream;
 
-    public RestoreWANMonthlyTrafficFromBackupAction(@NonNull Context context, @Nullable RouterActionListener listener,
+    public RestoreWANMonthlyTrafficFromBackupAction(Router router, @NonNull Context context, @Nullable RouterActionListener listener,
                                                     @NonNull final SharedPreferences globalSharedPreferences,
                                                     @NonNull final InputStream backupFileInputStream) {
-        super(listener, RouterAction.RESTORE, globalSharedPreferences);
+        super(router, listener, RouterAction.RESTORE, globalSharedPreferences);
         this.mContext = context;
         this.mBackupFileInputStream = backupFileInputStream;
     }
 
     @NonNull
     @Override
-    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground() {
         Exception exception = null;
         File tempFile = null;
         try {

@@ -30,12 +30,12 @@ public interface DoorbellService {
     })
     @POST("applications/{id}/submit")
     Call<ResponseBody> submitFeedbackForm(@Path("id") final int applicationId,
-                            @Query("key") final String key,
-                            @Query("email") final String email,
-                            @Query("message") final String message,
-                            @Query("name") final String userName,
-                            @Query("properties") final String propertiesJson,
-                            @Query("attachments[]") final String[] attachments);
+                                          @Query("key") final String key,
+                                          @Query("email") final String email,
+                                          @Query("message") final String message,
+                                          @Query("name") final String userName,
+                                          @Query("properties") final String propertiesJson,
+                                          @Query("attachments[]") final String[] attachments);
 
     @Headers({
             "User-Agent: " + BuildConfig.APPLICATION_ID + " v" + BuildConfig.VERSION_NAME
@@ -43,6 +43,6 @@ public interface DoorbellService {
     @Multipart
     @POST("applications/{id}/upload")
     Call<String[]> upload(@Path("id") final int applicationId,
-                            @Query("key") final String key,
+                          @Query("key") final String key,
                           @Part("files[]\"; filename=\"screenshot.png\" ") final RequestBody filename);
 }

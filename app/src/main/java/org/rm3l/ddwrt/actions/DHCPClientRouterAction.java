@@ -15,22 +15,15 @@ public class DHCPClientRouterAction extends AbstractRouterAction<Void> {
 
     public static final int DHCPClientAction_RELEASE = 1;
     public static final int DHCPClientAction_RENEW = 2;
-
-    public enum DHCPClientAction {
-        RELEASE,
-        RENEW
-    }
-
     @NonNull
     private final Context mContext;
-
     private final DHCPClientAction mDhcpClientAction;
 
-    public DHCPClientRouterAction(@NonNull Context context,
-                                           @Nullable RouterActionListener listener,
-                                           @NonNull final SharedPreferences globalSharedPreferences,
-                                           @NonNull final DHCPClientAction dhcpClientAction) {
-        super(listener,
+    public DHCPClientRouterAction(Router router, @NonNull Context context,
+                                  @Nullable RouterActionListener listener,
+                                  @NonNull final SharedPreferences globalSharedPreferences,
+                                  @NonNull final DHCPClientAction dhcpClientAction) {
+        super(router, listener,
                 dhcpClientAction == DHCPClientAction.RELEASE ?
                         RouterAction.DHCP_RELEASE : RouterAction.DHCP_RENEW,
                 globalSharedPreferences);
@@ -40,7 +33,7 @@ public class DHCPClientRouterAction extends AbstractRouterAction<Void> {
 
     @NonNull
     @Override
-    protected RouterActionResult<Void> doActionInBackground(@NonNull final Router router) {
+    protected RouterActionResult<Void> doActionInBackground() {
 
         Exception exception = null;
         try {
@@ -76,5 +69,10 @@ public class DHCPClientRouterAction extends AbstractRouterAction<Void> {
         }
 
         return new RouterActionResult<>(null, exception);
+    }
+
+    public enum DHCPClientAction {
+        RELEASE,
+        RENEW
     }
 }

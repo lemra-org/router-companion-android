@@ -40,17 +40,17 @@ public class EnableWANAccessRouterAction extends AbstractRouterAction<Void> {
     @NonNull
     private final Context mContext;
 
-    public EnableWANAccessRouterAction(@NonNull Context context, @Nullable RouterActionListener listener,
+    public EnableWANAccessRouterAction(Router router, @NonNull Context context, @Nullable RouterActionListener listener,
                                        @NonNull SharedPreferences globalSharedPreferences,
                                        @NonNull Device device) {
-        super(listener, RouterAction.ENABLE_WAN_ACCESS, globalSharedPreferences);
+        super(router, listener, RouterAction.ENABLE_WAN_ACCESS, globalSharedPreferences);
         this.mContext = context;
         this.mDevice = device;
     }
 
     @NonNull
     @Override
-    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground() {
         Exception exception = null;
         try {
             final String macAddr = mDevice.getMacAddress();

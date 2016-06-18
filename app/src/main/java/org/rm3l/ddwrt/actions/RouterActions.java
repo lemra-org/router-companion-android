@@ -33,5 +33,6 @@ public final class RouterActions {
     public static final int EXPORT_ALIASES = 101;
     public static final int IMPORT_ALIASES = 102;
 
-    private RouterActions() {}
+    private RouterActions() {
+    }
 }

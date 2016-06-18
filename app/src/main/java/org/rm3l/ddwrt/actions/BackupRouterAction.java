@@ -31,15 +31,15 @@ public class BackupRouterAction extends AbstractRouterAction<String> {
 
     private Date mBackupDate = null;
 
-    public BackupRouterAction(@NonNull Context context, @Nullable RouterActionListener listener,
+    public BackupRouterAction(Router router, @NonNull Context context, @Nullable RouterActionListener listener,
                               @NonNull final SharedPreferences globalSharedPreferences) {
-        super(listener, RouterAction.BACKUP, globalSharedPreferences);
+        super(router, listener, RouterAction.BACKUP, globalSharedPreferences);
         this.mContext = context;
     }
 
     @NonNull
     @Override
-    protected RouterActionResult<String> doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<String> doActionInBackground() {
         Exception exception = null;
         try {
             mBackupDate = new Date();
@@ -89,6 +89,6 @@ public class BackupRouterAction extends AbstractRouterAction<String> {
     @Nullable
     @Override
     protected Object getDataToReturnOnSuccess() {
-        return new Object[] {mBackupDate, mLocalBackupFilePath};
+        return new Object[]{mBackupDate, mLocalBackupFilePath};
     }
 }

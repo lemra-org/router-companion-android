@@ -35,17 +35,15 @@ public class TogglePhysicalInterfaceStateRouterAction extends AbstractRouterActi
 
     @NonNull
     private final Context mContext;
-
     private final String mPhyIface;
-
     private final PhysicalInterfaceState mState;
 
-    public TogglePhysicalInterfaceStateRouterAction(@NonNull Context context,
+    public TogglePhysicalInterfaceStateRouterAction(Router router, @NonNull Context context,
                                                     @Nullable RouterActionListener listener,
                                                     @NonNull final SharedPreferences globalSharedPreferences,
                                                     @Nullable final String mPhyIface,
                                                     @NonNull final PhysicalInterfaceState mState) {
-        super(listener, RouterAction.TOGGLE_PHY_IFACE_STATE, globalSharedPreferences);
+        super(router, listener, RouterAction.TOGGLE_PHY_IFACE_STATE, globalSharedPreferences);
         this.mContext = context;
         this.mPhyIface = mPhyIface;
         this.mState = mState;
@@ -53,7 +51,7 @@ public class TogglePhysicalInterfaceStateRouterAction extends AbstractRouterActi
 
     @NonNull
     @Override
-    protected RouterActionResult<Void> doActionInBackground(@NonNull final Router router) {
+    protected RouterActionResult<Void> doActionInBackground() {
 
         Exception exception = null;
         try {

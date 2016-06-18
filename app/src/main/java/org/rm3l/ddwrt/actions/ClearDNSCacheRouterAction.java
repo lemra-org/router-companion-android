@@ -34,16 +34,16 @@ public class ClearDNSCacheRouterAction extends AbstractRouterAction<Void> {
     @NonNull
     private final Context mContext;
 
-    public ClearDNSCacheRouterAction(@NonNull Context context,
+    public ClearDNSCacheRouterAction(Router router, @NonNull Context context,
                                      @Nullable RouterActionListener listener,
                                      @NonNull final SharedPreferences globalSharedPreferences) {
-        super(listener, RouterAction.CLEAR_DNS_CACHE, globalSharedPreferences);
+        super(router, listener, RouterAction.CLEAR_DNS_CACHE, globalSharedPreferences);
         this.mContext = context;
     }
 
     @NonNull
     @Override
-    protected RouterActionResult<Void> doActionInBackground(@NonNull final Router router) {
+    protected RouterActionResult<Void> doActionInBackground() {
 
         Exception exception = null;
         try {

@@ -26,12 +26,14 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.rm3l.ddwrt.resources.conn.Router;
+
 public class NsLookupFromRouterAction extends ExecStreamableCommandRouterAction {
 
-    public NsLookupFromRouterAction(@NonNull Context context, @Nullable RouterStreamActionListener listener,
+    public NsLookupFromRouterAction(Router router, @NonNull Context context, @Nullable RouterStreamActionListener listener,
                                     @NonNull final SharedPreferences globalSharedPreferences,
                                     @NonNull final String host) {
-        super(RouterAction.NSLOOKUP, context, listener, globalSharedPreferences,
+        super(router, RouterAction.NSLOOKUP, context, listener, globalSharedPreferences,
                 String.format("/usr/bin/nslookup %s 2>&1", host));
     }
 

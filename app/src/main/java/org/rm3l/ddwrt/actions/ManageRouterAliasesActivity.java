@@ -101,11 +101,11 @@ import static org.rm3l.ddwrt.main.DDWRTMainActivity.MAIN_ACTIVITY_ACTION;
 /**
  * Created by rm3l on 13/12/15.
  */
-public class ManageRouterAliasesActivity 
-    extends AppCompatActivity 
-    implements View.OnClickListener, 
-        SwipeRefreshLayout.OnRefreshListener, 
-        SearchView.OnQueryTextListener, 
+public class ManageRouterAliasesActivity
+        extends AppCompatActivity
+        implements View.OnClickListener,
+        SwipeRefreshLayout.OnRefreshListener,
+        SearchView.OnQueryTextListener,
         SnackbarCallback {
 
     private static final String LOG_TAG = ManageRouterAliasesActivity
@@ -128,6 +128,16 @@ public class ManageRouterAliasesActivity
 
     private Menu optionsMenu;
 
+    private static void displayRouterAliasDialog(final ManageRouterAliasesActivity activity,
+                                                 final String macAddress,
+                                                 final String currentAlias,
+                                                 final DialogInterface.OnClickListener onClickListener) {
+        final AddOrUpdateRouterAliasDialogFragment fragment = AddOrUpdateRouterAliasDialogFragment
+                .newInstance(activity.mRouter, macAddress, currentAlias, onClickListener);
+        fragment.show(activity.getSupportFragmentManager(), ADD_OR_EDIT_ROUTER_ALIAS_FRAGMENT);
+
+    }
+
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             final RouterAliasesListRecyclerViewAdapter adapter =
@@ -136,7 +146,7 @@ public class ManageRouterAliasesActivity
             if (query == null) {
                 adapter.setAliasesColl(FluentIterable.from(
                         Router.getAliases(this, mRouter))
-                .toList());
+                        .toList());
                 adapter.notifyDataSetChanged();
                 return;
             }
@@ -168,7 +178,7 @@ public class ManageRouterAliasesActivity
                 intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
         if (Strings.isNullOrEmpty(routerSelected) ||
                 (mRouter = RouterManagementActivity.getDao(this)
-                    .getRouter(routerSelected)) == null) {
+                        .getRouter(routerSelected)) == null) {
             Toast.makeText(
                     this, "Missing Router - might have been removed?",
                     Toast.LENGTH_SHORT).show();
@@ -186,7 +196,7 @@ public class ManageRouterAliasesActivity
         if (mToolbar != null) {
             mToolbar.setTitle("Manage Aliases");
             mToolbar.setSubtitle(String.format("%s (%s:%d)",
-                    mRouter.getDisplayName(), 
+                    mRouter.getDisplayName(),
                     mRouter.getRemoteIpAddress(),
                     mRouter.getRemotePort()));
             mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
@@ -249,7 +259,7 @@ public class ManageRouterAliasesActivity
             @Override
             public void onScrolled(RecyclerView recyclerView, int firstVisibleItem, int visibleItemCount) {
                 boolean enable = false;
-                if(recyclerView != null && recyclerView.getChildCount() > 0){
+                if (recyclerView != null && recyclerView.getChildCount() > 0) {
                     final LinearLayoutManager layoutManager = (LinearLayoutManager)
                             recyclerView.getLayoutManager();
                     if (layoutManager != null) {
@@ -270,16 +280,6 @@ public class ManageRouterAliasesActivity
 //                super.onScrolled(recyclerView, dx, dy);
             }
         });
-    }
-
-    private static void displayRouterAliasDialog(final ManageRouterAliasesActivity activity,
-                                                 final String macAddress,
-                                          final String currentAlias,
-                                          final DialogInterface.OnClickListener onClickListener) {
-        final AddOrUpdateRouterAliasDialogFragment fragment = AddOrUpdateRouterAliasDialogFragment
-                .newInstance(activity.mRouter, macAddress, currentAlias, onClickListener);
-        fragment.show(activity.getSupportFragmentManager(), ADD_OR_EDIT_ROUTER_ALIAS_FRAGMENT);
-
     }
 
     @Override
@@ -313,7 +313,7 @@ public class ManageRouterAliasesActivity
             public void run() {
                 try {
                     final ImmutableList<Pair<String, String>> allAliases = FluentIterable
-                        .from(Router.getAliases(ManageRouterAliasesActivity.this, mRouter))
+                            .from(Router.getAliases(ManageRouterAliasesActivity.this, mRouter))
                             .toList();
                     ((RouterAliasesListRecyclerViewAdapter) ManageRouterAliasesActivity.this.mAdapter)
                             .setAliasesColl(allAliases);
@@ -391,7 +391,7 @@ public class ManageRouterAliasesActivity
                             public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
                                 //Request permission
                                 ActivityCompat.requestPermissions(ManageRouterAliasesActivity.this,
-                                        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                                         DDWRTCompanionConstants.Permissions.STORAGE);
                             }
 
@@ -415,7 +415,7 @@ public class ManageRouterAliasesActivity
             } else {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
-                        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         DDWRTCompanionConstants.Permissions.STORAGE);
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
@@ -444,8 +444,8 @@ public class ManageRouterAliasesActivity
                     final RouterAliasesListRecyclerViewAdapter adapter =
                             (RouterAliasesListRecyclerViewAdapter) mAdapter;
                     adapter.setAliasesColl(FluentIterable
-                        .from(Router.getAliases(ManageRouterAliasesActivity.this, mRouter))
-                        .toList());
+                            .from(Router.getAliases(ManageRouterAliasesActivity.this, mRouter))
+                            .toList());
                     adapter.notifyDataSetChanged();
                     //Hide it now
                     searchView.setIconified(true);
@@ -497,7 +497,7 @@ public class ManageRouterAliasesActivity
                 break;
         }
     }
-    
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -629,7 +629,7 @@ public class ManageRouterAliasesActivity
                     FluentIterable.from(
                             Router.getAliases(this, mRouter)
                     )
-                    .toList()
+                            .toList()
             );
             adapter.notifyDataSetChanged();
         } else {
@@ -822,9 +822,9 @@ public class ManageRouterAliasesActivity
 
         private final ManageRouterAliasesActivity context;
         private final Filter mFilter;
-        private List<Pair<String, String>> aliasesColl;
         private final Router mRouter;
         private final SharedPreferences mPreferences;
+        private List<Pair<String, String>> aliasesColl;
 
         public RouterAliasesListRecyclerViewAdapter(final ManageRouterAliasesActivity activity,
                                                     final Router mRouter) {
@@ -843,7 +843,7 @@ public class ManageRouterAliasesActivity
                     final List<Pair<String, String>> aliases =
                             FluentIterable
                                     .from(RouterAliasesListRecyclerViewAdapter.this.mRouter
-                                        .getAliases(RouterAliasesListRecyclerViewAdapter.this.context))
+                                            .getAliases(RouterAliasesListRecyclerViewAdapter.this.context))
                                     .toList();
 
                     if (aliases.isEmpty()) {
@@ -884,7 +884,7 @@ public class ManageRouterAliasesActivity
 
                                         return (macouiVendor != null
                                                 && containsIgnoreCase(macouiVendor.getCompany(),
-                                                        constraint));
+                                                constraint));
                                     }
                                 }).toList();
                     }
@@ -921,7 +921,7 @@ public class ManageRouterAliasesActivity
                 //Light
                 cardView.setCardBackgroundColor(ContextCompat
                         .getColor(context, R.color.cardview_light_background));
-            } else  {
+            } else {
                 //Default is Dark
                 cardView.setCardBackgroundColor(ContextCompat
                         .getColor(context, R.color.cardview_dark_background));
@@ -955,7 +955,7 @@ public class ManageRouterAliasesActivity
                     try {
                         final MACOUIVendor macouiVendor =
                                 WirelessClientsTile.mMacOuiVendorLookupCache
-                                    .get(mac);
+                                        .get(mac);
                         context.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -1119,23 +1119,18 @@ public class ManageRouterAliasesActivity
 
         static class ViewHolder extends RecyclerView.ViewHolder {
 
-            private final View itemView;
-
             @NonNull
             final TextView macAddress;
             @NonNull
             final TextView alias;
             final TextView oui;
             final ProgressBar ouiLoadingSpinner;
-
             @NonNull
             final ImageButton removeButton;
-
             @NonNull
             final ImageButton aliasMenu;
-
             final View containerView;
-
+            private final View itemView;
             private final Context mContext;
 
             public ViewHolder(Context context, View itemView) {
@@ -1183,9 +1178,9 @@ public class ManageRouterAliasesActivity
         newInstance(@NonNull final Router router,
                     CharSequence mMacAddr,
                     CharSequence mAlias,
-                    final DialogInterface.OnClickListener onClickListener){
-            final AddOrUpdateRouterAliasDialogFragment addOrUpdateRouterAliasDialogFragment = 
-                new AddOrUpdateRouterAliasDialogFragment();
+                    final DialogInterface.OnClickListener onClickListener) {
+            final AddOrUpdateRouterAliasDialogFragment addOrUpdateRouterAliasDialogFragment =
+                    new AddOrUpdateRouterAliasDialogFragment();
             final Bundle args = new Bundle();
             args.putCharSequence(MAC_ADDRESS, mMacAddr);
             args.putCharSequence(ALIAS, mAlias);
@@ -1248,15 +1243,15 @@ public class ManageRouterAliasesActivity
                     .setIcon(android.R.drawable.stat_sys_warning)
                     .setView(view)
                     // Add action buttons
-                    .setPositiveButton(isNewAlias ? "Set Alias" : "Update Alias", 
-                     new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int id) {
-                            //Do nothing here because we override this button later to change the close behaviour.
-                            //However, we still need this because on older versions of Android unless we
-                            //pass a handler the button doesn't get instantiated
-                        }
-                    })
+                    .setPositiveButton(isNewAlias ? "Set Alias" : "Update Alias",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //Do nothing here because we override this button later to change the close behaviour.
+                                    //However, we still need this because on older versions of Android unless we
+                                    //pass a handler the button doesn't get instantiated
+                                }
+                            })
                     .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             getDialog().cancel();

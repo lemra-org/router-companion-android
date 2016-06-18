@@ -13,7 +13,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -127,7 +126,7 @@ public class RestoreRouterDialogFragment extends DialogFragment {
                                 "you might have to wait some time before connection is re-established.",
                         mRouter.getDisplayName(), mRouter.getRemoteIpAddress()))
                 .setView(view)
-                        // Add action buttons
+                // Add action buttons
                 .setPositiveButton("Got it! Proceed!", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
@@ -247,7 +246,7 @@ public class RestoreRouterDialogFragment extends DialogFragment {
                     final TextView backupFilePath = (TextView) d.findViewById(R.id.router_restore_backup_path);
                     if (!Strings.isNullOrEmpty(filename)) {
                         fileSelectorButton.setHint(filename + " (" +
-                            Utils.toHumanReadableByteCount(fileSize) + ")");
+                                Utils.toHumanReadableByteCount(fileSize) + ")");
                         backupFilePath.setText(filename);
                     } else {
                         backupFilePath.setText(null);
@@ -365,63 +364,57 @@ public class RestoreRouterDialogFragment extends DialogFragment {
                                         false, false);
                         alertDialog.show();
                         ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                        new Handler().postDelayed(new Runnable() {
+                        ActionManager.runTask(new RestoreRouterFromBackupAction(mRouter, activity, new RouterActionListener() {
                             @Override
-                            public void run() {
-                                new RestoreRouterFromBackupAction(activity, new RouterActionListener() {
-                                    @Override
-                                    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
-                                        try {
-                                            Utils.displayMessage(activity,
-                                                    String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
-                                                    Style.CONFIRM);
-                                        } finally {
-                                            alertDialog.cancel();
-                                            //Also dismiss main activity
-                                            dismiss();
-                                        }
+                            public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                                try {
+                                    Utils.displayMessage(activity,
+                                            String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
+                                            Style.CONFIRM);
+                                } finally {
+                                    alertDialog.cancel();
+                                    //Also dismiss main activity
+                                    dismiss();
+                                }
 
-                                    }
-
-                                    @Override
-                                    public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
-                                        try {
-                                            if (mUriCursor != null) {
-                                                mUriCursor.close();
-                                            }
-                                        } catch (Exception e) {
-                                            //No worries
-                                        } finally {
-                                            alertDialog.cancel();
-
-                                            mUriCursor = null;
-
-                                            activity.runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    //Reset everything
-                                                    final Button fileSelectorButton = (Button)
-                                                            d.findViewById(R.id.router_restore_backup_select_button);
-                                                    fileSelectorButton.setHint("Select Backup File to restore");
-                                                    mSelectedBackupInputStream = null;
-                                                    ((TextView) d.findViewById(R.id.router_restore_backup_path)).setText(null);
-                                                    Utils.scrollToView(
-                                                            (ScrollView) d.findViewById(R.id.router_restore_scrollview),
-                                                            fileSelectorButton);
-                                                    fileSelectorButton.requestFocus();
-                                                }
-                                            });
-
-                                            displayMessage(String.format("Error on action '%s': %s", routerAction.toString(),
-                                                    Utils.handleException(exception).first),
-                                                    Style.ALERT);
-
-                                        }
-                                    }
-                                }, mGlobalSharedPreferences, mSelectedBackupInputStream)
-                                        .execute(mRouter);
                             }
-                        }, 2000);
+
+                            @Override
+                            public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                                try {
+                                    if (mUriCursor != null) {
+                                        mUriCursor.close();
+                                    }
+                                } catch (Exception e) {
+                                    //No worries
+                                } finally {
+                                    alertDialog.cancel();
+
+                                    mUriCursor = null;
+
+                                    activity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            //Reset everything
+                                            final Button fileSelectorButton = (Button)
+                                                    d.findViewById(R.id.router_restore_backup_select_button);
+                                            fileSelectorButton.setHint("Select Backup File to restore");
+                                            mSelectedBackupInputStream = null;
+                                            ((TextView) d.findViewById(R.id.router_restore_backup_path)).setText(null);
+                                            Utils.scrollToView(
+                                                    (ScrollView) d.findViewById(R.id.router_restore_scrollview),
+                                                    fileSelectorButton);
+                                            fileSelectorButton.requestFocus();
+                                        }
+                                    });
+
+                                    displayMessage(String.format("Error on action '%s': %s", routerAction.toString(),
+                                            Utils.handleException(exception).first),
+                                            Style.ALERT);
+
+                                }
+                            }
+                        }, mGlobalSharedPreferences, mSelectedBackupInputStream));
                     }
                     ///else dialog stays open. 'Cancel' button can still close it.
                 }

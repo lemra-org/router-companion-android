@@ -26,12 +26,14 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.rm3l.ddwrt.resources.conn.Router;
+
 public class TracerouteFromRouterAction extends ExecStreamableCommandRouterAction {
 
-    public TracerouteFromRouterAction(@NonNull Context context, @Nullable RouterStreamActionListener listener,
+    public TracerouteFromRouterAction(Router router, @NonNull Context context, @Nullable RouterStreamActionListener listener,
                                       @NonNull final SharedPreferences globalSharedPreferences,
                                       @NonNull final String host) {
-        super(RouterAction.TRACEROUTE, context, listener, globalSharedPreferences,
+        super(router, RouterAction.TRACEROUTE, context, listener, globalSharedPreferences,
                 String.format("/usr/bin/traceroute -l -v %s 2>&1", host));
     }
 }
