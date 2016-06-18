@@ -66,29 +66,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <GridLayout
+        <LinearLayout
             android:id="@+id/tile_network_map_gridLayout"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fillViewport="true"
-            android:columnCount="3"
-            android:layout_marginBottom="20dp">
+            android:orientation="vertical">
 
             <!-- Active Clients -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="# Active Clients"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space" />
-
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"
+                android:textAppearance="?android:textAppearanceMedium"/>
             <TextView
                 android:textIsSelectable="true"
                 android:id="@+id/tile_network_map_active_clients"
@@ -105,16 +98,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="# Active DHCP Leases"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space" />
-
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"
+                android:textAppearance="?android:textAppearanceMedium"/>
             <TextView
                 android:textIsSelectable="true"
                 android:id="@+id/tile_network_map_active_dhcp_leases"
@@ -128,7 +114,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <LinearLayout
                 android:id="@+id/tile_network_map_container"
-                android:layout_columnSpan="3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -364,7 +349,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             </LinearLayout>
 
-        </GridLayout>
+        </LinearLayout>
 
         <ProgressBar
             android:id="@+id/tile_network_map_loading_view"
