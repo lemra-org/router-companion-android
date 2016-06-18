@@ -34,6 +34,7 @@ import com.google.common.base.Throwables;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.SetNVRAMVariablesAction;
@@ -560,7 +561,10 @@ public class AccessRestrictionsWANAccessTile extends
                                                         WANAccessPolicy.DENY.equals(wanAccessPolicy.getDenyOrFilter()) ?
                                                                 ENABLE_1 :
                                                                 ENABLE_2;
-                                                new ToggleWANAccessPolicyRouterAction(mParentFragmentActivity,
+                                                ActionManager.runTasks(
+                                                    new ToggleWANAccessPolicyRouterAction(
+                                                        mRouter,
+                                                        mParentFragmentActivity,
                                                         new RouterActionListener() {
                                                             @Override
                                                             public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
@@ -611,7 +615,8 @@ public class AccessRestrictionsWANAccessTile extends
                                                         },
                                                         mGlobalPreferences,
                                                         wanAccessPolicy,
-                                                        enableStatus).execute(mRouter);
+                                                        enableStatus)
+                                                );
                                             }
 
                                             @Override
@@ -673,7 +678,10 @@ public class AccessRestrictionsWANAccessTile extends
                                                 .setProperty("filter_web_host"+wanAccessPolicyNumber, EMPTY_STRING)
                                                 .setProperty("filter_web_url"+wanAccessPolicyNumber, EMPTY_STRING);
 
-                                        new SetNVRAMVariablesAction(mParentFragmentActivity,
+                                        ActionManager.runTasks(
+                                            new SetNVRAMVariablesAction(
+                                                mRouter,
+                                                mParentFragmentActivity,
                                                 nvramVarsToSet,
                                                 false,
                                                 new RouterActionListener() {
@@ -721,7 +729,8 @@ public class AccessRestrictionsWANAccessTile extends
                                                 },
                                                 mGlobalPreferences,
                                                 "/sbin/stopservice firewall",
-                                                "/sbin/startservice firewall").execute(mRouter);
+                                                "/sbin/startservice firewall")
+                                        );
 
                                     }
                                 })

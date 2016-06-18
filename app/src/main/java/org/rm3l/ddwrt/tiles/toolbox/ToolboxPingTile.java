@@ -72,7 +72,7 @@ public class ToolboxPingTile extends AbstractToolboxTile {
             //No worries
         }
 
-        return new PingFromRouterAction(mParentFragmentActivity, mRouterActionListener, mGlobalPreferences,
+        return new PingFromRouterAction(mRouter, mParentFragmentActivity, mRouterActionListener, mGlobalPreferences,
                 textToFind, packetCount);
     }
 

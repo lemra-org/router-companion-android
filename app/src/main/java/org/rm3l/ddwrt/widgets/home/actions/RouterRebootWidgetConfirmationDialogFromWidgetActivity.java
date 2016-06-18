@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Toast;
 
+import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.RebootRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
@@ -60,7 +61,10 @@ public class RouterRebootWidgetConfirmationDialogFromWidgetActivity extends Conf
                     }
                 });
 
-                new RebootRouterAction(RouterRebootWidgetConfirmationDialogFromWidgetActivity.this,
+                ActionManager.runTasks(
+                    new RebootRouterAction(
+                        mRouter,
+                        RouterRebootWidgetConfirmationDialogFromWidgetActivity.this,
                         new RouterActionListener() {
                             @Override
                             public void onRouterActionSuccess(@NonNull final RouterAction routerAction, @NonNull final Router router, Object returnData) {
@@ -90,7 +94,7 @@ public class RouterRebootWidgetConfirmationDialogFromWidgetActivity extends Conf
                             }
                         },
                         RouterRebootWidgetConfirmationDialogFromWidgetActivity.this.getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE))
-                        .execute(mRouter);
+                );
             }
         };
     }

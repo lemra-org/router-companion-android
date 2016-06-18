@@ -74,6 +74,7 @@ import com.google.gson.Gson;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.BackupWANMonthlyTrafficRouterAction;
 import org.rm3l.ddwrt.actions.EraseWANMonthlyTrafficRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
@@ -831,51 +832,48 @@ public class WANMonthlyTrafficTile
                                         null, "Erasing WAN Traffic Data - please hold on...", false, false);
                         alertDialog.show();
                         ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                new EraseWANMonthlyTrafficRouterAction(mParentFragmentActivity,
-                                        new RouterActionListener() {
-                                            @Override
-                                            public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
-                                                try {
-                                                    //dao delete everything
-                                                    dao.deleteWANTrafficDataByRouter(mRouter.getUuid());
-                                                    WANMonthlyTrafficTile.this.onRouterActionSuccess(routerAction, router, returnData);
-                                                }  finally {
-                                                    mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            alertDialog.cancel();
-                                                        }
-                                                    });
+                        ActionManager.runTasks(new EraseWANMonthlyTrafficRouterAction(
+                                mRouter,
+                                mParentFragmentActivity,
+                                new RouterActionListener() {
+                                    @Override
+                                    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                                        try {
+                                            //dao delete everything
+                                            dao.deleteWANTrafficDataByRouter(mRouter.getUuid());
+                                            WANMonthlyTrafficTile.this.onRouterActionSuccess(routerAction, router, returnData);
+                                        }  finally {
+                                            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    alertDialog.cancel();
                                                 }
-                                                if (mLoader != null) {
-                                                    //Reload everything right away
-                                                    doneWithLoaderInstance(WANMonthlyTrafficTile.this,
-                                                            mLoader,
-                                                            1l);
-                                                }
-                                            }
+                                            });
+                                        }
+                                        if (mLoader != null) {
+                                            //Reload everything right away
+                                            doneWithLoaderInstance(WANMonthlyTrafficTile.this,
+                                                    mLoader,
+                                                    1l);
+                                        }
+                                    }
 
-                                            @Override
-                                            public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
-                                                try {
-                                                    WANMonthlyTrafficTile.this.onRouterActionFailure(routerAction, router, exception);
-                                                }  finally {
-                                                    mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            alertDialog.cancel();
-                                                        }
-                                                    });
+                                    @Override
+                                    public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                                        try {
+                                            WANMonthlyTrafficTile.this.onRouterActionFailure(routerAction, router, exception);
+                                        }  finally {
+                                            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    alertDialog.cancel();
                                                 }
+                                            });
+                                        }
 
-                                            }
-                                        }, mGlobalPreferences)
-                                        .execute(mRouter);
-                            }
-                        }, 1500l);
+                                    }
+                                }, mGlobalPreferences)
+                        );
                     }
                         return;
                     case BACKUP_WAN_TRAFF:
@@ -887,108 +885,104 @@ public class WANMonthlyTrafficTile
                                         null, "Backing up WAN Traffic Data - please hold on...", false, false);
                         alertDialog.show();
                         ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                new BackupWANMonthlyTrafficRouterAction(fileType, mParentFragmentActivity,
-                                        new RouterActionListener() {
+                        ActionManager.runTasks(new BackupWANMonthlyTrafficRouterAction(
+                                mRouter,
+                                fileType, mParentFragmentActivity,
+                                new RouterActionListener() {
 
-                                            @Override
-                                            public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
-                                                try {
-                                                    String msg;
-                                                    if (!((returnData instanceof Object[]) &&
-                                                            ((Object[]) returnData).length >= 2)) {
-                                                        msg = String.format("Action '%s' executed " +
-                                                                        "successfully on host '%s', but an internal error occurred. " +
-                                                                        "The issue will be reported. Please try again later.",
-                                                                routerAction.toString(),
-                                                                router.getRemoteIpAddress());
-                                                        Utils.displayMessage(mParentFragmentActivity,
-                                                                msg,
-                                                                Style.INFO);
-                                                        Utils.reportException(null, new IllegalStateException(msg));
-                                                        return;
-                                                    }
-
-                                                    final Object[] returnDataObjectArray = ((Object[]) returnData);
-                                                    final Object backupDateObject = returnDataObjectArray[0];
-                                                    final Object localBackupFileObject = returnDataObjectArray[1];
-
-                                                    if (!((backupDateObject instanceof Date) &&
-                                                            (localBackupFileObject instanceof File))) {
-                                                        msg = String.format("Action '%s' executed " +
-                                                                        "successfully on host '%s', but could not determine where " +
-                                                                        "local backup file has been saved. Please try again later.",
-                                                                routerAction.toString(),
-                                                                router.getRemoteIpAddress());
-                                                        Utils.displayMessage(mParentFragmentActivity,
-                                                                msg,
-                                                                Style.INFO);
-                                                        Utils.reportException(null, new IllegalStateException(msg));
-                                                        return;
-                                                    }
-
-                                                    Utils.displayMessage(mParentFragmentActivity,
-                                                            String.format("Action '%s' executed successfully on host '%s'. " +
-                                                                            "Now loading the file sharing activity chooser...",
-                                                                    routerAction.toString(), router.getRemoteIpAddress()),
-                                                            Style.CONFIRM);
-
-                                                    final File localBackupFile = (File) (((Object[]) returnData)[1]);
-                                                    final Date backupDate = (Date) (((Object[]) returnData)[0]);
-
-                                                    final Uri uriForFile = FileProvider.getUriForFile(mParentFragmentActivity,
-                                                            DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
-                                                            localBackupFile);
-                                                    mParentFragmentActivity.grantUriPermission(
-                                                            mParentFragmentActivity.getPackageName(),
-                                                            uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-                                                    final Intent shareIntent = new Intent();
-                                                    shareIntent.setAction(Intent.ACTION_SEND);
-                                                    shareIntent.putExtra(Intent.EXTRA_SUBJECT,
-                                                            String.format("Backup of WAN Monthly Traffic on Router '%s'",
-                                                                    mRouter.getCanonicalHumanReadableName()));
-                                                    shareIntent.setType("text/html");
-                                                    shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
-                                                            ("Backup Date: " + backupDate + "\n\n").replaceAll("\n", "<br/>") +
-                                                                    Utils.getShareIntentFooter()));
-                                                    shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
-                                                    mParentFragmentActivity.startActivity(Intent.createChooser(shareIntent,
-                                                            mParentFragmentActivity.getResources().getText(R.string.share_backup)));
-
-                                                } finally {
-                                                    mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            alertDialog.cancel();
-                                                        }
-                                                    });
-                                                }
+                                    @Override
+                                    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                                        try {
+                                            String msg;
+                                            if (!((returnData instanceof Object[]) &&
+                                                    ((Object[]) returnData).length >= 2)) {
+                                                msg = String.format("Action '%s' executed " +
+                                                                "successfully on host '%s', but an internal error occurred. " +
+                                                                "The issue will be reported. Please try again later.",
+                                                        routerAction.toString(),
+                                                        router.getRemoteIpAddress());
+                                                Utils.displayMessage(mParentFragmentActivity,
+                                                        msg,
+                                                        Style.INFO);
+                                                Utils.reportException(null, new IllegalStateException(msg));
+                                                return;
                                             }
 
-                                            @Override
-                                            public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
-                                                try {
-                                                    Utils.displayMessage(mParentFragmentActivity,
-                                                            String.format("Error on action '%s': %s",
-                                                                    routerAction.toString(),
-                                                                    Utils.handleException(exception).first),
-                                                            Style.ALERT);
-                                                } finally {
-                                                    mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            alertDialog.cancel();
-                                                        }
-                                                    });
-                                                }
+                                            final Object[] returnDataObjectArray = ((Object[]) returnData);
+                                            final Object backupDateObject = returnDataObjectArray[0];
+                                            final Object localBackupFileObject = returnDataObjectArray[1];
+
+                                            if (!((backupDateObject instanceof Date) &&
+                                                    (localBackupFileObject instanceof File))) {
+                                                msg = String.format("Action '%s' executed " +
+                                                                "successfully on host '%s', but could not determine where " +
+                                                                "local backup file has been saved. Please try again later.",
+                                                        routerAction.toString(),
+                                                        router.getRemoteIpAddress());
+                                                Utils.displayMessage(mParentFragmentActivity,
+                                                        msg,
+                                                        Style.INFO);
+                                                Utils.reportException(null, new IllegalStateException(msg));
+                                                return;
                                             }
-                                        }, mGlobalPreferences)
-                                        .execute(mRouter);
-                            }
-                        }, 1500);
+
+                                            Utils.displayMessage(mParentFragmentActivity,
+                                                    String.format("Action '%s' executed successfully on host '%s'. " +
+                                                                    "Now loading the file sharing activity chooser...",
+                                                            routerAction.toString(), router.getRemoteIpAddress()),
+                                                    Style.CONFIRM);
+
+                                            final File localBackupFile = (File) (((Object[]) returnData)[1]);
+                                            final Date backupDate = (Date) (((Object[]) returnData)[0]);
+
+                                            final Uri uriForFile = FileProvider.getUriForFile(mParentFragmentActivity,
+                                                    DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
+                                                    localBackupFile);
+                                            mParentFragmentActivity.grantUriPermission(
+                                                    mParentFragmentActivity.getPackageName(),
+                                                    uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                                            final Intent shareIntent = new Intent();
+                                            shareIntent.setAction(Intent.ACTION_SEND);
+                                            shareIntent.putExtra(Intent.EXTRA_SUBJECT,
+                                                    String.format("Backup of WAN Monthly Traffic on Router '%s'",
+                                                            mRouter.getCanonicalHumanReadableName()));
+                                            shareIntent.setType("text/html");
+                                            shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
+                                                    ("Backup Date: " + backupDate + "\n\n").replaceAll("\n", "<br/>") +
+                                                            Utils.getShareIntentFooter()));
+                                            shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+                                            mParentFragmentActivity.startActivity(Intent.createChooser(shareIntent,
+                                                    mParentFragmentActivity.getResources().getText(R.string.share_backup)));
+
+                                        } finally {
+                                            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    alertDialog.cancel();
+                                                }
+                                            });
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                                        try {
+                                            Utils.displayMessage(mParentFragmentActivity,
+                                                    String.format("Error on action '%s': %s",
+                                                            routerAction.toString(),
+                                                            Utils.handleException(exception).first),
+                                                    Style.ALERT);
+                                        } finally {
+                                            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    alertDialog.cancel();
+                                                }
+                                            });
+                                        }
+                                    }
+                                }, mGlobalPreferences));
                         return;
                     default:
                         break;
@@ -1114,7 +1108,10 @@ public class WANMonthlyTrafficTile
                                                       enable ? "Enabling" : "Disabling"),
                                               Style.INFO);
 
-                                      new SetNVRAMVariablesAction(mParentFragmentActivity,
+                                      ActionManager.runTasks(
+                                        new SetNVRAMVariablesAction(
+                                              mRouter,
+                                              mParentFragmentActivity,
                                               nvramInfoToSet,
                                               false,
                                               new RouterActionListener() {
@@ -1178,10 +1175,8 @@ public class WANMonthlyTrafficTile
                                               }
 
                                               ,
-                                              mGlobalPreferences).
-
-                                              execute(mRouter);
-
+                                              mGlobalPreferences)
+                                      );
                                   }
 
                                   @Override

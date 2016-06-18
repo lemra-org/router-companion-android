@@ -56,7 +56,7 @@ public class ToolboxNsLookupTile extends AbstractToolboxTile {
     @NonNull
     @Override
     protected AbstractRouterAction getRouterAction(String textToFind) {
-        return new NsLookupFromRouterAction(mParentFragmentActivity, mRouterActionListener, mGlobalPreferences, textToFind);
+        return new NsLookupFromRouterAction(mRouter, mParentFragmentActivity, mRouterActionListener, mGlobalPreferences, textToFind);
     }
 
     @Override

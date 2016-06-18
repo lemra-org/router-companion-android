@@ -252,7 +252,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                         //Now send the actual WOL packet
                                         final Device device = new Device(deviceMac);
                                         device.setWolPort(deviceWolPort);
-                                        ActionManager.runTask(
+                                        ActionManager.runTasks(
                                                 new WakeOnLANRouterAction(router, RouterActionsDeepLinkActivity.this,
                                                         routerActionListener,
                                                         globalPrefs,
@@ -481,7 +481,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                                     WANAccessPolicy.DENY.equals(wanAccessPolicy.getDenyOrFilter()) ?
                                                             ENABLE_1 :
                                                             ENABLE_2;
-                                            ActionManager.runTask(
+                                            ActionManager.runTasks(
                                                     new ToggleWANAccessPolicyRouterAction(router, RouterActionsDeepLinkActivity.this,
                                                             routerActionListener,
                                                             globalPrefs,
@@ -548,7 +548,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                 if (routerActionTask == null) {
                     continue;
                 }
-                ActionManager.runTask(routerActionTask);
+                ActionManager.runTasks(routerActionTask);
             }
         }
 

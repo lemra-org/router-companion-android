@@ -47,6 +47,7 @@ import com.google.gson.GsonBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.WakeOnLANRouterAction;
@@ -629,8 +630,10 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                                                                         final AtomicInteger numActionsWithNoSuccess = new AtomicInteger(0);
                                                                         final int totalNumOfDevices = mCurrentDevicesList.size();
 
+                                                                        final WakeOnLANRouterAction[] wolActions = new WakeOnLANRouterAction[totalNumOfDevices];
+                                                                        int i = 0;
                                                                         for (final Device device : mCurrentDevicesList) {
-                                                                            new WakeOnLANRouterAction(mParentFragmentActivity,
+                                                                            wolActions[i++] = new WakeOnLANRouterAction(mRouter, mParentFragmentActivity,
                                                                                     new RouterActionListener() {
                                                                                         @Override
                                                                                         public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
@@ -670,9 +673,9 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                                                                                     mGlobalPreferences,
                                                                                     device,
                                                                                     device.getWolPort(),
-                                                                                    broadcastAddresses.toArray(new String[broadcastAddresses.size()]))
-                                                                                    .execute(mRouter);
+                                                                                    broadcastAddresses.toArray(new String[broadcastAddresses.size()]));
                                                                         }
+                                                                        ActionManager.runTasks(wolActions);
                                                                         break;
                                                                     default:
                                                                         //Ignored
@@ -1141,7 +1144,8 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                     try {
                         switch (RouterAction.valueOf(routerAction)) {
                             case WAKE_ON_LAN:
-                                new WakeOnLANRouterAction(mParentFragmentActivity,
+                                ActionManager.runTasks(
+                                    new WakeOnLANRouterAction(mRouter, mParentFragmentActivity,
                                         new RouterActionListener() {
                                             @Override
                                             public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
@@ -1163,7 +1167,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                                         device,
                                         device.getWolPort(),
                                         broadcastAddresses.toArray(new String[broadcastAddresses.size()]))
-                                        .execute(mRouter);
+                                );
                                 break;
                             default:
                                 //Ignored

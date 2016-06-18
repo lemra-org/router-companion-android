@@ -45,6 +45,7 @@ import com.crashlytics.android.Crashlytics;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.ToggleWirelessRadioRouterAction;
@@ -441,7 +442,10 @@ public class WirelessIfacesTile extends IfacesTile {
                                                       enable ? "Enabling" : "Disabling"),
                                               Style.INFO);
 
-                                      new ToggleWirelessRadioRouterAction(mParentFragmentActivity,
+                                      ActionManager.runTasks(
+                                        new ToggleWirelessRadioRouterAction(
+                                              mRouter,
+                                              mParentFragmentActivity,
                                               new RouterActionListener() {
                                                   @Override
                                                   public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull final Router router, Object returnData) {
@@ -499,9 +503,8 @@ public class WirelessIfacesTile extends IfacesTile {
                                                   }
                                               },
                                               mGlobalPreferences,
-                                              enable).
-                                              execute(mRouter);
-
+                                              enable)
+                                      );
                                   }
 
                                   @Override

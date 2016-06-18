@@ -51,6 +51,7 @@ import com.google.common.collect.Maps;
 import org.apache.commons.io.FileUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.SetNVRAMVariablesAction;
@@ -781,33 +782,42 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     nvramInfo.setProperty(NVRAMInfo.PPTPD_CLIENT_ENABLE, pptpClientStatusToSet);
-                                                    new SetNVRAMVariablesAction(mParentFragmentActivity,
+                                                    ActionManager.runTasks(
+                                                    new SetNVRAMVariablesAction(
+                                                            mRouter,
+                                                            mParentFragmentActivity,
                                                             nvramInfo,
                                                             true,
                                                             OpenVPNClientTile.this,
                                                             mGlobalPreferences)
-                                                            .execute(mRouter);
+                                                    );
                                                 }
                                             }
                                     ).setNegativeButton("No", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    new SetNVRAMVariablesAction(mParentFragmentActivity,
+                                    ActionManager.runTasks(
+                                    new SetNVRAMVariablesAction(
+                                            mRouter,
+                                            mParentFragmentActivity,
                                             nvramInfo,
                                             true,
                                             OpenVPNClientTile.this,
                                             mGlobalPreferences)
-                                            .execute(mRouter);
+                                    );
                                 }
                             }).create().show();
 
                         } else {
-                            new SetNVRAMVariablesAction(mParentFragmentActivity,
+                            ActionManager.runTasks(
+                            new SetNVRAMVariablesAction(
+                                    mRouter,
+                                    mParentFragmentActivity,
                                     nvramInfo,
                                     true,
                                     this,
                                     mGlobalPreferences)
-                                    .execute(mRouter);
+                            );
                         }
                         break;
                     default:
@@ -995,12 +1005,15 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                                                                       Style.INFO);
 
 
-                                                              new SetNVRAMVariablesAction(mParentFragmentActivity,
+                                                              ActionManager.runTasks(
+                                                                new SetNVRAMVariablesAction(
+                                                                      mRouter,
+                                                                      mParentFragmentActivity,
                                                                       nvramInfoToSet,
                                                                       true,
                                                                       listener,
                                                                       mGlobalPreferences)
-                                                                      .execute(mRouter);
+                                                              );
                                                           }
                                                       }
                                               ).setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -1012,12 +1025,15 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                                                                       enable ? "Enabling" : "Disabling"),
                                                               Style.INFO);
 
-                                                      new SetNVRAMVariablesAction(mParentFragmentActivity,
+                                                      ActionManager.runTasks(
+                                                      new SetNVRAMVariablesAction(
+                                                              mRouter,
+                                                              mParentFragmentActivity,
                                                                   nvramInfoToSet,
                                                                   true,
                                                                   listener,
                                                                   mGlobalPreferences)
-                                                              .execute(mRouter);
+                                                      );
                                                   }
                                               }).create().show();
 

@@ -364,7 +364,7 @@ public class RestoreRouterDialogFragment extends DialogFragment {
                                         false, false);
                         alertDialog.show();
                         ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                        ActionManager.runTask(new RestoreRouterFromBackupAction(mRouter, activity, new RouterActionListener() {
+                        ActionManager.runTasks(new RestoreRouterFromBackupAction(mRouter, activity, new RouterActionListener() {
                             @Override
                             public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
                                 try {

@@ -61,6 +61,6 @@ public class ToolboxWhoisTile extends AbstractToolboxTile {
     @NonNull
     @Override
     protected AbstractRouterAction<?> getRouterAction(String textToFind) {
-        return new WhoisFromLocalDeviceAction(mParentFragmentActivity, mRouterActionListener, mGlobalPreferences, textToFind);
+        return new WhoisFromLocalDeviceAction(mRouter, mParentFragmentActivity, mRouterActionListener, mGlobalPreferences, textToFind);
     }
 }

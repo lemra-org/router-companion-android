@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -29,6 +28,7 @@ import com.google.common.base.Strings;
 import com.google.gson.Gson;
 
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.WakeOnLANRouterAction;
@@ -281,15 +281,11 @@ public class AddWOLHostDialogFragment extends DialogFragment {
                             mWaitingDialog.show();
 
                             ((TextView) mWaitingDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    new WakeOnLANRouterAction(getActivity(), getRouterActionListener(), mGlobalPreferences, mDevice,
-                                            mDevice.getWolPort(),
-                                            bcastAddresses.toArray(new String[bcastAddresses.size()]))
-                                            .execute(mRouter);
-                                }
-                            }, 2000);
+                            ActionManager.runTasks(new WakeOnLANRouterAction(
+                                    mRouter,
+                                    getActivity(), getRouterActionListener(), mGlobalPreferences, mDevice,
+                                    mDevice.getWolPort(),
+                                    bcastAddresses.toArray(new String[bcastAddresses.size()])));
                         }
                         ///else dialog stays open. 'Cancel' button can still close it.
                     } catch (final Exception e) {

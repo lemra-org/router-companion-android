@@ -57,6 +57,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.SetNVRAMVariablesAction;
@@ -1058,7 +1059,9 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                                         final PhysicalInterfaceState interfaceState =
                                                 (PhysicalInterfaceState) phyInterfaceStateSer;
 
-                                        new TogglePhysicalInterfaceStateRouterAction(mParentFragmentActivity,
+                                        ActionManager.runTasks(new TogglePhysicalInterfaceStateRouterAction(
+                                                mRouter,
+                                                mParentFragmentActivity,
                                                 new RouterActionListener() {
                                                     @Override
                                                     public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
@@ -1088,8 +1091,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                                                 },
                                                 mGlobalPreferences,
                                                 phyIface,
-                                                interfaceState)
-                                            .execute(mRouter);
+                                                interfaceState));
                                     } catch (IllegalArgumentException | NullPointerException | IllegalStateException e) {
                                         e.printStackTrace();
                                     }
@@ -1290,7 +1292,9 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                             if (nvramInfo == null) {
                                 throw new IllegalStateException("Internal error - please try again later.");
                             }
-                            new SetNVRAMVariablesAction(mParentFragmentActivity,
+                            ActionManager.runTasks(new SetNVRAMVariablesAction(
+                                    mRouter,
+                                    mParentFragmentActivity,
                                     nvramInfo,
                                     false,
                                     this,
@@ -1303,8 +1307,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 //                                    # which simulates the save and apply buttons in the webGUI
 //                                     */
 //                                    "( /sbin/stopservice wan || true ) && sleep 2 && ( /sbin/startservice wan || true )"
-                                    )
-                                    .execute(mRouter);
+                            ));
+
                             break;
                         default:
                             //Ignored

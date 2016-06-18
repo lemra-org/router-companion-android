@@ -21,6 +21,7 @@ import android.widget.Toast;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.AbstractRouterAction;
+import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.ExecStreamableCommandRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterStreamActionListener;
@@ -188,7 +189,7 @@ public class AdminCommandsTile extends DDWRTTile<Void> {
                     button.setEnabled(false);
 
                     mCurrentRouterActionTask = getRouterAction(textToFind);
-                    mCurrentRouterActionTask.execute(mRouter);
+                    ActionManager.runTasks(mCurrentRouterActionTask);
 
                     return true;
                 }
@@ -223,7 +224,7 @@ public class AdminCommandsTile extends DDWRTTile<Void> {
                 button.setEnabled(false);
 
                 mCurrentRouterActionTask = getRouterAction(textToFind);
-                mCurrentRouterActionTask.execute(mRouter);
+                ActionManager.runTasks(mCurrentRouterActionTask);
 
                 cancelButton.setEnabled(true);
             }
@@ -243,7 +244,7 @@ public class AdminCommandsTile extends DDWRTTile<Void> {
             return;
         }
         try {
-            mCurrentRouterActionTask.cancel(true);
+            mCurrentRouterActionTask.cancel();
         } catch (final Exception e) {
             ReportingUtils.reportException(null, e);
         } finally {
@@ -255,7 +256,7 @@ public class AdminCommandsTile extends DDWRTTile<Void> {
 
     @NonNull
     private AbstractRouterAction getRouterAction(String cmdToRun) {
-        return new ExecStreamableCommandRouterAction(mParentFragmentActivity, mRouterActionListener, mGlobalPreferences, cmdToRun);
+        return new ExecStreamableCommandRouterAction(mRouter, mParentFragmentActivity, mRouterActionListener, mGlobalPreferences, cmdToRun);
     }
 
     private void openKeyboard(final TextView mTextView) {

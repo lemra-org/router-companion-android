@@ -66,6 +66,7 @@ import com.google.common.collect.FluentIterable;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.RebootRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
@@ -673,9 +674,10 @@ public class RouterListRecycleViewAdapter extends
                                         }
                                     };
 
-                                    new RebootRouterAction(context,
+                                    ActionManager.runTasks(new RebootRouterAction(mRouter, context,
                                             rebootRouterActionListener,
-                                            mGlobalPreferences).execute(mRouter);
+                                            mGlobalPreferences));
+
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

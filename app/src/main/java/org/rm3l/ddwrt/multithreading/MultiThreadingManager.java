@@ -9,7 +9,9 @@ import needle.Needle;
  */
 public final class MultiThreadingManager {
 
-    private static final String FEEDBACKS_TASK_TYPE = "Feedback";
+    private static final String FEEDBACK_TASK_TYPE = "Feedback";
+    private static final String ACTION_TASK_TYPE = "Action";
+    private static final String MISC_TASK_TYPE = "Misc";
 
     private MultiThreadingManager() {
     }
@@ -17,7 +19,7 @@ public final class MultiThreadingManager {
     public static Executor getFeedbackExecutor() {
         return Needle
                 .onBackgroundThread()
-                .withTaskType("Feedback")
+                .withTaskType(FEEDBACK_TASK_TYPE)
                 //Has to be executed serially, one thread at a time
                 .serially();
     }
@@ -25,7 +27,14 @@ public final class MultiThreadingManager {
     public static Executor getActionExecutor() {
         return Needle
                 .onBackgroundThread()
-                .withTaskType("Action")
+                .withTaskType(ACTION_TASK_TYPE)
                 .withThreadPoolSize(3);
+    }
+
+    public static Executor getMiscTasksExecutor() {
+        return Needle
+                .onBackgroundThread()
+                .withTaskType(MISC_TASK_TYPE)
+                .serially();
     }
 }

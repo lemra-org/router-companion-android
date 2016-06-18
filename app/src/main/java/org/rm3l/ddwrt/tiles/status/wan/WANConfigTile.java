@@ -50,6 +50,7 @@ import com.google.common.base.Throwables;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.DHCPClientRouterAction;
 import org.rm3l.ddwrt.actions.DHCPClientRouterAction.DHCPClientAction;
 import org.rm3l.ddwrt.actions.RouterAction;
@@ -627,7 +628,10 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                                                   String.format("%s WAN DHCP Lease...",
                                                           renew ? "Renewing" : "Releasing"),
                                                   Style.INFO);
-                                          new DHCPClientRouterAction(mParentFragmentActivity,
+                                          ActionManager.runTasks(
+                                            new DHCPClientRouterAction(
+                                                  mRouter,
+                                                  mParentFragmentActivity,
                                                   new RouterActionListener() {
                                                       @Override
                                                       public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull final Router router, Object returnData) {
@@ -681,7 +685,8 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                                                       }
                                                   },
                                                   mGlobalPreferences,
-                                                  dhcpClientRouterAction);
+                                                  dhcpClientRouterAction)
+                                          );
                                       }
 
                                       @Override

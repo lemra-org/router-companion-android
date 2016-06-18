@@ -106,6 +106,7 @@ import org.json.JSONObject;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.about.AboutDialog;
+import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.BackupRouterAction;
 import org.rm3l.ddwrt.actions.ClearARPCacheRouterAction;
 import org.rm3l.ddwrt.actions.ClearDNSCacheRouterAction;
@@ -1428,10 +1429,11 @@ public class DDWRTMainActivity extends AppCompatActivity
 
                             @Override
                             public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
-                                new ClearARPCacheRouterAction(
+                                ActionManager.runTasks(new ClearARPCacheRouterAction(
+                                        mRouter,
                                         DDWRTMainActivity.this,
                                         DDWRTMainActivity.this,
-                                        mGlobalPreferences).execute(mRouter);
+                                        mGlobalPreferences));
                             }
 
                             @Override
@@ -1473,10 +1475,11 @@ public class DDWRTMainActivity extends AppCompatActivity
 
                             @Override
                             public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
-                                new ClearDNSCacheRouterAction(
+                                ActionManager.runTasks(new ClearDNSCacheRouterAction(
+                                        mRouter,
                                         DDWRTMainActivity.this,
                                         DDWRTMainActivity.this,
-                                        mGlobalPreferences).execute(mRouter);
+                                        mGlobalPreferences));
                             }
 
                             @Override
@@ -1536,10 +1539,12 @@ public class DDWRTMainActivity extends AppCompatActivity
 
                             @Override
                             public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
-                                new ManageHTTPdRouterAction(DDWRTMainActivity.this,
+                                ActionManager.runTasks(new ManageHTTPdRouterAction(
+                                        mRouter,
+                                        DDWRTMainActivity.this,
                                         DDWRTMainActivity.this,
                                         mGlobalPreferences,
-                                        action).execute(mRouter);
+                                        action));
                             }
 
                             @Override
@@ -1775,10 +1780,10 @@ public class DDWRTMainActivity extends AppCompatActivity
             try {
                 switch (RouterAction.valueOf(routerAction)) {
                     case REBOOT:
-                        new RebootRouterAction(this, this, mGlobalPreferences).execute(mRouter);
+                        ActionManager.runTasks(new RebootRouterAction(mRouter, this, this, mGlobalPreferences));
                         break;
                     case RESTORE_FACTORY_DEFAULTS:
-                        new RestoreRouterDefaultsAction(this, this, mGlobalPreferences).execute(mRouter);
+                        ActionManager.runTasks(new RestoreRouterDefaultsAction(mRouter, this, this, mGlobalPreferences));
                         break;
                     case UPGRADE_FIRMWARE:
                         //TODO
@@ -1788,117 +1793,113 @@ public class DDWRTMainActivity extends AppCompatActivity
                                 buildAlertDialog(DDWRTMainActivity.this, null, "Backing up - please hold on...", false, false);
                         alertDialog.show();
                         ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                        new Handler().postDelayed(new Runnable() {
+                        ActionManager.runTasks(new BackupRouterAction(
+                                mRouter,
+                                DDWRTMainActivity.this, new RouterActionListener() {
                             @Override
-                            public void run() {
-                                new BackupRouterAction(DDWRTMainActivity.this, new RouterActionListener() {
-                                    @Override
-                                    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
-                                        try {
-                                            String msg;
-                                            if (!((returnData instanceof Object[]) &&
-                                                    ((Object[]) returnData).length >= 2)) {
-                                                msg = String.format("Action '%s' executed " +
-                                                                "successfully on host '%s', but an internal error occurred. " +
-                                                                "The issue will be reported. Please try again later.",
-                                                        routerAction.toString(),
-                                                        router.getRemoteIpAddress());
-                                                Utils.displayMessage(DDWRTMainActivity.this,
-                                                        msg,
-                                                        Style.INFO);
-                                                ReportingUtils.reportException(DDWRTMainActivity.this, new IllegalStateException(msg));
-                                                return;
-                                            }
+                            public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                                try {
+                                    String msg;
+                                    if (!((returnData instanceof Object[]) &&
+                                            ((Object[]) returnData).length >= 2)) {
+                                        msg = String.format("Action '%s' executed " +
+                                                        "successfully on host '%s', but an internal error occurred. " +
+                                                        "The issue will be reported. Please try again later.",
+                                                routerAction.toString(),
+                                                router.getRemoteIpAddress());
+                                        Utils.displayMessage(DDWRTMainActivity.this,
+                                                msg,
+                                                Style.INFO);
+                                        ReportingUtils.reportException(DDWRTMainActivity.this, new IllegalStateException(msg));
+                                        return;
+                                    }
 
-                                            final Object[] returnDataObjectArray = ((Object[]) returnData);
-                                            final Object backupDateObject = returnDataObjectArray[0];
-                                            final Object localBackupFileObject = returnDataObjectArray[1];
+                                    final Object[] returnDataObjectArray = ((Object[]) returnData);
+                                    final Object backupDateObject = returnDataObjectArray[0];
+                                    final Object localBackupFileObject = returnDataObjectArray[1];
 
-                                            if (!((backupDateObject instanceof Date) &&
-                                                    (localBackupFileObject instanceof File))) {
-                                                msg = String.format("Action '%s' executed " +
-                                                                "successfully on host '%s', but could not determine where " +
-                                                                "local backup file has been saved. Please try again later.",
-                                                        routerAction.toString(),
-                                                        router.getRemoteIpAddress());
-                                                Utils.displayMessage(DDWRTMainActivity.this,
-                                                        msg,
-                                                        Style.INFO);
-                                                ReportingUtils.reportException(DDWRTMainActivity.this, new IllegalStateException(msg));
-                                                return;
-                                            }
+                                    if (!((backupDateObject instanceof Date) &&
+                                            (localBackupFileObject instanceof File))) {
+                                        msg = String.format("Action '%s' executed " +
+                                                        "successfully on host '%s', but could not determine where " +
+                                                        "local backup file has been saved. Please try again later.",
+                                                routerAction.toString(),
+                                                router.getRemoteIpAddress());
+                                        Utils.displayMessage(DDWRTMainActivity.this,
+                                                msg,
+                                                Style.INFO);
+                                        ReportingUtils.reportException(DDWRTMainActivity.this, new IllegalStateException(msg));
+                                        return;
+                                    }
 
-                                            Utils.displayMessage(DDWRTMainActivity.this,
-                                                    String.format("Action '%s' executed successfully on host '%s'. " +
+                                    Utils.displayMessage(DDWRTMainActivity.this,
+                                            String.format("Action '%s' executed successfully on host '%s'. " +
                                                             "Now loading the file sharing activity chooser...",
-                                                            routerAction.toString(), router.getRemoteIpAddress()),
-                                                    Style.CONFIRM);
+                                                    routerAction.toString(), router.getRemoteIpAddress()),
+                                            Style.CONFIRM);
 
-                                            final File localBackupFile = (File) (((Object[]) returnData)[1]);
-                                            final Date backupDate = (Date) (((Object[]) returnData)[0]);
+                                    final File localBackupFile = (File) (((Object[]) returnData)[1]);
+                                    final Date backupDate = (Date) (((Object[]) returnData)[0]);
 
-                                            final Uri uriForFile = FileProvider.getUriForFile(DDWRTMainActivity.this,
-                                                    DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
-                                                    localBackupFile);
-                                            grantUriPermission(getPackageName(),
-                                                    uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                    final Uri uriForFile = FileProvider.getUriForFile(DDWRTMainActivity.this,
+                                            DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
+                                            localBackupFile);
+                                    grantUriPermission(getPackageName(),
+                                            uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-                                            final Intent shareIntent = new Intent();
-                                            shareIntent.setAction(Intent.ACTION_SEND);
-                                            shareIntent.putExtra(Intent.EXTRA_SUBJECT,
-                                                    String.format("Backup of Router '%s'",
-                                                            mRouter.getCanonicalHumanReadableName()));
-                                            shareIntent.setType("text/html");
-                                            shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
-                                                    ("Backup Date: " + backupDate + "\n\n" +
-                                                            "You may restore your router later using this Backup Configuration file.\n" +
-                                                            "Restoring can be performed either via the 'DD-WRT Companion' app, or using " +
-                                                            "the Web Management Interface.\n" +
-                                                            "Restoring will overwrite all current configurations " +
-                                                            "with the ones in this backup file.\n" +
-                                                            "\n" +
-                                                            "Please also note that you must only " +
-                                                            "restore configurations with files " +
-                                                            "backed up using the same firmware and " +
-                                                            "the same model of router.\n\n\n").replaceAll("\n", "<br/>") +
-                                                            Utils.getShareIntentFooter()));
-                                            shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+                                    final Intent shareIntent = new Intent();
+                                    shareIntent.setAction(Intent.ACTION_SEND);
+                                    shareIntent.putExtra(Intent.EXTRA_SUBJECT,
+                                            String.format("Backup of Router '%s'",
+                                                    mRouter.getCanonicalHumanReadableName()));
+                                    shareIntent.setType("text/html");
+                                    shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
+                                            ("Backup Date: " + backupDate + "\n\n" +
+                                                    "You may restore your router later using this Backup Configuration file.\n" +
+                                                    "Restoring can be performed either via the 'DD-WRT Companion' app, or using " +
+                                                    "the Web Management Interface.\n" +
+                                                    "Restoring will overwrite all current configurations " +
+                                                    "with the ones in this backup file.\n" +
+                                                    "\n" +
+                                                    "Please also note that you must only " +
+                                                    "restore configurations with files " +
+                                                    "backed up using the same firmware and " +
+                                                    "the same model of router.\n\n\n").replaceAll("\n", "<br/>") +
+                                                    Utils.getShareIntentFooter()));
+                                    shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
 //                                            shareIntent.setType("*/*");
-                                            startActivity(Intent.createChooser(shareIntent,
-                                                    getResources().getText(R.string.share_backup)));
+                                    startActivity(Intent.createChooser(shareIntent,
+                                            getResources().getText(R.string.share_backup)));
 
-                                        } finally {
-                                            runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    alertDialog.cancel();
-                                                }
-                                            });
+                                } finally {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            alertDialog.cancel();
                                         }
-                                    }
-
-                                    @Override
-                                    public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router,
-                                                                      @Nullable Exception exception) {
-                                        try {
-                                            Utils.displayMessage(DDWRTMainActivity.this,
-                                                    String.format("Error on action '%s': %s",
-                                                            routerAction.toString(),
-                                                            Utils.handleException(exception).first),
-                                                    Style.ALERT);
-                                        } finally {
-                                            runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    alertDialog.cancel();
-                                                }
-                                            });
-                                        }
-                                    }
-                                }, mGlobalPreferences)
-                                        .execute(mRouter);
+                                    });
+                                }
                             }
-                        }, 1500);
+
+                            @Override
+                            public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router,
+                                                              @Nullable Exception exception) {
+                                try {
+                                    Utils.displayMessage(DDWRTMainActivity.this,
+                                            String.format("Error on action '%s': %s",
+                                                    routerAction.toString(),
+                                                    Utils.handleException(exception).first),
+                                            Style.ALERT);
+                                } finally {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            alertDialog.cancel();
+                                        }
+                                    });
+                                }
+                            }
+                        }, mGlobalPreferences));
                         break;
                     case RESTORE:
                         //TODO

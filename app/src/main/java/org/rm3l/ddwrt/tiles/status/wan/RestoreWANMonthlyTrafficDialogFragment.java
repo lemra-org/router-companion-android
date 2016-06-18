@@ -13,7 +13,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
@@ -39,6 +38,7 @@ import com.google.common.base.Strings;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.BackupWANMonthlyTrafficRouterAction;
 import org.rm3l.ddwrt.actions.RestoreWANMonthlyTrafficFromBackupAction;
 import org.rm3l.ddwrt.actions.RestoreWANMonthlyTrafficFromBackupAction.AgreementToRestoreWANTraffDataFromBackup;
@@ -387,63 +387,58 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
                                         false, false);
                         alertDialog.show();
                         ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                        new Handler().postDelayed(new Runnable() {
+                        ActionManager.runTasks(new RestoreWANMonthlyTrafficFromBackupAction(
+                                mRouter,
+                                activity, new RouterActionListener() {
                             @Override
-                            public void run() {
-                                new RestoreWANMonthlyTrafficFromBackupAction(activity, new RouterActionListener() {
-                                    @Override
-                                    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
-                                        try {
-                                            Utils.displayMessage(activity,
-                                                    String.format("Action '%s' executed successfully on host '%s'. " +
-                                                                    "Data will refresh upon next sync.",
-                                                            routerAction.toString(), router.getRemoteIpAddress()),
-                                                    Style.CONFIRM);
-                                        } finally {
-                                            alertDialog.cancel();
-                                            //Also dismiss main activity
-                                            dismiss();
-                                        }
+                            public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                                try {
+                                    Utils.displayMessage(activity,
+                                            String.format("Action '%s' executed successfully on host '%s'. " +
+                                                            "Data will refresh upon next sync.",
+                                                    routerAction.toString(), router.getRemoteIpAddress()),
+                                            Style.CONFIRM);
+                                } finally {
+                                    alertDialog.cancel();
+                                    //Also dismiss main activity
+                                    dismiss();
+                                }
 
-                                    }
-
-                                    @Override
-                                    public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
-                                        try {
-                                            if (mUriCursor != null) {
-                                                mUriCursor.close();
-                                            }
-                                        } catch (Exception e) {
-                                            //No worries
-                                        } finally {
-                                            alertDialog.cancel();
-
-                                            mUriCursor = null;
-
-                                            activity.runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    //Reset everything
-                                                    final Button fileSelectorButton = (Button)
-                                                            d.findViewById(R.id.router_restore_backup_select_button);
-                                                    fileSelectorButton.setHint("Select Backup File to restore");
-                                                    mSelectedBackupInputStream = null;
-                                                    ((TextView) d.findViewById(R.id.router_restore_backup_path)).setText(null);
-
-                                                    fileSelectorButton.requestFocus();
-                                                }
-                                            });
-
-                                            displayMessage(String.format("Error on action '%s': %s", routerAction.toString(),
-                                                    Utils.handleException(exception).first),
-                                                    Style.ALERT);
-
-                                        }
-                                    }
-                                }, mGlobalSharedPreferences, mSelectedBackupInputStream)
-                                        .execute(mRouter);
                             }
-                        }, 2000);
+
+                            @Override
+                            public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                                try {
+                                    if (mUriCursor != null) {
+                                        mUriCursor.close();
+                                    }
+                                } catch (Exception e) {
+                                    //No worries
+                                } finally {
+                                    alertDialog.cancel();
+
+                                    mUriCursor = null;
+
+                                    activity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            //Reset everything
+                                            final Button fileSelectorButton = (Button)
+                                                    d.findViewById(R.id.router_restore_backup_select_button);
+                                            fileSelectorButton.setHint("Select Backup File to restore");
+                                            mSelectedBackupInputStream = null;
+                                            ((TextView) d.findViewById(R.id.router_restore_backup_path)).setText(null);
+
+                                            fileSelectorButton.requestFocus();
+                                        }
+                                    });
+
+                                    displayMessage(String.format("Error on action '%s': %s", routerAction.toString(),
+                                            Utils.handleException(exception).first),
+                                            Style.ALERT);
+                                }
+                            }
+                        }, mGlobalSharedPreferences, mSelectedBackupInputStream));
                     }
                     ///else dialog stays open. 'Cancel' button can still close it.
                 }
@@ -481,112 +476,108 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
                                         null, "Backing up WAN Traffic Data - please hold on...", false, false);
                         alertDialog.show();
                         ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                new BackupWANMonthlyTrafficRouterAction(fileType, mCtx,
-                                        new RouterActionListener() {
+                        ActionManager.runTasks(new BackupWANMonthlyTrafficRouterAction(
+                                mRouter,
+                                fileType, mCtx,
+                                new RouterActionListener() {
 
-                                            @Override
-                                            public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
-                                                try {
-                                                    String msg;
-                                                    if (!((returnData instanceof Object[]) &&
-                                                            ((Object[]) returnData).length >= 2)) {
-                                                        msg = String.format("Action '%s' executed " +
-                                                                        "successfully on host '%s', but an internal error occurred. " +
-                                                                        "The issue will be reported. Please try again later.",
-                                                                routerAction.toString(),
-                                                                router.getRemoteIpAddress());
-                                                        Utils.displayMessage(mCtx,
-                                                                msg,
-                                                                Style.INFO);
-                                                        Utils.reportException(null, new IllegalStateException(msg));
-                                                        return;
-                                                    }
-
-                                                    final Object[] returnDataObjectArray = ((Object[]) returnData);
-                                                    final Object backupDateObject = returnDataObjectArray[0];
-                                                    final Object localBackupFileObject = returnDataObjectArray[1];
-
-                                                    if (!((backupDateObject instanceof Date) &&
-                                                            (localBackupFileObject instanceof File))) {
-                                                        msg = String.format("Action '%s' executed " +
-                                                                        "successfully on host '%s', but could not determine where " +
-                                                                        "local backup file has been saved. Please try again later.",
-                                                                routerAction.toString(),
-                                                                router.getRemoteIpAddress());
-                                                        Utils.displayMessage(mCtx,
-                                                                msg,
-                                                                Style.INFO);
-                                                        Utils.reportException(null, new IllegalStateException(msg));
-                                                        return;
-                                                    }
-
-                                                    Utils.displayMessage(mCtx,
-                                                            String.format("Action '%s' executed successfully on host '%s'. " +
-                                                                            "Now loading the file sharing activity chooser...",
-                                                                    routerAction.toString(), router.getRemoteIpAddress()),
-                                                            Style.CONFIRM);
-
-                                                    final File localBackupFile = (File) (((Object[]) returnData)[1]);
-                                                    final Date backupDate = (Date) (((Object[]) returnData)[0]);
-
-                                                    final Uri uriForFile = FileProvider.getUriForFile(mCtx,
-                                                            DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
-                                                            localBackupFile);
-                                                    mCtx.grantUriPermission(
-                                                            mCtx.getPackageName(),
-                                                            uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-                                                    final Intent shareIntent = new Intent();
-                                                    shareIntent.setAction(Intent.ACTION_SEND);
-                                                    shareIntent.putExtra(Intent.EXTRA_SUBJECT,
-                                                            String.format("Backup of WAN Monthly Traffic on Router '%s'",
-                                                                    mRouter.getCanonicalHumanReadableName()));
-                                                    shareIntent.setType("text/html");
-                                                    shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
-                                                            ("Backup Date: " + backupDate + "\n\n").replaceAll("\n", "<br/>") +
-                                                                    Utils.getShareIntentFooter()));
-                                                    shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
-                                                    mCtx.startActivity(Intent.createChooser(shareIntent,
-                                                            mCtx.getResources().getText(R.string.share_backup)));
-
-                                                } finally {
-                                                    mCtx.runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            alertDialog.cancel();
-                                                        }
-                                                    });
-                                                }
+                                    @Override
+                                    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                                        try {
+                                            String msg;
+                                            if (!((returnData instanceof Object[]) &&
+                                                    ((Object[]) returnData).length >= 2)) {
+                                                msg = String.format("Action '%s' executed " +
+                                                                "successfully on host '%s', but an internal error occurred. " +
+                                                                "The issue will be reported. Please try again later.",
+                                                        routerAction.toString(),
+                                                        router.getRemoteIpAddress());
+                                                Utils.displayMessage(mCtx,
+                                                        msg,
+                                                        Style.INFO);
+                                                Utils.reportException(null, new IllegalStateException(msg));
+                                                return;
                                             }
 
-                                            @Override
-                                            public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
-                                                try {
-                                                    Utils.displayMessage(mCtx,
-                                                            String.format("Error on action '%s': %s",
-                                                                    routerAction.toString(),
-                                                                    Utils.handleException(exception).first),
-                                                            Style.ALERT);
-                                                } finally {
-                                                    mCtx.runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            alertDialog.cancel();
-                                                        }
-                                                    });
-                                                }
+                                            final Object[] returnDataObjectArray = ((Object[]) returnData);
+                                            final Object backupDateObject = returnDataObjectArray[0];
+                                            final Object localBackupFileObject = returnDataObjectArray[1];
+
+                                            if (!((backupDateObject instanceof Date) &&
+                                                    (localBackupFileObject instanceof File))) {
+                                                msg = String.format("Action '%s' executed " +
+                                                                "successfully on host '%s', but could not determine where " +
+                                                                "local backup file has been saved. Please try again later.",
+                                                        routerAction.toString(),
+                                                        router.getRemoteIpAddress());
+                                                Utils.displayMessage(mCtx,
+                                                        msg,
+                                                        Style.INFO);
+                                                Utils.reportException(null, new IllegalStateException(msg));
+                                                return;
                                             }
-                                        },
-                                        mCtx
-                                            .getSharedPreferences(
-                                                    DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                                                    Context.MODE_PRIVATE))
-                                        .execute(mRouter);
-                            }
-                        }, 1500);
+
+                                            Utils.displayMessage(mCtx,
+                                                    String.format("Action '%s' executed successfully on host '%s'. " +
+                                                                    "Now loading the file sharing activity chooser...",
+                                                            routerAction.toString(), router.getRemoteIpAddress()),
+                                                    Style.CONFIRM);
+
+                                            final File localBackupFile = (File) (((Object[]) returnData)[1]);
+                                            final Date backupDate = (Date) (((Object[]) returnData)[0]);
+
+                                            final Uri uriForFile = FileProvider.getUriForFile(mCtx,
+                                                    DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
+                                                    localBackupFile);
+                                            mCtx.grantUriPermission(
+                                                    mCtx.getPackageName(),
+                                                    uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                                            final Intent shareIntent = new Intent();
+                                            shareIntent.setAction(Intent.ACTION_SEND);
+                                            shareIntent.putExtra(Intent.EXTRA_SUBJECT,
+                                                    String.format("Backup of WAN Monthly Traffic on Router '%s'",
+                                                            mRouter.getCanonicalHumanReadableName()));
+                                            shareIntent.setType("text/html");
+                                            shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
+                                                    ("Backup Date: " + backupDate + "\n\n").replaceAll("\n", "<br/>") +
+                                                            Utils.getShareIntentFooter()));
+                                            shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+                                            mCtx.startActivity(Intent.createChooser(shareIntent,
+                                                    mCtx.getResources().getText(R.string.share_backup)));
+
+                                        } finally {
+                                            mCtx.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    alertDialog.cancel();
+                                                }
+                                            });
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                                        try {
+                                            Utils.displayMessage(mCtx,
+                                                    String.format("Error on action '%s': %s",
+                                                            routerAction.toString(),
+                                                            Utils.handleException(exception).first),
+                                                    Style.ALERT);
+                                        } finally {
+                                            mCtx.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    alertDialog.cancel();
+                                                }
+                                            });
+                                        }
+                                    }
+                                },
+                                mCtx
+                                        .getSharedPreferences(
+                                                DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                                                Context.MODE_PRIVATE)));
                         return;
                     default:
                         break;

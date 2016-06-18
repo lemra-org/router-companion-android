@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
 
+import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.WakeOnLANRouterAction;
@@ -125,8 +126,12 @@ public class RouterWolWidgetConfirmationDialogFromWidgetActivity extends Confirm
                 final AtomicInteger numActionsWithNoSuccess = new AtomicInteger(0);
                 final int totalNumOfDevices = mCurrentDevicesList.size();
 
+                final WakeOnLANRouterAction[] wolActions = new WakeOnLANRouterAction[totalNumOfDevices];
+                int i = 0;
                 for (final Device device : mCurrentDevicesList) {
-                    new WakeOnLANRouterAction(RouterWolWidgetConfirmationDialogFromWidgetActivity.this,
+                    wolActions[i++] = new WakeOnLANRouterAction(
+                            mRouter,
+                            RouterWolWidgetConfirmationDialogFromWidgetActivity.this,
                             new RouterActionListener() {
                                 @Override
                                 public void onRouterActionSuccess(@NonNull final RouterAction routerAction, @NonNull final Router router, Object returnData) {
@@ -185,10 +190,9 @@ public class RouterWolWidgetConfirmationDialogFromWidgetActivity extends Confirm
                             getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
                             device,
                             device.getWolPort(),
-                            mBroadcastAddresses)
-                            .execute(mRouter);
+                            mBroadcastAddresses);
                 }
-
+                ActionManager.runTasks(wolActions);
             }
         };
     }

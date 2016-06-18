@@ -47,7 +47,7 @@ public class ToolboxMACOUITile extends AbstractToolboxTile {
     @NonNull
     @Override
     protected AbstractRouterAction<?> getRouterAction(String textToFind) {
-        return new MACOUILookupAction(mParentFragmentActivity, mRouterActionListener, mGlobalPreferences, textToFind);
+        return new MACOUILookupAction(mRouter, mParentFragmentActivity, mRouterActionListener, mGlobalPreferences, textToFind);
     }
 
     @Override

@@ -68,6 +68,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.about.AboutDialog;
+import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.RebootRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
@@ -508,7 +509,8 @@ public class RouterManagementActivity
                                 final int totalNumOfDevices = routersList.size();
 
                                 for (final Router selectedRouter : routersList) {
-                                    new RebootRouterAction(RouterManagementActivity.this,
+                                    ActionManager.runTasks(new RebootRouterAction(selectedRouter,
+                                            RouterManagementActivity.this,
                                             new RouterActionListener() {
                                                 @Override
                                                 public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
@@ -554,7 +556,7 @@ public class RouterManagementActivity
                                                     }
                                                 }
                                             },
-                                            mPreferences).execute(selectedRouter);
+                                            mPreferences));
                                 }
                             }
                         })

@@ -62,6 +62,6 @@ public class ToolboxTracerouteTile extends AbstractToolboxTile {
     @NonNull
     @Override
     protected AbstractRouterAction<?> getRouterAction(String textToFind) {
-        return new TracerouteFromRouterAction(mParentFragmentActivity, mRouterActionListener, mGlobalPreferences, textToFind);
+        return new TracerouteFromRouterAction(mRouter, mParentFragmentActivity, mRouterActionListener, mGlobalPreferences, textToFind);
     }
 }

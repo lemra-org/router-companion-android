@@ -26,6 +26,7 @@ import com.google.common.base.Throwables;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.SetNVRAMVariablesAction;
@@ -600,11 +601,15 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
                                                                       Style.INFO);
 
 
-                                                              new SetNVRAMVariablesAction(mParentFragmentActivity,
+                                                              ActionManager.runTasks(
+                                                                new SetNVRAMVariablesAction(
+                                                                      mRouter,
+                                                                      mParentFragmentActivity,
                                                                       nvramInfoToSet,
                                                                       true,
                                                                       listener,
-                                                                      mGlobalPreferences).execute(mRouter);
+                                                                      mGlobalPreferences)
+                                                              );
                                                           }
                                                       }
                                               ).setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -616,11 +621,15 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
                                                                           enable ? "Enabling" : "Disabling"),
                                                                   Style.INFO);
 
-                                                          new SetNVRAMVariablesAction(mParentFragmentActivity,
+                                                          ActionManager.runTasks(
+                                                            new SetNVRAMVariablesAction(
+                                                                  mRouter,
+                                                                  mParentFragmentActivity,
                                                                   nvramInfoToSet,
                                                                   true,
                                                                   listener,
-                                                                  mGlobalPreferences).execute(mRouter);
+                                                                  mGlobalPreferences)
+                                                          );
                                                       }
                                       }).create().show();
 

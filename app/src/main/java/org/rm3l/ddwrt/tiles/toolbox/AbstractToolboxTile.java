@@ -47,6 +47,7 @@ import com.google.common.base.Throwables;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.AbstractRouterAction;
+import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterStreamActionListener;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
@@ -298,7 +299,7 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                     geolocateButton.setVisibility(View.GONE);
 
                     mCurrentRouterActionTask = getRouterAction(textToFind);
-                    mCurrentRouterActionTask.execute(mRouter);
+                    ActionManager.runTasks(mCurrentRouterActionTask);
 
                     return true;
                 }
@@ -360,7 +361,7 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
 
                 Utils.hideSoftKeyboard(mParentFragmentActivity);
                 mCurrentRouterActionTask = getRouterAction(textToFind);
-                mCurrentRouterActionTask.execute(mRouter);
+                ActionManager.runTasks(mCurrentRouterActionTask);
 
                 cancelButton.setEnabled(true);
             }
@@ -374,7 +375,7 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                     return;
                 }
                 try {
-                    mCurrentRouterActionTask.cancel(true);
+                    mCurrentRouterActionTask.cancel();
                     Toast.makeText(mParentFragmentActivity, "Stopping...", Toast.LENGTH_SHORT)
                             .show();
                 } catch (final Exception e) {
@@ -425,7 +426,7 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
             return;
         }
         try {
-            mCurrentRouterActionTask.cancel(true);
+            mCurrentRouterActionTask.cancel();
         } catch (final Exception e) {
             Utils.reportException(null, e);
         } finally {

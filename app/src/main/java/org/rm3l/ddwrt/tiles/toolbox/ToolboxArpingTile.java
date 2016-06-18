@@ -61,6 +61,6 @@ public class ToolboxArpingTile extends AbstractToolboxTile {
     @NonNull
     @Override
     protected AbstractRouterAction<?> getRouterAction(String textToFind) {
-        return new ArpPingFromRouterAction(mParentFragmentActivity, mRouterActionListener, mGlobalPreferences, textToFind);
+        return new ArpPingFromRouterAction(mRouter, mParentFragmentActivity, mRouterActionListener, mGlobalPreferences, textToFind);
     }
 }

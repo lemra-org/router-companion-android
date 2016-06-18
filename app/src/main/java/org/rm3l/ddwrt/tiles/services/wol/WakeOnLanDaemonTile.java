@@ -26,6 +26,7 @@ import com.google.common.base.Throwables;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.SetNVRAMVariablesAction;
@@ -401,12 +402,14 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
             try {
                 switch (RouterAction.valueOf(routerAction)) {
                     case SET_NVRAM_VARIABLES:
-                        new SetNVRAMVariablesAction(mParentFragmentActivity,
+                        ActionManager.runTasks(
+                        new SetNVRAMVariablesAction(
+                                mRouter,
+                                mParentFragmentActivity,
                                 (NVRAMInfo) token.getSerializable(WOL_DAEMON_NVRAMINFO),
                                 true, //Reboot Router at the end of the operation
                                 this,
-                                mGlobalPreferences)
-                                .execute(mRouter);
+                                mGlobalPreferences));
                         break;
                     default:
                         //Ignored
@@ -519,7 +522,10 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
                                                       enable ? "Enabling" : "Disabling"),
                                               Style.INFO);
 
-                                      new SetNVRAMVariablesAction(mParentFragmentActivity,
+                                      ActionManager.runTasks(
+                                        new SetNVRAMVariablesAction(
+                                              mRouter,
+                                              mParentFragmentActivity,
                                               nvramInfoToSet,
                                               true,
                                               new RouterActionListener() {
@@ -580,9 +586,8 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
                                               }
 
                                               ,
-                                              mGlobalPreferences).
-
-                                              execute(mRouter);
+                                              mGlobalPreferences)
+                                      );
 
                                   }
 

@@ -109,6 +109,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.DisableWANAccessRouterAction;
 import org.rm3l.ddwrt.actions.EnableWANAccessRouterAction;
 import org.rm3l.ddwrt.actions.ResetBandwidthMonitoringCountersRouterAction;
@@ -119,6 +120,7 @@ import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.multithreading.MultiThreadingManager;
 import org.rm3l.ddwrt.resources.ClientDevices;
 import org.rm3l.ddwrt.resources.Device;
 import org.rm3l.ddwrt.resources.MACOUIVendor;
@@ -2815,18 +2817,18 @@ public class WirelessClientsTile
                 try {
                     switch (RouterAction.valueOf(routerAction)) {
                         case RESET_COUNTERS:
-                            new Thread(new Runnable() {
+                            MultiThreadingManager.getMiscTasksExecutor().execute(new Runnable() {
                                 @Override
                                 public void run() {
                                     synchronized (usageDataLock) {
-                                        new ResetBandwidthMonitoringCountersRouterAction(
+                                        ActionManager.runTasks(new ResetBandwidthMonitoringCountersRouterAction(
+                                                mRouter,
                                                 mParentFragmentActivity,
                                                 MenuActionItemClickListener.this,
-                                                mGlobalPreferences)
-                                                .execute(mRouter);
+                                                mGlobalPreferences));
                                     }
                                 }
-                            }).start();
+                            });
                             break;
                         default:
                             //Ignored
@@ -3061,15 +3063,14 @@ public class WirelessClientsTile
                                 Utils.reportException(null, new IllegalStateException("WOL Internal Error: unable to fetch broadcast addresses. Try again later."));
                                 return;
                             }
-                            new WakeOnLANRouterAction(mParentFragmentActivity, this, mGlobalPreferences, device,
-                                    broadcastAddresses.toArray(new String[broadcastAddresses.size()]))
-                                    .execute(mRouter);
+                            ActionManager.runTasks(new WakeOnLANRouterAction(mRouter, mParentFragmentActivity, this, mGlobalPreferences, device,
+                                    broadcastAddresses.toArray(new String[broadcastAddresses.size()])));
                             break;
                         case DISABLE_WAN_ACCESS:
-                            new DisableWANAccessRouterAction(mParentFragmentActivity, this, mGlobalPreferences, device).execute(mRouter);
+                            ActionManager.runTasks(new DisableWANAccessRouterAction(mRouter, mParentFragmentActivity, this, mGlobalPreferences, device));
                             break;
                         case ENABLE_WAN_ACCESS:
-                            new EnableWANAccessRouterAction(mParentFragmentActivity, this, mGlobalPreferences, device).execute(mRouter);
+                            ActionManager.runTasks(new EnableWANAccessRouterAction(mRouter, mParentFragmentActivity, this, mGlobalPreferences, device));
                             break;
                         default:
                             //Ignored
