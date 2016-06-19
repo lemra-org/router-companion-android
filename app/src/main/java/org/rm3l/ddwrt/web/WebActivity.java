@@ -1,14 +1,18 @@
 package org.rm3l.ddwrt.web;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,7 +20,11 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.Window;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -36,7 +44,7 @@ import org.rm3l.ddwrt.utils.Utils;
 /**
  * Created by rm3l on 04/07/15.
  */
-public abstract class WebActivity extends AppCompatActivity {
+public abstract class WebActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     protected Toolbar mToolbar;
 
@@ -44,6 +52,8 @@ public abstract class WebActivity extends AppCompatActivity {
 
     @Nullable
     private InterstitialAd mInterstitialAd;
+    protected SwipeRefreshLayout mSwipeRefreshLayout;
+    protected String mSavedUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,9 +116,20 @@ public abstract class WebActivity extends AppCompatActivity {
             actionBar.setHomeButtonEnabled(true);
         }
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.web_webview_swiperefresh);
+
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+
         mWebview = (WebView) findViewById(R.id.web_webview);
 
-        mWebview.getSettings().setJavaScriptEnabled(true);
+        final WebSettings webSettings = mWebview.getSettings();
+        //FIXME Review
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setSupportZoom(true);
+        webSettings.setBuiltInZoomControls(true);
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setAllowFileAccess(true);
 
         final Activity activity = this;
         mWebview.setWebChromeClient(new WebChromeClient() {
@@ -117,12 +138,69 @@ public abstract class WebActivity extends AppCompatActivity {
                 // The progress meter will automatically disappear when we reach 100%
                 activity.setProgress(progress * 1000);
             }
+
+            @Override
+            public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
+                //TODO
+                return super.onShowFileChooser(webView, filePathCallback, fileChooserParams);
+            }
         });
-        mWebview.setWebViewClient(new WebViewClient() {
+
+        mWebview.setWebViewClient(getWebClient());
+
+        if (this.autoOpenUrl()) {
+            final String url = this.getUrl();
+            if (!TextUtils.isEmpty(url)) {
+                mWebview.loadUrl(url);
+                mSwipeRefreshLayout.setEnabled(true);
+            } else {
+                mSwipeRefreshLayout.setEnabled(false);
+            }
+        } else {
+            mSwipeRefreshLayout.setEnabled(false);
+        }
+    }
+
+    // handling back button
+    @Override
+    public void onBackPressed() {
+        if(mWebview.canGoBack()) {
+            mWebview.goBack();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    protected WebViewClient getWebClient() {
+        final Activity activity = this;
+        return new WebViewClient() {
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                mSwipeRefreshLayout.setRefreshing(true);
+                WebActivity.this.mSavedUrl = url;
+            }
+
+            @Override
+            public void onPageCommitVisible(WebView view, String url) {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                Utils.reportException(null, new WebException(("Error: " + failingUrl + " - errorCode=" + errorCode +
-                        ": " + description)));
+                Utils.reportException(null, new WebException(
+                        "Error: " + failingUrl + " - errorCode=" + errorCode +
+                        ": " + description));
+                Toast.makeText(activity, "Oh no! " + description, Toast.LENGTH_SHORT).show();
+            }
+
+            @TargetApi(Build.VERSION_CODES.M)
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                final CharSequence description = error.getDescription();
+                Utils.reportException(null, new WebException(
+                        "Error: " + request.getUrl() + " - errorCode=" + error.getErrorCode() +
+                        ": " + description));
                 Toast.makeText(activity, "Oh no! " + description, Toast.LENGTH_SHORT).show();
             }
 
@@ -144,12 +222,12 @@ public abstract class WebActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             }
-        });
 
-        final String url = this.getUrl();
-        if (!TextUtils.isEmpty(url)) {
-            mWebview.loadUrl(url);
-        }
+        };
+    }
+
+    protected boolean autoOpenUrl() {
+        return true;
     }
 
     protected abstract CharSequence getTitleStr();
@@ -221,7 +299,11 @@ public abstract class WebActivity extends AppCompatActivity {
         } else {
             super.finish();
         }
+    }
 
+    @Override
+    public void onRefresh() {
+        mWebview.loadUrl(TextUtils.isEmpty(mSavedUrl) ? getUrl() : mSavedUrl);
     }
 
     public static class WebException extends DDWRTCompanionException {

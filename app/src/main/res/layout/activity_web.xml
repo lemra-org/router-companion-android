@@ -51,10 +51,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <WebView
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/web_webview_swiperefresh"
             android:layout_width="match_parent"
-            android:id="@+id/web_webview"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent">
+
+            <WebView
+                android:layout_width="match_parent"
+                android:id="@+id/web_webview"
+                android:layout_height="match_parent"/>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/button_check_updates"

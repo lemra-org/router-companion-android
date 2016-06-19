@@ -461,6 +461,23 @@ public class Router implements Serializable {
                 getRemotePort());
     }
 
+    @NonNull
+    public String getCanonicalHumanReadableNameWithEffectiveInfo(final boolean displayPort) {
+        return getCanonicalHumanReadableNameWithEffectiveInfo(this.context, this, displayPort);
+    }
+
+    @NonNull
+    public static String getCanonicalHumanReadableNameWithEffectiveInfo(
+            final Context ctx, final Router router, final boolean displayPort) {
+        if (Utils.isDemoRouter(router)) {
+            return ("(DEMO) " + router.getDisplayName());
+        }
+        return String.format("%s (%s%s)",
+                router.getDisplayName(),
+                getEffectiveRemoteAddr(router, ctx),
+                displayPort ? (":" + getEffectivePort(router, ctx)) : "");
+    }
+
     /**
      * Set the name
      *

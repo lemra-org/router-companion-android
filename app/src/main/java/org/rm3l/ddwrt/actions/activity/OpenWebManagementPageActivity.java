@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,7 +19,6 @@ import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.CheckBox;
@@ -32,7 +30,6 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -40,6 +37,7 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.multithreading.MultiThreadingManager;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.resources.conn.Router.SSHAuthenticationMethod;
@@ -59,6 +57,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
+import needle.UiRelatedProgressTask;
 
 import static org.rm3l.ddwrt.main.DDWRTMainActivity.SAVE_ROUTER_SELECTED;
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
@@ -86,6 +86,7 @@ public class OpenWebManagementPageActivity extends WebActivity {
             return true;
         }
     };
+    private WebManagementLoaderTask mWebManagementLoaderTask;
 
     /**
      * Trust every server - dont check for any certificate
@@ -146,6 +147,11 @@ public class OpenWebManagementPageActivity extends WebActivity {
     }
 
     @Override
+    protected boolean autoOpenUrl() {
+        return false;
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         if (mRouter != null) {
             savedInstanceState.putString(SAVE_ROUTER_SELECTED, mRouter.getUuid());
@@ -174,19 +180,248 @@ public class OpenWebManagementPageActivity extends WebActivity {
             return;
         }
 
+        mToolbar.setSubtitle(Router
+                .getCanonicalHumanReadableNameWithEffectiveInfo(this, this.mRouter, false));
+
         mWebview.setVisibility(View.GONE);
 
         mErrorTextView = (TextView)
                 findViewById(R.id.error_placeholder);
 
         mLoadingView = findViewById(R.id.loading_view);
-        mLoadingView.setVisibility(View.VISIBLE);
+        if (mLoadingView != null) {
+            mLoadingView.setVisibility(View.VISIBLE);
+        }
 
-        new WebManagementLoaderAsyncTask().execute();
+        this.mWebManagementLoaderTask = new WebManagementLoaderTask();
+        MultiThreadingManager.getMiscTasksExecutor().execute(this.mWebManagementLoaderTask);
     }
 
-    class WebManagementLoaderAsyncTask extends AsyncTask<Void, Void,
-            WebManagementLoaderAsyncTask.Result> {
+    @Override
+    protected WebViewClient getWebClient() {
+        return new WebViewClient() {
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                mSwipeRefreshLayout.setRefreshing(true);
+                OpenWebManagementPageActivity.this.mSavedUrl = url;
+            }
+
+            @Override
+            public void onPageCommitVisible(WebView view, String url) {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+
+            @TargetApi(Build.VERSION_CODES.M)
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                final int errorCode = error.getErrorCode();
+                final CharSequence description = error.getDescription();
+                Crashlytics.log(Log.DEBUG, LOG_TAG,
+                        "GOT Page error : code : " + errorCode + ", Desc : " + description);
+                showError(OpenWebManagementPageActivity.this, errorCode);
+            }
+
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                Utils.reportException(null, new WebException(("Error: " + failingUrl + " - errorCode=" + errorCode +
+                        ": " + description)));
+                Toast.makeText(OpenWebManagementPageActivity.this,
+                        "Oh no! " + description, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                //Case of self-signed certificates
+                handler.proceed();
+            }
+
+            @Override
+            public void onReceivedHttpAuthRequest(WebView view, final HttpAuthHandler handler, String host, String realm) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final LayoutInflater layoutInflater = getLayoutInflater();
+
+                        //If the current SSH authentication method is 'Password' , use that,
+                        // otherwise, ask user to supply such info
+                        String password = null;
+                        if (SSHAuthenticationMethod.PASSWORD
+                                .equals(mRouter.getSshAuthenticationMethod())) {
+                            password = mRouter.getPasswordPlain();
+                        }
+
+                        final View mAuthPromptDialogview = layoutInflater
+                                .inflate(R.layout.activity_open_web_mgmt_interface_http_auth_prompt, null);
+
+                        final ScrollView contentScrollView = (ScrollView) mAuthPromptDialogview.findViewById(R.id.http_auth_prompt_scrollview);
+                        final EditText usernamePrompt = (EditText) mAuthPromptDialogview.findViewById(R.id.http_auth_prompt_username);
+                        final EditText passwordPrompt = (EditText) mAuthPromptDialogview.findViewById(R.id.http_auth_prompt_password);
+
+                        passwordPrompt.setText(password, TextView.BufferType.EDITABLE);
+
+                        final CheckBox showPasswordPrompt = (CheckBox) mAuthPromptDialogview.findViewById(R.id.http_auth_prompt_password_show_checkbox);
+                        showPasswordPrompt
+                                .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                    @Override
+                                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                        if (!isChecked) {
+                                            passwordPrompt.setInputType(
+                                                    InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                                            Utils.scrollToView(contentScrollView, passwordPrompt);
+                                            passwordPrompt.requestFocus();
+                                        } else {
+                                            passwordPrompt.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                                            Utils.scrollToView(contentScrollView, passwordPrompt);
+                                            passwordPrompt.requestFocus();
+                                        }
+                                        passwordPrompt.setSelection(passwordPrompt.length());
+                                    }
+                                });
+
+                        final AlertDialog.Builder httpBasicAuthCredsDialogPrompt =
+                                new AlertDialog.Builder(OpenWebManagementPageActivity.this)
+                                .setTitle(mUrl)
+                                .setView(mAuthPromptDialogview)
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        handler.cancel();
+                                    }
+                                })
+                                .setPositiveButton("Go", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        final String httpUser = usernamePrompt.getText().toString();
+                                        final String httpPassword = passwordPrompt.getText().toString();
+
+//                                        mWebview.setHttpAuthUsernamePassword(mUrl,
+//                                                Strings.nullToEmpty(mRealm), httpUser, httpPassword);
+                                        handler.proceed(httpUser, httpPassword);
+
+//                                        mWebview.loadUrl(mUrl);
+//                                        mLoadingView.setVisibility(View.GONE);
+                                    }
+                                });
+                        httpBasicAuthCredsDialogPrompt.create().show();
+                    }
+                });
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                //Fixes issue https://fabric.io/lemra-inc2/android/apps/org.rm3l.ddwrt/issues/568283d6f5d3a7f76bb8f2dc
+                if (url == null) {
+                    return false;
+                }
+                return false;
+//                        if (Uri.parse(url).getHost().endsWith("rm3l.org")) {
+//                            // This is my web site, so do not override; let my WebView load the page
+//                            return false;
+//                        } else if (url.startsWith("mailto:")){
+//                            startActivity(new Intent(Intent.ACTION_SENDTO, Uri.parse(url)));
+//                            return true;
+//                        }
+//                        // Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
+//                        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+//                        startActivity(intent);
+//                        return true;
+            }
+
+            private void showError(Context mContext, int errorCode) {
+                //Prepare message
+                String message = null;
+                String title = null;
+                if (errorCode == WebViewClient.ERROR_AUTHENTICATION) {
+                    message = "User authentication failed on server";
+                    title = "Auth Error";
+                } else if (errorCode == WebViewClient.ERROR_TIMEOUT) {
+                    message = "The server is taking too much time to communicate. Try again later.";
+                    title = "Connection Timeout";
+                } else if (errorCode == WebViewClient.ERROR_TOO_MANY_REQUESTS) {
+                    message = "Too many requests during this load";
+                    title = "Too Many Requests";
+                } else if (errorCode == WebViewClient.ERROR_UNKNOWN) {
+                    message = "Generic error";
+                    title = "Unknown Error";
+                } else if (errorCode == WebViewClient.ERROR_BAD_URL) {
+                    message = "Check entered URL..";
+                    title = "Malformed URL";
+                } else if (errorCode == WebViewClient.ERROR_CONNECT) {
+                    message = "Failed to connect to the server";
+                    title = "Connection";
+                } else if (errorCode == WebViewClient.ERROR_FAILED_SSL_HANDSHAKE) {
+                    message = "Failed to perform SSL handshake";
+                    title = "SSL Handshake Failed";
+                } else if (errorCode == WebViewClient.ERROR_HOST_LOOKUP) {
+                    message = "Server or proxy hostname lookup failed";
+                    title = "Host Lookup Error";
+                } else if (errorCode == WebViewClient.ERROR_PROXY_AUTHENTICATION) {
+                    message = "User authentication failed on proxy";
+                    title = "Proxy Auth Error";
+                } else if (errorCode == WebViewClient.ERROR_REDIRECT_LOOP) {
+                    message = "Too many redirects";
+                    title = "Redirect Loop Error";
+                } else if (errorCode == WebViewClient.ERROR_UNSUPPORTED_AUTH_SCHEME) {
+                    message = "Unsupported authentication scheme (not basic or digest)";
+                    title = "Auth Scheme Error";
+                } else if (errorCode == WebViewClient.ERROR_UNSUPPORTED_SCHEME) {
+                    message = "Unsupported URI scheme";
+                    title = "URI Scheme Error";
+                } else if (errorCode == WebViewClient.ERROR_FILE) {
+                    message = "Generic file error";
+                    title = "File";
+                } else if (errorCode == WebViewClient.ERROR_FILE_NOT_FOUND) {
+                    message = "File not found";
+                    title = "File";
+                } else if (errorCode == WebViewClient.ERROR_IO) {
+                    message = "The server failed to communicate. Try again later.";
+                    title = "IO Error";
+                }
+
+                if (message != null) {
+                    new AlertDialog.Builder(mContext)
+                            .setMessage(message)
+                            .setTitle(title)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setCancelable(false)
+                            .setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            setResult(RESULT_CANCELED);
+                                        }
+                                    }).show();
+                }
+            }
+        };
+    }
+
+    @Override
+    protected void onPause() {
+        if (mWebManagementLoaderTask != null) {
+            mWebManagementLoaderTask.cancel();
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        if (mWebManagementLoaderTask != null) {
+            mWebManagementLoaderTask.cancel();
+        }
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mWebManagementLoaderTask != null) {
+            mWebManagementLoaderTask.cancel();
+        }
+        super.onDestroy();
+    }
+
+    class WebManagementLoaderTask
+            extends UiRelatedProgressTask<WebManagementLoaderTask.Result, Integer> {
 
         private boolean canConnect(@NonNull final String urlStr)  {
             Crashlytics.log(Log.DEBUG, LOG_TAG, "--> Trying GET '" + urlStr + "'");
@@ -221,7 +456,7 @@ public class OpenWebManagementPageActivity extends WebActivity {
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
-                Crashlytics.log(Log.DEBUG, LOG_TAG, "Didn't succedd in GET'ing " + urlStr);
+                Crashlytics.log(Log.DEBUG, LOG_TAG, "Didn't succeed in GET'ing " + urlStr);
                 return false;
             } finally {
                 if (urlConnection != null) {
@@ -231,13 +466,12 @@ public class OpenWebManagementPageActivity extends WebActivity {
         }
 
         @Override
-        protected Result doInBackground(Void... params) {
+        protected WebManagementLoaderTask.Result doWork() {
             try {
                 final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(
                         OpenWebManagementPageActivity.this,
                         mRouter,
-                        getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
-                                Context.MODE_PRIVATE),
+                        getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
                         LAN_IPADDR,
                         WAN_IPADDR,
                         HTTP_LANPORT,
@@ -313,7 +547,13 @@ public class OpenWebManagementPageActivity extends WebActivity {
         }
 
         @Override
-        protected void onPostExecute(Result result) {
+        protected void onProgressUpdate(Integer integer) {
+
+        }
+
+        @Override
+        protected void thenDoUiRelatedWork(WebManagementLoaderTask.Result result) {
+            mLoadingView.setVisibility(View.GONE);
             final Exception exception = result.getException();
             if (exception != null) {
                 @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
@@ -332,216 +572,12 @@ public class OpenWebManagementPageActivity extends WebActivity {
                     }
                 });
                 mWebview.setVisibility(View.GONE);
-                mLoadingView.setVisibility(View.GONE);
             } else {
                 mWebview.setVisibility(View.VISIBLE);
                 mErrorTextView.setVisibility(View.GONE);
-                final WebSettings webviewSettings = mWebview.getSettings();
-                webviewSettings.setJavaScriptEnabled(true);
-                webviewSettings.setDomStorageEnabled(true);
-                webviewSettings.setSupportZoom(true);
-                webviewSettings.setBuiltInZoomControls(true);
-
-                mWebview.setWebViewClient(new WebViewClient() {
-
-                    @TargetApi(Build.VERSION_CODES.M)
-                    @Override
-                    public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                        final int errorCode = error.getErrorCode();
-                        final CharSequence description = error.getDescription();
-                        Crashlytics.log(Log.DEBUG, LOG_TAG,
-                                "GOT Page error : code : " + errorCode + ", Desc : " + description);
-                        showError(OpenWebManagementPageActivity.this, errorCode);
-                    }
-
-                    @Override
-                    public void onLoadResource(WebView view, String url) {
-                        mLoadingView.setVisibility(View.VISIBLE);
-                        super.onLoadResource(view, url);
-                    }
-
-                    @Override
-                    public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                        mLoadingView.setVisibility(View.VISIBLE);
-                        super.onPageStarted(view, url, favicon);
-                    }
-
-                    @Override
-                    public void onPageFinished(WebView view, String url) {
-                        super.onPageFinished(view, url);
-                        mLoadingView.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                        Utils.reportException(null, new WebException(("Error: " + failingUrl + " - errorCode=" + errorCode +
-                                ": " + description)));
-                        Toast.makeText(OpenWebManagementPageActivity.this,
-                                "Oh no! " + description, Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-                        //Case of self-signed certificates
-                        handler.proceed();
-                    }
-
-                    @Override
-                    public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String host, String realm) {
-                        super.onReceivedHttpAuthRequest(view, handler, host, realm);
-                    }
-
-                    @Override
-                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                        //Fixes issue https://fabric.io/lemra-inc2/android/apps/org.rm3l.ddwrt/issues/568283d6f5d3a7f76bb8f2dc
-                        if (url == null) {
-                            return false;
-                        }
-                        return false;
-//                        if (Uri.parse(url).getHost().endsWith("rm3l.org")) {
-//                            // This is my web site, so do not override; let my WebView load the page
-//                            return false;
-//                        } else if (url.startsWith("mailto:")){
-//                            startActivity(new Intent(Intent.ACTION_SENDTO, Uri.parse(url)));
-//                            return true;
-//                        }
-//                        // Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
-//                        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-//                        startActivity(intent);
-//                        return true;
-                    }
-
-                    private void showError(Context mContext, int errorCode) {
-                        //Prepare message
-                        String message = null;
-                        String title = null;
-                        if (errorCode == WebViewClient.ERROR_AUTHENTICATION) {
-                            message = "User authentication failed on server";
-                            title = "Auth Error";
-                        } else if (errorCode == WebViewClient.ERROR_TIMEOUT) {
-                            message = "The server is taking too much time to communicate. Try again later.";
-                            title = "Connection Timeout";
-                        } else if (errorCode == WebViewClient.ERROR_TOO_MANY_REQUESTS) {
-                            message = "Too many requests during this load";
-                            title = "Too Many Requests";
-                        } else if (errorCode == WebViewClient.ERROR_UNKNOWN) {
-                            message = "Generic error";
-                            title = "Unknown Error";
-                        } else if (errorCode == WebViewClient.ERROR_BAD_URL) {
-                            message = "Check entered URL..";
-                            title = "Malformed URL";
-                        } else if (errorCode == WebViewClient.ERROR_CONNECT) {
-                            message = "Failed to connect to the server";
-                            title = "Connection";
-                        } else if (errorCode == WebViewClient.ERROR_FAILED_SSL_HANDSHAKE) {
-                            message = "Failed to perform SSL handshake";
-                            title = "SSL Handshake Failed";
-                        } else if (errorCode == WebViewClient.ERROR_HOST_LOOKUP) {
-                            message = "Server or proxy hostname lookup failed";
-                            title = "Host Lookup Error";
-                        } else if (errorCode == WebViewClient.ERROR_PROXY_AUTHENTICATION) {
-                            message = "User authentication failed on proxy";
-                            title = "Proxy Auth Error";
-                        } else if (errorCode == WebViewClient.ERROR_REDIRECT_LOOP) {
-                            message = "Too many redirects";
-                            title = "Redirect Loop Error";
-                        } else if (errorCode == WebViewClient.ERROR_UNSUPPORTED_AUTH_SCHEME) {
-                            message = "Unsupported authentication scheme (not basic or digest)";
-                            title = "Auth Scheme Error";
-                        } else if (errorCode == WebViewClient.ERROR_UNSUPPORTED_SCHEME) {
-                            message = "Unsupported URI scheme";
-                            title = "URI Scheme Error";
-                        } else if (errorCode == WebViewClient.ERROR_FILE) {
-                            message = "Generic file error";
-                            title = "File";
-                        } else if (errorCode == WebViewClient.ERROR_FILE_NOT_FOUND) {
-                            message = "File not found";
-                            title = "File";
-                        } else if (errorCode == WebViewClient.ERROR_IO) {
-                            message = "The server failed to communicate. Try again later.";
-                            title = "IO Error";
-                        }
-
-                        if (message != null) {
-                            new AlertDialog.Builder(mContext)
-                                    .setMessage(message)
-                                    .setTitle(title)
-                                    .setIcon(android.R.drawable.ic_dialog_alert)
-                                    .setCancelable(false)
-                                    .setPositiveButton("OK",
-                                            new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int id) {
-                                                    setResult(RESULT_CANCELED);
-                                                    finish();
-                                                }
-                                            }).show();
-                        }
-                    }
-                });
-
-                final LayoutInflater layoutInflater = OpenWebManagementPageActivity.this.getLayoutInflater();
-
-                //If the current SSH authentication method is 'Password' , use that,
-                // otherwise, ask user to supply such info
-                String password = null;
-                if (SSHAuthenticationMethod.PASSWORD
-                        .equals(mRouter.getSshAuthenticationMethod())) {
-                    password = mRouter.getPasswordPlain();
-                }
-                final View view = layoutInflater
-                        .inflate(R.layout.activity_open_web_mgmt_interface_http_auth_prompt, null);
-
-                final ScrollView contentScrollView = (ScrollView) view.findViewById(R.id.http_auth_prompt_scrollview);
-                final EditText usernamePrompt = (EditText) view.findViewById(R.id.http_auth_prompt_username);
-                final EditText passwordPrompt = (EditText) view.findViewById(R.id.http_auth_prompt_password);
-
-                passwordPrompt.setText(password, TextView.BufferType.EDITABLE);
-
-                final CheckBox showPasswordPrompt = (CheckBox) view.findViewById(R.id.http_auth_prompt_password_show_checkbox);
-                showPasswordPrompt
-                        .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                            @Override
-                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                if (!isChecked) {
-                                    passwordPrompt.setInputType(
-                                            InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                                    Utils.scrollToView(contentScrollView, passwordPrompt);
-                                    passwordPrompt.requestFocus();
-                                } else {
-                                    passwordPrompt.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                                    Utils.scrollToView(contentScrollView, passwordPrompt);
-                                    passwordPrompt.requestFocus();
-                                }
-                                passwordPrompt.setSelection(passwordPrompt.length());
-                            }
-                        });
-
-                final AlertDialog.Builder httpBasicAuthCredsDialogPrompt = new AlertDialog.Builder(OpenWebManagementPageActivity.this)
-                        .setTitle(mUrl)
-                        .setView(view)
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                mWebview.loadUrl(mUrl);
-                                mLoadingView.setVisibility(View.GONE);
-                            }
-                        })
-                        .setPositiveButton("Go", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                final String httpUser = usernamePrompt.getText().toString();
-                                final String httpPassword = passwordPrompt.getText().toString();
-
-                                mWebview.setHttpAuthUsernamePassword(mUrl,
-                                        Strings.nullToEmpty(mRealm), httpUser, httpPassword);
-
-                                mWebview.loadUrl(mUrl);
-                                mLoadingView.setVisibility(View.GONE);
-                            }
-                        });
-
-                httpBasicAuthCredsDialogPrompt.create().show();
+                mWebview.loadUrl(mUrl);
             }
+            mSwipeRefreshLayout.setEnabled(true);
         }
 
         class Result {
