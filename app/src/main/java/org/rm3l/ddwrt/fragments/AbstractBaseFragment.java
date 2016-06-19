@@ -115,7 +115,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
-public abstract class AbstractBaseFragment<T> extends Fragment implements LoaderManager.LoaderCallbacks<T>, SwipeRefreshLayout.OnRefreshListener {
+public abstract class AbstractBaseFragment<T> extends Fragment
+        implements LoaderManager.LoaderCallbacks<T>, SwipeRefreshLayout.OnRefreshListener {
 
     public static final String TAB_TITLE = "fragment_tab_title";
     public static final String FRAGMENT_CLASS = "fragment_class";
