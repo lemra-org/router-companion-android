@@ -355,6 +355,7 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                 mRenderer.setExternalZoomEnabled(false);
                 mRenderer.setInScroll(false);
                 mRenderer.setFitLegend(true);
+                mRenderer.setLabelsTextSize(30f);
 
                 final GraphicalView chartView = ChartFactory.getTimeChartView(graphPlaceHolder
                         .getContext(), dataset, mRenderer, null);
