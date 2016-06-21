@@ -57,7 +57,7 @@ public class ChangelogActivity extends WebActivity {
 
     @NonNull
     @Override
-    protected String getUrl() {
+    public String getUrl() {
         return DDWRTCompanionConstants.REMOTE_HELP_WEBSITE_CHANGELOG;
     }
 }

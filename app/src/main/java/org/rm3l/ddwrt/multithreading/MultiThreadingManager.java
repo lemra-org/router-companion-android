@@ -12,6 +12,7 @@ public final class MultiThreadingManager {
     private static final String FEEDBACK_TASK_TYPE = "Feedback";
     private static final String ACTION_TASK_TYPE = "Action";
     private static final String MISC_TASK_TYPE = "Misc";
+    private static final String WEB_TASK_TYPE = "Web";
 
     private MultiThreadingManager() {
     }
@@ -35,6 +36,13 @@ public final class MultiThreadingManager {
         return Needle
                 .onBackgroundThread()
                 .withTaskType(MISC_TASK_TYPE)
+                .serially();
+    }
+
+    public static Executor getWebTasksExecutor() {
+        return Needle
+                .onBackgroundThread()
+                .withTaskType(WEB_TASK_TYPE)
                 .serially();
     }
 

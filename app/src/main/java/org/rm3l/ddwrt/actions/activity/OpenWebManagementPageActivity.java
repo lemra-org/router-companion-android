@@ -47,16 +47,9 @@ import org.rm3l.ddwrt.web.WebActivity;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.List;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 import needle.UiRelatedProgressTask;
 
@@ -72,6 +65,8 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.REMOTE_MGT_HTTPS;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.WAN_IPADDR;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
+import static org.rm3l.ddwrt.web.WebUtils.DO_NOT_VERIFY;
+import static org.rm3l.ddwrt.web.WebUtils.trustAllHosts;
 
 /**
  * Created by rm3l on 08/03/16.
@@ -80,43 +75,7 @@ public class OpenWebManagementPageActivity extends WebActivity {
 
     private static final String LOG_TAG = OpenWebManagementPageActivity.class.getSimpleName();
 
-    // always verify the host - dont check for certificate
-    final static HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
-        public boolean verify(String hostname, SSLSession session) {
-            return true;
-        }
-    };
     private WebManagementLoaderTask mWebManagementLoaderTask;
-
-    /**
-     * Trust every server - dont check for any certificate
-     */
-    private static void trustAllHosts() {
-        // Create a trust manager that does not validate certificate chains
-        TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                return new java.security.cert.X509Certificate[] {};
-            }
-
-            public void checkClientTrusted(X509Certificate[] chain,
-                                           String authType) throws CertificateException {
-            }
-
-            public void checkServerTrusted(X509Certificate[] chain,
-                                           String authType) throws CertificateException {
-            }
-        } };
-
-        // Install the all-trusting trust manager
-        try {
-            SSLContext sc = SSLContext.getInstance("TLS");
-            sc.init(null, trustAllCerts, new java.security.SecureRandom());
-            HttpsURLConnection
-                    .setDefaultSSLSocketFactory(sc.getSocketFactory());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     private View mLoadingView;
 
@@ -142,7 +101,7 @@ public class OpenWebManagementPageActivity extends WebActivity {
 
     @NonNull
     @Override
-    protected String getUrl() {
+    public String getUrl() {
         return mUrl;
     }
 

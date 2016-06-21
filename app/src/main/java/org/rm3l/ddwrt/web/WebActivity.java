@@ -239,7 +239,7 @@ public abstract class WebActivity extends AppCompatActivity implements SwipeRefr
     }
 
     @NonNull
-    protected abstract String getUrl();
+    public abstract String getUrl();
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
