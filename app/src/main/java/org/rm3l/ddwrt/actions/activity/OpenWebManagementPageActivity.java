@@ -75,6 +75,8 @@ public class OpenWebManagementPageActivity extends WebActivity {
 
     private static final String LOG_TAG = OpenWebManagementPageActivity.class.getSimpleName();
 
+    public static final String URL_TO_OPEN = "URL_TO_OPEN";
+
     private WebManagementLoaderTask mWebManagementLoaderTask;
 
     private View mLoadingView;
@@ -137,6 +139,10 @@ public class OpenWebManagementPageActivity extends WebActivity {
                     "No router set or router no longer exists", Toast.LENGTH_LONG).show();
             finish();
             return;
+        }
+
+        if (intent.hasExtra(URL_TO_OPEN)) {
+            mUrl = intent.getStringExtra(URL_TO_OPEN);
         }
 
         mToolbar.setSubtitle(Router
@@ -427,6 +433,13 @@ public class OpenWebManagementPageActivity extends WebActivity {
         @Override
         protected WebManagementLoaderTask.Result doWork() {
             try {
+                if (!TextUtils.isEmpty(mUrl)) {
+                    //Skip, as it has already been pre-fetched
+                    if (mUrl.startsWith("https://")) {
+                        trustAllHosts();
+                    }
+                    return new Result(null);
+                }
                 final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(
                         OpenWebManagementPageActivity.this,
                         mRouter,

@@ -22,6 +22,7 @@
 
 package org.rm3l.ddwrt.main;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -145,9 +146,9 @@ import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.StorageUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.customtabs.CustomTabActivityHelper;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
-import org.rm3l.ddwrt.web.WebUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -202,7 +203,7 @@ public class DDWRTMainActivity extends AppCompatActivity
         implements ViewPager.OnPageChangeListener, UndoBarController.AdvancedUndoListener,
         RouterActionListener,
         RouterMgmtDialogListener,
-        RouterRestoreDialogListener, NavigationView.OnNavigationItemSelectedListener, SnackbarCallback {
+        RouterRestoreDialogListener, NavigationView.OnNavigationItemSelectedListener, SnackbarCallback, CustomTabActivityHelper.ConnectionCallback {
 
     public static final String TAG = DDWRTMainActivity.class.getSimpleName();
     public static final String TAB_INDEX = "TAB_INDEX";
@@ -294,6 +295,8 @@ public class DDWRTMainActivity extends AppCompatActivity
 
     private static final Uri BASE_APP_URI = Uri.parse("android-app://" + BuildConfig.APPLICATION_ID +
             "/http/ddwrt-companion.rm3l.org/routers");
+
+    private CustomTabActivityHelper mCustomTabActivityHelper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -425,6 +428,7 @@ public class DDWRTMainActivity extends AppCompatActivity
         mInterstitialAd = AdUtils.requestNewInterstitial(this,
                 R.string.interstitial_ad_unit_id_router_list_to_router_main);
 
+        setupCustomTabHelper(this);
         setUpToolbar();
         setUpViewPager();
         setUpNavDrawer();
@@ -722,21 +726,27 @@ public class DDWRTMainActivity extends AppCompatActivity
                             switch (identifier) {
                                 case 1001:
                                     //Help
-                                    if (WebUtils.isChromeCustomTabsSupported(DDWRTMainActivity.this)) {
-                                        WebUtils.openChromeCustomTab(DDWRTMainActivity.this, null,
-                                                DDWRTCompanionConstants.REMOTE_HELP_WEBSITE, mRouterUuid);
-                                    } else {
-                                        startActivity(new Intent(DDWRTMainActivity.this, HelpActivity.class));
-                                    }
+                                    CustomTabActivityHelper.openCustomTab(DDWRTMainActivity.this, null,
+                                            DDWRTCompanionConstants.REMOTE_HELP_WEBSITE, mRouterUuid, null,
+                                            new CustomTabActivityHelper.CustomTabFallback() {
+                                                @Override
+                                                public void openUri(Activity activity, Uri uri) {
+                                                    activity.startActivity(
+                                                            new Intent(DDWRTMainActivity.this, HelpActivity.class));
+                                                }
+                                            });
                                     break;
                                 case 1002:
                                     //Changelog
-                                    if (WebUtils.isChromeCustomTabsSupported(DDWRTMainActivity.this)) {
-                                        WebUtils.openChromeCustomTab(DDWRTMainActivity.this, null,
-                                                DDWRTCompanionConstants.REMOTE_HELP_WEBSITE_CHANGELOG, mRouterUuid);
-                                    } else {
-                                        startActivity(new Intent(DDWRTMainActivity.this, ChangelogActivity.class));
-                                    }
+                                    CustomTabActivityHelper.openCustomTab(DDWRTMainActivity.this, null,
+                                            DDWRTCompanionConstants.REMOTE_HELP_WEBSITE_CHANGELOG, mRouterUuid, null,
+                                            new CustomTabActivityHelper.CustomTabFallback() {
+                                                @Override
+                                                public void openUri(Activity activity, Uri uri) {
+                                                    activity.startActivity(
+                                                            new Intent(DDWRTMainActivity.this, ChangelogActivity.class));
+                                                }
+                                            });
                                     break;
                                 case 1003:
                                     //Feedback
@@ -977,6 +987,15 @@ public class DDWRTMainActivity extends AppCompatActivity
         Utils.displayRatingBarIfNeeded(this);
     }
 
+    private void setupCustomTabHelper(final CustomTabActivityHelper.ConnectionCallback cb) {
+        mCustomTabActivityHelper = new CustomTabActivityHelper();
+        mCustomTabActivityHelper.setConnectionCallback(cb);
+        mCustomTabActivityHelper.mayLaunchUrl(
+                Uri.parse(DDWRTCompanionConstants.REMOTE_HELP_WEBSITE), null, null);
+        mCustomTabActivityHelper.mayLaunchUrl(
+                Uri.parse(DDWRTCompanionConstants.REMOTE_HELP_WEBSITE_CHANGELOG), null, null);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -989,6 +1008,12 @@ public class DDWRTMainActivity extends AppCompatActivity
             Utils.reportException(this, e);
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mCustomTabActivityHelper.bindCustomTabsService(this);
     }
 
     @Override
@@ -1025,6 +1050,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                 e.printStackTrace();
             } finally {
                 super.onStop();
+                mCustomTabActivityHelper.unbindCustomTabsService(this);
             }
         }
 
@@ -1225,22 +1251,28 @@ public class DDWRTMainActivity extends AppCompatActivity
                 return true;
 
             case R.id.help:
-                if (WebUtils.isChromeCustomTabsSupported(DDWRTMainActivity.this)) {
-                    WebUtils.openChromeCustomTab(DDWRTMainActivity.this, null,
-                            DDWRTCompanionConstants.REMOTE_HELP_WEBSITE, mRouterUuid);
-                } else {
-                    this.startActivity(new Intent(this, HelpActivity.class));
-                }
+                CustomTabActivityHelper.openCustomTab(DDWRTMainActivity.this, null,
+                        DDWRTCompanionConstants.REMOTE_HELP_WEBSITE, mRouterUuid, null,
+                        new CustomTabActivityHelper.CustomTabFallback() {
+                            @Override
+                            public void openUri(Activity activity, Uri uri) {
+                                activity.startActivity(
+                                        new Intent(DDWRTMainActivity.this, HelpActivity.class));
+                            }
+                        });
                 eventMap.put("Menu Item", "Help");
                 ReportingUtils.reportEvent(ReportingUtils.EVENT_MENU_ITEM, eventMap);
                 return true;
             case R.id.changelog:
-                if (WebUtils.isChromeCustomTabsSupported(DDWRTMainActivity.this)) {
-                    WebUtils.openChromeCustomTab(DDWRTMainActivity.this, null,
-                            DDWRTCompanionConstants.REMOTE_HELP_WEBSITE_CHANGELOG, mRouterUuid);
-                } else {
-                    this.startActivity(new Intent(this, ChangelogActivity.class));
-                }
+                CustomTabActivityHelper.openCustomTab(DDWRTMainActivity.this, null,
+                        DDWRTCompanionConstants.REMOTE_HELP_WEBSITE_CHANGELOG, mRouterUuid, null,
+                        new CustomTabActivityHelper.CustomTabFallback() {
+                            @Override
+                            public void openUri(Activity activity, Uri uri) {
+                                activity.startActivity(
+                                        new Intent(DDWRTMainActivity.this, ChangelogActivity.class));
+                            }
+                        });
                 eventMap.put("Menu Item", "Changelog");
                 ReportingUtils.reportEvent(ReportingUtils.EVENT_MENU_ITEM, eventMap);
                 return true;
@@ -1277,158 +1309,165 @@ public class DDWRTMainActivity extends AppCompatActivity
                 return true;
             case R.id.action_ddwrt_actions_open_webinterface:
             {
-                //if Chrome Custom tabs are available
-                if (WebUtils.isChromeCustomTabsSupported(this)) {
-                    final ProgressDialog alertDialog = ProgressDialog.show(this,
-                            "Looking for an appropriate IP Address", "Please wait...", true);
-                    MultiThreadingManager.getWebTasksExecutor().execute(new UiRelatedTask<String>() {
+                final ProgressDialog alertDialog = ProgressDialog.show(this,
+                        "Looking for an appropriate IP Address", "Please wait...", true);
+                MultiThreadingManager.getWebTasksExecutor().execute(new UiRelatedTask<String>() {
 
-                        private String mRealm;
+                    private String mRealm;
 
-                        private boolean canConnect(@NonNull final String urlStr) {
-                            Crashlytics.log(Log.DEBUG, TAG, "--> Trying GET '" + urlStr + "'");
-                            HttpURLConnection urlConnection = null;
-                            try {
-                                final URL url = new URL(urlStr + "/Management.asp");
-                                if (url.getProtocol().toLowerCase().equals("https")) {
-                                    trustAllHosts();
-                                    final HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
-                                    https.setHostnameVerifier(DO_NOT_VERIFY);
-                                    urlConnection = https;
-                                } else {
-                                    urlConnection = (HttpURLConnection) url.openConnection();
-                                }
-                                //FIXME Add a user-preference
-                                urlConnection.setConnectTimeout(5000);
-                                final int statusCode = urlConnection.getResponseCode();
-                                String wwwAuthenticateHeaderField = urlConnection
-                                        .getHeaderField("WWW-Authenticate");
-                                if (wwwAuthenticateHeaderField != null) {
-                                    final List<String> stringList =
-                                            Splitter.on("=").omitEmptyStrings().splitToList(wwwAuthenticateHeaderField);
-                                    if (stringList.size() >= 2) {
-                                        final String realm = stringList.get(0);
-                                        if (realm != null) {
-                                            mRealm = realm.replaceAll("\"", "")
-                                                    .replaceAll("'", "");
-                                        }
+                    private boolean canConnect(@NonNull final String urlStr) {
+                        Crashlytics.log(Log.DEBUG, TAG, "--> Trying GET '" + urlStr + "'");
+                        HttpURLConnection urlConnection = null;
+                        try {
+                            final URL url = new URL(urlStr + "/Management.asp");
+                            if (url.getProtocol().toLowerCase().equals("https")) {
+                                trustAllHosts();
+                                final HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
+                                https.setHostnameVerifier(DO_NOT_VERIFY);
+                                urlConnection = https;
+                            } else {
+                                urlConnection = (HttpURLConnection) url.openConnection();
+                            }
+                            //FIXME Add a user-preference
+                            urlConnection.setConnectTimeout(5000);
+                            final int statusCode = urlConnection.getResponseCode();
+                            String wwwAuthenticateHeaderField = urlConnection
+                                    .getHeaderField("WWW-Authenticate");
+                            if (wwwAuthenticateHeaderField != null) {
+                                final List<String> stringList =
+                                        Splitter.on("=").omitEmptyStrings().splitToList(wwwAuthenticateHeaderField);
+                                if (stringList.size() >= 2) {
+                                    final String realm = stringList.get(0);
+                                    if (realm != null) {
+                                        mRealm = realm.replaceAll("\"", "")
+                                                .replaceAll("'", "");
                                     }
                                 }
-                                Crashlytics.log(Log.DEBUG, TAG, "GET " + urlStr + " : " + statusCode);
-                                return true;
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                Crashlytics.log(Log.DEBUG, TAG, "Didn't succeed in GET'ing " + urlStr);
-                                return false;
-                            } finally {
-                                if (urlConnection != null) {
-                                    urlConnection.disconnect();
-                                }
+                            }
+                            Crashlytics.log(Log.DEBUG, TAG, "GET " + urlStr + " : " + statusCode);
+                            return true;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Crashlytics.log(Log.DEBUG, TAG, "Didn't succeed in GET'ing " + urlStr);
+                            return false;
+                        } finally {
+                            if (urlConnection != null) {
+                                urlConnection.disconnect();
                             }
                         }
+                    }
 
-                        @Override
-                        protected String doWork() {
-                            try {
-                                final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(
-                                        DDWRTMainActivity.this,
-                                        mRouter,
-                                        getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
-                                        LAN_IPADDR,
-                                        WAN_IPADDR,
-                                        HTTP_LANPORT,
-                                        HTTP_WANPORT,
-                                        HTTP_USERNAME,
-                                        HTTP_PASSWD,
-                                        HTTPS_ENABLE,
-                                        REMOTE_MGT_HTTPS);
+                    @Override
+                    protected String doWork() {
+                        try {
+                            final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(
+                                    DDWRTMainActivity.this,
+                                    mRouter,
+                                    getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
+                                    LAN_IPADDR,
+                                    WAN_IPADDR,
+                                    HTTP_LANPORT,
+                                    HTTP_WANPORT,
+                                    HTTP_USERNAME,
+                                    HTTP_PASSWD,
+                                    HTTPS_ENABLE,
+                                    REMOTE_MGT_HTTPS);
 
-                                if (nvRamInfoFromRouter == null || nvRamInfoFromRouter.isEmpty()) {
-                                    throw new DDWRTCompanionException(
-                                            "Unable to retrieve info about HTTPd service");
-                                }
+                            if (nvRamInfoFromRouter == null || nvRamInfoFromRouter.isEmpty()) {
+                                throw new DDWRTCompanionException(
+                                        "Unable to retrieve info about HTTPd service");
+                            }
 
-                                String lanUrl = "http";
-                                String wanUrl = "http";
-                                final String lanIpAddr = nvRamInfoFromRouter
-                                        .getProperty(LAN_IPADDR, EMPTY_STRING);
-                                final String lanPort = nvRamInfoFromRouter
-                                        .getProperty(HTTP_LANPORT, EMPTY_STRING);
+                            String lanUrl = "http";
+                            String wanUrl = "http";
+                            final String lanIpAddr = nvRamInfoFromRouter
+                                    .getProperty(LAN_IPADDR, EMPTY_STRING);
+                            final String lanPort = nvRamInfoFromRouter
+                                    .getProperty(HTTP_LANPORT, EMPTY_STRING);
 
-                                final String wanIpAddr = nvRamInfoFromRouter
-                                        .getProperty(WAN_IPADDR, EMPTY_STRING);
-                                final String wanPort = nvRamInfoFromRouter
-                                        .getProperty(HTTP_WANPORT, EMPTY_STRING);
+                            final String wanIpAddr = nvRamInfoFromRouter
+                                    .getProperty(WAN_IPADDR, EMPTY_STRING);
+                            final String wanPort = nvRamInfoFromRouter
+                                    .getProperty(HTTP_WANPORT, EMPTY_STRING);
 
+                            if ("1".equals(nvRamInfoFromRouter.getProperty(HTTPS_ENABLE))) {
+                                lanUrl += "s";
+                            }
+                            if ("1".equals(nvRamInfoFromRouter.getProperty(REMOTE_MGT_HTTPS))) {
+                                wanUrl += "s";
+                            }
+                            lanUrl += ("://" + lanIpAddr + (TextUtils.isEmpty(lanPort) ? "" : (":" + lanPort)));
+                            wanUrl += ("://" + wanIpAddr + (TextUtils.isEmpty(wanPort) ? "" : (":" + wanPort)));
+
+                            String mUrl = null;
+
+                            if (canConnect(lanUrl)) {
+                                mUrl = lanUrl;
+                            } else if (canConnect(wanUrl)) {
+                                mUrl = wanUrl;
+                            } else {
+                                //Try with router IP / DNS
+                                String urlFromRouterRemoteIpOrDns = "http";
+                                final String remoteIpAddress = mRouter.getRemoteIpAddress();
                                 if ("1".equals(nvRamInfoFromRouter.getProperty(HTTPS_ENABLE))) {
-                                    lanUrl += "s";
+                                    urlFromRouterRemoteIpOrDns += "s";
                                 }
-                                if ("1".equals(nvRamInfoFromRouter.getProperty(REMOTE_MGT_HTTPS))) {
-                                    wanUrl += "s";
-                                }
-                                lanUrl += ("://" + lanIpAddr + (TextUtils.isEmpty(lanPort) ? "" : (":" + lanPort)));
-                                wanUrl += ("://" + wanIpAddr + (TextUtils.isEmpty(wanPort) ? "" : (":" + wanPort)));
-
-                                String mUrl = null;
-
-                                if (canConnect(lanUrl)) {
-                                    mUrl = lanUrl;
-                                } else if (canConnect(wanUrl)) {
-                                    mUrl = wanUrl;
+                                urlFromRouterRemoteIpOrDns +=
+                                        ("://" + remoteIpAddress + (TextUtils.isEmpty(lanPort) ? "" : (":" + lanPort)));
+                                if (canConnect(urlFromRouterRemoteIpOrDns)) {
+                                    mUrl = urlFromRouterRemoteIpOrDns;
                                 } else {
-                                    //Try with router IP / DNS
-                                    String urlFromRouterRemoteIpOrDns = "http";
-                                    final String remoteIpAddress = mRouter.getRemoteIpAddress();
-                                    if ("1".equals(nvRamInfoFromRouter.getProperty(HTTPS_ENABLE))) {
+                                    //WAN
+                                    urlFromRouterRemoteIpOrDns = "http";
+                                    if ("1".equals(nvRamInfoFromRouter.getProperty(REMOTE_MGT_HTTPS))) {
                                         urlFromRouterRemoteIpOrDns += "s";
                                     }
                                     urlFromRouterRemoteIpOrDns +=
-                                            ("://" + remoteIpAddress + (TextUtils.isEmpty(lanPort) ? "" : (":" + lanPort)));
+                                            ("://" + remoteIpAddress + (TextUtils.isEmpty(wanPort) ? "" : (":" + wanPort)));
                                     if (canConnect(urlFromRouterRemoteIpOrDns)) {
                                         mUrl = urlFromRouterRemoteIpOrDns;
                                     } else {
-                                        //WAN
-                                        urlFromRouterRemoteIpOrDns = "http";
-                                        if ("1".equals(nvRamInfoFromRouter.getProperty(REMOTE_MGT_HTTPS))) {
-                                            urlFromRouterRemoteIpOrDns += "s";
-                                        }
-                                        urlFromRouterRemoteIpOrDns +=
-                                                ("://" + remoteIpAddress + (TextUtils.isEmpty(wanPort) ? "" : (":" + wanPort)));
-                                        if (canConnect(urlFromRouterRemoteIpOrDns)) {
-                                            mUrl = urlFromRouterRemoteIpOrDns;
-                                        } else {
-                                            //TODO Maybe display dialog where user can explicitly provide the information
-                                            throw new DDWRTCompanionException("Could not connect to router");
-                                        }
+                                        //TODO Maybe display dialog where user can explicitly provide the information
+                                        throw new DDWRTCompanionException("Could not connect to router");
                                     }
                                 }
-                                return mUrl;
-
-                            } catch (final Exception e) {
-                                e.printStackTrace();
-                                return null;
                             }
+                            return mUrl;
+
+                        } catch (final Exception e) {
+                            e.printStackTrace();
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected void thenDoUiRelatedWork(@Nullable final String url) {
+                        alertDialog.cancel();
+                        if (TextUtils.isEmpty(url)) {
+                            Toast.makeText(DDWRTMainActivity.this,
+                                    "Unable to determine an IP address for opening the Web Management Interface",
+                                    Toast.LENGTH_SHORT);
+                            return;
                         }
 
-                        @Override
-                        protected void thenDoUiRelatedWork(@Nullable final String url) {
-                            alertDialog.cancel();
-                            if (TextUtils.isEmpty(url)) {
-                                Toast.makeText(DDWRTMainActivity.this,
-                                        "Unable to determine an IP address for opening the Web Management Interface",
-                                        Toast.LENGTH_SHORT);
-                                return;
-                            }
-                            WebUtils.openChromeCustomTab(DDWRTMainActivity.this, null, url, mRouterUuid);
-                        }
-                    });
+                        CustomTabActivityHelper.openCustomTab(DDWRTMainActivity.this, null,
+                                url, mRouterUuid, null,
+                                new CustomTabActivityHelper.CustomTabFallback() {
+                                    @Override
+                                    public void openUri(Activity activity, Uri uri) {
+                                        //Otherwise, default to a classic WebView implementation
+                                        final Intent webManagementIntent = new Intent(
+                                                DDWRTMainActivity.this, OpenWebManagementPageActivity.class);
+                                        webManagementIntent.putExtra(ROUTER_SELECTED,
+                                                DDWRTMainActivity.this.mRouterUuid);
+                                        webManagementIntent
+                                                .putExtra(OpenWebManagementPageActivity.URL_TO_OPEN, url);
+                                        activity.startActivity(webManagementIntent);
+                                    }
+                                });
 
-                } else {
-                    //Otherwise, default to a classic WebView implementation
-                    final Intent webManagementIntent = new Intent(this, OpenWebManagementPageActivity.class);
-                    webManagementIntent.putExtra(ROUTER_SELECTED, this.mRouterUuid);
-                    this.startActivity(webManagementIntent);
-                }
+                    }
+                });
             }
                 return true;
             case R.id.main_add_shortcut: {
@@ -2312,6 +2351,18 @@ public class DDWRTMainActivity extends AppCompatActivity
     @Override
     public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
 
+    }
+
+    @Override
+    public void onCustomTabsConnected() {
+        //We may make UI changes
+        Crashlytics.log(Log.INFO, TAG, "onCustomTabsConnected");
+    }
+
+    @Override
+    public void onCustomTabsDisconnected() {
+        //We may make UI changes
+        Crashlytics.log(Log.INFO, TAG, "onCustomTabsDisconnected");
     }
 
     public class NetworkChangeReceiver extends BroadcastReceiver {

@@ -7,12 +7,16 @@ import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.Strings;
 
+import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 /**
@@ -190,5 +194,13 @@ public final class SnackbarUtils {
                 callback,
                 bundle,
                 show);
+    }
+
+    public static Snackbar createSnackbar(Context context, View view, String message) {
+        final Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
+        final ViewGroup group = (ViewGroup) snackbar.getView();
+        group.setBackgroundColor(ContextCompat.getColor(context,
+                ColorUtils.isThemeLight(context) ? R.color.lightTheme_primary : R.color.darkTheme_primary));
+        return snackbar;
     }
 }
