@@ -10,10 +10,6 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-/**
- * Created by rm3l on 21/06/16.
- */
-@Deprecated
 public final class WebUtils {
 
     // always verify the host - dont check for certificate
@@ -52,78 +48,5 @@ public final class WebUtils {
             e.printStackTrace();
         }
     }
-//
-//    /**
-//     * Check if Chrome CustomTabs are supported.
-//     * Some devices don't have Chrome or it may not be
-//     * updated to a version where custom tabs is supported.
-//     *
-//     * @param context the context
-//     * @return whether custom tabs are supported
-//     */
-//    public static boolean isChromeCustomTabsSupported(@NonNull final Context context) {
-//        final Intent serviceIntent = new Intent("android.support.customtabs.action.CustomTabsService");
-//        serviceIntent.setPackage("com.android.chrome");
-//
-//        CustomTabsServiceConnection serviceConnection = new CustomTabsServiceConnection() {
-//            @Override
-//            public void onCustomTabsServiceConnected(final ComponentName componentName,
-//                                                     final CustomTabsClient customTabsClient) { }
-//
-//            @Override
-//            public void onServiceDisconnected(final ComponentName name) { }
-//        };
-//
-//        final boolean customTabsSupported =
-//                context.bindService(serviceIntent, serviceConnection,
-//                        Context.BIND_AUTO_CREATE | Context.BIND_WAIVE_PRIORITY);
-//        context.unbindService(serviceConnection);
-//
-//        return customTabsSupported;
-//    }
-//
-//    public static void openChromeCustomTab(@NonNull final Activity context,
-//                                           @Nullable final CustomTabsSession customTabsSession,
-//                                           @NonNull final String url,
-//                                           @Nullable final String routerUuid,
-//                                           @Nullable final String helpLink) {
-//
-//        final CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder(customTabsSession);
-//
-//        builder.setShowTitle(true);
-//        // Changes the background color for the omnibox. colorInt is an int
-//        // that specifies a Color.
-//        builder.setToolbarColor(ContextCompat.getColor(context, ColorUtils.isThemeLight(context) ?
-//                R.color.lightTheme_primary : R.color.darkTheme_primary));
-//
-//        builder.setStartAnimations(this,
-//                R.anim.slide_in_right,
-//                R.anim.slide_out_left);
-//        builder.setExitAnimations(this,
-//                android.R.anim.slide_in_left,
-//                android.R.anim.slide_out_right);
-//
-//        builder.setCloseButtonIcon(BitmapFactory.decodeResource(
-//                context.getResources(), R.drawable.ic_arrow_back_white_24dp));
-//
-//        //Menu items
-//        builder.addDefaultShareMenuItem();
-//
-//        //FIXME Send Feedback
-//        final Intent intent = new Intent(context, SendFeedbackBroadcastReceiver.class);
-//        if (routerUuid != null) {
-//            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
-//        }
-//        builder.addMenuItem("Send Feedback", PendingIntent.getBroadcast(context, 0, intent, 0));
-//
-//        final CustomTabsIntent customTabsIntent = builder.build();
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-//                //Add app as the referrer
-//                customTabsIntent.intent.putExtra(Intent.EXTRA_REFERRER,
-//                        Uri.parse(Intent.URI_ANDROID_APP_SCHEME + "//" + context.getPackageName()));
-//            }
-//        }
-//        customTabsIntent.launchUrl(context, Uri.parse(url));
-//    }
+
 }
