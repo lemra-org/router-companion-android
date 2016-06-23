@@ -27,6 +27,7 @@ buildscript {
     repositories {
         mavenCentral()
         maven { url 'https://maven.fabric.io/public' }
+        maven { url 'http://dl.bintray.com/amulyakhare/maven' }
     }
 
     dependencies {
@@ -504,4 +505,5 @@ dependencies {
 
     compile 'com.zsoltsafrany:needle:1.0.0'
 
+    compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
 }

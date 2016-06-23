@@ -5,18 +5,21 @@ import android.app.Notification;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.RemoteViews;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
-import com.squareup.picasso.Transformation;
 import com.squareup.picasso.Target;
+import com.squareup.picasso.Transformation;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -37,6 +40,13 @@ import static org.rm3l.ddwrt.utils.Utils.reportException;
 public final class ImageUtils {
 
     private static final String TAG = ImageUtils.class.getSimpleName();
+
+    private static TextDrawable.IBuilder TEXTDRAWABLE_BUILDER = TextDrawable.builder()
+            .beginConfig()
+            .withBorder(4)
+            .toUpperCase()
+            .endConfig()
+            .roundRect(15);
 
     private ImageUtils() {}
 
@@ -300,6 +310,22 @@ public final class ImageUtils {
             Utils.reportException(mCtx, e);
         }
     }
+
+    @Nullable
+    public static TextDrawable getTextDrawable(@Nullable final String key,
+                                               @NonNull final ColorGenerator generator) {
+
+        if (TextUtils.isEmpty(key)) {
+            return null;
+        }
+        return TEXTDRAWABLE_BUILDER.build(key.substring(0,1), generator.getColor(key));
+    }
+
+    @Nullable
+    public static TextDrawable getTextDrawable(@Nullable final String key) {
+        return getTextDrawable(key, ColorGenerator.MATERIAL);
+    }
+
 
     public static class DownloadImageException extends DDWRTCompanionException {
         public DownloadImageException() {

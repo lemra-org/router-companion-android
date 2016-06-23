@@ -43,10 +43,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
@@ -75,6 +77,7 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -690,6 +693,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         layout.findViewById(R.id.tile_status_wireless_iface_gridlayout)
                 .setVisibility(View.VISIBLE);
 
+        final ImageView avatarView = (ImageView) layout.findViewById(R.id.avatar);
 
         if (data == null) {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
@@ -703,6 +707,14 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
             if (exception == null) {
                 errorPlaceHolderView.setVisibility(View.GONE);
+            }
+            final String wlSsid = data.getProperty(this.iface + "_ssid");
+            final TextDrawable textDrawable = ImageUtils.getTextDrawable(wlSsid);
+            if (textDrawable == null) {
+                avatarView.setVisibility(View.GONE);
+            } else {
+                avatarView.setImageDrawable(textDrawable);
+                avatarView.setVisibility(View.VISIBLE);
             }
             updateTileDisplayInfo(data, true);
 
