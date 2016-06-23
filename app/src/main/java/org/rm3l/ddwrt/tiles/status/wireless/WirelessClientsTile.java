@@ -61,12 +61,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
@@ -139,6 +141,7 @@ import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.TopTalkersClientsSortingVi
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.NVRAMParser;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
@@ -1750,17 +1753,24 @@ public class WirelessClientsTile
                     //Highlight CardView
 //                    cardView.setCardElevation(10f);
 
+                    final ImageView avatarView = (ImageView) cardView.findViewById(R.id.avatar);
+
                     final String macAddress = device.getMacAddress();
 
                     final TextView deviceNameView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_name);
                     final String name = device.getName();
+                    final String nameForAvatar;
                     if (isNullOrEmpty(device.getAlias()) &&
                             isNullOrEmpty(device.getSystemName()) &&
                             StringUtils.equals(name, macAddress)) {
                         deviceNameView.setText(EMPTY_VALUE_TO_DISPLAY);
+                        nameForAvatar = EMPTY_VALUE_TO_DISPLAY;
                     } else {
                         deviceNameView.setText(name);
+                        nameForAvatar = name;
                     }
+                    final TextDrawable textDrawable = ImageUtils.getTextDrawable(nameForAvatar);
+                    avatarView.setImageDrawable(textDrawable);
 
                     final TextView rssiTitleView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_rssi_title);
                     final TextView rssiSepView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_rssi_sep);
