@@ -29,6 +29,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -84,6 +85,7 @@ import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.customtabs.CustomTabActivityHelper;
 import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
 
 import java.util.ArrayList;
@@ -100,6 +102,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_BG_SERV
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
+
 @DeepLink({"dd-wrt://management",
         "ddwrt://management"})
 public class RouterManagementActivity
@@ -107,7 +110,7 @@ public class RouterManagementActivity
         implements View.OnClickListener,
         RouterMgmtDialogListener,
         SearchView.OnQueryTextListener,
-        SwipeRefreshLayout.OnRefreshListener {
+        SwipeRefreshLayout.OnRefreshListener, CustomTabActivityHelper.ConnectionCallback {
 
     public static final int ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE = 111;
     public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
@@ -137,10 +140,14 @@ public class RouterManagementActivity
     private boolean mBackgroundServiceEnabled;
     private long mBackgroundServiceFrequency;
 
+    private CustomTabActivityHelper mCustomTabActivityHelper;
+
     @NonNull
     public static DDWRTCompanionDAO getDao(Context context) {
         return DDWRTCompanionSqliteDAOImpl.getInstance();
     }
+
+
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -188,6 +195,8 @@ public class RouterManagementActivity
         mBackgroundServiceFrequency = mPreferences.getLong(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1);
 
         setContentView(R.layout.activity_router_management);
+
+        setupCustomTabHelper(this);
 
         AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.router_list_adView));
 
@@ -326,10 +335,31 @@ public class RouterManagementActivity
 
     }
 
+    private void setupCustomTabHelper(final CustomTabActivityHelper.ConnectionCallback cb) {
+        mCustomTabActivityHelper = new CustomTabActivityHelper();
+        mCustomTabActivityHelper.setConnectionCallback(cb);
+        mCustomTabActivityHelper.mayLaunchUrl(
+                Uri.parse(DDWRTCompanionConstants.REMOTE_HELP_WEBSITE), null, null);
+        mCustomTabActivityHelper.mayLaunchUrl(
+                Uri.parse(DDWRTCompanionConstants.REMOTE_HELP_WEBSITE_CHANGELOG), null, null);
+    }
+
     private void initOpenAddRouterFormIfNecessary() {
         if (mAdapter.getItemCount() == 0) {
             this.openAddRouterForm();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mCustomTabActivityHelper.bindCustomTabsService(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mCustomTabActivityHelper.bindCustomTabsService(this);
     }
 
     @Override
@@ -432,11 +462,32 @@ public class RouterManagementActivity
                 return true;
 
             case R.id.help:
-                this.startActivity(new Intent(this, HelpActivity.class));
+                CustomTabActivityHelper.openCustomTab(RouterManagementActivity.this, null,
+                        DDWRTCompanionConstants.REMOTE_HELP_WEBSITE, null, null,
+                        new CustomTabActivityHelper.CustomTabFallback() {
+                            @Override
+                            public void openUri(Activity activity, Uri uri) {
+                                activity.startActivity(
+                                        new Intent(RouterManagementActivity.this, HelpActivity.class));
+                            }
+                        });
                 return true;
             case R.id.changelog:
-                this.startActivity(new Intent(this, ChangelogActivity.class));
+                CustomTabActivityHelper.openCustomTab(RouterManagementActivity.this, null,
+                        DDWRTCompanionConstants.REMOTE_HELP_WEBSITE_CHANGELOG, null, null,
+                        new CustomTabActivityHelper.CustomTabFallback() {
+                            @Override
+                            public void openUri(Activity activity, Uri uri) {
+                                activity.startActivity(
+                                        new Intent(RouterManagementActivity.this, ChangelogActivity.class));
+                            }
+                        });
                 return true;
+
+            case R.id.router_list_actionbar_add:
+                this.openAddRouterForm();
+                return true;
+
             case R.id.router_list_take_bug_report:
                 Utils.takeBugReport(this);
                 return true;
@@ -1186,6 +1237,18 @@ public class RouterManagementActivity
     public static final int RoutersListRefreshCause_REMOVED = 2;
     public static final int RoutersListRefreshCause_DATA_SET_CHANGED = 3;
     public static final int RoutersListRefreshCause_UPDATED = 4;
+
+    @Override
+    public void onCustomTabsConnected() {
+        //We may make UI changes
+        Crashlytics.log(Log.INFO, LOG_TAG, "onCustomTabsConnected");
+    }
+
+    @Override
+    public void onCustomTabsDisconnected() {
+        //We may make UI changes
+        Crashlytics.log(Log.INFO, LOG_TAG, "onCustomTabsDisconnected");
+    }
 
     public enum RoutersListRefreshCause {
         INSERTED, REMOVED, DATA_SET_CHANGED, UPDATED

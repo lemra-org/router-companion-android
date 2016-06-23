@@ -25,12 +25,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="org.rm3l.ddwrt.mgmt.RouterManagementActivity">
 
+    <item
+        android:id="@+id/router_list_actionbar_add"
+        android:alphabeticShortcut="a"
+        android:icon="@drawable/ic_plus_white_24dp"
+        android:orderInCategory="1"
+        android:title="@string/router_add_new"
+        app:showAsAction="collapseActionView|ifRoom" />
+
     <!-- Search, should appear as action button -->
     <item
         android:id="@+id/router_list_refresh_search"
         android:alphabeticShortcut="l"
         android:icon="@drawable/ic_search_white_24dp"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         android:title="@string/action_search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom" />
@@ -39,14 +47,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:id="@+id/router_list_refresh"
         android:alphabeticShortcut="r"
         android:icon="@drawable/ic_refresh_white_24dp"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:title="@string/menuitem_refresh"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/router_list_actions"
         android:alphabeticShortcut="A"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         android:title="@string/menuitem_actions"
         app:showAsAction="never">
         <menu>
@@ -82,7 +90,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <item
         android:id="@+id/router_list_settings"
         android:alphabeticShortcut="s"
-        android:orderInCategory="4"
+        android:orderInCategory="5"
         android:title="@string/menuitem_settings"
         app:showAsAction="never" />
 
@@ -111,7 +119,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <item
         android:id="@+id/changelog"
         android:orderInCategory="10"
-        android:title="What's new"
+        android:title="@string/what_s_new"
         app:showAsAction="never" />
 
 
