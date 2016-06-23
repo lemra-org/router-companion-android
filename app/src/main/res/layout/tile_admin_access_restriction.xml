@@ -56,6 +56,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="7dp"
+                    android:id="@+id/avatar"
+                    android:contentDescription="@string/avatar" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -68,8 +75,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginEnd="10dp"/>
+                    android:layout_marginRight="7dp"
+                    android:layout_marginEnd="5dp"/>
 
                 <TextView
                     android:textIsSelectable="true"

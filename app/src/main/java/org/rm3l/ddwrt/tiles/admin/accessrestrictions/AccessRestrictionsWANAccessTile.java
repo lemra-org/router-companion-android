@@ -14,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.SwitchCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,10 +23,12 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Splitter;
@@ -48,6 +51,7 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
@@ -394,6 +398,8 @@ public class AccessRestrictionsWANAccessTile extends
                         final CardView cardView = (CardView) mParentFragmentActivity.getLayoutInflater()
                                 .inflate(R.layout.tile_admin_access_restriction, null);
 
+                        final ImageView avatarView = (ImageView) cardView.findViewById(R.id.avatar);
+
                         //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
                         cardView.setPreventCornerOverlap(true);
                         //Add padding in API v21+ as well to have the same measurements with previous versions.
@@ -445,6 +451,15 @@ public class AccessRestrictionsWANAccessTile extends
 
                         policyNb.setText(String.valueOf(wanAccessPolicy.getNumber()));
                         policyName.setText(wanAccessPolicy.getName());
+
+                        if (TextUtils.isEmpty(wanAccessPolicy.getName())) {
+                            avatarView.setVisibility(View.GONE);
+                        } else {
+                            final TextDrawable textDrawable = ImageUtils.getTextDrawable(
+                                    wanAccessPolicy.getName());
+                            avatarView.setImageDrawable(textDrawable);
+                            avatarView.setVisibility(View.VISIBLE);
+                        }
 
                         String daysPattern = wanAccessPolicy.getDaysPattern();
                         if (daysPattern != null) {
