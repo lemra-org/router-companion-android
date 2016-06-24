@@ -30,12 +30,14 @@ import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.text.InputFilter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.rm3l.ddwrt.R;
@@ -235,6 +237,13 @@ public final class ViewGroupUtils {
         toolbar.animate()
                 .translationY(0)
                 .setInterpolator(new DecelerateInterpolator(2));
+    }
+
+    public static void limitTextViewLength(@Nullable final TextView textView, int maxLength) {
+        if (textView == null) {
+            return;
+        }
+        textView.setFilters(new InputFilter[] { new InputFilter.LengthFilter(maxLength) });
     }
 
 }

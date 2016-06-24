@@ -54,6 +54,7 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.ViewGroupUtils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 
@@ -426,6 +427,8 @@ public class AccessRestrictionsWANAccessTile extends
                         final TextView internetPolicyDuringSelectedTimeOfDay = (TextView)
                                 cardView.findViewById(R.id.access_restriction_policy_cardview_internet_policy);
 
+                        ViewGroupUtils.limitTextViewLength(policyName, 10);
+
                         final TextView[] daysTextViews = new TextView[7];
                         daysTextViews[0] = (TextView)
                                 cardView.findViewById(R.id.access_restriction_policy_cardview_days_sunday);
@@ -451,6 +454,14 @@ public class AccessRestrictionsWANAccessTile extends
 
                         policyNb.setText(String.valueOf(wanAccessPolicy.getNumber()));
                         policyName.setText(wanAccessPolicy.getName());
+                        policyName.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Toast.makeText(mParentFragmentActivity,
+                                        wanAccessPolicy.getName(),
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
 
                         if (TextUtils.isEmpty(wanAccessPolicy.getName())) {
                             avatarView.setVisibility(View.GONE);
