@@ -178,7 +178,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         <View
                             android:id="@+id/tile_network_map_wan_path_vertical"
                             android:layout_width="2dp"
-                            android:layout_height="35dp"
+                            android:layout_height="45dp"
                             android:background="#ffcccccc" />
 
                         <TextView
