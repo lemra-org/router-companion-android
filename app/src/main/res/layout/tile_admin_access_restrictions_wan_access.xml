@@ -88,79 +88,108 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:textStyle="bold"
             android:visibility="gone" />
 
-        <GridLayout
-            android:id="@+id/tile_admin_access_restrictions_wan_access_list_container"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="0.74"
-            android:columnCount="2"
-            android:orientation="vertical" />
+        <!--<GridLayout-->
+            <!--android:id="@+id/tile_admin_access_restrictions_wan_access_toolbar"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:columnCount="3"-->
+            <!--android:visibility="gone">-->
 
-        <ProgressBar
-            android:id="@+id/tile_admin_access_restrictions_wan_access_loading_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <com.github.curioustechizen.ago.RelativeTimeTextView
-            android:textIsSelectable="true"
-            android:layout_marginTop="5dp"
-            android:id="@+id/tile_last_sync"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:textStyle="italic"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:ellipsize="end"
-            android:gravity="end"
-            android:singleLine="false"
-            android:text="Last sync: "/>
-
-        <!--<RelativeLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent">-->
-
-            <!--<org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport-->
-                <!--android:id="@+id/tile_admin_access_restrictions_wan_access_ListView"-->
+            <!--&lt;!&ndash; Filter &ndash;&gt;-->
+            <!--<android.support.design.widget.TextInputLayout-->
                 <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:listSelector="@android:color/transparent"-->
-                <!--android:overScrollMode="ifContentScrolls"-->
-                <!--android:scrollbars="none" />-->
+                <!--android:layout_height="wrap_content">-->
+                <!--<EditText-->
+                    <!--android:selectAllOnFocus="true"-->
+                    <!--android:id="@+id/tile_admin_access_restrictions_wan_access_filter"-->
+                    <!--android:layout_width="fill_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_columnSpan="3"-->
+                    <!--android:layout_gravity="start"-->
+                    <!--android:drawableBottom="@color/accent_material_light"-->
+                    <!--android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"-->
+                    <!--android:drawableLeft="@drawable/abs__ic_search_api_holo_light"-->
+                    <!--android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"-->
+                    <!--android:drawableStart="@drawable/abs__ic_search_api_holo_light"-->
+                    <!--android:hint="@string/syslog_filter_hint"-->
+                    <!--android:imeOptions="actionSearch"-->
+                    <!--android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"-->
+                    <!--android:textColor="@color/accent_material_light" />-->
+            <!--</android.support.design.widget.TextInputLayout>-->
+
+            <!--&lt;!&ndash; Size &ndash;&gt;-->
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="@string/size"-->
+                <!--android:textStyle="bold" />-->
 
             <!--<TextView-->
-                <!--android:textIsSelectable="true"-->
-                <!--android:id="@+id/empty_view"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:gravity="center"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
                 <!--android:layout_gravity="center"-->
-                <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-                <!--android:text="No Access Policy." />-->
+                <!--android:layout_marginLeft="8.0dip"-->
+                <!--android:layout_marginRight="8.0dip"-->
+                <!--android:text="@string/one_space" />-->
 
-            <!--<ProgressBar-->
-                <!--android:id="@+id/tile_admin_access_restrictions_wan_access_loading_view"-->
+            <!--<TextView-->
+                <!--android:id="@+id/tile_admin_access_restrictions_wan_access_size"-->
                 <!--android:layout_width="wrap_content"-->
                 <!--android:layout_height="wrap_content"-->
-                <!--android:layout_centerInParent="true" />-->
-
-            <!--<com.github.curioustechizen.ago.RelativeTimeTextView-->
-                <!--android:textIsSelectable="true"-->
-                <!--android:layout_marginTop="5dp"-->
-                <!--android:id="@+id/tile_last_sync"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_alignParentEnd="true"-->
-                <!--android:layout_alignParentRight="true"-->
-                <!--android:textStyle="italic"-->
-                <!--android:textAppearance="?android:textAppearanceSmall"-->
-                <!--android:layout_alignParentBottom="true"-->
+                <!--android:layout_gravity="start"-->
                 <!--android:ellipsize="end"-->
-                <!--android:gravity="end"-->
-                <!--android:layout_below="@+id/tile_admin_access_restrictions_wan_access_ListView"-->
+                <!--android:gravity="start"-->
                 <!--android:singleLine="false"-->
-                <!--android:text="Last sync: "/>-->
+                <!--android:text="@string/loading" />-->
 
-        <!--</RelativeLayout>-->
+        <!--</GridLayout>-->
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport
+                android:id="@+id/tile_admin_access_restrictions_wan_access_ListView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:listSelector="@android:color/transparent"
+                android:overScrollMode="ifContentScrolls"
+                android:scrollbars="none" />
+
+            <TextView
+                android:textIsSelectable="true"
+                android:id="@+id/empty_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="No Access Policy." />
+
+            <ProgressBar
+                android:id="@+id/tile_admin_access_restrictions_wan_access_loading_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+
+            <com.github.curioustechizen.ago.RelativeTimeTextView
+                android:textIsSelectable="true"
+                android:layout_marginTop="5dp"
+                android:id="@+id/tile_last_sync"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:textStyle="italic"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:layout_alignParentBottom="true"
+                android:ellipsize="end"
+                android:gravity="end"
+                android:layout_below="@+id/tile_admin_access_restrictions_wan_access_ListView"
+                android:singleLine="false"
+                android:text="Last sync: "/>
+
+        </RelativeLayout>
 
     </LinearLayout>
 </LinearLayout>

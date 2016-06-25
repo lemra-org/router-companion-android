@@ -3,7 +3,7 @@ package org.rm3l.ddwrt.tiles.admin.accessrestrictions;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Resources;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,16 +12,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
-import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.GridLayout;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -54,9 +57,9 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
-import org.rm3l.ddwrt.utils.ViewGroupUtils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
+import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -108,14 +111,70 @@ public class AccessRestrictionsWANAccessTile extends
     private static final String LOG_TAG =
             AccessRestrictionsWANAccessTile.class.getSimpleName();
 
+    private RecyclerViewEmptySupport mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
     private long mLastSync;
-    private boolean isThemeLight;
 
     public AccessRestrictionsWANAccessTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_admin_access_restrictions_wan_access, null);
-        isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+
+        mRecyclerView = (RecyclerViewEmptySupport) layout.findViewById(R.id.tile_admin_access_restrictions_wan_access_ListView);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        // allows for optimizations if all items are of the same size:
+        mRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(mParentFragmentActivity,
+                LinearLayoutManager.VERTICAL, false);
+        mLayoutManager.scrollToPosition(0);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+//
+        final TextView emptyView = (TextView) layout.findViewById(R.id.empty_view);
+        if (ColorUtils.isThemeLight(mParentFragmentActivity)) {
+            emptyView.setTextColor(ContextCompat.getColor(mParentFragmentActivity, R.color.black));
+        } else {
+            emptyView.setTextColor(ContextCompat.getColor(mParentFragmentActivity, R.color.white));
+        }
+        mRecyclerView.setEmptyView(emptyView);
+
+        // specify an adapter (see also next example)
+        mAdapter = new WANAccessRulesRecyclerViewAdapter(this);
+        mRecyclerView.setAdapter(mAdapter);
+
+        final Display display = mParentFragmentActivity
+                .getWindowManager()
+                .getDefaultDisplay();
+        final Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        Log.d(LOG_TAG, "<width,height> = <" + width + "," + height + ">");
+        mRecyclerView.setMinimumHeight(size.y);
+
     }
 
+    public boolean canChildScrollUp() {
+        final boolean canScrollVertically = ViewCompat
+                .canScrollVertically(mRecyclerView, -1);
+        if (!canScrollVertically) {
+            return canScrollVertically;
+        }
+
+        //TODO ScrollView can scroll vertically,
+        // but detect whether the touch was done outside of the scroll view
+        // (in which case we should return false)
+
+        return canScrollVertically;
+    }
+
+    @Override
+    public boolean isEmbeddedWithinScrollView() {
+        return false;
+    }
 
     @Override
     public int getTileHeaderViewId() {
@@ -206,8 +265,6 @@ public class AccessRestrictionsWANAccessTile extends
                                 || (properties = nvramInfo.getData()) == null) {
                             return null;
                         }
-
-                        Crashlytics.log(Log.DEBUG, LOG_TAG, "properties: " + properties);
 
                         int i = 2;
                         String todPattern;
@@ -371,454 +428,9 @@ public class AccessRestrictionsWANAccessTile extends
                     errorPlaceHolderView.setVisibility(View.GONE);
                 }
 
-                final GridLayout wanAccessPoliciesContainer = (GridLayout)
-                        this.layout.findViewById(R.id.tile_admin_access_restrictions_wan_access_list_container);
-                wanAccessPoliciesContainer.removeAllViews();
-
-                final Resources resources = mParentFragmentActivity.getResources();
-                wanAccessPoliciesContainer.setBackgroundColor(
-                        ContextCompat.getColor(mParentFragmentActivity, android.R.color.transparent));
-
-                final CardView.LayoutParams cardViewLayoutParams = new FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.MATCH_PARENT,
-                        FrameLayout.LayoutParams.WRAP_CONTENT);
-                cardViewLayoutParams.rightMargin = R.dimen.marginRight;
-                cardViewLayoutParams.leftMargin = R.dimen.marginLeft;
-                cardViewLayoutParams.bottomMargin = R.dimen.activity_vertical_margin;
-
-                if (wanAccessPolicies != null) {
-                    Collections.sort(wanAccessPolicies, new Comparator<WANAccessPolicy>() {
-                        @Override
-                        public int compare(WANAccessPolicy lhs, WANAccessPolicy rhs) {
-                            return Integer.valueOf(lhs.getNumber()).compareTo(rhs.getNumber());
-                        }
-                    });
-                    int index = 0;
-                    for (final WANAccessPolicy wanAccessPolicy : wanAccessPolicies) {
-                        final int viewIndex = (index++);
-                        final CardView cardView = (CardView) mParentFragmentActivity.getLayoutInflater()
-                                .inflate(R.layout.tile_admin_access_restriction, null);
-
-                        final ImageView avatarView = (ImageView) cardView.findViewById(R.id.avatar);
-
-                        //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
-                        cardView.setPreventCornerOverlap(true);
-                        //Add padding in API v21+ as well to have the same measurements with previous versions.
-                        cardView.setUseCompatPadding(true);
-
-                        if (isThemeLight) {
-                            //Light
-                            cardView.setCardBackgroundColor(
-                                    ContextCompat.getColor(mParentFragmentActivity,
-                                            R.color.cardview_light_background));
-                        } else {
-                            //Default is Dark
-                            cardView.setCardBackgroundColor(
-                                    ContextCompat.getColor(mParentFragmentActivity,
-                                            R.color.cardview_dark_background));
-                        }
-
-                        final TextView policyNb = (TextView)
-                                cardView.findViewById(R.id.access_restriction_policy_cardview_number);
-                        final TextView policyName = (TextView)
-                                cardView.findViewById(R.id.access_restriction_policy_cardview_name);
-                        final TextView policyHours = (TextView)
-                                cardView.findViewById(R.id.access_restriction_policy_cardview_hours);
-                        final TextView internetPolicyDuringSelectedTimeOfDay = (TextView)
-                                cardView.findViewById(R.id.access_restriction_policy_cardview_internet_policy);
-
-                        ViewGroupUtils.limitTextViewLength(policyName, 10);
-
-                        final TextView[] daysTextViews = new TextView[7];
-                        daysTextViews[0] = (TextView)
-                                cardView.findViewById(R.id.access_restriction_policy_cardview_days_sunday);
-                        daysTextViews[1] = (TextView)
-                                cardView.findViewById(R.id.access_restriction_policy_cardview_days_monday);
-                        daysTextViews[2] = (TextView)
-                                cardView.findViewById(R.id.access_restriction_policy_cardview_days_tuesday);
-                        daysTextViews[3] = (TextView)
-                                cardView.findViewById(R.id.access_restriction_policy_cardview_days_wednesday);
-                        daysTextViews[4] = (TextView)
-                                cardView.findViewById(R.id.access_restriction_policy_cardview_days_thursday);
-                        daysTextViews[5] = (TextView)
-                                cardView.findViewById(R.id.access_restriction_policy_cardview_days_friday);
-                        daysTextViews[6] = (TextView)
-                                cardView.findViewById(R.id.access_restriction_policy_cardview_days_saturday);
-
-                        final SwitchCompat statusSwitchButton = (SwitchCompat)
-                                cardView.findViewById(R.id.access_restriction_policy_cardview_status);
-                        final ImageButton menuImageButton = (ImageButton)
-                                cardView.findViewById(R.id.access_restriction_policy_cardview_menu);
-                        final ImageButton removeImageButton = (ImageButton)
-                                cardView.findViewById(R.id.access_restriction_policy_remove_btn);
-
-                        policyNb.setText(String.valueOf(wanAccessPolicy.getNumber()));
-                        policyName.setText(wanAccessPolicy.getName());
-                        policyName.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Toast.makeText(mParentFragmentActivity,
-                                        wanAccessPolicy.getName(),
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                        if (TextUtils.isEmpty(wanAccessPolicy.getName())) {
-                            avatarView.setVisibility(View.GONE);
-                        } else {
-                            final TextDrawable textDrawable = ImageUtils.getTextDrawable(
-                                    wanAccessPolicy.getName());
-                            avatarView.setImageDrawable(textDrawable);
-                            avatarView.setVisibility(View.VISIBLE);
-                        }
-
-                        String daysPattern = wanAccessPolicy.getDaysPattern();
-                        if (daysPattern != null) {
-                            if ("7".equals(daysPattern)) {
-                                daysPattern = "1 1 1 1 1 1 1"; //Everyday
-                            }
-                            final List<String> timeOfDayBufferList = Splitter.on(" ").omitEmptyStrings().trimResults()
-                                    .splitToList(daysPattern);
-                            for (int i = 0; i < timeOfDayBufferList.size(); i++) {
-                                final String todStatus = timeOfDayBufferList.get(i);
-                                if (i >= daysTextViews.length) {
-                                    continue;
-                                }
-                                final TextView daysTextView = daysTextViews[i];
-                                daysTextView.setEnabled(true);
-                                if ("1".equals(todStatus)) {
-                                    daysTextView
-                                            .setBackgroundResource(R.drawable.table_border_selected);
-                                } else {
-                                    daysTextView
-                                            .setBackgroundResource(R.drawable.table_border);
-                                    if (!"0".equals(todStatus)) {
-                                        daysTextView.setEnabled(false);
-                                    }
-                                }
-                            }
-                        }
-
-                        internetPolicyDuringSelectedTimeOfDay
-                                .setText(wanAccessPolicy.getDenyOrFilter());
-
-                        policyHours.setText(wanAccessPolicy.getTimeOfDay());
-
-                        //Disable switch button listener
-                        statusSwitchButton.setEnabled(true);
-                        final String status = Strings.nullToEmpty(wanAccessPolicy.getStatus()).trim();
-                        switch (status) {
-                            case "0":
-                            case "$STAT:0":
-                                //Disabled
-                                statusSwitchButton.setChecked(false);
-                                break;
-                            case "1":
-                            case "$STAT:1":
-                            case "2":
-                            case "$STAT:2":
-                                statusSwitchButton.setChecked(true);
-                                break;
-                            default:
-                                Utils.reportException(mParentFragmentActivity,
-                                        new WANAccessPolicyException("status=[" + status + "]"));
-                                statusSwitchButton.setChecked(false);
-                                statusSwitchButton.setEnabled(false);
-                                break;
-                        }
-
-
-                        statusSwitchButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                                    Utils.displayUpgradeMessage(mParentFragmentActivity,
-                                            "Toggle WAN Access Policy Restriction");
-                                    statusSwitchButton.toggle();
-                                    return;
-                                }
-
-                                statusSwitchButton.setEnabled(false);
-                                final boolean isChecked = statusSwitchButton.isChecked();
-                                SnackbarUtils.buildSnackbar(mParentFragmentActivity,
-                                        mParentFragmentActivity.findViewById(android.R.id.content),
-                                        String.format("Going to %sable WAN Access Policy: '%s'",
-                                                isChecked ? "en" : "dis", wanAccessPolicy.getName()),
-                                        "Undo",
-                                        Snackbar.LENGTH_LONG,
-                                        new SnackbarCallback() {
-                                            @Override
-                                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-                                            }
-
-                                            @Override
-                                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
-                                                //revert
-                                                mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-
-                                                        statusSwitchButton.toggle();
-                                                        statusSwitchButton.setEnabled(true);
-                                                    }
-                                                });
-                                            }
-
-                                            @Override
-                                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
-                                                //revert
-                                                mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        statusSwitchButton.toggle();
-                                                        statusSwitchButton.setEnabled(true);
-                                                    }
-                                                });
-                                            }
-
-                                            @Override
-                                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
-                                                Utils.displayMessage(mParentFragmentActivity,
-                                                        String.format("%sabling WAN Access Policy: '%s'...",
-                                                                isChecked ?"En":"Dis", wanAccessPolicy.getName()),
-                                                        Style.INFO);
-                                                final int enableStatus = !isChecked ? DISABLE :
-                                                        WANAccessPolicy.DENY.equals(wanAccessPolicy.getDenyOrFilter()) ?
-                                                                ENABLE_1 :
-                                                                ENABLE_2;
-                                                ActionManager.runTasks(
-                                                    new ToggleWANAccessPolicyRouterAction(
-                                                        mRouter,
-                                                        mParentFragmentActivity,
-                                                        new RouterActionListener() {
-                                                            @Override
-                                                            public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
-                                                                mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                                    @Override
-                                                                    public void run() {
-
-                                                                        try {
-                                                                            Utils.displayMessage(mParentFragmentActivity,
-                                                                                    String.format("WAN Access Policy '%s' successfully %s on host '%s'. ",
-                                                                                            wanAccessPolicy.getName(),
-                                                                                            isChecked ? "enabled" : "disabled",
-                                                                                            mRouter.getCanonicalHumanReadableName()),
-                                                                                    Style.CONFIRM);
-                                                                        } finally {
-                                                                            statusSwitchButton.setEnabled(true);
-                                                                            wanAccessPolicy.setStatus(Integer.toString(enableStatus));
-                                                                            wanAccessPoliciesContainer.removeViewAt(viewIndex);
-//                                                                            WANAccessRulesRecyclerViewAdapter.this.
-//                                                                                    notifyItemChanged(getAdapterPosition());
-                                                                        }
-                                                                    }
-
-                                                                });
-                                                            }
-
-                                                            @Override
-                                                            public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable final Exception exception) {
-                                                                mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                                    @Override
-                                                                    public void run() {
-                                                                        try {
-                                                                            Utils.displayMessage(mParentFragmentActivity,
-                                                                                    String.format("Error while trying to %s WAN Access Policy '%s' on '%s': %s",
-                                                                                            isChecked ? "enable" : "disable",
-                                                                                            wanAccessPolicy.getName(),
-                                                                                            mRouter.getCanonicalHumanReadableName(),
-                                                                                            Utils.handleException(exception).first),
-                                                                                    Style.ALERT);
-                                                                        } finally {
-                                                                            //Revert
-                                                                            statusSwitchButton.toggle();
-                                                                            statusSwitchButton.setEnabled(true);
-                                                                        }
-                                                                    }
-                                                                });
-                                                            }
-                                                        },
-                                                        mGlobalPreferences,
-                                                        wanAccessPolicy,
-                                                        enableStatus)
-                                                );
-                                            }
-
-                                            @Override
-                                            public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
-                                                //Revert
-                                                mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        statusSwitchButton.toggle();
-                                                        statusSwitchButton.setEnabled(true);
-                                                    }
-                                                });
-                                            }
-
-                                            @Override
-                                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
-                                                //revert
-                                                mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        statusSwitchButton.toggle();
-                                                        statusSwitchButton.setEnabled(true);
-                                                    }
-                                                });
-                                            }
-                                        },
-                                        null,
-                                        true);
-                            }
-                        });
-
-                        final AlertDialog removeWanPolicyDialog = new AlertDialog.Builder(mParentFragmentActivity)
-                                .setIcon(R.drawable.ic_action_alert_warning)
-                                .setTitle(String.format("Remove WAN Access Policy: '%s'?",
-                                        wanAccessPolicy.getName()))
-                                .setMessage("Are you sure you wish to continue? ")
-                                .setCancelable(true)
-                                .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        statusSwitchButton.setEnabled(false);
-
-                                        Utils.displayMessage(mParentFragmentActivity,
-                                                String.format("Deleting WAN Access Policy: '%s'...",
-                                                        wanAccessPolicy.getName()),
-                                                Style.INFO);
-
-                                        final int wanAccessPolicyNumber = wanAccessPolicy.getNumber();
-
-                                        final NVRAMInfo nvramVarsToSet = new NVRAMInfo()
-                                                .setProperty("filter_dport_grp"+wanAccessPolicyNumber, EMPTY_STRING)
-                                                .setProperty("filter_ip_grp"+wanAccessPolicyNumber, EMPTY_STRING)
-                                                .setProperty("filter_mac_grp"+wanAccessPolicyNumber, EMPTY_STRING)
-                                                .setProperty("filter_p2p_grp"+wanAccessPolicyNumber, EMPTY_STRING)
-                                                .setProperty("filter_port_grp"+wanAccessPolicyNumber, EMPTY_STRING)
-                                                .setProperty("filter_rule"+wanAccessPolicyNumber, EMPTY_STRING)
-                                                .setProperty("filter_tod"+wanAccessPolicyNumber, EMPTY_STRING)
-                                                .setProperty("filter_tod_buf"+wanAccessPolicyNumber, EMPTY_STRING)
-                                                .setProperty("filter_web_host"+wanAccessPolicyNumber, EMPTY_STRING)
-                                                .setProperty("filter_web_url"+wanAccessPolicyNumber, EMPTY_STRING);
-
-                                        ActionManager.runTasks(
-                                            new SetNVRAMVariablesAction(
-                                                mRouter,
-                                                mParentFragmentActivity,
-                                                nvramVarsToSet,
-                                                false,
-                                                new RouterActionListener() {
-                                                    @Override
-                                                    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
-                                                        mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                            @Override
-                                                            public void run() {
-                                                                try {
-                                                                    Utils.displayMessage(mParentFragmentActivity,
-                                                                            String.format("WAN Access Policy '%s' successfully deleted on host '%s'. ",
-                                                                                    wanAccessPolicy.getName(),
-                                                                                    mRouter.getCanonicalHumanReadableName()),
-                                                                            Style.CONFIRM);
-                                                                } finally {
-                                                                    statusSwitchButton.setEnabled(true);
-                                                                    //Reload
-                                                                    wanAccessPoliciesContainer.removeViewAt(viewIndex);
-//                                                                    wanAccessPolicies.remove(wanAccessPolicy);
-                                                                    //Success- update recycler view
-//                                                                    notifyItemRemoved(getAdapterPosition());
-                                                                }
-                                                            }
-                                                        });
-                                                    }
-
-                                                    @Override
-                                                    public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable final Exception exception) {
-                                                        mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                            @Override
-                                                            public void run() {
-                                                                try {
-                                                                    Utils.displayMessage(mParentFragmentActivity,
-                                                                            String.format("Error while trying to delete WAN Access Policy '%s' on '%s': %s",
-                                                                                    wanAccessPolicy.getName(),
-                                                                                    mRouter.getCanonicalHumanReadableName(),
-                                                                                    Utils.handleException(exception).first),
-                                                                            Style.ALERT);
-                                                                } finally {
-                                                                    statusSwitchButton.setEnabled(true);
-                                                                }
-                                                            }
-                                                        });
-                                                    }
-                                                },
-                                                mGlobalPreferences,
-                                                "/sbin/stopservice firewall",
-                                                "/sbin/startservice firewall")
-                                        );
-
-                                    }
-                                })
-                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        //Cancelled - nothing more to do!
-                                    }
-                                }).create();
-
-                        if (!ColorUtils.isThemeLight(mParentFragmentActivity)) {
-                            //Set menu background to white
-                            menuImageButton.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
-                        }
-
-                        menuImageButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
-                                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                                    @Override
-                                    public boolean onMenuItemClick(MenuItem item) {
-                                        switch (item.getItemId()) {
-                                            case R.id.tile_wan_access_policy_toggle:
-                                                statusSwitchButton.performClick();
-                                                return true;
-                                            case R.id.tile_wan_access_policy_remove:
-                                                removeWanPolicyDialog.show();
-                                                return true;
-                                            case R.id.tile_wan_access_policy_edit:
-                                                //TODO Edit: open up edit popup or, better, a completely different setting activity
-                                                Toast.makeText(mParentFragmentActivity,
-                                                        "[TODO] Edit WAN Access Policy #" + wanAccessPolicy.getNumber() +
-                                                                " (" + wanAccessPolicy.getName() + ")", Toast.LENGTH_SHORT).show();
-                                                return true;
-                                            default:
-                                                break;
-                                        }
-                                        return false;
-                                    }
-                                });
-                                final MenuInflater inflater = popup.getMenuInflater();
-                                final Menu menu = popup.getMenu();
-                                inflater.inflate(R.menu.tile_wan_access_policy_options, menu);
-                                popup.show();
-                            }
-                        });
-
-                        removeImageButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                removeWanPolicyDialog.show();
-                            }
-                        });
-
-                        wanAccessPoliciesContainer.addView(cardView, viewIndex);
-                    }
-                }
-
-//                ((WANAccessRulesRecyclerViewAdapter) mAdapter)
-//                        .setWanAccessPolicies(wanAccessPolicies);
-//                mAdapter.notifyDataSetChanged();
+                ((WANAccessRulesRecyclerViewAdapter) mAdapter)
+                        .setWanAccessPolicies(wanAccessPolicies);
+                mAdapter.notifyDataSetChanged();
 
                 //Update last sync
                 final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
@@ -856,469 +468,486 @@ public class AccessRestrictionsWANAccessTile extends
         }
 
     }
-//
-//    static class WANAccessRulesRecyclerViewAdapter
-//            extends RecyclerView.Adapter<WANAccessRulesRecyclerViewAdapter.ViewHolder> {
-//
-//        @NonNull
-//        private final AccessRestrictionsWANAccessTile tile;
-//
-//        @NonNull
-//        private final List<WANAccessPolicy> wanAccessPolicies = new ArrayList<>();
-//
-//        public WANAccessRulesRecyclerViewAdapter(@NonNull final AccessRestrictionsWANAccessTile tile) {
-//            this.tile = tile;
-//        }
-//
-//        @NonNull
-//        public List<WANAccessPolicy> getWanAccessPolicies() {
-//            return wanAccessPolicies;
-//        }
-//
-//        public WANAccessRulesRecyclerViewAdapter setWanAccessPolicies(
-//                @Nullable final List<WANAccessPolicy> wanAccessPolicies) {
-//            this.wanAccessPolicies.clear();
-//            if (wanAccessPolicies != null) {
-//                this.wanAccessPolicies.addAll(wanAccessPolicies);
-//                Collections.sort(this.wanAccessPolicies, new Comparator<WANAccessPolicy>() {
-//                    @Override
-//                    public int compare(WANAccessPolicy lhs, WANAccessPolicy rhs) {
-//                        return Integer.valueOf(lhs.getNumber()).compareTo(rhs.getNumber());
-//                    }
-//                });
-//            }
-//            return this;
-//        }
-//
-//        @Override
-//        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//            // create a new view
-//            View v = LayoutInflater.from(parent.getContext())
-//                    .inflate(R.layout.tile_admin_access_restriction, parent, false);
-//            // set the view's size, margins, paddings and layout parameters
-//            // ...
-//            final ViewHolder vh = new ViewHolder(this.tile, v);
-//            return vh;
-//        }
-//
-//        @Override
-//        public void onBindViewHolder(final ViewHolder holder, int position) {
-//            // - get element from your dataset at this position
-//            // - replace the contents of the view with that element
-//            if (position < 0 || position >= wanAccessPolicies.size()) {
-//                Crashlytics.log(Log.DEBUG, LOG_TAG,
-//                        "invalid position for WAN Access Policy Adapter");
-//                return;
-//            }
-//            final WANAccessPolicy wanAccessPolicy = wanAccessPolicies.get(position);
-//            if (wanAccessPolicy == null) {
-//                //Report error
-//                Crashlytics.log(Log.DEBUG, LOG_TAG,
-//                        "wanAccessPolicy @" + position + " is NULL");
-//                return;
-//            }
-//
-//            if (ColorUtils.isThemeLight(this.tile.mParentFragmentActivity)) {
-//                holder.cardView.setCardBackgroundColor(ContextCompat
-//                        .getColor(this.tile.mParentFragmentActivity, R.color.cardview_light_background));
-//            } else {
-//                holder.cardView.setCardBackgroundColor(ContextCompat
-//                        .getColor(this.tile.mParentFragmentActivity, R.color.cardview_dark_background));
-//            }
-//
-//            holder.policyNb.setText(String.valueOf(wanAccessPolicy.getNumber()));
-//            holder.policyName.setText(wanAccessPolicy.getName());
-//
-//            String daysPattern = wanAccessPolicy.getDaysPattern();
-//            if (daysPattern != null) {
-//                if ("7".equals(daysPattern)) {
-//                    daysPattern = "1 1 1 1 1 1 1"; //Everyday
-//                }
-//                final List<String> timeOfDayBufferList = Splitter.on(" ").omitEmptyStrings().trimResults()
-//                        .splitToList(daysPattern);
-//                for (int i = 0; i < timeOfDayBufferList.size(); i++) {
-//                    final String todStatus = timeOfDayBufferList.get(i);
-//                    if (i >= holder.daysTextViews.length) {
-//                        continue;
-//                    }
-//                    final TextView daysTextView = holder.daysTextViews[i];
-//                    daysTextView.setEnabled(true);
-//                    if ("1".equals(todStatus)) {
-//                        daysTextView
-//                                .setBackgroundResource(R.drawable.table_border_selected);
-//                    } else {
-//                        daysTextView
-//                                .setBackgroundResource(R.drawable.table_border);
-//                        if (!"0".equals(todStatus)) {
-//                            daysTextView.setEnabled(false);
-//                        }
-//                    }
-//                }
-//            }
-//
-//            holder.internetPolicyDuringSelectedTimeOfDay
-//                    .setText(wanAccessPolicy.getDenyOrFilter());
-//
-//            holder.policyHours.setText(wanAccessPolicy.getTimeOfDay());
-//
-//            //Disable switch button listener
-//            holder.statusSwitchButton.setEnabled(true);
-//            final String status = Strings.nullToEmpty(wanAccessPolicy.getStatus()).trim();
-//            switch (status) {
-//                case "0":
-//                case "$STAT:0":
-//                    //Disabled
-//                    holder.statusSwitchButton.setChecked(false);
-//                    break;
-//                case "1":
-//                case "$STAT:1":
-//                case "2":
-//                case "$STAT:2":
-//                    holder.statusSwitchButton.setChecked(true);
-//                    break;
-//                default:
-//                    Utils.reportException(tile.mParentFragmentActivity,
-//                            new WANAccessPolicyException("status=[" + status + "]"));
-//                    holder.statusSwitchButton.setChecked(false);
-//                    holder.statusSwitchButton.setEnabled(false);
-//                    break;
-//            }
-//
-//
-//            holder.statusSwitchButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//
-//                    if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-//                        Utils.displayUpgradeMessage(tile.mParentFragmentActivity,
-//                                "Toggle WAN Access Policy Restriction");
-//                        holder.statusSwitchButton.toggle();
-//                        return;
-//                    }
-//
-//                    holder.statusSwitchButton.setEnabled(false);
-//                    final boolean isChecked = holder.statusSwitchButton.isChecked();
-//                    SnackbarUtils.buildSnackbar(tile.mParentFragmentActivity,
-//                            tile.mParentFragmentActivity.findViewById(android.R.id.content),
-//                            String.format("Going to %sable WAN Access Policy: '%s'",
-//                                    isChecked ? "en" : "dis", wanAccessPolicy.getName()),
-//                            "Undo",
-//                            Snackbar.LENGTH_LONG,
-//                            new SnackbarCallback() {
-//                                @Override
-//                                public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-//                                }
-//
-//                                @Override
-//                                public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
-//                                    //revert
-//                                    tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//
-//                                            holder.statusSwitchButton.toggle();
-//                                            holder.statusSwitchButton.setEnabled(true);
-//                                        }
-//                                    });
-//                                }
-//
-//                                @Override
-//                                public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
-//                                    //revert
-//                                    tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            holder.statusSwitchButton.toggle();
-//                                            holder.statusSwitchButton.setEnabled(true);
-//                                        }
-//                                    });
-//                                }
-//
-//                                @Override
-//                                public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
-//                                    Utils.displayMessage(tile.mParentFragmentActivity,
-//                                            String.format("%sabling WAN Access Policy: '%s'...",
-//                                                    isChecked ?"En":"Dis", wanAccessPolicy.getName()),
-//                                            Style.INFO);
-//                                    final int enableStatus = !isChecked ? DISABLE :
-//                                            WANAccessPolicy.DENY.equals(wanAccessPolicy.getDenyOrFilter()) ?
-//                                                    ENABLE_1 :
-//                                                    ENABLE_2;
-//                                    new ToggleWANAccessPolicyRouterAction(tile.mParentFragmentActivity,
-//                                            new RouterActionListener() {
-//                                                @Override
-//                                                public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
-//                                                    tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
-//                                                        @Override
-//                                                        public void run() {
-//
-//                                                            try {
-//                                                                Utils.displayMessage(tile.mParentFragmentActivity,
-//                                                                        String.format("WAN Access Policy '%s' successfully %s on host '%s'. ",
-//                                                                                wanAccessPolicy.getName(),
-//                                                                                isChecked ? "enabled" : "disabled",
-//                                                                                tile.mRouter.getCanonicalHumanReadableName()),
-//                                                                        Style.CONFIRM);
-//                                                            } finally {
-//                                                                holder.statusSwitchButton.setEnabled(true);
-//                                                                wanAccessPolicy.setStatus(Integer.toString(enableStatus));
-//                                                                WANAccessRulesRecyclerViewAdapter.this.
-//                                                                        notifyItemChanged(holder.getAdapterPosition());
-//                                                            }
-//                                                        }
-//
-//                                                    });
-//                                                }
-//
-//                                                @Override
-//                                                public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable final Exception exception) {
-//                                                    tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
-//                                                        @Override
-//                                                        public void run() {
-//                                                            try {
-//                                                                Utils.displayMessage(tile.mParentFragmentActivity,
-//                                                                        String.format("Error while trying to %s WAN Access Policy '%s' on '%s': %s",
-//                                                                                isChecked ? "enable" : "disable",
-//                                                                                wanAccessPolicy.getName(),
-//                                                                                tile.mRouter.getCanonicalHumanReadableName(),
-//                                                                                Utils.handleException(exception).first),
-//                                                                        Style.ALERT);
-//                                                            } finally {
-//                                                                //Revert
-//                                                                holder.statusSwitchButton.toggle();
-//                                                                holder.statusSwitchButton.setEnabled(true);
-//                                                            }
-//                                                        }
-//                                                    });
-//                                                }
-//                                            },
-//                                            tile.mGlobalPreferences,
-//                                            wanAccessPolicy,
-//                                            enableStatus).execute(tile.mRouter);
-//                                }
-//
-//                                @Override
-//                                public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
-//                                    //Revert
-//                                    tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            holder.statusSwitchButton.toggle();
-//                                            holder.statusSwitchButton.setEnabled(true);
-//                                        }
-//                                    });
-//                                }
-//
-//                                @Override
-//                                public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
-//                                    //revert
-//                                    tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            holder.statusSwitchButton.toggle();
-//                                            holder.statusSwitchButton.setEnabled(true);
-//                                        }
-//                                    });
-//                                }
-//                            },
-//                            null,
-//                            true);
-//                }
-//            });
-//
-//            final AlertDialog removeWanPolicyDialog = new AlertDialog.Builder(tile.mParentFragmentActivity)
-//                    .setIcon(R.drawable.ic_action_alert_warning)
-//                    .setTitle(String.format("Remove WAN Access Policy: '%s'?",
-//                            wanAccessPolicy.getName()))
-//                    .setMessage("Are you sure you wish to continue? ")
-//                    .setCancelable(true)
-//                    .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            holder.statusSwitchButton.setEnabled(false);
-//
-//                            Utils.displayMessage(tile.mParentFragmentActivity,
-//                                    String.format("Deleting WAN Access Policy: '%s'...",
-//                                            wanAccessPolicy.getName()),
-//                                    Style.INFO);
-//
-//                            final int wanAccessPolicyNumber = wanAccessPolicy.getNumber();
-//
-//                            final NVRAMInfo nvramVarsToSet = new NVRAMInfo()
-//                                    .setProperty("filter_dport_grp"+wanAccessPolicyNumber, EMPTY_STRING)
-//                                    .setProperty("filter_ip_grp"+wanAccessPolicyNumber, EMPTY_STRING)
-//                                    .setProperty("filter_mac_grp"+wanAccessPolicyNumber, EMPTY_STRING)
-//                                    .setProperty("filter_p2p_grp"+wanAccessPolicyNumber, EMPTY_STRING)
-//                                    .setProperty("filter_port_grp"+wanAccessPolicyNumber, EMPTY_STRING)
-//                                    .setProperty("filter_rule"+wanAccessPolicyNumber, EMPTY_STRING)
-//                                    .setProperty("filter_tod"+wanAccessPolicyNumber, EMPTY_STRING)
-//                                    .setProperty("filter_tod_buf"+wanAccessPolicyNumber, EMPTY_STRING)
-//                                    .setProperty("filter_web_host"+wanAccessPolicyNumber, EMPTY_STRING)
-//                                    .setProperty("filter_web_url"+wanAccessPolicyNumber, EMPTY_STRING);
-//
-//                            new SetNVRAMVariablesAction(tile.mParentFragmentActivity,
-//                                    nvramVarsToSet,
-//                                    false,
-//                                    new RouterActionListener() {
-//                                        @Override
-//                                        public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
-//                                            tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
-//                                                @Override
-//                                                public void run() {
-//                                                    try {
-//                                                        Utils.displayMessage(tile.mParentFragmentActivity,
-//                                                                String.format("WAN Access Policy '%s' successfully deleted on host '%s'. ",
-//                                                                        wanAccessPolicy.getName(),
-//                                                                        tile.mRouter.getCanonicalHumanReadableName()),
-//                                                                Style.CONFIRM);
-//                                                    } finally {
-//                                                        holder.statusSwitchButton.setEnabled(true);
-//                                                        wanAccessPolicies.remove(wanAccessPolicy);
-//                                                        //Success- update recycler view
-//                                                        notifyItemRemoved(holder.getAdapterPosition());
-//                                                    }
-//                                                }
-//                                            });
-//                                        }
-//
-//                                        @Override
-//                                        public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable final Exception exception) {
-//                                            tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
-//                                                @Override
-//                                                public void run() {
-//                                                    try {
-//                                                        Utils.displayMessage(tile.mParentFragmentActivity,
-//                                                                String.format("Error while trying to delete WAN Access Policy '%s' on '%s': %s",
-//                                                                        wanAccessPolicy.getName(),
-//                                                                        tile.mRouter.getCanonicalHumanReadableName(),
-//                                                                        Utils.handleException(exception).first),
-//                                                                Style.ALERT);
-//                                                    } finally {
-//                                                        holder.statusSwitchButton.setEnabled(true);
-//                                                    }
-//                                                }
-//                                            });
-//                                        }
-//                                    },
-//                                    tile.mGlobalPreferences,
-//                                    "/sbin/stopservice firewall",
-//                                    "/sbin/startservice firewall").execute(tile.mRouter);
-//
-//                        }
-//                    })
-//                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialogInterface, int i) {
-//                            //Cancelled - nothing more to do!
-//                        }
-//                    }).create();
-//
-//            if (!ColorUtils.isThemeLight(tile.mParentFragmentActivity)) {
-//                //Set menu background to white
-//                holder.menuImageButton.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
-//            }
-//
-//            holder.menuImageButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    final PopupMenu popup = new PopupMenu(tile.mParentFragmentActivity, v);
-//                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-//                        @Override
-//                        public boolean onMenuItemClick(MenuItem item) {
-//                            switch (item.getItemId()) {
-//                                case R.id.tile_wan_access_policy_toggle:
-//                                    holder.statusSwitchButton.performClick();
-//                                    return true;
-//                                case R.id.tile_wan_access_policy_remove:
-//                                    removeWanPolicyDialog.show();
-//                                    return true;
-//                                case R.id.tile_wan_access_policy_edit:
-//                                    //TODO Edit: open up edit popup or, better, a completely different setting activity
-//                                    Toast.makeText(tile.mParentFragmentActivity,
-//                                            "[TODO] Edit WAN Access Policy #" + wanAccessPolicy.getNumber() +
-//                                                    " (" + wanAccessPolicy.getName() + ")", Toast.LENGTH_SHORT).show();
-//                                    return true;
-//                                default:
-//                                    break;
-//                            }
-//                            return false;
-//                        }
-//                    });
-//                    final MenuInflater inflater = popup.getMenuInflater();
-//                    final Menu menu = popup.getMenu();
-//                    inflater.inflate(R.menu.tile_wan_access_policy_options, menu);
-//                    popup.show();
-//                }
-//            });
-//
-//            holder.removeImageButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    removeWanPolicyDialog.show();
-//                }
-//            });
-//
-//        }
-//
-//        @Override
-//        public int getItemCount() {
-//            return wanAccessPolicies.size();
-//        }
-//
-//        static class ViewHolder extends RecyclerView.ViewHolder {
-//
-//            final CardView cardView;
-//            final TextView policyNb;
-//            final TextView policyName;
-//            final TextView policyHours;
-//            final TextView internetPolicyDuringSelectedTimeOfDay;
-//
-//            final TextView[] daysTextViews = new TextView[7];
-//
-//            final SwitchCompat statusSwitchButton;
-//            final ImageButton menuImageButton;
-//            final ImageButton removeImageButton;
-//
-//            private final AccessRestrictionsWANAccessTile tile;
-//
-//            public ViewHolder(AccessRestrictionsWANAccessTile tile, View itemView) {
-//                super(itemView);
-//                this.tile = tile;
-//                this.cardView = (CardView)
-//                        itemView.findViewById(R.id.access_restriction_policy_cardview);
-//                this.policyNb = (TextView)
-//                        itemView.findViewById(R.id.access_restriction_policy_cardview_number);
-//                this.policyName = (TextView)
-//                        itemView.findViewById(R.id.access_restriction_policy_cardview_name);
-//                this.policyHours = (TextView)
-//                        itemView.findViewById(R.id.access_restriction_policy_cardview_hours);
-//                this.internetPolicyDuringSelectedTimeOfDay = (TextView)
-//                        itemView.findViewById(R.id.access_restriction_policy_cardview_internet_policy);
-//
-//                this.daysTextViews[0] = (TextView)
-//                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_sunday);
-//                this.daysTextViews[1] = (TextView)
-//                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_monday);
-//                this.daysTextViews[2] = (TextView)
-//                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_tuesday);
-//                this.daysTextViews[3] = (TextView)
-//                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_wednesday);
-//                this.daysTextViews[4] = (TextView)
-//                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_thursday);
-//                this.daysTextViews[5] = (TextView)
-//                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_friday);
-//                this.daysTextViews[6] = (TextView)
-//                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_saturday);
-//
-//                this.statusSwitchButton = (SwitchCompat)
-//                        itemView.findViewById(R.id.access_restriction_policy_cardview_status);
-//                this.menuImageButton = (ImageButton)
-//                        itemView.findViewById(R.id.access_restriction_policy_cardview_menu);
-//                this.removeImageButton = (ImageButton)
-//                        itemView.findViewById(R.id.access_restriction_policy_remove_btn);
-//            }
-//        }
-//    }
+
+    static class WANAccessRulesRecyclerViewAdapter
+            extends RecyclerView.Adapter<WANAccessRulesRecyclerViewAdapter.ViewHolder> {
+
+        @NonNull
+        private final AccessRestrictionsWANAccessTile tile;
+
+        @NonNull
+        private final List<WANAccessPolicy> wanAccessPolicies = new ArrayList<>();
+
+        public WANAccessRulesRecyclerViewAdapter(@NonNull final AccessRestrictionsWANAccessTile tile) {
+            this.tile = tile;
+        }
+
+        @NonNull
+        public List<WANAccessPolicy> getWanAccessPolicies() {
+            return wanAccessPolicies;
+        }
+
+        public WANAccessRulesRecyclerViewAdapter setWanAccessPolicies(
+                @Nullable final List<WANAccessPolicy> wanAccessPolicies) {
+            this.wanAccessPolicies.clear();
+            if (wanAccessPolicies != null) {
+                this.wanAccessPolicies.addAll(wanAccessPolicies);
+                Collections.sort(this.wanAccessPolicies, new Comparator<WANAccessPolicy>() {
+                    @Override
+                    public int compare(WANAccessPolicy lhs, WANAccessPolicy rhs) {
+                        return Integer.valueOf(lhs.getNumber()).compareTo(rhs.getNumber());
+                    }
+                });
+            }
+            return this;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            // create a new view
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.tile_admin_access_restriction, parent, false);
+            // set the view's size, margins, paddings and layout parameters
+            // ...
+            return new ViewHolder(this.tile, v);
+        }
+
+        @Override
+        public void onBindViewHolder(final ViewHolder holder, int position) {
+            // - get element from your dataset at this position
+            // - replace the contents of the view with that element
+            if (position < 0 || position >= wanAccessPolicies.size()) {
+                Crashlytics.log(Log.DEBUG, LOG_TAG,
+                        "invalid position for WAN Access Policy Adapter");
+                return;
+            }
+            final WANAccessPolicy wanAccessPolicy = wanAccessPolicies.get(position);
+            if (wanAccessPolicy == null) {
+                //Report error
+                Crashlytics.log(Log.DEBUG, LOG_TAG,
+                        "wanAccessPolicy @" + position + " is NULL");
+                return;
+            }
+
+            if (ColorUtils.isThemeLight(this.tile.mParentFragmentActivity)) {
+                holder.cardView.setCardBackgroundColor(ContextCompat
+                        .getColor(this.tile.mParentFragmentActivity, R.color.cardview_light_background));
+            } else {
+                holder.cardView.setCardBackgroundColor(ContextCompat
+                        .getColor(this.tile.mParentFragmentActivity, R.color.cardview_dark_background));
+            }
+
+            final TextDrawable textDrawable = ImageUtils.getTextDrawable(wanAccessPolicy.getName());
+            if (textDrawable == null) {
+                holder.avatarImageView.setVisibility(View.GONE);
+            } else {
+                holder.avatarImageView.setVisibility(View.VISIBLE);
+                holder.avatarImageView.setImageDrawable(textDrawable);
+            }
+
+            holder.policyNb.setText(String.valueOf(wanAccessPolicy.getNumber()));
+            holder.policyName.setText(wanAccessPolicy.getName());
+
+            String daysPattern = wanAccessPolicy.getDaysPattern();
+            if (daysPattern != null) {
+                if ("7".equals(daysPattern)) {
+                    daysPattern = "1 1 1 1 1 1 1"; //Everyday
+                }
+                final List<String> timeOfDayBufferList = Splitter.on(" ").omitEmptyStrings().trimResults()
+                        .splitToList(daysPattern);
+                for (int i = 0; i < timeOfDayBufferList.size(); i++) {
+                    final String todStatus = timeOfDayBufferList.get(i);
+                    if (i >= holder.daysTextViews.length) {
+                        continue;
+                    }
+                    final TextView daysTextView = holder.daysTextViews[i];
+                    daysTextView.setEnabled(true);
+                    if ("1".equals(todStatus)) {
+                        daysTextView
+                                .setBackgroundResource(R.drawable.table_border_selected);
+                    } else {
+                        daysTextView
+                                .setBackgroundResource(R.drawable.table_border);
+                        if (!"0".equals(todStatus)) {
+                            daysTextView.setEnabled(false);
+                        }
+                    }
+                }
+            }
+
+            holder.internetPolicyDuringSelectedTimeOfDay
+                    .setText(wanAccessPolicy.getDenyOrFilter());
+
+            holder.policyHours.setText(wanAccessPolicy.getTimeOfDay());
+
+            //Disable switch button listener
+            holder.statusSwitchButton.setEnabled(true);
+            final String status = Strings.nullToEmpty(wanAccessPolicy.getStatus()).trim();
+            switch (status) {
+                case "0":
+                case "$STAT:0":
+                    //Disabled
+                    holder.statusSwitchButton.setChecked(false);
+                    break;
+                case "1":
+                case "$STAT:1":
+                case "2":
+                case "$STAT:2":
+                    holder.statusSwitchButton.setChecked(true);
+                    break;
+                default:
+                    Utils.reportException(tile.mParentFragmentActivity,
+                            new WANAccessPolicyException("status=[" + status + "]"));
+                    holder.statusSwitchButton.setChecked(false);
+                    holder.statusSwitchButton.setEnabled(false);
+                    break;
+            }
+
+
+            holder.statusSwitchButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                        Utils.displayUpgradeMessage(tile.mParentFragmentActivity,
+                                "Toggle WAN Access Policy Restriction");
+                        holder.statusSwitchButton.toggle();
+                        return;
+                    }
+
+                    holder.statusSwitchButton.setEnabled(false);
+                    final boolean isChecked = holder.statusSwitchButton.isChecked();
+                    SnackbarUtils.buildSnackbar(tile.mParentFragmentActivity,
+                            tile.mParentFragmentActivity.findViewById(android.R.id.content),
+                            String.format("Going to %sable WAN Access Policy: '%s'",
+                                    isChecked ? "en" : "dis", wanAccessPolicy.getName()),
+                            "Undo",
+                            Snackbar.LENGTH_LONG,
+                            new SnackbarCallback() {
+                                @Override
+                                public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+                                }
+
+                                @Override
+                                public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+                                    //revert
+                                    tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+
+                                            holder.statusSwitchButton.toggle();
+                                            holder.statusSwitchButton.setEnabled(true);
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
+                                    //revert
+                                    tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            holder.statusSwitchButton.toggle();
+                                            holder.statusSwitchButton.setEnabled(true);
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
+                                    Utils.displayMessage(tile.mParentFragmentActivity,
+                                            String.format("%sabling WAN Access Policy: '%s'...",
+                                                    isChecked ?"En":"Dis", wanAccessPolicy.getName()),
+                                            Style.INFO);
+                                    final int enableStatus = !isChecked ? DISABLE :
+                                            WANAccessPolicy.DENY.equals(wanAccessPolicy.getDenyOrFilter()) ?
+                                                    ENABLE_1 :
+                                                    ENABLE_2;
+                                    ActionManager.runTasks(
+                                        new ToggleWANAccessPolicyRouterAction(
+                                                tile.mRouter,
+                                                tile.mParentFragmentActivity,
+                                                new RouterActionListener() {
+                                                    @Override
+                                                    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                                                        tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+
+                                                                try {
+                                                                    Utils.displayMessage(tile.mParentFragmentActivity,
+                                                                            String.format("WAN Access Policy '%s' successfully %s on host '%s'. ",
+                                                                                    wanAccessPolicy.getName(),
+                                                                                    isChecked ? "enabled" : "disabled",
+                                                                                    tile.mRouter.getCanonicalHumanReadableName()),
+                                                                            Style.CONFIRM);
+                                                                } finally {
+                                                                    holder.statusSwitchButton.setEnabled(true);
+                                                                    wanAccessPolicy.setStatus(Integer.toString(enableStatus));
+                                                                    WANAccessRulesRecyclerViewAdapter.this.
+                                                                            notifyItemChanged(holder.getAdapterPosition());
+                                                                }
+                                                            }
+
+                                                        });
+                                                    }
+
+                                                    @Override
+                                                    public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable final Exception exception) {
+                                                        tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                try {
+                                                                    Utils.displayMessage(tile.mParentFragmentActivity,
+                                                                            String.format("Error while trying to %s WAN Access Policy '%s' on '%s': %s",
+                                                                                    isChecked ? "enable" : "disable",
+                                                                                    wanAccessPolicy.getName(),
+                                                                                    tile.mRouter.getCanonicalHumanReadableName(),
+                                                                                    Utils.handleException(exception).first),
+                                                                            Style.ALERT);
+                                                                } finally {
+                                                                    //Revert
+                                                                    holder.statusSwitchButton.toggle();
+                                                                    holder.statusSwitchButton.setEnabled(true);
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                },
+                                                tile.mGlobalPreferences,
+                                                wanAccessPolicy,
+                                                enableStatus));
+                                }
+
+                                @Override
+                                public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+                                    //Revert
+                                    tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            holder.statusSwitchButton.toggle();
+                                            holder.statusSwitchButton.setEnabled(true);
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
+                                    //revert
+                                    tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            holder.statusSwitchButton.toggle();
+                                            holder.statusSwitchButton.setEnabled(true);
+                                        }
+                                    });
+                                }
+                            },
+                            null,
+                            true);
+                }
+            });
+
+            final AlertDialog removeWanPolicyDialog = new AlertDialog.Builder(tile.mParentFragmentActivity)
+                    .setIcon(R.drawable.ic_action_alert_warning)
+                    .setTitle(String.format("Remove WAN Access Policy: '%s'?",
+                            wanAccessPolicy.getName()))
+                    .setMessage("Are you sure you wish to continue? ")
+                    .setCancelable(true)
+                    .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            holder.statusSwitchButton.setEnabled(false);
+
+                            Utils.displayMessage(tile.mParentFragmentActivity,
+                                    String.format("Deleting WAN Access Policy: '%s'...",
+                                            wanAccessPolicy.getName()),
+                                    Style.INFO);
+
+                            final int wanAccessPolicyNumber = wanAccessPolicy.getNumber();
+
+                            final NVRAMInfo nvramVarsToSet = new NVRAMInfo()
+                                    .setProperty("filter_dport_grp"+wanAccessPolicyNumber, EMPTY_STRING)
+                                    .setProperty("filter_ip_grp"+wanAccessPolicyNumber, EMPTY_STRING)
+                                    .setProperty("filter_mac_grp"+wanAccessPolicyNumber, EMPTY_STRING)
+                                    .setProperty("filter_p2p_grp"+wanAccessPolicyNumber, EMPTY_STRING)
+                                    .setProperty("filter_port_grp"+wanAccessPolicyNumber, EMPTY_STRING)
+                                    .setProperty("filter_rule"+wanAccessPolicyNumber, EMPTY_STRING)
+                                    .setProperty("filter_tod"+wanAccessPolicyNumber, EMPTY_STRING)
+                                    .setProperty("filter_tod_buf"+wanAccessPolicyNumber, EMPTY_STRING)
+                                    .setProperty("filter_web_host"+wanAccessPolicyNumber, EMPTY_STRING)
+                                    .setProperty("filter_web_url"+wanAccessPolicyNumber, EMPTY_STRING);
+
+                            ActionManager.runTasks(
+                                new SetNVRAMVariablesAction(
+                                        tile.mRouter,
+                                        tile.mParentFragmentActivity,
+                                        nvramVarsToSet,
+                                        false,
+                                        new RouterActionListener() {
+                                            @Override
+                                            public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                                                tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        try {
+                                                            Utils.displayMessage(tile.mParentFragmentActivity,
+                                                                    String.format("WAN Access Policy '%s' successfully deleted on host '%s'. ",
+                                                                            wanAccessPolicy.getName(),
+                                                                            tile.mRouter.getCanonicalHumanReadableName()),
+                                                                    Style.CONFIRM);
+                                                        } finally {
+                                                            holder.statusSwitchButton.setEnabled(true);
+                                                            wanAccessPolicies.remove(wanAccessPolicy);
+                                                            //Success- update recycler view
+                                                            notifyItemRemoved(holder.getAdapterPosition());
+                                                        }
+                                                    }
+                                                });
+                                            }
+
+                                            @Override
+                                            public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable final Exception exception) {
+                                                tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        try {
+                                                            Utils.displayMessage(tile.mParentFragmentActivity,
+                                                                    String.format("Error while trying to delete WAN Access Policy '%s' on '%s': %s",
+                                                                            wanAccessPolicy.getName(),
+                                                                            tile.mRouter.getCanonicalHumanReadableName(),
+                                                                            Utils.handleException(exception).first),
+                                                                    Style.ALERT);
+                                                        } finally {
+                                                            holder.statusSwitchButton.setEnabled(true);
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        },
+                                        tile.mGlobalPreferences,
+                                        "/sbin/stopservice firewall",
+                                        "/sbin/startservice firewall"));
+
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //Cancelled - nothing more to do!
+                        }
+                    }).create();
+
+            if (!ColorUtils.isThemeLight(tile.mParentFragmentActivity)) {
+                //Set menu background to white
+                holder.menuImageButton.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+            }
+
+            holder.menuImageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final PopupMenu popup = new PopupMenu(tile.mParentFragmentActivity, v);
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.tile_wan_access_policy_toggle:
+                                    holder.statusSwitchButton.performClick();
+                                    return true;
+                                case R.id.tile_wan_access_policy_remove:
+                                    removeWanPolicyDialog.show();
+                                    return true;
+                                case R.id.tile_wan_access_policy_edit:
+                                    //TODO Edit: open up edit popup or, better, a completely different setting activity
+                                    Toast.makeText(tile.mParentFragmentActivity,
+                                            "[TODO] Edit WAN Access Policy #" + wanAccessPolicy.getNumber() +
+                                                    " (" + wanAccessPolicy.getName() + ")", Toast.LENGTH_SHORT).show();
+                                    return true;
+                                default:
+                                    break;
+                            }
+                            return false;
+                        }
+                    });
+                    final MenuInflater inflater = popup.getMenuInflater();
+                    final Menu menu = popup.getMenu();
+                    inflater.inflate(R.menu.tile_wan_access_policy_options, menu);
+                    popup.show();
+                }
+            });
+
+            holder.removeImageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    removeWanPolicyDialog.show();
+                }
+            });
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return wanAccessPolicies.size();
+        }
+
+        static class ViewHolder extends RecyclerView.ViewHolder {
+
+            final CardView cardView;
+            final TextView policyNb;
+            final TextView policyName;
+            final TextView policyHours;
+            final TextView internetPolicyDuringSelectedTimeOfDay;
+
+            final TextView[] daysTextViews = new TextView[7];
+
+            final SwitchCompat statusSwitchButton;
+            final ImageButton menuImageButton;
+            final ImageButton removeImageButton;
+
+            final ImageView avatarImageView;
+
+            private final AccessRestrictionsWANAccessTile tile;
+
+            public ViewHolder(AccessRestrictionsWANAccessTile tile, View itemView) {
+                super(itemView);
+                this.tile = tile;
+                this.cardView = (CardView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview);
+
+                this.avatarImageView = (ImageView) itemView.findViewById(R.id.avatar);
+                this.policyNb = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_number);
+                this.policyName = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_name);
+                this.policyHours = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_hours);
+                this.internetPolicyDuringSelectedTimeOfDay = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_internet_policy);
+
+                this.daysTextViews[0] = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_sunday);
+                this.daysTextViews[1] = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_monday);
+                this.daysTextViews[2] = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_tuesday);
+                this.daysTextViews[3] = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_wednesday);
+                this.daysTextViews[4] = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_thursday);
+                this.daysTextViews[5] = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_friday);
+                this.daysTextViews[6] = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_saturday);
+
+                this.statusSwitchButton = (SwitchCompat)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_status);
+                this.menuImageButton = (ImageButton)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_menu);
+                this.removeImageButton = (ImageButton)
+                        itemView.findViewById(R.id.access_restriction_policy_remove_btn);
+            }
+        }
+    }
 
     static class WANAccessPoliciesRouterData extends
             RouterData<List<WANAccessPolicy>> {
