@@ -138,10 +138,10 @@ def getVersionName(String flavorName) {
     "$versionMajor.$versionMinor.$versionPatch ($gitCommitHash-$flavorName)"
 }
 
-configurations.all {
-    // Check for updates every build
-    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-}
+//configurations.all {
+//    // Check for updates every build
+//    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+//}
 
 android {
 //    tracepotConfig {
@@ -167,8 +167,8 @@ android {
         }
     }
 
-    compileSdkVersion 24
-    buildToolsVersion '24.0.0'
+    compileSdkVersion 23
+    buildToolsVersion '23.0.3'
     sourceSets {
         main {
             manifest.srcFile 'src/main/AndroidManifest.xml'
@@ -199,7 +199,7 @@ android {
         applicationId "org.rm3l.ddwrt"
         testApplicationId "org.rm3l.ddwrt.tests"
         minSdkVersion 15
-        targetSdkVersion 24
+        targetSdkVersion 23
 
         vectorDrawables.useSupportLibrary = true
 
