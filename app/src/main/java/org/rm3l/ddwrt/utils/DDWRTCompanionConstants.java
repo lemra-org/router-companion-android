@@ -163,6 +163,7 @@ public final class DDWRTCompanionConstants {
     public static final String ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION = "routerSpeedTest.withCurrentConnection";
 
     public static final OnlineTileSourceBase TILE_SOURCE = TileSourceFactory.MAPQUESTOSM;
+    public static final String VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE = "vpn.pptp.toggles.mutually.exclusive";
 
     public static int MB = 1024 * 1024;
 

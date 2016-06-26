@@ -115,6 +115,7 @@ import static org.rm3l.ddwrt.tiles.services.vpn.client.EditOpenVPNClientSettings
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.CAT_SYS_CLASS_NET_S_STATISTICS;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.IfaceStatsType.RX_BYTES;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.IfaceStatsType.TX_BYTES;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE;
 
 public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
         implements DDWRTTile.ActivityResultListener, UndoBarController.AdvancedUndoListener, RouterActionListener {
@@ -764,7 +765,10 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                     case SET_NVRAM_VARIABLES:
                         final NVRAMInfo nvramInfo = (NVRAMInfo) token.getSerializable(OPENVPNCL_NVRAMINFO);
                         final String openvpnClEnable = nullToEmpty(nvramInfo.getProperty(OPENVPNCL_ENABLE));
-                        if (Arrays.asList("0", "1").contains(openvpnClEnable)) {
+
+                        if (mParentFragmentPreferences != null
+                                && mParentFragmentPreferences.getBoolean(VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE, false)
+                                && Arrays.asList("0", "1").contains(openvpnClEnable)) {
                             //Display a popup inviting user to toggle PPTP Client status at the same time
                             final String pptpClientStatusToSet;
                             if ("0".equals(openvpnClEnable)) {
@@ -783,7 +787,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     nvramInfo.setProperty(NVRAMInfo.PPTPD_CLIENT_ENABLE, pptpClientStatusToSet);
                                                     ActionManager.runTasks(
-                                                    new SetNVRAMVariablesAction(
+                                                        new SetNVRAMVariablesAction(
                                                             mRouter,
                                                             mParentFragmentActivity,
                                                             nvramInfo,
@@ -797,7 +801,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     ActionManager.runTasks(
-                                    new SetNVRAMVariablesAction(
+                                        new SetNVRAMVariablesAction(
                                             mRouter,
                                             mParentFragmentActivity,
                                             nvramInfo,
@@ -810,7 +814,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
                         } else {
                             ActionManager.runTasks(
-                            new SetNVRAMVariablesAction(
+                                new SetNVRAMVariablesAction(
                                     mRouter,
                                     mParentFragmentActivity,
                                     nvramInfo,

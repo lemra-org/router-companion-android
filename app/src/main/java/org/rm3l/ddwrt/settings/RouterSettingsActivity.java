@@ -38,6 +38,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_DUR
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WAN_CYCLE_DAY_PREF;
 
 /**
@@ -105,6 +106,7 @@ public class RouterSettingsActivity extends AbstractRouterSettingsActivity {
             bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_SERVER));
             bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB));
             bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS));
+            bindPreferenceSummaryToValue(findPreference(VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE));
 //            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION));
         }
 

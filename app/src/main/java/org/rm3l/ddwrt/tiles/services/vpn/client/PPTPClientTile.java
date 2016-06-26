@@ -58,6 +58,7 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.PPTPD_CLIENT_SRVSEC;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.PPTPD_CLIENT_SRVSUB;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.PPTPD_CLIENT_SRVSUBMSK;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.PPTPD_CLIENT_SRVUSER;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE;
 
 /**
  * Created by rm3l on 06/09/15.
@@ -583,55 +584,74 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
 
                                       final boolean openvpnClStatusToSet = !enable;
 
-                                      new AlertDialog.Builder(mParentFragmentActivity)
-                                              .setIcon(R.drawable.ic_action_alert_warning)
-                                              .setTitle("Toggle OpenVPN Client status")
-                                              .setMessage(String.format(Locale.US, "Router will be rebooted. Do you wish to %s OpenVPN Client at the same time?",
-                                                      openvpnClStatusToSet ? "start" : "stop"))
-                                              .setCancelable(true)
-                                              .setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
-                                                          @Override
-                                                          public void onClick(DialogInterface dialog, int which) {
-                                                              nvramInfoToSet.setProperty(NVRAMInfo.OPENVPNCL_ENABLE,
-                                                                      openvpnClStatusToSet ? "1" : "0");
-                                                              Utils.displayMessage(mParentFragmentActivity,
-                                                                      String.format("%s PPTP Client (and %s OpenVPN Client) ...",
-                                                                              enable ? "Enabling" : "Disabling",
-                                                                              openvpnClStatusToSet ? "Enabling" : "Disabling"),
-                                                                      Style.INFO);
+                                      if (mParentFragmentPreferences != null
+                                              && mParentFragmentPreferences.getBoolean(VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE, false)) {
+
+                                          new AlertDialog.Builder(mParentFragmentActivity)
+                                                  .setIcon(R.drawable.ic_action_alert_warning)
+                                                  .setTitle("Toggle OpenVPN Client status")
+                                                  .setMessage(String.format(Locale.US, "Router will be rebooted. Do you wish to %s OpenVPN Client at the same time?",
+                                                          openvpnClStatusToSet ? "start" : "stop"))
+                                                  .setCancelable(true)
+                                                  .setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
+                                                              @Override
+                                                              public void onClick(DialogInterface dialog, int which) {
+                                                                  nvramInfoToSet.setProperty(NVRAMInfo.OPENVPNCL_ENABLE,
+                                                                          openvpnClStatusToSet ? "1" : "0");
+                                                                  Utils.displayMessage(mParentFragmentActivity,
+                                                                          String.format("%s PPTP Client (and %s OpenVPN Client) ...",
+                                                                                  enable ? "Enabling" : "Disabling",
+                                                                                  openvpnClStatusToSet ? "Enabling" : "Disabling"),
+                                                                          Style.INFO);
 
 
-                                                              ActionManager.runTasks(
-                                                                new SetNVRAMVariablesAction(
-                                                                      mRouter,
-                                                                      mParentFragmentActivity,
-                                                                      nvramInfoToSet,
-                                                                      true,
-                                                                      listener,
-                                                                      mGlobalPreferences)
-                                                              );
+                                                                  ActionManager.runTasks(
+                                                                          new SetNVRAMVariablesAction(
+                                                                                  mRouter,
+                                                                                  mParentFragmentActivity,
+                                                                                  nvramInfoToSet,
+                                                                                  true,
+                                                                                  listener,
+                                                                                  mGlobalPreferences)
+                                                                  );
+                                                              }
                                                           }
-                                                      }
-                                              ).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                                      @Override
-                                                      public void onClick(DialogInterface dialogInterface, int i) {
+                                                  ).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                              @Override
+                                              public void onClick(DialogInterface dialogInterface, int i) {
 
-                                                          Utils.displayMessage(mParentFragmentActivity,
-                                                                  String.format("%s PPTP Client...",
-                                                                          enable ? "Enabling" : "Disabling"),
-                                                                  Style.INFO);
+                                                  Utils.displayMessage(mParentFragmentActivity,
+                                                          String.format("%s PPTP Client...",
+                                                                  enable ? "Enabling" : "Disabling"),
+                                                          Style.INFO);
 
-                                                          ActionManager.runTasks(
-                                                            new SetNVRAMVariablesAction(
+                                                  ActionManager.runTasks(
+                                                          new SetNVRAMVariablesAction(
                                                                   mRouter,
                                                                   mParentFragmentActivity,
                                                                   nvramInfoToSet,
                                                                   true,
                                                                   listener,
                                                                   mGlobalPreferences)
-                                                          );
-                                                      }
-                                      }).create().show();
+                                                  );
+                                              }
+                                          }).create().show();
+                                      } else {
+                                          Utils.displayMessage(mParentFragmentActivity,
+                                                  String.format("%s PPTP Client...",
+                                                          enable ? "Enabling" : "Disabling"),
+                                                  Style.INFO);
+
+                                          ActionManager.runTasks(
+                                                  new SetNVRAMVariablesAction(
+                                                          mRouter,
+                                                          mParentFragmentActivity,
+                                                          nvramInfoToSet,
+                                                          true,
+                                                          listener,
+                                                          mGlobalPreferences)
+                                          );
+                                      }
 
 //                                      Utils.displayMessage(mParentFragmentActivity,
 //                                              String.format("%s PPTP Client...",
