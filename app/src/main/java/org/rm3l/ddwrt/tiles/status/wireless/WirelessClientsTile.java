@@ -95,10 +95,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.google.common.hash.Hashing;
-import com.google.common.io.Closeables;
 import com.google.common.io.Files;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -121,6 +118,7 @@ import org.rm3l.ddwrt.actions.WakeOnLANRouterAction;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.ddwrt.lookup.MACOUILookupService;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.multithreading.MultiThreadingManager;
 import org.rm3l.ddwrt.resources.ClientDevices;
@@ -143,19 +141,14 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.NVRAMParser;
+import org.rm3l.ddwrt.utils.NetworkUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 import org.rm3l.ddwrt.widgets.NetworkTrafficView;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Collection;
@@ -171,6 +164,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -204,6 +199,14 @@ public class WirelessClientsTile
 
     private static final int MAC_OUI_VENDOR_LOOKUP_CACHE_SIZE = 20;
 
+    private static final Retrofit macOuiLookupRetrofit = new Retrofit.Builder()
+            .baseUrl(MACOUIVendor.TOOLS_RM3L_PREFIX)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(NetworkUtils.getHttpClientInstance())
+            .build();
+    private static final MACOUILookupService mMACOUILookupService =
+            macOuiLookupRetrofit.create(MACOUILookupService.class);
+
     public static final LoadingCache<String, MACOUIVendor> mMacOuiVendorLookupCache = CacheBuilder
             .newBuilder()
             .softValues()
@@ -223,50 +226,16 @@ public class WirelessClientsTile
                     }
                     //Get to MAC OUI Vendor Lookup API
                     try {
-                        final String urlStr = String.format("%s/%s",
-                                MACOUIVendor.MAC_VENDOR_LOOKUP_API_PREFIX, macAddr.toUpperCase());
-                        Crashlytics.log(Log.DEBUG, LOG_TAG, "--> GET " + urlStr);
-                        final URL url = new URL(urlStr);
-                        final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                        //FIXME Add a user-preference
-                        urlConnection.setConnectTimeout(5000);
-                        try {
-                            final int statusCode = urlConnection.getResponseCode();
-                            if (statusCode == 200) {
-                                final InputStream content = new BufferedInputStream(urlConnection.getInputStream());
-                                try {
-                                    //Read the server response and attempt to parse it as JSON
-                                    final Reader reader = new InputStreamReader(content);
-                                    final GsonBuilder gsonBuilder = new GsonBuilder();
-                                    final Gson gson = gsonBuilder.create();
-                                    final MACOUIVendor[] macouiVendors = gson.fromJson(reader, MACOUIVendor[].class);
-                                    Crashlytics.log(Log.DEBUG, LOG_TAG, "--> Result of GET " + urlStr + ": " + Arrays.toString(macouiVendors));
-                                    if (macouiVendors == null || macouiVendors.length == 0) {
-                                        //Returning null so we can try again later
-                                        throw new DDWRTCompanionException();
-                                    }
-                                    return macouiVendors[0];
 
-                                } finally {
-                                    Closeables.closeQuietly(content);
-                                }
-                            } else {
-                                Crashlytics.log(Log.ERROR, LOG_TAG, "<--- Server responded with status code: " + statusCode);
-                                if (statusCode == 204) {
-                                    //No Content found on the remote server - no need to retry later
-                                    return new MACOUIVendor();
-                                }
-                            }
-
-                        } finally {
-                            urlConnection.disconnect();
-                        }
+                        return mMACOUILookupService
+                                .lookupMACAddress(macAddr.replaceAll(":", "-"))
+                                .execute()
+                                .body();
 
                     } catch (final Exception e) {
                         e.printStackTrace();
+                        throw new DDWRTCompanionException(e);
                     }
-
-                    throw new DDWRTCompanionException();
                 }
             });
 

@@ -24,209 +24,161 @@ package org.rm3l.ddwrt.resources;
 
 import android.support.annotation.Nullable;
 
+import com.google.common.base.Joiner;
+
+import java.util.List;
+
 /**
  * @see {https://www.macvendorlookup.com/mac-address-api}
+ * @see {https://github.com/klauspost/oui}
  */
 public class MACOUIVendor {
 
-    public static final String MAC_VENDOR_LOOKUP_API_PREFIX = "http://www.macvendorlookup.com/api/v2";
-
+    public static final String TOOLS_RM3L_PREFIX = "http://tools.rm3l.org:5000/";
     /*
     {
-      "startHex":"0023AB000000",
-      "endHex":"0023ABFFFFFF",
-      "startDec":"153192759296",
-      "endDec":"153209536511",
-      "company":"CISCO SYSTEMS, INC.",
-      "addressL1":"170 W. TASMAN DRIVE",
-      "addressL2":"M\/S SJA-2",
-      "addressL3":"SAN JOSE CA 95134-1706",
-      "country":"UNITED STATES",
-      "type":"oui24"
-   }
+      "data": {
+        "manufacturer": "Liteon Technology Corporation",
+        "address": [
+          "Taipei  23585",
+          "TAIWAN, PROVINCE OF CHINA"
+        ],
+        "prefix": "d0:df:9a",
+        "country": "TAIWAN, PROVINCE OF CHINA"
+      }
+    }
      */
 
-    /**
-     * The start of the MAC address range the vendor owns in hexadecimal format
-     */
     @Nullable
-    private String startHex;
+    private DataDetails data;
 
-    /**
-     * The end of the MAC address range the vendor owns in hexadecimal format
-     */
     @Nullable
-    private String endHex;
-
-    /**
-     * The start of the MAC address range the vendor owns in decimal format
-     */
-    @Nullable
-    private String startDec;
-
-    /**
-     * The end of the MAC address range the vendor owns in decimal format
-     */
-    @Nullable
-    private String endDec;
-
-    /**
-     * Company name of the vendor or manufacturer
-     */
-    @Nullable
-    private String company;
-
-    /**
-     * First line of the address the company provided to IEEE
-     */
-    @Nullable
-    private String addressL1;
-
-    /**
-     * Second line of the address the company provided to IEEE
-     */
-    @Nullable
-    private String addressL2;
-
-    /**
-     * Third line of the address the company provided to IEEE
-     */
-    @Nullable
-    private String addressL3;
-
-    /**
-     * Country the company is located in
-     */
-    @Nullable
-    private String country;
-
-    /**
-     * There are 3 different IEEE databases: oui24, oui36, and iab
-     */
-    @Nullable
-    private String type;
-
-    public String getStartHex() {
-        return startHex;
+    public DataDetails getData() {
+        return data;
     }
 
-    public void setStartHex(String startHex) {
-        this.startHex = startHex;
-    }
-
-    public String getEndHex() {
-        return endHex;
-    }
-
-    public void setEndHex(String endHex) {
-        this.endHex = endHex;
-    }
-
-    public String getStartDec() {
-        return startDec;
-    }
-
-    public void setStartDec(String startDec) {
-        this.startDec = startDec;
-    }
-
-    public String getEndDec() {
-        return endDec;
-    }
-
-    public void setEndDec(String endDec) {
-        this.endDec = endDec;
+    public MACOUIVendor setData(@Nullable DataDetails data) {
+        this.data = data;
+        return this;
     }
 
     public String getCompany() {
-        return company;
+        return data != null ? data.getManufacturer() : null;
     }
 
-    public void setCompany(String company) {
-        this.company = company;
-    }
+    public static class DataDetails {
 
-    public String getAddressL1() {
-        return addressL1;
-    }
+        @Nullable
+        private String manufacturer;
 
-    public void setAddressL1(String addressL1) {
-        this.addressL1 = addressL1;
-    }
+        @Nullable
+        private List<String> address;
 
-    public String getAddressL2() {
-        return addressL2;
-    }
+        @Nullable
+        private String prefix;
 
-    public void setAddressL2(String addressL2) {
-        this.addressL2 = addressL2;
-    }
+        @Nullable
+        private String country;
 
-    public String getAddressL3() {
-        return addressL3;
-    }
+        @Nullable
+        public String getManufacturer() {
+            return manufacturer;
+        }
 
-    public void setAddressL3(String addressL3) {
-        this.addressL3 = addressL3;
-    }
+        public DataDetails setManufacturer(@Nullable String manufacturer) {
+            this.manufacturer = manufacturer;
+            return this;
+        }
 
-    public String getCountry() {
-        return country;
-    }
+        @Nullable
+        public List<String> getAddress() {
+            return address;
+        }
 
-    public void setCountry(String country) {
-        this.country = country;
-    }
+        public DataDetails setAddress(@Nullable List<String> address) {
+            this.address = address;
+            return this;
+        }
 
-    public String getType() {
-        return type;
-    }
+        @Nullable
+        public String getPrefix() {
+            return prefix;
+        }
 
-    public void setType(String type) {
-        this.type = type;
+        public DataDetails setPrefix(@Nullable String prefix) {
+            this.prefix = prefix;
+            return this;
+        }
+
+        @Nullable
+        public String getCountry() {
+            return country;
+        }
+
+        public DataDetails setCountry(@Nullable String country) {
+            this.country = country;
+            return this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            DataDetails that = (DataDetails) o;
+
+            if (manufacturer != null ? !manufacturer.equals(that.manufacturer) : that.manufacturer != null)
+                return false;
+            if (address != null ? !address.equals(that.address) : that.address != null)
+                return false;
+            if (prefix != null ? !prefix.equals(that.prefix) : that.prefix != null) return false;
+            return country != null ? country.equals(that.country) : that.country == null;
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = manufacturer != null ? manufacturer.hashCode() : 0;
+            result = 31 * result + (address != null ? address.hashCode() : 0);
+            result = 31 * result + (prefix != null ? prefix.hashCode() : 0);
+            result = 31 * result + (country != null ? country.hashCode() : 0);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "DataDetails{" +
+                    "manufacturer='" + manufacturer + '\'' +
+                    ", address=" + address +
+                    ", prefix='" + prefix + '\'' +
+                    ", country='" + country + '\'' +
+                    '}';
+        }
     }
 
     public boolean isNone() {
-        return (startHex == null &&
-                endHex == null &&
-                startDec == null &&
-                endDec == null &&
-                company == null &&
-                addressL1 == null &&
-                addressL2 == null &&
-                addressL3 == null &&
-                country == null &&
-                type == null);
+        return (data == null ||
+                ((data.getAddress() == null || data.getAddress().isEmpty()) &&
+                data.getCountry() == null &&
+                data.getManufacturer() == null &&
+                data.getPrefix() == null));
     }
 
     @Override
     public String toString() {
         return "MACOUIVendor{" +
-                "startHex='" + startHex + '\'' +
-                ", endHex='" + endHex + '\'' +
-                ", startDec='" + startDec + '\'' +
-                ", endDec='" + endDec + '\'' +
-                ", company='" + company + '\'' +
-                ", addressL1='" + addressL1 + '\'' +
-                ", addressL2='" + addressL2 + '\'' +
-                ", addressL3='" + addressL3 + '\'' +
-                ", country='" + country + '\'' +
-                ", type='" + type + '\'' +
+                "data='" + data + '\'' +
                 '}';
     }
 
     public String toCommandOutputString() {
-        return "\n" +
-                "- startHex: " + startHex + "\n" +
-                "- endHex: " + endHex + "\n" +
-                "- startDec: " + startDec + "\n" +
-                "- endDec: " + endDec + "\n" +
-                "- company: " + company + "\n" +
-                "- addressL1: " + addressL1 + "\n" +
-                "- addressL2: " + addressL2 + "\n" +
-                "- addressL3: " + addressL3 + "\n" +
-                "- country: " + country + "\n" +
-                "- type: " + type ;
+        return data == null ? "" :
+                "\n" +
+                "- manufacturer: " + data.getManufacturer() + "\n" +
+                "- address: " + (data.getAddress() != null ?
+                        Joiner.on(" , ").skipNulls().join(data.getAddress()) : "N/A") + "\n" +
+                "- country: " + data.getCountry() + "\n" +
+                "- prefix: " + data.getPrefix() ;
     }
 
     @Override
@@ -234,39 +186,14 @@ public class MACOUIVendor {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        final MACOUIVendor that = (MACOUIVendor) o;
+        MACOUIVendor that = (MACOUIVendor) o;
 
-        if (addressL1 != null ? !addressL1.equals(that.addressL1) : that.addressL1 != null)
-            return false;
-        if (addressL2 != null ? !addressL2.equals(that.addressL2) : that.addressL2 != null)
-            return false;
-        if (addressL3 != null ? !addressL3.equals(that.addressL3) : that.addressL3 != null)
-            return false;
-        if (company != null ? !company.equals(that.company) : that.company != null) return false;
-        if (country != null ? !country.equals(that.country) : that.country != null) return false;
-        if (endDec != null ? !endDec.equals(that.endDec) : that.endDec != null) return false;
-        if (endHex != null ? !endHex.equals(that.endHex) : that.endHex != null) return false;
-        if (startDec != null ? !startDec.equals(that.startDec) : that.startDec != null)
-            return false;
-        if (startHex != null ? !startHex.equals(that.startHex) : that.startHex != null)
-            return false;
-        if (type != null ? !type.equals(that.type) : that.type != null) return false;
+        return data != null ? data.equals(that.data) : that.data == null;
 
-        return true;
     }
 
     @Override
     public int hashCode() {
-        int result = startHex != null ? startHex.hashCode() : 0;
-        result = 31 * result + (endHex != null ? endHex.hashCode() : 0);
-        result = 31 * result + (startDec != null ? startDec.hashCode() : 0);
-        result = 31 * result + (endDec != null ? endDec.hashCode() : 0);
-        result = 31 * result + (company != null ? company.hashCode() : 0);
-        result = 31 * result + (addressL1 != null ? addressL1.hashCode() : 0);
-        result = 31 * result + (addressL2 != null ? addressL2.hashCode() : 0);
-        result = 31 * result + (addressL3 != null ? addressL3.hashCode() : 0);
-        result = 31 * result + (country != null ? country.hashCode() : 0);
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        return result;
+        return data != null ? data.hashCode() : 0;
     }
 }
