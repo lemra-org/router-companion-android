@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -55,6 +54,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Predicate;
@@ -66,6 +66,7 @@ import org.json.JSONObject;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.StorageException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.multithreading.MultiThreadingManager;
 import org.rm3l.ddwrt.resources.MACOUIVendor;
 import org.rm3l.ddwrt.resources.RecyclerViewRefreshCause;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -73,6 +74,7 @@ import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.StorageUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
@@ -89,6 +91,7 @@ import java.util.Set;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import needle.UiRelatedTask;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -912,8 +915,8 @@ public class ManageRouterAliasesActivity
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             // create a new view
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.router_aliases_list_layout, parent, false);
+            final View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.router_alias, parent, false);
             // set the view's size, margins, paddings and layout parameters
             // ...
             final CardView cardView = (CardView) v.findViewById(R.id.router_alias_item_cardview);
@@ -948,45 +951,47 @@ public class ManageRouterAliasesActivity
             holder.macAddress.setText(mac);
             holder.alias.setText(aliasStr);
 
-            //Update OUI in a background thread - as this is likely to infer network call
-            new AsyncTask<String, Void, Void>() {
-                @Override
-                protected Void doInBackground(String... params) {
-                    try {
-                        final MACOUIVendor macouiVendor =
-                                WirelessClientsTile.mMacOuiVendorLookupCache
-                                        .get(mac);
-                        context.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (macouiVendor != null) {
-                                    holder.oui.setText(macouiVendor.getCompany());
-                                    holder.oui.setVisibility(View.VISIBLE);
-                                } else {
-                                    holder.oui.setVisibility(View.INVISIBLE);
-                                }
-                            }
-                        });
+            final TextDrawable avatarTextDrawable = ImageUtils.getTextDrawable(aliasStr);
+            if (avatarTextDrawable != null) {
+                holder.avatarImageView.setVisibility(View.VISIBLE);
+                holder.avatarImageView.setImageDrawable(avatarTextDrawable);
+            } else {
+                holder.avatarImageView.setVisibility(View.GONE);
+            }
 
-                    } catch (final Exception e) {
-                        context.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+            //Update OUI in a background thread - as this is likely to infer network call
+            MultiThreadingManager.getMiscTasksExecutor()
+                    .execute(new UiRelatedTask<MACOUIVendor>() {
+
+                        @Override
+                        @Nullable
+                        protected MACOUIVendor doWork() {
+                            try {
+                                return WirelessClientsTile
+                                        .mMacOuiVendorLookupCache
+                                        .get(mac);
+                            } catch (final Exception e) {
+                                return null;
+                            }
+                        }
+
+                        @Override
+                        protected void thenDoUiRelatedWork(@Nullable final MACOUIVendor macouiVendor) {
+                            //Hide loading wheel
+                            context.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    holder.ouiLoadingSpinner.setVisibility(View.GONE);
+                                }
+                            });
+                            if (macouiVendor != null) {
+                                holder.oui.setText(macouiVendor.getCompany());
+                                holder.oui.setVisibility(View.VISIBLE);
+                            } else {
                                 holder.oui.setVisibility(View.INVISIBLE);
                             }
-                        });
-                    } finally {
-                        //Hide loading wheel
-                        context.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                holder.ouiLoadingSpinner.setVisibility(View.GONE);
-                            }
-                        });
-                    }
-                    return null;
-                }
-            }.execute(mac);
+                        }
+                    });
 
             final AlertDialog removeAliasEntryDialog = new AlertDialog.Builder(context)
                     .setIcon(R.drawable.ic_action_alert_warning)
@@ -1132,6 +1137,8 @@ public class ManageRouterAliasesActivity
             final View containerView;
             private final View itemView;
             private final Context mContext;
+            @NonNull
+            final ImageView avatarImageView;
 
             public ViewHolder(Context context, View itemView) {
                 super(itemView);
@@ -1140,6 +1147,8 @@ public class ManageRouterAliasesActivity
 
                 this.containerView = this.itemView
                         .findViewById(R.id.router_alias_detail_container);
+
+                this.avatarImageView = (ImageView) this.itemView.findViewById(R.id.avatar);
 
                 this.macAddress =
                         (TextView) this.itemView.findViewById(
