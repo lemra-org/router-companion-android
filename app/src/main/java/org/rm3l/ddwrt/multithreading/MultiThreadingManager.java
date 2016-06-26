@@ -13,6 +13,7 @@ public final class MultiThreadingManager {
     private static final String ACTION_TASK_TYPE = "Action";
     private static final String MISC_TASK_TYPE = "Misc";
     private static final String WEB_TASK_TYPE = "Web";
+    private static final String SPEED_TEST_TASK_TYPE = "SpeedTest";
 
     private MultiThreadingManager() {
     }
@@ -43,6 +44,13 @@ public final class MultiThreadingManager {
         return Needle
                 .onBackgroundThread()
                 .withTaskType(WEB_TASK_TYPE)
+                .serially();
+    }
+
+    public static Executor getSpeedTestTasksExecutor() {
+        return Needle
+                .onBackgroundThread()
+                .withTaskType(SPEED_TEST_TASK_TYPE)
                 .serially();
     }
 
