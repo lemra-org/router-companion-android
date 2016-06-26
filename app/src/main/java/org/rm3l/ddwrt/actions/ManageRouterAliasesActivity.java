@@ -971,6 +971,7 @@ public class ManageRouterAliasesActivity
                                         .mMacOuiVendorLookupCache
                                         .get(mac);
                             } catch (final Exception e) {
+                                //No worries
                                 return null;
                             }
                         }
@@ -978,12 +979,7 @@ public class ManageRouterAliasesActivity
                         @Override
                         protected void thenDoUiRelatedWork(@Nullable final MACOUIVendor macouiVendor) {
                             //Hide loading wheel
-                            context.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    holder.ouiLoadingSpinner.setVisibility(View.GONE);
-                                }
-                            });
+                            holder.ouiLoadingSpinner.setVisibility(View.GONE);
                             if (macouiVendor != null) {
                                 holder.oui.setText(macouiVendor.getCompany());
                                 holder.oui.setVisibility(View.VISIBLE);
