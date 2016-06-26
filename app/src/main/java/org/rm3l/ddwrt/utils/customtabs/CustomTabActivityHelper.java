@@ -34,11 +34,12 @@ public class CustomTabActivityHelper {
     private ConnectionCallback mConnectionCallback;
 
     public static void openCustomTab(@NonNull final Activity context,
-                                           @Nullable final CustomTabsSession customTabsSession,
-                                           @NonNull final String url,
-                                           @Nullable final String routerUuid,
-                                           @Nullable final String helpLink,
-                                           @Nullable final CustomTabFallback fallback) {
+                                     @Nullable final CustomTabsSession customTabsSession,
+                                     @NonNull final String url,
+                                     @Nullable final String routerUuid,
+                                     @Nullable final String helpLink,
+                                     @Nullable final CustomTabFallback fallback,
+                                     boolean withFeedbackMenuItem) {
 
         final CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder(customTabsSession);
 
@@ -61,12 +62,15 @@ public class CustomTabActivityHelper {
         //Menu items
         builder.addDefaultShareMenuItem();
 
-        //FIXME Send Feedback
-        final Intent intent = new Intent(context, SendFeedbackBroadcastReceiver.class);
-        if (routerUuid != null) {
+        if (withFeedbackMenuItem) {
+            final Intent intent = new Intent(context, SendFeedbackBroadcastReceiver.class);
+            intent.putExtra(CustomTabActivityHelper.class.getSimpleName(), true);
             intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
+            if (routerUuid != null) {
+                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
+            }
+            builder.addMenuItem("Send Feedback", PendingIntent.getBroadcast(context, 0, intent, 0));
         }
-        builder.addMenuItem("Send Feedback", PendingIntent.getBroadcast(context, 0, intent, 0));
 
         final CustomTabsIntent customTabsIntent = builder.build();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {

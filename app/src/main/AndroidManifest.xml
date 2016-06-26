@@ -487,6 +487,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:value=".mgmt.RouterManagementActivity" />
         </activity>
 
+        <receiver android:name=".feedback.SendFeedbackBroadcastReceiver"/>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="bf40a9722838d1959a1a770881926ee96e4b94f1" />

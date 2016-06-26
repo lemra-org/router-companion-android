@@ -734,7 +734,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                                     activity.startActivity(
                                                             new Intent(DDWRTMainActivity.this, HelpActivity.class));
                                                 }
-                                            });
+                                            }, false);
                                     break;
                                 case 1002:
                                     //Changelog
@@ -746,7 +746,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                                     activity.startActivity(
                                                             new Intent(DDWRTMainActivity.this, ChangelogActivity.class));
                                                 }
-                                            });
+                                            }, false);
                                     break;
                                 case 1003:
                                     //Feedback
@@ -1259,7 +1259,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                 activity.startActivity(
                                         new Intent(DDWRTMainActivity.this, HelpActivity.class));
                             }
-                        });
+                        }, false);
                 eventMap.put("Menu Item", "Help");
                 ReportingUtils.reportEvent(ReportingUtils.EVENT_MENU_ITEM, eventMap);
                 return true;
@@ -1272,7 +1272,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                 activity.startActivity(
                                         new Intent(DDWRTMainActivity.this, ChangelogActivity.class));
                             }
-                        });
+                        }, false);
                 eventMap.put("Menu Item", "Changelog");
                 ReportingUtils.reportEvent(ReportingUtils.EVENT_MENU_ITEM, eventMap);
                 return true;
@@ -1464,7 +1464,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                                 .putExtra(OpenWebManagementPageActivity.URL_TO_OPEN, url);
                                         activity.startActivity(webManagementIntent);
                                     }
-                                });
+                                }, false);
 
                     }
                 });

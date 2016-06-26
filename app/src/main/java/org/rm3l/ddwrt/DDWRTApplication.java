@@ -22,13 +22,17 @@
 
 package org.rm3l.ddwrt;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.airbnb.deeplinkdispatch.DeepLinkHandler;
@@ -47,6 +51,7 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -73,7 +78,9 @@ import static org.rm3l.ddwrt.utils.Utils.isFirstLaunch;
         buildConfigClass = BuildConfig.class,
         additionalSharedPreferences = {DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY}
 )
-public class DDWRTApplication extends Application {
+public class DDWRTApplication extends Application implements Application.ActivityLifecycleCallbacks {
+
+    private static final String TAG = DDWRTApplication.class.getSimpleName();
 
     private static final List<String> GOOGLE_INSTALLER_PACKAGE_NAMES =
             Arrays.asList("com.android.vending", "com.google.android.feedback");
@@ -84,9 +91,13 @@ public class DDWRTApplication extends Application {
     private static final List<String> FDROID_INSTALLER_PACKAGE_NAMES =
             Collections.singletonList("org.fdroid.fdroid.installer");
 
+    private static WeakReference<Activity> mCurrentActivity;
+
     @Override
     public void onCreate() {
         super.onCreate();
+
+        registerActivityLifecycleCallbacks(this);
 
         if (BuildConfig.DEBUG) {
 //            LeakCanary.install(this);
@@ -171,7 +182,65 @@ public class DDWRTApplication extends Application {
             //Default is Dark
             setTheme(R.style.AppThemeDark);
         }
-
     }
 
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        unregisterActivityLifecycleCallbacks(this);
+    }
+
+    @Override
+    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+        Crashlytics.log(Log.DEBUG, TAG,
+                "onActivityCreated: " + activity.getClass().getCanonicalName());
+        mCurrentActivity = new WeakReference<>(activity);
+    }
+
+    @Override
+    public void onActivityStarted(Activity activity) {
+        Crashlytics.log(Log.DEBUG, TAG,
+                "onActivityStarted: " + activity.getClass().getCanonicalName());
+        mCurrentActivity = new WeakReference<>(activity);
+    }
+
+    @Override
+    public void onActivityResumed(Activity activity) {
+        Crashlytics.log(Log.DEBUG, TAG,
+                "onActivityResumed: " + activity.getClass().getCanonicalName());
+        mCurrentActivity = new WeakReference<>(activity);
+    }
+
+    @Override
+    public void onActivityPaused(Activity activity) {
+        Crashlytics.log(Log.DEBUG, TAG,
+                "onActivityPaused: " + activity.getClass().getCanonicalName());
+        mCurrentActivity.clear();
+    }
+
+    @Override
+    public void onActivityStopped(Activity activity) {
+        Crashlytics.log(Log.DEBUG, TAG,
+                "onActivityStopped: " + activity.getClass().getCanonicalName());
+        mCurrentActivity.clear();
+    }
+
+    @Override
+    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+        Crashlytics.log(Log.DEBUG, TAG,
+                "onActivitySaveInstanceState: " + activity.getClass().getCanonicalName());
+        mCurrentActivity.clear();
+    }
+
+    @Override
+    public void onActivityDestroyed(Activity activity) {
+        Crashlytics.log(Log.DEBUG, TAG,
+                "onActivityDestroyed: " + activity.getClass().getCanonicalName());
+        mCurrentActivity.clear();
+    }
+
+    @Nullable
+    public static Activity getCurrentActivity() {
+        return mCurrentActivity.get();
+    }
 }

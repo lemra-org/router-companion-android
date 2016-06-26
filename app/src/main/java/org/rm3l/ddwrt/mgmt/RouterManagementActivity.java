@@ -470,7 +470,7 @@ public class RouterManagementActivity
                                 activity.startActivity(
                                         new Intent(RouterManagementActivity.this, HelpActivity.class));
                             }
-                        });
+                        }, false);
                 return true;
             case R.id.changelog:
                 CustomTabActivityHelper.openCustomTab(RouterManagementActivity.this, null,
@@ -481,7 +481,7 @@ public class RouterManagementActivity
                                 activity.startActivity(
                                         new Intent(RouterManagementActivity.this, ChangelogActivity.class));
                             }
-                        });
+                        }, false);
                 return true;
 
             case R.id.router_list_actionbar_add:
