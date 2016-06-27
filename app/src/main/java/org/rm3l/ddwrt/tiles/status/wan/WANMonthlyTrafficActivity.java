@@ -89,7 +89,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -636,8 +635,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                 outputStream.flush();
             } catch (IOException e) {
                 e.printStackTrace();
-                Crouton.makeText(this, getString(R.string.internal_error_please_try_again), Style.ALERT)
-                        .show();
+                Utils.displayMessage(this, getString(R.string.internal_error_please_try_again), Style.ALERT);
             } finally {
                 try {
                     if (outputStream != null) {

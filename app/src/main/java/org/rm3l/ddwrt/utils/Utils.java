@@ -34,6 +34,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
 import android.net.NetworkInfo;
@@ -110,7 +111,6 @@ import static android.util.TypedValue.COMPLEX_UNIT_DIP;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static de.keyboardsurfer.android.widget.crouton.Crouton.makeText;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AD_FREE_APP_APPLICATION_ID;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
@@ -187,10 +187,35 @@ public final class Utils {
     }
 
     public static void displayMessage(@NonNull final Activity activity, final String msg, final Style style) {
+        final int bgColor;
+        if (style == null) {
+            bgColor = Color.BLUE;
+        } else {
+            if (style == Style.ALERT) {
+                bgColor = Color.RED;
+            } else if (style == Style.CONFIRM) {
+                bgColor = Color.GREEN;
+            } else if (style == Style.INFO) {
+                bgColor = Color.BLUE;
+            } else {
+                bgColor = Color.GRAY;
+            }
+        }
+
         activity.runOnUiThread(new Runnable() {
             public void run() {
-                makeText(activity, msg, style,
-                        (ViewGroup) activity.findViewById(android.R.id.content)).show();
+                SnackbarUtils.buildSnackbar(activity,
+                        activity.findViewById(android.R.id.content),
+                        bgColor,
+                        msg,
+                        Color.WHITE,
+                        null, Color.YELLOW,
+                        Snackbar.LENGTH_LONG,
+                        null,
+                        null,
+                        true);
+
+//                makeText(activity, msg, style, android.R.id.content).show();
             }
         });
     }

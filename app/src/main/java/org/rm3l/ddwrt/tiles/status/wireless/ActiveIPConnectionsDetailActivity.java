@@ -111,7 +111,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -796,9 +795,9 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             }
 
             if (exception != null) {
-                Crouton.makeText(this,
+                Utils.displayMessage(this,
                         "Error while trying to share Active IP Connections - please try again later",
-                        Style.ALERT).show();
+                        Style.ALERT);
                 return true;
             }
 

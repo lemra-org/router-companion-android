@@ -63,7 +63,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.nullToEmpty;
@@ -266,9 +265,9 @@ public class RouterMemInfoActivity extends AppCompatActivity {
             }
 
             if (exception != null) {
-                Crouton.makeText(this,
+                Utils.displayMessage(this,
                         "Error while trying to share Mem Info - please try again later",
-                        Style.ALERT).show();
+                        Style.ALERT);
                 return true;
             }
 

@@ -96,7 +96,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
-import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -631,16 +630,16 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
             if (PermissionChecker.checkSelfPermission(mParentFragmentActivity,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
                     PackageManager.PERMISSION_GRANTED) {
-                Crouton.makeText(mParentFragmentActivity,
+                Utils.displayMessage(mParentFragmentActivity,
                         "This feature requires permission to write to devices storage!",
-                        Style.ALERT).show();
+                        Style.ALERT);
                 return true;
             }
 
             //Share action
             final Map<Object, Object> nvramInfo = ((NVRAMDataRecyclerViewAdapter) mAdapter).getNvramInfo();
             if (nvramInfo == null || nvramInfo.isEmpty()) {
-                Crouton.makeText(mParentFragmentActivity, "Nothing to share!", Style.ALERT).show();
+                Utils.displayMessage(mParentFragmentActivity, "Nothing to share!", Style.ALERT);
                 return true;
             }
 
@@ -666,9 +665,9 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
             }
 
             if (exception != null) {
-                Crouton.makeText(mParentFragmentActivity,
+                Utils.displayMessage(mParentFragmentActivity,
                         "Error while trying to share file - please try again later",
-                        Style.ALERT).show();
+                        Style.ALERT);
                 return true;
             }
 

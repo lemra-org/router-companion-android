@@ -45,7 +45,6 @@ import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.Collection;
 
-import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static android.widget.TextView.BufferType.EDITABLE;
@@ -80,8 +79,8 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
         final FragmentActivity activity = getActivity();
 
         if (error) {
-            Crouton.makeText(activity, "Error while trying to update item - please try again later.",
-                    Style.ALERT).show();
+            Utils.displayMessage(activity, "Error while trying to update item - please try again later.",
+                    Style.ALERT);
         } else {
             //Request Backup
             Utils.requestBackup(activity);

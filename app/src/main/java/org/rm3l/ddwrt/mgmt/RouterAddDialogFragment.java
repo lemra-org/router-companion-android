@@ -36,7 +36,6 @@ import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.Utils;
 
-import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -45,6 +44,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_SECONDS;
 
 
+@Deprecated
 public class RouterAddDialogFragment extends AbstractRouterMgmtDialogFragment {
 
     @Override
@@ -79,8 +79,8 @@ public class RouterAddDialogFragment extends AbstractRouterMgmtDialogFragment {
             }
 //            Crouton.makeText(getActivity(), "Item added", Style.CONFIRM).show();
         } else {
-            Crouton.makeText(getActivity(), "Error while trying to add item - please try again later.",
-                    Style.ALERT).show();
+            Utils.displayMessage(getActivity(), "Error while trying to add item - please try again later.",
+                    Style.ALERT);
         }
     }
 

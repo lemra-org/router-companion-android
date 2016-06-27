@@ -79,7 +79,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -719,9 +718,9 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                                                                     .remove(wolHostsPrefKey)
                                                                     .apply();
 
-                                                            Crouton.makeText(mParentFragmentActivity,
+                                                            Utils.displayMessage(mParentFragmentActivity,
                                                                     devicesEditableForWol.size() + " item(s) deleted - list will refresh upon next sync",
-                                                                    Style.CONFIRM).show();
+                                                                    Style.CONFIRM);
                                                             //Request Backup
                                                             Utils.requestBackup(mParentFragmentActivity);
                                                         }
@@ -1068,8 +1067,8 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                         return true;
                     case R.id.tile_services_wol_client_delete:
                         if (!device.isEditableForWol()) {
-                            Crouton.makeText(mParentFragmentActivity,"Operation allowed for user-defined hosts only",
-                                    Style.INFO).show();
+                            Utils.displayMessage(mParentFragmentActivity,"Operation allowed for user-defined hosts only",
+                                    Style.INFO);
                             return true;
                         }
                         new AlertDialog.Builder(mParentFragmentActivity)
@@ -1094,9 +1093,9 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                                                             .putStringSet(wolHostsPrefKey, newSet)
                                                             .apply();
 
-                                                    Crouton.makeText(mParentFragmentActivity,
+                                                    Utils.displayMessage(mParentFragmentActivity,
                                                             "Item dropped - list will refresh upon next sync",
-                                                            Style.CONFIRM).show();
+                                                            Style.CONFIRM);
                                                     //Request Backup
                                                     Utils.requestBackup(mParentFragmentActivity);
                                                 }
