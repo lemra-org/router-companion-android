@@ -189,7 +189,8 @@ public final class Utils {
     public static void displayMessage(@NonNull final Activity activity, final String msg, final Style style) {
         activity.runOnUiThread(new Runnable() {
             public void run() {
-                makeText(activity, msg, style).show();
+                makeText(activity, msg, style,
+                        (ViewGroup) activity.findViewById(android.R.id.content)).show();
             }
         });
     }
