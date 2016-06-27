@@ -164,8 +164,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -199,13 +197,8 @@ public class WirelessClientsTile
 
     private static final int MAC_OUI_VENDOR_LOOKUP_CACHE_SIZE = 20;
 
-    private static final Retrofit macOuiLookupRetrofit = new Retrofit.Builder()
-            .baseUrl(MACOUIVendor.TOOLS_RM3L_PREFIX)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(NetworkUtils.getHttpClientInstance())
-            .build();
     private static final MACOUILookupService mMACOUILookupService =
-            macOuiLookupRetrofit.create(MACOUILookupService.class);
+             NetworkUtils.createApiService(MACOUIVendor.TOOLS_RM3L_PREFIX, MACOUILookupService.class);
 
     public static final LoadingCache<String, MACOUIVendor> mMacOuiVendorLookupCache = CacheBuilder
             .newBuilder()
@@ -226,7 +219,6 @@ public class WirelessClientsTile
                     }
                     //Get to MAC OUI Vendor Lookup API
                     try {
-
                         return mMACOUILookupService
                                 .lookupMACAddress(macAddr.replaceAll(":", "-"))
                                 .execute()

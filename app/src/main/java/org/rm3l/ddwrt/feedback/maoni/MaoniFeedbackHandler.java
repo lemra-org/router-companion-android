@@ -39,8 +39,6 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DOORBELL_APIKEY;
@@ -97,12 +95,8 @@ public class MaoniFeedbackHandler implements Handler {
         this.mProperties.put(PROPERTY_BUILD_TYPE, BuildConfig.BUILD_TYPE);
         this.mProperties.put(PROPERTY_BUILD_VERSION_NAME, BuildConfig.VERSION_NAME);
 
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(FEEDBACK_API_BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(NetworkUtils.getHttpClientInstance())
-                .build();
-        mDoorbellService = retrofit.create(DoorbellService.class);
+        mDoorbellService = NetworkUtils
+                .createApiService(FEEDBACK_API_BASE_URL, DoorbellService.class);
     }
 
     @Override
