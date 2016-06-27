@@ -26,6 +26,7 @@ import android.support.annotation.Nullable;
 public class IPWhoisInfo {
 
     public static final String IP_WHOIS_INFO_API_PREFIX = "https://dazzlepod.com/ip/";
+    public static final String TOOLS_RM3L_GEOIP_API_PREFIX = "http://tools.rm3l.org:5080/json";
 
     /**
      * {

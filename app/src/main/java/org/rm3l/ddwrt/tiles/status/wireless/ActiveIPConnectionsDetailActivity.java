@@ -80,13 +80,11 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.RowSortedTable;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
-import com.google.common.io.Closeables;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.squareup.picasso.Callback;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
+import org.rm3l.ddwrt.lookup.IPGeoLookupService;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.IPConntrack;
 import org.rm3l.ddwrt.resources.IPWhoisInfo;
@@ -95,22 +93,17 @@ import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ImageUtils;
+import org.rm3l.ddwrt.utils.NetworkUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -146,6 +139,9 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
     public static final Table<Integer, Integer, String> ICMP_TYPE_CODE_DESCRIPTION_TABLE = HashBasedTable.create();
     private static final String LOG_TAG = ActiveIPConnectionsDetailActivity.class.getSimpleName();
 
+    private static final IPGeoLookupService mIPGeoLookupService =
+            NetworkUtils.createApiService(IPWhoisInfo.IP_WHOIS_INFO_API_PREFIX, IPGeoLookupService.class);
+
     public static final LoadingCache<String, IPWhoisInfo> mIPWhoisInfoCache = CacheBuilder
             .newBuilder()
             .softValues()
@@ -165,51 +161,11 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     }
                     //Get to MAC OUI Vendor Lookup API
                     try {
-                        final String urlStr = String.format("%s/%s.json",
-                                IPWhoisInfo.IP_WHOIS_INFO_API_PREFIX, ipAddr);
-                        Crashlytics.log(Log.DEBUG, LOG_TAG, "--> GET " + urlStr);
-                        final URL url = new URL(urlStr);
-                        final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                        //FIXME Add a user-preference
-                        urlConnection.setConnectTimeout(7000);
-                        try {
-                            final int statusCode = urlConnection.getResponseCode();
-                            if (statusCode == 200) {
-                                final InputStream content = new BufferedInputStream(urlConnection.getInputStream());
-                                try {
-                                    //Read the server response and attempt to parse it as JSON
-                                    final Reader reader = new InputStreamReader(content);
-                                    final GsonBuilder gsonBuilder = new GsonBuilder();
-                                    final Gson gson = gsonBuilder.create();
-                                    final IPWhoisInfo ipWhoisInfo = gson.fromJson(reader, IPWhoisInfo.class);
-                                    Crashlytics.log(Log.DEBUG, LOG_TAG, "--> Result of GET " + urlStr + ": " + ipWhoisInfo);
-
-                                    if (ipWhoisInfo == null) {
-                                        throw new DDWRTCompanionException();
-                                    }
-
-                                    return ipWhoisInfo;
-
-                                } finally {
-                                    Closeables.closeQuietly(content);
-                                }
-                            } else {
-                                Crashlytics.log(Log.ERROR, LOG_TAG, "<--- Server responded with status code: " + statusCode);
-                                if (statusCode == 204) {
-                                    //No Content found on the remote server - no need to retry later
-                                    return new IPWhoisInfo();
-                                }
-                            }
-
-                        } finally {
-                            urlConnection.disconnect();
-                        }
-
+                        return mIPGeoLookupService.lookupIP(ipAddr).execute().body();
                     } catch (final Exception e) {
                         e.printStackTrace();
+                        throw new DDWRTCompanionException(e);
                     }
-
-                    throw new DDWRTCompanionException();
                 }
             });
 
