@@ -364,8 +364,6 @@ public class RouterManagementActivity
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-
         //Dismiss existing dialog fragments, if any
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
         if (fragment instanceof DialogFragment) {
@@ -376,6 +374,8 @@ public class RouterManagementActivity
         if (fragment instanceof DialogFragment) {
             ((DialogFragment) fragment).dismiss();
         }
+
+        super.onDestroy();
     }
 
     private void openAddRouterForm() {

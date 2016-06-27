@@ -58,6 +58,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
 import io.fabric.sdk.android.Fabric;
 
 import static org.rm3l.ddwrt.BuildConfig.DEBUG;
@@ -237,6 +238,9 @@ public class DDWRTApplication extends Application implements Application.Activit
         Crashlytics.log(Log.DEBUG, TAG,
                 "onActivityDestroyed: " + activity.getClass().getCanonicalName());
         mCurrentActivity.clear();
+        // cancel all scheduled Croutons: Workaround until there's a way to detach the Activity from Crouton while
+        // there are still some in the Queue.
+        Crouton.cancelAllCroutons();
     }
 
     @Nullable
