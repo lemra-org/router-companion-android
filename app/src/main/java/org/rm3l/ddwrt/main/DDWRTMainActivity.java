@@ -160,6 +160,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -1360,6 +1361,8 @@ public class DDWRTMainActivity extends AppCompatActivity
                     @Override
                     protected String doWork() {
                         try {
+                            //Give time to the ProgressDialog to show up
+                            Thread.sleep(TimeUnit.SECONDS.toMillis(3));
                             final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(
                                     DDWRTMainActivity.this,
                                     mRouter,
@@ -1446,7 +1449,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                         if (TextUtils.isEmpty(url)) {
                             Toast.makeText(DDWRTMainActivity.this,
                                     "Unable to determine an IP address for opening the Web Management Interface",
-                                    Toast.LENGTH_SHORT);
+                                    Toast.LENGTH_SHORT).show();
                             return;
                         }
 
