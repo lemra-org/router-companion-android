@@ -159,7 +159,7 @@ public class OpenWebManagementPageActivity extends WebActivity {
         }
 
         this.mWebManagementLoaderTask = new WebManagementLoaderTask();
-        MultiThreadingManager.getMiscTasksExecutor().execute(this.mWebManagementLoaderTask);
+        MultiThreadingManager.getWebTasksExecutor().execute(this.mWebManagementLoaderTask);
     }
 
     @Override

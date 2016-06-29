@@ -960,7 +960,7 @@ public class ManageRouterAliasesActivity
             }
 
             //Update OUI in a background thread - as this is likely to infer network call
-            MultiThreadingManager.getMiscTasksExecutor()
+            MultiThreadingManager.getResolutionTasksExecutor()
                     .execute(new UiRelatedTask<MACOUIVendor>() {
 
                         @Override

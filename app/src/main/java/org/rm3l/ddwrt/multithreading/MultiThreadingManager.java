@@ -14,6 +14,7 @@ public final class MultiThreadingManager {
     private static final String MISC_TASK_TYPE = "Misc";
     private static final String WEB_TASK_TYPE = "Web";
     private static final String SPEED_TEST_TASK_TYPE = "SpeedTest";
+    private static final String RESOLUTION_TASK_TYPE = "ResolutionTask";
 
     private MultiThreadingManager() {
     }
@@ -36,8 +37,7 @@ public final class MultiThreadingManager {
     public static Executor getMiscTasksExecutor() {
         return Needle
                 .onBackgroundThread()
-                .withTaskType(MISC_TASK_TYPE)
-                .serially();
+                .withTaskType(MISC_TASK_TYPE);
     }
 
     public static Executor getWebTasksExecutor() {
@@ -52,6 +52,12 @@ public final class MultiThreadingManager {
                 .onBackgroundThread()
                 .withTaskType(SPEED_TEST_TASK_TYPE)
                 .serially();
+    }
+
+    public static Executor getResolutionTasksExecutor() {
+        return Needle
+                .onBackgroundThread()
+                .withTaskType(RESOLUTION_TASK_TYPE);
     }
 
 }
