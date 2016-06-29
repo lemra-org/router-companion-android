@@ -98,6 +98,26 @@ public class DDWRTApplication extends Application implements Application.Activit
     public void onCreate() {
         super.onCreate();
 
+//        if (BuildConfig.DEBUG) {
+//            //Enable Strict Mode in DEBUG mode
+//            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+//                    .detectAll()
+//                    .detectDiskReads()
+//                    .detectDiskWrites()
+//                    .detectNetwork()
+//                    // alternatively .detectAll() for all detectable problems
+//                    .penaltyLog()
+//                    .penaltyDeath()
+//                    .build());
+//            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+//                    .detectLeakedSqlLiteObjects()
+//                    .detectLeakedClosableObjects()
+//                    // alternatively .detectAll() for all detectable problems
+//                    .penaltyLog()
+//                    .penaltyDeath()
+//                    .build());
+//        }
+
         registerActivityLifecycleCallbacks(this);
 
         if (BuildConfig.DEBUG) {
