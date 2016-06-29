@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
@@ -189,6 +190,26 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_below="@+id/tile_admin_nvram_ListView"
                 android:singleLine="false"
                 android:text="Last sync: "/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:id="@+id/nvram_var_add"
+                android:contentDescription="@string/add_new_nvram_variable"
+                android:src="@drawable/ic_plus_white_24dp"
+                android:tint="@android:color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:layout_margin="@dimen/fab_margin"
+                app:fabSize="normal"
+                android:layout_gravity="bottom|end"
+                app:elevation="6dp"
+                app:pressedTranslationZ="12dp"
+                app:layout_anchorGravity="end|bottom|right"
+                app:layout_anchor="@id/tile_admin_nvram_ListView"
+                app:layout_behavior="org.rm3l.ddwrt.widgets.ScrollAwareFABBehavior"/>
 
         </RelativeLayout>
 

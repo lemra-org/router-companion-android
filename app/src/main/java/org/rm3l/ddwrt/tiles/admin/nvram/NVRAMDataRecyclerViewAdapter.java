@@ -21,7 +21,9 @@
  */
 package org.rm3l.ddwrt.tiles.admin.nvram;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -34,12 +36,18 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.cocosw.undobar.UndoBarController;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.multithreading.MultiThreadingManager;
@@ -115,12 +123,13 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         final Entry<Object, Object> entryAt = entryList.get(position);
 
-        if (ColorUtils.isThemeLight(this.context)) {
+        final boolean themeLight = ColorUtils.isThemeLight(this.context);
+        if (themeLight) {
             holder.cardView.setCardBackgroundColor(ContextCompat
                     .getColor(context, R.color.cardview_light_background));
         } else {
@@ -128,10 +137,102 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
                     .getColor(context, R.color.cardview_dark_background));
         }
 
-        holder.key.setText(entryAt.getKey().toString());
+        final String nvramKey = \"fake-key\";
+        holder.key.setText(nvramKey);
         final Object value = entryAt.getValue();
         holder.value.setText(nullToEmpty(value != null ? value.toString() : ""));
         holder.position = holder.getAdapterPosition();
+
+        final AlertDialog deleteDialog = new AlertDialog.Builder(context)
+                .setIcon(R.drawable.ic_action_alert_warning)
+                .setTitle("Drop NVRAM variable: '" + nvramKey + "'?")
+                .setMessage("You'll lose this record!")
+                .setCancelable(true)
+                .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        MultiThreadingManager.getActionExecutor().execute(new UiRelatedTask<Exception>() {
+                            @Override
+                            protected Exception doWork() {
+                                Exception exception = null;
+                                try {
+                                    final int exitStatus = SSHUtils
+                                            .runCommands(context, mGlobalPreferences, router,
+                                                    String.format("/usr/sbin/nvram unset \"%s\"", nvramKey),
+                                                    "/usr/sbin/nvram commit");
+                                    if (exitStatus != 0) {
+                                        throw new IllegalStateException("Failed to unset NVRAM data: " + nvramKey);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    exception = e;
+                                }
+                                return exception;
+                            }
+
+                            @Override
+                            protected void thenDoUiRelatedWork(Exception exception) {
+                                if (exception != null) {
+                                    Utils.displayMessage(context,
+                                            "Error while trying to unset NVRAM variable: " + nvramKey + ": " +
+                                                    ExceptionUtils.getRootCauseMessage(exception),
+                                            Style.ALERT);
+                                } else {
+                                    Utils.displayMessage(context, "Done unsetting NVRAM variable: " + nvramKey, Style.CONFIRM);
+                                    notifyItemRemoved(holder.position);
+                                }
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //Cancelled - nothing more to do!
+                    }
+                }).create();
+
+        holder.removeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Display confirmation dialog
+                deleteDialog.show();
+            }
+        });
+
+        if (!themeLight) {
+            //Set menu background to white
+            holder.menuBtn
+                    .setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+        }
+
+        holder.menuBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final PopupMenu popup = new PopupMenu(context, v);
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.menu_nvram_var_edit:
+                                holder.cardView.performClick();
+                                return true;
+                            case R.id.menu_nvram_var_remove:
+                                deleteDialog.show();
+                                return true;
+                            default:
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                final MenuInflater inflater = popup.getMenuInflater();
+                final Menu menu = popup.getMenu();
+                inflater.inflate(R.menu.menu_manage_nvram_var, menu);
+                popup.show();
+            }
+        });
+
     }
 
     @Override
@@ -183,6 +284,9 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
         private final View itemView;
         private final FragmentManager fragmentManager;
 
+        final ImageButton menuBtn;
+        final ImageButton removeBtn;
+
         int position;
 
         public ViewHolder(Context context, FragmentManager fragmentManager, View itemView) {
@@ -194,6 +298,9 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
             this.cardView = (CardView)
                     this.itemView.findViewById(R.id.nvram_entry_cardview);
             this.cardView.setOnClickListener(this);
+
+            this.menuBtn = (ImageButton) this.itemView.findViewById(R.id.nvram_var_menu);
+            this.removeBtn = (ImageButton) this.itemView.findViewById(R.id.nvram_var_remove_btn);
 
             this.key = (TextView) this.itemView.findViewById(R.id.nvram_key);
             this.value = (TextView) this.itemView.findViewById(R.id.nvram_value);

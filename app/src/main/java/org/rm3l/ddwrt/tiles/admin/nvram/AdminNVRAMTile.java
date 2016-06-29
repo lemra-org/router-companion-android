@@ -33,6 +33,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -142,6 +143,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
     private final RecyclerViewEmptySupport mRecyclerView;
     private final RecyclerView.Adapter mAdapter;
     private final RecyclerView.LayoutManager mLayoutManager;
+    private FloatingActionButton addNewButton;
 
     private final NVRAMInfo mNvramInfoDefaultSorting;
     private final BiMap<Integer, Integer> sortIds = HashBiMap.create();
@@ -158,6 +160,16 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
         this.mNvramInfoDefaultSorting = new NVRAMInfo();
         mRecyclerView = (RecyclerViewEmptySupport) layout.findViewById(R.id.tile_admin_nvram_ListView);
+
+        addNewButton = (FloatingActionButton) layout.findViewById(R.id.nvram_var_add);
+
+        addNewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //FIXME
+                Toast.makeText(mParentFragmentActivity, "[TODO] Open Dialog to add new NVRAM var", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -805,6 +817,9 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
             }
 
             layout.findViewById(R.id.tile_admin_nvram_loading_view).setVisibility(View.GONE);
+
+
+
 
             final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_admin_nvram_error);
 
