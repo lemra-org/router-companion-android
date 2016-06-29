@@ -189,16 +189,16 @@ public final class Utils {
     public static void displayMessage(@NonNull final Activity activity, final String msg, final Style style) {
         final int bgColor;
         if (style == null) {
-            bgColor = Color.BLUE;
+            bgColor = R.color.win8_blue;
         } else {
             if (style == Style.ALERT) {
-                bgColor = Color.RED;
+                bgColor = R.color.win8_red;
             } else if (style == Style.CONFIRM) {
-                bgColor = Color.GREEN;
+                bgColor = R.color.win8_green;
             } else if (style == Style.INFO) {
-                bgColor = Color.BLUE;
+                bgColor = R.color.win8_blue;
             } else {
-                bgColor = Color.GRAY;
+                bgColor = R.color.gray;
             }
         }
 
