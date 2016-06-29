@@ -40,7 +40,6 @@ import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
-import com.squareup.leakcanary.LeakCanary;
 import com.squareup.picasso.Picasso;
 
 import org.acra.ACRA;
@@ -102,7 +101,7 @@ public class DDWRTApplication extends Application implements Application.Activit
         registerActivityLifecycleCallbacks(this);
 
         if (BuildConfig.DEBUG) {
-            LeakCanary.install(this);
+//            LeakCanary.install(this);
             Stetho.initializeWithDefaults(this);
         }
 
