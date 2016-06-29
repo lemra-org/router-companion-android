@@ -201,7 +201,7 @@ public class Device implements Comparable<Device> {
         return macouiVendorDetails;
     }
 
-    public void setMacouiVendorDetails(@Nullable MACOUIVendor macouiVendorDetails) {
+    public synchronized void setMacouiVendorDetails(@Nullable MACOUIVendor macouiVendorDetails) {
         this.macouiVendorDetails = macouiVendorDetails;
     }
 

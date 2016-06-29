@@ -164,6 +164,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
+import needle.UiRelatedTask;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -2060,11 +2061,11 @@ public class WirelessClientsTile
 
                         // We want to avoid black border
                         //setting text size of the title
-                        mRenderer.setChartTitleTextSize(17);
+                        mRenderer.setChartTitleTextSize(25);
                         //setting text size of the axis title
-                        mRenderer.setAxisTitleTextSize(13);
+                        mRenderer.setAxisTitleTextSize(22);
                         //setting text size of the graph label
-                        mRenderer.setLabelsTextSize(13);
+                        mRenderer.setLabelsTextSize(22);
                         mRenderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00)); // transparent margins
                         // Disable Pan on two axis
                         mRenderer.setPanEnabled(false, false);
@@ -2127,39 +2128,43 @@ public class WirelessClientsTile
                     final TextView ouiVendorRowView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_oui_addr);
                     final TextView nicManufacturerView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_nic_manufacturer);
 
-                    new android.os.AsyncTask<Void, Void, Void>() {
+                    MultiThreadingManager.getResolutionTasksExecutor()
+                            .execute(new UiRelatedTask<Void>() {
+                                @Override
+                                protected Void doWork() {
+                                    try {
+                                        device.setMacouiVendorDetails(mMacOuiVendorLookupCache.get(macAddress));
+                                    } catch (final Exception e) {
+                                        Crashlytics.logException(e);
+                                        e.printStackTrace();
+                                    }
+                                    return null;
+                                }
 
-                        @Override
-                        protected Void doInBackground(Void... params) {
-                            try {
-                                device.setMacouiVendorDetails(mMacOuiVendorLookupCache.get(macAddress));
-                            } catch (final Exception e) {
-                                Crashlytics.logException(e);
-                                e.printStackTrace();
-                            }
-                            return null;
-                        }
-
-                        @Override
-                        protected void onPostExecute(Void aVoid) {
-                            final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
-                            final String company;
-                            if (macouiVendorDetails == null || (company = macouiVendorDetails.getCompany()) == null || company.isEmpty()) {
-                                ouiVendorRowView.setText(EMPTY_VALUE_TO_DISPLAY);
-                                nicManufacturerView.setVisibility(View.GONE);
-                            } else {
-                                ouiVendorRowView.setText(company);
-                                nicManufacturerView.setText(company);
-                                nicManufacturerView.setVisibility(View.VISIBLE);
-                            }
-                        }
-
-                    }.execute();
+                                @Override
+                                protected void thenDoUiRelatedWork(Void aVoid) {
+                                    final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
+                                    final String company;
+                                    if (macouiVendorDetails == null || (company = macouiVendorDetails.getCompany()) == null || company.isEmpty()) {
+                                        if (ouiVendorRowView != null)
+                                            ouiVendorRowView.setText(EMPTY_VALUE_TO_DISPLAY);
+                                        if (nicManufacturerView != null)
+                                            nicManufacturerView.setVisibility(View.GONE);
+                                    } else {
+                                        if (ouiVendorRowView != null)
+                                            ouiVendorRowView.setText(company);
+                                        if (nicManufacturerView != null) {
+                                            nicManufacturerView.setText(company);
+                                            nicManufacturerView.setVisibility(View.VISIBLE);
+                                        }
+                                    }
+                                }
+                            });
 
                     final RelativeTimeTextView lastSeenRowView = (RelativeTimeTextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_lastseen);
                     final long lastSeen = device.getLastSeen();
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "XXX lastSeen for '" + macAddress + "' =[" + lastSeen + "]");
-                    if (lastSeen <= 0l) {
+                    if (lastSeen <= 0) {
                         lastSeenRowView.setText(EMPTY_VALUE_TO_DISPLAY);
                         lastSeenRowView.setReferenceTime(-1l);
                     } else {
