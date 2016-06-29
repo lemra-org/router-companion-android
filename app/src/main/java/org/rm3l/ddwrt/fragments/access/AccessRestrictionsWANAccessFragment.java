@@ -53,7 +53,7 @@ public class AccessRestrictionsWANAccessFragment extends AbstractBaseFragment {
 
     @NonNull
     protected int getRootViewType() {
-        return RootViewType_RECYCLER_VIEW;
+        return RootViewType_LINEAR_LAYOUT;
     }
 //
 //    @Override

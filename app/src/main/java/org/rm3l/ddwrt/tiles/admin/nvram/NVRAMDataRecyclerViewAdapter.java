@@ -23,7 +23,6 @@ package org.rm3l.ddwrt.tiles.admin.nvram;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -43,6 +42,7 @@ import com.cocosw.undobar.UndoBarController;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.multithreading.MultiThreadingManager;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ColorUtils;
@@ -55,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
+import needle.UiRelatedTask;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -143,7 +144,8 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
         //Update entry in remote router, and notify item changed
         if (parcelable instanceof Bundle) {
             //Background task
-            new EditNVRAMVariableTask().execute((Bundle) parcelable);
+            MultiThreadingManager.getActionExecutor()
+                    .execute(new EditNVRAMVariableTask((Bundle) parcelable));
         }
 
     }
@@ -209,46 +211,51 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
         }
 
     }
+    
+    private class EditNVRAMVariableTask extends
+            UiRelatedTask<EditNVRAMVariableTask.EditNVRAMVariableTaskResult<CharSequence>> {
 
-    private class EditNVRAMVariableTask extends AsyncTask<Bundle, Void, EditNVRAMVariableTask.EditNVRAMVariableTaskResult<CharSequence>> {
+        final Bundle token;
+        final int position;
+        final CharSequence key;
+        final CharSequence value;
+
+        private EditNVRAMVariableTask(Bundle token) {
+            this.token = token;
+            this.position = token.getInt(POSITION);
+            this.key = token.getCharSequence(KEY);
+            this.value = token.getCharSequence(VALUE);
+        }
 
         @Override
-        protected EditNVRAMVariableTask.EditNVRAMVariableTaskResult<CharSequence> doInBackground(Bundle... params) {
-            final Bundle token = params[0];
-            final int position = token.getInt(POSITION);
-            final CharSequence key = token.getCharSequence(KEY);
-            final CharSequence value = token.getCharSequence(VALUE);
-
+        protected EditNVRAMVariableTaskResult<CharSequence> doWork() {
             Exception exception = null;
-
             try {
                 final int exitStatus = SSHUtils
                         .runCommands(context, mGlobalPreferences, router,
                                 String.format("/usr/sbin/nvram set %s=\"%s\"", key, value), "/usr/sbin/nvram commit");
-                if (exitStatus == 0) {
-                    //Notify item changed
-                    nvramInfo.put(key, value);
-                    notifyItemChanged(position);
-                } else {
-                    throw new IllegalStateException();
+                if (exitStatus != 0) {
+                    throw new IllegalStateException("Failed to update NVRAM data");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 exception = e;
             }
-
             return new EditNVRAMVariableTask.EditNVRAMVariableTaskResult<>(key, exception);
         }
 
         @Override
-        protected void onPostExecute(EditNVRAMVariableTaskResult<CharSequence> result) {
+        protected void thenDoUiRelatedWork(EditNVRAMVariableTaskResult<CharSequence> result) {
             final Exception exception = result.getException();
             try {
                 if (exception == null) {
+                    nvramInfo.put(key, value);
+                    notifyItemChanged(position);
                     displayMessage("Variable '" + result.getResult() + "' updated", Style.CONFIRM);
                 } else {
                     displayMessage("Variable '" + result.getResult() + "' NOT updated" +
-                            (exception.getMessage() != null ? (": " + exception.getMessage()) : ""), Style.ALERT);
+                            (exception.getMessage() != null ? (": " + exception.getMessage()) : ""),
+                            Style.ALERT);
                 }
             } catch (Exception e) {
                 //No worries
@@ -272,5 +279,7 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
                 return exception;
             }
         }
+        
     }
+
 }

@@ -36,7 +36,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -44,7 +43,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -929,37 +927,37 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                             continue;
                         }
 
-                        final FrameLayout.LayoutParams cardViewLayoutParams = new FrameLayout.LayoutParams(
-                                FrameLayout.LayoutParams.MATCH_PARENT,
-                                FrameLayout.LayoutParams.MATCH_PARENT);
-                        cardViewLayoutParams.rightMargin = R.dimen.cardview_margin_right;
-                        cardViewLayoutParams.leftMargin = R.dimen.cardview_margin_left;
-                        cardViewLayoutParams.topMargin = R.dimen.cardview_margin_top;
-                        cardViewLayoutParams.bottomMargin = R.dimen.cardview_margin_bottom;
-
-                        final CardView cardView = new CardView(activity);
-                        cardView.setLayoutParams(cardViewLayoutParams);
-                        cardView.setFocusable(true);
-                        cardView.setClickable(true);
-                        cardView.setContentPadding(
-                                R.dimen.cardview_contentPadding,
-                                R.dimen.cardview_contentPadding,
-                                R.dimen.cardview_contentPadding,
-                                R.dimen.cardview_contentPadding);
-
-                        //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
-                        cardView.setPreventCornerOverlap(true);
-                        //Add padding in API v21+ as well to have the same measurements with previous versions.
-                        cardView.setUseCompatPadding(true);
-
-                        //Highlight CardView
-//                cardView.setCardElevation(10f);
-
-                        cardView.setCardBackgroundColor(
-                                ContextCompat.getColor(activity,
-                                        isThemeLight ?
-                                                R.color.cardview_light_background :
-                                                R.color.cardview_dark_background));
+//                        final FrameLayout.LayoutParams cardViewLayoutParams = new FrameLayout.LayoutParams(
+//                                FrameLayout.LayoutParams.MATCH_PARENT,
+//                                FrameLayout.LayoutParams.MATCH_PARENT);
+//                        cardViewLayoutParams.rightMargin = R.dimen.cardview_margin_right;
+//                        cardViewLayoutParams.leftMargin = R.dimen.cardview_margin_left;
+//                        cardViewLayoutParams.topMargin = R.dimen.cardview_margin_top;
+//                        cardViewLayoutParams.bottomMargin = R.dimen.cardview_margin_bottom;
+//
+//                        final CardView cardView = new CardView(activity);
+//                        cardView.setLayoutParams(cardViewLayoutParams);
+//                        cardView.setFocusable(true);
+//                        cardView.setClickable(true);
+//                        cardView.setContentPadding(
+//                                R.dimen.cardview_contentPadding,
+//                                R.dimen.cardview_contentPadding,
+//                                R.dimen.cardview_contentPadding,
+//                                R.dimen.cardview_contentPadding);
+//
+//                        //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
+//                        cardView.setPreventCornerOverlap(true);
+//                        //Add padding in API v21+ as well to have the same measurements with previous versions.
+//                        cardView.setUseCompatPadding(true);
+//
+//                        //Highlight CardView
+////                cardView.setCardElevation(10f);
+//
+//                        cardView.setCardBackgroundColor(
+//                                ContextCompat.getColor(activity,
+//                                        isThemeLight ?
+//                                                R.color.cardview_light_background :
+//                                                R.color.cardview_dark_background));
 
 
                         final TextView titleTextView = (TextView) viewGroupLayout.findViewById(ddwrtTile.getTileTitleViewId());
@@ -972,9 +970,10 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                         viewGroupLayout.setBackgroundColor(ContextCompat
                                 .getColor(activity, android.R.color.transparent));
 
-                        cardView.addView(viewGroupLayout);
-
-                        linearLayout.addView(cardView);
+//                        cardView.addView(viewGroupLayout);
+//
+//                        linearLayout.addView(cardView);
+                        linearLayout.addView(viewGroupLayout);
                     }
                 }
                 break;
