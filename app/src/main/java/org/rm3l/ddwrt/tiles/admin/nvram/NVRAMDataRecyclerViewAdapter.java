@@ -42,6 +42,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -55,6 +56,7 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -126,6 +128,8 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
     public void onBindViewHolder(final ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
+        holder.position = holder.getAdapterPosition();
+
         final Entry<Object, Object> entryAt = entryList.get(position);
 
         final boolean themeLight = ColorUtils.isThemeLight(this.context);
@@ -141,7 +145,8 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
         holder.key.setText(nvramKey);
         final Object value = entryAt.getValue();
         holder.value.setText(nullToEmpty(value != null ? value.toString() : ""));
-        holder.position = holder.getAdapterPosition();
+
+        ImageUtils.setTextDrawable(holder.avatar, nvramKey, true);
 
         final AlertDialog deleteDialog = new AlertDialog.Builder(context)
                 .setIcon(R.drawable.ic_action_alert_warning)
@@ -287,6 +292,8 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
         final ImageButton menuBtn;
         final ImageButton removeBtn;
 
+        final ImageView avatar;
+
         int position;
 
         public ViewHolder(Context context, FragmentManager fragmentManager, View itemView) {
@@ -301,6 +308,8 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
 
             this.menuBtn = (ImageButton) this.itemView.findViewById(R.id.nvram_var_menu);
             this.removeBtn = (ImageButton) this.itemView.findViewById(R.id.nvram_var_remove_btn);
+
+            this.avatar = (ImageView) this.itemView.findViewById(R.id.avatar);
 
             this.key = (TextView) this.itemView.findViewById(R.id.nvram_key);
             this.value = (TextView) this.itemView.findViewById(R.id.nvram_value);

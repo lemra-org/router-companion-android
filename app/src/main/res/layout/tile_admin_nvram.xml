@@ -203,6 +203,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 android:layout_margin="@dimen/fab_margin"
+                android:layout_marginBottom="20dp"
                 app:fabSize="normal"
                 android:layout_gravity="bottom|end"
                 app:elevation="6dp"

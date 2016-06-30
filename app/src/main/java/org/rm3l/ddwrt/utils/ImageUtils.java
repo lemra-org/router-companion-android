@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RemoteViews;
 
@@ -324,6 +325,32 @@ public final class ImageUtils {
     @Nullable
     public static TextDrawable getTextDrawable(@Nullable final String key) {
         return getTextDrawable(key, ColorGenerator.MATERIAL);
+    }
+
+    public static void setTextDrawable(@Nullable final ImageView imageView,
+                                       @Nullable final String key,
+                                       boolean updateVisibilityIfNeeded) {
+        setTextDrawable(imageView, key, ColorGenerator.MATERIAL, updateVisibilityIfNeeded);
+    }
+
+    public static void setTextDrawable(@Nullable final ImageView imageView,
+                                       @Nullable final String key,
+                                       @NonNull final ColorGenerator generator,
+                                       boolean updateVisibilityIfNeeded) {
+        if (imageView == null) {
+            return;
+        }
+        final TextDrawable textDrawable = getTextDrawable(key, generator);
+        if (textDrawable == null) {
+            if (updateVisibilityIfNeeded) {
+                imageView.setVisibility(View.GONE);
+            }
+        } else {
+            imageView.setImageDrawable(textDrawable);
+            if (updateVisibilityIfNeeded) {
+                imageView.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
 
