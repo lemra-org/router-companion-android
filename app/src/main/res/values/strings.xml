@@ -541,5 +541,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="background">Background</string>
     <string name="avatar">Avatar</string>
     <string name="add_new_nvram_variable">Add new NVRAM variable</string>
+    <string name="remove">Remove</string>
 
 </resources>

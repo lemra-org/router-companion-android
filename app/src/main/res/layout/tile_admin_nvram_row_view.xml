@@ -42,55 +42,38 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginLeft="2dp"
-            android:layout_marginStart="2dp"
-            android:id="@+id/avatar"
-            android:contentDescription="@string/avatar" />
-
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:orientation="vertical"
-                android:padding="10dip"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true">
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/avatar"
+                android:contentDescription="@string/avatar"
+                android:layout_marginRight="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginStart="2dp"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
                 <TextView
                     android:id="@+id/nvram_key"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                <TextView
-                    android:id="@+id/nvram_value"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="10"
-                    android:singleLine="false" />
-
-            </LinearLayout>
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_gravity="end"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true">
-
                 <ImageButton
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:id="@+id/nvram_var_menu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -101,18 +84,41 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
                     android:layout_marginBottom="5dp"/>
 
-                <ImageButton
-                    android:id="@+id/nvram_var_remove_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentBottom="true"
-                    android:layout_gravity="end|bottom"
-                    android:layout_below="@+id/nvram_var_menu"
-                    android:src="@drawable/ic_action_action_delete"
-                    android:background="?android:selectableItemBackground"
-                    android:contentDescription="Remove" />
-
             </RelativeLayout>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="60dp"
+            android:layout_marginLeft="60dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/nvram_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="30dp"
+                android:layout_marginRight="30dp"
+                android:ellipsize="end"
+                android:maxLines="10"
+                android:singleLine="false" />
+
+            <ImageButton
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/nvram_var_remove_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="end|bottom"
+                android:src="@drawable/ic_action_action_delete"
+                android:background="?android:selectableItemBackground"
+                android:contentDescription="@string/remove" />
+
 
         </RelativeLayout>
 
