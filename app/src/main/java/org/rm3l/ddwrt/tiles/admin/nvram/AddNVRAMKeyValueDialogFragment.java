@@ -30,7 +30,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.text.Editable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,40 +40,27 @@ import android.widget.TextView;
 
 import com.cocosw.undobar.UndoBarController;
 
-import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.ColorUtils;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 
 import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
+import static org.rm3l.ddwrt.tiles.admin.nvram.EditNVRAMKeyValueDialogFragment.ACTION;
 
-public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
+public class AddNVRAMKeyValueDialogFragment extends DialogFragment {
 
-    public static final String POSITION = "position";
     public static final String KEY = \"fake-key\";
     public static final String VALUE = "value";
-    public static final String ACTION = "action";
-
-    public static final int ADD = 1;
-    public static final int EDIT = 2;
-
-    private NVRAMDataRecyclerViewAdapter nvramDataRecyclerViewAdapter;
-    private int mPosition;
-    private CharSequence mKey;
-    private CharSequence mValue;
+    private UndoBarController.UndoListener undoListener;
 
     @NonNull
-    public static EditNVRAMKeyValueDialogFragment newInstance(NVRAMDataRecyclerViewAdapter nvramDataRecyclerViewAdapter,
-                                                              int position, CharSequence key, CharSequence value) {
-        final EditNVRAMKeyValueDialogFragment fragment = new EditNVRAMKeyValueDialogFragment();
+    public static AddNVRAMKeyValueDialogFragment newInstance(UndoBarController.UndoListener undoListener) {
+        final AddNVRAMKeyValueDialogFragment fragment = new AddNVRAMKeyValueDialogFragment();
 
-        fragment.nvramDataRecyclerViewAdapter = nvramDataRecyclerViewAdapter;
+        fragment.undoListener = undoListener;
 
         final Bundle args = new Bundle();
-        args.putInt(POSITION, position);
-        args.putCharSequence(KEY, key);
-        args.putCharSequence(VALUE, value);
         fragment.setArguments(args);
 
         return fragment;
@@ -88,18 +75,12 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
         if (ColorUtils.isThemeLight(fragmentActivity)) {
             //Light
             fragmentActivity.setTheme(R.style.AppThemeLight);
-//            fragmentActivity.getWindow().getDecorView()
-//                    .setBackgroundColor(ContextCompat.getColor(fragmentActivity,
-//                            android.R.color.white));
         } else {
             //Default is Dark
             fragmentActivity.setTheme(R.style.AppThemeDark);
         }
 
         final Bundle arguments = getArguments();
-        this.mKey = \"fake-key\";
-        this.mValue = arguments.getCharSequence(VALUE);
-        this.mPosition = arguments.getInt(POSITION);
     }
 
     @NonNull
@@ -112,9 +93,9 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
         // Get the layout inflater
         final LayoutInflater inflater = activity.getLayoutInflater();
 
-        final View view = inflater.inflate(R.layout.tile_admin_nvram_edit, null);
+        final View view = inflater.inflate(R.layout.tile_admin_nvram_add, null);
         builder
-                .setTitle(R.string.edit_nvram)
+                .setTitle(R.string.add_nvram)
                 .setMessage("NVRAM is the permanent settings storage. This includes: " +
                         "i) settings that you normally change using Web Interface, and " +
                         "ii) settings for user Startup Scripts. \n" +
@@ -147,51 +128,42 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
         final AlertDialog d = (AlertDialog) getDialog();
         if (d != null) {
 
-            ((TextView) d.findViewById(R.id.tile_admin_nvram_edit_key)).setText(this.mKey);
-            final EditText valueEditText = (EditText) d.findViewById(R.id.tile_admin_nvram_edit_value);
-//            valueEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//                @Override
-//                public void onFocusChange(View v, boolean hasFocus) {
-//                    ((TextView) d.findViewById(R.id.tile_admin_nvram_edit_value_textview))
-//                            .setTypeface(null, hasFocus ? Typeface.BOLD_ITALIC : Typeface.NORMAL);
-//                }
-//            });
-            valueEditText.setText(this.mValue, TextView.BufferType.EDITABLE);
 
             d.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //Validate data
-                    final EditText editText = (EditText) d.findViewById(R.id.tile_admin_nvram_edit_value);
-                    final Editable newValue = editText.getText();
-
-                    if (mValue != null && StringUtils.equals(newValue.toString(), mValue.toString())) {
+                    final TextView varKeyTV = (TextView) d.findViewById(R.id.tile_admin_nvram_add_key);
+                    final CharSequence variableKey = \"fake-key\";
+                    if (TextUtils.isEmpty(variableKey)) {
+                        //Error
                         //Crouton
-                        Crouton.makeText(getActivity(), "No change", ALERT,
-                                (ViewGroup) (d.findViewById(R.id.tile_admin_nvram_edit_notification_viewgroup))).show();
-                        editText.requestFocus();
+                        Crouton.makeText(getActivity(), "Missing key for NVRAM variable",
+                                ALERT,
+                                (ViewGroup) (d.findViewById(R.id.tile_admin_nvram_add_notification_viewgroup)))
+                                .show();
+                        varKeyTV.requestFocus();
                         //Open Keyboard
                         final InputMethodManager imm = (InputMethodManager) getActivity()
                                 .getSystemService(Context.INPUT_METHOD_SERVICE);
                         if (imm != null) {
                             // only will trigger it if no physical keyboard is open
-                            imm.showSoftInput(editText, 0);
+                            imm.showSoftInput(varKeyTV, 0);
                         }
                         return;
                     }
 
-                    final CharSequence variableKey = \"fake-key\";
+                    final CharSequence variableValue = ((EditText) d.findViewById(R.id.tile_admin_nvram_add_value))
+                            .getText();
 
                     final Bundle token = new Bundle();
-                    token.putInt(POSITION, mPosition);
-                    token.putCharSequence(VALUE, newValue);
+                    token.putCharSequence(VALUE, variableValue);
                     token.putCharSequence(KEY, variableKey);
-                    token.putInt(ACTION, EDIT);
+                    token.putInt(ACTION, EditNVRAMKeyValueDialogFragment.ADD);
 
-                    //nvram set data changed
                     new UndoBarController.UndoBar(getActivity())
-                            .message(String.format("Variable '%s' will be updated", variableKey))
-                            .listener(nvramDataRecyclerViewAdapter)
+                            .message(String.format("Variable '%s' will be added", variableKey))
+                            .listener(undoListener)
                             .token(token)
                             .show();
 

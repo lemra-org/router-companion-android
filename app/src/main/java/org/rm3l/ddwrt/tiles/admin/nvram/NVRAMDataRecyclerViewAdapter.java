@@ -70,6 +70,9 @@ import needle.UiRelatedTask;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Map.Entry;
+import static org.rm3l.ddwrt.tiles.admin.nvram.EditNVRAMKeyValueDialogFragment.ACTION;
+import static org.rm3l.ddwrt.tiles.admin.nvram.EditNVRAMKeyValueDialogFragment.ADD;
+import static org.rm3l.ddwrt.tiles.admin.nvram.EditNVRAMKeyValueDialogFragment.EDIT;
 import static org.rm3l.ddwrt.tiles.admin.nvram.EditNVRAMKeyValueDialogFragment.KEY;
 import static org.rm3l.ddwrt.tiles.admin.nvram.EditNVRAMKeyValueDialogFragment.POSITION;
 import static org.rm3l.ddwrt.tiles.admin.nvram.EditNVRAMKeyValueDialogFragment.VALUE;
@@ -251,7 +254,7 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
         if (parcelable instanceof Bundle) {
             //Background task
             MultiThreadingManager.getActionExecutor()
-                    .execute(new EditNVRAMVariableTask((Bundle) parcelable));
+                    .execute(new AddOrEditNVRAMVariableTask((Bundle) parcelable));
         }
 
     }
@@ -322,25 +325,31 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
                 return;
             }
             final DialogFragment editFragment =
-                    EditNVRAMKeyValueDialogFragment.newInstance(NVRAMDataRecyclerViewAdapter.this, position, key.getText(), value.getText());
+                    EditNVRAMKeyValueDialogFragment.newInstance(
+                            NVRAMDataRecyclerViewAdapter.this,
+                            position,
+                            key.getText(),
+                            value.getText());
             editFragment.show(fragmentManager, EDIT_NVRAM_DATA_FRAGMENT_TAG);
         }
 
     }
     
-    private class EditNVRAMVariableTask extends
-            UiRelatedTask<EditNVRAMVariableTask.EditNVRAMVariableTaskResult<CharSequence>> {
+    private class AddOrEditNVRAMVariableTask extends
+            UiRelatedTask<AddOrEditNVRAMVariableTask.EditNVRAMVariableTaskResult<CharSequence>> {
 
         final Bundle token;
         final int position;
         final CharSequence key;
         final CharSequence value;
+        final int action;
 
-        private EditNVRAMVariableTask(Bundle token) {
+        private AddOrEditNVRAMVariableTask(Bundle token) {
             this.token = token;
-            this.position = token.getInt(POSITION);
+            this.position = token.getInt(POSITION, -1);
             this.key = token.getCharSequence(KEY);
             this.value = token.getCharSequence(VALUE);
+            this.action = token.getInt(ACTION, EDIT);
         }
 
         @Override
@@ -357,7 +366,7 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
                 e.printStackTrace();
                 exception = e;
             }
-            return new EditNVRAMVariableTask.EditNVRAMVariableTaskResult<>(key, exception);
+            return new AddOrEditNVRAMVariableTask.EditNVRAMVariableTaskResult<>(key, exception);
         }
 
         @Override
@@ -366,7 +375,15 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
             try {
                 if (exception == null) {
                     nvramInfo.put(key, value);
-                    notifyItemChanged(position);
+                    switch (action) {
+                        case EDIT:
+                            notifyItemChanged(position);
+                            break;
+                        case ADD:
+                            notifyItemInserted(0);
+                        default:
+                            break;
+                    }
                     displayMessage("Variable '" + result.getResult() + "' updated", Style.CONFIRM);
                 } else {
                     displayMessage("Variable '" + result.getResult() + "' NOT updated" +

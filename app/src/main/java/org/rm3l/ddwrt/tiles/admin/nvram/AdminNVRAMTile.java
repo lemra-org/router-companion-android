@@ -36,6 +36,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
@@ -141,7 +142,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
     private static final String LOG_TAG = AdminNVRAMTile.class.getSimpleName();
     private static final String LAST_SEARCH = "lastSearch";
     private final RecyclerViewEmptySupport mRecyclerView;
-    private final RecyclerView.Adapter mAdapter;
+    private final NVRAMDataRecyclerViewAdapter mAdapter;
     private final RecyclerView.LayoutManager mLayoutManager;
     private FloatingActionButton addNewButton;
 
@@ -160,16 +161,6 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
         this.mNvramInfoDefaultSorting = new NVRAMInfo();
         mRecyclerView = (RecyclerViewEmptySupport) layout.findViewById(R.id.tile_admin_nvram_ListView);
-
-        addNewButton = (FloatingActionButton) layout.findViewById(R.id.nvram_var_add);
-
-        addNewButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //FIXME
-                Toast.makeText(mParentFragmentActivity, "[TODO] Open Dialog to add new NVRAM var", Toast.LENGTH_SHORT).show();
-            }
-        });
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -203,6 +194,18 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         int height = size.y;
         Log.d(LOG_TAG, "<width,height> = <" + width + "," + height + ">");
         mRecyclerView.setMinimumHeight(size.y);
+
+        addNewButton = (FloatingActionButton) layout.findViewById(R.id.nvram_var_add);
+
+        addNewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final DialogFragment editFragment =
+                        AddNVRAMKeyValueDialogFragment.newInstance(mAdapter);
+                editFragment.show(mParentFragmentActivity.getSupportFragmentManager(),
+                        "AddNVRAMKeyValueDialogFragment");
+            }
+        });
 
         //Create Options Menu
         final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_admin_nvram_menu);
@@ -887,7 +890,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                         }
                     }
 
-                    ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplayCopy);
+                    mAdapter.setEntryList(mNvramInfoToDisplayCopy);
                     mAdapter.notifyDataSetChanged();
                 }
 
@@ -926,5 +929,4 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
             doneWithLoaderInstance(this, loader);
         }
     }
-
 }
