@@ -604,7 +604,6 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
                                                                                   openvpnClStatusToSet ? "Enabling" : "Disabling"),
                                                                           Style.INFO);
 
-
                                                                   ActionManager.runTasks(
                                                                           new SetNVRAMVariablesAction(
                                                                                   mRouter,
