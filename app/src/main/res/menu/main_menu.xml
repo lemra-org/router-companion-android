@@ -160,11 +160,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:title="Open SSH Console"
                         app:showAsAction="ifRoom" />
 
-                    <item
-                        android:id="@+id/main_add_shortcut"
-                        android:title="Add Shortcut"
-                        app:showAsAction="never" />
-
                     <!-- TODO Store http port (or WAN port) in router preferences. If available, pick it from there. Otherwise, ask user to provide the right port.
                     Remind to detect whether to use WAN or LAN IP Address (based on the current network we are connected to)
                     -->
@@ -174,6 +169,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:visible="true"
                         android:title="Open Web Interface"
                         app:showAsAction="ifRoom" />
+
+                    <item
+                        android:id="@+id/main_add_shortcut"
+                        android:title="Add Shortcut"
+                        app:showAsAction="never" />
 
                 </menu>
             </item>
