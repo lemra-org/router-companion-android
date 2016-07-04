@@ -23,6 +23,7 @@
 package org.rm3l.ddwrt.fragments.status;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
@@ -48,6 +49,11 @@ public class StatusSyslogFragment extends AbstractBaseFragment {
                             savedInstanceState, null, true, this.router, null));
         }
         return tiles;
+    }
+
+    @NonNull
+    protected int getRootViewType() {
+        return RootViewType_LINEAR_LAYOUT;
     }
 
     @Override
