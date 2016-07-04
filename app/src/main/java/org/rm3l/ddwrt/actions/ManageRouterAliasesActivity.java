@@ -1317,6 +1317,21 @@ public class ManageRouterAliasesActivity
                         final EditText aliasEditText = (EditText)
                                 d.findViewById(R.id.add_or_edit_router_alias_value);
 
+                        if (TextUtils.isEmpty(aliasEditText.getText())) {
+                            //Crouton
+                            Crouton.makeText(getActivity(), "Alias cannot be blank", ALERT,
+                                    (ViewGroup) (d.findViewById(R.id.add_or_edit_router_alias_notification_viewgroup))).show();
+                            aliasEditText.requestFocus();
+                            //Open Keyboard
+                            final InputMethodManager imm = (InputMethodManager) getActivity()
+                                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+                            if (imm != null) {
+                                // only will trigger it if no physical keyboard is open
+                                imm.showSoftInput(aliasEditText, 0);
+                            }
+                            return;
+                        }
+
                         routerPreferences.edit()
                                 .putString(macValueToPersist,
                                         nullToEmpty(aliasEditText.getText().toString()))
