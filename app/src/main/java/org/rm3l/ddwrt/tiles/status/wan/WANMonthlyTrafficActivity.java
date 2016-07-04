@@ -442,11 +442,12 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             }
 
             //setting text size of the title
-            multiRenderer.setChartTitleTextSize(24);
+            multiRenderer.setChartTitleTextSize(35);
             //setting text size of the axis title
-            multiRenderer.setAxisTitleTextSize(20);
+            multiRenderer.setAxisTitleTextSize(25);
             //setting text size of the graph label
-            multiRenderer.setLabelsTextSize(20);
+            multiRenderer.setLabelsTextSize(25);
+            multiRenderer.setLegendTextSize(25);
             //setting pan enablity which uses graph to move on both axis
             multiRenderer.setPanEnabled(false, false);
             //setting click false on graph

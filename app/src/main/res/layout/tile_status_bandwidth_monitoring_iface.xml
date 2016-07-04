@@ -90,7 +90,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <LinearLayout
                     android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
+                    android:layout_height="400dp"
                     android:orientation="vertical"/>
 
                 <ProgressBar

@@ -326,6 +326,17 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                             .replace("bytes", "B"));
                 }
 
+
+                // We want to avoid black border
+                //setting text size of the title
+                mRenderer.setChartTitleTextSize(25);
+                //setting text size of the axis title
+                mRenderer.setAxisTitleTextSize(22);
+                //setting text size of the graph label
+//                mRenderer.setLabelsTextSize(22);
+
+                mRenderer.setLegendTextSize(22);
+
                 // We want to avoid black border
                 //setting text size of the title
                 mRenderer.setChartTitleTextSize(22);

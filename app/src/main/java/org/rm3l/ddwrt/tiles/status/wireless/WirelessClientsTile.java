@@ -2066,6 +2066,8 @@ public class WirelessClientsTile
                         mRenderer.setAxisTitleTextSize(22);
                         //setting text size of the graph label
                         mRenderer.setLabelsTextSize(22);
+                        mRenderer.setLegendTextSize(22);
+
                         mRenderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00)); // transparent margins
                         // Disable Pan on two axis
                         mRenderer.setPanEnabled(false, false);
