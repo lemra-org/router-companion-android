@@ -116,6 +116,15 @@ public class BasicDetailsStep extends MaterialWizardStep {
         demoText.setText(demoText.getText().toString()
                 .replace("%PACKAGE_NAME%", BuildConfig.APPLICATION_ID));
 
+        //DEMO Button
+        v.findViewById(R.id.router_add_ip_demo)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        routerIpOrDnsEt.setText(BuildConfig.APPLICATION_ID);
+                    }
+                });
+
         //and set default values by using Context Variables
         uuidTv.setText(uuid);
         routerNameEt.setText(routerName);
