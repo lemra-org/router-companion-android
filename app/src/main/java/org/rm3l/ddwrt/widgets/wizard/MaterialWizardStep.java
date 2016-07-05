@@ -35,6 +35,9 @@ public abstract class MaterialWizardStep extends WizardStep implements WizardSte
     // create boolean for fetching data
     protected boolean isViewShown = false;
 
+    private boolean isStarted = false;
+    private boolean isVisible = false;
+
     /**
       * Called whenever the wizard proceeds to the next step or goes back to the previous step
       */
@@ -68,25 +71,64 @@ public abstract class MaterialWizardStep extends WizardStep implements WizardSte
         super.setUserVisibleHint(isVisibleToUser);
         Log.d(this.getClass().getSimpleName(), "setUserVisibleHint(isVisibleToUser=" +
                 isVisibleToUser + ")");
-        if (getView() != null) {
-            isViewShown = true;
-            if (isVisibleToUser) {
-                busInstance.register(this);
-                this.onVisibleToUser();
-                Crashlytics.log(Log.DEBUG, LOG_TAG,
-                        "POST event wizardStepVisibleToUser(" + getWizardStepTitle() + ") on bus " +
-                                busInstance);
-                busInstance.post(
-                        new WizardStepVisibleToUserEvent(this.getWizardStepTitle()));
-            } else {
-                busInstance.unregister(this);
-                onHiddenToUser();
-            }
+        isVisible = isVisibleToUser;
+        isViewShown = (isVisible && isStarted && getView() != null);
+
+        if (isViewShown) {
+            viewDidAppear();
         } else {
-            busInstance.unregister(this);
-            isViewShown = false;
-            onHiddenToUser();
+            viewDidHide();
         }
+
+//        if (getView() != null) {
+//            isViewShown = true;
+//            if (isVisibleToUser) {
+//                busInstance.register(this);
+//                this.onVisibleToUser();
+//                Crashlytics.log(Log.DEBUG, LOG_TAG,
+//                        "POST event wizardStepVisibleToUser(" + getWizardStepTitle() + ") on bus " +
+//                                busInstance);
+//                busInstance.post(
+//                        new WizardStepVisibleToUserEvent(this.getWizardStepTitle()));
+//            } else {
+//                busInstance.unregister(this);
+//                onHiddenToUser();
+//            }
+//        } else {
+//            busInstance.unregister(this);
+//            isViewShown = false;
+//            onHiddenToUser();
+//        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        isStarted = true;
+        isViewShown = (isVisible && isStarted && getView() != null);
+        if (isViewShown) {
+            viewDidAppear();
+        } else {
+            viewDidHide();
+        }
+    }
+
+    private void viewDidAppear() {
+        // your logic
+        busInstance.register(this);
+        this.onVisibleToUser();
+        Crashlytics.log(Log.DEBUG, LOG_TAG,
+                "POST event wizardStepVisibleToUser(" + getWizardStepTitle() + ") on bus " +
+                        busInstance);
+        busInstance.post(
+                new WizardStepVisibleToUserEvent(this.getWizardStepTitle()));
+    }
+
+    private void viewDidHide() {
+        // your logic
+        busInstance.unregister(this);
+        isViewShown = false;
+        onHiddenToUser();
     }
 
     /**
