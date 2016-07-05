@@ -37,6 +37,7 @@ import org.rm3l.ddwrt.events.bus.BusSingleton;
 import org.rm3l.ddwrt.events.wizard.WizardStepVisibleToUserEvent;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.register.resources.RouterWizardAction;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.widgets.ViewPagerWithAllowedSwipeDirection;
@@ -118,6 +119,8 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
                 closeWizard(RESULT_CANCELED);
             }
         });
+        toolbar.setPopupTheme(ColorUtils.isThemeLight(getContext()) ?
+                R.style.PopupThemeLight : R.style.PopupTheme);
         toolbar.inflateMenu(R.menu.menu_material_wizard);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
