@@ -91,7 +91,7 @@ public final class AdUtils {
     @Nullable
     public static InterstitialAd requestNewInterstitial(@Nullable final Context ctx, @NonNull final String unitId) {
         //noinspection PointlessBooleanExpression
-        if (ctx == null || !BuildConfig.WITH_ADS) {
+        if (ctx == null || !BuildConfig.WITH_ADS || !BuildConfig.WITH_INTERSTITIAL_ADS) {
             return null;
         }
         final AdRequest adRequest = buildAdRequest(ctx);
