@@ -160,6 +160,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -2474,7 +2475,7 @@ public class WirelessClientsTile
                 mParentFragmentPreferences.getBoolean(getFormattedPrefKey(RT_GRAPHS), false)) {
             //Reschedule next run right away, to have a pseudo realtime effect, regardless of the actual sync pref!
             //TODO Check how much extra load that represents on the router
-            doneWithLoaderInstance(this, loader, 7000l);
+            doneWithLoaderInstance(this, loader, TimeUnit.MINUTES.toMillis(1));
         }
 //        else {
 //            //Use classical sync
