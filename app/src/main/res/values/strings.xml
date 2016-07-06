@@ -545,5 +545,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="remove">Remove</string>
     <string name="nvram_variable_key">NVRAM Variable Key</string>
     <string name="demo_uppercase">DEMO</string>
+    <string name="notification_error_ssl_cert_invalid">Certificate presented by \'%1$s\' is not trusted. This may be caused by a misconfiguration or an attacker intercepting your connection.</string>
 
 </resources>

@@ -196,9 +196,32 @@ public class OpenWebManagementPageActivity extends WebActivity {
             }
 
             @Override
-            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+            public void onReceivedSslError(WebView view, final SslErrorHandler handler, final SslError error) {
                 //Case of self-signed certificates
-                handler.proceed();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(
+                                OpenWebManagementPageActivity.this);
+                        builder.setMessage(getString(
+                                R.string.notification_error_ssl_cert_invalid,
+                                error.getUrl()));
+                        builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                handler.proceed();
+                            }
+                        });
+                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                handler.cancel();
+                            }
+                        });
+                        final AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                });
             }
 
             @Override
