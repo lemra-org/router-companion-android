@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -181,7 +182,12 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
 
     private void setUiPageViewController() {
 
-        dotsCount = mPager.getAdapter().getCount();
+        final PagerAdapter adapter;
+        if (mPager == null || (adapter = mPager.getAdapter()) == null) {
+            Crashlytics.log(Log.WARN, LOG_TAG, "No pager or pager adapter => no dots in wizard!");
+            return;
+        }
+        dotsCount = adapter.getCount();
         dots = new ImageView[dotsCount];
 
         final Context context = getContext();
@@ -408,13 +414,20 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
 
     @Override
     public void onPageSelected(int position) {
+        if (position < 0 || position >= dotsCount) {
+            Crashlytics.log(Log.WARN, LOG_TAG,
+                    "Invalid position: " + position + " - max dots length is " + dotsCount);
+            return;
+        }
         final Context context = getContext();
         for (int i = 0; i < dotsCount; i++) {
-            dots[i].setImageDrawable(ContextCompat.getDrawable(context,
-                    R.drawable.nonselecteditem_dot));
+            dots[i].setImageDrawable(
+                    ContextCompat.getDrawable(context,
+                            (position != i) ?
+                                    R.drawable.nonselecteditem_dot : R.drawable.selecteditem_dot));
         }
-        dots[position].setImageDrawable(ContextCompat.getDrawable(context,
-                R.drawable.selecteditem_dot));
+//        dots[position].setImageDrawable(ContextCompat.getDrawable(context,
+//                R.drawable.selecteditem_dot));
     }
 
     @Override
