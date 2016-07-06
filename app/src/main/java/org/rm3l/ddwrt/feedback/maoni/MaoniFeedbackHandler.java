@@ -31,8 +31,8 @@ import org.rm3l.maoni.common.contract.Handler;
 import org.rm3l.maoni.common.model.Feedback;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import needle.UiRelatedProgressTask;
 import okhttp3.MediaType;
@@ -70,7 +70,7 @@ public class MaoniFeedbackHandler implements Handler {
     public static final String PROPERTY_BUILD_TYPE = "BUILD_TYPE";
     public static final String PROPERTY_BUILD_VERSION_NAME = "BUILD_VERSION_NAME";
 
-    private Map<String, Object> mProperties = new ConcurrentHashMap<>();
+    private Map<String, Object> mProperties = new HashMap<>();
 
     public MaoniFeedbackHandler(Activity context, Router router) {
         this.mContext = context;
