@@ -24,11 +24,13 @@ package org.rm3l.ddwrt.settings;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 
 import com.airbnb.deeplinkdispatch.DeepLink;
 
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
@@ -79,7 +81,17 @@ public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActiv
             // updated to reflect the new value, per the Android Design
             // guidelines.
 //            bindPreferenceSummaryToValue(findPreference(ALWAYS_CHECK_CONNECTION_PREF_KEY));
-            bindPreferenceSummaryToValue(findPreference(THEMING_PREF));
+            final Preference themingPreference = findPreference(THEMING_PREF);
+            final CharSequence summary = themingPreference.getSummary();
+            if (BuildConfig.WITH_ADS) {
+                themingPreference.setSummary(summary + ". Upgrade to switch");
+                themingPreference.setEnabled(false);
+            } else {
+                themingPreference.setSummary(summary);
+                themingPreference.setEnabled(true);
+            }
+
+            bindPreferenceSummaryToValue(themingPreference);
             bindPreferenceSummaryToValue(findPreference(DATA_USAGE_NETWORK_PREF));
 //            bindPreferenceSummaryToValue(findPreference(DATA_SYNC_BACKUP_PREF));
 
