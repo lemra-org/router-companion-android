@@ -536,7 +536,7 @@ public class ReviewStep extends MaterialWizardStep {
 
         @Override
         protected void onPreExecute() {
-            if (checkActualConnection) {
+            if (isAdded() && checkActualConnection) {
                 checkingConnectionDialog = Utils.buildAlertDialog(getActivity(), null,
                         String.format("Hold on - checking connection to router '%s'...",
                                 router.getRemoteIpAddress()), false, false);
@@ -547,7 +547,7 @@ public class ReviewStep extends MaterialWizardStep {
         @Nullable
         @Override
         protected CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router> doInBackground(Void... voids) {
-            if (!checkActualConnection) {
+            if (!(isAdded() && checkActualConnection)) {
                 return new CheckRouterConnectionAsyncTaskResult<>(router, null);
             }
             Router result = null;
@@ -555,9 +555,11 @@ public class ReviewStep extends MaterialWizardStep {
             try {
                 result = doCheckConnectionToRouter();
                 if (!Utils.isDemoRouter(router)) {
-                    final Context context = getContext();
-                    new RouterModelUpdaterServiceTask(context).runBackgroundServiceTask(router);
-                    new RouterInfoForFeedbackServiceTask(context).runBackgroundServiceTask(router);
+                    if (isAdded()) {
+                        final Context context = getContext();
+                        new RouterModelUpdaterServiceTask(context).runBackgroundServiceTask(router);
+                        new RouterInfoForFeedbackServiceTask(context).runBackgroundServiceTask(router);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -569,6 +571,10 @@ public class ReviewStep extends MaterialWizardStep {
 
         @Override
         protected void onPostExecute(@NonNull CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router> result) {
+            if (!isAdded()) {
+                Crashlytics.log(Log.WARN, TAG, "Fragment no longer attached to activity");
+                this.cancel(true);
+            }
             if (checkingConnectionDialog != null) {
                 checkingConnectionDialog.cancel();
             }
@@ -626,7 +632,7 @@ public class ReviewStep extends MaterialWizardStep {
         @Override
         protected void onCancelled(CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router> router) {
             super.onCancelled(router);
-            if (checkingConnectionDialog != null) {
+            if (isAdded() && checkingConnectionDialog != null) {
                 checkingConnectionDialog.cancel();
             }
         }
@@ -634,7 +640,7 @@ public class ReviewStep extends MaterialWizardStep {
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            if (checkingConnectionDialog != null) {
+            if (isAdded() && checkingConnectionDialog != null) {
                 checkingConnectionDialog.cancel();
             }
         }
