@@ -169,6 +169,8 @@ public class AboutDialog extends Dialog {
                         final Context context = AboutDialog.this.getContext();
                         final WebView view = (WebView) LayoutInflater.from(context)
                                 .inflate(R.layout.dialog_licenses, null);
+                        view.setBackgroundColor(ContextCompat.getColor(mContext,
+                                isThemeLight ? R.color.white : R.color.black));
                         view.loadUrl("file:///android_asset/open_source_licenses.html");
                         mOssLicensesAlertDialog = new AlertDialog.Builder(context)
                                 .setCancelable(true)
