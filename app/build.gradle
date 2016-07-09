@@ -249,6 +249,7 @@ android {
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
             buildConfigField "boolean", "WITH_ADS", "false"
             buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
+            buildConfigField "boolean", "WITH_TASKER", "false"
         }
         google {
             //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
@@ -257,6 +258,7 @@ android {
             buildConfigField "boolean", "DONATIONS_GOOGLE", "true"
             buildConfigField "boolean", "WITH_ADS", "false"
             buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
+            buildConfigField "boolean", "WITH_TASKER", "true"
         }
         amazon {
             //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
@@ -265,6 +267,7 @@ android {
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
             buildConfigField "boolean", "WITH_ADS", "false"
             buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
+            buildConfigField "boolean", "WITH_TASKER", "false"
         }
         blackberry {
             //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
@@ -273,6 +276,7 @@ android {
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
             buildConfigField "boolean", "WITH_ADS", "false"
             buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
+            buildConfigField "boolean", "WITH_TASKER", "false"
         }
         amazonUnderground {
             //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
@@ -281,6 +285,7 @@ android {
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
             buildConfigField "boolean", "WITH_ADS", "false"
             buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
+            buildConfigField "boolean", "WITH_TASKER", "false"
         }
         samsung {
             //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
@@ -289,6 +294,7 @@ android {
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
             buildConfigField "boolean", "WITH_ADS", "false"
             buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
+            buildConfigField "boolean", "WITH_TASKER", "false"
         }
         // For FOSS version only (no ads)
         fdroid {
@@ -298,6 +304,7 @@ android {
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
             buildConfigField "boolean", "WITH_ADS", "false"
             buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
+            buildConfigField "boolean", "WITH_TASKER", "false"
         }
 
         /*
@@ -313,6 +320,7 @@ android {
 
             buildConfigField "boolean", "WITH_ADS", "true"
             buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "true"
+            buildConfigField "boolean", "WITH_TASKER", "false"
         }
         googleFreeWithAds {
             //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
@@ -322,6 +330,7 @@ android {
 
             buildConfigField "boolean", "WITH_ADS", "true"
             buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
+            buildConfigField "boolean", "WITH_TASKER", "false"
         }
         amazonFreeWithAds {
             //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
@@ -331,6 +340,7 @@ android {
 
             buildConfigField "boolean", "WITH_ADS", "true"
             buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
+            buildConfigField "boolean", "WITH_TASKER", "false"
         }
         blackberryFreeWithAds {
             //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
@@ -340,6 +350,7 @@ android {
 
             buildConfigField "boolean", "WITH_ADS", "true"
             buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "true"
+            buildConfigField "boolean", "WITH_TASKER", "false"
         }
         samsungFreeWithAds {
             //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
@@ -349,6 +360,7 @@ android {
 
             buildConfigField "boolean", "WITH_ADS", "true"
             buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "true"
+            buildConfigField "boolean", "WITH_TASKER", "false"
         }
 //        // For FOSS version only (with ads)
 //        fdroidFreeWithAds {
@@ -500,8 +512,6 @@ dependencies {
 
     compile ('org.rm3l:maoni:1.3.0@aar') {
         transitive = true;
-        //Force Gradle to re-download the dependency
-//        changing = true;
     }
 
     //LeakCanary - to detect memory leaks (only in debug flavor)

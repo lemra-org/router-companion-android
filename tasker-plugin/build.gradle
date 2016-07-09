@@ -1,0 +1,280 @@
+/*
+ * DD-WRT Companion is a mobile app that lets you connect to,
+ * monitor and manage your DD-WRT routers on the go.
+ *
+ * Copyright (C) 2014  Armel Soro
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ */
+
+/**
+ * Gradle build file
+ */
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://maven.fabric.io/public' }
+        maven { url 'http://dl.bintray.com/amulyakhare/maven' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
+apply plugin: 'com.android.application'
+
+import groovy.swing.SwingBuilder
+apply plugin: 'android-apt'
+apply plugin: 'com.github.triplet.play'
+
+final homePath = System.properties['user.home']
+
+//Prompt for keystore file and password (same for private key and store file)
+// Will take care of prompting via console or via a dialog form (if no console available, which
+// can be the case if building with Android Studio, or with gradle daemon mode)
+gradle.taskGraph.whenReady { taskGraph ->
+    if (taskGraph.hasTask(':app:assembleRelease') ||
+            taskGraph.hasTask(':app:assembleGenericRelease') ||
+            taskGraph.hasTask(':app:assembleGoogleRelease') ||
+            taskGraph.hasTask(':app:assembleAmazonRelease')) {
+
+        def password = ""
+        def storeFile = ""
+
+        //Attempt to read keystore.properties file, if any first
+        final propsFile = new File(homePath.toString() + "/.droid/", "keystore.properties")
+        final configName = 'release'
+
+        if (propsFile.exists() && android.signingConfigs.hasProperty(configName)) {
+            printf("Using properties file located at " + propsFile.absolutePath)
+            final props = new Properties()
+            props.load(new FileInputStream(propsFile))
+            storeFile = new File(props['keystore'].toString())
+//            password = props['storePassword']
+//            android.signingConfigs[configName].keyAlias = props['keyAlias']
+            password = props['keyPassword']
+
+        } else if (System.console() == null) {
+            new SwingBuilder().edt {
+                dialog(modal: true,
+                        title: 'Enter signing configuration',
+                        alwaysOnTop: true,
+                        resizable: false,
+                        locationRelativeTo: null,
+                        pack: true,
+                        show: true) {
+                    vbox { // Put everything below each other
+                        label(text: "Please select keystore file:")
+                        final javax.swing.JFileChooser fileInput = fileChooser()
+                        label(text: "Please enter passphrase:")
+                        final javax.swing.JPasswordField input = passwordField()
+                        button(defaultButton: true, text: 'OK', actionPerformed: {
+                            storeFile = fileInput.selectedFile
+                            password = input.password
+                            dispose()
+                        })
+                    }
+                }
+            }
+        } else {
+            storeFile = System.console().readLine("\nPlease enter path to keystore file: ")
+            storeFile = new File(storeFile)
+            password = System.console().readPassword("\nPlease enter signing config password: ")
+        }
+
+        if (storeFile == null || !storeFile.exists()) {
+            throw new InvalidUserDataException("Keystore path not specified or file does not exist")
+        }
+
+        if (password.size() <= 0) {
+            throw new InvalidUserDataException("You must enter the password to proceed.")
+        }
+
+        // For debugging, friendly print the version output to the Gradle console
+        printf("\n-------- SIGNING CONFIG --------\n" +
+                "- storeFile.absolutePath: [" + storeFile.absolutePath +
+                "]\n----------------------------\n")
+
+        android.signingConfigs.release.storeFile = storeFile
+        android.signingConfigs.release.storePassword = password
+        android.signingConfigs.release.keyPassword = password
+    }
+}
+
+def getVersionName(String flavorName) {
+    // Fetch the version according to git latest tag and "how far we are from last tag"
+    def longVersionName = "git -C ${rootDir} describe --tags --long".execute().text.trim()
+    def (fullVersionTag, versionBuild, gitSha) = longVersionName.tokenize('-')
+    def (versionMajor, versionMinor, versionPatch) = fullVersionTag.tokenize('.')
+    def gitCommitHash = "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
+
+    // Return the version name
+    "$versionMajor.$versionMinor.$versionPatch ($gitCommitHash-$flavorName)"
+}
+
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.0"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    signingConfigs {
+        release {
+            keyAlias 'DDWRTCompanionAndroidKey'
+            //User will be prompted for the parameters below, for 'assemble*Release' tasks
+            keyPassword ''
+            storeFile file('/dev/null')
+            storePassword ''
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+            //noinspection GroovyAssignabilityCheck
+            java.srcDirs = ['src/main/java']
+            //noinspection GroovyAssignabilityCheck
+            resources.srcDirs = ['src/main/res']
+            aidl.srcDirs = ['src/main/res']
+            renderscript.srcDirs = ['src/main/java']
+            res.srcDirs = ['src/main/res']
+            assets.srcDirs = ['src/main/assets']
+        }
+
+        // Move the tests to tests/java, tests/res, etc...
+        instrumentTest.setRoot('src/androidTests')
+
+        // Move the build types to build-types/<type>
+        // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...
+        // This moves them out of them default location under src/<type>/... which would
+        // conflict with src/ being used by the main source set.
+        // Adding new build types or product flavors should be accompanied
+        // by a similar customization.
+        debug.setRoot('build-types/debug')
+        release.setRoot('build-types/release')
+    }
+
+    defaultConfig {
+        applicationId "org.rm3l.ddwrt.tasker"
+        testApplicationId "org.rm3l.ddwrt.tasker.tests"
+        minSdkVersion 15
+        targetSdkVersion 24
+
+        // Enabling multidex support.
+//        multiDexEnabled true
+        // Fetch the version according to git latest tag and "how far are we from last tag"
+        def longVersionName = "git -C ${rootDir} describe --tags --long".execute().text.trim()
+        def (fullVersionTag, versionBuild, gitSha) = longVersionName.tokenize('-')
+        def (versionMajor, versionMinor, versionPatch) = fullVersionTag.tokenize('.')
+//        def gitCommitHash = "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
+
+        // Set the version name
+        versionName getVersionName("default")
+//        versionName "$versionMajor.$versionMinor.$versionPatch ($gitCommitHash)"
+
+        // Turn the version name into a version code
+        //noinspection GroovyAssignabilityCheck
+        versionCode versionMajor.toInteger() * 100000 +
+                versionMinor.toInteger() * 10000 +
+                versionPatch.toInteger() * 1000 +
+                versionBuild.toInteger()
+
+        // For debugging, friendly print the version output to the Gradle console
+        printf("\n--------" + "VERSION DATA--------" + "\n" + "- CODE: " + versionCode + "\n" +
+                "- NAME: " + versionName + "\n----------------------------\n")
+
+    }
+
+    //Those files, from Apache Commons lib cause build errors
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+    lintOptions {
+        abortOnError false
+        disable 'TypographyEllipsis'
+    }
+
+    /**
+     * Flavors: this is because apps uploaded to Play Store will certainly be banned if
+     * they contain link to billing platforms other than Google
+     */
+    productFlavors {
+        generic {
+            //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
+//            buildConfigField "boolean", "DONATIONS", "false"
+//            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
+//            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
+//            buildConfigField "boolean", "WITH_ADS", "false"
+//            buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
+        }
+        google {
+            //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
+//            buildConfigField "boolean", "DONATIONS", "false"
+//            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
+//            buildConfigField "boolean", "DONATIONS_GOOGLE", "true"
+//            buildConfigField "boolean", "WITH_ADS", "false"
+//            buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
+        }
+        amazon {
+            //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
+//            buildConfigField "boolean", "DONATIONS", "false"
+//            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
+//            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
+//            buildConfigField "boolean", "WITH_ADS", "false"
+//            buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
+        }
+    }
+
+    buildTypes {
+//        release {
+//            minifyEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+            zipAlignEnabled true
+        }
+        debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            zipAlignEnabled true
+        }
+    }
+}
+
+//Automate the way version name is built for each flavor
+android.productFlavors.each { flavor ->
+    flavor.versionName = getVersionName(flavor.name)
+}
+
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:24.0.0'
+
+    compile ('org.rm3l:maoni:1.3.0@aar') {
+        transitive = true;
+    }
+
+}
