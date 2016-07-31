@@ -35,8 +35,6 @@ buildscript {
     }
 }
 
-import groovy.swing.SwingBuilder
-
 apply plugin: 'com.android.application'
 //apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'android-apt'
@@ -81,27 +79,9 @@ gradle.taskGraph.whenReady { taskGraph ->
             password = props['keyPassword']
 
         } else if (System.console() == null) {
-            new SwingBuilder().edt {
-                dialog(modal: true,
-                        title: 'Enter signing configuration',
-                        alwaysOnTop: true,
-                        resizable: false,
-                        locationRelativeTo: null,
-                        pack: true,
-                        show: true) {
-                    vbox { // Put everything below each other
-                        label(text: "Please select keystore file:")
-                        final javax.swing.JFileChooser fileInput = fileChooser()
-                        label(text: "Please enter passphrase:")
-                        final javax.swing.JPasswordField input = passwordField()
-                        button(defaultButton: true, text: 'OK', actionPerformed: {
-                            storeFile = fileInput.selectedFile
-                            password = input.password
-                            dispose()
-                        })
-                    }
-                }
-            }
+            storeFile = "UNDEFINED"
+            storeFile = "UNDEFINED"
+            password = "UNDEFINED"
         } else {
             storeFile = System.console().readLine("\nPlease enter path to keystore file: ")
             storeFile = new File(storeFile)
