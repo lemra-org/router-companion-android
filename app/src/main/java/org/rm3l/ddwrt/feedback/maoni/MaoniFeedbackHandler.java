@@ -245,7 +245,7 @@ public class MaoniFeedbackHandler implements Handler {
                                                             "" : routerInfoText),
                                             null,
                                             GSON_BUILDER.create().toJson(properties),
-                                            null)
+                                            new String[0])
                                     .execute();
 
                             return ImmutablePair.of(response, null);
