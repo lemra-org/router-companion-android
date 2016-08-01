@@ -15,6 +15,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.google.gson.GsonBuilder;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -25,6 +29,7 @@ import org.rm3l.ddwrt.feedback.api.DoorbellService;
 import org.rm3l.ddwrt.multithreading.MultiThreadingManager;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.AWSUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.MaoniUtils;
 import org.rm3l.ddwrt.utils.NetworkUtils;
@@ -35,13 +40,14 @@ import org.rm3l.maoni.common.model.Feedback;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import needle.UiRelatedProgressTask;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AWS_S3_BUCKET_NAME;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AWS_S3_FEEDBACKS_FOLDER_NAME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DOORBELL_APIKEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DOORBELL_APPID;
@@ -147,22 +153,57 @@ public class MaoniFeedbackHandler implements Handler {
                                 return ImmutablePair.of(openResponse, new IllegalStateException());
                             }
 
-                            String[] attachments = null;
+                            String screenshotCaptureUploadUrl = null;
+
                             if (includeScreenshot) {
                                 publishProgress(UPLOADING_ATTACHMENT);
-                                final RequestBody requestBody = RequestBody.create(
-                                        MediaType.parse("image/png"),
+
+                                //Upload to AWS S3
+                                final TransferUtility transferUtility =
+                                        AWSUtils.getTransferUtility(mContext);
+                                final TransferObserver uploadObserver =
+                                        transferUtility.upload(AWS_S3_BUCKET_NAME,
+                                        String.format("%s/%s.png",
+                                                AWS_S3_FEEDBACKS_FOLDER_NAME,
+                                                feedback.id),
                                         feedback.screenshotFile);
-                                final Response<String[]> uploadResponse = mDoorbellService
-                                        .upload(DOORBELL_APPID, DOORBELL_APIKEY, requestBody)
-                                        .execute();
-                                if (uploadResponse.code() != 201) {
-                                    return ImmutablePair.of(openResponse, new IllegalStateException());
+                                uploadObserver.setTransferListener(new TransferListener() {
+                                    @Override
+                                    public void onStateChanged(int id, TransferState state) {
+
+                                    }
+
+                                    @Override
+                                    public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+
+                                    }
+
+                                    @Override
+                                    public void onError(int id, Exception ex) {
+
+                                    }
+                                }); // required, or else you need to call refresh()
+
+                                while (true) {
+                                    final TransferState transferState = uploadObserver.getState();
+                                    if (TransferState.COMPLETED.equals(transferState)
+                                            || TransferState.FAILED.equals(transferState)) {
+                                        if (TransferState.FAILED.equals(transferState)) {
+                                            return ImmutablePair.of(openResponse,
+                                                    new IllegalStateException(
+                                                            "Failed to upload screenshot capture"));
+                                        } else {
+                                            //Set URL TO S3
+                                            screenshotCaptureUploadUrl = String.format(
+                                                    "https://%s.s3.amazonaws.com/%s/%s.png",
+                                                    AWS_S3_BUCKET_NAME,
+                                                    AWS_S3_FEEDBACKS_FOLDER_NAME,
+                                                    feedback.id);
+                                        }
+                                        break;
+                                    }
+                                    Thread.sleep(TimeUnit.SECONDS.toMillis(5));
                                 }
-                                attachments = uploadResponse.body();
-                            }
-                            if (attachments == null) {
-                                attachments = new String[0];
                             }
 
                             publishProgress(SUBMITTING_FEEDBACK);
@@ -179,12 +220,17 @@ public class MaoniFeedbackHandler implements Handler {
                                             emailText,
                                             String.format("%s\n\n" +
                                                             "-------\n" +
+                                                            "%s" +
                                                             "- Feedback UUID: %s\n" +
                                                             "- Android Version: %s (SDK %s)\n" +
                                                             "- Device: %s (%s)\n" +
                                                             "%s" +
                                                             "-------",
                                                     contentText,
+                                                    TextUtils.isEmpty(screenshotCaptureUploadUrl) ?
+                                                            "" :
+                                                            String.format("Screenshot: %s\n\n",
+                                                                    screenshotCaptureUploadUrl),
                                                     feedback.id,
                                                     deviceInfo != null ?
                                                             deviceInfo.androidReleaseVersion :
@@ -199,7 +245,7 @@ public class MaoniFeedbackHandler implements Handler {
                                                             "" : routerInfoText),
                                             null,
                                             GSON_BUILDER.create().toJson(properties),
-                                            attachments)
+                                            null)
                                     .execute();
 
                             return ImmutablePair.of(response, null);
@@ -232,17 +278,21 @@ public class MaoniFeedbackHandler implements Handler {
                             }
 
                             if (response != null) {
+                                final ResponseBody responseBody = response.body();
                                 if (response.code() == 201) {
                                     try {
                                         Toast.makeText(mContext,
-                                                response.body().string(),
+                                                responseBody != null ?
+                                                    responseBody.string() :
+                                                    "Thank you - we'll get back to you as soon as possible",
                                                 Toast.LENGTH_SHORT).show();
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
                                 } else {
                                     Toast.makeText(mContext,
-                                            "Error: " + response.body().toString(),
+                                            "Error" + (responseBody != null ?
+                                                    (": " + responseBody.toString()) : ""),
                                             Toast.LENGTH_SHORT).show();
                                 }
                             }

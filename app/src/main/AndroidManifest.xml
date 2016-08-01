@@ -489,6 +489,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         <receiver android:name=".feedback.SendFeedbackBroadcastReceiver"/>
 
+        <service
+            android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
+            android:enabled="true" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="bf40a9722838d1959a1a770881926ee96e4b94f1" />

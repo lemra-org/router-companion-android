@@ -25,6 +25,8 @@ package org.rm3l.ddwrt.utils;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.amazonaws.regions.Regions;
+
 import org.apache.commons.lang3.CharEncoding;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -193,7 +195,13 @@ public final class DDWRTCompanionConstants {
 
     public static final String COUNTRY_API_SERVER_FLAG = "http://www.geognos.com/api/en/countries/flag";
 
-    public static final int MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION = 3;
+    public static final int MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION = 5;
+
+    public static final String AWS_COGNITO_IDENTITY_POOL_ID =
+            "us-east-1:2d76d7a3-17f4-4c78-a5c4-ed3a548fe45b";
+    public static final Regions AWS_COGNITO_IDENTITY_POOL_REGION = Regions.US_EAST_1;
+    public static final String AWS_S3_BUCKET_NAME = "dd-wrt-companion";
+    public static final String AWS_S3_FEEDBACKS_FOLDER_NAME = "feedbacks";
 
     public static class Permissions {
         public static final int INTERNET = 1;

@@ -508,4 +508,7 @@ dependencies {
     compile 'com.zsoltsafrany:needle:1.0.0'
 
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
+
+    compile 'com.amazonaws:aws-android-sdk-core:2.2.+'
+    compile 'com.amazonaws:aws-android-sdk-s3:2.2.+'
 }
