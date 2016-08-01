@@ -26,8 +26,10 @@ import org.rm3l.ddwrt.multithreading.MultiThreadingManager;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.MaoniUtils;
 import org.rm3l.ddwrt.utils.NetworkUtils;
 import org.rm3l.maoni.common.contract.Handler;
+import org.rm3l.maoni.common.model.DeviceInfo;
 import org.rm3l.maoni.common.model.Feedback;
 
 import java.io.IOException;
@@ -50,6 +52,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DOORBELL_APPID;
 public class MaoniFeedbackHandler implements Handler {
 
     public static final String FEEDBACK_API_BASE_URL = "https://doorbell.io/api/";
+    public static final String UNKNOWN = "???";
 
     private Activity mContext;
     private Router mRouter;
@@ -70,31 +73,9 @@ public class MaoniFeedbackHandler implements Handler {
     public static final String PROPERTY_BUILD_TYPE = "BUILD_TYPE";
     public static final String PROPERTY_BUILD_VERSION_NAME = "BUILD_VERSION_NAME";
 
-    private Map<String, Object> mProperties = new HashMap<>();
-
     public MaoniFeedbackHandler(Activity context, Router router) {
         this.mContext = context;
         this.mRouter = router;
-
-        if (this.mRouter != null) {
-            final SharedPreferences routerPrefs =
-                    mContext.getSharedPreferences(mRouter.getUuid(), Context.MODE_PRIVATE);
-
-            this.mProperties.put("Router Model", Router.getRouterModel(mContext, mRouter));
-            this.mProperties.put("Router Firmware", routerPrefs.getString(NVRAMInfo.LOGIN_PROMPT, "-"));
-            this.mProperties.put("Router Kernel", routerPrefs.getString(NVRAMInfo.KERNEL, "-"));
-            this.mProperties.put("Router CPU Model", routerPrefs.getString(NVRAMInfo.CPU_MODEL, "-"));
-            this.mProperties.put("Router CPU Cores", routerPrefs.getString(NVRAMInfo.CPU_CORES_COUNT, "-"));
-        }
-
-        //Also add build related properties
-        this.mProperties.put(PROPERTY_BUILD_DEBUG, BuildConfig.DEBUG);
-        this.mProperties.put(PROPERTY_BUILD_APPLICATION_ID, BuildConfig.APPLICATION_ID);
-        this.mProperties.put(PROPERTY_BUILD_VERSION_CODE, BuildConfig.VERSION_CODE);
-        this.mProperties.put(PROPERTY_BUILD_FLAVOR, BuildConfig.FLAVOR);
-        this.mProperties.put(PROPERTY_BUILD_TYPE, BuildConfig.BUILD_TYPE);
-        this.mProperties.put(PROPERTY_BUILD_VERSION_NAME, BuildConfig.VERSION_NAME);
-
         mDoorbellService = NetworkUtils
                 .createApiService(FEEDBACK_API_BASE_URL, DoorbellService.class);
     }
@@ -115,6 +96,27 @@ public class MaoniFeedbackHandler implements Handler {
                     "An Internet connection is needed to send feedbacks.", Toast.LENGTH_SHORT).show();
             return false;
         }
+
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("UUID", feedback.id);
+
+        if (this.mRouter != null) {
+            final SharedPreferences routerPrefs =
+                    mContext.getSharedPreferences(mRouter.getUuid(), Context.MODE_PRIVATE);
+            properties.put("Router Model", Router.getRouterModel(mContext, mRouter));
+            properties.put("Router Firmware", routerPrefs.getString(NVRAMInfo.LOGIN_PROMPT, "-"));
+            properties.put("Router Kernel", routerPrefs.getString(NVRAMInfo.KERNEL, "-"));
+            properties.put("Router CPU Model", routerPrefs.getString(NVRAMInfo.CPU_MODEL, "-"));
+            properties.put("Router CPU Cores", routerPrefs.getString(NVRAMInfo.CPU_CORES_COUNT, "-"));
+        }
+        //Also add build related properties
+        properties.put(PROPERTY_BUILD_DEBUG, BuildConfig.DEBUG);
+        properties.put(PROPERTY_BUILD_APPLICATION_ID, BuildConfig.APPLICATION_ID);
+        properties.put(PROPERTY_BUILD_VERSION_CODE, BuildConfig.VERSION_CODE);
+        properties.put(PROPERTY_BUILD_FLAVOR, BuildConfig.FLAVOR);
+        properties.put(PROPERTY_BUILD_TYPE, BuildConfig.BUILD_TYPE);
+        properties.put(PROPERTY_BUILD_VERSION_NAME, BuildConfig.VERSION_NAME);
+
 
         final boolean includeScreenshot = feedback.includeScreenshot;
         final String emailText = mEmail.getText().toString();
@@ -164,6 +166,13 @@ public class MaoniFeedbackHandler implements Handler {
                             }
 
                             publishProgress(SUBMITTING_FEEDBACK);
+
+                            //Add device info retrieved from the Feedback object
+                            final DeviceInfo deviceInfo = feedback.deviceInfo;
+                            if (deviceInfo != null) {
+                                properties.putAll(MaoniUtils.deviceInfoToMap(deviceInfo));
+                            }
+
                             final Response<ResponseBody> response = mDoorbellService
                                     .submitFeedbackForm(
                                             DOORBELL_APPID, DOORBELL_APIKEY,
@@ -171,14 +180,25 @@ public class MaoniFeedbackHandler implements Handler {
                                             String.format("%s\n\n" +
                                                             "-------\n" +
                                                             "- Feedback UUID: %s\n" +
+                                                            "- Android Version: %s (SDK %s)\n" +
+                                                            "- Device: %s (%s)\n" +
                                                             "%s" +
                                                             "-------",
                                                     contentText,
                                                     feedback.id,
+                                                    deviceInfo != null ?
+                                                            deviceInfo.androidReleaseVersion :
+                                                            UNKNOWN,
+                                                    deviceInfo != null ? deviceInfo.sdkVersion :
+                                                            UNKNOWN,
+                                                    deviceInfo != null ? deviceInfo.model :
+                                                            UNKNOWN,
+                                                    deviceInfo != null ? deviceInfo.manufacturer :
+                                                            UNKNOWN,
                                                     TextUtils.isEmpty(routerInfoText) ?
                                                             "" : routerInfoText),
                                             null,
-                                            GSON_BUILDER.create().toJson(mProperties),
+                                            GSON_BUILDER.create().toJson(properties),
                                             attachments)
                                     .execute();
 
