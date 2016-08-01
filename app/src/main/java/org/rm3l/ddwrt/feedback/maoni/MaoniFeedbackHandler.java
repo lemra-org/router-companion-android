@@ -279,7 +279,9 @@ public class MaoniFeedbackHandler implements Handler {
 
                             if (response != null) {
                                 final ResponseBody responseBody = response.body();
-                                if (response.code() == 201) {
+                                if (response.code() == 201 || response.code() == 502) {
+                                    //FIXME Check with Doorbell support why an 502 Bad Gateway s being returned by their API,
+                                    //even if feedback is properly stored
                                     try {
                                         Toast.makeText(mContext,
                                                 responseBody != null ?
