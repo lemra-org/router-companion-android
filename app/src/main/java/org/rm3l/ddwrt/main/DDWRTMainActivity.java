@@ -750,6 +750,10 @@ public class DDWRTMainActivity extends AppCompatActivity
                                             }, false);
                                     break;
                                 case 1003:
+                                    //Close drawer and open feedback activity
+                                    if (mDrawerResult.isDrawerOpen()) {
+                                        mDrawerResult.closeDrawer();
+                                    }
                                     //Feedback
                                     Utils.openFeedbackForm(DDWRTMainActivity.this, mRouter);
 //                                    final Intent intent = new Intent(DDWRTMainActivity.this, FeedbackActivity.class);
