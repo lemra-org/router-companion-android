@@ -1,4 +1,4 @@
-package org.rm3l.ddwrt.feedback.api;
+package org.rm3l.ddwrt.api.feedback;
 
 import org.rm3l.ddwrt.BuildConfig;
 

@@ -25,14 +25,16 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.feedback.api.DoorbellService;
+import org.rm3l.ddwrt.api.feedback.DoorbellService;
+import org.rm3l.ddwrt.api.urlshortener.goo_gl.GooGlService;
+import org.rm3l.ddwrt.api.urlshortener.goo_gl.resources.GooGlData;
 import org.rm3l.ddwrt.multithreading.MultiThreadingManager;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.AWSUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
-import org.rm3l.ddwrt.utils.MaoniUtils;
 import org.rm3l.ddwrt.utils.NetworkUtils;
+import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.maoni.common.contract.Handler;
 import org.rm3l.maoni.common.model.DeviceInfo;
 import org.rm3l.maoni.common.model.Feedback;
@@ -48,9 +50,11 @@ import retrofit2.Response;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AWS_S3_BUCKET_NAME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AWS_S3_FEEDBACKS_FOLDER_NAME;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AWS_S3_FEEDBACK_PENDING_TRANSFER_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DOORBELL_APIKEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DOORBELL_APPID;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.GOOGLE_API_KEY;
 
 /**
  * Created by rm3l on 13/05/16.
@@ -69,6 +73,7 @@ public class MaoniFeedbackHandler implements Handler {
     private EditText mRouterInfo;
 
     private DoorbellService mDoorbellService;
+    private GooGlService mGooGlService;
 
     private static final GsonBuilder GSON_BUILDER = new GsonBuilder();
 
@@ -84,6 +89,9 @@ public class MaoniFeedbackHandler implements Handler {
         this.mRouter = router;
         mDoorbellService = NetworkUtils
                 .createApiService(FEEDBACK_API_BASE_URL, DoorbellService.class);
+        mGooGlService = NetworkUtils
+                .createApiService(DDWRTCompanionConstants.URL_SHORTENER_API_BASE_URL,
+                        GooGlService.class);
     }
 
     @Override
@@ -116,12 +124,8 @@ public class MaoniFeedbackHandler implements Handler {
             properties.put("Router CPU Cores", routerPrefs.getString(NVRAMInfo.CPU_CORES_COUNT, "-"));
         }
         //Also add build related properties
-        properties.put(PROPERTY_BUILD_DEBUG, BuildConfig.DEBUG);
-        properties.put(PROPERTY_BUILD_APPLICATION_ID, BuildConfig.APPLICATION_ID);
-        properties.put(PROPERTY_BUILD_VERSION_CODE, BuildConfig.VERSION_CODE);
         properties.put(PROPERTY_BUILD_FLAVOR, BuildConfig.FLAVOR);
         properties.put(PROPERTY_BUILD_TYPE, BuildConfig.BUILD_TYPE);
-        properties.put(PROPERTY_BUILD_VERSION_NAME, BuildConfig.VERSION_NAME);
 
 
         final boolean includeScreenshot = feedback.includeScreenshot;
@@ -136,37 +140,56 @@ public class MaoniFeedbackHandler implements Handler {
                         <ImmutablePair<Response<ResponseBody>, ? extends Exception>, Integer>() {
 
                     private static final int STARTED = 1;
-                    private static final int OPENING_APPLICATION = 2;
-                    private static final int UPLOADING_ATTACHMENT = 3;
+                    private static final int UPLOADING_ATTACHMENT = 2;
+                    private static final int OPENING_APPLICATION = 3;
                     private static final int SUBMITTING_FEEDBACK = 4;
 
                     @Override
                     protected ImmutablePair<Response<ResponseBody>, ? extends Exception> doWork() {
                         publishProgress(STARTED);
                         try {
-                            publishProgress(OPENING_APPLICATION);
-                            final Response<ResponseBody> openResponse = mDoorbellService
-                                    .openApplication(DOORBELL_APPID, DOORBELL_APIKEY)
-                                    .execute();
-
-                            if (openResponse.code() != 201) {
-                                return ImmutablePair.of(openResponse, new IllegalStateException());
-                            }
-
+                            //1. Upload screenshot and shorten S3 URL
                             String screenshotCaptureUploadUrl = null;
-
                             if (includeScreenshot) {
                                 publishProgress(UPLOADING_ATTACHMENT);
 
-                                //Upload to AWS S3
                                 final TransferUtility transferUtility =
                                         AWSUtils.getTransferUtility(mContext);
+
+                                final SharedPreferences preferences =
+                                        mContext.getSharedPreferences(
+                                                DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                                                Context.MODE_PRIVATE);
+                                final Integer pendingTransferId;
+                                if (preferences.contains(AWS_S3_FEEDBACK_PENDING_TRANSFER_PREF)) {
+                                    pendingTransferId = preferences
+                                            .getInt(AWS_S3_FEEDBACK_PENDING_TRANSFER_PREF, -1);
+                                } else {
+                                    pendingTransferId = null;
+                                }
+                                if (pendingTransferId != null && pendingTransferId != -1) {
+                                    if (transferUtility.cancel(pendingTransferId)) {
+                                        preferences.edit()
+                                                .remove(AWS_S3_FEEDBACK_PENDING_TRANSFER_PREF)
+                                                .apply();
+                                    }
+                                }
+
+                                //Upload to AWS S3
                                 final TransferObserver uploadObserver =
                                         transferUtility.upload(AWS_S3_BUCKET_NAME,
-                                        String.format("%s/%s.png",
-                                                AWS_S3_FEEDBACKS_FOLDER_NAME,
-                                                feedback.id),
-                                        feedback.screenshotFile);
+                                                String.format("%s/%s.png",
+                                                        AWS_S3_FEEDBACKS_FOLDER_NAME,
+                                                        feedback.id),
+                                                feedback.screenshotFile);
+
+                                //Save transfer ID
+                                preferences.edit()
+                                        .putInt(AWS_S3_FEEDBACK_PENDING_TRANSFER_PREF,
+                                                uploadObserver.getId())
+                                        .apply();
+                                Utils.requestBackup(mContext);
+
                                 uploadObserver.setTransferListener(new TransferListener() {
                                     @Override
                                     public void onStateChanged(int id, TransferState state) {
@@ -189,29 +212,45 @@ public class MaoniFeedbackHandler implements Handler {
                                     if (TransferState.COMPLETED.equals(transferState)
                                             || TransferState.FAILED.equals(transferState)) {
                                         if (TransferState.FAILED.equals(transferState)) {
-                                            return ImmutablePair.of(openResponse,
+                                            return ImmutablePair.of(null,
                                                     new IllegalStateException(
                                                             "Failed to upload screenshot capture"));
                                         } else {
                                             //Set URL TO S3
-                                            screenshotCaptureUploadUrl = String.format(
-                                                    "https://%s.s3.amazonaws.com/%s/%s.png",
-                                                    AWS_S3_BUCKET_NAME,
-                                                    AWS_S3_FEEDBACKS_FOLDER_NAME,
-                                                    feedback.id);
+                                            screenshotCaptureUploadUrl = mGooGlService.shortenLongUrl(
+                                                    GOOGLE_API_KEY,
+                                                    new GooGlData()
+                                                            .setLongUrl(
+                                                                    String.format(
+                                                                            "https://%s.s3.amazonaws.com/%s/%s.png",
+                                                                            AWS_S3_BUCKET_NAME,
+                                                                            AWS_S3_FEEDBACKS_FOLDER_NAME,
+                                                                            feedback.id)))
+                                                    .execute().body().getId();
                                         }
                                         break;
                                     }
-                                    Thread.sleep(TimeUnit.SECONDS.toMillis(5));
+                                    Thread.sleep(TimeUnit.SECONDS.toMillis(2));
                                 }
                             }
 
+                            //2. Open App in Doorbell
+                            publishProgress(OPENING_APPLICATION);
+                            final Response<ResponseBody> openResponse = mDoorbellService
+                                    .openApplication(DOORBELL_APPID, DOORBELL_APIKEY)
+                                    .execute();
+
+                            if (openResponse.code() != 201) {
+                                return ImmutablePair.of(openResponse, new IllegalStateException());
+                            }
+
+                            //3. Submit the actual feedback
                             publishProgress(SUBMITTING_FEEDBACK);
 
                             //Add device info retrieved from the Feedback object
                             final DeviceInfo deviceInfo = feedback.deviceInfo;
                             if (deviceInfo != null) {
-                                properties.putAll(MaoniUtils.deviceInfoToMap(deviceInfo));
+                                properties.putAll(feedback.getDeviceAndAppInfoAsHumanReadableMap());
                             }
 
                             final Response<ResponseBody> response = mDoorbellService
@@ -221,17 +260,16 @@ public class MaoniFeedbackHandler implements Handler {
                                             String.format("%s\n\n" +
                                                             "-------\n" +
                                                             "%s" +
-                                                            "- Feedback UUID: %s\n" +
                                                             "- Android Version: %s (SDK %s)\n" +
                                                             "- Device: %s (%s)\n" +
                                                             "%s" +
-                                                            "-------",
+                                                            "-------\n\n" +
+                                                    ">>> NOTE: Ask questions and discuss/vote for features on %s <<<",
                                                     contentText,
                                                     TextUtils.isEmpty(screenshotCaptureUploadUrl) ?
                                                             "" :
                                                             String.format("Screenshot: %s\n\n",
                                                                     screenshotCaptureUploadUrl),
-                                                    feedback.id,
                                                     deviceInfo != null ?
                                                             deviceInfo.androidReleaseVersion :
                                                             UNKNOWN,
@@ -242,7 +280,8 @@ public class MaoniFeedbackHandler implements Handler {
                                                     deviceInfo != null ? deviceInfo.manufacturer :
                                                             UNKNOWN,
                                                     TextUtils.isEmpty(routerInfoText) ?
-                                                            "" : routerInfoText),
+                                                            "" : routerInfoText,
+                                                    DDWRTCompanionConstants.Q_A_WEBSITE),
                                             null,
                                             GSON_BUILDER.create().toJson(properties),
                                             new String[0])
@@ -320,7 +359,7 @@ public class MaoniFeedbackHandler implements Handler {
                                 alertDialog.setMessage("Uploading attachment...");
                                 break;
                             case SUBMITTING_FEEDBACK:
-                                alertDialog.setMessage("Submitting your helpful feedback...");
+                                alertDialog.setMessage("Submitting your valuable feedback...");
                                 break;
                             default:
                                 break;

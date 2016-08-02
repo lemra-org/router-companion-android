@@ -203,6 +203,15 @@ public final class DDWRTCompanionConstants {
     public static final String AWS_S3_BUCKET_NAME = "dd-wrt-companion";
     public static final String AWS_S3_FEEDBACKS_FOLDER_NAME = "feedbacks";
 
+    public static final String AWS_S3_FEEDBACK_PENDING_TRANSFER_PREF = "feedbacks_pending_transfer";
+
+    public static final String Q_A_WEBSITE = "https://www.codewake.com/p/ddwrt-companion";
+
+    public static final String URL_SHORTENER_API_BASE_URL =
+            "https://www.googleapis.com/urlshortener/v1/";
+
+    public static final String GOOGLE_API_KEY = \"fake-api-key\";
+
     public static class Permissions {
         public static final int INTERNET = 1;
         public static final int NETSTATE = 2;
