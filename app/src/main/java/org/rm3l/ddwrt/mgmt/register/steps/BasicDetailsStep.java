@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
-import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,8 +25,6 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.ViewGroupUtils;
 import org.rm3l.ddwrt.widgets.wizard.MaterialWizardStep;
-
-import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
 /**
  * Created by rm3l on 15/03/16.
@@ -192,18 +189,20 @@ public class BasicDetailsStep extends MaterialWizardStep {
 
     @Override
     public Boolean validateStep(@Nullable final Wizard wizard) {
-        final String routerReachableAddr = routerIpOrDnsEt.getText().toString();
-        final boolean stepValidated;
-        if (isDemoRouter(routerReachableAddr)
-                || Patterns.IP_ADDRESS.matcher(routerReachableAddr).matches()
-                || Patterns.DOMAIN_NAME.matcher(routerReachableAddr).matches()) {
-            routerIpTil.setErrorEnabled(false);
-            stepValidated = true;
-        } else {
-            routerIpTil.setErrorEnabled(true);
-            routerIpTil.setError(getString(R.string.router_add_dns_or_ip_invalid));
-            stepValidated = false;
-        }
-        return stepValidated;
+        return true;
+        //In a LAN, some names might be resolvable, but not valid DNS names.
+//        final String routerReachableAddr = routerIpOrDnsEt.getText().toString();
+//        final boolean stepValidated;
+//        if (isDemoRouter(routerReachableAddr)
+//                || Patterns.IP_ADDRESS.matcher(routerReachableAddr).matches()
+//                || Patterns.DOMAIN_NAME.matcher(routerReachableAddr).matches()) {
+//            routerIpTil.setErrorEnabled(false);
+//            stepValidated = true;
+//        } else {
+//            routerIpTil.setErrorEnabled(true);
+//            routerIpTil.setError(getString(R.string.router_add_dns_or_ip_invalid));
+//            stepValidated = false;
+//        }
+//        return stepValidated;
     }
 }
