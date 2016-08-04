@@ -189,8 +189,19 @@ public class BasicDetailsStep extends MaterialWizardStep {
 
     @Override
     public Boolean validateStep(@Nullable final Wizard wizard) {
-        return true;
         //In a LAN, some names might be resolvable, but not valid DNS names.
+        //So just make sure input data is not empty
+        final String routerReachableAddr = routerIpOrDnsEt.getText().toString();
+        final boolean stepValidated;
+        if (routerReachableAddr == null || "".equals(routerReachableAddr.trim())) {
+            routerIpTil.setErrorEnabled(true);
+            routerIpTil.setError("Must not be blank");
+            stepValidated = false;
+        } else {
+            routerIpTil.setErrorEnabled(false);
+            stepValidated = true;
+        }
+        
 //        final String routerReachableAddr = routerIpOrDnsEt.getText().toString();
 //        final boolean stepValidated;
 //        if (isDemoRouter(routerReachableAddr)
@@ -203,6 +214,7 @@ public class BasicDetailsStep extends MaterialWizardStep {
 //            routerIpTil.setError(getString(R.string.router_add_dns_or_ip_invalid));
 //            stepValidated = false;
 //        }
-//        return stepValidated;
+        
+        return stepValidated;
     }
 }
