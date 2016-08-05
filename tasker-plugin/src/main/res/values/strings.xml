@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Tasker Plugin for DD-WRT Companion</string>
+
+    <!-- Name of the plug-in that appears in Locale -->
+    <string name="plugin_name">Toast</string>
+
+    <!-- Hint text in the toast edit text -->
+    <string name="message_hint">Scheduled Toast</string>
+
+    <!-- Discard menu item -->
+    <string name="menu_discard_changes">Discard changes</string>
 </resources>

@@ -1,7 +1,22 @@
 package org.rm3l.ddwrt.tasker;
 
+import android.app.Application;
+
+import com.twofortyfouram.log.Lumberjack;
+
 /**
- * Created by rm3l on 06/08/16.
+ * Implements an application object for the plug-in.
  */
-public class DDWRTCompanionTaskerPluginApplication {
+/*
+ * This application is non-essential for the plug-in's operation; it simply enables debugging
+ * options globally for the app.
+ */
+public class DDWRTCompanionTaskerPluginApplication extends Application {
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        Lumberjack.init(getApplicationContext());
+    }
 }
