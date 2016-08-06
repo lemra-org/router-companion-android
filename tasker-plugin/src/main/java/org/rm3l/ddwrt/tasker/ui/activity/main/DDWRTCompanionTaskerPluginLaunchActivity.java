@@ -31,7 +31,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import org.rm3l.ddwrt.tasker.Constants;
 import org.rm3l.ddwrt.tasker.R;
+import org.rm3l.ddwrt.tasker.feedback.maoni.FeedbackHandler;
+import org.rm3l.maoni.Maoni;
 
 /**
  * EntryPoint Activity
@@ -77,11 +80,14 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
             case android.R.id.home:
                 onBackPressed();
                 break;
-            //TODO
             case R.id.ddwrt_companion_tasker_feedback:
-                //TOO Maoni
-                Toast.makeText(DDWRTCompanionTaskerPluginLaunchActivity.this,
-                        "[TODO] Send Feedback", Toast.LENGTH_SHORT).show();
+                new Maoni.Builder(Constants.FILEPROVIDER_AUTHORITY)
+                        .withTheme(R.style.AppThemeLight_StatusBarTransparent)
+                        .withWindowTitle("Send Feedback")
+                        .withExtraLayout(R.layout.activity_feedback_maoni)
+                        .withHandler(new FeedbackHandler(this))
+                        .build()
+                        .start(this);
                 break;
             case R.id.ddwrt_companion_tasker_about:
                 //TODO About

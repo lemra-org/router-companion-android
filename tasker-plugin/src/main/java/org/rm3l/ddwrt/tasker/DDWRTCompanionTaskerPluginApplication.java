@@ -2,12 +2,16 @@ package org.rm3l.ddwrt.tasker;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.facebook.stetho.Stetho;
 import com.twofortyfouram.log.Lumberjack;
+
+import org.rm3l.ddwrt.tasker.feedback.maoni.FeedbackHandler;
 
 import io.fabric.sdk.android.Fabric;
 import java.lang.ref.WeakReference;
@@ -28,7 +32,15 @@ public class DDWRTCompanionTaskerPluginApplication extends Application implement
     @Override
     public void onCreate() {
         super.onCreate();
+        registerActivityLifecycleCallbacks(this);
+
+        if (BuildConfig.DEBUG) {
+//            LeakCanary.install(this);
+            Stetho.initializeWithDefaults(this);
+        }
+
         Fabric.with(this, new Crashlytics());
+        Crashlytics.setBool("DEBUG", BuildConfig.DEBUG);
 
         Lumberjack.init(getApplicationContext());
     }
