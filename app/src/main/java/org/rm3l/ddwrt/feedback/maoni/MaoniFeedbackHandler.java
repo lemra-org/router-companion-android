@@ -63,6 +63,7 @@ public class MaoniFeedbackHandler implements Handler {
 
     public static final String FEEDBACK_API_BASE_URL = "https://doorbell.io/api/";
     public static final String UNKNOWN = "???";
+    public static final String MAONI_EMAIL = "maoni_email";
 
     private Activity mContext;
     private Router mRouter;
@@ -83,6 +84,7 @@ public class MaoniFeedbackHandler implements Handler {
     public static final String PROPERTY_BUILD_FLAVOR = "BUILD_FLAVOR";
     public static final String PROPERTY_BUILD_TYPE = "BUILD_TYPE";
     public static final String PROPERTY_BUILD_VERSION_NAME = "BUILD_VERSION_NAME";
+    private SharedPreferences mGlobalPreferences;
 
     public MaoniFeedbackHandler(Activity context, Router router) {
         this.mContext = context;
@@ -132,6 +134,12 @@ public class MaoniFeedbackHandler implements Handler {
         final String emailText = mEmail.getText().toString();
         final String contentText = feedback.userComment.toString();
         final String routerInfoText = mRouterInfo.getText().toString();
+
+        //Save last value, so it can be prefill next time
+        mGlobalPreferences
+                .edit()
+                .putString(MAONI_EMAIL, emailText)
+                .apply();
 
         final ProgressDialog alertDialog = ProgressDialog.show(mContext,
                 "Please hold on...", "Submitting feedback...", true);
@@ -377,11 +385,16 @@ public class MaoniFeedbackHandler implements Handler {
 
         mRouterInfo = (EditText) rootView.findViewById(R.id.activity_feedback_router_information_content);
 
-        //Set user-defined email if any
-        final String acraEmailAddr = mContext.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
-                Context.MODE_PRIVATE)
-                .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
-        mEmail.setText(acraEmailAddr, TextView.BufferType.EDITABLE);
+        //Load previously used email addr
+        final String emailAddr;
+        if (mGlobalPreferences.contains(MAONI_EMAIL)) {
+            emailAddr = mGlobalPreferences.getString(MAONI_EMAIL, "");
+        } else {
+            //Set user-defined email if any
+            emailAddr = mGlobalPreferences
+                    .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
+        }
+        mEmail.setText(emailAddr, TextView.BufferType.EDITABLE);
 
         if (mRouter != null) {
             final SharedPreferences routerPrefs =
