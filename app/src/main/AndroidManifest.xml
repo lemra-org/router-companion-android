@@ -188,11 +188,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:label="@string/support_app"
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name="org.acra.CrashReportDialog"
-            android:excludeFromRecents="true"
-            android:finishOnTaskLaunch="true"
-            android:windowSoftInputMode="adjustResize" />
+        <!--<activity-->
+            <!--android:name="org.acra.CrashReportDialog"-->
+            <!--android:excludeFromRecents="true"-->
+            <!--android:finishOnTaskLaunch="true"-->
+            <!--android:windowSoftInputMode="adjustResize" />-->
         <activity
             android:name=".tiles.status.wan.WANMonthlyTrafficActivity"
             android:label="WAN Monthly Traffic"

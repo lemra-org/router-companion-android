@@ -107,7 +107,7 @@
 # "project.properties" file to get the path to the default "proguard-android-optimize.txt".
 -keepattributes *Annotation*
 # Keep all the ACRA classes
--keep class org.acra.** { *; }
+#-keep class org.acra.** { *; }
 
 -keep public class com.google.android.gms.ads.** {
    public *;

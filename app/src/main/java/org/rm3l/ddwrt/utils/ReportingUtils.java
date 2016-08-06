@@ -12,7 +12,6 @@ import com.crashlytics.android.answers.ContentViewEvent;
 import com.crashlytics.android.answers.CustomEvent;
 import com.crashlytics.android.answers.RatingEvent;
 
-import org.acra.ACRA;
 import org.rm3l.ddwrt.BuildConfig;
 
 import java.util.Map;
@@ -21,6 +20,8 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ACRA_ENABLE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ACRA_USER_EMAIL;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+
+//import org.acra.ACRA;
 
 /**
  * Created by rm3l on 07/11/15.
@@ -59,7 +60,7 @@ public final class ReportingUtils {
         if (sharedPreferences.getBoolean(ACRA_ENABLE, true)) {
 
             //ACRA Notification
-            ACRA.getErrorReporter().handleSilentException(error);
+//            ACRA.getErrorReporter().handleSilentException(error);
 
             //Crashlytics Notification
             final String acraEmailAddr = sharedPreferences

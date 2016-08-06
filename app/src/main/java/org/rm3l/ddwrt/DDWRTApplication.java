@@ -42,9 +42,6 @@ import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.picasso.Picasso;
 
-import org.acra.ACRA;
-import org.acra.ReportingInteractionMode;
-import org.acra.annotation.ReportsCrashes;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -61,24 +58,26 @@ import java.util.Map;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import io.fabric.sdk.android.Fabric;
 
-import static org.rm3l.ddwrt.BuildConfig.DEBUG;
 import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TRACEPOT_DEVELOP_MODE;
 import static org.rm3l.ddwrt.utils.Utils.isFirstLaunch;
+
+//import org.acra.ACRA;
+//import org.acra.ReportingInteractionMode;
+//import org.acra.annotation.ReportsCrashes;
 
 /**
  * App Main Entry point.
  * Leverages ACRA for capturing eventual app crashes and sending the relevant metrics for further analysis.
  */
-@ReportsCrashes(
-        formUri = DDWRTCompanionConstants.ACRA_BACKEND_URL,
-        mode = ReportingInteractionMode.SILENT,
-        sharedPreferencesName = DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-        sharedPreferencesMode = Context.MODE_PRIVATE,
-        buildConfigClass = BuildConfig.class,
-        additionalSharedPreferences = {DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY}
-)
+//@ReportsCrashes(
+//        formUri = DDWRTCompanionConstants.ACRA_BACKEND_URL,
+//        mode = ReportingInteractionMode.SILENT,
+//        sharedPreferencesName = DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+//        sharedPreferencesMode = Context.MODE_PRIVATE,
+//        buildConfigClass = BuildConfig.class,
+//        additionalSharedPreferences = {DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY}
+//)
 public class DDWRTApplication extends Application implements Application.ActivityLifecycleCallbacks {
 
     private static final String TAG = DDWRTApplication.class.getSimpleName();
@@ -161,10 +160,10 @@ public class DDWRTApplication extends Application implements Application.Activit
         });
 
         // The following line triggers the initialization of ACRA
-        ACRA.init(this);
+//        ACRA.init(this);
 
-        ACRA.getErrorReporter()
-                .putCustomData(TRACEPOT_DEVELOP_MODE, DEBUG ? "1" : "0");
+//        ACRA.getErrorReporter()
+//                .putCustomData(TRACEPOT_DEVELOP_MODE, DEBUG ? "1" : "0");
 
         Fabric.with(this, new Crashlytics());
         Crashlytics.setBool("DEBUG", BuildConfig.DEBUG);
