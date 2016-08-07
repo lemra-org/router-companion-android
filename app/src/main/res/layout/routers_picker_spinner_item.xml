@@ -5,4 +5,4 @@
     android:background="?android:attr/listChoiceBackgroundIndicator"
     android:gravity="start"
     android:textAppearance="?android:attr/textAppearanceMedium"
-    android:textColor="@color/white" />
+    android:textColor="@color/CadetBlue" />

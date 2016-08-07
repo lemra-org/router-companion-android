@@ -4,8 +4,7 @@
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/actions_widget_configure_toolbar"
@@ -21,6 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="5dp"
+        android:padding="16dp"
         android:layout_marginTop="5dp"
         android:visibility="gone"
         android:layout_weight="1"
@@ -30,6 +30,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dip"
+        android:padding="16dp"
         android:layout_weight="2"
         android:orientation="vertical"
         android:scrollbars="vertical">
