@@ -36,55 +36,114 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize" />
 
+    <!-- Error message placeholder -->
+    <TextView
+        android:textIsSelectable="true"
+        android:id="@+id/error_placeholder"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="Error"
+        android:textColor="@color/ddwrt_purple"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_margin="10dp">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
-            <TextView
+            <ProgressBar
+                android:id="@+id/loading_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:indeterminate="false" />
+
+            <LinearLayout
+                android:id="@+id/main_content_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Lorem Ipsum..."
-                android:textAppearance="?android:textAppearanceMedium"/>
+                android:orientation="vertical"
+                android:visibility="gone">
 
-            <EditText
-                android:id="@android:id/text1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="6dip"
-                android:layout_marginRight="6dip"
-                android:layout_marginTop="8dip"
-                android:hint="@string/message_hint" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:text="Select Router"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold"/>
 
-            <!--<android.support.v4.widget.SwipeRefreshLayout-->
-            <!--android:id="@+id/swipeRefreshLayout"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content">-->
+                <Spinner
+                    android:id="@+id/select_router_dropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:imeOptions="flagNoExtractUi" />
 
-            <!-- TODO Move 'org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport' to a shared app library -->
-            <!--<org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport-->
-            <!--android:id="@+id/historyListView"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:scrollbars="vertical"/>-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/selected_router_uuid"
+                    android:visibility="invisible"/>
 
-            <!--<TextView-->
-            <!--android:textIsSelectable="true"-->
-            <!--android:id="@+id/empty_view"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:gravity="center"-->
-            <!--android:layout_gravity="center"-->
-            <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
-            <!--android:text="No recent history" />-->
 
-            <!--</android.support.v4.widget.SwipeRefreshLayout>-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:text="Select Command"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold"/>
 
-        </LinearLayout>
+                <Spinner
+                    android:id="@+id/select_command_dropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:imeOptions="flagNoExtractUi" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/selected_command"
+                    android:visibility="gone"/>
+
+                <EditText
+                    android:id="@+id/command_configuration_input"
+                    android:visibility="gone"
+                    android:layout_marginLeft="6dip"
+                    android:layout_marginRight="6dip"
+                    android:layout_marginTop="8dip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableBottom="@color/win8_teal"
+                    android:gravity="top|start"
+                    android:hint="Configure your command here"
+                    android:imeOptions="actionSend"
+                    android:inputType="textMultiLine"
+                    android:lines="7"
+                    android:padding="8dp"
+                    android:scrollbars="vertical" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
 
     </ScrollView>
 
