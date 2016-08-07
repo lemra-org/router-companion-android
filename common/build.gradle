@@ -1,0 +1,90 @@
+apply plugin: 'com.android.library'
+
+
+def getVersionName(String flavorName) {
+    // Fetch the version according to git latest tag and "how far we are from last tag"
+    def longVersionName = "git -C ${rootDir} describe --tags --long".execute().text.trim()
+    def (fullVersionTag, versionBuild, gitSha) = longVersionName.tokenize('-')
+    def (versionMajor, versionMinor, versionPatch) = fullVersionTag.tokenize('.')
+    def gitCommitHash = "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
+
+    // Return the version name
+    "$versionMajor.$versionMinor.$versionPatch ($gitCommitHash-$flavorName)"
+}
+
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.0"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 24
+
+        // Enabling multidex support.
+//        multiDexEnabled true
+        // Fetch the version according to git latest tag and "how far are we from last tag"
+        def longVersionName = "git -C ${rootDir} describe --tags --long".execute().text.trim()
+        def (fullVersionTag, versionBuild, gitSha) = longVersionName.tokenize('-')
+        def (versionMajor, versionMinor, versionPatch) = fullVersionTag.tokenize('.')
+//        def gitCommitHash = "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
+
+        // Set the version name
+        versionName getVersionName("default")
+//        versionName "$versionMajor.$versionMinor.$versionPatch ($gitCommitHash)"
+
+        // Turn the version name into a version code
+        //noinspection GroovyAssignabilityCheck
+        versionCode versionMajor.toInteger() * 100000 +
+                versionMinor.toInteger() * 10000 +
+                versionPatch.toInteger() * 1000 +
+                versionBuild.toInteger()
+
+        // For debugging, friendly print the version output to the Gradle console
+        printf("\n--------" + "VERSION DATA--------" + "\n" + "- CODE: " + versionCode + "\n" +
+                "- NAME: " + versionName + "\n----------------------------\n")
+
+    }
+
+
+    //Those files, from Apache Commons lib cause build errors
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+    lintOptions {
+        abortOnError false
+        disable 'TypographyEllipsis'
+    }
+
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            zipAlignEnabled true
+        }
+    }
+}
+
+
+//Automate the way version name is built for each flavor
+android.productFlavors.each { flavor ->
+    flavor.versionName = getVersionName(flavor.name)
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:24.0.0'
+}

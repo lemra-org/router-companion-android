@@ -56,6 +56,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.common.resources.RouterInfo;
 import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.tiles.services.wol.WakeOnLanTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -1304,5 +1305,21 @@ public class Router implements Serializable {
         public int hashCode() {
             return Objects.hashCode(getRouterUuid());
         }
+    }
+
+    public RouterInfo toRouterInfo() {
+        return new RouterInfo()
+                .setId(this.id)
+                .setUuid(this.uuid)
+                .setName(this.name)
+                .setRouterConnectionProtocol(
+                        this.routerConnectionProtocol.name())
+                .setRemoteIpAddress(this.remoteIpAddress)
+                .setRemotePort(this.remotePort)
+                .setRouterFirmware(this.routerFirmware != null ?
+                        this.routerFirmware.name() : null)
+                .setRouterModel(this.routerModel)
+                .setDemoRouter(Utils.isDemoRouter(this));
+
     }
 }

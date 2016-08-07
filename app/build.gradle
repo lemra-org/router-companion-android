@@ -410,6 +410,8 @@ dependencies {
     // Latest one on maven central
 //    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:+'
 
+    compile project(':common')
+
     compile fileTree(include: '*.jar', dir: 'libs')
     //Crouton notification lib (cf. #125 - replace with Android SnackBar)
     compile('de.keyboardsurfer.android.widget:crouton:1.8.5@aar') {

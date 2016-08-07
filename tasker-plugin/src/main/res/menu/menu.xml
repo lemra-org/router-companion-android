@@ -5,6 +5,21 @@
     <item
         android:id="@+id/menu_discard_changes"
         app:showAsAction="never"
+        android:orderInCategory="1"
         android:title="@string/menu_discard_changes"/>
+
+    <item
+        android:id="@+id/ddwrt_companion_tasker_feedback"
+        android:alphabeticShortcut="f"
+        android:orderInCategory="11"
+        android:title="@string/send_feedback"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/ddwrt_companion_tasker_about"
+        android:alphabeticShortcut="a"
+        android:orderInCategory="12"
+        android:title="@string/about"
+        app:showAsAction="never" />
 
 </menu>
