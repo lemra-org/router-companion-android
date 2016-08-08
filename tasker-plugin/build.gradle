@@ -286,6 +286,10 @@ dependencies {
         transitive = true;
     }
 
+    compile('com.mikepenz:aboutlibraries:5.7.1@aar') {
+        transitive = true
+    }
+
     compile group:'net.jcip', name:'jcip-annotations', version:"1.0"
 //    compile group:'com.android.support', name:'support-annotations', version:"${ANDROID_SUPPORT_VERSION_MATCHER}"
 //    compile group:'com.android.support', name:'appcompat-v7', version:"${ANDROID_SUPPORT_VERSION_MATCHER}"

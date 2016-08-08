@@ -26,6 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.mikepenz.aboutlibraries.Libs;
+import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.twofortyfouram.locale.sdk.client.ui.activity.AbstractAppCompatPluginActivity;
 import com.twofortyfouram.log.Lumberjack;
 
@@ -73,6 +75,16 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
 
         setContentView(R.layout.main);
 
+        mErrorPlaceholder = (TextView) findViewById(R.id.error_placeholder);
+        mErrorPlaceholder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(EditActivity.this,
+                        mErrorPlaceholder.getText(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
         final PackageManager packageManager = getPackageManager();
 
         // connect to the service
@@ -87,7 +99,9 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
         } else if (Utils.isPackageInstalled("org.rm3l.ddwrt.lite", packageManager)) {
             ddwrtCompanionAppPackage = "org.rm3l.ddwrt.lite";
         } else {
-            ddwrtCompanionAppPackage = "org.rm3l.ddwrt";
+            mErrorPlaceholder.setText("You must install DD-WRT Companion App !");
+            //TODO Add button that opens up the Play Store
+            return;
         }
         Crashlytics.log(Log.DEBUG, Constants.TAG,
                 "ddwrtCompanionAppPackage=" + ddwrtCompanionAppPackage);
@@ -127,16 +141,6 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayShowHomeEnabled(true);
         }
-
-        mErrorPlaceholder = (TextView) findViewById(R.id.error_placeholder);
-        mErrorPlaceholder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(EditActivity.this,
-                        mErrorPlaceholder.getText(),
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
 
         mLoadingView = (ProgressBar) findViewById(R.id.loading_view);
         mMainContentView = findViewById(R.id.main_content_view);
@@ -194,8 +198,6 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-
-
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
@@ -212,9 +214,12 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
                         .start(this);
                 break;
             case R.id.ddwrt_companion_tasker_about:
-                //TODO About
-                Toast.makeText(this,
-                        "[TODO] About", Toast.LENGTH_SHORT).show();
+                new LibsBuilder()
+                        .withActivityTitle("About")
+                        //provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
+                        .withActivityStyle(Libs.ActivityStyle.LIGHT)
+                        //start the activity
+                        .start(this);
                 break;
             case R.id.menu_discard_changes:
                 // Signal to AbstractAppCompatPluginActivity that the user canceled.

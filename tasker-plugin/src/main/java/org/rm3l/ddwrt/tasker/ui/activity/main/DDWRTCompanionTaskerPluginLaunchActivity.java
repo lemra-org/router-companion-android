@@ -31,6 +31,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.mikepenz.aboutlibraries.Libs;
+import com.mikepenz.aboutlibraries.LibsBuilder;
+
 import org.rm3l.ddwrt.tasker.Constants;
 import org.rm3l.ddwrt.tasker.R;
 import org.rm3l.ddwrt.tasker.feedback.maoni.FeedbackHandler;
@@ -90,9 +93,12 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
                         .start(this);
                 break;
             case R.id.ddwrt_companion_tasker_about:
-                //TODO About
-                Toast.makeText(DDWRTCompanionTaskerPluginLaunchActivity.this,
-                        "[TODO] About", Toast.LENGTH_SHORT).show();
+                new LibsBuilder()
+                        .withActivityTitle("About")
+                        //provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
+                        .withActivityStyle(Libs.ActivityStyle.LIGHT)
+                        //start the activity
+                        .start(this);
                 break;
             case R.id.exit:
                 finish();
