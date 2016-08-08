@@ -19,6 +19,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -68,6 +70,10 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
 
     private Spinner mCommandsDropdown;
     private EditText mCommandConfiguration;
+    private EditText mSelectedRouterVariable;
+    private CheckBox mCommandConfigurationVariable;
+    private EditText mReturnOutputVariable;
+    private CheckBox mReturnOutputCheckbox;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -75,40 +81,7 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
 
         setContentView(R.layout.main);
 
-        mErrorPlaceholder = (TextView) findViewById(R.id.error_placeholder);
-        mErrorPlaceholder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(EditActivity.this,
-                        mErrorPlaceholder.getText(),
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-
         final PackageManager packageManager = getPackageManager();
-
-        // connect to the service
-        conn = new RouterServiceConnection();
-        // name must match the service's Intent filter in the Service Manifest file
-        final Intent intent = new Intent("org.rm3l.ddwrt.IRouterService");
-        String ddwrtCompanionAppPackage;
-        if (Utils.isPackageInstalled("org.rm3l.ddwrt", packageManager)) {
-            ddwrtCompanionAppPackage = "org.rm3l.ddwrt";
-        } else if (Utils.isPackageInstalled("org.rm3l.ddwrt.amzn.underground", packageManager)) {
-            ddwrtCompanionAppPackage = "org.rm3l.ddwrt.amzn.underground";
-        } else if (Utils.isPackageInstalled("org.rm3l.ddwrt.lite", packageManager)) {
-            ddwrtCompanionAppPackage = "org.rm3l.ddwrt.lite";
-        } else {
-            mErrorPlaceholder.setText("You must install DD-WRT Companion App !");
-            //TODO Add button that opens up the Play Store
-            return;
-        }
-        Crashlytics.log(Log.DEBUG, Constants.TAG,
-                "ddwrtCompanionAppPackage=" + ddwrtCompanionAppPackage);
-
-        intent.setPackage(ddwrtCompanionAppPackage);
-        // bind to the Service, create it if it's not already there
-        bindService(intent, conn, Context.BIND_AUTO_CREATE);
 
         /*
          * To help the user keep context, the title shows the host's name and the subtitle
@@ -121,7 +94,7 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
                             packageManager.getApplicationInfo(getCallingPackage(),
                                     0));
         } catch (final PackageManager.NameNotFoundException e) {
-            Lumberjack.e("Calling package couldn't be found%s", e); //$NON-NLS-1$
+            Lumberjack.e("Calling package couldn't be found: %s", e); //$NON-NLS-1$
         }
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -142,6 +115,16 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
             actionBar.setDisplayShowHomeEnabled(true);
         }
 
+        mErrorPlaceholder = (TextView) findViewById(R.id.error_placeholder);
+        mErrorPlaceholder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(EditActivity.this,
+                        mErrorPlaceholder.getText(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
         mLoadingView = (ProgressBar) findViewById(R.id.loading_view);
         mMainContentView = findViewById(R.id.main_content_view);
 
@@ -150,6 +133,60 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
 
         mCommandsDropdown = (Spinner) findViewById(R.id.select_command_dropdown);
         mCommandConfiguration = (EditText) findViewById(R.id.command_configuration_input);
+
+        mSelectedRouterVariable = (EditText) findViewById(R.id.selected_router_variable);
+
+        mCommandConfigurationVariable = (CheckBox) findViewById(R.id.command_configuration_input_variable);
+        mCommandConfigurationVariable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean newValue) {
+                if (newValue) {
+                    mCommandConfiguration.setText("%command", TextView.BufferType.EDITABLE);
+                    mCommandConfiguration.setLines(1);
+                } else {
+                    mCommandConfiguration.setText(null, TextView.BufferType.EDITABLE);
+                    mCommandConfiguration.setLines(7);
+                }
+            }
+        });
+
+        mReturnOutputVariable = (EditText) findViewById(R.id.return_output_variable);
+        mReturnOutputCheckbox = (CheckBox) findViewById(R.id.return_output_variable_checkbox);
+
+        mReturnOutputCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean newValue) {
+                mReturnOutputVariable.setText(null, TextView.BufferType.EDITABLE);
+                mReturnOutputVariable.setVisibility(newValue ? View.VISIBLE : View.GONE);
+            }
+        });
+
+        String ddwrtCompanionAppPackage;
+        if (Utils.isPackageInstalled("org.rm3l.ddwrt", packageManager)) {
+            ddwrtCompanionAppPackage = "org.rm3l.ddwrt";
+        } else if (Utils.isPackageInstalled("org.rm3l.ddwrt.amzn.underground", packageManager)) {
+            ddwrtCompanionAppPackage = "org.rm3l.ddwrt.amzn.underground";
+        } else if (Utils.isPackageInstalled("org.rm3l.ddwrt.lite", packageManager)) {
+            ddwrtCompanionAppPackage = "org.rm3l.ddwrt.lite";
+        } else {
+            mErrorPlaceholder.setText("You must install DD-WRT Companion App !");
+            mErrorPlaceholder.setVisibility(View.VISIBLE);
+            //TODO Add button that opens up the Play Store
+            return;
+        }
+        mErrorPlaceholder.setVisibility(View.GONE);
+        Crashlytics.log(Log.DEBUG, Constants.TAG,
+                "ddwrtCompanionAppPackage=" + ddwrtCompanionAppPackage);
+
+        // connect to the service
+        conn = new RouterServiceConnection();
+
+        // name must match the service's Intent filter in the Service Manifest file
+        final Intent intent = new Intent("org.rm3l.ddwrt.IRouterService");
+        intent.setPackage(ddwrtCompanionAppPackage);
+        // bind to the Service, create it if it's not already there
+        bindService(intent, conn, Context.BIND_AUTO_CREATE);
+
     }
 
     @Override
@@ -269,16 +306,20 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
 
             if (allRouters == null || allRouters.isEmpty()) {
                 //Error - redirect to "Launch DD-WRT Companion to add a new Router"
+                mErrorPlaceholder.setText("Open DD-WRT Companion to register routers");
+                mErrorPlaceholder.setVisibility(View.VISIBLE);
                 return;
             }
+            mErrorPlaceholder.setVisibility(View.GONE);
 
-            final String[] routersNamesArray = new String[allRouters.size()];
+            final String[] routersNamesArray = new String[allRouters.size() + 1];
             int i = 0;
             for (final RouterInfo router : allRouters) {
                 final String routerName = router.getName();
                 routersNamesArray[i++] = ((isNullOrEmpty(routerName) ? "-" : routerName) + "\n(" +
                         router.getRemoteIpAddress() + ":" + router.getRemotePort() + ")");
             }
+            routersNamesArray[i] = "-- VARIABLE --";
 
             mRoutersListAdapter = new ArrayAdapter<>(EditActivity.this,
                     R.layout.spinner_item, new ArrayList<>(Arrays.asList(routersNamesArray)));
@@ -291,11 +332,17 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
             mRoutersDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                    final RouterInfo routerInfo = allRouters.get(position);
-                    if (routerInfo == null) {
-                        return;
+                    if (position == routersNamesArray.length - 1) {
+                        //Variable
+                        mSelectedRouterVariable.setVisibility(View.VISIBLE);
+                    } else {
+                        mSelectedRouterVariable.setVisibility(View.GONE);
+                        final RouterInfo routerInfo = allRouters.get(position);
+                        if (routerInfo == null) {
+                            return;
+                        }
+                        mSelectedRouterUuid.setText(routerInfo.getUuid());
                     }
-                    mSelectedRouterUuid.setText(routerInfo.getUuid());
                 }
 
                 @Override
@@ -328,10 +375,14 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
                     switch (supportedCommand) {
                         case CUSTOM_COMMAND:
                             mCommandConfiguration.setVisibility(View.VISIBLE);
+                            mCommandConfigurationVariable.setChecked(false);
+                            mCommandConfigurationVariable.setVisibility(View.VISIBLE);
                             break;
                         default:
                             mCommandConfiguration.setVisibility(View.GONE);
                             mCommandConfiguration.setText("", TextView.BufferType.EDITABLE);
+                            mCommandConfigurationVariable.setChecked(false);
+                            mCommandConfigurationVariable.setVisibility(View.GONE);
                             break;
                     }
                 }
