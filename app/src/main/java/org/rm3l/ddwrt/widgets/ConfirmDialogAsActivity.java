@@ -8,6 +8,7 @@ import android.view.Window;
 import android.widget.TextView;
 
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.utils.ColorUtils;
 
 public abstract class ConfirmDialogAsActivity extends Activity {
 
@@ -21,6 +22,18 @@ public abstract class ConfirmDialogAsActivity extends Activity {
         setFinishOnTouchOutside(true);
 
         super.onCreate(savedInstanceState);
+
+        final boolean themeLight = ColorUtils.isThemeLight(this);
+        if (themeLight) {
+            //Light
+            setTheme(R.style.AppThemeLight);
+//            getWindow().getDecorView()
+//                    .setBackgroundColor(ContextCompat.getColor(this,
+//                            android.R.color.white));
+        } else {
+            //Default is Dark
+            setTheme(R.style.AppThemeDark);
+        }
 
         setContentView(R.layout.confirm_dialog_as_activity);
 

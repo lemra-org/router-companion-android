@@ -8,10 +8,10 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -21,15 +21,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.collect.Lists;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.mgmt.RouterAddDialogFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.RouterMgmtDialogListener;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.mgmt.register.ManageRouterFragmentActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
@@ -56,13 +57,16 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERS
  */
 public class WOLWidgetConfigureActivity extends AppCompatActivity implements RouterMgmtDialogListener {
 
-
     private static final String PREFS_NAME = DDWRTCompanionConstants.WIDGETS_PREFERENCES_KEY;
     private static final String PREF_PREFIX_KEY = \"fake-key\";
 
     public static final String ADD_ROUTER_FRAGMENT_TAG = "add_router_from_wol_widget";
     public static final String ADD_NEW = "--- ADD NEW ---";
     public static final String WIDGETS_WOL = "widgets_wol";
+
+    public static final String TAG = WOLWidgetConfigureActivity.class.getSimpleName();
+
+    public static final int NEW_ROUTER_ADDED = 9871;
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
@@ -356,10 +360,23 @@ public class WOLWidgetConfigureActivity extends AppCompatActivity implements Rou
     }
 
     private void openAddRouterForm() {
-        final Fragment addRouter = getSupportFragmentManager().findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
-        if (addRouter instanceof DialogFragment) {
-            ((DialogFragment) addRouter).dismiss();
-        }
+//        final Fragment addRouter = getSupportFragmentManager().findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
+//        if (addRouter instanceof DialogFragment) {
+//            ((DialogFragment) addRouter).dismiss();
+//        }
+//
+//        //Display Donate Message if trying to add more than the max routers for Free version
+//        final List<Router> allRouters = mDao.getAllRouters();
+//        //noinspection PointlessBooleanExpression,ConstantConditions
+//        if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS) &&
+//                allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
+//            //Download the full version to unlock this version
+//            Utils.displayUpgradeMessage(this, "Manage a new Router");
+//            return;
+//        }
+//
+//        final DialogFragment addFragment = new RouterAddDialogFragment();
+//        addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);
 
         //Display Donate Message if trying to add more than the max routers for Free version
         final List<Router> allRouters = mDao.getAllRouters();
@@ -371,8 +388,31 @@ public class WOLWidgetConfigureActivity extends AppCompatActivity implements Rou
             return;
         }
 
-        final DialogFragment addFragment = new RouterAddDialogFragment();
-        addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);
+        startActivityForResult(new Intent(this, ManageRouterFragmentActivity.class), NEW_ROUTER_ADDED);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Crashlytics.log(Log.DEBUG,  TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data);
+
+        // Check which request we're responding to
+        switch (requestCode) {
+            case NEW_ROUTER_ADDED: {
+                //Get newly router added
+                final List<Router> routerList = mDao.getAllRouters();
+                // Make sure the request was successful and reload U if necessary
+                if (resultCode == RESULT_OK) {
+                    //The most recent router is the first element in the list
+                    onRouterAdd(null,
+                            routerList.isEmpty() ? null : routerList.get(0), false);
+                }
+            }
+            break;
+            default:
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

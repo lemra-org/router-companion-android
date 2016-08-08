@@ -186,9 +186,6 @@
 -keep public class org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter$* {
     *;
 }
--keep public class org.rm3l.ddwrt.mgmt.AbstractRouterMgmtDialogFragment$* {
-    *;
-}
 -keep public class com.android.common.view.SlidingTabLayout$* {
     *;
 }

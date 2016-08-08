@@ -84,11 +84,14 @@ public class MaoniFeedbackHandler implements Handler {
     public static final String PROPERTY_BUILD_FLAVOR = "BUILD_FLAVOR";
     public static final String PROPERTY_BUILD_TYPE = "BUILD_TYPE";
     public static final String PROPERTY_BUILD_VERSION_NAME = "BUILD_VERSION_NAME";
-    private SharedPreferences mGlobalPreferences;
+    private final SharedPreferences mGlobalPreferences;
 
     public MaoniFeedbackHandler(Activity context, Router router) {
         this.mContext = context;
         this.mRouter = router;
+        mGlobalPreferences = context.getSharedPreferences(
+                DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                Context.MODE_PRIVATE);
         mDoorbellService = NetworkUtils
                 .createApiService(FEEDBACK_API_BASE_URL, DoorbellService.class);
         mGooGlService = NetworkUtils
@@ -128,7 +131,6 @@ public class MaoniFeedbackHandler implements Handler {
         //Also add build related properties
         properties.put(PROPERTY_BUILD_FLAVOR, BuildConfig.FLAVOR);
         properties.put(PROPERTY_BUILD_TYPE, BuildConfig.BUILD_TYPE);
-
 
         final boolean includeScreenshot = feedback.includeScreenshot;
         final String emailText = mEmail.getText().toString();
