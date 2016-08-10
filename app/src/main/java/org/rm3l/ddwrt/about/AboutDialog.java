@@ -171,7 +171,9 @@ public class AboutDialog extends Dialog {
                                 .inflate(R.layout.dialog_licenses, null);
                         view.setBackgroundColor(ContextCompat.getColor(mContext,
                                 isThemeLight ? R.color.white : R.color.black));
-                        view.loadUrl("file:///android_asset/open_source_licenses.html");
+                        view.loadUrl(String.format(
+                                "file:///android_asset/open_source_licenses_%s.html",
+                                isThemeLight ? "light" : "dark"));
                         mOssLicensesAlertDialog = new AlertDialog.Builder(context)
                                 .setCancelable(true)
                                 .setTitle("Open Source Licenses")
