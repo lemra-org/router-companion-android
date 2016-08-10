@@ -51,6 +51,7 @@ import retrofit2.Response;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AWS_S3_BUCKET_NAME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AWS_S3_FEEDBACKS_FOLDER_NAME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AWS_S3_FEEDBACK_PENDING_TRANSFER_PREF;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AWS_S3_LOGS_FOLDER_NAME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DOORBELL_APIKEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DOORBELL_APPID;
@@ -133,6 +134,7 @@ public class MaoniFeedbackHandler implements Handler {
         properties.put(PROPERTY_BUILD_TYPE, BuildConfig.BUILD_TYPE);
 
         final boolean includeScreenshot = feedback.includeScreenshot;
+        final boolean includeLogs = feedback.includeLogs;
         final String emailText = mEmail.getText().toString();
         final String contentText = feedback.userComment.toString();
         final String routerInfoText = mRouterInfo.getText().toString();
@@ -151,8 +153,9 @@ public class MaoniFeedbackHandler implements Handler {
 
                     private static final int STARTED = 1;
                     private static final int UPLOADING_ATTACHMENT = 2;
-                    private static final int OPENING_APPLICATION = 3;
-                    private static final int SUBMITTING_FEEDBACK = 4;
+                    private static final int UPLOADING_LOGS = 3;
+                    private static final int OPENING_APPLICATION = 4;
+                    private static final int SUBMITTING_FEEDBACK = 5;
 
                     @Override
                     protected ImmutablePair<Response<ResponseBody>, ? extends Exception> doWork() {
@@ -237,6 +240,79 @@ public class MaoniFeedbackHandler implements Handler {
                                                                             AWS_S3_FEEDBACKS_FOLDER_NAME,
                                                                             feedback.id)))
                                                     .execute().body().getId();
+                                        }
+                                        break;
+                                    }
+                                    Thread.sleep(TimeUnit.SECONDS.toMillis(2));
+                                }
+                            }
+
+                            if (includeLogs) {
+                                publishProgress(UPLOADING_LOGS);
+
+                                final TransferUtility transferUtility =
+                                        AWSUtils.getTransferUtility(mContext);
+
+                                final SharedPreferences preferences =
+                                        mContext.getSharedPreferences(
+                                                DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                                                Context.MODE_PRIVATE);
+                                final Integer pendingTransferId;
+                                if (preferences.contains(AWS_S3_FEEDBACK_PENDING_TRANSFER_PREF)) {
+                                    pendingTransferId = preferences
+                                            .getInt(AWS_S3_FEEDBACK_PENDING_TRANSFER_PREF, -1);
+                                } else {
+                                    pendingTransferId = null;
+                                }
+                                if (pendingTransferId != null && pendingTransferId != -1) {
+                                    if (transferUtility.cancel(pendingTransferId)) {
+                                        preferences.edit()
+                                                .remove(AWS_S3_FEEDBACK_PENDING_TRANSFER_PREF)
+                                                .apply();
+                                    }
+                                }
+
+                                //Upload to AWS S3
+                                final TransferObserver uploadObserver =
+                                        transferUtility.upload(AWS_S3_BUCKET_NAME,
+                                                String.format("%s/%s/%s.txt",
+                                                        AWS_S3_FEEDBACKS_FOLDER_NAME,
+                                                        AWS_S3_LOGS_FOLDER_NAME,
+                                                        feedback.id),
+                                                feedback.logsFile);
+
+                                //Save transfer ID
+                                preferences.edit()
+                                        .putInt(AWS_S3_FEEDBACK_PENDING_TRANSFER_PREF,
+                                                uploadObserver.getId())
+                                        .apply();
+                                Utils.requestBackup(mContext);
+
+                                uploadObserver.setTransferListener(new TransferListener() {
+                                    @Override
+                                    public void onStateChanged(int id, TransferState state) {
+
+                                    }
+
+                                    @Override
+                                    public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+
+                                    }
+
+                                    @Override
+                                    public void onError(int id, Exception ex) {
+
+                                    }
+                                }); // required, or else you need to call refresh()
+
+                                while (true) {
+                                    final TransferState transferState = uploadObserver.getState();
+                                    if (TransferState.COMPLETED.equals(transferState)
+                                            || TransferState.FAILED.equals(transferState)) {
+                                        if (TransferState.FAILED.equals(transferState)) {
+                                            return ImmutablePair.of(null,
+                                                    new IllegalStateException(
+                                                            "Failed to upload logs"));
                                         }
                                         break;
                                     }
@@ -366,7 +442,10 @@ public class MaoniFeedbackHandler implements Handler {
                                 alertDialog.setMessage("Connecting to the remote feedback service...");
                                 break;
                             case UPLOADING_ATTACHMENT:
-                                alertDialog.setMessage("Uploading attachment...");
+                                alertDialog.setMessage("Uploading screen capture...");
+                                break;
+                            case UPLOADING_LOGS:
+                                alertDialog.setMessage("Uploading application logs...");
                                 break;
                             case SUBMITTING_FEEDBACK:
                                 alertDialog.setMessage("Submitting your valuable feedback...");
