@@ -282,7 +282,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:24.0.0'
 
-    compile ('org.rm3l:maoni:2.0.1@aar') {
+    compile ('org.rm3l:maoni:2.2.0@aar') {
         transitive = true;
     }
 
