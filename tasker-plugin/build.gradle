@@ -25,9 +25,9 @@
  */
 buildscript {
     repositories {
-        mavenCentral()
         maven { url 'https://maven.fabric.io/public' }
         maven { url 'http://dl.bintray.com/amulyakhare/maven' }
+        mavenCentral()
     }
 
     dependencies {
@@ -39,6 +39,7 @@ apply plugin: 'io.fabric'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
+    maven { url 'http://clojars.org/repo' }
 }
 
 
@@ -326,5 +327,8 @@ dependencies {
 
     compile 'com.amazonaws:aws-android-sdk-core:2.2.+'
     compile 'com.amazonaws:aws-android-sdk-s3:2.2.+'
+
+//    compile 'com.google.firebase:firebase-messaging:9.4.0'
+    compile 'com.pusher:pusher-java-client:1.0.0'
 
 }

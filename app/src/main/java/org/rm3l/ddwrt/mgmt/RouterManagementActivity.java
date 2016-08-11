@@ -56,6 +56,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airbnb.deeplinkdispatch.DeepLink;
 import com.crashlytics.android.Crashlytics;
@@ -64,6 +65,8 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
 import com.madx.updatechecker.lib.UpdateRunnable;
+import com.pusher.client.Pusher;
+import com.pusher.client.channel.SubscriptionEventListener;
 
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
@@ -84,12 +87,15 @@ import org.rm3l.ddwrt.settings.RouterManagementSettingsActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.PushUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.customtabs.CustomTabActivityHelper;
 import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -141,6 +147,7 @@ public class RouterManagementActivity
     private long mBackgroundServiceFrequency;
 
     private CustomTabActivityHelper mCustomTabActivityHelper;
+    private Pusher mPusher;
 
     @NonNull
     public static DDWRTCompanionDAO getDao(Context context) {
@@ -170,6 +177,19 @@ public class RouterManagementActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //FIXME Just a simple test
+        final Map<String, SubscriptionEventListener> pushEventListeners = new HashMap<>();
+        pushEventListeners.put("new_update", new SubscriptionEventListener() {
+            @Override
+            public void onEvent(String s, String s1, String s2) {
+                Toast.makeText(RouterManagementActivity.this,
+                        "[TEST] New DD-WRT Update: " + s + ", " + s1 + ", " + s2,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        this.mPusher = PushUtils.getPusher("ddwrt_updates", pushEventListeners);
 
         handleIntent(getIntent());
 
