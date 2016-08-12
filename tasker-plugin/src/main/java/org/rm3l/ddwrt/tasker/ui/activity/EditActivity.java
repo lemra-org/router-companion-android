@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -74,6 +75,8 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
     private CheckBox mCommandConfigurationVariable;
     private EditText mReturnOutputVariable;
     private CheckBox mReturnOutputCheckbox;
+    private SupportedCommand mCommand;
+    private String mSelectedRouterReadableName;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -192,7 +195,8 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
     @Override
     public void onPostCreateWithPreviousResult(@NonNull final Bundle previousBundle,
                                                @NonNull final String previousBlurb) {
-        final String message = PluginBundleValues.getMessage(previousBundle);
+        //TODO
+//        final String message = PluginBundleValues.getMessage(previousBundle);
 //        ((EditText) findViewById(android.R.id.text1)).setText(message);
     }
 
@@ -204,29 +208,22 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
     @Nullable
     @Override
     public Bundle getResultBundle() {
-        Bundle result = null;
-
-//        final String message = ((EditText) findViewById(android.R.id.text1)).getText().toString();
-//        if (!TextUtils.isEmpty(message)) {
-//            result = PluginBundleValues.generateBundle(getApplicationContext(), message);
-//        }
-
-        return result;
+        return PluginBundleValues.generateBundle(getApplicationContext(),
+                mSelectedRouterUuid.getText(),
+                mSelectedRouterReadableName,
+                mSelectedRouterVariable.getText(),
+                mCommandConfigurationVariable.isChecked(),
+                mCommandConfiguration.getText(),
+                mCommand == null,
+                mCommand,
+                mReturnOutputCheckbox.isChecked(),
+                mReturnOutputVariable.getText());
     }
 
     @NonNull
     @Override
     public String getResultBlurb(@NonNull final Bundle bundle) {
-        final String message = PluginBundleValues.getMessage(bundle);
-
-        final int maxBlurbLength = getResources().getInteger(
-                R.integer.com_twofortyfouram_locale_sdk_client_maximum_blurb_length);
-
-        if (message.length() > maxBlurbLength) {
-            return message.substring(0, maxBlurbLength);
-        }
-
-        return message;
+        return PluginBundleValues.getBundleBlurb(bundle);
     }
 
     @Override
@@ -335,13 +332,23 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
                     if (position == routersNamesArray.length - 1) {
                         //Variable
                         mSelectedRouterVariable.setVisibility(View.VISIBLE);
+                        mSelectedRouterVariable.setText("%router_name");
+                        mSelectedRouterUuid.setText(null);
+                        mSelectedRouterReadableName = null;
                     } else {
                         mSelectedRouterVariable.setVisibility(View.GONE);
+                        mSelectedRouterVariable.setText(null);
                         final RouterInfo routerInfo = allRouters.get(position);
                         if (routerInfo == null) {
                             return;
                         }
                         mSelectedRouterUuid.setText(routerInfo.getUuid());
+                        mSelectedRouterReadableName = String.format("%s (%s)",
+                                TextUtils.isEmpty(routerInfo.getName()) ? "-" : routerInfo.getName(),
+                                routerInfo.isDemoRouter() ? "DEMO" :
+                                        String.format("%s:%d",
+                                                routerInfo.getRemoteIpAddress(),
+                                                routerInfo.getRemotePort()));
                     }
                 }
 
@@ -375,14 +382,17 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
                     switch (supportedCommand) {
                         case CUSTOM_COMMAND:
                             mCommandConfiguration.setVisibility(View.VISIBLE);
+                            mCommandConfiguration.setText("%command");
                             mCommandConfigurationVariable.setChecked(false);
                             mCommandConfigurationVariable.setVisibility(View.VISIBLE);
+                            mCommand = null;
                             break;
                         default:
                             mCommandConfiguration.setVisibility(View.GONE);
                             mCommandConfiguration.setText("", TextView.BufferType.EDITABLE);
                             mCommandConfigurationVariable.setChecked(false);
                             mCommandConfigurationVariable.setVisibility(View.GONE);
+                            mCommand = supportedCommand;
                             break;
                     }
                 }
@@ -406,7 +416,7 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
 
     }
 
-    enum SupportedCommand {
+    public enum SupportedCommand {
 
         CUSTOM_COMMAND("-- CUSTOM COMMAND --", false, "", null),
         REBOOT("Reboot", false, "reboot", null),

@@ -101,7 +101,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:drawableBottom="@color/win8_teal"
                     android:gravity="top|start"
                     android:hint="Router Name Tasker Variable"
-                    android:text="%router_name"
                     android:imeOptions="actionSend"
                     android:inputType="text"
                     android:lines="1"
