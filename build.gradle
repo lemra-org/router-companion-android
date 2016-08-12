@@ -45,3 +45,9 @@ allprojects {
         maven { url "https://jitpack.io" }
     }
 }
+
+subprojects {
+    repositories {
+        maven { url 'http://clojars.org/repo' }
+    }
+}

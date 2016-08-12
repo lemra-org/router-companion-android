@@ -87,7 +87,7 @@ import org.rm3l.ddwrt.settings.RouterManagementSettingsActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
-import org.rm3l.ddwrt.utils.PushUtils;
+import org.rm3l.ddwrt.common.utils.PushUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.customtabs.CustomTabActivityHelper;
 import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
@@ -178,19 +178,6 @@ public class RouterManagementActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //FIXME Just a simple test
-        final Map<String, SubscriptionEventListener> pushEventListeners = new HashMap<>();
-        pushEventListeners.put("new_update", new SubscriptionEventListener() {
-            @Override
-            public void onEvent(String s, String s1, String s2) {
-                Toast.makeText(RouterManagementActivity.this,
-                        "[TEST] New DD-WRT Update: " + s + ", " + s1 + ", " + s2,
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        this.mPusher = PushUtils.getPusher("ddwrt_updates", pushEventListeners);
-
         handleIntent(getIntent());
 
         //Default values are not set by default
@@ -215,6 +202,23 @@ public class RouterManagementActivity
         mBackgroundServiceFrequency = mPreferences.getLong(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1);
 
         setContentView(R.layout.activity_router_management);
+
+        //FIXME Just a simple test
+        final Map<String, SubscriptionEventListener> pushEventListeners = new HashMap<>();
+        pushEventListeners.put("new_update", new SubscriptionEventListener() {
+            @Override
+            public void onEvent(final String channelName, final String eventName, final String data) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(RouterManagementActivity.this,
+                                "[TEST] New DD-WRT Update: " + channelName + ", " + eventName + ", " + data,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+        this.mPusher = PushUtils.getPusher("ddwrt_updates", pushEventListeners, false);
 
         setupCustomTabHelper(this);
 
@@ -373,13 +377,19 @@ public class RouterManagementActivity
     @Override
     protected void onStart() {
         super.onStart();
+        if (this.mPusher != null) {
+            this.mPusher.connect();
+        }
         mCustomTabActivityHelper.bindCustomTabsService(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mCustomTabActivityHelper.bindCustomTabsService(this);
+        mCustomTabActivityHelper.unbindCustomTabsService(this);
+        if (this.mPusher != null) {
+            this.mPusher.disconnect();
+        }
     }
 
     @Override

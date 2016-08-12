@@ -1,4 +1,4 @@
-package org.rm3l.ddwrt.utils;
+package org.rm3l.ddwrt.common.utils;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import com.pusher.client.Pusher;
 import com.pusher.client.channel.Channel;
 import com.pusher.client.channel.SubscriptionEventListener;
+
+import org.rm3l.ddwrt.common.Constants;
 
 import java.util.Map;
 
@@ -17,9 +19,10 @@ public final class PushUtils {
     private PushUtils() {}
 
     public static Pusher getPusher(@NonNull final String channelName,
-                                   @Nullable final  Map<String, SubscriptionEventListener> eventListenerMap) {
+                                   @Nullable final Map<String, SubscriptionEventListener> eventListenerMap,
+                                   final boolean connect) {
 
-        final Pusher pusher = new Pusher(DDWRTCompanionConstants.PUSHER_APP_KEY);
+        final Pusher pusher = new Pusher(Constants.PUSHER_APP_KEY);
 
         final Channel channel = pusher.subscribe(channelName);
         if (eventListenerMap != null) {
@@ -32,7 +35,9 @@ public final class PushUtils {
                 channel.bind(event, eventListener);
             }
         }
-        pusher.connect();
+        if (connect) {
+            pusher.connect();
+        }
         return pusher;
     }
 }

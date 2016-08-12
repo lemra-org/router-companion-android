@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 
-
 def getVersionName(String flavorName) {
     // Fetch the version according to git latest tag and "how far we are from last tag"
     def longVersionName = "git -C ${rootDir} describe --tags --long".execute().text.trim()
@@ -87,4 +86,8 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:24.0.0'
+
+    //Push
+//    compile 'com.google.firebase:firebase-messaging:9.4.0'
+    compile 'com.pusher:pusher-java-client:1.0.0'
 }
