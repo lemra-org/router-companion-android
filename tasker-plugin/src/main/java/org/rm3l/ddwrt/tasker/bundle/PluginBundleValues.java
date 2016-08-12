@@ -137,6 +137,14 @@ public final class PluginBundleValues {
                     final EditActivity.SupportedCommand supportedCommand =
                             EditActivity.SupportedCommand.valueOf(cmdStr);
                     stringBuilder.append(supportedCommand.humanReadableName);
+                    if (supportedCommand.isConfigurable) {
+                        if (supportedCommand.paramName != null) {
+                            //Get param value
+                            stringBuilder.append("\n").append(" - ")
+                                    .append(supportedCommand.paramName).append(" : TODO");
+                            //TODO Append actual param value
+                        }
+                    }
                 } catch (final Exception e) {
                     //No worries
                 }

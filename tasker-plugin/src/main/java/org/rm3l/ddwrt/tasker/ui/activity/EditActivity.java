@@ -145,10 +145,8 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean newValue) {
                 if (newValue) {
                     mCommandConfiguration.setText("%command", TextView.BufferType.EDITABLE);
-                    mCommandConfiguration.setLines(1);
                 } else {
                     mCommandConfiguration.setText(null, TextView.BufferType.EDITABLE);
-                    mCommandConfiguration.setLines(7);
                 }
             }
         });
@@ -164,22 +162,16 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
             }
         });
 
-        String ddwrtCompanionAppPackage;
-        if (Utils.isPackageInstalled("org.rm3l.ddwrt", packageManager)) {
-            ddwrtCompanionAppPackage = "org.rm3l.ddwrt";
-        } else if (Utils.isPackageInstalled("org.rm3l.ddwrt.amzn.underground", packageManager)) {
-            ddwrtCompanionAppPackage = "org.rm3l.ddwrt.amzn.underground";
-        } else if (Utils.isPackageInstalled("org.rm3l.ddwrt.lite", packageManager)) {
-            ddwrtCompanionAppPackage = "org.rm3l.ddwrt.lite";
-        } else {
+        final String ddwrtCompanionAppPackage = Utils.getDDWRTCompanionAppPackage(packageManager);
+        Crashlytics.log(Log.DEBUG, Constants.TAG,
+                "ddwrtCompanionAppPackage=" + ddwrtCompanionAppPackage);
+
+        if (ddwrtCompanionAppPackage == null) {
             mErrorPlaceholder.setText("You must install DD-WRT Companion App !");
             mErrorPlaceholder.setVisibility(View.VISIBLE);
             //TODO Add button that opens up the Play Store
             return;
         }
-        mErrorPlaceholder.setVisibility(View.GONE);
-        Crashlytics.log(Log.DEBUG, Constants.TAG,
-                "ddwrtCompanionAppPackage=" + ddwrtCompanionAppPackage);
 
         // connect to the service
         conn = new RouterServiceConnection();
@@ -379,17 +371,16 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
                     if (supportedCommand == null) {
                         return;
                     }
+                    mCommandConfiguration.setText("", TextView.BufferType.EDITABLE);
                     switch (supportedCommand) {
                         case CUSTOM_COMMAND:
                             mCommandConfiguration.setVisibility(View.VISIBLE);
-                            mCommandConfiguration.setText("%command");
                             mCommandConfigurationVariable.setChecked(false);
                             mCommandConfigurationVariable.setVisibility(View.VISIBLE);
                             mCommand = null;
                             break;
                         default:
                             mCommandConfiguration.setVisibility(View.GONE);
-                            mCommandConfiguration.setText("", TextView.BufferType.EDITABLE);
                             mCommandConfigurationVariable.setChecked(false);
                             mCommandConfigurationVariable.setVisibility(View.GONE);
                             mCommand = supportedCommand;
@@ -429,7 +420,7 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
         START_HTTPD("Start HTTP Server", false, "start-httpd", null),
         RESTART_HTTPD("Restart HTTP Server", false, "restart-httpd", null),
         RESET_BANDWIDTH_COUNTERS("Reset Bandwidth Counters", false, "reset-bandwidth-counters", null),
-        WAKE_ON_LAN("Wake On LAN", false, "wol", "mac"), //TODO Add port
+        WAKE_ON_LAN("Wake On LAN", true, "wol", "mac"), //TODO Add port
         ENABLE_OPENVPNC("Enable OpenVPN Client", false, "enable-openvpn-client", null),
         DISABLE_OPENVPNC("Disable OpenVPN Client", false, "disable-openvpn-client", null),
         ENABLE_OPENVPND("Enable OpenVPN Server", false, "enable-openvpn-server", null),
@@ -444,10 +435,10 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
         DISABLE_WAN_TRAFFIC_COUNTERS("Disable WAN Traffic counters", false, "diable-wan-traffic-counters", null),
         ENABLE_SYSLOGD("Enable Syslog", false, "enable-syslog", null),
         DISABLE_SYSLOGD("Disable Syslog", false, "disable-syslog", null),
-        ENABLE_DEVICE_WAN_ACCESS("Enable WAN Access for Device", false, "enable-device-wan-access", "mac"),
-        DISABLE_DEVICE_WAN_ACCESS("Disable WAN Access for Device", false, "disable-device-wan-access", "mac"),
-        ESABLE_WAN_ACCESS_POLICY("Enable WAN Access Policy", false, "ensable-wan-access-policy", "policy"),
-        DISABLE_WAN_ACCESS_POLICY("Disable WAN Access Policy", false, "disable-pptp-server", "policy");
+        ENABLE_DEVICE_WAN_ACCESS("Enable WAN Access for Device", true, "enable-device-wan-access", "mac"),
+        DISABLE_DEVICE_WAN_ACCESS("Disable WAN Access for Device", true, "disable-device-wan-access", "mac"),
+        ESABLE_WAN_ACCESS_POLICY("Enable WAN Access Policy", true, "ensable-wan-access-policy", "policy"),
+        DISABLE_WAN_ACCESS_POLICY("Disable WAN Access Policy", true, "disable-pptp-server", "policy");
 
         @Nullable
         public final String humanReadableName;
