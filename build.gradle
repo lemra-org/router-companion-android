@@ -23,6 +23,9 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+    //Workaround to have the 'com.android.application' plugin with any version of Gradle (other than the expected one)
+    //see https://github.com/gradle/gradle-script-kotlin/issues/2#issuecomment-222120296
+    System.properties['com.android.build.gradle.overrideVersionCheck'] = 'true'
     repositories {
         jcenter()
 //        maven { url 'http://www.tracepot.com/maven' }
