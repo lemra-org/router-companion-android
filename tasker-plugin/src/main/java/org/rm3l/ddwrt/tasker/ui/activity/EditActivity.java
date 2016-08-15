@@ -36,7 +36,7 @@ import com.twofortyfouram.log.Lumberjack;
 
 import net.jcip.annotations.NotThreadSafe;
 
-import org.rm3l.ddwrt.common.IRouterService;
+import org.rm3l.ddwrt.common.IDDWRTCompanionService;
 import org.rm3l.ddwrt.common.resources.RouterInfo;
 import org.rm3l.ddwrt.tasker.Constants;
 import org.rm3l.ddwrt.tasker.R;
@@ -55,7 +55,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public class EditActivity extends AbstractAppCompatPluginActivity {
 
     /** Service to which this client will bind */
-    private IRouterService routerService;
+    private IDDWRTCompanionService ddwrtCompanionService;
 
     /** Connection to the service (inner class) */
     private RouterServiceConnection conn;
@@ -177,7 +177,7 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
         conn = new RouterServiceConnection();
 
         // name must match the service's Intent filter in the Service Manifest file
-        final Intent intent = new Intent("org.rm3l.ddwrt.IRouterService");
+        final Intent intent = new Intent("org.rm3l.ddwrt.IDDWRTCompanionService");
         intent.setPackage(ddwrtCompanionAppPackage);
         // bind to the Service, create it if it's not already there
         bindService(intent, conn, Context.BIND_AUTO_CREATE);
@@ -266,7 +266,7 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
         mIsCancelled = true;
         super.onDestroy();
         unbindService(conn);
-        routerService = null;
+        ddwrtCompanionService = null;
     }
 
     /** Inner class used to connect to UserDataService */
@@ -275,7 +275,7 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
         /** is called once the bind succeeds */
         public void onServiceConnected(ComponentName name, IBinder service) {
             Crashlytics.log(Log.DEBUG, Constants.TAG, "Service connected");
-            routerService = IRouterService.Stub.asInterface(service);
+            ddwrtCompanionService = IDDWRTCompanionService.Stub.asInterface(service);
 
             mErrorPlaceholder.setVisibility(View.GONE);
             mLoadingView.setVisibility(View.GONE);
@@ -283,7 +283,7 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
 
             final List<RouterInfo> allRouters;
             try {
-                allRouters = routerService.getAllRouters();
+                allRouters = ddwrtCompanionService.getAllRouters();
             } catch (RemoteException e) {
                 Crashlytics.logException(e);
                 e.printStackTrace();
@@ -402,7 +402,7 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
             mErrorPlaceholder.setVisibility(View.VISIBLE);
             mLoadingView.setVisibility(View.VISIBLE);
             mMainContentView.setVisibility(View.GONE);
-            routerService = null;
+            ddwrtCompanionService = null;
         }
 
     }

@@ -1,11 +1,11 @@
-// IRouterService.aidl
+// IDDWRTCompanionService.aidl
 package org.rm3l.ddwrt.common;
 
 import org.rm3l.ddwrt.common.resources.RouterInfo;
 
 // Declare any non-default types here with import statements
 
-interface IRouterService {
+interface IDDWRTCompanionService {
     /**
      * Demonstrates some basic types that you can use as parameters
      * and return values in AIDL.
