@@ -228,6 +228,8 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                // Signal to AbstractAppCompatPluginActivity that the user canceled.
+                mIsCancelled = true;
                 onBackPressed();
                 break;
             case R.id.ddwrt_companion_tasker_feedback:
@@ -250,6 +252,10 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
             case R.id.menu_discard_changes:
                 // Signal to AbstractAppCompatPluginActivity that the user canceled.
                 mIsCancelled = true;
+                finish();
+                break;
+            case R.id.menu_save_changes:
+                mIsCancelled = false;
                 finish();
                 break;
             default:
