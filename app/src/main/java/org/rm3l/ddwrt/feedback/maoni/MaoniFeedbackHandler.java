@@ -348,6 +348,7 @@ public class MaoniFeedbackHandler implements Handler {
                     }
                 }
 
+                String logsUrl = null;
                 if (includeLogs) {
                     publishProgress(UPLOADING_LOGS);
 
@@ -374,12 +375,13 @@ public class MaoniFeedbackHandler implements Handler {
                     }
 
                     //Upload to AWS S3
+                    logsUrl = String.format("%s/%s/%s.txt",
+                            AWS_S3_FEEDBACKS_FOLDER_NAME,
+                            AWS_S3_LOGS_FOLDER_NAME,
+                            feedback.id);
                     final TransferObserver uploadObserver =
                             transferUtility.upload(AWS_S3_BUCKET_NAME,
-                                    String.format("%s/%s/%s.txt",
-                                            AWS_S3_FEEDBACKS_FOLDER_NAME,
-                                            AWS_S3_LOGS_FOLDER_NAME,
-                                            feedback.id),
+                                    logsUrl,
                                     feedback.logsFile);
 
                     //Save transfer ID
@@ -442,6 +444,12 @@ public class MaoniFeedbackHandler implements Handler {
                 final DeviceInfo deviceInfo = feedback.deviceInfo;
                 if (deviceInfo != null) {
                     properties.putAll(feedback.getDeviceAndAppInfoAsHumanReadableMap());
+                }
+                if (screenshotCaptureUploadUrl != null) {
+                    properties.put("Screenshot", screenshotCaptureUploadUrl);
+                }
+                if (logsUrl != null) {
+                    properties.put("Logs", logsUrl);
                 }
 
                 final String emailText = mEmail.getText().toString();

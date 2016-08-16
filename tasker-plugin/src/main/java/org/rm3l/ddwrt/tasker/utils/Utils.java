@@ -1,5 +1,7 @@
 package org.rm3l.ddwrt.tasker.utils;
 
+import android.app.Activity;
+import android.app.backup.BackupManager;
 import android.content.pm.PackageManager;
 import android.support.annotation.Nullable;
 
@@ -35,5 +37,12 @@ public final class Utils {
             ddwrtCompanionAppPackage = null;
         }
         return ddwrtCompanionAppPackage;
+    }
+
+    public static void requestBackup(Activity ctx) {
+        if (ctx == null) {
+            return;
+        }
+        new BackupManager(ctx).dataChanged();
     }
 }

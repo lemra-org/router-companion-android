@@ -18,6 +18,10 @@ public final class Constants {
     public static final int DOORBELL_APPID = 0;
     public static final String DOORBELL_APIKEY = \"fake-api-key\";
 
+
+    public static final String URL_SHORTENER_API_BASE_URL =
+            "https://www.googleapis.com/urlshortener/v1/";
+
     public static final String GOOGLE_API_KEY = \"fake-api-key\";
 
     public static final String AWS_COGNITO_IDENTITY_POOL_ID =
