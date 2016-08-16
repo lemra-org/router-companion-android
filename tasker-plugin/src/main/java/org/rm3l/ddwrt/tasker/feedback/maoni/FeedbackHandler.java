@@ -322,13 +322,12 @@ public class FeedbackHandler implements Handler {
                     }
 
                     //Upload to AWS S3
-                    logsUrl = String.format("%s/%s/%s.txt",
-                            Constants.AWS_S3_FEEDBACKS_FOLDER_NAME,
-                            Constants.AWS_S3_LOGS_FOLDER_NAME,
-                            feedback.id);
                     final TransferObserver uploadObserver =
                             transferUtility.upload(Constants.AWS_S3_BUCKET_NAME,
-                                    logsUrl,
+                                    String.format("%s/%s/%s.txt",
+                                            Constants.AWS_S3_FEEDBACKS_FOLDER_NAME,
+                                            Constants.AWS_S3_LOGS_FOLDER_NAME,
+                                            feedback.id),
                                     feedback.logsFile);
 
                     //Save transfer ID
@@ -367,6 +366,19 @@ public class FeedbackHandler implements Handler {
                                 return ImmutablePair.of(null,
                                         new IllegalStateException(
                                                 "Failed to upload logs"));
+                            } else {
+                                //Set URL TO S3
+                                logsUrl = mGooGlService.shortenLongUrl(
+                                        Constants.GOOGLE_API_KEY,
+                                        new GooGlData()
+                                                .setLongUrl(
+                                                        String.format(
+                                                                "https://%s.s3.amazonaws.com/%s/%s/%s.txt",
+                                                                Constants.AWS_S3_BUCKET_NAME,
+                                                                Constants.AWS_S3_FEEDBACKS_FOLDER_NAME,
+                                                                Constants.AWS_S3_LOGS_FOLDER_NAME,
+                                                                feedback.id)))
+                                        .execute().body().getId();
                             }
                             break;
                         }

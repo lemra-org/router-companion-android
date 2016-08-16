@@ -375,13 +375,12 @@ public class MaoniFeedbackHandler implements Handler {
                     }
 
                     //Upload to AWS S3
-                    logsUrl = String.format("%s/%s/%s.txt",
-                            AWS_S3_FEEDBACKS_FOLDER_NAME,
-                            AWS_S3_LOGS_FOLDER_NAME,
-                            feedback.id);
                     final TransferObserver uploadObserver =
                             transferUtility.upload(AWS_S3_BUCKET_NAME,
-                                    logsUrl,
+                                    String.format("%s/%s/%s.txt",
+                                            AWS_S3_FEEDBACKS_FOLDER_NAME,
+                                            AWS_S3_LOGS_FOLDER_NAME,
+                                            feedback.id),
                                     feedback.logsFile);
 
                     //Save transfer ID
@@ -420,6 +419,19 @@ public class MaoniFeedbackHandler implements Handler {
                                 return ImmutablePair.of(null,
                                         new IllegalStateException(
                                                 "Failed to upload logs"));
+                            } else {
+                                //Set URL TO S3
+                                logsUrl = mGooGlService.shortenLongUrl(
+                                        GOOGLE_API_KEY,
+                                        new GooGlData()
+                                                .setLongUrl(
+                                                        String.format(
+                                                                "https://%s.s3.amazonaws.com/%s/%s/%s.txt",
+                                                                AWS_S3_BUCKET_NAME,
+                                                                AWS_S3_FEEDBACKS_FOLDER_NAME,
+                                                                AWS_S3_LOGS_FOLDER_NAME,
+                                                                feedback.id)))
+                                        .execute().body().getId();
                             }
                             break;
                         }
