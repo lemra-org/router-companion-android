@@ -50,12 +50,20 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_EXTRA_STRING_CMD;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_EXTRA_STRING_CMD_OUTPUT_VAR;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_EXTRA_STRING_CMD_VAR;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_EXTRA_STRING_SELECTED_ROUTER_FROM_VAR;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_EXTRA_STRING_SELECTED_ROUTER_UUID;
 
 @NotThreadSafe
 public class EditActivity extends AbstractAppCompatPluginActivity {
 
+    public static final String DDWRT_COMPANION_SERVICE_NAME = "org.rm3l.ddwrt.IDDWRTCompanionService";
     /** Service to which this client will bind */
     private IDDWRTCompanionService ddwrtCompanionService;
+
+    private String ddwrtCompanionAppPackage;
 
     /** Connection to the service (inner class) */
     private RouterServiceConnection conn;
@@ -77,6 +85,12 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
     private CheckBox mReturnOutputCheckbox;
     private SupportedCommand mCommand;
     private String mSelectedRouterReadableName;
+
+    private String mPreviousBundleSelectedRouterUuid;
+    private String mPreviousBundleSelectedRouterVarName;
+    private String mPreviousBundleCmdVarName;
+    private String mPreviousBundleCustomCommand;
+    private String mPreviousBundleCmdOutputVarName;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -162,7 +176,7 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
             }
         });
 
-        final String ddwrtCompanionAppPackage = Utils.getDDWRTCompanionAppPackage(packageManager);
+        this.ddwrtCompanionAppPackage = Utils.getDDWRTCompanionAppPackage(packageManager);
         Crashlytics.log(Log.DEBUG, Constants.TAG,
                 "ddwrtCompanionAppPackage=" + ddwrtCompanionAppPackage);
 
@@ -177,7 +191,7 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
         conn = new RouterServiceConnection();
 
         // name must match the service's Intent filter in the Service Manifest file
-        final Intent intent = new Intent("org.rm3l.ddwrt.IDDWRTCompanionService");
+        final Intent intent = new Intent(DDWRT_COMPANION_SERVICE_NAME);
         intent.setPackage(ddwrtCompanionAppPackage);
         // bind to the Service, create it if it's not already there
         bindService(intent, conn, Context.BIND_AUTO_CREATE);
@@ -187,9 +201,52 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
     @Override
     public void onPostCreateWithPreviousResult(@NonNull final Bundle previousBundle,
                                                @NonNull final String previousBlurb) {
-        //TODO
-//        final String message = PluginBundleValues.getMessage(previousBundle);
-//        ((EditText) findViewById(android.R.id.text1)).setText(message);
+
+        final String selectedRouterVarName = previousBundle
+                .getString(BUNDLE_EXTRA_STRING_SELECTED_ROUTER_FROM_VAR);
+        if (TextUtils.isEmpty(selectedRouterVarName)) {
+            //UUID instead
+            final String selectedRouterUuid = previousBundle.
+                    getString(BUNDLE_EXTRA_STRING_SELECTED_ROUTER_UUID);
+            if (TextUtils.isEmpty(selectedRouterUuid)) {
+                mPreviousBundleSelectedRouterUuid = null;
+            } else {
+                mPreviousBundleSelectedRouterUuid = selectedRouterUuid;
+            }
+            mPreviousBundleSelectedRouterVarName = null;
+        } else {
+            mPreviousBundleSelectedRouterVarName = selectedRouterVarName;
+            mPreviousBundleSelectedRouterUuid = null;
+        }
+
+        final String cmdVarName = previousBundle.getString(BUNDLE_EXTRA_STRING_CMD_VAR);
+        if (TextUtils.isEmpty(cmdVarName)) {
+            final String cmdCustom = previousBundle.getString(BUNDLE_EXTRA_STRING_CMD);
+            if (TextUtils.isEmpty(cmdCustom)) {
+                mPreviousBundleCustomCommand = null;
+            } else {
+                mPreviousBundleCustomCommand = cmdCustom;
+            }
+            mPreviousBundleCmdVarName = null;
+        } else {
+            mPreviousBundleCmdVarName = cmdVarName;
+        }
+
+        mPreviousBundleCmdOutputVarName =
+                previousBundle.getString(BUNDLE_EXTRA_STRING_CMD_OUTPUT_VAR);
+
+        //Reconnect to the remote service
+        unbindService(conn);
+        ddwrtCompanionService = null;
+
+        // connect to the service
+        conn = new RouterServiceConnection();
+
+        // name must match the service's Intent filter in the Service Manifest file
+        final Intent intent = new Intent(DDWRT_COMPANION_SERVICE_NAME);
+        intent.setPackage(ddwrtCompanionAppPackage);
+        // bind to the Service, create it if it's not already there
+        bindService(intent, conn, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -309,7 +366,12 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
 
             final String[] routersNamesArray = new String[allRouters.size() + 1];
             int i = 0;
+            Integer selectedRouterIndex = null;
             for (final RouterInfo router : allRouters) {
+                if (mPreviousBundleSelectedRouterUuid != null &&
+                        mPreviousBundleSelectedRouterUuid.equals(router.getUuid())) {
+                    selectedRouterIndex = i;
+                }
                 final String routerName = router.getName();
                 routersNamesArray[i++] = ((isNullOrEmpty(routerName) ? "-" : routerName) + "\n(" +
                         router.getRemoteIpAddress() + ":" + router.getRemotePort() + ")");
@@ -321,8 +383,6 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
             mRoutersListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
             mRoutersDropdown.setAdapter(mRoutersListAdapter);
-
-            mRoutersDropdown.setSelection(0);
 
             mRoutersDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -356,10 +416,26 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
                 }
             });
 
+            mRoutersDropdown.setSelection(
+                    (selectedRouterIndex != null && selectedRouterIndex < routersNamesArray.length)
+                            ? selectedRouterIndex : 0);
+
+            if (!TextUtils.isEmpty(mPreviousBundleSelectedRouterVarName)) {
+                mRoutersDropdown.setSelection(i);
+                mSelectedRouterVariable
+                        .setText(mPreviousBundleSelectedRouterVarName, TextView.BufferType.EDITABLE);
+            }
+
+
             final SupportedCommand[] supportedCommands = SupportedCommand.values();
             final String[] supportedCommandsArr = new String[supportedCommands.length];
             int j = 0;
+            Integer selectedCommandIndex = null;
             for (final SupportedCommand cmd : supportedCommands) {
+                if (mPreviousBundleCustomCommand != null &&
+                        mPreviousBundleCustomCommand.equals(cmd.actionName)) {
+                    selectedCommandIndex = j;
+                }
                 supportedCommandsArr[j++] = cmd.humanReadableName;
             }
             final ArrayAdapter<String> cmdAdapter = new ArrayAdapter<>(EditActivity.this,
@@ -399,6 +475,23 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
 
                 }
             });
+
+            if (selectedCommandIndex != null && selectedCommandIndex < supportedCommandsArr.length) {
+                mCommandsDropdown.setSelection(selectedCommandIndex);
+            }
+
+            if (!TextUtils.isEmpty(mPreviousBundleCmdVarName)) {
+                mCommandConfigurationVariable.setChecked(true);
+                mCommandConfiguration.setText(mPreviousBundleSelectedRouterVarName,
+                        TextView.BufferType.EDITABLE);
+            }
+
+            if (!TextUtils.isEmpty(mPreviousBundleCmdOutputVarName)) {
+                mReturnOutputCheckbox.setChecked(true);
+                mReturnOutputVariable
+                        .setText(mPreviousBundleCmdOutputVarName, TextView.BufferType.EDITABLE);
+            }
+
         }
 
         /*** is called once the remote service is no longer available */
