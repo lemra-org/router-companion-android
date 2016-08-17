@@ -421,7 +421,7 @@ public class FeedbackHandler implements Handler {
                                                 "-------\n" +
                                                 "%s" +
                                                 "- Android Version: %s (SDK %s)\n" +
-                                                "- Device: %s (%s)" +
+                                                "- Device: %s (%s)\n" +
                                                 "-------\n\n" +
                                                 ">>> NOTE: Ask questions and discuss/vote for features on %s <<<",
                                         contentText,
