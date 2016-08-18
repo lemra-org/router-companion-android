@@ -4,15 +4,19 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.twofortyfouram.spackle.AppBuildInfo;
 
 import net.jcip.annotations.ThreadSafe;
 
 import org.rm3l.ddwrt.tasker.BuildConfig;
+import org.rm3l.ddwrt.tasker.Constants;
 import org.rm3l.ddwrt.tasker.ui.activity.EditActivity;
 
-import static android.text.TextUtils.isEmpty;
 import static com.twofortyfouram.assertion.Assertions.assertNotNull;
 
 
@@ -23,37 +27,21 @@ import static com.twofortyfouram.assertion.Assertions.assertNotNull;
 @ThreadSafe
 public final class PluginBundleValues {
 
-    /**
-     * Type: {@code String}.
-     * <p>
-     * String message to display in a Toast message.
-     */
-    @NonNull
-    public static final String BUNDLE_EXTRA_STRING_SELECTED_ROUTER_UUID
-            = BuildConfig.APPLICATION_ID + ".extra.SELECTED_ROUTER_UUID"; //$NON-NLS-1$
-    @NonNull
-    public static final String BUNDLE_EXTRA_STRING_SELECTED_ROUTER_CANONICAL_NAME
-            = BuildConfig.APPLICATION_ID + ".extra.SELECTED_ROUTER_CANONICAL_NAME"; //$NON-NLS-1$
-    @NonNull
-    public static final String BUNDLE_EXTRA_STRING_SELECTED_ROUTER_FROM_VAR
-            = BuildConfig.APPLICATION_ID + ".extra.SELECTED_ROUTER_FROM_VAR"; //$NON-NLS-1$
-
-    @NonNull
-    public static final String BUNDLE_EXTRA_STRING_CMD_OUTPUT_VAR
-            = BuildConfig.APPLICATION_ID + ".extra.OUTPUT_VARIABLE"; //$NON-NLS-1$
-
-    @NonNull
-    public static final String BUNDLE_EXTRA_STRING_CMD_VAR
-            = BuildConfig.APPLICATION_ID + ".extra.CMD_VARIABLE"; //$NON-NLS-1$
-
-    @NonNull
-    public static final String BUNDLE_EXTRA_STRING_CMD
-            = BuildConfig.APPLICATION_ID + ".extra.CMD"; //$NON-NLS-1$
-
-
-    @NonNull
-    public static final String BUNDLE_EXTRA_STRING_CMD_CUSTOM
-            = BuildConfig.APPLICATION_ID + ".extra.CUSTOM_CMD"; //$NON-NLS-1$
+    public static final String BUNDLE_PREFIX = BuildConfig.APPLICATION_ID + ".extra.";
+    public static final String BUNDLE_OUTPUT_VARIABLE_NAME = BUNDLE_PREFIX + "OUTPUT.VARIABLE_NAME";
+    public static final String BUNDLE_OUTPUT_IS_VARIABLE = BUNDLE_PREFIX + "OUTPUT.IS_VARIABLE";
+    public static final String BUNDLE_COMMAND_SUPPORTED_PARAM = BUNDLE_PREFIX + "COMMAND.SUPPORTED_PARAM";
+    public static final String BUNDLE_COMMAND_SUPPORTED_PARAM_HINT = BUNDLE_PREFIX + "COMMAND.SUPPORTED_PARAM_HINT";
+    public static final String BUNDLE_COMMAND_SUPPORTED_READABLE_NAME = BUNDLE_PREFIX + "COMMAND.SUPPORTED_READABLE_NAME";
+    public static final String BUNDLE_COMMAND_SUPPORTED_NAME = BUNDLE_PREFIX + "COMMAND.SUPPORTED_NAME";
+    public static final String BUNDLE_COMMAND_CUSTOM_CMD = BUNDLE_PREFIX + "COMMAND.CUSTOM.CMD";
+    public static final String BUNDLE_COMMAND_CUSTOM_VARIABLE_NAME = BUNDLE_PREFIX + "COMMAND.CUSTOM.VARIABLE_NAME";
+    public static final String BUNDLE_COMMAND_CUSTOM_IS_VARIABLE = BUNDLE_PREFIX + "COMMAND.CUSTOM.IS_VARIABLE";
+    public static final String BUNDLE_COMMAND_IS_CUSTOM = BUNDLE_PREFIX + "COMMAND.IS_CUSTOM";
+    public static final String BUNDLE_ROUTER_CANONICAL_READABLE_NAME = BUNDLE_PREFIX + "ROUTER.CANONICAL_READABLE_NAME";
+    public static final String BUNDLE_ROUTER_UUID = BUNDLE_PREFIX + "ROUTER.UUID";
+    public static final String BUNDLE_ROUTER_VARIABLE_NAME = BUNDLE_PREFIX + "ROUTER.VARIABLE_NAME";
+    public static final String BUNDLE_ROUTER_IS_VARIABLE = BUNDLE_PREFIX + "ROUTER.IS_VARIABLE";
 
     /**
      * Type: {@code int}.
@@ -66,8 +54,8 @@ public final class PluginBundleValues {
      * stored its Bundle. By having the version, the plug-in can better detect when such bugs occur.
      */
     @NonNull
-    public static final String BUNDLE_EXTRA_INT_VERSION_CODE
-            = BuildConfig.APPLICATION_ID + ".extra.INT_VERSION_CODE"; //$NON-NLS-1$
+    public static final String BUNDLE_EXTRA_INT_VERSION_CODE =
+            BUNDLE_PREFIX + "INT_VERSION_CODE"; //$NON-NLS-1$
 
     /**
      * Method to verify the content of the bundle are correct.
@@ -116,94 +104,103 @@ public final class PluginBundleValues {
 
     public static String getBundleBlurb(Bundle bundle) {
         final StringBuilder stringBuilder = new StringBuilder();
-        if (bundle.getString(BUNDLE_EXTRA_STRING_SELECTED_ROUTER_FROM_VAR) != null) {
+
+        if (bundle.getBoolean(BUNDLE_ROUTER_IS_VARIABLE, false)) {
             stringBuilder.append("- Router Variable Name : ")
-                    .append(bundle.getString(BUNDLE_EXTRA_STRING_SELECTED_ROUTER_FROM_VAR));
-        } else if (bundle.getString(BUNDLE_EXTRA_STRING_SELECTED_ROUTER_CANONICAL_NAME) != null) {
+                    .append(bundle.getString(BUNDLE_ROUTER_VARIABLE_NAME));
+        } else {
             stringBuilder.append("- Router : ")
-                    .append(bundle.getString(BUNDLE_EXTRA_STRING_SELECTED_ROUTER_CANONICAL_NAME));
+                    .append(bundle.getString(BUNDLE_ROUTER_CANONICAL_READABLE_NAME));
         }
         stringBuilder.append("\n\n");
-        if (bundle.getString(BUNDLE_EXTRA_STRING_CMD_VAR) != null) {
+        if (bundle.getBoolean(BUNDLE_COMMAND_CUSTOM_IS_VARIABLE, false)) {
             stringBuilder.append("- Command Variable Name : ")
-                    .append(bundle.getString(BUNDLE_EXTRA_STRING_CMD_VAR));
+                    .append(bundle.getString(BUNDLE_COMMAND_CUSTOM_VARIABLE_NAME));
         } else {
             stringBuilder.append("- Command : ");
-            if (bundle.getBoolean(BUNDLE_EXTRA_STRING_CMD_CUSTOM, false)) {
+            if (bundle.getBoolean(BUNDLE_COMMAND_IS_CUSTOM, false)) {
                 stringBuilder.append("Custom");
             } else {
-                final String cmdStr = bundle.getString(BUNDLE_EXTRA_STRING_CMD);
-                try {
-                    final EditActivity.SupportedCommand supportedCommand =
-                            EditActivity.SupportedCommand.valueOf(cmdStr);
-                    stringBuilder.append(supportedCommand.humanReadableName);
-                    if (supportedCommand.isConfigurable) {
-                        if (supportedCommand.paramName != null) {
-                            //Get param value
-                            stringBuilder.append("\n").append(" - ")
-                                    .append(supportedCommand.paramName).append(" : TODO");
-                            //TODO Append actual param value
-                        }
-                    }
-                } catch (final Exception e) {
-                    //No worries
+                stringBuilder.append(bundle.getString(BUNDLE_COMMAND_SUPPORTED_READABLE_NAME,
+                        "-"));
+                final CharSequence paramHint = bundle.getString(BUNDLE_COMMAND_SUPPORTED_PARAM_HINT);
+                if (!TextUtils.isEmpty(paramHint)) {
+                    //Get param value
+                    stringBuilder.append("\n").append(" - ")
+                            .append(paramHint)
+                            .append(" : ")
+                            .append(bundle
+                                    .getString(BUNDLE_COMMAND_SUPPORTED_PARAM, "-"));
                 }
             }
         }
 
-        if (bundle.getString(BUNDLE_EXTRA_STRING_CMD_OUTPUT_VAR) != null) {
+        if (bundle.getBoolean(BUNDLE_OUTPUT_IS_VARIABLE, false)) {
             stringBuilder.append("\n\n");
             stringBuilder.append("- Output Variable Name: ")
-                    .append(bundle.getString(BUNDLE_EXTRA_STRING_CMD_OUTPUT_VAR));
+                    .append(bundle.getString(BUNDLE_OUTPUT_VARIABLE_NAME));
         }
 
         return stringBuilder.toString();
     }
 
     public static Bundle generateBundle(Context context,
+                                        boolean isVariableRouter,
+                                        Editable selectedRouterVariableName,
                                         CharSequence selectedRouterUuid,
                                         String selectedRouterReadableName,
-                                        CharSequence routerVariableName,
-                                        boolean commandVariableChecked,
-                                        CharSequence commandName,
+
                                         boolean isCustomCommand,
-                                        EditActivity.SupportedCommand command,
-                                        boolean returnOutputChecked,
-                                        CharSequence returnVarName) {
+                                        boolean isVariableCustomCommand,
+                                        Editable customCommandConfiguration,
+                                        EditActivity.SupportedCommand supportedCommand,
+                                        Editable supportedCommandParam,
+
+                                        boolean isVariableReturnOuput,
+                                        Editable returnOutputVariableName) {
 
         assertNotNull(context, "context"); //$NON-NLS-1$
 
         final Bundle result = new Bundle();
         result.putInt(BUNDLE_EXTRA_INT_VERSION_CODE, AppBuildInfo.getVersionCode(context));
-        if (isEmpty(selectedRouterUuid) && !isEmpty(routerVariableName)) {
-            //Variable backed
-            result.putString(BUNDLE_EXTRA_STRING_SELECTED_ROUTER_FROM_VAR, routerVariableName.toString());
-        } else {
-            //Router UUID
-            result.putString(BUNDLE_EXTRA_STRING_SELECTED_ROUTER_UUID, selectedRouterUuid.toString());
-            result.putString(BUNDLE_EXTRA_STRING_SELECTED_ROUTER_CANONICAL_NAME, selectedRouterReadableName);
-        }
 
-        if (commandVariableChecked && !isEmpty(commandName)) {
-            //Variable backed
-            result.putString(BUNDLE_EXTRA_STRING_CMD_VAR, commandName.toString());
-        } else {
-            result.putBoolean(BUNDLE_EXTRA_STRING_CMD_CUSTOM, isCustomCommand);
-            if (isCustomCommand && commandName != null) {
-                result.putString(BUNDLE_EXTRA_STRING_CMD, commandName.toString());
+        result.putBoolean(BUNDLE_ROUTER_IS_VARIABLE, isVariableRouter);
+        if (selectedRouterVariableName != null)
+            result.putString(BUNDLE_ROUTER_VARIABLE_NAME, selectedRouterVariableName.toString());
+        if (selectedRouterUuid != null)
+            result.putString(BUNDLE_ROUTER_UUID, selectedRouterUuid.toString());
+        result.putString(BUNDLE_ROUTER_CANONICAL_READABLE_NAME,
+                selectedRouterReadableName);
+
+        result.putBoolean(BUNDLE_COMMAND_IS_CUSTOM, isCustomCommand);
+        result.putBoolean(BUNDLE_COMMAND_CUSTOM_IS_VARIABLE, isVariableCustomCommand);
+        if (customCommandConfiguration != null) {
+            if (isVariableCustomCommand) {
+                result.putString(BUNDLE_COMMAND_CUSTOM_VARIABLE_NAME,
+                        customCommandConfiguration.toString());
             } else {
-                //Actual command along with the parameters
-                if (command != null) {
-                    result.putString(BUNDLE_EXTRA_STRING_CMD, command.toString());
-                    //TODO Add parameters values
-                }
+                result.putString(BUNDLE_COMMAND_CUSTOM_CMD,
+                        customCommandConfiguration.toString());
             }
         }
-
-        if (returnOutputChecked && !isEmpty(returnVarName)) {
-            //Variable
-            result.putString(BUNDLE_EXTRA_STRING_CMD_OUTPUT_VAR, returnVarName.toString());
+        if (supportedCommand != null) {
+            result.putString(BUNDLE_COMMAND_SUPPORTED_NAME,
+                    supportedCommand.name());
+            result.putString(BUNDLE_COMMAND_SUPPORTED_READABLE_NAME,
+                    supportedCommand.humanReadableName);
+            if (!TextUtils.isEmpty(supportedCommand.paramHumanReadableHint)) {
+                result.putString(BUNDLE_COMMAND_SUPPORTED_PARAM_HINT,
+                        supportedCommand.paramHumanReadableHint);
+            }
         }
+        if (supportedCommandParam != null)
+            result.putString(BUNDLE_COMMAND_SUPPORTED_PARAM, supportedCommandParam.toString());
+
+        result.putBoolean(BUNDLE_OUTPUT_IS_VARIABLE, isVariableReturnOuput);
+        if (returnOutputVariableName != null)
+            result.putString(BUNDLE_OUTPUT_VARIABLE_NAME, returnOutputVariableName.toString());
+
+        Crashlytics.log(Log.DEBUG, Constants.TAG, "result: " + result);
 
         return result;
 

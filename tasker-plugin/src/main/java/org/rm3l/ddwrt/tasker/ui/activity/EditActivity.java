@@ -49,12 +49,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static android.widget.TextView.BufferType.*;
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_EXTRA_STRING_CMD;
-import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_EXTRA_STRING_CMD_OUTPUT_VAR;
-import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_EXTRA_STRING_CMD_VAR;
-import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_EXTRA_STRING_SELECTED_ROUTER_FROM_VAR;
-import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_EXTRA_STRING_SELECTED_ROUTER_UUID;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.*;
 
 @NotThreadSafe
 public class EditActivity extends AbstractAppCompatPluginActivity {
@@ -83,14 +80,26 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
     private CheckBox mCommandConfigurationVariable;
     private EditText mReturnOutputVariable;
     private CheckBox mReturnOutputCheckbox;
+    private EditText mCommandParamEditText;
     private SupportedCommand mCommand;
     private String mSelectedRouterReadableName;
+    
+    private int mPreviousBundleIntVersionCode;
+    private boolean mPreviousBundleRouterIsVariable;
+    private String mPreviousBundleRouterUuid;
+    private String mPreviousBundleRouterCanonicalReadableName;
+    private boolean mPreviousBundleCommandIsCustom;
+    private boolean mPreviousBundleCommandCustomIsVariable;
+    private String mPreviousBundleCommandCustomVariableName;
+    private String mPreviousBundleCommandCustomCmd;
+    private String mPreviousBundleCommandSupportedName;
+    private String mPreviousBundleCommandSupportedReadableName;
+    private String mPreviousBundleCommandSupportedParamHint;
+    private String mPreviousBundleCommandSupportedParam;
+    private boolean mPreviousBundleOutputIsVariable;
+    private String mPreviousBundleOutputVariableName;
+    private String mPreviousBundleRouterVariableName;
 
-    private String mPreviousBundleSelectedRouterUuid;
-    private String mPreviousBundleSelectedRouterVarName;
-    private String mPreviousBundleCmdVarName;
-    private String mPreviousBundleCustomCommand;
-    private String mPreviousBundleCmdOutputVarName;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -158,9 +167,9 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean newValue) {
                 if (newValue) {
-                    mCommandConfiguration.setText("%command", TextView.BufferType.EDITABLE);
+                    mCommandConfiguration.setText("%command", EDITABLE);
                 } else {
-                    mCommandConfiguration.setText(null, TextView.BufferType.EDITABLE);
+                    mCommandConfiguration.setText(null, EDITABLE);
                 }
             }
         });
@@ -171,10 +180,12 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
         mReturnOutputCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean newValue) {
-                mReturnOutputVariable.setText(null, TextView.BufferType.EDITABLE);
+                mReturnOutputVariable.setText(null, EDITABLE);
                 mReturnOutputVariable.setVisibility(newValue ? View.VISIBLE : View.GONE);
             }
         });
+        
+        mCommandParamEditText = (EditText) findViewById(R.id.command_configuration_input_param); 
 
         this.ddwrtCompanionAppPackage = Utils.getDDWRTCompanionAppPackage(packageManager);
         Crashlytics.log(Log.DEBUG, Constants.TAG,
@@ -202,38 +213,25 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
     public void onPostCreateWithPreviousResult(@NonNull final Bundle previousBundle,
                                                @NonNull final String previousBlurb) {
 
-        final String selectedRouterVarName = previousBundle
-                .getString(BUNDLE_EXTRA_STRING_SELECTED_ROUTER_FROM_VAR);
-        if (TextUtils.isEmpty(selectedRouterVarName)) {
-            //UUID instead
-            final String selectedRouterUuid = previousBundle.
-                    getString(BUNDLE_EXTRA_STRING_SELECTED_ROUTER_UUID);
-            if (TextUtils.isEmpty(selectedRouterUuid)) {
-                mPreviousBundleSelectedRouterUuid = null;
-            } else {
-                mPreviousBundleSelectedRouterUuid = selectedRouterUuid;
-            }
-            mPreviousBundleSelectedRouterVarName = null;
-        } else {
-            mPreviousBundleSelectedRouterVarName = selectedRouterVarName;
-            mPreviousBundleSelectedRouterUuid = null;
-        }
+        Crashlytics.log(Log.DEBUG, Constants.TAG, "previousBundle: " + previousBundle);
 
-        final String cmdVarName = previousBundle.getString(BUNDLE_EXTRA_STRING_CMD_VAR);
-        if (TextUtils.isEmpty(cmdVarName)) {
-            final String cmdCustom = previousBundle.getString(BUNDLE_EXTRA_STRING_CMD);
-            if (TextUtils.isEmpty(cmdCustom)) {
-                mPreviousBundleCustomCommand = null;
-            } else {
-                mPreviousBundleCustomCommand = cmdCustom;
-            }
-            mPreviousBundleCmdVarName = null;
-        } else {
-            mPreviousBundleCmdVarName = cmdVarName;
-        }
+        mPreviousBundleIntVersionCode = previousBundle.getInt(BUNDLE_EXTRA_INT_VERSION_CODE);
+        mPreviousBundleRouterIsVariable = previousBundle.getBoolean(BUNDLE_ROUTER_IS_VARIABLE, false);
+        mPreviousBundleRouterVariableName = previousBundle.getString(BUNDLE_ROUTER_VARIABLE_NAME);
+        mPreviousBundleRouterUuid = previousBundle.getString(BUNDLE_ROUTER_UUID);
+        mPreviousBundleRouterCanonicalReadableName = previousBundle.getString(BUNDLE_ROUTER_CANONICAL_READABLE_NAME);
+        
+        mPreviousBundleCommandIsCustom = previousBundle.getBoolean(BUNDLE_COMMAND_IS_CUSTOM, false);
+        mPreviousBundleCommandCustomIsVariable = previousBundle.getBoolean(BUNDLE_COMMAND_CUSTOM_IS_VARIABLE, false);
+        mPreviousBundleCommandCustomVariableName = previousBundle.getString(BUNDLE_COMMAND_CUSTOM_VARIABLE_NAME);
+        mPreviousBundleCommandCustomCmd = previousBundle.getString(BUNDLE_COMMAND_CUSTOM_CMD);
+        mPreviousBundleCommandSupportedName = previousBundle.getString(BUNDLE_COMMAND_SUPPORTED_NAME);
+        mPreviousBundleCommandSupportedReadableName = previousBundle.getString(BUNDLE_COMMAND_SUPPORTED_READABLE_NAME);
+        mPreviousBundleCommandSupportedParamHint = previousBundle.getString(BUNDLE_COMMAND_SUPPORTED_PARAM_HINT);
+        mPreviousBundleCommandSupportedParam = previousBundle.getString(BUNDLE_COMMAND_SUPPORTED_PARAM);
 
-        mPreviousBundleCmdOutputVarName =
-                previousBundle.getString(BUNDLE_EXTRA_STRING_CMD_OUTPUT_VAR);
+        mPreviousBundleOutputIsVariable = previousBundle.getBoolean(BUNDLE_OUTPUT_IS_VARIABLE, false);
+        mPreviousBundleOutputVariableName = previousBundle.getString(BUNDLE_OUTPUT_VARIABLE_NAME);
 
         //Reconnect to the remote service
         unbindService(conn);
@@ -257,14 +255,21 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
     @Nullable
     @Override
     public Bundle getResultBundle() {
+        final boolean isVariableRouter = TextUtils.isEmpty(mSelectedRouterUuid.getText());
+        final boolean isCustomCommand = (mCommand == null);
         return PluginBundleValues.generateBundle(getApplicationContext(),
+                
+                isVariableRouter,
+                mSelectedRouterVariable.getText(),
                 mSelectedRouterUuid.getText(),
                 mSelectedRouterReadableName,
-                mSelectedRouterVariable.getText(),
+
+                isCustomCommand,
                 mCommandConfigurationVariable.isChecked(),
                 mCommandConfiguration.getText(),
-                mCommand == null,
                 mCommand,
+                mCommandParamEditText.getText(),
+                
                 mReturnOutputCheckbox.isChecked(),
                 mReturnOutputVariable.getText());
     }
@@ -368,8 +373,8 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
             int i = 0;
             Integer selectedRouterIndex = null;
             for (final RouterInfo router : allRouters) {
-                if (mPreviousBundleSelectedRouterUuid != null &&
-                        mPreviousBundleSelectedRouterUuid.equals(router.getUuid())) {
+                if (mPreviousBundleRouterUuid != null &&
+                        mPreviousBundleRouterUuid.equals(router.getUuid())) {
                     selectedRouterIndex = i;
                 }
                 final String routerName = router.getName();
@@ -420,10 +425,10 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
                     (selectedRouterIndex != null && selectedRouterIndex < routersNamesArray.length)
                             ? selectedRouterIndex : 0);
 
-            if (!TextUtils.isEmpty(mPreviousBundleSelectedRouterVarName)) {
+            if (mPreviousBundleRouterIsVariable) {
                 mRoutersDropdown.setSelection(i);
                 mSelectedRouterVariable
-                        .setText(mPreviousBundleSelectedRouterVarName, TextView.BufferType.EDITABLE);
+                        .setText(mPreviousBundleRouterVariableName, EDITABLE);
             }
 
 
@@ -431,9 +436,9 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
             final String[] supportedCommandsArr = new String[supportedCommands.length];
             int j = 0;
             Integer selectedCommandIndex = null;
+
             for (final SupportedCommand cmd : supportedCommands) {
-                if (mPreviousBundleCustomCommand != null &&
-                        mPreviousBundleCustomCommand.equals(cmd.actionName)) {
+                if (cmd.name().equals(mPreviousBundleCommandSupportedName)) {
                     selectedCommandIndex = j;
                 }
                 supportedCommandsArr[j++] = cmd.humanReadableName;
@@ -448,17 +453,19 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
             mCommandsDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                    //TODO
                     final SupportedCommand supportedCommand = supportedCommands[position];
                     if (supportedCommand == null) {
                         return;
                     }
-                    mCommandConfiguration.setText("", TextView.BufferType.EDITABLE);
+                    mCommandConfiguration.setText("", EDITABLE);
                     switch (supportedCommand) {
                         case CUSTOM_COMMAND:
                             mCommandConfiguration.setVisibility(View.VISIBLE);
                             mCommandConfigurationVariable.setChecked(false);
                             mCommandConfigurationVariable.setVisibility(View.VISIBLE);
+                            mCommandParamEditText.setText(null);
+                            mCommandParamEditText.setHint("Command Input");
+                            mCommandParamEditText.setVisibility(View.GONE);
                             mCommand = null;
                             break;
                         default:
@@ -466,6 +473,12 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
                             mCommandConfigurationVariable.setChecked(false);
                             mCommandConfigurationVariable.setVisibility(View.GONE);
                             mCommand = supportedCommand;
+                            if (!TextUtils.isEmpty(supportedCommand.paramName)) {
+                                mCommandParamEditText.setHint(supportedCommand.paramHumanReadableHint);
+                                mCommandParamEditText.setVisibility(View.VISIBLE);
+                            } else {
+                                mCommandParamEditText.setVisibility(View.GONE);
+                            }
                             break;
                     }
                 }
@@ -480,17 +493,26 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
                 mCommandsDropdown.setSelection(selectedCommandIndex);
             }
 
-            if (!TextUtils.isEmpty(mPreviousBundleCmdVarName)) {
-                mCommandConfigurationVariable.setChecked(true);
-                mCommandConfiguration.setText(mPreviousBundleSelectedRouterVarName,
-                        TextView.BufferType.EDITABLE);
+            mCommandConfigurationVariable.setChecked(mPreviousBundleCommandCustomIsVariable);
+
+            if (mPreviousBundleCommandCustomIsVariable) {
+                mCommandConfiguration.setText(mPreviousBundleCommandCustomVariableName,
+                        EDITABLE);
+            } else {
+                mCommandConfiguration.setText(mPreviousBundleCommandCustomCmd,
+                        EDITABLE);
             }
 
-            if (!TextUtils.isEmpty(mPreviousBundleCmdOutputVarName)) {
-                mReturnOutputCheckbox.setChecked(true);
-                mReturnOutputVariable
-                        .setText(mPreviousBundleCmdOutputVarName, TextView.BufferType.EDITABLE);
+            if (mPreviousBundleCommandSupportedParamHint != null) {
+                mCommandParamEditText.setHint(mPreviousBundleCommandSupportedParamHint);
+                if (mPreviousBundleCommandSupportedParam != null) {
+                    mCommandParamEditText.setText(mPreviousBundleCommandSupportedParam, EDITABLE);
+                }
             }
+
+            mReturnOutputCheckbox.setChecked(mPreviousBundleOutputIsVariable);
+
+            mReturnOutputVariable.setText(mPreviousBundleOutputVariableName, EDITABLE);
 
         }
 
@@ -508,36 +530,43 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
 
     public enum SupportedCommand {
 
-        CUSTOM_COMMAND("-- CUSTOM COMMAND --", false, "", null),
-        REBOOT("Reboot", false, "reboot", null),
-        CLEAR_ARP_CACHE("Clear ARP Cache", false, "clear-arp-cache", null),
-        CLEAR_DNS_CACHE("Clear DNS Cache", false, "clear-dns-cache", null),
-        DHCP_RELEASE("DHCP Release", false, "dhcp-release", null),
-        DHCP_RENEW("DHCP Renew", false, "dhcp-renew", null),
-        ERASE_WAN_TRAFFIC("Erase WAN Traffic Data", false, "erase-wan-traffic", null),
-        STOP_HTTPD("Stop HTTP Server", false, "stop-httpd", null),
-        START_HTTPD("Start HTTP Server", false, "start-httpd", null),
-        RESTART_HTTPD("Restart HTTP Server", false, "restart-httpd", null),
-        RESET_BANDWIDTH_COUNTERS("Reset Bandwidth Counters", false, "reset-bandwidth-counters", null),
-        WAKE_ON_LAN("Wake On LAN", true, "wol", "mac"), //TODO Add port
-        ENABLE_OPENVPNC("Enable OpenVPN Client", false, "enable-openvpn-client", null),
-        DISABLE_OPENVPNC("Disable OpenVPN Client", false, "disable-openvpn-client", null),
-        ENABLE_OPENVPND("Enable OpenVPN Server", false, "enable-openvpn-server", null),
-        DISABLE_OPENVPND("Disable OpenVPN Server", false, "disable-openvpn-server", null),
-        ENABLE_PPTPC("Enable PPTP Client", false, "enable-pptp-client", null),
-        DISABLE_PPTPC("Disable PPTP Client", false, "disable-pptp-client", null),
-        ENABLE_PPTPD("Enable PPTP Server", false, "enable-pptp-server", null),
-        DISABLE_PPTPD("Disable PPTP Server", false, "disable-pptp-server", null),
-        ENABLE_WOLD("Enable Wake On LAN Daemon", false, "enable-wol-daemon", null),
-        DISABLE_WOLD("Disable Wake On LAN Daemon", false, "disable-wol-daemon", null),
-        ENABLE_WAN_TRAFFIC_COUNTERS("Enable WAN Traffic counters", false, "enable-wan-traffic-counters", null),
-        DISABLE_WAN_TRAFFIC_COUNTERS("Disable WAN Traffic counters", false, "diable-wan-traffic-counters", null),
-        ENABLE_SYSLOGD("Enable Syslog", false, "enable-syslog", null),
-        DISABLE_SYSLOGD("Disable Syslog", false, "disable-syslog", null),
-        ENABLE_DEVICE_WAN_ACCESS("Enable WAN Access for Device", true, "enable-device-wan-access", "mac"),
-        DISABLE_DEVICE_WAN_ACCESS("Disable WAN Access for Device", true, "disable-device-wan-access", "mac"),
-        ESABLE_WAN_ACCESS_POLICY("Enable WAN Access Policy", true, "ensable-wan-access-policy", "policy"),
-        DISABLE_WAN_ACCESS_POLICY("Disable WAN Access Policy", true, "disable-pptp-server", "policy");
+        CUSTOM_COMMAND("-- CUSTOM COMMAND --", false, "", null, null),
+        REBOOT("Reboot", false, "reboot", null, null),
+        CLEAR_ARP_CACHE("Clear ARP Cache", false, "clear-arp-cache", null, null),
+        CLEAR_DNS_CACHE("Clear DNS Cache", false, "clear-dns-cache", null, null),
+        DHCP_RELEASE("DHCP Release", false, "dhcp-release", null, null),
+        DHCP_RENEW("DHCP Renew", false, "dhcp-renew", null, null),
+        ERASE_WAN_TRAFFIC("Erase WAN Traffic Data", false, "erase-wan-traffic", null, null),
+        STOP_HTTPD("Stop HTTP Server", false, "stop-httpd", null, null),
+        START_HTTPD("Start HTTP Server", false, "start-httpd", null, null),
+        RESTART_HTTPD("Restart HTTP Server", false, "restart-httpd", null, null),
+        RESET_BANDWIDTH_COUNTERS("Reset Bandwidth Counters", false, "reset-bandwidth-counters", 
+                null, null),
+        WAKE_ON_LAN("Wake On LAN", true, "wol", "mac", "MAC Address"), //TODO Add port
+        ENABLE_OPENVPNC("Enable OpenVPN Client", false, "enable-openvpn-client", null, null),
+        DISABLE_OPENVPNC("Disable OpenVPN Client", false, "disable-openvpn-client", null, null),
+        ENABLE_OPENVPND("Enable OpenVPN Server", false, "enable-openvpn-server", null, null),
+        DISABLE_OPENVPND("Disable OpenVPN Server", false, "disable-openvpn-server", null, null),
+        ENABLE_PPTPC("Enable PPTP Client", false, "enable-pptp-client", null, null),
+        DISABLE_PPTPC("Disable PPTP Client", false, "disable-pptp-client", null, null),
+        ENABLE_PPTPD("Enable PPTP Server", false, "enable-pptp-server", null, null),
+        DISABLE_PPTPD("Disable PPTP Server", false, "disable-pptp-server", null, null),
+        ENABLE_WOLD("Enable Wake On LAN Daemon", false, "enable-wol-daemon", null, null),
+        DISABLE_WOLD("Disable Wake On LAN Daemon", false, "disable-wol-daemon", null, null),
+        ENABLE_WAN_TRAFFIC_COUNTERS("Enable WAN Traffic counters", false, 
+                "enable-wan-traffic-counters", null, null),
+        DISABLE_WAN_TRAFFIC_COUNTERS("Disable WAN Traffic counters", false, 
+                "diable-wan-traffic-counters", null, null),
+        ENABLE_SYSLOGD("Enable Syslog", false, "enable-syslog", null, null),
+        DISABLE_SYSLOGD("Disable Syslog", false, "disable-syslog", null, null),
+        ENABLE_DEVICE_WAN_ACCESS("Enable WAN Access for Device", true, "enable-device-wan-access", 
+                "mac", "Device MAC Address"),
+        DISABLE_DEVICE_WAN_ACCESS("Disable WAN Access for Device", true, "disable-device-wan-access", 
+                "mac", "Device MAC Address"),
+        ESABLE_WAN_ACCESS_POLICY("Enable WAN Access Policy", true, "ensable-wan-access-policy", 
+                "policy", "Policy Name"),
+        DISABLE_WAN_ACCESS_POLICY("Disable WAN Access Policy", true, "disable-pptp-server", 
+                "policy", "Policy Name");
 
         @Nullable
         public final String humanReadableName;
@@ -546,15 +575,19 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
         public final String actionName;
         @Nullable
         public final String paramName;
+        @Nullable
+        public final String paramHumanReadableHint;
 
-        SupportedCommand(String humanReadableName,
+        SupportedCommand(@Nullable String humanReadableName,
                          boolean isConfigurable,
-                         String actionName,
-                         String paramName) {
+                         @NonNull String actionName,
+                         @Nullable String paramName,
+                         @Nullable String paramHumanReadableHint) {
             this.humanReadableName = humanReadableName;
             this.isConfigurable = isConfigurable;
             this.actionName = actionName;
             this.paramName = paramName;
+            this.paramHumanReadableHint = paramHumanReadableHint;
         }
     }
 }
