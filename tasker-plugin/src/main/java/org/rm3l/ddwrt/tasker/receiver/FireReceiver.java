@@ -1,5 +1,6 @@
 package org.rm3l.ddwrt.tasker.receiver;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -129,7 +130,17 @@ public final class FireReceiver extends AbstractPluginSettingReceiver {
 
         final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(deepLinkUrl));
         intent.setPackage(appPackage);
-        context.startActivity(intent);
+
+        final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        Crashlytics.log(Log.DEBUG, Constants.TAG, "pendingIntent: " + pendingIntent);
+        try {
+            pendingIntent.send();
+        } catch (PendingIntent.CanceledException e) {
+            Crashlytics.logException(e);
+            Toast.makeText(context, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
+//            e.printStackTrace();
+        }
+//        context.startActivity(intent);
     }
 
 }
