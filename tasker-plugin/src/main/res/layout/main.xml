@@ -190,6 +190,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:checked="false"
                     android:text="Variable"/>
 
+                <!-- Hidden for now, as it is not possible to get a result from DeepLink Dispatch-->
 
                 <CheckBox
                     android:layout_width="match_parent"
@@ -199,6 +200,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:id="@+id/return_output_variable_checkbox"
                     android:checked="false"
+                    android:visibility="gone"
                     android:text="Return Output, if possible"/>
 
                 <EditText
