@@ -142,6 +142,22 @@ public class RouterActionsDeepLinkActivity extends Activity {
 
                 switch (action) {
 
+                    case "exec-custom":
+                        final String cmd = Strings.nullToEmpty(parameters.getString("cmd"))
+                                .toLowerCase();
+                        if (cmd.isEmpty()) {
+                            Crashlytics.log(Log.WARN, LOG_TAG, "Missing Custom Command");
+                            Toast.makeText(this, "Missing Custom Command", Toast.LENGTH_SHORT).show();
+                            finish();
+                            return;
+                        }
+                        routerAction = new ExecuteCommandRouterAction(router,
+                                RouterActionsDeepLinkActivity.this,
+                                routerActionListener,
+                                globalPrefs,
+                                cmd);
+                        break;
+
                     case "reboot":
                     case "restart":
                         routerAction = new RebootRouterAction(router, RouterActionsDeepLinkActivity.this,

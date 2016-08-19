@@ -1,30 +1,42 @@
 package org.rm3l.ddwrt.tasker.receiver;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.twofortyfouram.locale.sdk.client.receiver.AbstractPluginSettingReceiver;
 
-import org.rm3l.ddwrt.common.IDDWRTCompanionService;
+import org.rm3l.ddwrt.tasker.Constants;
 import org.rm3l.ddwrt.tasker.bundle.PluginBundleValues;
+import org.rm3l.ddwrt.tasker.ui.activity.EditActivity;
+import org.rm3l.ddwrt.tasker.ui.activity.EditActivity.SupportedCommand;
 import org.rm3l.ddwrt.tasker.utils.Utils;
 
-import static org.rm3l.ddwrt.tasker.Constants.TAG;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_COMMAND_CUSTOM_CMD;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_COMMAND_CUSTOM_IS_VARIABLE;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_COMMAND_CUSTOM_VARIABLE_NAME;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_COMMAND_IS_CUSTOM;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_COMMAND_SUPPORTED_NAME;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_COMMAND_SUPPORTED_PARAM;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_COMMAND_SUPPORTED_PARAM_HINT;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_COMMAND_SUPPORTED_PARAM_IS_VARIABLE;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_COMMAND_SUPPORTED_PARAM_VARIABLE_NAME;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_COMMAND_SUPPORTED_READABLE_NAME;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_EXTRA_INT_VERSION_CODE;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_OUTPUT_IS_VARIABLE;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_OUTPUT_VARIABLE_NAME;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_ROUTER_CANONICAL_READABLE_NAME;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_ROUTER_IS_VARIABLE;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_ROUTER_UUID;
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_ROUTER_VARIABLE_NAME;
 
 public final class FireReceiver extends AbstractPluginSettingReceiver {
-
-    /** Service to which this client will bind */
-    private IDDWRTCompanionService ddwrtCompanionService;
-
-    /** Connection to the service (inner class) */
-    private DDWRTCompanionServiceConnection conn;
 
     @Override
     protected boolean isBundleValid(@NonNull final Bundle bundle) {
@@ -38,50 +50,86 @@ public final class FireReceiver extends AbstractPluginSettingReceiver {
 
     @Override
     protected void firePluginSetting(@NonNull final Context context, @NonNull final Bundle bundle) {
-        final String ddwrtCompanionAppPackage = Utils
-                .getDDWRTCompanionAppPackage(context.getPackageManager());
-        Crashlytics.log(Log.DEBUG, TAG, "ddwrtCompanionAppPackage=" + ddwrtCompanionAppPackage);
-        if (ddwrtCompanionAppPackage == null) {
-            Crashlytics.log(Log.WARN, TAG, "DD-WRT Companion app *not* installed!");
+        Crashlytics.log(Log.DEBUG, Constants.TAG, "bundle: " + bundle);
+
+        final String appPackage = Utils.getDDWRTCompanionAppPackage(context.getPackageManager());
+        if (TextUtils.isEmpty(appPackage)) {
+            Toast.makeText(context, "DD-WRT Companion App must be installed", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // connect to the service
-        conn = new DDWRTCompanionServiceConnection(bundle);
+        final int versionCode = bundle.getInt(BUNDLE_EXTRA_INT_VERSION_CODE);
+        final boolean routerIsVariable = bundle.getBoolean(BUNDLE_ROUTER_IS_VARIABLE, false);
+        final String routerVariableName = bundle.getString(BUNDLE_ROUTER_VARIABLE_NAME);
+        final String routerUuid = bundle.getString(BUNDLE_ROUTER_UUID);
+        final String routerCanonicalReadableName = bundle.getString(BUNDLE_ROUTER_CANONICAL_READABLE_NAME);
 
-        // name must match the service's Intent filter in the Service Manifest file
-        final Intent intent = new Intent("org.rm3l.ddwrt.IDDWRTCompanionService");
-        intent.setPackage(ddwrtCompanionAppPackage);
-        // bind to the Service, create it if it's not already there
-        context.bindService(intent, conn, Context.BIND_AUTO_CREATE);
-    }
+        final boolean commandIsCustom = bundle.getBoolean(BUNDLE_COMMAND_IS_CUSTOM, false);
+        final boolean commandCustomIsVariable = bundle.getBoolean(BUNDLE_COMMAND_CUSTOM_IS_VARIABLE, false);
+        final String commandCustomVariableName = bundle.getString(BUNDLE_COMMAND_CUSTOM_VARIABLE_NAME);
+        final String commandCustomCmd = bundle.getString(BUNDLE_COMMAND_CUSTOM_CMD);
+        final String commandSupportedName = bundle.getString(BUNDLE_COMMAND_SUPPORTED_NAME);
+        final String commandSupportedReadableName = bundle.getString(BUNDLE_COMMAND_SUPPORTED_READABLE_NAME);
+        final String commandSupportedParamHint = bundle.getString(BUNDLE_COMMAND_SUPPORTED_PARAM_HINT);
+        final String commandSupportedParam = bundle.getString(BUNDLE_COMMAND_SUPPORTED_PARAM);
+        final boolean commandSupportedParamIsVariable = bundle.getBoolean(BUNDLE_COMMAND_SUPPORTED_PARAM_IS_VARIABLE);
+        final String commandSupportedParamVariableName = bundle
+                .getString(BUNDLE_COMMAND_SUPPORTED_PARAM_VARIABLE_NAME);
 
-    /** Inner class used to connect to UserDataService */
-    class DDWRTCompanionServiceConnection implements ServiceConnection {
+        final boolean outputIsVariable = bundle.getBoolean(BUNDLE_OUTPUT_IS_VARIABLE, false);
+        final String outputVariableName = bundle.getString(BUNDLE_OUTPUT_VARIABLE_NAME);
 
-        private final Bundle bundle;
+        final StringBuilder deeplinkStringBuilder = new StringBuilder()
+                .append("ddwrt://routers/");
+        if (routerIsVariable) {
+            deeplinkStringBuilder.append(routerVariableName);
+        } else {
+            deeplinkStringBuilder.append(routerUuid);
+        }
+        deeplinkStringBuilder.append("/actions/");
 
-        public DDWRTCompanionServiceConnection(Bundle bundle) {
-            this.bundle = bundle;
+        final SupportedCommand supportedCommand;
+        if (commandIsCustom) {
+            supportedCommand = SupportedCommand.CUSTOM_COMMAND;
+        } else {
+            try {
+                supportedCommand = SupportedCommand.valueOf(commandSupportedName);
+            } catch (IllegalArgumentException iae) {
+                Crashlytics.logException(iae);
+                Toast.makeText(context, "Internal Error - please try again later",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        deeplinkStringBuilder.append(supportedCommand.actionName.toLowerCase());
+
+        if (commandIsCustom) {
+            deeplinkStringBuilder.append("?cmd=");
+            if (commandCustomIsVariable) {
+                deeplinkStringBuilder.append(commandCustomVariableName);
+            } else {
+                deeplinkStringBuilder.append(commandCustomCmd);
+            }
+        } else {
+            if (!TextUtils.isEmpty(supportedCommand.paramName)) {
+                deeplinkStringBuilder.append("?").append(supportedCommand.paramName).append("=");
+                if (commandSupportedParamIsVariable) {
+                    deeplinkStringBuilder.append(commandSupportedParamVariableName);
+                } else {
+                    deeplinkStringBuilder.append(commandSupportedParam);
+                }
+            }
         }
 
-        /**
-         * is called once the bind succeeds
-         */
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            Crashlytics.log(Log.DEBUG, TAG, "Service connected");
-            ddwrtCompanionService = IDDWRTCompanionService.Stub.asInterface(service);
+        final String deepLinkUrl = deeplinkStringBuilder.toString();
 
-            //TODO Execute the actual action
-//        Toast.makeText(context, PluginBundleValues.getMessage(bundle), Toast.LENGTH_LONG).show();
-        }
+        Crashlytics.log(Log.DEBUG, Constants.TAG,
+                String.format("\n- appPackage = [%s]\n- deepLinkUrl = [%s]",
+                        appPackage, deepLinkUrl));
 
-        /*** is called once the remote service is no longer available */
-        public void onServiceDisconnected(ComponentName name) { //
-            Crashlytics.log(Log.WARN, TAG, "Service has unexpectedly disconnected");
-            ddwrtCompanionService = null;
-        }
-
+        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(deepLinkUrl));
+        intent.setPackage(appPackage);
+        context.startActivity(intent);
     }
 
 }

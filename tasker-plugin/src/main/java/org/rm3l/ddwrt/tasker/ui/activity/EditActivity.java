@@ -575,7 +575,7 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
 
     public enum SupportedCommand {
 
-        CUSTOM_COMMAND("-- CUSTOM COMMAND --", false, "", null, null),
+        CUSTOM_COMMAND("-- CUSTOM COMMAND --", false, "exec-custom", null, null),
         REBOOT("Reboot", false, "reboot", null, null),
         CLEAR_ARP_CACHE("Clear ARP Cache", false, "clear-arp-cache", null, null),
         CLEAR_DNS_CACHE("Clear DNS Cache", false, "clear-dns-cache", null, null),
