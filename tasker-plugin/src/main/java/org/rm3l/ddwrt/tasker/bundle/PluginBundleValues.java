@@ -31,6 +31,8 @@ public final class PluginBundleValues {
     public static final String BUNDLE_OUTPUT_VARIABLE_NAME = BUNDLE_PREFIX + "OUTPUT.VARIABLE_NAME";
     public static final String BUNDLE_OUTPUT_IS_VARIABLE = BUNDLE_PREFIX + "OUTPUT.IS_VARIABLE";
     public static final String BUNDLE_COMMAND_SUPPORTED_PARAM = BUNDLE_PREFIX + "COMMAND.SUPPORTED_PARAM";
+    public static final String BUNDLE_COMMAND_SUPPORTED_PARAM_VARIABLE_NAME = BUNDLE_PREFIX + "COMMAND.SUPPORTED_PARAM_VARIABLE_NAME";
+    public static final String BUNDLE_COMMAND_SUPPORTED_PARAM_IS_VARIABLE = BUNDLE_PREFIX + "COMMAND.SUPPORTED_PARAM_IS_VARIABLE";
     public static final String BUNDLE_COMMAND_SUPPORTED_PARAM_HINT = BUNDLE_PREFIX + "COMMAND.SUPPORTED_PARAM_HINT";
     public static final String BUNDLE_COMMAND_SUPPORTED_READABLE_NAME = BUNDLE_PREFIX + "COMMAND.SUPPORTED_READABLE_NAME";
     public static final String BUNDLE_COMMAND_SUPPORTED_NAME = BUNDLE_PREFIX + "COMMAND.SUPPORTED_NAME";
@@ -127,10 +129,17 @@ public final class PluginBundleValues {
                 if (!TextUtils.isEmpty(paramHint)) {
                     //Get param value
                     stringBuilder.append("\n").append(" - ")
-                            .append(paramHint)
+                            .append(paramHint);
+                    final boolean isVariableCmdParam = bundle.getBoolean(BUNDLE_COMMAND_SUPPORTED_PARAM_IS_VARIABLE, false);
+                    if (isVariableCmdParam) {
+                        stringBuilder.append(" (Variable)");
+                    }
+                    stringBuilder
                             .append(" : ")
                             .append(bundle
-                                    .getString(BUNDLE_COMMAND_SUPPORTED_PARAM, "-"));
+                                    .getString(isVariableCmdParam ?
+                                            BUNDLE_COMMAND_SUPPORTED_PARAM_VARIABLE_NAME :
+                                            BUNDLE_COMMAND_SUPPORTED_PARAM, "-"));
                 }
             }
         }
@@ -155,6 +164,7 @@ public final class PluginBundleValues {
                                         Editable customCommandConfiguration,
                                         EditActivity.SupportedCommand supportedCommand,
                                         Editable supportedCommandParam,
+                                        final boolean isVariableSupportedCommandParam,
 
                                         boolean isVariableReturnOuput,
                                         Editable returnOutputVariableName) {
@@ -193,8 +203,15 @@ public final class PluginBundleValues {
                         supportedCommand.paramHumanReadableHint);
             }
         }
-        if (supportedCommandParam != null)
-            result.putString(BUNDLE_COMMAND_SUPPORTED_PARAM, supportedCommandParam.toString());
+
+        result.putBoolean(BUNDLE_COMMAND_SUPPORTED_PARAM_IS_VARIABLE,
+                isVariableSupportedCommandParam);
+
+        if (supportedCommandParam != null) {
+            result.putString(isVariableSupportedCommandParam ?
+                    BUNDLE_COMMAND_SUPPORTED_PARAM_VARIABLE_NAME : BUNDLE_COMMAND_SUPPORTED_PARAM,
+                    supportedCommandParam.toString());
+        }
 
         result.putBoolean(BUNDLE_OUTPUT_IS_VARIABLE, isVariableReturnOuput);
         if (returnOutputVariableName != null)

@@ -176,6 +176,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="6dip"
                     android:layout_marginRight="6dip"
+                    android:id="@+id/command_configuration_input_param_variable"
+                    android:visibility="gone"
+                    android:checked="false"
+                    android:text="Variable"/>
+
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dip"
+                    android:layout_marginRight="6dip"
                     android:id="@+id/command_configuration_input_variable"
                     android:checked="false"
                     android:text="Variable"/>
@@ -186,7 +196,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="6dip"
                     android:layout_marginRight="6dip"
-                    android:layout_marginTop="8dip"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:id="@+id/return_output_variable_checkbox"
                     android:checked="false"
                     android:text="Return Output, if possible"/>

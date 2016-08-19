@@ -81,6 +81,7 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
     private EditText mReturnOutputVariable;
     private CheckBox mReturnOutputCheckbox;
     private EditText mCommandParamEditText;
+    private CheckBox mCommandParamVariable;
     private SupportedCommand mCommand;
     private String mSelectedRouterReadableName;
     
@@ -96,6 +97,8 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
     private String mPreviousBundleCommandSupportedReadableName;
     private String mPreviousBundleCommandSupportedParamHint;
     private String mPreviousBundleCommandSupportedParam;
+    private boolean mPreviousBundleCommandSupportedParamIsVariable;
+    private String mPreviousBundleCommandSupportedParamVariableName;
     private boolean mPreviousBundleOutputIsVariable;
     private String mPreviousBundleOutputVariableName;
     private String mPreviousBundleRouterVariableName;
@@ -166,11 +169,14 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
         mCommandConfigurationVariable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean newValue) {
-                if (newValue) {
-                    mCommandConfiguration.setText("%command", EDITABLE);
-                } else {
-                    mCommandConfiguration.setText(null, EDITABLE);
-                }
+                mCommandConfiguration.setHint("e.g, %command");
+//                if (newValue) {
+//                    if (TextUtils.isEmpty(mCommandConfiguration.getText())) {
+//                        mCommandConfiguration.setText("%command", EDITABLE);
+//                    }
+//                } else {
+//                    mCommandConfiguration.setText(null, EDITABLE);
+//                }
             }
         });
 
@@ -185,7 +191,19 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
             }
         });
         
-        mCommandParamEditText = (EditText) findViewById(R.id.command_configuration_input_param); 
+        mCommandParamEditText = (EditText) findViewById(R.id.command_configuration_input_param);
+
+        mCommandParamVariable = (CheckBox)
+                findViewById(R.id.command_configuration_input_param_variable);
+
+        mCommandParamVariable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    mCommandConfigurationVariable.setVisibility(View.GONE);
+                }
+            }
+        });
 
         this.ddwrtCompanionAppPackage = Utils.getDDWRTCompanionAppPackage(packageManager);
         Crashlytics.log(Log.DEBUG, Constants.TAG,
@@ -229,6 +247,10 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
         mPreviousBundleCommandSupportedReadableName = previousBundle.getString(BUNDLE_COMMAND_SUPPORTED_READABLE_NAME);
         mPreviousBundleCommandSupportedParamHint = previousBundle.getString(BUNDLE_COMMAND_SUPPORTED_PARAM_HINT);
         mPreviousBundleCommandSupportedParam = previousBundle.getString(BUNDLE_COMMAND_SUPPORTED_PARAM);
+        mPreviousBundleCommandSupportedParamIsVariable =
+                previousBundle.getBoolean(BUNDLE_COMMAND_SUPPORTED_PARAM_IS_VARIABLE);
+        mPreviousBundleCommandSupportedParamVariableName = previousBundle
+                .getString(BUNDLE_COMMAND_SUPPORTED_PARAM_VARIABLE_NAME);
 
         mPreviousBundleOutputIsVariable = previousBundle.getBoolean(BUNDLE_OUTPUT_IS_VARIABLE, false);
         mPreviousBundleOutputVariableName = previousBundle.getString(BUNDLE_OUTPUT_VARIABLE_NAME);
@@ -269,6 +291,7 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
                 mCommandConfiguration.getText(),
                 mCommand,
                 mCommandParamEditText.getText(),
+                mCommandParamVariable.isChecked(),
                 
                 mReturnOutputCheckbox.isChecked(),
                 mReturnOutputVariable.getText());
@@ -450,6 +473,22 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
 
             mCommandConfiguration.setVisibility(View.GONE);
 
+            mCommandParamVariable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (mCommand != null) {
+                        if (TextUtils.isEmpty(mCommand.paramHumanReadableHint)) {
+                            mCommandParamEditText.setHint("Variable Name");
+                        } else {
+                            if (b) {
+                                mCommandParamEditText
+                                        .setHint("Variable for '" + mCommand.paramHumanReadableHint + "'");
+                            }
+                        }
+                    }
+                }
+            });
+
             mCommandsDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
@@ -460,12 +499,13 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
                     mCommandConfiguration.setText("", EDITABLE);
                     switch (supportedCommand) {
                         case CUSTOM_COMMAND:
+                            mCommandConfigurationVariable.setChecked(mPreviousBundleCommandCustomIsVariable);
                             mCommandConfiguration.setVisibility(View.VISIBLE);
-                            mCommandConfigurationVariable.setChecked(false);
                             mCommandConfigurationVariable.setVisibility(View.VISIBLE);
                             mCommandParamEditText.setText(null);
                             mCommandParamEditText.setHint("Command Input");
                             mCommandParamEditText.setVisibility(View.GONE);
+                            mCommandParamVariable.setVisibility(View.GONE);
                             mCommand = null;
                             break;
                         default:
@@ -476,8 +516,10 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
                             if (!TextUtils.isEmpty(supportedCommand.paramName)) {
                                 mCommandParamEditText.setHint(supportedCommand.paramHumanReadableHint);
                                 mCommandParamEditText.setVisibility(View.VISIBLE);
+                                mCommandParamVariable.setVisibility(View.VISIBLE);
                             } else {
                                 mCommandParamEditText.setVisibility(View.GONE);
+                                mCommandParamVariable.setVisibility(View.GONE);
                             }
                             break;
                     }
@@ -505,7 +547,10 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
 
             if (mPreviousBundleCommandSupportedParamHint != null) {
                 mCommandParamEditText.setHint(mPreviousBundleCommandSupportedParamHint);
-                if (mPreviousBundleCommandSupportedParam != null) {
+                mCommandParamVariable.setChecked(mPreviousBundleCommandSupportedParamIsVariable);
+                if (mPreviousBundleCommandSupportedParamIsVariable) {
+                    mCommandParamEditText.setText(mPreviousBundleCommandSupportedParamVariableName, EDITABLE);
+                } else {
                     mCommandParamEditText.setText(mPreviousBundleCommandSupportedParam, EDITABLE);
                 }
             }
