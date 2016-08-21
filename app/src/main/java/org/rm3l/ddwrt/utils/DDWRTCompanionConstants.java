@@ -184,13 +184,6 @@ public final class DDWRTCompanionConstants {
 
     public static final long DRAWER_CLOSE_DELAY_MS = 10l;
 
-    /**
-     * Disabled for now (until this PR has been merged and released:
-     * https://github.com/amlcurran/ShowcaseView/pull/312)
-     * This appears to cause more and more issues on some devices
-     */
-    public static final boolean SHOWCASEVIEW_ENABLED = false;
-
     public static final String GEO_IP_API_SERVER = "http://api.petabyet.com/geoip/";
 
     public static final String COUNTRY_API_SERVER_FLAG = "http://www.geognos.com/api/en/countries/flag";

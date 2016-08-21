@@ -462,7 +462,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-ads:9.2.0'
     compile 'fr.nicolaspomepuy:discreetapprate:2.0.3@aar'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.github.amlcurran.showcaseview:library:5.4.3'
 //    compile 'com.github.halysongoncalves:pugnotification:1.8.1'
 
     compile 'org.osmdroid:osmdroid-android:5.2@aar'
@@ -512,4 +511,6 @@ dependencies {
 
     compile 'com.amazonaws:aws-android-sdk-core:2.2.+'
     compile 'com.amazonaws:aws-android-sdk-s3:2.2.+'
+
+    compile 'com.stephentuso:welcome:0.7.2'
 }

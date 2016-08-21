@@ -312,3 +312,9 @@
 # The SDK has several references of Apache HTTP client
 -dontwarn com.amazonaws.http.**
 -dontwarn com.amazonaws.metrics.**
+
+# Welcome-Android
+-keepclassmembers class * extends com.stephentuso.welcome.ui.WelcomeActivity {
+    public static java.lang.String welcomeKey();
+}
+

@@ -67,6 +67,8 @@ import com.google.common.base.Joiner;
 import com.madx.updatechecker.lib.UpdateRunnable;
 import com.pusher.client.Pusher;
 import com.pusher.client.channel.SubscriptionEventListener;
+import com.stephentuso.welcome.WelcomeScreenHelper;
+import com.stephentuso.welcome.ui.WelcomeActivity;
 
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
@@ -90,6 +92,7 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.common.utils.PushUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.customtabs.CustomTabActivityHelper;
+import org.rm3l.ddwrt.welcome.GettingStartedActivity;
 import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
 
 import java.util.ArrayList;
@@ -148,6 +151,8 @@ public class RouterManagementActivity
 
     private CustomTabActivityHelper mCustomTabActivityHelper;
     private Pusher mPusher;
+
+    private WelcomeScreenHelper welcomeScreen;
 
     @NonNull
     public static DDWRTCompanionDAO getDao(Context context) {
@@ -355,7 +360,10 @@ public class RouterManagementActivity
 
         Utils.displayRatingBarIfNeeded(this);
 
-        initOpenAddRouterFormIfNecessary();
+        welcomeScreen = new WelcomeScreenHelper(this, GettingStartedActivity.class);
+        welcomeScreen.show(savedInstanceState);
+
+//        initOpenAddRouterFormIfNecessary();
 
     }
 
@@ -704,6 +712,18 @@ public class RouterManagementActivity
                 }
             }
                 break;
+            case WelcomeScreenHelper.DEFAULT_WELCOME_SCREEN_REQUEST:
+                //TODO
+                final String welcomeKey = \"fake-key\";
+                if (resultCode == RESULT_OK) {
+                    Toast.makeText(getApplicationContext(), welcomeKey + " completed", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), welcomeKey + " canceled", Toast.LENGTH_SHORT).show();
+                }
+                initOpenAddRouterFormIfNecessary();
+                break;
+            default:
+                break;
 
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -759,6 +779,7 @@ public class RouterManagementActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         //No call for super(). Bug on API Level > 11.
+        welcomeScreen.onSaveInstanceState(outState);
     }
 
     @Override

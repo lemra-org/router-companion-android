@@ -306,4 +306,5 @@ dependencies {
     compile 'com.amazonaws:aws-android-sdk-core:2.2.+'
     compile 'com.amazonaws:aws-android-sdk-s3:2.2.+'
 
+    compile 'com.stephentuso:welcome:0.7.2'
 }

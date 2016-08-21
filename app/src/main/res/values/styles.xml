@@ -146,42 +146,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <style name="AppThemeDark.StatusBarTransparent" parent="AppThemeDark"/>
 
-    <style name="SCV_Custom_semi_transparent" parent="ShowcaseView.Light">
-        <!--<item name="sv_backgroundColor">#3333B5E5</item>-->
-        <!--<item name="sv_showcaseColor">#25467A</item> &lt;!&ndash;you can customize it&ndash;&gt;-->
-        <item name="sv_buttonText">Got it!</item> <!--you can customize it-->
-        <!--<item name="sv_backgroundColor">#3300A621</item>-->
-        <item name="sv_backgroundColor">@color/material_drawer_primary_dark</item>
-        <item name="sv_showcaseColor">#00801A</item>
-        <item name="sv_tintButtonColor">false</item>
-        <item name="sv_titleTextAppearance">@style/CustomTitle2</item>
-        <item name="sv_detailTextAppearance">@style/CustomText2</item>
-    </style>
-
-    <style name="SCV_Custom_semi_transparent.Dark" parent="ShowcaseView">
-        <item name="sv_buttonText">Got it!</item> <!--you can customize it-->
-        <!--<item name="sv_backgroundColor">#e51249d9</item>-->
-        <item name="sv_backgroundColor">@color/material_drawer_primary_dark</item>
-        <item name="sv_showcaseColor">#25467A</item>
-        <!--<item name="sv_buttonText">Close</item>-->
-        <item name="sv_titleTextAppearance">@style/CustomTitle</item>
-        <!--<item name="sv_detailTextAppearance">@style/CustomText2</item>-->
-    </style>
-
-    <style name="CustomTitle" parent="TextAppearance.ShowcaseView.Title">
-        <item name="android:textColor">#deffffff</item>
-        <item name="android:textAppearance">?android:textAppearanceLarge</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="CustomTitle2" parent="TextAppearance.ShowcaseView.Title.Light">
-        <item name="android:textColor">#deffffff</item>
-    </style>
-
-    <style name="CustomText2" parent="TextAppearance.ShowcaseView.Detail.Light">
-        <item name="android:textColor">#8affffff</item>
-    </style>
-
     <style name="MyDropDownListView" parent="android:style/Widget.Holo.ListView.DropDown">
         <item name="android:listSelector">@drawable/ad_selectable_background</item>
     </style>
@@ -254,6 +218,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </style>
     <style name="ToolbarSubtitle" parent="Base.TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
         <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+    </style>
+
+
+    <style name="CustomWelcomeScreenTheme" parent="WelcomeScreenTheme">
+        <item name="welcomeIndicatorStyle">@style/WelcomeScreenPageIndicator.Custom</item>
+        <item name="welcomeTitleTextStyle">@style/WelcomeScreenText.Title.Centered</item>
+    </style>
+
+    <style name="WelcomeScreenPageIndicator.Custom">
+        <item name="animated">true</item>
+    </style>
+
+    <style name="WelcomeScreenText.Title.Centered.Custom">
+        <item name="android:textSize">30sp</item>
     </style>
 
 </resources>

@@ -343,4 +343,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <color name="opaque_full">#FF000000</color>
     <color name="transparent_semi">#80000000</color>
 
+    <color name="blue_background">#1976D2</color>
+    <color name="teal_background">#00796B</color>
+    <color name="orange_background">#F57C00</color>
+    <color name="red_background">#D32F2F</color>
+    <color name="purple_background">#7B1FA2</color>
+
 </resources>
