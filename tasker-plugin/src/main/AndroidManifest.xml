@@ -117,7 +117,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!--</activity>-->
 
         <activity
-            android:name=".ui.activity.EditActivity"
+            android:name=".ui.activity.action.ActionEditActivity"
             android:exported="false"
             android:label="@string/plugin_name"
             android:uiOptions="splitActionBarWhenNarrow"
@@ -138,7 +138,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:exported="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/plugin_name"
-            android:targetActivity="org.rm3l.ddwrt.tasker.ui.activity.EditActivity"
+            android:targetActivity=".ui.activity.action.ActionEditActivity"
             tools:ignore="ExportedActivity">
             <!-- this Intent filter allows the plug-in to be discovered by the host. -->
             <intent-filter>
@@ -150,7 +150,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <!--android:exported="true"-->
             <!--android:icon="@mipmap/ic_launcher"-->
             <!--android:label="Toast 2 Action"-->
-            <!--android:targetActivity="org.rm3l.ddwrt.tasker.ui.activity.EditActivity"-->
+            <!--android:targetActivity="org.rm3l.ddwrt.tasker.ui.activity.action.ActionEditActivity"-->
             <!--tools:ignore="ExportedActivity">-->
             <!--&lt;!&ndash; this Intent filter allows the plug-in to be discovered by the host. &ndash;&gt;-->
             <!--<intent-filter>-->
@@ -167,7 +167,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 - There are multiple BroadcastReceivers for com.twofortyfouram.locale.intent.action.FIRE_SETTING
         -->
         <receiver
-            android:name=".receiver.FireReceiver"
+            android:name=".receiver.action.ActionFireReceiver"
             android:exported="true"
             android:process=":background"
             tools:ignore="ExportedReceiver">

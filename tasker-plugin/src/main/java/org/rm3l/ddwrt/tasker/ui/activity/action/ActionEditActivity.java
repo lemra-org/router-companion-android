@@ -1,4 +1,4 @@
-package org.rm3l.ddwrt.tasker.ui.activity;
+package org.rm3l.ddwrt.tasker.ui.activity.action;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -54,7 +54,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.*;
 
 @NotThreadSafe
-public class EditActivity extends AbstractAppCompatPluginActivity {
+public class ActionEditActivity extends AbstractAppCompatPluginActivity {
 
     public static final String DDWRT_COMPANION_SERVICE_NAME = "org.rm3l.ddwrt.IDDWRTCompanionService";
     /** Service to which this client will bind */
@@ -148,7 +148,7 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
         mErrorPlaceholder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(EditActivity.this,
+                Toast.makeText(ActionEditActivity.this,
                         mErrorPlaceholder.getText(),
                         Toast.LENGTH_SHORT).show();
             }
@@ -378,7 +378,7 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
             } catch (RemoteException e) {
                 Crashlytics.logException(e);
                 e.printStackTrace();
-                Toast.makeText(EditActivity.this, "Internal Error - please try again later", Toast.LENGTH_SHORT)
+                Toast.makeText(ActionEditActivity.this, "Internal Error - please try again later", Toast.LENGTH_SHORT)
                         .show();
                 finish();
                 return;
@@ -406,7 +406,7 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
             }
             routersNamesArray[i] = "-- VARIABLE --";
 
-            mRoutersListAdapter = new ArrayAdapter<>(EditActivity.this,
+            mRoutersListAdapter = new ArrayAdapter<>(ActionEditActivity.this,
                     R.layout.spinner_item, new ArrayList<>(Arrays.asList(routersNamesArray)));
             mRoutersListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -466,7 +466,7 @@ public class EditActivity extends AbstractAppCompatPluginActivity {
                 }
                 supportedCommandsArr[j++] = cmd.humanReadableName;
             }
-            final ArrayAdapter<String> cmdAdapter = new ArrayAdapter<>(EditActivity.this,
+            final ArrayAdapter<String> cmdAdapter = new ArrayAdapter<>(ActionEditActivity.this,
                     R.layout.spinner_item, supportedCommandsArr);
             cmdAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             mCommandsDropdown.setAdapter(cmdAdapter);

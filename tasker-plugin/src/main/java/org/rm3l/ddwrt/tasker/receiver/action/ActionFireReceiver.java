@@ -1,4 +1,4 @@
-package org.rm3l.ddwrt.tasker.receiver;
+package org.rm3l.ddwrt.tasker.receiver.action;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -13,10 +13,10 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.twofortyfouram.locale.sdk.client.receiver.AbstractPluginSettingReceiver;
 
+import org.rm3l.ddwrt.tasker.BuildConfig;
 import org.rm3l.ddwrt.tasker.Constants;
 import org.rm3l.ddwrt.tasker.bundle.PluginBundleValues;
-import org.rm3l.ddwrt.tasker.ui.activity.EditActivity;
-import org.rm3l.ddwrt.tasker.ui.activity.EditActivity.SupportedCommand;
+import org.rm3l.ddwrt.tasker.ui.activity.action.ActionEditActivity.SupportedCommand;
 import org.rm3l.ddwrt.tasker.utils.Utils;
 
 import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_COMMAND_CUSTOM_CMD;
@@ -37,7 +37,7 @@ import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_ROUTER_IS_V
 import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_ROUTER_UUID;
 import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_ROUTER_VARIABLE_NAME;
 
-public final class FireReceiver extends AbstractPluginSettingReceiver {
+public final class ActionFireReceiver extends AbstractPluginSettingReceiver {
 
     @Override
     protected boolean isBundleValid(@NonNull final Bundle bundle) {
@@ -132,6 +132,9 @@ public final class FireReceiver extends AbstractPluginSettingReceiver {
         intent.setPackage(appPackage);
 
         final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        intent.putExtra("ORIGIN_INTENT", pendingIntent);
+        intent.putExtra("CREATOR_PKG", BuildConfig.APPLICATION_ID);
+
         Crashlytics.log(Log.DEBUG, Constants.TAG, "pendingIntent: " + pendingIntent);
         try {
             pendingIntent.send();

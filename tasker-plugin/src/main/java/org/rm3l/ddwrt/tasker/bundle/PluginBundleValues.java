@@ -9,15 +9,20 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.twofortyfouram.assertion.BundleAssertions;
+import com.twofortyfouram.log.Lumberjack;
 import com.twofortyfouram.spackle.AppBuildInfo;
 
 import net.jcip.annotations.ThreadSafe;
 
 import org.rm3l.ddwrt.tasker.BuildConfig;
 import org.rm3l.ddwrt.tasker.Constants;
-import org.rm3l.ddwrt.tasker.ui.activity.EditActivity;
+import org.rm3l.ddwrt.tasker.ui.activity.action.ActionEditActivity;
 
 import static com.twofortyfouram.assertion.Assertions.assertNotNull;
+import static com.twofortyfouram.assertion.BundleAssertions.assertHasBoolean;
+import static com.twofortyfouram.assertion.BundleAssertions.assertHasString;
+import static org.rm3l.ddwrt.tasker.Constants.TAG;
 
 
 /**
@@ -69,31 +74,52 @@ public final class PluginBundleValues {
      */
     public static boolean isBundleValid(@Nullable final Bundle bundle) {
         if (null == bundle) {
+            Crashlytics.log(Log.WARN, TAG, "null == bundle");
             return false;
         }
 
-        //TODO
+        try {
+            BundleAssertions.assertHasInt(bundle, BUNDLE_EXTRA_INT_VERSION_CODE);
 
-//        try {
-//            BundleAssertions.assertHasString(bundle, BUNDLE_EXTRA_STRING_MESSAGE, false, false);
-//            BundleAssertions.assertHasInt(bundle, BUNDLE_EXTRA_INT_VERSION_CODE);
-//            BundleAssertions.assertKeyCount(bundle, 2);
-//        } catch (final AssertionError e) {
-//            Lumberjack.e("Bundle failed verification%s", e); //$NON-NLS-1$
-//            return false;
-//        }
+            assertHasBoolean(bundle, BUNDLE_ROUTER_IS_VARIABLE);
+            if (bundle.getBoolean(BUNDLE_ROUTER_IS_VARIABLE, false)) {
+                assertHasString(bundle,
+                        BUNDLE_ROUTER_VARIABLE_NAME, false, false);
+            } else {
+                assertHasString(bundle, BUNDLE_ROUTER_UUID, false, false);
+            }
+            assertHasString(bundle, BUNDLE_ROUTER_CANONICAL_READABLE_NAME, false, true);
 
-        return true;
+            assertHasBoolean(bundle, BUNDLE_COMMAND_IS_CUSTOM);
+            assertHasBoolean(bundle, BUNDLE_COMMAND_CUSTOM_IS_VARIABLE);
+            if (bundle.getBoolean(BUNDLE_COMMAND_IS_CUSTOM, false)) {
+                //Custom Command
+                if (bundle.getBoolean(BUNDLE_COMMAND_CUSTOM_IS_VARIABLE, false)) {
+                    assertHasString(bundle,
+                            BUNDLE_COMMAND_CUSTOM_VARIABLE_NAME, false, false);
+                } else {
+                    assertHasString(bundle,
+                            BUNDLE_COMMAND_CUSTOM_CMD, false, false);
+                }
+            } else {
+                //Supported command
+                assertHasString(bundle,
+                        BUNDLE_COMMAND_SUPPORTED_NAME, false, false);
+                assertHasString(bundle,
+                        BUNDLE_COMMAND_SUPPORTED_READABLE_NAME, false, false);
+            }
+            assertHasBoolean(bundle, BUNDLE_COMMAND_SUPPORTED_PARAM_IS_VARIABLE);
+
+            assertHasBoolean(bundle, BUNDLE_OUTPUT_IS_VARIABLE);
+
+            return true;
+
+        } catch (final AssertionError e) {
+            Lumberjack.e("Bundle failed verification%s", e); //$NON-NLS-1$
+            Crashlytics.logException(e);
+            return false;
+        }
     }
-
-    /**
-     * @param bundle A valid plug-in bundle.
-     * @return The message inside the plug-in bundle.
-     */
-//    @NonNull
-//    public static String getMessage(@NonNull final Bundle bundle) {
-//        return bundle.getString(BUNDLE_EXTRA_STRING_MESSAGE);
-//    }
 
     /**
      * Private constructor prevents instantiation
@@ -162,7 +188,7 @@ public final class PluginBundleValues {
                                         boolean isCustomCommand,
                                         boolean isVariableCustomCommand,
                                         Editable customCommandConfiguration,
-                                        EditActivity.SupportedCommand supportedCommand,
+                                        ActionEditActivity.SupportedCommand supportedCommand,
                                         Editable supportedCommandParam,
                                         final boolean isVariableSupportedCommandParam,
 
@@ -217,7 +243,7 @@ public final class PluginBundleValues {
         if (returnOutputVariableName != null)
             result.putString(BUNDLE_OUTPUT_VARIABLE_NAME, returnOutputVariableName.toString());
 
-        Crashlytics.log(Log.DEBUG, Constants.TAG, "result: " + result);
+        Crashlytics.log(Log.DEBUG, TAG, "result: " + result);
 
         return result;
 
