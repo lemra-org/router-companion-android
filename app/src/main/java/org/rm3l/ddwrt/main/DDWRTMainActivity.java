@@ -816,9 +816,6 @@ public class DDWRTMainActivity extends AppCompatActivity
                     .apply();
         }
 
-        final int scvTheme = (mIsThemeLight ? R.style.SCV_Custom_semi_transparent :
-                R.style.SCV_Custom_semi_transparent_Dark);
-
         final Resources resources = getResources();
 
         //Recreate Default Preferences if they are no longer available
