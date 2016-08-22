@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -83,7 +84,11 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
     private EditText mCommandParamEditText;
     private CheckBox mCommandParamVariable;
     private SupportedCommand mCommand;
+
+    private Button mFileSelectionButton;
+
     private String mSelectedRouterReadableName;
+
     
     private int mPreviousBundleIntVersionCode;
     private boolean mPreviousBundleRouterIsVariable;
@@ -201,6 +206,11 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
                 }
             }
         });
+
+        mFileSelectionButton = (Button) findViewById(R.id.custom_cmd_file_selection_button);
+//        mFileSelectionErrorTextView = (TextView) findViewById(R.id.custom_cmd_file_error_msg);
+//        mSelectedFilePathTextView = (TextView) findViewById(R.id.custom_cmd_file_path);
+
 
         this.ddwrtCompanionAppPackage = Utils.getDDWRTCompanionAppPackage(packageManager);
         Crashlytics.log(Log.DEBUG, Constants.TAG,
@@ -579,6 +589,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
     public enum SupportedCommand {
 
         CUSTOM_COMMAND("-- CUSTOM COMMAND --", false, "exec-custom", null, null),
+//        CUSTOM_SCRIPT("-- SCRIPT FILE --", false, "exec-file", null, null),
         REBOOT("Reboot", false, "reboot", null, null),
         CLEAR_ARP_CACHE("Clear ARP Cache", false, "clear-arp-cache", null, null),
         CLEAR_DNS_CACHE("Clear DNS Cache", false, "clear-dns-cache", null, null),
