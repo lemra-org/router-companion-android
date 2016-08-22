@@ -169,14 +169,11 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
         mCommandConfigurationVariable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean newValue) {
-                mCommandConfiguration.setHint("e.g, %command");
-//                if (newValue) {
-//                    if (TextUtils.isEmpty(mCommandConfiguration.getText())) {
-//                        mCommandConfiguration.setText("%command", EDITABLE);
-//                    }
-//                } else {
-//                    mCommandConfiguration.setText(null, EDITABLE);
-//                }
+                if (newValue) {
+                    mCommandConfiguration.setHint("e.g, %command");
+                } else {
+                    mCommandConfiguration.setHint("Configure your command here");
+                }
             }
         });
 
