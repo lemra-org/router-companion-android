@@ -31,6 +31,7 @@ import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.SetNVRAMVariablesAction;
 import org.rm3l.ddwrt.actions.ToggleWANAccessPolicyRouterAction;
+import org.rm3l.ddwrt.actions.UploadAndExecuteScriptRouterAction;
 import org.rm3l.ddwrt.actions.WakeOnLANRouterAction;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
@@ -41,6 +42,7 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.NVRAMParser;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -156,6 +158,33 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                 routerActionListener,
                                 globalPrefs,
                                 cmd);
+                        break;
+
+                    case "exec-file":
+                        final String resourceFile = Strings.nullToEmpty(parameters.getString("file"))
+                                .toLowerCase();
+                        if (resourceFile.isEmpty()) {
+                            Crashlytics.log(Log.WARN, LOG_TAG, "Missing path to file");
+                            Toast.makeText(this, "Missing path to file", Toast.LENGTH_SHORT).show();
+                            finish();
+                            return;
+                        }
+                        final File filePath = new File(resourceFile);
+                        if (!filePath.exists()) {
+                            Crashlytics.log(Log.WARN, LOG_TAG, "File does not exist: " + resourceFile);
+                            Toast.makeText(this, "File does not exist: " + resourceFile, Toast.LENGTH_SHORT).show();
+                            finish();
+                            return;
+                        }
+                        
+                        final String args = parameters.getString("args");
+
+                        routerAction = new UploadAndExecuteScriptRouterAction(router,
+                                RouterActionsDeepLinkActivity.this,
+                                routerActionListener,
+                                globalPrefs,
+                                filePath.getAbsolutePath(),
+                                args);
                         break;
 
                     case "reboot":
