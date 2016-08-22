@@ -312,7 +312,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
+        getMenuInflater().inflate(R.menu.menu_action_edit_activity, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -324,6 +324,24 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
                 mIsCancelled = true;
                 onBackPressed();
                 break;
+
+            case R.id.menu_refresh:
+                mLoadingView.setVisibility(View.VISIBLE);
+                mMainContentView.setEnabled(false);
+                //Reconnect to the remote service
+                unbindService(conn);
+                ddwrtCompanionService = null;
+
+                // connect to the service
+                conn = new RouterServiceConnection();
+
+                // name must match the service's Intent filter in the Service Manifest file
+                final Intent intent = new Intent(DDWRT_COMPANION_SERVICE_NAME);
+                intent.setPackage(ddwrtCompanionAppPackage);
+                // bind to the Service, create it if it's not already there
+                bindService(intent, conn, Context.BIND_AUTO_CREATE);
+                break;
+
             case R.id.ddwrt_companion_tasker_feedback:
                 new Maoni.Builder(Constants.FILEPROVIDER_AUTHORITY)
                         .withTheme(R.style.AppThemeLight_StatusBarTransparent)
@@ -378,6 +396,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
             mErrorPlaceholder.setVisibility(View.GONE);
             mLoadingView.setVisibility(View.GONE);
             mMainContentView.setVisibility(View.VISIBLE);
+            mMainContentView.setEnabled(true);
 
             final List<RouterInfo> allRouters;
             try {
@@ -490,6 +509,8 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
                             if (b) {
                                 mCommandParamEditText
                                         .setHint("Variable for '" + mCommand.paramHumanReadableHint + "'");
+                            } else {
+                                mCommandParamEditText.setHint(mCommand.paramHumanReadableHint);
                             }
                         }
                     }
@@ -580,7 +601,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
             mErrorPlaceholder.setText("Unexpected disconnection to remote service - please try again later");
             mErrorPlaceholder.setVisibility(View.VISIBLE);
             mLoadingView.setVisibility(View.VISIBLE);
-            mMainContentView.setVisibility(View.GONE);
+            mMainContentView.setEnabled(false);
             ddwrtCompanionService = null;
         }
 

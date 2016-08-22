@@ -3,16 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_save_changes"
+        android:id="@+id/menu_refresh"
         app:showAsAction="ifRoom"
         android:orderInCategory="1"
+        android:icon="@drawable/ic_refresh_white_24dp"
+        android:title="@string/menu_refresh"/>
+
+    <item
+        android:id="@+id/menu_save_changes"
+        app:showAsAction="ifRoom"
+        android:orderInCategory="2"
         android:icon="@drawable/ic_save_white_24dp"
         android:title="@string/menu_save_changes"/>
 
     <item
         android:id="@+id/menu_discard_changes"
         app:showAsAction="ifRoom"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:icon="@drawable/ic_close_white_24dp"
         android:title="@string/menu_discard_changes"/>
 
