@@ -493,7 +493,6 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
                     if (supportedCommand == null) {
                         return;
                     }
-                    mCommandConfiguration.setText("", EDITABLE);
                     switch (supportedCommand) {
                         case CUSTOM_COMMAND:
                             mCommandConfigurationVariable.setChecked(mPreviousBundleCommandCustomIsVariable);
@@ -533,6 +532,13 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
             }
 
             mCommandConfigurationVariable.setChecked(mPreviousBundleCommandCustomIsVariable);
+
+            Crashlytics.log(Log.DEBUG, Constants.TAG,
+                    "mPreviousBundleCommandCustomIsVariable: " + mPreviousBundleCommandCustomIsVariable);
+            Crashlytics.log(Log.DEBUG, Constants.TAG,
+                    "mPreviousBundleCommandCustomVariableName: " + mPreviousBundleCommandCustomVariableName);
+            Crashlytics.log(Log.DEBUG, Constants.TAG,
+                    "mPreviousBundleCommandCustomCmd: " + mPreviousBundleCommandCustomCmd);
 
             if (mPreviousBundleCommandCustomIsVariable) {
                 mCommandConfiguration.setText(mPreviousBundleCommandCustomVariableName,
