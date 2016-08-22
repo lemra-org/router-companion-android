@@ -13,4 +13,7 @@
     <string name="about">About</string>
     <string name="exit">Exit</string>
     <string name="menu_save_changes">Save</string>
+    <string name="menu_refresh">Refresh</string>
+    <string name="launch_tasker">Launch Tasker</string>
+    <string name="launch_ddwrt_companion">Launch DD-WRT Companion</string>
 </resources>

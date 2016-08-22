@@ -21,28 +21,38 @@
  */
 package org.rm3l.ddwrt.tasker.ui.activity.main;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.mikepenz.aboutlibraries.Libs;
 import com.mikepenz.aboutlibraries.LibsBuilder;
 
+import org.rm3l.ddwrt.common.utils.ActivityUtils;
 import org.rm3l.ddwrt.tasker.Constants;
 import org.rm3l.ddwrt.tasker.R;
 import org.rm3l.ddwrt.tasker.feedback.maoni.FeedbackHandler;
+import org.rm3l.ddwrt.tasker.utils.Utils;
 import org.rm3l.maoni.Maoni;
 
 /**
  * EntryPoint Activity
  */
 public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity {
+
+    private static final String TASKER_PKG_NAME = "net.dinglisch.android.taskerm";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +93,23 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
             case android.R.id.home:
                 onBackPressed();
                 break;
+
+            case R.id.launch_ddwrt_companion:
+                final String ddwrtCompanionAppPackage = Utils
+                        .getDDWRTCompanionAppPackage(getPackageManager());
+                Crashlytics.log(Log.DEBUG, Constants.TAG,
+                        "ddwrtCompanionAppPackage=" + ddwrtCompanionAppPackage);
+
+                final boolean packageNameIsEmpty = TextUtils.isEmpty(ddwrtCompanionAppPackage);
+                ActivityUtils.launchApp(this,
+                        packageNameIsEmpty ? "org.rm3l.ddwrt" : ddwrtCompanionAppPackage,
+                        true);
+                break;
+
+            case R.id.launch_tasker:
+                ActivityUtils.launchApp(this,TASKER_PKG_NAME, true);
+                break;
+
             case R.id.ddwrt_companion_tasker_feedback:
                 new Maoni.Builder(Constants.FILEPROVIDER_AUTHORITY)
                         .withTheme(R.style.AppThemeLight_StatusBarTransparent)
@@ -92,6 +119,7 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
                         .build()
                         .start(this);
                 break;
+
             case R.id.ddwrt_companion_tasker_about:
                 new LibsBuilder()
                         .withActivityTitle("About")
@@ -100,9 +128,11 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
                         //start the activity
                         .start(this);
                 break;
+
             case R.id.exit:
                 finish();
                 break;
+
             default:
                 break;
         }

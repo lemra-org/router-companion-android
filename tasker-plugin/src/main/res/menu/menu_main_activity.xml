@@ -26,6 +26,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     tools:context=".ui.activity.main.DDWRTCompanionTaskerPluginLaunchActivity">
 
     <item
+        android:id="@+id/launch_tasker"
+        android:alphabeticShortcut="t"
+        android:orderInCategory="1"
+        android:title="@string/launch_tasker"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/launch_ddwrt_companion"
+        android:alphabeticShortcut="d"
+        android:orderInCategory="2"
+        android:title="@string/launch_ddwrt_companion"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/ddwrt_companion_tasker_feedback"
         android:alphabeticShortcut="f"
         android:orderInCategory="11"
