@@ -87,8 +87,8 @@ public final class PluginBundleValues {
                         BUNDLE_ROUTER_VARIABLE_NAME, false, false);
             } else {
                 assertHasString(bundle, BUNDLE_ROUTER_UUID, false, false);
+                assertHasString(bundle, BUNDLE_ROUTER_CANONICAL_READABLE_NAME, false, true);
             }
-            assertHasString(bundle, BUNDLE_ROUTER_CANONICAL_READABLE_NAME, false, true);
 
             assertHasBoolean(bundle, BUNDLE_COMMAND_IS_CUSTOM);
             assertHasBoolean(bundle, BUNDLE_COMMAND_CUSTOM_IS_VARIABLE);
