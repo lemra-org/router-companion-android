@@ -58,11 +58,14 @@ public class UploadAndExecuteScriptRouterAction extends AbstractRouterAction<Str
                     String.format("File upload: [%s] => [%s]",
                             mFileAbsolutePath, mRemoteFileAbsolutePath));
 
-            SSHUtils.scpTo(mContext, router, globalSharedPreferences,
+            if (!SSHUtils.scpTo(mContext, router, globalSharedPreferences,
                     mFileAbsolutePath,
-                    mRemoteFileAbsolutePath);
+                    mRemoteFileAbsolutePath)) {
+                throw new IllegalStateException("Failed to upload script to the router");
+            }
 
             mResult = SSHUtils.getManualProperty(mContext, router, globalSharedPreferences,
+                    "chmod 700 " + mRemoteFileAbsolutePath,
                     mRemoteFileAbsolutePath + " " + Strings.nullToEmpty(mAdditionalArguments));
 
         } catch (Exception e) {

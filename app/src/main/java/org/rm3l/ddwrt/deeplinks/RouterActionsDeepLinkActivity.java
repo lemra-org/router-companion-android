@@ -157,6 +157,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                 RouterActionsDeepLinkActivity.this,
                                 routerActionListener,
                                 globalPrefs,
+                                true,
                                 cmd);
                         break;
 
@@ -176,7 +177,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                             finish();
                             return;
                         }
-                        
+
                         final String args = parameters.getString("args");
 
                         routerAction = new UploadAndExecuteScriptRouterAction(router,
