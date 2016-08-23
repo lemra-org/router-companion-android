@@ -87,16 +87,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_height="1dp"
                     android:background="?android:attr/listDivider"
                     android:minHeight="1dp"/>
-                <!-- TODO Add some comment here -->
-            <!--<LinearLayout-->
-                <!--android:layout_width="0dip"-->
-                <!--android:layout_height="0dp"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:layout_weight="1"-->
-                <!--android:divider="?android:dividerHorizontal"-->
-                <!--android:gravity="center"-->
-                <!--android:orientation="vertical"-->
-                <!--android:showDividers="middle" />-->
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="This requires that you have DD-WRT Companion app installed and the relevant router already registered within DD-WRT Companion."/>
 
                 <Spinner
                     android:id="@+id/select_router_dropdown"
