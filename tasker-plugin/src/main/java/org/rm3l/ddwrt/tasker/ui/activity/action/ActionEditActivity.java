@@ -113,7 +113,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.main);
+        setContentView(R.layout.activity_action_edit);
 
         final PackageManager packageManager = getPackageManager();
 

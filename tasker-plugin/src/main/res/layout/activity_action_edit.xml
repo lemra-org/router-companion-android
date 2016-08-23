@@ -82,6 +82,21 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="Select Router"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textStyle="bold"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?android:attr/listDivider"
+                    android:minHeight="1dp"/>
+                <!-- TODO Add some comment here -->
+            <!--<LinearLayout-->
+                <!--android:layout_width="0dip"-->
+                <!--android:layout_height="0dp"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:layout_weight="1"-->
+                <!--android:divider="?android:dividerHorizontal"-->
+                <!--android:gravity="center"-->
+                <!--android:orientation="vertical"-->
+                <!--android:showDividers="middle" />-->
 
                 <Spinner
                     android:id="@+id/select_router_dropdown"
@@ -121,6 +136,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="Select Command"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textStyle="bold"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?android:attr/listDivider"
+                    android:minHeight="1dp"/>
+                <!-- TODO Add some comment here -->
 
                 <Spinner
                     android:id="@+id/select_command_dropdown"
