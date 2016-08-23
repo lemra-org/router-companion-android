@@ -140,6 +140,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
 
+            <intent-filter>
+                <action android:name="org.rm3l.ddwrt.OPEN_ADD_ROUTER_WIZARD"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />

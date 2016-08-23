@@ -128,6 +128,9 @@ public class RouterManagementActivity
     private static final String LOG_TAG = RouterManagementActivity.class.getSimpleName();
     public static final String COPY_ROUTER = "copy_router";
 
+    public static final String ACTION_OPEN_ADD_ROUTER_WIZARD = "org.rm3l.ddwrt.OPEN_ADD_ROUTER_WIZARD";
+    public static final String CLOSE_ON_ACTION_DONE = "CLOSE_ON_ACTION_DONE";
+
     public static final int NEW_ROUTER_ADDED = 987;
     public static final int ROUTER_UPDATED = 876;
 
@@ -153,6 +156,7 @@ public class RouterManagementActivity
     private Pusher mPusher;
 
     private WelcomeScreenHelper welcomeScreen;
+    private boolean mCloseOnActionDone;
 
     @NonNull
     public static DDWRTCompanionDAO getDao(Context context) {
@@ -183,7 +187,8 @@ public class RouterManagementActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        handleIntent(getIntent());
+        final Intent intent = getIntent();
+        handleIntent(intent);
 
         //Default values are not set by default
         //Android bug workaround: http://code.google.com/p/android/issues/detail?id=6641
@@ -361,7 +366,13 @@ public class RouterManagementActivity
         Utils.displayRatingBarIfNeeded(this);
 
         welcomeScreen = new WelcomeScreenHelper(this, GettingStartedActivity.class);
-        welcomeScreen.show(savedInstanceState);
+
+        if (ACTION_OPEN_ADD_ROUTER_WIZARD.equals(intent.getAction())) {
+            mCloseOnActionDone = intent.getBooleanExtra(CLOSE_ON_ACTION_DONE, false);
+            this.openAddRouterForm();
+        } else {
+            welcomeScreen.show(savedInstanceState);
+        }
 
 //        initOpenAddRouterFormIfNecessary();
 
@@ -964,6 +975,23 @@ public class RouterManagementActivity
 
     private void onRouterAdd() {
         onRouterAdd(null, null, false);
+        if (this.mCloseOnActionDone) {
+            final List<Router> allRouters = RouterManagementActivity.this.dao.getAllRouters();
+            if (!allRouters.isEmpty()) {
+                final Router newRouter = allRouters.get(0);
+                if (newRouter != null) {
+                    final Intent data = new Intent();
+                    data.putExtra(ROUTER_SELECTED, newRouter.getUuid());
+                    setResult(RESULT_OK, data);
+                } else {
+                    setResult(RESULT_CANCELED);
+                }
+            } else {
+                setResult(RESULT_CANCELED);
+            }
+
+            finish();
+        }
     }
 
     @Override
