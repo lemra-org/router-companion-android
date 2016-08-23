@@ -1,5 +1,7 @@
 package org.rm3l.ddwrt.tasker.ui.activity.action;
 
+import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -39,6 +41,7 @@ import net.jcip.annotations.NotThreadSafe;
 
 import org.rm3l.ddwrt.common.IDDWRTCompanionService;
 import org.rm3l.ddwrt.common.resources.RouterInfo;
+import org.rm3l.ddwrt.common.utils.ActivityUtils;
 import org.rm3l.ddwrt.tasker.Constants;
 import org.rm3l.ddwrt.tasker.R;
 import org.rm3l.ddwrt.tasker.bundle.PluginBundleValues;
@@ -58,10 +61,21 @@ import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.*;
 public class ActionEditActivity extends AbstractAppCompatPluginActivity {
 
     public static final String DDWRT_COMPANION_SERVICE_NAME = "org.rm3l.ddwrt.IDDWRTCompanionService";
+
+    private static final int REGISTER_ROUTER_REQUEST = 1;
+
+    public static final String ACTION_OPEN_ADD_ROUTER_WIZARD = "org.rm3l.ddwrt.OPEN_ADD_ROUTER_WIZARD";
+    public static final String CLOSE_ON_ACTION_DONE = "CLOSE_ON_ACTION_DONE";
+
+    public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
+
+
     /** Service to which this client will bind */
     private IDDWRTCompanionService ddwrtCompanionService;
 
     private String ddwrtCompanionAppPackage;
+
+    private PackageManager mPackageManager;
 
     /** Connection to the service (inner class) */
     private RouterServiceConnection conn;
@@ -108,14 +122,13 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
     private String mPreviousBundleOutputVariableName;
     private String mPreviousBundleRouterVariableName;
 
-
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_action_edit);
 
-        final PackageManager packageManager = getPackageManager();
+        mPackageManager = getPackageManager();
 
         /*
          * To help the user keep context, the title shows the host's name and the subtitle
@@ -124,9 +137,8 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
         CharSequence callingApplicationLabel = null;
         try {
             callingApplicationLabel =
-                    packageManager.getApplicationLabel(
-                            packageManager.getApplicationInfo(getCallingPackage(),
-                                    0));
+                    mPackageManager.getApplicationLabel(
+                            mPackageManager.getApplicationInfo(getCallingPackage(), 0));
         } catch (final PackageManager.NameNotFoundException e) {
             Lumberjack.e("Calling package couldn't be found: %s", e); //$NON-NLS-1$
         }
@@ -212,7 +224,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
 //        mSelectedFilePathTextView = (TextView) findViewById(R.id.custom_cmd_file_path);
 
 
-        this.ddwrtCompanionAppPackage = Utils.getDDWRTCompanionAppPackage(packageManager);
+        this.ddwrtCompanionAppPackage = Utils.getDDWRTCompanionAppPackage(mPackageManager);
         Crashlytics.log(Log.DEBUG, Constants.TAG,
                 "ddwrtCompanionAppPackage=" + ddwrtCompanionAppPackage);
 
@@ -224,7 +236,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
         }
 
         // connect to the service
-        conn = new RouterServiceConnection();
+        conn = new RouterServiceConnection(false);
 
         // name must match the service's Intent filter in the Service Manifest file
         final Intent intent = new Intent(DDWRT_COMPANION_SERVICE_NAME);
@@ -267,7 +279,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
         ddwrtCompanionService = null;
 
         // connect to the service
-        conn = new RouterServiceConnection();
+        conn = new RouterServiceConnection(false);
 
         // name must match the service's Intent filter in the Service Manifest file
         final Intent intent = new Intent(DDWRT_COMPANION_SERVICE_NAME);
@@ -326,20 +338,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
                 break;
 
             case R.id.menu_refresh:
-                mLoadingView.setVisibility(View.VISIBLE);
-                mMainContentView.setEnabled(false);
-                //Reconnect to the remote service
-                unbindService(conn);
-                ddwrtCompanionService = null;
-
-                // connect to the service
-                conn = new RouterServiceConnection();
-
-                // name must match the service's Intent filter in the Service Manifest file
-                final Intent intent = new Intent(DDWRT_COMPANION_SERVICE_NAME);
-                intent.setPackage(ddwrtCompanionAppPackage);
-                // bind to the Service, create it if it's not already there
-                bindService(intent, conn, Context.BIND_AUTO_CREATE);
+                refresh();
                 break;
 
             case R.id.ddwrt_companion_tasker_feedback:
@@ -375,6 +374,23 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
         return true;
     }
 
+    private void refresh() {
+        mLoadingView.setVisibility(View.VISIBLE);
+        mMainContentView.setEnabled(false);
+        //Reconnect to the remote service
+        unbindService(conn);
+        ddwrtCompanionService = null;
+
+        // connect to the service
+        conn = new RouterServiceConnection(true);
+
+        // name must match the service's Intent filter in the Service Manifest file
+        final Intent intent = new Intent(DDWRT_COMPANION_SERVICE_NAME);
+        intent.setPackage(ddwrtCompanionAppPackage);
+        // bind to the Service, create it if it's not already there
+        bindService(intent, conn, Context.BIND_AUTO_CREATE);
+    }
+
     /** Clean up before Activity is destroyed */
     @Override
     protected void onDestroy() {
@@ -385,8 +401,32 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
         ddwrtCompanionService = null;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == REGISTER_ROUTER_REQUEST) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                // The user registered a router
+                //Set it and reload everything
+                mPreviousBundleRouterUuid = data.getStringExtra(ROUTER_SELECTED); //the new router UUID
+                refresh();
+            } else {
+                if (mRoutersDropdown != null) {
+                    mRoutersDropdown.setSelection(0);
+                }
+            }
+        }
+    }
+
     /** Inner class used to connect to UserDataService */
     class RouterServiceConnection implements ServiceConnection {
+
+        private final boolean reloading;
+
+        RouterServiceConnection(boolean reloading) {
+            this.reloading = reloading;
+        }
 
         /** is called once the bind succeeds */
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -418,7 +458,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
             }
             mErrorPlaceholder.setVisibility(View.GONE);
 
-            final String[] routersNamesArray = new String[allRouters.size() + 1];
+            final String[] routersNamesArray = new String[allRouters.size() + 2];
             int i = 0;
             Integer selectedRouterIndex = null;
             for (final RouterInfo router : allRouters) {
@@ -431,6 +471,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
                         router.getRemoteIpAddress() + ":" + router.getRemotePort() + ")");
             }
             routersNamesArray[i] = "-- VARIABLE --";
+            routersNamesArray[i+1] = ">> ADD NEW ROUTER <<";
 
             mRoutersListAdapter = new ArrayAdapter<>(ActionEditActivity.this,
                     R.layout.spinner_item, new ArrayList<>(Arrays.asList(routersNamesArray)));
@@ -439,16 +480,42 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
             mRoutersDropdown.setAdapter(mRoutersListAdapter);
 
             mRoutersDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                @SuppressLint("DefaultLocale")
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+
                     if (position == routersNamesArray.length - 1) {
+                        //Open DD-WRT Companion Android app to register a new router
+                        final String ddwrtCompanionAppPackage = Utils.getDDWRTCompanionAppPackage(mPackageManager);
+                        if (TextUtils.isEmpty(ddwrtCompanionAppPackage)) {
+                            ActivityUtils.openPlayStoreForPackage(ActionEditActivity.this, "org.rm3l.ddwrt");
+                            mRoutersDropdown.setSelection(0);
+                            return;
+                        }
+
+                        final Intent intent = new Intent(ACTION_OPEN_ADD_ROUTER_WIZARD);
+                        intent.setPackage(ddwrtCompanionAppPackage);
+                        intent.putExtra(CLOSE_ON_ACTION_DONE, true);
+
+                        try {
+                            ActionEditActivity.this.startActivityForResult(intent, REGISTER_ROUTER_REQUEST);
+                        } catch (final ActivityNotFoundException anfe) {
+                            Crashlytics.logException(anfe);
+                            ActivityUtils.openPlayStoreForPackage(ActionEditActivity.this, "org.rm3l.ddwrt");
+                            mRoutersDropdown.setSelection(0);
+                        }
+
+                    } else if (position == routersNamesArray.length - 2) {
                         //Variable
                         mSelectedRouterVariable.setVisibility(View.VISIBLE);
-                        mSelectedRouterVariable.setText("%router_name");
+                        mSelectedRouterVariable.setHint("e.g., %router_name");
                         mSelectedRouterUuid.setText(null);
                         mSelectedRouterReadableName = null;
+
                     } else {
                         mSelectedRouterVariable.setVisibility(View.GONE);
+                        mSelectedRouterVariable.setHint(null);
                         mSelectedRouterVariable.setText(null);
                         final RouterInfo routerInfo = allRouters.get(position);
                         if (routerInfo == null) {
@@ -480,118 +547,119 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
                         .setText(mPreviousBundleRouterVariableName, EDITABLE);
             }
 
+            if (!reloading) {
+                final SupportedCommand[] supportedCommands = SupportedCommand.values();
+                final String[] supportedCommandsArr = new String[supportedCommands.length];
+                int j = 0;
+                Integer selectedCommandIndex = null;
 
-            final SupportedCommand[] supportedCommands = SupportedCommand.values();
-            final String[] supportedCommandsArr = new String[supportedCommands.length];
-            int j = 0;
-            Integer selectedCommandIndex = null;
-
-            for (final SupportedCommand cmd : supportedCommands) {
-                if (cmd.name().equals(mPreviousBundleCommandSupportedName)) {
-                    selectedCommandIndex = j;
+                for (final SupportedCommand cmd : supportedCommands) {
+                    if (cmd.name().equals(mPreviousBundleCommandSupportedName)) {
+                        selectedCommandIndex = j;
+                    }
+                    supportedCommandsArr[j++] = cmd.humanReadableName;
                 }
-                supportedCommandsArr[j++] = cmd.humanReadableName;
-            }
-            final ArrayAdapter<String> cmdAdapter = new ArrayAdapter<>(ActionEditActivity.this,
-                    R.layout.spinner_item, supportedCommandsArr);
-            cmdAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            mCommandsDropdown.setAdapter(cmdAdapter);
+                final ArrayAdapter<String> cmdAdapter = new ArrayAdapter<>(ActionEditActivity.this,
+                        R.layout.spinner_item, supportedCommandsArr);
+                cmdAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                mCommandsDropdown.setAdapter(cmdAdapter);
 
-            mCommandConfiguration.setVisibility(View.GONE);
+                mCommandConfiguration.setVisibility(View.GONE);
 
-            mCommandParamVariable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    if (mCommand != null) {
-                        if (TextUtils.isEmpty(mCommand.paramHumanReadableHint)) {
-                            mCommandParamEditText.setHint("Variable Name");
-                        } else {
-                            if (b) {
-                                mCommandParamEditText
-                                        .setHint("Variable for '" + mCommand.paramHumanReadableHint + "'");
+                mCommandParamVariable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        if (mCommand != null) {
+                            if (TextUtils.isEmpty(mCommand.paramHumanReadableHint)) {
+                                mCommandParamEditText.setHint("Variable Name");
                             } else {
-                                mCommandParamEditText.setHint(mCommand.paramHumanReadableHint);
+                                if (b) {
+                                    mCommandParamEditText
+                                            .setHint("Variable for '" + mCommand.paramHumanReadableHint + "'");
+                                } else {
+                                    mCommandParamEditText.setHint(mCommand.paramHumanReadableHint);
+                                }
                             }
                         }
                     }
-                }
-            });
+                });
 
-            mCommandsDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                    final SupportedCommand supportedCommand = supportedCommands[position];
-                    if (supportedCommand == null) {
-                        return;
-                    }
-                    switch (supportedCommand) {
-                        case CUSTOM_COMMAND:
-                            mCommandConfigurationVariable.setChecked(mPreviousBundleCommandCustomIsVariable);
-                            mCommandConfiguration.setVisibility(View.VISIBLE);
-                            mCommandConfigurationVariable.setVisibility(View.VISIBLE);
-                            mCommandParamEditText.setText(null);
-                            mCommandParamEditText.setHint("Command Input");
-                            mCommandParamEditText.setVisibility(View.GONE);
-                            mCommandParamVariable.setVisibility(View.GONE);
-                            mCommand = null;
-                            break;
-                        default:
-                            mCommandConfiguration.setVisibility(View.GONE);
-                            mCommandConfigurationVariable.setChecked(false);
-                            mCommandConfigurationVariable.setVisibility(View.GONE);
-                            mCommand = supportedCommand;
-                            if (!TextUtils.isEmpty(supportedCommand.paramName)) {
-                                mCommandParamEditText.setHint(supportedCommand.paramHumanReadableHint);
-                                mCommandParamEditText.setVisibility(View.VISIBLE);
-                                mCommandParamVariable.setVisibility(View.VISIBLE);
-                            } else {
+                mCommandsDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                        final SupportedCommand supportedCommand = supportedCommands[position];
+                        if (supportedCommand == null) {
+                            return;
+                        }
+                        switch (supportedCommand) {
+                            case CUSTOM_COMMAND:
+                                mCommandConfigurationVariable.setChecked(mPreviousBundleCommandCustomIsVariable);
+                                mCommandConfiguration.setVisibility(View.VISIBLE);
+                                mCommandConfigurationVariable.setVisibility(View.VISIBLE);
+                                mCommandParamEditText.setText(null);
+                                mCommandParamEditText.setHint("Command Input");
                                 mCommandParamEditText.setVisibility(View.GONE);
                                 mCommandParamVariable.setVisibility(View.GONE);
-                            }
-                            break;
+                                mCommand = null;
+                                break;
+                            default:
+                                mCommandConfiguration.setVisibility(View.GONE);
+                                mCommandConfigurationVariable.setChecked(false);
+                                mCommandConfigurationVariable.setVisibility(View.GONE);
+                                mCommand = supportedCommand;
+                                if (!TextUtils.isEmpty(supportedCommand.paramName)) {
+                                    mCommandParamEditText.setHint(supportedCommand.paramHumanReadableHint);
+                                    mCommandParamEditText.setVisibility(View.VISIBLE);
+                                    mCommandParamVariable.setVisibility(View.VISIBLE);
+                                } else {
+                                    mCommandParamEditText.setVisibility(View.GONE);
+                                    mCommandParamVariable.setVisibility(View.GONE);
+                                }
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+
+                    }
+                });
+
+                if (selectedCommandIndex != null && selectedCommandIndex < supportedCommandsArr.length) {
+                    mCommandsDropdown.setSelection(selectedCommandIndex);
+                }
+
+                mCommandConfigurationVariable.setChecked(mPreviousBundleCommandCustomIsVariable);
+
+                Crashlytics.log(Log.DEBUG, Constants.TAG,
+                        "mPreviousBundleCommandCustomIsVariable: " + mPreviousBundleCommandCustomIsVariable);
+                Crashlytics.log(Log.DEBUG, Constants.TAG,
+                        "mPreviousBundleCommandCustomVariableName: " + mPreviousBundleCommandCustomVariableName);
+                Crashlytics.log(Log.DEBUG, Constants.TAG,
+                        "mPreviousBundleCommandCustomCmd: " + mPreviousBundleCommandCustomCmd);
+
+                if (mPreviousBundleCommandCustomIsVariable) {
+                    mCommandConfiguration.setText(mPreviousBundleCommandCustomVariableName,
+                            EDITABLE);
+                } else {
+                    mCommandConfiguration.setText(mPreviousBundleCommandCustomCmd,
+                            EDITABLE);
+                }
+
+                if (mPreviousBundleCommandSupportedParamHint != null) {
+                    mCommandParamEditText.setHint(mPreviousBundleCommandSupportedParamHint);
+                    mCommandParamVariable.setChecked(mPreviousBundleCommandSupportedParamIsVariable);
+                    if (mPreviousBundleCommandSupportedParamIsVariable) {
+                        mCommandParamEditText.setText(mPreviousBundleCommandSupportedParamVariableName, EDITABLE);
+                    } else {
+                        mCommandParamEditText.setText(mPreviousBundleCommandSupportedParam, EDITABLE);
                     }
                 }
 
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
+                mReturnOutputCheckbox.setChecked(mPreviousBundleOutputIsVariable);
 
-                }
-            });
-
-            if (selectedCommandIndex != null && selectedCommandIndex < supportedCommandsArr.length) {
-                mCommandsDropdown.setSelection(selectedCommandIndex);
+                mReturnOutputVariable.setText(mPreviousBundleOutputVariableName, EDITABLE);
             }
-
-            mCommandConfigurationVariable.setChecked(mPreviousBundleCommandCustomIsVariable);
-
-            Crashlytics.log(Log.DEBUG, Constants.TAG,
-                    "mPreviousBundleCommandCustomIsVariable: " + mPreviousBundleCommandCustomIsVariable);
-            Crashlytics.log(Log.DEBUG, Constants.TAG,
-                    "mPreviousBundleCommandCustomVariableName: " + mPreviousBundleCommandCustomVariableName);
-            Crashlytics.log(Log.DEBUG, Constants.TAG,
-                    "mPreviousBundleCommandCustomCmd: " + mPreviousBundleCommandCustomCmd);
-
-            if (mPreviousBundleCommandCustomIsVariable) {
-                mCommandConfiguration.setText(mPreviousBundleCommandCustomVariableName,
-                        EDITABLE);
-            } else {
-                mCommandConfiguration.setText(mPreviousBundleCommandCustomCmd,
-                        EDITABLE);
-            }
-
-            if (mPreviousBundleCommandSupportedParamHint != null) {
-                mCommandParamEditText.setHint(mPreviousBundleCommandSupportedParamHint);
-                mCommandParamVariable.setChecked(mPreviousBundleCommandSupportedParamIsVariable);
-                if (mPreviousBundleCommandSupportedParamIsVariable) {
-                    mCommandParamEditText.setText(mPreviousBundleCommandSupportedParamVariableName, EDITABLE);
-                } else {
-                    mCommandParamEditText.setText(mPreviousBundleCommandSupportedParam, EDITABLE);
-                }
-            }
-
-            mReturnOutputCheckbox.setChecked(mPreviousBundleOutputIsVariable);
-
-            mReturnOutputVariable.setText(mPreviousBundleOutputVariableName, EDITABLE);
 
         }
 
