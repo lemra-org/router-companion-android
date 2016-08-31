@@ -111,6 +111,8 @@ public class AccessRestrictionsWANAccessTile extends
     private static final String LOG_TAG =
             AccessRestrictionsWANAccessTile.class.getSimpleName();
 
+    private static final Splitter todHoursSplitter = Splitter.on(":").omitEmptyStrings().trimResults();
+
     private RecyclerViewEmptySupport mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -364,8 +366,9 @@ public class AccessRestrictionsWANAccessTile extends
                                         wanAccessPolicy.setTimeOfDay("24 Hours");
                                     } else {
                                         wanAccessPolicy.setTimeOfDay(
-                                                String.format(Locale.US,
-                                                        "from %s to %s", start, end));
+                                                String.format(Locale.US, "from %s to %s",
+                                                        getHourFormatted(start),
+                                                        getHourFormatted(end)));
                                     }
                                 }
                             }
@@ -395,6 +398,23 @@ public class AccessRestrictionsWANAccessTile extends
                 }
             }
         };
+    }
+
+    @NonNull
+    private static String getHourFormatted(@NonNull final String todHour) {
+        final List<String> stringList = todHoursSplitter.splitToList(todHour);
+        if (stringList.size() < 2) {
+            return todHour;
+        }
+        String hour = stringList.get(0);
+        String minutes = stringList.get(1);
+        if (hour.length() == 1) {
+            hour = ("0" + hour);
+        }
+        if (minutes.length() == 1) {
+            minutes = ("0" + minutes);
+        }
+        return (hour + ":" + minutes);
     }
 
     @Override
