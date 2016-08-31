@@ -453,6 +453,10 @@ public class RouterManagementActivity
         this.optionsMenu = menu;
         getMenuInflater().inflate(R.menu.menu_router_management, menu);
 
+        final MenuItem debugOnlyTools = menu.findItem(R.id.debug_only);
+        debugOnlyTools.setEnabled(BuildConfig.DEBUG);
+        debugOnlyTools.setVisible(BuildConfig.DEBUG);
+
         final MenuItem donateMenuItem = menu.findItem(R.id.router_list_donate);
         if (donateMenuItem != null) {
             donateMenuItem.setVisible(BuildConfig.DONATIONS);
@@ -531,6 +535,12 @@ public class RouterManagementActivity
                                         new Intent(RouterManagementActivity.this, ChangelogActivity.class));
                             }
                         }, false);
+                return true;
+
+            case R.id.debug_welcome_screen:
+                if (welcomeScreen != null) {
+                    welcomeScreen.forceShow();
+                }
                 return true;
 
             case R.id.router_list_actionbar_add:

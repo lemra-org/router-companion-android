@@ -144,6 +144,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         app:showAsAction="never"
         android:visible="false"/>
 
+        <!-- Just debug -->
+        <item
+            android:id="@+id/debug_only"
+            android:orderInCategory="80"
+            android:title="-- DEBUG (TEST) --"
+            app:showAsAction="never"
+            android:visible="false">
+            <menu>
+                <item
+                    android:id="@+id/debug_welcome_screen"
+                    android:orderInCategory="1"
+                    android:title="Force show welcome screen"
+                    app:showAsAction="never" />
+            </menu>
+        </item>
+
     <item
         android:id="@+id/exit"
         android:orderInCategory="100"
