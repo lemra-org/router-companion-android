@@ -508,7 +508,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                                         if (nameAndFollowingSplitter.size() >= 2) {
                                                             //1$$
                                                             final String s =
-                                                                    nameAndFollowingSplitter.get(1).replaceAll("$$", "");
+                                                                    nameAndFollowingSplitter.get(1).replaceAll("\\$\\$", "");
                                                             if ("0".equals(s)) {
                                                                 wanAccessPolicy.setDenyOrFilter(WANAccessPolicy.FILTER);
                                                             } else {
