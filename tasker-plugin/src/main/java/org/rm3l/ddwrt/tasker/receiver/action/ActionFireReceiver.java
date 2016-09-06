@@ -104,8 +104,10 @@ public final class ActionFireReceiver extends AbstractPluginSettingReceiver {
         }
         deeplinkStringBuilder.append(supportedCommand.actionName.toLowerCase());
 
+        deeplinkStringBuilder.append("?origin=").append(BuildConfig.APPLICATION_ID);
+
         if (commandIsCustom) {
-            deeplinkStringBuilder.append("?cmd=");
+            deeplinkStringBuilder.append("&cmd=");
             if (commandCustomIsVariable) {
                 deeplinkStringBuilder.append(commandCustomVariableName);
             } else {
@@ -113,7 +115,7 @@ public final class ActionFireReceiver extends AbstractPluginSettingReceiver {
             }
         } else {
             if (!TextUtils.isEmpty(supportedCommand.paramName)) {
-                deeplinkStringBuilder.append("?").append(supportedCommand.paramName).append("=");
+                deeplinkStringBuilder.append("&").append(supportedCommand.paramName).append("=");
                 if (commandSupportedParamIsVariable) {
                     deeplinkStringBuilder.append(commandSupportedParamVariableName);
                 } else {

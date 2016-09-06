@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -83,6 +84,15 @@ public class RouterActionsDeepLinkActivity extends Activity {
         if (intent.getBooleanExtra(DeepLink.IS_DEEP_LINK, false)) {
             //Deep link
             final Bundle parameters = intent.getExtras();
+
+            final String origin = parameters.getString("origin");
+            if (TextUtils.isEmpty(origin)) {
+                Crashlytics.log(Log.WARN, LOG_TAG,
+                        "Origin cannot be blank");
+                Toast.makeText(this, "Origin cannot be blank", Toast.LENGTH_SHORT).show();
+                finish();
+                return;
+            }
 
             final String routerUuidOrRouterName = parameters.getString("routerUuidOrRouterName");
             boolean isUuid;
@@ -594,6 +604,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                 if (routerActionTask == null) {
                     continue;
                 }
+                routerActionTask.setOrigin(origin);
                 ActionManager.runTasks(routerActionTask);
             }
         }
