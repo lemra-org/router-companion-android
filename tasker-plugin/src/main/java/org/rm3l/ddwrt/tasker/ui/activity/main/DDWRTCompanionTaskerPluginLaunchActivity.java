@@ -347,8 +347,12 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
             mSlidingUpPanel.setVisibility(View.VISIBLE);
 
             mHistoryAdapter.setService(ddwrtCompanionService);
-            mHistoryAdapter.setActionLogs(
-                    ddwrtCompanionService.getActionsByOrigin(BuildConfig.APPLICATION_ID));
+            try {
+                mHistoryAdapter.setActionLogs(
+                        ddwrtCompanionService.getActionsByOrigin(BuildConfig.APPLICATION_ID));
+            }  catch (RemoteException e) {
+                Crashlytics.logException(e);
+            }
         }
 
         @Override
