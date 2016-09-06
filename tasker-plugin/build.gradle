@@ -307,4 +307,6 @@ dependencies {
     compile 'com.amazonaws:aws-android-sdk-s3:2.2.+'
 
     compile 'com.stephentuso:welcome:0.7.2'
+
+    compile 'com.sothree.slidinguppanel:library:3.3.0'
 }
