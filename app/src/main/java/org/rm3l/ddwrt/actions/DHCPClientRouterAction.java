@@ -31,6 +31,13 @@ public class DHCPClientRouterAction extends AbstractRouterAction<Void> {
         this.mDhcpClientAction = dhcpClientAction;
     }
 
+
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
+    }
+
     @NonNull
     @Override
     protected RouterActionResult<Void> doActionInBackground() {

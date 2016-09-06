@@ -21,14 +21,23 @@
  */
 package org.rm3l.ddwrt.actions;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
+import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.common.resources.audit.ActionLog;
 import org.rm3l.ddwrt.exceptions.RouterActionException;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -52,6 +61,8 @@ public abstract class AbstractRouterAction<T> extends
     protected final Router router;
     private final UUID actionUuid;
 
+    private String origin;
+
     protected AbstractRouterAction(@NonNull final Router router,
                                    @Nullable final RouterActionListener listener,
                                    @NonNull final RouterAction routerAction,
@@ -63,8 +74,16 @@ public abstract class AbstractRouterAction<T> extends
         this.globalSharedPreferences = globalSharedPreferences;
     }
 
+    public final AbstractRouterAction setOrigin(String origin) {
+        this.origin = origin;
+        return this;
+    }
+
     @Override
     protected final RouterActionResult<T> doWork() {
+
+        final Date actionDate = new Date();
+
         try {
             //To get stats over the number of actions executed
             final Map<String, Object> eventMap = new HashMap<>();
@@ -75,7 +94,7 @@ public abstract class AbstractRouterAction<T> extends
             //No worries
         }
 
-        RouterActionResult<T> actionResult;
+        RouterActionResult<T> actionResult = null;
         try {
             actionResult = this.doActionInBackground();
         } catch (final Exception e) {
@@ -85,8 +104,36 @@ public abstract class AbstractRouterAction<T> extends
                     new RouterActionException("Exception on Action '" + routerAction + "': " +
                             actionUuid,
                             e));
+        } finally {
+            final Context context = getContext();
+            if (context != null) {
+                final ActionLog actionLog = getActionLog();
+                if (actionLog != null) {
+                    actionLog.setOriginPackageName(
+                            TextUtils.isEmpty(this.origin) ?
+                                    BuildConfig.APPLICATION_ID : this.origin);
+                    actionLog.setActionData(DateFormat.getDateTimeInstance().format(actionDate));
+                    actionLog.setUuid(this.actionUuid.toString());
+                    actionLog.setRouter(router.getUuid());
+                    actionLog.setStatus(
+                            actionResult == null || actionResult.getException() == null ? 0 : -1);
+
+                    //Record action
+                    RouterManagementActivity.getDao(context).recordAction(actionLog);
+                }
+            }
         }
         return actionResult;
+    }
+
+    protected ActionLog getActionLog() {
+        return new ActionLog()
+                .setActionName(routerAction.toString());
+    }
+
+    @Nullable
+    protected Context getContext() {
+        return null;
     }
 
     @Override

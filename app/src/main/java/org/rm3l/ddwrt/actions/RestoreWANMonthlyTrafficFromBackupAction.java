@@ -36,6 +36,12 @@ public class RestoreWANMonthlyTrafficFromBackupAction extends AbstractRouterActi
         this.mBackupFileInputStream = backupFileInputStream;
     }
 
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
+    }
+
     @NonNull
     @Override
     protected RouterActionResult<Void> doActionInBackground() {

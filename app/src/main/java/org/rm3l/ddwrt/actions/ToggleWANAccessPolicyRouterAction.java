@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 
 import com.google.common.base.Strings;
 
+import org.rm3l.ddwrt.common.resources.audit.ActionLog;
 import org.rm3l.ddwrt.resources.WANAccessPolicy;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.SSHUtils;
@@ -41,6 +42,19 @@ public class ToggleWANAccessPolicyRouterAction extends AbstractRouterAction<Void
         this.mContext = context;
         this.mWanAccessPolicy = wanAccessPolicy;
         this.mEnableStatus = enableStatus;
+    }
+
+    @Override
+    protected ActionLog getActionLog() {
+        return super.getActionLog()
+                .setActionData(String.format("- Policy Name: %s\n" +
+                        "- Status: %d", mWanAccessPolicy, mEnableStatus));
+    }
+
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
     }
 
     @NonNull

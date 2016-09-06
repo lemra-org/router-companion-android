@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.rm3l.ddwrt.common.resources.audit.ActionLog;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
@@ -35,6 +36,21 @@ public class BackupRouterAction extends AbstractRouterAction<String> {
                               @NonNull final SharedPreferences globalSharedPreferences) {
         super(router, listener, RouterAction.BACKUP, globalSharedPreferences);
         this.mContext = context;
+    }
+
+    @Nullable
+    @Override
+    protected ActionLog getActionLog() {
+        return new ActionLog()
+                .setActionName(routerAction.toString())
+                .setActionData(mLocalBackupFilePath != null ?
+                        ("Local Backup file: " + mLocalBackupFilePath.getAbsolutePath()) : "");
+    }
+
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
     }
 
     @NonNull

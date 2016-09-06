@@ -33,6 +33,7 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 
 import org.rm3l.ddwrt.actions.activity.PingRTT;
+import org.rm3l.ddwrt.common.resources.audit.ActionLog;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.SpeedTestResult;
 import org.rm3l.ddwrt.resources.WANTrafficData;
@@ -62,6 +63,15 @@ import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_SSH_STRICT_HOST_KEY_CHECKING;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_USERNAME;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_UUID;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_ACTION_DATA;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_ACTION_NAME;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_ACTION_STATUS;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_COLUMN_ID;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_ORIGIN;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_ROUTER_UUID;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_TRIGGER_DATE;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_UUID;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_ROUTERS;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_COLUMN_ID;
@@ -153,6 +163,17 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_DURATION,
             TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_FILESIZE,
             TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_DURATION};
+
+    @NonNull
+    private static final String[] auditActionLogAllColumns = {
+            TABLE_ACTIONS_AUDIT_LOG_COLUMN_ID,
+            TABLE_ACTIONS_AUDIT_LOG_UUID,
+            TABLE_ACTIONS_AUDIT_LOG_ORIGIN,
+            TABLE_ACTIONS_AUDIT_LOG_ROUTER_UUID,
+            TABLE_ACTIONS_AUDIT_LOG_TRIGGER_DATE,
+            TABLE_ACTIONS_AUDIT_LOG_ACTION_NAME,
+            TABLE_ACTIONS_AUDIT_LOG_ACTION_DATA,
+            TABLE_ACTIONS_AUDIT_LOG_ACTION_STATUS};
 
     public static synchronized void initialize(Context context) {
         if (instance == null) {
@@ -681,6 +702,163 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         }
     }
 
+    @Override
+    public Long recordAction(ActionLog actionLog) {
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
+        try {
+            return instance.openDatabase()
+                    .insertOrThrow(TABLE_ACTIONS_AUDIT_LOG, null,
+                            getContentValuesFromActionAuditLog(actionLog));
+        } catch (final RuntimeException e) {
+            ReportingUtils.reportException(null, e);
+            return null;
+
+        } finally {
+            instance.closeDatabase();
+        }
+    }
+
+    @Override
+    public Collection<ActionLog> getActionsByOrigin(String origin) {
+        if (isNullOrEmpty(origin)) {
+            return Collections.emptyList();
+        }
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
+
+        try {
+            final List<ActionLog> actionLogs = new ArrayList<>();
+            final Cursor cursor = instance.openDatabase()
+                    .query(TABLE_ACTIONS_AUDIT_LOG,
+                            auditActionLogAllColumns,
+                            String.format("%s = '%s'",
+                                    TABLE_ACTIONS_AUDIT_LOG_ORIGIN, origin),
+                            null, null, null,
+                            TABLE_ACTIONS_AUDIT_LOG_TRIGGER_DATE + " DESC");
+
+            //noinspection TryFinallyCanBeTryWithResources
+            try {
+                if (cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    while (!cursor.isAfterLast()) {
+                        final ActionLog actionLog = cursorToActionLog(cursor);
+                        actionLogs.add(actionLog);
+                        cursor.moveToNext();
+                    }
+                }
+            } finally {
+                // make sure to close the cursor
+                cursor.close();
+            }
+
+            return actionLogs;
+        } catch (final RuntimeException e) {
+            ReportingUtils.reportException(null, e);
+            throw e;
+
+        } finally {
+            instance.closeDatabase();
+        }
+    }
+
+    @Override
+    public Collection<ActionLog> getActionsByRouterByOrigin(String routerUuid, String origin) {
+        if (isNullOrEmpty(routerUuid) || isNullOrEmpty(origin)) {
+            return Collections.emptyList();
+        }
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
+
+        try {
+            final List<ActionLog> actionLogs = new ArrayList<>();
+            final Cursor cursor = instance.openDatabase()
+                    .query(TABLE_ACTIONS_AUDIT_LOG,
+                            auditActionLogAllColumns,
+                            String.format("%s = '%s' AND %s = '%s",
+                                    TABLE_ACTIONS_AUDIT_LOG_ROUTER_UUID, routerUuid,
+                                    TABLE_ACTIONS_AUDIT_LOG_ORIGIN, origin),
+                            null, null, null,
+                            TABLE_ACTIONS_AUDIT_LOG_TRIGGER_DATE + " DESC");
+
+            //noinspection TryFinallyCanBeTryWithResources
+            try {
+                if (cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    while (!cursor.isAfterLast()) {
+                        final ActionLog actionLog = cursorToActionLog(cursor);
+                        actionLogs.add(actionLog);
+                        cursor.moveToNext();
+                    }
+                }
+            } finally {
+                // make sure to close the cursor
+                cursor.close();
+            }
+
+            return actionLogs;
+        } catch (final RuntimeException e) {
+            ReportingUtils.reportException(null, e);
+            throw e;
+
+        } finally {
+            instance.closeDatabase();
+        }
+    }
+
+    @Override
+    public void clearActionsLogByOrigin(String origin) {
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
+        try {
+
+            instance.openDatabase()
+                    .delete(TABLE_ACTIONS_AUDIT_LOG,
+                            String.format("%s='%s'",
+                                    TABLE_ACTIONS_AUDIT_LOG_ORIGIN, origin),
+                            null);
+
+        } catch (final RuntimeException e) {
+            ReportingUtils.reportException(null, e);
+
+        } finally {
+            instance.closeDatabase();
+        }
+    }
+
+    @Override
+    public void clearActionsLogByRouterByOrigin(String routerUuid, String origin) {
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
+        try {
+
+            instance.openDatabase()
+                    .delete(TABLE_ACTIONS_AUDIT_LOG,
+                            String.format("%s='%s' AND %s='%s'",
+                                    TABLE_ACTIONS_AUDIT_LOG_ROUTER_UUID, routerUuid,
+                                    TABLE_ACTIONS_AUDIT_LOG_ORIGIN, origin),
+                            null);
+
+        } catch (final RuntimeException e) {
+            ReportingUtils.reportException(null, e);
+
+        } finally {
+            instance.closeDatabase();
+        }
+    }
+
+    @Override
+    public void clearActionsLogs() {
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
+        try {
+
+            instance.openDatabase()
+                    .delete(TABLE_ACTIONS_AUDIT_LOG,
+                            null,
+                            null);
+
+        } catch (final RuntimeException e) {
+            ReportingUtils.reportException(null, e);
+
+        } finally {
+            instance.closeDatabase();
+        }
+    }
 
     @NonNull
     private Router cursorToRouter(@NonNull Cursor cursor) {
@@ -742,6 +920,19 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         speedTestResult.setConnectionULDuration(cursor.getLong(22));
 
         return speedTestResult;
+    }
+
+    @NonNull
+    private ActionLog cursorToActionLog(@NonNull Cursor cursor) {
+        return new ActionLog()
+                .setId(cursor.getInt(0))
+                .setUuid(cursor.getString(1))
+                .setOriginPackageName(cursor.getString(2))
+                .setRouter(cursor.getString(3))
+                .setDate(cursor.getString(4))
+                .setActionName(cursor.getString(5))
+                .setActionData(cursor.getString(6))
+                .setStatus(cursor.getInt(7));
     }
 
     @NonNull
@@ -821,6 +1012,19 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         }
         values.put(TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_DURATION, speedTestResult.getConnectionULDuration());
 
+        return values;
+    }
+
+    @NonNull
+    private ContentValues getContentValuesFromActionAuditLog(@NonNull ActionLog actionLog) {
+        ContentValues values = new ContentValues();
+
+        values.put(DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_UUID, actionLog.getUuid());
+        values.put(DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_ORIGIN, actionLog.getOriginPackageName());
+        values.put(DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_ROUTER_UUID, actionLog.getRouter());
+        values.put(DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_TRIGGER_DATE, actionLog.getDate());
+        values.put(DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_ACTION_NAME, actionLog.getActionName());
+        values.put(DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_ACTION_DATA, actionLog.getActionData());
 
         return values;
     }

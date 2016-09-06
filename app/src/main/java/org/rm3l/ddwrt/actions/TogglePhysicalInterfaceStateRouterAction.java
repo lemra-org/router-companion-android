@@ -28,6 +28,7 @@ import android.support.annotation.Nullable;
 
 import com.google.common.base.Strings;
 
+import org.rm3l.ddwrt.common.resources.audit.ActionLog;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
@@ -47,6 +48,19 @@ public class TogglePhysicalInterfaceStateRouterAction extends AbstractRouterActi
         this.mContext = context;
         this.mPhyIface = mPhyIface;
         this.mState = mState;
+    }
+
+    @Override
+    protected ActionLog getActionLog() {
+        return super.getActionLog()
+                .setActionData(String.format("- Physical iface: %s\n" +
+                        "- State: %s", mPhyIface, mState));
+    }
+
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
     }
 
     @NonNull

@@ -32,6 +32,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 
 import org.apache.commons.io.FileUtils;
+import org.rm3l.ddwrt.common.resources.audit.ActionLog;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ReportingUtils;
@@ -76,6 +77,21 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
         } else {
             this.commandsToRunAfterCommit = ImmutableList.of();
         }
+    }
+
+    @Override
+    protected ActionLog getActionLog() {
+        return super.getActionLog()
+                .setActionData(String.format("- NVRAM Data: %s\n" +
+                        "- Commands run after commit: %s",
+                        nvramInfo.toString(),
+                        commandsToRunAfterCommit));
+    }
+
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
     }
 
     public static RouterActionResult<Void> getRouterActionResult(@NonNull final Context mContext,

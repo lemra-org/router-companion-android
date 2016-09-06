@@ -43,6 +43,12 @@ public class ResetBandwidthMonitoringCountersRouterAction extends AbstractRouter
         this.mContext = context;
     }
 
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
+    }
+
     @NonNull
     @Override
     protected RouterActionResult<Void> doActionInBackground() {

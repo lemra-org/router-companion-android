@@ -28,6 +28,7 @@ import android.support.annotation.Nullable;
 
 import com.google.common.base.Strings;
 
+import org.rm3l.ddwrt.common.resources.audit.ActionLog;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
@@ -50,6 +51,20 @@ public class ExecStreamableCommandRouterAction extends AbstractRouterAction<Void
                                              @NonNull final SharedPreferences globalSharedPreferences,
                                              @NonNull final String cmd) {
         this(router, RouterAction.CMD_SHELL, context, listener, globalSharedPreferences, cmd);
+    }
+
+    @Nullable
+    @Override
+    protected ActionLog getActionLog() {
+        return new ActionLog()
+                .setActionName(routerAction.toString())
+                .setActionData(this.mCmd);
+    }
+
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
     }
 
     @NonNull

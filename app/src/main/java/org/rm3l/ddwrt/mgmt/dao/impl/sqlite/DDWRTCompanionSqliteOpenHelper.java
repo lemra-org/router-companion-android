@@ -28,6 +28,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -154,6 +155,34 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
                     ") ON DELETE CASCADE ON UPDATE CASCADE " +
                 ");";
 
+    /*
+     * DB Table: actions_audit_log
+     */
+    public static final String TABLE_ACTIONS_AUDIT_LOG = "actions_audit_log";
+    public static final String TABLE_ACTIONS_AUDIT_LOG_COLUMN_ID = "_id";
+    public static final String TABLE_ACTIONS_AUDIT_LOG_UUID = "uuid";
+    public static final String TABLE_ACTIONS_AUDIT_LOG_ROUTER_UUID = "fk_router_uuid";
+    public static final String TABLE_ACTIONS_AUDIT_LOG_ORIGIN = "origin";
+    public static final String TABLE_ACTIONS_AUDIT_LOG_TRIGGER_DATE = "triggerDate";
+    public static final String TABLE_ACTIONS_AUDIT_LOG_ACTION_NAME = "name";
+    public static final String TABLE_ACTIONS_AUDIT_LOG_ACTION_DATA = "data";
+    public static final String TABLE_ACTIONS_AUDIT_LOG_ACTION_STATUS = "status";
+    // Database creation sql statement
+    private static final String TABLE_ACTIONS_AUDIT_LOG_CREATE = "CREATE TABLE IF NOT EXISTS " + TABLE_ACTIONS_AUDIT_LOG +
+            " (" +
+            TABLE_ACTIONS_AUDIT_LOG_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            TABLE_ACTIONS_AUDIT_LOG_UUID + " TEXT NOT NULL, " +
+            TABLE_ACTIONS_AUDIT_LOG_ROUTER_UUID + " TEXT NOT NULL, " +
+            TABLE_ACTIONS_AUDIT_LOG_ORIGIN + " TEXT, " +
+            TABLE_ACTIONS_AUDIT_LOG_TRIGGER_DATE + " TEXT NOT NULL, " +
+            TABLE_ACTIONS_AUDIT_LOG_ACTION_NAME + " TEXT NOT NULL, " +
+            TABLE_ACTIONS_AUDIT_LOG_ACTION_DATA + " TEXT NOT NULL, " +
+            TABLE_ACTIONS_AUDIT_LOG_ACTION_STATUS + " INTEGER NOT NULL, " +
+            "FOREIGN KEY (" + TABLE_ACTIONS_AUDIT_LOG_ROUTER_UUID + ") REFERENCES " +
+            TABLE_ROUTERS + "(" + ROUTER_UUID +
+            ") ON DELETE CASCADE ON UPDATE CASCADE " +
+            ");";
+
     /**
      * DB
      */
@@ -161,16 +190,17 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
 
     /*
      TODO In case of DB upgrades, don't forget to increment (by 2) this field,
-     update DATABASE_CREATE (for newer installs), and
+     update DATABASE_TABLES_TO_CREATE (for newer installs), and
      add an entry into DATABASE_UPGRADES map
     */
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 14;
 
     //TODO Don't forget to add new SQL here if a new table is to be created!
     private static final String[] DATABASE_TABLES_TO_CREATE = new String[] {
             DATABASE_CREATE,
             TABLE_WAN_TRAFFIC_CREATE,
-            TABLE_SPEED_TEST_RESULTS_CREATE
+            TABLE_SPEED_TEST_RESULTS_CREATE,
+            TABLE_ACTIONS_AUDIT_LOG_CREATE
     };
 
     private static final Multimap<Integer, String> DATABASE_UPGRADES = ArrayListMultimap.create();
@@ -215,6 +245,9 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
 //                    String.format("ALTER TABLE %s ADD COLUMN %s REAL DEFAULT NULL; ",
 //                            TABLE_SPEED_TEST_RESULTS, v10Col));
 //        }
+
+        //Actions Audit Log
+        DATABASE_UPGRADES.put(14, TABLE_ACTIONS_AUDIT_LOG_CREATE);
     }
 
     public DDWRTCompanionSqliteOpenHelper(Context context) {
@@ -242,13 +275,13 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
          */
         int upgradeTo = oldVersion + 1;
         while (upgradeTo <= newVersion) {
-            //Loop because we do not know which version users will be converted from or to
+            //Loop because we do not know which version users will be converting from or to
             final Collection<String> upgradeToSqlCollection = DATABASE_UPGRADES.get(upgradeTo);
             if (!(upgradeToSqlCollection == null || upgradeToSqlCollection.isEmpty())) {
-                Log.d(TAG, "\t--> Performing DB Upgrade " + oldVersion + "=>" + upgradeTo);
+                Crashlytics.log(Log.DEBUG, TAG, "\t--> Performing DB Upgrade " + oldVersion + "=>" + upgradeTo);
                 for (final String upgradeToSql : upgradeToSqlCollection) {
                     if (!Strings.isNullOrEmpty(upgradeToSql)) {
-                        Log.d(TAG, "\t\t>>> upgradeToSql: " + upgradeToSql);
+                        Crashlytics.log(Log.DEBUG, TAG, "\t\t>>> upgradeToSql: " + upgradeToSql);
                         db.execSQL(upgradeToSql);
                     }
                 }

@@ -28,6 +28,7 @@ import android.support.annotation.Nullable;
 
 import com.google.common.base.Joiner;
 
+import org.rm3l.ddwrt.common.resources.audit.ActionLog;
 import org.rm3l.ddwrt.resources.Device;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.SSHUtils;
@@ -68,6 +69,19 @@ public class WakeOnLANRouterAction extends AbstractRouterAction<Void> {
         }
         this.mDevice = device;
         this.port = port;
+    }
+
+    @Override
+    protected ActionLog getActionLog() {
+        return super.getActionLog()
+                .setActionData(String.format("- Device: %s (%s)\n" +
+                        "- Port: %d", mDevice.getAliasOrSystemName(), mDevice.getMacAddress(), port));
+    }
+
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return context;
     }
 
     @NonNull

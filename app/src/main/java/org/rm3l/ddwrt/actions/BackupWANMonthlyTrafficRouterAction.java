@@ -17,6 +17,7 @@ import com.google.common.io.Files;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.rm3l.ddwrt.common.resources.audit.ActionLog;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -56,6 +57,22 @@ public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<St
         super(router, listener, RouterAction.BACKUP_WAN_TRAFF, globalSharedPreferences);
         this.mContext = context;
         this.mBackupFileType = backupFileType;
+    }
+
+    @Nullable
+    @Override
+    protected ActionLog getActionLog() {
+        return new ActionLog()
+                .setActionName(routerAction.toString())
+                .setActionData(String.format("Backup type: %s\n" +
+                        "Backup File: %s", mBackupFileType,
+                        mLocalBackupFilePath != null ? mLocalBackupFilePath.getAbsolutePath() : "-"));
+    }
+
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
     }
 
     @NonNull

@@ -8,11 +8,13 @@ import android.support.annotation.Nullable;
 import com.google.common.base.Joiner;
 
 import org.apache.commons.io.FileUtils;
+import org.rm3l.ddwrt.common.resources.audit.ActionLog;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
@@ -51,6 +53,18 @@ public class ExecuteCommandRouterAction extends AbstractRouterAction<String[]> {
                                       @NonNull final String... cmd) {
         this(router, context, listener, globalSharedPreferences, cmd);
         this.potentiallyLongCommand = potentiallyLongCommand;
+    }
+
+    @Override
+    protected ActionLog getActionLog() {
+        return super.getActionLog()
+                .setActionData(String.format("- Command: %s", Arrays.toString(mCmd)));
+    }
+
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
     }
 
     @NonNull

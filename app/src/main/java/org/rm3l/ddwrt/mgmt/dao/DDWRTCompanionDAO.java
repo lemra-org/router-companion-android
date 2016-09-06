@@ -25,6 +25,7 @@ package org.rm3l.ddwrt.mgmt.dao;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.rm3l.ddwrt.common.resources.audit.ActionLog;
 import org.rm3l.ddwrt.resources.SpeedTestResult;
 import org.rm3l.ddwrt.resources.WANTrafficData;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -81,5 +82,20 @@ public interface DDWRTCompanionDAO {
     void deleteSpeedTestResultByRouterById(@NonNull final String router, final long id);
 
     void deleteAllSpeedTestResultsByRouter(@NonNull final String router);
+
+    /**
+     * Audit log of all actions performed via the Plugin
+     */
+    Long recordAction(ActionLog actionLog);
+
+    Collection<ActionLog> getActionsByOrigin(String origin);
+
+    Collection<ActionLog> getActionsByRouterByOrigin(String routerUuid, String origin);
+
+    void clearActionsLogByOrigin(String origin);
+
+    void clearActionsLogByRouterByOrigin(String routerUuid, String origin);
+
+    void clearActionsLogs();
 
 }

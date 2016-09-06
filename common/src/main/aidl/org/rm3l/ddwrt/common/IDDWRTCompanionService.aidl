@@ -2,16 +2,9 @@
 package org.rm3l.ddwrt.common;
 
 import org.rm3l.ddwrt.common.resources.RouterInfo;
-
-// Declare any non-default types here with import statements
+import org.rm3l.ddwrt.common.resources.audit.ActionLog;
 
 interface IDDWRTCompanionService {
-    /**
-     * Demonstrates some basic types that you can use as parameters
-     * and return values in AIDL.
-     */
-//    void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat,
-//            double aDouble, String aString);
 
     List<RouterInfo> getAllRouters();
 
@@ -20,4 +13,14 @@ interface IDDWRTCompanionService {
     RouterInfo getRouterById(int routerId);
 
     List<RouterInfo> lookupRoutersByName(String name);
+
+    void recordAction(in ActionLog actionLog);
+
+    List<ActionLog> getActionsByOrigin(String origin);
+
+    List<ActionLog> getActionsByRouterByOrigin(String routerUuid, String origin);
+
+    void clearActionsLogByOrigin(String origin);
+
+    void clearActionsLogByRouterByOrigin(String routerUuid, String origin);
 }

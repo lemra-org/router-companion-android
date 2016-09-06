@@ -41,6 +41,12 @@ public class ClearDNSCacheRouterAction extends AbstractRouterAction<Void> {
         this.mContext = context;
     }
 
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
+    }
+
     @NonNull
     @Override
     protected RouterActionResult<Void> doActionInBackground() {

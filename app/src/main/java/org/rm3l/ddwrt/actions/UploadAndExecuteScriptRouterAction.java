@@ -9,6 +9,7 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
 
+import org.rm3l.ddwrt.common.resources.audit.ActionLog;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
@@ -46,6 +47,23 @@ public class UploadAndExecuteScriptRouterAction extends AbstractRouterAction<Str
         this.mFileAbsolutePath = fileAbsolutePath;
         this.mRemoteFileAbsolutePath = String.format(REMOTE_DEST_FILE_FORMAT, UUID.randomUUID().toString());
         this.mAdditionalArguments = additionalArguments;
+    }
+
+    @Override
+    protected ActionLog getActionLog() {
+        return super.getActionLog()
+                .setActionData(String.format("- Local file: %s\n" +
+                        "- Remote file: %s\n" +
+                        "- Additional args: %s",
+                        mFileAbsolutePath,
+                        mRemoteFileAbsolutePath,
+                        mAdditionalArguments));
+    }
+
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
     }
 
     @NonNull

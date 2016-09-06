@@ -26,6 +26,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.rm3l.ddwrt.common.resources.audit.ActionLog;
 import org.rm3l.ddwrt.resources.Device;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.SSHUtils;
@@ -46,6 +47,19 @@ public class DisableWANAccessRouterAction extends AbstractRouterAction<Void> {
         super(router, listener, RouterAction.DISABLE_WAN_ACCESS, globalSharedPreferences);
         this.mContext = context;
         this.mDevice = device;
+    }
+
+    @Override
+    protected ActionLog getActionLog() {
+        return super.getActionLog()
+                .setActionData(String.format("Device: %s (%s)",
+                        mDevice.getAliasOrSystemName(), mDevice.getMacAddress()));
+    }
+
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
     }
 
     @NonNull

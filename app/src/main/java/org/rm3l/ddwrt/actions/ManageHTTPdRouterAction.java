@@ -53,6 +53,12 @@ public class ManageHTTPdRouterAction extends AbstractRouterAction<Void> {
         this.mHTTPdAction = httpdAction;
     }
 
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
+    }
+
     @NonNull
     @Override
     protected RouterActionResult<Void> doActionInBackground() {

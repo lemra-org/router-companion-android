@@ -26,6 +26,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.rm3l.ddwrt.common.resources.audit.ActionLog;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
@@ -43,6 +44,18 @@ public class ToggleWirelessRadioRouterAction extends AbstractRouterAction<Void> 
         super(router, listener, RouterAction.TOGGLE_WL_RADIO, globalSharedPreferences);
         this.mContext = context;
         this.mEnable = mEnable;
+    }
+
+    @Override
+    protected ActionLog getActionLog() {
+        return super.getActionLog()
+                .setActionData("- Status: " + mEnable);
+    }
+
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
     }
 
     @NonNull
