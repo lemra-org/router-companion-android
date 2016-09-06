@@ -14,7 +14,7 @@ interface IDDWRTCompanionService {
 
     List<RouterInfo> lookupRoutersByName(String name);
 
-    void recordAction(in ActionLog actionLog);
+//    void recordAction(in ActionLog actionLog);
 
     List<ActionLog> getActionsByOrigin(String origin);
 

@@ -21,38 +21,69 @@
  */
 package org.rm3l.ddwrt.tasker.ui.activity.main;
 
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import com.mikepenz.aboutlibraries.Libs;
 import com.mikepenz.aboutlibraries.LibsBuilder;
 
+import org.rm3l.ddwrt.common.IDDWRTCompanionService;
+import org.rm3l.ddwrt.common.resources.RouterInfo;
+import org.rm3l.ddwrt.common.resources.audit.ActionLog;
 import org.rm3l.ddwrt.common.utils.ActivityUtils;
+import org.rm3l.ddwrt.tasker.BuildConfig;
 import org.rm3l.ddwrt.tasker.Constants;
 import org.rm3l.ddwrt.tasker.R;
 import org.rm3l.ddwrt.tasker.feedback.maoni.FeedbackHandler;
+import org.rm3l.ddwrt.tasker.ui.activity.action.ActionEditActivity;
 import org.rm3l.ddwrt.tasker.utils.Utils;
 import org.rm3l.maoni.Maoni;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * EntryPoint Activity
  */
 public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity {
 
+    /** Service to which this client will bind */
+    private IDDWRTCompanionService ddwrtCompanionService;
+    /** Connection to the service (inner class) */
+    private RouterServiceConnection conn;
+
+    private String ddwrtCompanionAppPackage;
+
     private static final String TASKER_PKG_NAME = "net.dinglisch.android.taskerm";
+    private RecyclerView mActionHistoryRecyclerView;
+    private LinearLayoutManager mHistoryLayoutManager;
+    private TextView mHistoryEmptyView;
+    private TaskerActionHistoryAdapter mHistoryAdapter;
+    private View mSlidingUpPanel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +110,59 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
             actionBar.setDisplayShowHomeEnabled(true);
             actionBar.setIcon(R.mipmap.ic_launcher);
         }
+
+        mActionHistoryRecyclerView = (RecyclerView)
+                findViewById(R.id.tasker_main_history_recyclerview);
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        // allows for optimizations if all items are of the same size:
+        mActionHistoryRecyclerView.setHasFixedSize(true);
+        // use a linear layout manager
+        mHistoryLayoutManager = new LinearLayoutManager(this);
+        mHistoryLayoutManager.scrollToPosition(0);
+        mActionHistoryRecyclerView.setLayoutManager(mHistoryLayoutManager);
+        mHistoryEmptyView = (TextView) findViewById(R.id.tasker_main_history_recyclerview_empty_view);
+//        if (themeLight) {
+//            statsEmptyView.setTextColor(ContextCompat.getColor(this, R.color.black));
+//        } else {
+//            statsEmptyView.setTextColor(ContextCompat.getColor(this, R.color.white));
+//        }
+//        mActionHistoryRecyclerView.setEmptyView(statsEmptyView);
+//        // specify an adapter (see also next example)
+        mHistoryAdapter = new TaskerActionHistoryAdapter(this);
+        mHistoryAdapter.setActionLogs(Collections.<ActionLog> emptyList());
+        mActionHistoryRecyclerView.setAdapter(mHistoryAdapter);
+
+        mSlidingUpPanel = findViewById(R.id.tasker_main_history);
+
+        this.ddwrtCompanionAppPackage = Utils.getDDWRTCompanionAppPackage(getPackageManager());
+        Crashlytics.log(Log.DEBUG, Constants.TAG,
+                "ddwrtCompanionAppPackage=" + ddwrtCompanionAppPackage);
+        if (ddwrtCompanionAppPackage == null) {
+            //Hide history sliding layout
+            mSlidingUpPanel.setVisibility(View.GONE);
+        } else {
+            //Bind service
+            mSlidingUpPanel.setVisibility(View.VISIBLE);
+
+            // connect to the service
+            conn = new RouterServiceConnection();
+
+            // name must match the service's Intent filter in the Service Manifest file
+            final Intent intent = new Intent(ActionEditActivity.DDWRT_COMPANION_SERVICE_NAME);
+            intent.setPackage(ddwrtCompanionAppPackage);
+            // bind to the Service, create it if it's not already there
+            bindService(intent, conn, Context.BIND_AUTO_CREATE);
+        }
+
+    }
+
+    /** Clean up before Activity is destroyed */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(conn);
+        ddwrtCompanionService = null;
     }
 
     @Override
@@ -137,6 +221,142 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
                 break;
         }
         return true;
+    }
+
+    public static class TaskerActionHistoryAdapter
+            extends RecyclerView.Adapter<TaskerActionHistoryAdapter.ViewHolder>{
+
+        private final Activity activity;
+
+        private List<ActionLog> actionLogs;
+
+        private IDDWRTCompanionService service;
+
+        public TaskerActionHistoryAdapter(Activity activity) {
+            this.activity = activity;
+        }
+
+        public TaskerActionHistoryAdapter setService(IDDWRTCompanionService service) {
+            this.service = service;
+            return this;
+        }
+
+        public TaskerActionHistoryAdapter setActionLogs(List<ActionLog> actionLogs) {
+            this.actionLogs = actionLogs;
+            notifyDataSetChanged();
+            return this;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            final View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.action_history_log_cardview, parent, false);
+            final CardView cardView = (CardView)
+                    v.findViewById(R.id.action_history_log_card_view);
+            //Light
+            cardView.setCardBackgroundColor(ContextCompat
+                    .getColor(activity, R.color.cardview_light_background));
+
+//        return new ViewHolder(this.context,
+//                RippleViewCreator.addRippleToView(v));
+            return new ViewHolder(this.activity, v);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            if (position < 0 || actionLogs == null || position >= actionLogs.size() ||
+                    actionLogs.get(position) == null) {
+                Crashlytics.log(Log.WARN, Constants.TAG,
+                        "position < 0 || actionLogs == null || position >= actionLogs.size() || " +
+                                "actionLogs.get(" + position + ") == null");
+                return;
+            }
+            final ActionLog actionLog = actionLogs.get(0);
+            holder.actionNameTv.setText(actionLog.getActionName());
+            holder.dateTv.setText(actionLog.getDate());
+
+            String routerDisplayName = null;
+            if (service != null && service.asBinder().isBinderAlive()) {
+                try {
+                    final RouterInfo routerInfo = service.getRouterByUuid(actionLog.getRouter());
+                    if (routerInfo != null) {
+                        routerDisplayName = String.format("%s (%s)",
+                                TextUtils.isEmpty(routerInfo.getName()) ? "-" : routerInfo.getName(),
+                                routerInfo.isDemoRouter() ? "DEMO" :
+                                        String.format("%s:%d",
+                                                routerInfo.getRemoteIpAddress(),
+                                                routerInfo.getRemotePort()));
+                    }
+                } catch (RemoteException e) {
+                    Crashlytics.logException(e);
+                    routerDisplayName = null;
+                }
+            }
+            if (TextUtils.isEmpty(routerDisplayName)) {
+                holder.routerTitleTv.setVisibility(View.GONE);
+                holder.routerTv.setVisibility(View.GONE);
+            } else {
+                holder.routerTitleTv.setVisibility(View.VISIBLE);
+                holder.routerTv.setVisibility(View.VISIBLE);
+            }
+            holder.routerTv.setText(routerDisplayName);
+
+            holder.statusTv.setText(actionLog.getStatus() == 0 ? "Success" : "Error");
+
+        }
+
+        @Override
+        public int getItemCount() {
+            if (actionLogs != null) {
+                return actionLogs.size();
+            }
+            return 0;
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+
+            private final Context mContext;
+
+            private final TextView dateTv;
+            private final TextView actionNameTv;
+            private final TextView routerTitleTv;
+            private final TextView routerTv;
+            private final TextView statusTv;
+
+            public ViewHolder(Context mContext, View itemView) {
+                super(itemView);
+                this.mContext = mContext;
+                this.dateTv = (TextView) itemView.findViewById(R.id.action_history_log_card_view_date);
+                this.actionNameTv = (TextView) itemView.findViewById(R.id.action_history_log_card_view_action);
+                this.routerTitleTv = (TextView) itemView.findViewById(R.id.action_history_log_card_view_router_title);
+                this.routerTv = (TextView) itemView.findViewById(R.id.action_history_log_card_view_router);
+                this.statusTv = (TextView) itemView.findViewById(R.id.action_history_log_card_view_status);
+            }
+        }
+
+    }
+
+    /** Inner class used to connect to UserDataService */
+    class RouterServiceConnection implements ServiceConnection {
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            Crashlytics.log(Log.DEBUG, Constants.TAG, "Service connected");
+            ddwrtCompanionService = IDDWRTCompanionService.Stub.asInterface(service);
+
+            mSlidingUpPanel.setVisibility(View.VISIBLE);
+
+            mHistoryAdapter.setService(ddwrtCompanionService);
+            mHistoryAdapter.setActionLogs(
+                    ddwrtCompanionService.getActionsByOrigin(BuildConfig.APPLICATION_ID));
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            Crashlytics.log(Log.WARN, Constants.TAG, "Service has unexpectedly disconnected");
+            ddwrtCompanionService = null;
+            mHistoryAdapter.setService(null);
+        }
     }
 
 }

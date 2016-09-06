@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/action_history_log_card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:layout_marginStart="7dp"
+    android:layout_marginLeft="7dp"
+    android:layout_marginRight="7dp"
+    android:layout_marginEnd="7dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="5dp"
+    card_view:cardPreventCornerOverlap="true"
+    card_view:contentPaddingBottom="@dimen/activity_vertical_margin"
+    card_view:contentPaddingLeft="10dp"
+    card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin"
+    card_view:contentPaddingTop="@dimen/activity_vertical_margin">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Date"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/action_history_log_card_view_date"
+            android:layout_marginBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Action"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/action_history_log_card_view_action"
+            android:layout_marginBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/action_history_log_card_view_router_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Router"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/action_history_log_card_view_router"
+            android:layout_marginBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Status"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/action_history_log_card_view_status"
+            android:layout_marginBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+
+</android.support.v7.widget.CardView>

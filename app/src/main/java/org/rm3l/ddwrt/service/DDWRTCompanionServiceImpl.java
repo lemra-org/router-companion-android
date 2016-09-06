@@ -89,13 +89,13 @@ public class DDWRTCompanionServiceImpl extends Service {
             return routerInfoList;
         }
 
-        @Override
-        public void recordAction(ActionLog actionLog) {
-            if (isEmpty(actionLog.getOriginPackageName())) {
-                throw new IllegalArgumentException("Origin must not be blank");
-            }
-            mDao.recordAction(actionLog);
-        }
+//        @Override
+//        public void recordAction(ActionLog actionLog) {
+//            if (isEmpty(actionLog.getOriginPackageName())) {
+//                throw new IllegalArgumentException("Origin must not be blank");
+//            }
+//            mDao.recordAction(actionLog);
+//        }
 
         @Override
         public List<ActionLog> getActionsByOrigin(String origin) {
