@@ -711,9 +711,9 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
                 "mac", "Device MAC Address"),
         DISABLE_DEVICE_WAN_ACCESS("Disable WAN Access for Device", true, "disable-device-wan-access", 
                 "mac", "Device MAC Address"),
-        ESABLE_WAN_ACCESS_POLICY("Enable WAN Access Policy", true, "ensable-wan-access-policy", 
+        ESABLE_WAN_ACCESS_POLICY("Enable WAN Access Policy", true, "enable-wan-access-policy", 
                 "policy", "Policy Name"),
-        DISABLE_WAN_ACCESS_POLICY("Disable WAN Access Policy", true, "disable-pptp-server", 
+        DISABLE_WAN_ACCESS_POLICY("Disable WAN Access Policy", true, "disable-wan-access-policy", 
                 "policy", "Policy Name");
 
         @Nullable
