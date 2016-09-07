@@ -206,6 +206,7 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
 
             case R.id.ddwrt_companion_tasker_about:
                 new LibsBuilder()
+                        .withFields(R.string.class.getFields())
                         .withActivityTitle("About")
                         //provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
                         .withActivityStyle(Libs.ActivityStyle.LIGHT)
