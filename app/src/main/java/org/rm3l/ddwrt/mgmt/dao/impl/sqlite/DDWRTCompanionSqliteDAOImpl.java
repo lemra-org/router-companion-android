@@ -1025,6 +1025,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         values.put(DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_TRIGGER_DATE, actionLog.getDate());
         values.put(DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_ACTION_NAME, actionLog.getActionName());
         values.put(DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_ACTION_DATA, actionLog.getActionData());
+        values.put(DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_ACTION_STATUS, actionLog.getStatus());
 
         return values;
     }
