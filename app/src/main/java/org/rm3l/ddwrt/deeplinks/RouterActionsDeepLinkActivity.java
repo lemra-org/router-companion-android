@@ -34,6 +34,7 @@ import org.rm3l.ddwrt.actions.SetNVRAMVariablesAction;
 import org.rm3l.ddwrt.actions.ToggleWANAccessPolicyRouterAction;
 import org.rm3l.ddwrt.actions.UploadAndExecuteScriptRouterAction;
 import org.rm3l.ddwrt.actions.WakeOnLANRouterAction;
+import org.rm3l.ddwrt.common.resources.audit.ActionLog;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.Device;
@@ -44,9 +45,11 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.NVRAMParser;
 
 import java.io.File;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -67,11 +70,57 @@ public class RouterActionsDeepLinkActivity extends Activity {
 
     private static final String LOG_TAG = RouterActionsDeepLinkActivity.class
             .getSimpleName();
+    public static final String DISABLE_DEVICE_WAN_ACCESS = "disable-device-wan-access";
+    public static final String ENABLE_DEVICE_WAN_ACCESS = "enable-device-wan-access";
+    public static final String DISABLE_WAN_POLICY = "disable-wan-policy";
+    public static final String DISABLE_WAN_ACCESS_POLICY = "disable-wan-access-policy";
+    public static final String ENABLE_WAN_POLICY = "enable-wan-policy";
+    public static final String ENABLE_WAN_ACCESS_POLICY = "enable-wan-access-policy";
+    public static final String DISABLE_SYSLOG = "disable-syslog";
+    public static final String ENABLE_SYSLOG = "enable-syslog";
+    public static final String DISABLE_WAN_TRAFFIC_COUNTERS = "disable-wan-traffic-counters";
+    public static final String ENABLE_WAN_TRAFFIC_COUNTERS = "enable-wan-traffic-counters";
+    public static final String DISABLE_WOLD = "disable-wold";
+    public static final String DISABLE_WOL_DAEMON = "disable-wol-daemon";
+    public static final String DISABLE_WAKE_ON_LAN_DAEMON = "disable-wake-on-lan-daemon";
+    public static final String ENABLE_WOLD = "enable-wold";
+    public static final String ENABLE_WOL_DAEMON = "enable-wol-daemon";
+    public static final String ENABLE_WAKE_ON_LAN_DAEMON = "enable-wake-on-lan-daemon";
+    public static final String DISABLE_PPTPD = "disable-pptpd";
+    public static final String DISABLE_PPTP_SERVER = "disable-pptp-server";
+    public static final String ENABLE_PPTPD = "enable-pptpd";
+    public static final String ENABLE_PPTP_SERVER = "enable-pptp-server";
+    public static final String DISABLE_PPTPC = "disable-pptpc";
+    public static final String DISABLE_PPTP_CLIENT = "disable-pptp-client";
+    public static final String ENABLE_PPTPC = "enable-pptpc";
+    public static final String ENABLE_PPTP_CLIENT = "enable-pptp-client";
+    public static final String DISABLE_OPENVPND = "disable-openvpnd";
+    public static final String DISABLE_OPENVPN_SERVER = "disable-openvpn-server";
+    public static final String ENABLE_OPENVPND = "enable-openvpnd";
+    public static final String ENABLE_OPENVPN_SERVER = "enable-openvpn-server";
+    public static final String DISABLE_OPENVPNC = "disable-openvpnc";
+    public static final String DISABLE_OPENVPN_CLIENT = "disable-openvpn-client";
+    public static final String ENABLE_OPENVPNC = "enable-openvpnc";
+    public static final String ENABLE_OPENVPN_CLIENT = "enable-openvpn-client";
+    public static final String WOL = "wol";
+    public static final String WAKE_ON_LAN = "wake-on-lan";
+    public static final String RESET_BANDWIDTH_COUNTERS = "reset-bandwidth-counters";
+    public static final String RESTART_HTTPD = "restart-httpd";
+    public static final String START_HTTPD = "start-httpd";
+    public static final String STOP_HTTPD = "stop-httpd";
+    public static final String ERASE_WAN_TRAFFIC = "erase-wan-traffic";
+    public static final String DHCP_RENEW = "dhcp-renew";
+    public static final String DHCP_RELEASE = "dhcp-release";
+    public static final String CLEAR_DNS_CACHE = "clear-dns-cache";
+    public static final String CLEAR_ARP_CACHE = "clear-arp-cache";
+    public static final String RESTART = "restart";
+    public static final String REBOOT = "reboot";
+    public static final String EXEC_FILE = "exec-file";
+    public static final String EXEC_CUSTOM = "exec-custom";
 
     private DDWRTCompanionDAO mDao;
 
     private Collection<Router> mRouters;
-    private RouterActionListener routerActionListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,18 +174,6 @@ public class RouterActionsDeepLinkActivity extends Activity {
                 return;
             }
 
-            routerActionListener = new RouterActionListener() {
-                @Override
-                public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
-                    finish();
-                }
-
-                @Override
-                public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
-                    finish();
-                }
-            };
-
             final SharedPreferences globalPrefs = getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                     Context.MODE_PRIVATE);
 
@@ -145,16 +182,42 @@ public class RouterActionsDeepLinkActivity extends Activity {
 
             final List<AbstractRouterAction<?>> routerActions = new ArrayList<>();
 
+            final Date actionDate = new Date();
+
             for (final Router router : mRouters) {
                 if (router == null) {
                     continue;
                 }
 
+                final ActionLog actionLog = new ActionLog()
+                        .setUuid(UUID.randomUUID().toString())
+                        .setOriginPackageName(origin)
+                        .setRouter(router.getUuid())
+                        .setDate(DateFormat.getDateTimeInstance().format(actionDate))
+                        .setActionName(toHumanReadableName(action))
+                        .setActionData(parameters.toString());
+
                 final AbstractRouterAction<?> routerAction;
+
+                final RouterActionListener routerActionListener = new RouterActionListener() {
+                    @Override
+                    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                        actionLog.setStatus(0);
+                        mDao.recordAction(actionLog);
+                        finish();
+                    }
+
+                    @Override
+                    public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                        actionLog.setStatus(-1);
+                        mDao.recordAction(actionLog);
+                        finish();
+                    }
+                };
 
                 switch (action) {
 
-                    case "exec-custom":
+                    case EXEC_CUSTOM:
                         final String cmd = Strings.nullToEmpty(parameters.getString("cmd"))
                                 .toLowerCase();
                         if (cmd.isEmpty()) {
@@ -171,7 +234,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                 cmd);
                         break;
 
-                    case "exec-file":
+                    case EXEC_FILE:
                         final String resourceFile = Strings.nullToEmpty(parameters.getString("file"))
                                 .toLowerCase();
                         if (resourceFile.isEmpty()) {
@@ -198,74 +261,74 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                 args);
                         break;
 
-                    case "reboot":
-                    case "restart":
+                    case REBOOT:
+                    case RESTART:
                         routerAction = new RebootRouterAction(router, RouterActionsDeepLinkActivity.this,
                                 routerActionListener,
                                 globalPrefs);
                         break;
 
-                    case "clear-arp-cache":
+                    case CLEAR_ARP_CACHE:
                         routerAction = new ClearARPCacheRouterAction(router, RouterActionsDeepLinkActivity.this,
                                 routerActionListener,
                                 globalPrefs);
                         break;
 
-                    case "clear-dns-cache":
+                    case CLEAR_DNS_CACHE:
                         routerAction = new ClearDNSCacheRouterAction(router, RouterActionsDeepLinkActivity.this,
                                 routerActionListener,
                                 globalPrefs);
                         break;
 
-                    case "dhcp-release":
+                    case DHCP_RELEASE:
                         routerAction = new DHCPClientRouterAction(router, RouterActionsDeepLinkActivity.this,
                                 routerActionListener,
                                 globalPrefs,
                                 DHCPClientRouterAction.DHCPClientAction.RELEASE);
                         break;
 
-                    case "dhcp-renew":
+                    case DHCP_RENEW:
                         routerAction = new DHCPClientRouterAction(router, RouterActionsDeepLinkActivity.this,
                                 routerActionListener,
                                 globalPrefs,
                                 DHCPClientRouterAction.DHCPClientAction.RENEW);
                         break;
 
-                    case "erase-wan-traffic":
+                    case ERASE_WAN_TRAFFIC:
                         routerAction = new EraseWANMonthlyTrafficRouterAction(router, RouterActionsDeepLinkActivity.this,
                                 routerActionListener,
                                 globalPrefs);
                         break;
 
-                    case "stop-httpd":
+                    case STOP_HTTPD:
                         routerAction = new ManageHTTPdRouterAction(router, RouterActionsDeepLinkActivity.this,
                                 routerActionListener,
                                 globalPrefs,
                                 ManageHTTPdRouterAction.STOP);
                         break;
 
-                    case "start-httpd":
+                    case START_HTTPD:
                         routerAction = new ManageHTTPdRouterAction(router, RouterActionsDeepLinkActivity.this,
                                 routerActionListener,
                                 globalPrefs,
                                 ManageHTTPdRouterAction.START);
                         break;
 
-                    case "restart-httpd":
+                    case RESTART_HTTPD:
                         routerAction = new ManageHTTPdRouterAction(router, RouterActionsDeepLinkActivity.this,
                                 routerActionListener,
                                 globalPrefs,
                                 ManageHTTPdRouterAction.RESTART);
                         break;
 
-                    case "reset-bandwidth-counters":
+                    case RESET_BANDWIDTH_COUNTERS:
                         routerAction = new ResetBandwidthMonitoringCountersRouterAction(router, RouterActionsDeepLinkActivity.this,
                                 routerActionListener,
                                 globalPrefs);
                         break;
 
-                    case "wake-on-lan":
-                    case "wol": {
+                    case WAKE_ON_LAN:
+                    case WOL: {
                         final String deviceMac = Strings.nullToEmpty(parameters.getString("mac"))
                                 .toLowerCase();
                         if (deviceMac.isEmpty()) {
@@ -291,17 +354,23 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                     public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
                                         if (!(returnData instanceof Map)) {
                                             Crashlytics.log(Log.ERROR, LOG_TAG, "returnData is NOT an instance of Map");
+                                            routerActionListener.onRouterActionFailure(routerAction, router,
+                                                    new IllegalStateException("returnData is NOT an instance of Map"));
                                             return;
                                         }
                                         final Map resultMap = (Map) returnData;
                                         final Object resultForRouter = resultMap.get(router.getUuid());
                                         if (!(resultForRouter instanceof String[])) {
                                             Crashlytics.log(Log.ERROR, LOG_TAG, "resultForRouter is NOT an instance of String[]");
+                                            routerActionListener.onRouterActionFailure(routerAction, router,
+                                                    new IllegalStateException("resultForRouter is NOT an instance of String[]"));
                                             return;
                                         }
                                         final String[] wanAndLanBroadcast = (String[]) resultForRouter;
                                         if (wanAndLanBroadcast.length == 0) {
                                             Crashlytics.log(Log.ERROR, LOG_TAG, "No broadcast address found");
+                                            routerActionListener.onRouterActionFailure(routerAction, router,
+                                                    new IllegalStateException("No broadcast address found"));
                                             return;
                                         }
 
@@ -319,6 +388,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                     @Override
                                     public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
                                         Crashlytics.log(Log.ERROR, LOG_TAG, "Error on action: " + routerAction);
+                                        routerActionListener.onRouterActionFailure(routerAction, router, exception);
                                     }
                                 },
                                 globalPrefs,
@@ -327,10 +397,10 @@ public class RouterActionsDeepLinkActivity extends Activity {
                     }
                     break;
 
-                    case "enable-openvpn-client":
-                    case "enable-openvpnc":
-                    case "disable-openvpn-client":
-                    case "disable-openvpnc": {
+                    case ENABLE_OPENVPN_CLIENT:
+                    case ENABLE_OPENVPNC:
+                    case DISABLE_OPENVPN_CLIENT:
+                    case DISABLE_OPENVPNC: {
                         final NVRAMInfo nvramInfo = new NVRAMInfo();
                         nvramInfo.setProperty(NVRAMInfo.OPENVPNCL_ENABLE,
                                 action.startsWith("enable") ? "1" : "0");
@@ -343,10 +413,10 @@ public class RouterActionsDeepLinkActivity extends Activity {
                     }
                     break;
 
-                    case "enable-openvpn-server":
-                    case "enable-openvpnd":
-                    case "disable-openvpn-server":
-                    case "disable-openvpnd": {
+                    case ENABLE_OPENVPN_SERVER:
+                    case ENABLE_OPENVPND:
+                    case DISABLE_OPENVPN_SERVER:
+                    case DISABLE_OPENVPND: {
                         final NVRAMInfo nvramInfo = new NVRAMInfo();
                         nvramInfo.setProperty(NVRAMInfo.OPENVPN_ENABLE,
                                 action.startsWith("enable") ? "1" : "0");
@@ -359,10 +429,10 @@ public class RouterActionsDeepLinkActivity extends Activity {
                     }
                     break;
 
-                    case "enable-pptp-client":
-                    case "enable-pptpc":
-                    case "disable-pptp-client":
-                    case "disable-pptpc": {
+                    case ENABLE_PPTP_CLIENT:
+                    case ENABLE_PPTPC:
+                    case DISABLE_PPTP_CLIENT:
+                    case DISABLE_PPTPC: {
                         final NVRAMInfo nvramInfo = new NVRAMInfo();
                         nvramInfo.setProperty(NVRAMInfo.PPTPD_CLIENT_ENABLE,
                                 action.startsWith("enable") ? "1" : "0");
@@ -375,10 +445,10 @@ public class RouterActionsDeepLinkActivity extends Activity {
                     }
                     break;
 
-                    case "enable-pptp-server":
-                    case "enable-pptpd":
-                    case "disable-pptp-server":
-                    case "disable-pptpd": {
+                    case ENABLE_PPTP_SERVER:
+                    case ENABLE_PPTPD:
+                    case DISABLE_PPTP_SERVER:
+                    case DISABLE_PPTPD: {
                         final NVRAMInfo nvramInfo = new NVRAMInfo();
                         nvramInfo.setProperty(NVRAMInfo.PPTPD_ENABLE,
                                 action.startsWith("enable") ? "1" : "0");
@@ -391,12 +461,12 @@ public class RouterActionsDeepLinkActivity extends Activity {
                     }
                     break;
 
-                    case "enable-wake-on-lan-daemon":
-                    case "enable-wol-daemon":
-                    case "enable-wold":
-                    case "disable-wake-on-lan-daemon":
-                    case "disable-wol-daemon":
-                    case "disable-wold": {
+                    case ENABLE_WAKE_ON_LAN_DAEMON:
+                    case ENABLE_WOL_DAEMON:
+                    case ENABLE_WOLD:
+                    case DISABLE_WAKE_ON_LAN_DAEMON:
+                    case DISABLE_WOL_DAEMON:
+                    case DISABLE_WOLD: {
                         final NVRAMInfo nvramInfo = new NVRAMInfo();
                         nvramInfo.setProperty(NVRAMInfo.WOL_ENABLE,
                                 action.startsWith("enable") ? "1" : "0");
@@ -409,8 +479,8 @@ public class RouterActionsDeepLinkActivity extends Activity {
                     }
                     break;
 
-                    case "enable-wan-traffic-counters":
-                    case "disable-wan-traffic-counters": {
+                    case ENABLE_WAN_TRAFFIC_COUNTERS:
+                    case DISABLE_WAN_TRAFFIC_COUNTERS: {
                         final NVRAMInfo nvramInfo = new NVRAMInfo();
                         nvramInfo.setProperty(NVRAMInfo.TTRAFF_ENABLE,
                                 action.startsWith("enable") ? "1" : "0");
@@ -423,8 +493,8 @@ public class RouterActionsDeepLinkActivity extends Activity {
                     }
                     break;
 
-                    case "enable-syslog":
-                    case "disable-syslog": {
+                    case ENABLE_SYSLOG:
+                    case DISABLE_SYSLOG: {
                         final NVRAMInfo nvramInfo = new NVRAMInfo();
                         nvramInfo.setProperty(NVRAMInfo.SYSLOGD_ENABLE,
                                 action.startsWith("enable") ? "1" : "0");
@@ -437,10 +507,10 @@ public class RouterActionsDeepLinkActivity extends Activity {
                     }
                     break;
 
-                    case "enable-wan-access-policy":
-                    case "enable-wan-policy":
-                    case "disable-wan-access-policy":
-                    case "disable-wan-policy":
+                    case ENABLE_WAN_ACCESS_POLICY:
+                    case ENABLE_WAN_POLICY:
+                    case DISABLE_WAN_ACCESS_POLICY:
+                    case DISABLE_WAN_POLICY:
                         final String policyName = Strings.nullToEmpty(parameters.getString("policy"))
                                 .toLowerCase();
                         if (policyName.isEmpty()) {
@@ -458,17 +528,23 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                     public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
                                         if (!(returnData instanceof Map)) {
                                             Crashlytics.log(Log.ERROR, LOG_TAG, "returnData is NOT an instance of Map");
+                                            routerActionListener.onRouterActionFailure(routerAction, router,
+                                                    new IllegalStateException("returnData is NOT an instance of Map"));
                                             return;
                                         }
                                         final Map resultMap = (Map) returnData;
                                         final Object resultForRouter = resultMap.get(router.getUuid());
                                         if (!(resultForRouter instanceof String[])) {
                                             Crashlytics.log(Log.ERROR, LOG_TAG, "resultForRouter is NOT an instance of String[]");
+                                            routerActionListener.onRouterActionFailure(routerAction, router,
+                                                    new IllegalStateException("resultForRouter is NOT an instance of String[]"));
                                             return;
                                         }
                                         final String[] policies = (String[]) resultForRouter;
                                         if (policies.length == 0) {
                                             Crashlytics.log(Log.ERROR, LOG_TAG, "No Policy found");
+                                            routerActionListener.onRouterActionFailure(routerAction, router,
+                                                    new IllegalArgumentException("No Policy found"));
                                             return;
                                         }
 
@@ -478,6 +554,8 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                         if (nvramInfo == null
                                                 || (properties = nvramInfo.getData()) == null) {
                                             Crashlytics.log(Log.ERROR, LOG_TAG, "No Policy found");
+                                            routerActionListener.onRouterActionFailure(routerAction, router,
+                                                    new IllegalArgumentException("No Policy found"));
                                             return;
                                         }
 
@@ -549,6 +627,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                     @Override
                                     public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
                                         Crashlytics.log(Log.ERROR, LOG_TAG, "Error on action: " + routerAction);
+                                        routerActionListener.onRouterActionFailure(routerAction, router, exception);
                                     }
                                 },
                                 globalPrefs,
@@ -556,8 +635,8 @@ public class RouterActionsDeepLinkActivity extends Activity {
 
                         break;
 
-                    case "enable-device-wan-access":
-                    case "disable-device-wan-access": {
+                    case ENABLE_DEVICE_WAN_ACCESS:
+                    case DISABLE_DEVICE_WAN_ACCESS: {
                         final String deviceMac = Strings.nullToEmpty(parameters.getString("mac"))
                                 .toLowerCase();
                         if (deviceMac.isEmpty()) {
@@ -604,12 +683,100 @@ public class RouterActionsDeepLinkActivity extends Activity {
                 if (routerActionTask == null) {
                     continue;
                 }
-                routerActionTask.setOrigin(origin);
+                // Do not record action in the AbstractRouterAction.
+                // Our own action listener will perform the appropriate actions
+                routerActionTask.setRecordActionForAudit(false);
                 ActionManager.runTasks(routerActionTask);
             }
         }
 
         finish();
+    }
+
+    @NonNull
+    private static String toHumanReadableName(@NonNull final String action) {
+        switch (action) {
+            case EXEC_CUSTOM:
+                return "Execute custom command";
+            case EXEC_FILE:
+                return "Execute script from file";
+            case REBOOT:
+            case RESTART:
+                return "Reboot";
+            case CLEAR_ARP_CACHE:
+                return "Clear ARP Cache";
+            case CLEAR_DNS_CACHE:
+                return "Clear DNS Cache";
+            case DHCP_RELEASE:
+                return "DHCP Release";
+            case DHCP_RENEW:
+                return "DHCP Renew";
+            case ERASE_WAN_TRAFFIC:
+                return "Erase WAN Traffic Data";
+            case STOP_HTTPD:
+                return "Stop HTTP Server";
+            case START_HTTPD:
+                return "Start HTTP Server";
+            case RESTART_HTTPD:
+                return "Restart HTTP Server";
+            case RESET_BANDWIDTH_COUNTERS:
+                return "Reset Bandwidth Counters";
+            case WAKE_ON_LAN:
+            case WOL:
+                return "Wake On LAN";
+            case ENABLE_OPENVPN_CLIENT:
+            case ENABLE_OPENVPNC:
+                return "Enable OpenVPN Client";
+            case DISABLE_OPENVPN_CLIENT:
+            case DISABLE_OPENVPNC:
+                return "Disable OpenVPN Client";
+            case ENABLE_OPENVPN_SERVER:
+            case ENABLE_OPENVPND:
+                return "Enable OpenVPN Server";
+            case DISABLE_OPENVPN_SERVER:
+            case DISABLE_OPENVPND:
+                return "Disable OpenVPN Server";
+            case ENABLE_PPTP_CLIENT:
+            case ENABLE_PPTPC:
+                return "Enable PPTP Client";
+            case DISABLE_PPTP_CLIENT:
+            case DISABLE_PPTPC:
+                return "Disable PPTP Client";
+            case ENABLE_PPTP_SERVER:
+            case ENABLE_PPTPD:
+                return "Enable PPTP Server";
+            case DISABLE_PPTP_SERVER:
+            case DISABLE_PPTPD:
+                return "Disable PPTP Server";
+            case ENABLE_WAKE_ON_LAN_DAEMON:
+            case ENABLE_WOL_DAEMON:
+            case ENABLE_WOLD:
+                return "Enable Wake On LAN Daemon";
+            case DISABLE_WAKE_ON_LAN_DAEMON:
+            case DISABLE_WOL_DAEMON:
+            case DISABLE_WOLD:
+                return "Disable Wake On LAN Daemon";
+            case ENABLE_WAN_TRAFFIC_COUNTERS:
+                return "Enable WAN Traffic counters";
+            case DISABLE_WAN_TRAFFIC_COUNTERS:
+                return "Disable WAN Traffic counters";
+            case ENABLE_SYSLOG:
+                return "Enable Syslog";
+            case DISABLE_SYSLOG:
+                return "Disable Syslog";
+            case ENABLE_WAN_ACCESS_POLICY:
+            case ENABLE_WAN_POLICY:
+                return "Enable WAN Access Policy";
+            case DISABLE_WAN_ACCESS_POLICY:
+            case DISABLE_WAN_POLICY:
+                return "Disable WAN Access Policy";
+            case ENABLE_DEVICE_WAN_ACCESS:
+                return "Enable WAN Access for Device";
+            case DISABLE_DEVICE_WAN_ACCESS:
+                return "Disable WAN Access for Device";
+            default:
+                return TextUtils.isEmpty(action) ? "Unknown" : action;
+        }
     }
 
 }
