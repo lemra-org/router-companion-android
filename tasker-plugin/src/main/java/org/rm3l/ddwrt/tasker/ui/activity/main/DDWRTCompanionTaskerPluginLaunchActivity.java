@@ -272,7 +272,7 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
                                 "actionLogs.get(" + position + ") == null");
                 return;
             }
-            final ActionLog actionLog = actionLogs.get(0);
+            final ActionLog actionLog = actionLogs.get(position);
             holder.actionNameTv.setText(actionLog.getActionName());
             holder.dateTv.setText(actionLog.getDate());
 
