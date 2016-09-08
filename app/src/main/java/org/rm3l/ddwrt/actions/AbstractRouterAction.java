@@ -63,6 +63,8 @@ public abstract class AbstractRouterAction<T> extends
 
     private String origin;
 
+    private boolean recordActionForAudit;
+
     protected AbstractRouterAction(@NonNull final Router router,
                                    @Nullable final RouterActionListener listener,
                                    @NonNull final RouterAction routerAction,
@@ -72,10 +74,16 @@ public abstract class AbstractRouterAction<T> extends
         this.listener = listener;
         this.routerAction = routerAction;
         this.globalSharedPreferences = globalSharedPreferences;
+        this.recordActionForAudit = true;
     }
 
     public final AbstractRouterAction setOrigin(String origin) {
         this.origin = origin;
+        return this;
+    }
+
+    public AbstractRouterAction setRecordActionForAudit(boolean recordActionForAudit) {
+        this.recordActionForAudit = recordActionForAudit;
         return this;
     }
 
@@ -105,21 +113,23 @@ public abstract class AbstractRouterAction<T> extends
                             actionUuid,
                             e));
         } finally {
-            final Context context = getContext();
-            if (context != null) {
-                final ActionLog actionLog = getActionLog();
-                if (actionLog != null) {
-                    actionLog.setOriginPackageName(
-                            TextUtils.isEmpty(this.origin) ?
-                                    BuildConfig.APPLICATION_ID : this.origin);
-                    actionLog.setDate(DateFormat.getDateTimeInstance().format(actionDate));
-                    actionLog.setUuid(this.actionUuid.toString());
-                    actionLog.setRouter(router.getUuid());
-                    actionLog.setStatus(
-                            actionResult == null || actionResult.getException() == null ? 0 : -1);
+            if (recordActionForAudit) {
+                final Context context = getContext();
+                if (context != null) {
+                    final ActionLog actionLog = getActionLog();
+                    if (actionLog != null) {
+                        actionLog.setOriginPackageName(
+                                TextUtils.isEmpty(this.origin) ?
+                                        BuildConfig.APPLICATION_ID : this.origin);
+                        actionLog.setDate(DateFormat.getDateTimeInstance().format(actionDate));
+                        actionLog.setUuid(this.actionUuid.toString());
+                        actionLog.setRouter(router.getUuid());
+                        actionLog.setStatus(
+                                actionResult == null || actionResult.getException() == null ? 0 : -1);
 
-                    //Record action
-                    RouterManagementActivity.getDao(context).recordAction(actionLog);
+                        //Record action
+                        RouterManagementActivity.getDao(context).recordAction(actionLog);
+                    }
                 }
             }
         }
