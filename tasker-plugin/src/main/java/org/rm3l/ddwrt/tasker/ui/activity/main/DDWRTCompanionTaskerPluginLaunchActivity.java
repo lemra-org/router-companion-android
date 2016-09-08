@@ -22,8 +22,10 @@
 package org.rm3l.ddwrt.tasker.ui.activity.main;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -65,6 +67,7 @@ import org.rm3l.maoni.Maoni;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * EntryPoint Activity
@@ -84,6 +87,7 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
     private TextView mHistoryEmptyView;
     private TaskerActionHistoryAdapter mHistoryAdapter;
     private View mSlidingUpPanel;
+    private AtomicBoolean mClearHistory = new AtomicBoolean(false);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,6 +158,63 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
             // bind to the Service, create it if it's not already there
             bindService(intent, conn, Context.BIND_AUTO_CREATE);
         }
+
+        final View refreshButton = findViewById(R.id.tasker_main_history_refresh);
+        final View clearAllButton = findViewById(R.id.tasker_main_history_clear_all);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mClearHistory.set(false);
+                //Reload adapter data
+                unbindService(conn);
+                ddwrtCompanionService = null;
+
+                // connect to the service
+                conn = new RouterServiceConnection();
+
+                // name must match the service's Intent filter in the Service Manifest file
+                final Intent intent = new Intent(ActionEditActivity.DDWRT_COMPANION_SERVICE_NAME);
+                intent.setPackage(ddwrtCompanionAppPackage);
+                // bind to the Service, create it if it's not already there
+                bindService(intent, conn, Context.BIND_AUTO_CREATE);
+            }
+        });
+
+        clearAllButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AlertDialog.Builder(DDWRTCompanionTaskerPluginLaunchActivity.this)
+                        .setIcon(R.drawable.ic_warning_black_24dp)
+                        .setTitle("Clear All?")
+                        .setMessage("You'll lose the history of all actions performed by this plugin!")
+                        .setCancelable(true)
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialogInterface, final int i) {
+                                mClearHistory.set(true);
+                                //Reload adapter data
+                                unbindService(conn);
+                                ddwrtCompanionService = null;
+
+                                // connect to the service
+                                conn = new RouterServiceConnection();
+
+                                // name must match the service's Intent filter in the Service Manifest file
+                                final Intent intent = new Intent(ActionEditActivity.DDWRT_COMPANION_SERVICE_NAME);
+                                intent.setPackage(ddwrtCompanionAppPackage);
+                                // bind to the Service, create it if it's not already there
+                                bindService(intent, conn, Context.BIND_AUTO_CREATE);
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Cancelled - nothing more to do!
+                            }
+                        }).create().show();
+            }
+        });
+
 
     }
 
@@ -349,6 +410,9 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
 
             mHistoryAdapter.setService(ddwrtCompanionService);
             try {
+                if (mClearHistory.getAndSet(false)) {
+                    ddwrtCompanionService.clearActionsLogByOrigin(BuildConfig.APPLICATION_ID);
+                }
                 final List<ActionLog> actionsByOrigin = ddwrtCompanionService
                         .getActionsByOrigin(BuildConfig.APPLICATION_ID);
                 Crashlytics.log(Log.DEBUG, Constants.TAG, "actionsByOrigin: " + actionsByOrigin);
