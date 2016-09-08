@@ -349,8 +349,10 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
 
             mHistoryAdapter.setService(ddwrtCompanionService);
             try {
-                mHistoryAdapter.setActionLogs(
-                        ddwrtCompanionService.getActionsByOrigin(BuildConfig.APPLICATION_ID));
+                final List<ActionLog> actionsByOrigin = ddwrtCompanionService
+                        .getActionsByOrigin(BuildConfig.APPLICATION_ID);
+                Crashlytics.log(Log.DEBUG, Constants.TAG, "actionsByOrigin: " + actionsByOrigin);
+                mHistoryAdapter.setActionLogs(actionsByOrigin);
             }  catch (RemoteException e) {
                 Crashlytics.logException(e);
             }

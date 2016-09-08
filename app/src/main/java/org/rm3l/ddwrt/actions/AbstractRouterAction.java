@@ -112,7 +112,7 @@ public abstract class AbstractRouterAction<T> extends
                     actionLog.setOriginPackageName(
                             TextUtils.isEmpty(this.origin) ?
                                     BuildConfig.APPLICATION_ID : this.origin);
-                    actionLog.setActionData(DateFormat.getDateTimeInstance().format(actionDate));
+                    actionLog.setDate(DateFormat.getDateTimeInstance().format(actionDate));
                     actionLog.setUuid(this.actionUuid.toString());
                     actionLog.setRouter(router.getUuid());
                     actionLog.setStatus(
