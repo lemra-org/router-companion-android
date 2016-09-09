@@ -261,11 +261,11 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:24.0.0'
 
-    compile ('org.rm3l:maoni:2.2.0@aar') {
+    compile ('org.rm3l:maoni:2.3.0@aar') {
         transitive = true;
     }
 
-    compile('com.mikepenz:aboutlibraries:5.7.1@aar') {
+    compile('com.mikepenz:aboutlibraries:5.8.1@aar') {
         transitive = true
     }
 
