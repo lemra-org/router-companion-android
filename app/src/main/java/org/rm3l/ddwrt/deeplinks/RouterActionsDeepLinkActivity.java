@@ -46,11 +46,13 @@ import org.rm3l.ddwrt.utils.NVRAMParser;
 
 import java.io.File;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -193,7 +195,8 @@ public class RouterActionsDeepLinkActivity extends Activity {
                         .setUuid(UUID.randomUUID().toString())
                         .setOriginPackageName(origin)
                         .setRouter(router.getUuid())
-                        .setDate(DateFormat.getDateTimeInstance().format(actionDate))
+                        .setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+                                .format(actionDate))
                         .setActionName(toHumanReadableName(action))
                         .setActionData(parameters.toString());
 

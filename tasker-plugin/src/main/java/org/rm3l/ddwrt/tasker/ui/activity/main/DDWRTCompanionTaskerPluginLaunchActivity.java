@@ -64,9 +64,13 @@ import org.rm3l.ddwrt.tasker.ui.activity.action.ActionEditActivity;
 import org.rm3l.ddwrt.tasker.utils.Utils;
 import org.rm3l.maoni.Maoni;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -335,7 +339,19 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
             }
             final ActionLog actionLog = actionLogs.get(position);
             holder.actionNameTv.setText(actionLog.getActionName());
-            holder.dateTv.setText(actionLog.getDate());
+            final String actionLogDate = actionLog.getDate();
+            if (TextUtils.isEmpty(actionLogDate)) {
+                holder.dateTv.setText("-");
+            } else {
+                try {
+                    holder.dateTv.setText(DateFormat.getDateTimeInstance().format(
+                            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+                                    .parse(actionLogDate)));
+                } catch (final ParseException e) {
+                    Crashlytics.logException(e);
+                    holder.dateTv.setText("-");
+                }
+            }
 
             String routerDisplayName = null;
             if (service != null && service.asBinder().isBinderAlive()) {
@@ -413,10 +429,8 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
                 if (mClearHistory.getAndSet(false)) {
                     ddwrtCompanionService.clearActionsLogByOrigin(BuildConfig.APPLICATION_ID);
                 }
-                final List<ActionLog> actionsByOrigin = ddwrtCompanionService
-                        .getActionsByOrigin(BuildConfig.APPLICATION_ID);
-                Crashlytics.log(Log.DEBUG, Constants.TAG, "actionsByOrigin: " + actionsByOrigin);
-                mHistoryAdapter.setActionLogs(actionsByOrigin);
+                mHistoryAdapter.setActionLogs(ddwrtCompanionService
+                        .getActionsByOrigin(BuildConfig.APPLICATION_ID));
             }  catch (RemoteException e) {
                 Crashlytics.logException(e);
             }
