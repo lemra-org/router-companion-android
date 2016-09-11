@@ -287,6 +287,23 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
         unbindService(conn);
         ddwrtCompanionService = null;
 
+        try {
+            final PackageInfo packageInfo = Utils
+                    .getDDWRTCompanionAppPackageLeastRequiredVersion(mPackageManager);
+
+            if (packageInfo == null ||
+                    (this.ddwrtCompanionAppPackage = packageInfo.packageName) == null) {
+                mErrorPlaceholder.setText("DD-WRT Companion app *not* found !");
+                mErrorPlaceholder.setVisibility(View.VISIBLE);
+                //TODO Add button that opens up the Play Store
+                return;
+            }
+        } catch (final DDWRTCompanionPackageVersionRequiredNotFoundException e) {
+            mErrorPlaceholder.setText(e.getMessage());
+            mErrorPlaceholder.setVisibility(View.VISIBLE);
+            return;
+        }
+
         // connect to the service
         conn = new RouterServiceConnection(false);
 
@@ -385,6 +402,24 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
     }
 
     private void refresh() {
+
+        try {
+            final PackageInfo packageInfo = Utils
+                    .getDDWRTCompanionAppPackageLeastRequiredVersion(mPackageManager);
+
+            if (packageInfo == null ||
+                    (this.ddwrtCompanionAppPackage = packageInfo.packageName) == null) {
+                mErrorPlaceholder.setText("DD-WRT Companion app *not* found !");
+                mErrorPlaceholder.setVisibility(View.VISIBLE);
+                //TODO Add button that opens up the Play Store
+                return;
+            }
+        } catch (final DDWRTCompanionPackageVersionRequiredNotFoundException e) {
+            mErrorPlaceholder.setText(e.getMessage());
+            mErrorPlaceholder.setVisibility(View.VISIBLE);
+            return;
+        }
+
         mLoadingView.setVisibility(View.VISIBLE);
         mMainContentView.setEnabled(false);
         //Reconnect to the remote service
