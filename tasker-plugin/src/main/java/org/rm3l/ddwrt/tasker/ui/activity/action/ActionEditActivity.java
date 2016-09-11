@@ -284,7 +284,9 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
         mPreviousBundleOutputVariableName = previousBundle.getString(BUNDLE_OUTPUT_VARIABLE_NAME);
 
         //Reconnect to the remote service
-        unbindService(conn);
+        if (conn != null) {
+            unbindService(conn);
+        }
         ddwrtCompanionService = null;
 
         try {
@@ -423,7 +425,9 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
         mLoadingView.setVisibility(View.VISIBLE);
         mMainContentView.setEnabled(false);
         //Reconnect to the remote service
-        unbindService(conn);
+        if (conn != null) {
+            unbindService(conn);
+        }
         ddwrtCompanionService = null;
 
         // connect to the service
@@ -442,7 +446,9 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
         // Signal to AbstractAppCompatPluginActivity that the user canceled.
         mIsCancelled = true;
         super.onDestroy();
-        unbindService(conn);
+        if (conn != null) {
+            unbindService(conn);
+        }
         ddwrtCompanionService = null;
     }
 
