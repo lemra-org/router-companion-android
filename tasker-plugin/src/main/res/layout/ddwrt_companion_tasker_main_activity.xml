@@ -49,6 +49,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize" />
+
+        <!-- Error message placeholder -->
+        <TextView
+            android:layout_marginTop="7dp"
+            android:id="@+id/error_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:text="Error"
+            android:textColor="@color/ddwrt_purple"
+            android:textStyle="bold"
+            android:visibility="gone" />
     
         <ScrollView
             android:layout_width="match_parent"
@@ -74,10 +88,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="5dp"/>
 
                 <TextView
+                    android:id="@+id/tasker_main_about_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:textAppearanceMedium"/>
+
+                <TextView
+                    android:id="@+id/tasker_main_history_textview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:textAppearanceMedium"
-                    android:text="@string/main_activity_app_description"/>
+                    android:text="@string/main_activity_app_description_history"/>
 
             </LinearLayout>
     

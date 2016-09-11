@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -39,12 +40,14 @@ import com.twofortyfouram.log.Lumberjack;
 
 import net.jcip.annotations.NotThreadSafe;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.common.IDDWRTCompanionService;
 import org.rm3l.ddwrt.common.resources.RouterInfo;
 import org.rm3l.ddwrt.common.utils.ActivityUtils;
 import org.rm3l.ddwrt.tasker.Constants;
 import org.rm3l.ddwrt.tasker.R;
 import org.rm3l.ddwrt.tasker.bundle.PluginBundleValues;
+import org.rm3l.ddwrt.tasker.exception.DDWRTCompanionPackageVersionRequiredNotFoundException;
 import org.rm3l.ddwrt.tasker.feedback.maoni.FeedbackHandler;
 import org.rm3l.ddwrt.tasker.utils.Utils;
 import org.rm3l.maoni.Maoni;
@@ -224,14 +227,20 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
 //        mSelectedFilePathTextView = (TextView) findViewById(R.id.custom_cmd_file_path);
 
 
-        this.ddwrtCompanionAppPackage = Utils.getDDWRTCompanionAppPackage(mPackageManager);
-        Crashlytics.log(Log.DEBUG, Constants.TAG,
-                "ddwrtCompanionAppPackage=" + ddwrtCompanionAppPackage);
+        try {
+            final PackageInfo packageInfo = Utils
+                    .getDDWRTCompanionAppPackageLeastRequiredVersion(mPackageManager);
 
-        if (ddwrtCompanionAppPackage == null) {
-            mErrorPlaceholder.setText("You must install DD-WRT Companion App !");
+            if (packageInfo == null ||
+                    (this.ddwrtCompanionAppPackage = packageInfo.packageName) == null) {
+                mErrorPlaceholder.setText("DD-WRT Companion app *not* found !");
+                mErrorPlaceholder.setVisibility(View.VISIBLE);
+                //TODO Add button that opens up the Play Store
+                return;
+            }
+        } catch (final DDWRTCompanionPackageVersionRequiredNotFoundException e) {
+            mErrorPlaceholder.setText(e.getMessage());
             mErrorPlaceholder.setVisibility(View.VISIBLE);
-            //TODO Add button that opens up the Play Store
             return;
         }
 
@@ -240,7 +249,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
 
         // name must match the service's Intent filter in the Service Manifest file
         final Intent intent = new Intent(DDWRT_COMPANION_SERVICE_NAME);
-        intent.setPackage(ddwrtCompanionAppPackage);
+        intent.setPackage(this.ddwrtCompanionAppPackage);
         // bind to the Service, create it if it's not already there
         bindService(intent, conn, Context.BIND_AUTO_CREATE);
 
@@ -447,17 +456,19 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
                 e.printStackTrace();
                 Toast.makeText(ActionEditActivity.this, "Internal Error - please try again later", Toast.LENGTH_SHORT)
                         .show();
+                mErrorPlaceholder.setText("Error: " + ExceptionUtils.getRootCauseMessage(e));
+                mErrorPlaceholder.setVisibility(View.VISIBLE);
                 finish();
                 return;
             }
 
-            if (allRouters == null || allRouters.isEmpty()) {
-                //Error - redirect to "Launch DD-WRT Companion to add a new Router"
-                mErrorPlaceholder.setText("Open DD-WRT Companion to register routers");
-                mErrorPlaceholder.setVisibility(View.VISIBLE);
-                return;
-            }
-            mErrorPlaceholder.setVisibility(View.GONE);
+//            if (allRouters == null || allRouters.isEmpty()) {
+//                //Error - redirect to "Launch DD-WRT Companion to add a new Router"
+//                mErrorPlaceholder.setText("Open DD-WRT Companion to register routers");
+//                mErrorPlaceholder.setVisibility(View.VISIBLE);
+//                return;
+//            }
+//            mErrorPlaceholder.setVisibility(View.GONE);
 
             final String[] routersNamesArray = new String[allRouters.size() + 2];
             int i = 0;
@@ -488,22 +499,33 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
 
                     if (position == routersNamesArray.length - 1) {
                         //Open DD-WRT Companion Android app to register a new router
-                        final String ddwrtCompanionAppPackage = Utils.getDDWRTCompanionAppPackage(mPackageManager);
-                        if (TextUtils.isEmpty(ddwrtCompanionAppPackage)) {
-                            ActivityUtils.openPlayStoreForPackage(ActionEditActivity.this, "org.rm3l.ddwrt");
-                            mRoutersDropdown.setSelection(0);
-                            return;
-                        }
-
-                        final Intent intent = new Intent(ACTION_OPEN_ADD_ROUTER_WIZARD);
-                        intent.setPackage(ddwrtCompanionAppPackage);
-                        intent.putExtra(CLOSE_ON_ACTION_DONE, true);
-
                         try {
-                            ActionEditActivity.this.startActivityForResult(intent, REGISTER_ROUTER_REQUEST);
-                        } catch (final ActivityNotFoundException anfe) {
-                            Crashlytics.logException(anfe);
-                            ActivityUtils.openPlayStoreForPackage(ActionEditActivity.this, "org.rm3l.ddwrt");
+                            final PackageInfo packageInfo = Utils
+                                    .getDDWRTCompanionAppPackageLeastRequiredVersion(mPackageManager);
+                            final String ddwrtCompanionAppPackage = (packageInfo != null ?
+                                    packageInfo.packageName : null);
+                            if (TextUtils.isEmpty(ddwrtCompanionAppPackage)) {
+                                ActivityUtils.openPlayStoreForPackage(ActionEditActivity.this, "org.rm3l.ddwrt");
+                                mRoutersDropdown.setSelection(0);
+                                return;
+                            }
+
+                            final Intent intent = new Intent(ACTION_OPEN_ADD_ROUTER_WIZARD);
+                            intent.setPackage(ddwrtCompanionAppPackage);
+                            intent.putExtra(CLOSE_ON_ACTION_DONE, true);
+
+                            try {
+                                ActionEditActivity.this.startActivityForResult(intent, REGISTER_ROUTER_REQUEST);
+                            } catch (final ActivityNotFoundException anfe) {
+                                Crashlytics.logException(anfe);
+                                ActivityUtils.openPlayStoreForPackage(ActionEditActivity.this, "org.rm3l.ddwrt");
+                                mRoutersDropdown.setSelection(0);
+                            }
+                        } catch (final DDWRTCompanionPackageVersionRequiredNotFoundException e) {
+                            Toast.makeText(ActionEditActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                            Crashlytics.logException(e);
+                            mErrorPlaceholder.setText(e.getMessage());
+                            mErrorPlaceholder.setVisibility(View.VISIBLE);
                             mRoutersDropdown.setSelection(0);
                         }
 
@@ -513,8 +535,10 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
                         mSelectedRouterVariable.setHint("e.g., %router_name");
                         mSelectedRouterUuid.setText(null);
                         mSelectedRouterReadableName = null;
+                        mErrorPlaceholder.setVisibility(View.GONE);
 
                     } else {
+                        mErrorPlaceholder.setVisibility(View.GONE);
                         mSelectedRouterVariable.setVisibility(View.GONE);
                         mSelectedRouterVariable.setHint(null);
                         mSelectedRouterVariable.setText(null);
@@ -667,7 +691,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
         /*** is called once the remote service is no longer available */
         public void onServiceDisconnected(ComponentName name) { //
             Crashlytics.log(Log.WARN, Constants.TAG, "Service has unexpectedly disconnected");
-            mErrorPlaceholder.setText("Unexpected disconnection to remote service - please try again later");
+            mErrorPlaceholder.setText("Connection to DD-WRT Companion application unexpectedly disconnected. Please reload and try again.");
             mErrorPlaceholder.setVisibility(View.VISIBLE);
             mLoadingView.setVisibility(View.VISIBLE);
             mMainContentView.setEnabled(false);

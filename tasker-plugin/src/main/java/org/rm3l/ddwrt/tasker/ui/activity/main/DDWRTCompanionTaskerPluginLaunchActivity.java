@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -59,6 +60,7 @@ import org.rm3l.ddwrt.common.utils.ActivityUtils;
 import org.rm3l.ddwrt.tasker.BuildConfig;
 import org.rm3l.ddwrt.tasker.Constants;
 import org.rm3l.ddwrt.tasker.R;
+import org.rm3l.ddwrt.tasker.exception.DDWRTCompanionPackageVersionRequiredNotFoundException;
 import org.rm3l.ddwrt.tasker.feedback.maoni.FeedbackHandler;
 import org.rm3l.ddwrt.tasker.ui.activity.action.ActionEditActivity;
 import org.rm3l.ddwrt.tasker.utils.Utils;
@@ -72,6 +74,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.rm3l.ddwrt.tasker.Constants.DDWRT_COMPANION_MIN_VERSION_REQUIRED;
 
 /**
  * EntryPoint Activity
@@ -88,9 +92,13 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
     private static final String TASKER_PKG_NAME = "net.dinglisch.android.taskerm";
     private RecyclerView mActionHistoryRecyclerView;
     private LinearLayoutManager mHistoryLayoutManager;
+
+    private TextView mErrorView;
+
     private TextView mHistoryEmptyView;
     private TaskerActionHistoryAdapter mHistoryAdapter;
     private View mSlidingUpPanel;
+    private View mHistoryDescriptionText;
     private AtomicBoolean mClearHistory = new AtomicBoolean(false);
 
     @Override
@@ -119,6 +127,14 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
             actionBar.setIcon(R.mipmap.ic_launcher);
         }
 
+        mErrorView = (TextView) findViewById(R.id.error_placeholder);
+
+        final TextView aboutView = (TextView) findViewById(R.id.tasker_main_about_textview);
+        aboutView.setText(getResources().getString(R.string.main_activity_app_description,
+                DDWRT_COMPANION_MIN_VERSION_REQUIRED));
+
+        mHistoryDescriptionText = findViewById(R.id.tasker_main_history_textview);
+
         mActionHistoryRecyclerView = (RecyclerView)
                 findViewById(R.id.tasker_main_history_recyclerview);
         // use this setting to improve performance if you know that changes
@@ -143,24 +159,51 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
 
         mSlidingUpPanel = findViewById(R.id.tasker_main_history);
 
-        this.ddwrtCompanionAppPackage = Utils.getDDWRTCompanionAppPackage(getPackageManager());
-        Crashlytics.log(Log.DEBUG, Constants.TAG,
-                "ddwrtCompanionAppPackage=" + ddwrtCompanionAppPackage);
-        if (ddwrtCompanionAppPackage == null) {
-            //Hide history sliding layout
+        try {
+            final PackageInfo packageInfo = Utils
+                    .getDDWRTCompanionAppPackageLeastRequiredVersion(getPackageManager());
+            if (packageInfo == null ||
+                    (this.ddwrtCompanionAppPackage = packageInfo.packageName) == null) {
+                mErrorView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ActivityUtils.openPlayStoreForPackage(
+                                DDWRTCompanionTaskerPluginLaunchActivity.this, "org.rm3l.ddwrt");
+                    }
+                });
+                mErrorView.setText("DD-WRT Companion app *not* found !");
+                mErrorView.setVisibility(View.VISIBLE);
+                //Hide history sliding layout
+                mSlidingUpPanel.setVisibility(View.GONE);
+                mHistoryDescriptionText.setVisibility(View.INVISIBLE);
+            } else {
+                //Bind service
+                mErrorView.setVisibility(View.GONE);
+                mSlidingUpPanel.setVisibility(View.VISIBLE);
+                mHistoryDescriptionText.setVisibility(View.VISIBLE);
+
+                // connect to the service
+                conn = new RouterServiceConnection();
+
+                // name must match the service's Intent filter in the Service Manifest file
+                final Intent intent = new Intent(ActionEditActivity.DDWRT_COMPANION_SERVICE_NAME);
+                intent.setPackage(this.ddwrtCompanionAppPackage);
+                // bind to the Service, create it if it's not already there
+                bindService(intent, conn, Context.BIND_AUTO_CREATE);
+            }
+        } catch (final DDWRTCompanionPackageVersionRequiredNotFoundException e) {
+            Crashlytics.logException(e);
+            mErrorView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ActivityUtils.openPlayStoreForPackage(
+                            DDWRTCompanionTaskerPluginLaunchActivity.this, "org.rm3l.ddwrt");
+                }
+            });
+            mErrorView.setText(e.getMessage());
+            mErrorView.setVisibility(View.VISIBLE);
             mSlidingUpPanel.setVisibility(View.GONE);
-        } else {
-            //Bind service
-            mSlidingUpPanel.setVisibility(View.VISIBLE);
-
-            // connect to the service
-            conn = new RouterServiceConnection();
-
-            // name must match the service's Intent filter in the Service Manifest file
-            final Intent intent = new Intent(ActionEditActivity.DDWRT_COMPANION_SERVICE_NAME);
-            intent.setPackage(ddwrtCompanionAppPackage);
-            // bind to the Service, create it if it's not already there
-            bindService(intent, conn, Context.BIND_AUTO_CREATE);
+            mHistoryDescriptionText.setVisibility(View.INVISIBLE);
         }
 
         final View refreshButton = findViewById(R.id.tasker_main_history_refresh);
@@ -178,7 +221,7 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
 
                 // name must match the service's Intent filter in the Service Manifest file
                 final Intent intent = new Intent(ActionEditActivity.DDWRT_COMPANION_SERVICE_NAME);
-                intent.setPackage(ddwrtCompanionAppPackage);
+                intent.setPackage(DDWRTCompanionTaskerPluginLaunchActivity.this.ddwrtCompanionAppPackage);
                 // bind to the Service, create it if it's not already there
                 bindService(intent, conn, Context.BIND_AUTO_CREATE);
             }
@@ -205,7 +248,7 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
 
                                 // name must match the service's Intent filter in the Service Manifest file
                                 final Intent intent = new Intent(ActionEditActivity.DDWRT_COMPANION_SERVICE_NAME);
-                                intent.setPackage(ddwrtCompanionAppPackage);
+                                intent.setPackage(DDWRTCompanionTaskerPluginLaunchActivity.this.ddwrtCompanionAppPackage);
                                 // bind to the Service, create it if it's not already there
                                 bindService(intent, conn, Context.BIND_AUTO_CREATE);
                             }
@@ -244,13 +287,13 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
                 break;
 
             case R.id.launch_ddwrt_companion:
-                final String ddwrtCompanionAppPackage = Utils
+                final PackageInfo packageInfo = Utils
                         .getDDWRTCompanionAppPackage(getPackageManager());
-                Crashlytics.log(Log.DEBUG, Constants.TAG,
-                        "ddwrtCompanionAppPackage=" + ddwrtCompanionAppPackage);
-
+                final String ddwrtCompanionAppPackage = (packageInfo != null ?
+                        packageInfo.packageName : null);
                 final boolean packageNameIsEmpty = TextUtils.isEmpty(ddwrtCompanionAppPackage);
-                ActivityUtils.launchApp(this,
+                ActivityUtils.launchApp(
+                        this,
                         packageNameIsEmpty ? "org.rm3l.ddwrt" : ddwrtCompanionAppPackage,
                         true);
                 break;
@@ -420,9 +463,11 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             Crashlytics.log(Log.DEBUG, Constants.TAG, "Service connected");
+            mErrorView.setVisibility(View.GONE);
             ddwrtCompanionService = IDDWRTCompanionService.Stub.asInterface(service);
 
             mSlidingUpPanel.setVisibility(View.VISIBLE);
+            mHistoryDescriptionText.setVisibility(View.VISIBLE);
 
             mHistoryAdapter.setService(ddwrtCompanionService);
             try {
@@ -441,6 +486,9 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
             Crashlytics.log(Log.WARN, Constants.TAG, "Service has unexpectedly disconnected");
             ddwrtCompanionService = null;
             mHistoryAdapter.setService(null);
+            mErrorView.setText("Connection to DD-WRT Companion application unexpectedly disconnected. Please reload and try again.");
+            mErrorView.setOnClickListener(null);
+            mErrorView.setVisibility(View.VISIBLE);
         }
     }
 

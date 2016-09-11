@@ -13,6 +13,9 @@ public final class Constants {
 
     public static final String TAG = "DDWRTCompanionTaskerPlugin";
 
+    //This means we need at least the app built from tag '7.1.0'
+    public static final int DDWRT_COMPANION_MIN_VERSION_REQUIRED = 710000;
+
     public static final String FILEPROVIDER_AUTHORITY = (BuildConfig.APPLICATION_ID + ".fileprovider");
 
     public static final int DOORBELL_APPID = 0;
