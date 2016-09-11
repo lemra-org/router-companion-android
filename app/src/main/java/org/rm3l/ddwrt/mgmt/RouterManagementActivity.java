@@ -371,7 +371,9 @@ public class RouterManagementActivity
             mCloseOnActionDone = intent.getBooleanExtra(CLOSE_ON_ACTION_DONE, false);
             this.openAddRouterForm();
         } else {
-            welcomeScreen.show(savedInstanceState);
+            //TODO Uncomment when welcome screen is ready, and comment the line below
+//            welcomeScreen.show(savedInstanceState);
+            initOpenAddRouterFormIfNecessary();
         }
 
 //        initOpenAddRouterFormIfNecessary();

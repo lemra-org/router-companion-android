@@ -18,7 +18,8 @@ public class GettingStartedActivity extends WelcomeActivity {
                 .theme(R.style.CustomWelcomeScreenTheme)
                 .defaultTitleTypefacePath("Montserrat-Bold.ttf")
                 .defaultHeaderTypefacePath("Montserrat-Bold.ttf")
-                .titlePage(R.drawable.welcome_photo, "Welcome", R.color.orange_background)
+                .titlePage(R.drawable.welcome_photo,
+                        "Welcome", R.color.orange_background)
                 .basicPage(R.drawable.welcome_photo,
                         "Simple to use",
                         "Add a welcome screen to your app with only a few lines of code.",
