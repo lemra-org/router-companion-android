@@ -7,12 +7,7 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    android:layout_marginStart="7dp"
-    android:layout_marginLeft="7dp"
-    android:layout_marginRight="7dp"
-    android:layout_marginEnd="7dp"
-    android:layout_marginTop="10dp"
-    android:layout_marginBottom="5dp"
+    android:layout_margin="5dp"
     card_view:cardPreventCornerOverlap="true"
     card_view:contentPaddingBottom="@dimen/activity_vertical_margin"
     card_view:contentPaddingLeft="10dp"
@@ -22,56 +17,84 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:weightSum="100"
+        android:baselineAligned="false">
 
-        <TextView
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Date"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:textStyle="bold"/>
-        <TextView
-            android:id="@+id/action_history_log_card_view_date"
-            android:layout_marginBottom="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_weight="20"
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Action"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:textStyle="bold"/>
-        <TextView
-            android:id="@+id/action_history_log_card_view_action"
-            android:layout_marginBottom="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            <ImageView
+                android:id="@+id/action_history_log_card_view_action_image"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerInParent="true"
+                android:contentDescription="@string/action_image" />
 
-        <TextView
-            android:id="@+id/action_history_log_card_view_router_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Router"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:textStyle="bold"/>
-        <TextView
-            android:id="@+id/action_history_log_card_view_router"
-            android:layout_marginBottom="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            <TextView
+                android:layout_below="@id/action_history_log_card_view_action_image"
+                android:id="@+id/action_history_log_card_view_action"
+                android:layout_alignParentBottom="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:textColor="@color/win8_teal"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Status"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:textStyle="bold"/>
-        <TextView
-            android:id="@+id/action_history_log_card_view_status"
-            android:layout_marginBottom="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        </RelativeLayout>
+
+        <View
+            android:layout_height="match_parent"
+            android:layout_width="1dp"
+            android:background="@color/win8_teal"
+            android:layout_marginStart="7dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginEnd="7dp"/>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="80">
+
+            <TextView
+                android:id="@+id/action_history_log_card_view_router"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:textAppearanceMedium"/>
+
+            <RelativeLayout
+                android:layout_alignParentBottom="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/action_history_log_card_view_date"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <ImageView
+                    android:id="@+id/action_history_log_card_view_action_status_image"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/action_status" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
 
     </LinearLayout>
 

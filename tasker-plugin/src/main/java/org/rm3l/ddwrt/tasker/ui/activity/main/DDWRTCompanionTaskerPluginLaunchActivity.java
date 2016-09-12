@@ -32,7 +32,9 @@ import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -47,7 +49,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.mikepenz.aboutlibraries.Libs;
@@ -381,7 +385,18 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
                 return;
             }
             final ActionLog actionLog = actionLogs.get(position);
-            holder.actionNameTv.setText(actionLog.getActionName());
+            final String actionName = actionLog.getActionName();
+
+            final Integer drawableResForCommand = getDrawableResForCommand(actionName);
+            if (drawableResForCommand == null) {
+                holder.actionAvatarIV.setVisibility(View.INVISIBLE);
+            } else {
+                holder.actionAvatarIV.setVisibility(View.VISIBLE);
+                holder.actionAvatarIV.setImageDrawable(ContextCompat
+                        .getDrawable(activity, drawableResForCommand));
+            }
+
+            holder.actionNameTv.setText(actionName);
             final String actionLogDate = actionLog.getDate();
             if (TextUtils.isEmpty(actionLogDate)) {
                 holder.dateTv.setText("-");
@@ -414,15 +429,23 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
                 }
             }
             if (TextUtils.isEmpty(routerDisplayName)) {
-                holder.routerTitleTv.setVisibility(View.GONE);
-                holder.routerTv.setVisibility(View.GONE);
+                holder.routerTv.setVisibility(View.INVISIBLE);
             } else {
-                holder.routerTitleTv.setVisibility(View.VISIBLE);
                 holder.routerTv.setVisibility(View.VISIBLE);
             }
             holder.routerTv.setText(routerDisplayName);
 
-            holder.statusTv.setText(actionLog.getStatus() == 0 ? "Success" : "Error");
+            final int actionLogStatus = actionLog.getStatus();
+            holder.actionStatusIV.setImageDrawable(ContextCompat.getDrawable(activity,
+                    actionLogStatus == 0 ? R.drawable.ic_action_action_done : R.drawable.ic_action_alert_error));
+            holder.actionStatusIV.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(activity, actionLogStatus == 0 ?
+                            "Action sent out successfully" : "An error occurred.",
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
 
         }
 
@@ -438,20 +461,26 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
 
             private final Context mContext;
 
+            private final ImageView actionAvatarIV;
+            private final ImageView actionStatusIV;
             private final TextView dateTv;
             private final TextView actionNameTv;
-            private final TextView routerTitleTv;
             private final TextView routerTv;
-            private final TextView statusTv;
 
             public ViewHolder(Context mContext, View itemView) {
                 super(itemView);
                 this.mContext = mContext;
-                this.dateTv = (TextView) itemView.findViewById(R.id.action_history_log_card_view_date);
-                this.actionNameTv = (TextView) itemView.findViewById(R.id.action_history_log_card_view_action);
-                this.routerTitleTv = (TextView) itemView.findViewById(R.id.action_history_log_card_view_router_title);
-                this.routerTv = (TextView) itemView.findViewById(R.id.action_history_log_card_view_router);
-                this.statusTv = (TextView) itemView.findViewById(R.id.action_history_log_card_view_status);
+
+                this.actionAvatarIV = (ImageView) itemView
+                        .findViewById(R.id.action_history_log_card_view_action_image);
+                this.actionNameTv = (TextView) itemView
+                        .findViewById(R.id.action_history_log_card_view_action);
+                this.routerTv = (TextView) itemView
+                        .findViewById(R.id.action_history_log_card_view_router);
+                this.dateTv = (TextView) itemView
+                        .findViewById(R.id.action_history_log_card_view_date);
+                this.actionStatusIV = (ImageView) itemView
+                        .findViewById(R.id.action_history_log_card_view_action_status_image);
             }
         }
 
@@ -489,6 +518,26 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
             mErrorView.setText("Connection to DD-WRT Companion application unexpectedly disconnected. Please reload and try again.");
             mErrorView.setOnClickListener(null);
             mErrorView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public static Integer getDrawableResForCommand(@Nullable final String command) {
+        if (command == null) {
+            return null;
+        }
+        switch (command) {
+            case "Reboot":
+                //TODO
+                return null;
+            case "Wake On LAN":
+                //TODO
+                return null;
+            case "Execute custom command":
+            case "Execute script from file":
+                //TODO
+                return null;
+            default:
+                return null;
         }
     }
 

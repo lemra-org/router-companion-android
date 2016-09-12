@@ -23,4 +23,6 @@
     <string name="refresh">Refresh</string>
     <string name="delete_all">Delete All</string>
     <string name="no_recent_history">No Recent History</string>
+    <string name="action_image">Action Image</string>
+    <string name="action_status">Action Status</string>
 </resources>
