@@ -158,7 +158,7 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
 //        }
 //        mActionHistoryRecyclerView.setEmptyView(statsEmptyView);
 //        // specify an adapter (see also next example)
-        mHistoryAdapter = new TaskerActionHistoryAdapter(this);
+        mHistoryAdapter = new TaskerActionHistoryAdapter();
         mHistoryAdapter.setActionLogs(Collections.<ActionLog> emptyList());
         mActionHistoryRecyclerView.setAdapter(mHistoryAdapter);
 
@@ -337,7 +337,7 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
         return true;
     }
 
-    public static class TaskerActionHistoryAdapter
+    public class TaskerActionHistoryAdapter
             extends RecyclerView.Adapter<TaskerActionHistoryAdapter.ViewHolder>{
 
         private final Activity activity;
@@ -346,8 +346,8 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
 
         private IDDWRTCompanionService service;
 
-        public TaskerActionHistoryAdapter(Activity activity) {
-            this.activity = activity;
+        public TaskerActionHistoryAdapter() {
+            this.activity = DDWRTCompanionTaskerPluginLaunchActivity.this;
         }
 
         public TaskerActionHistoryAdapter setService(IDDWRTCompanionService service) {
@@ -357,6 +357,13 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
 
         public TaskerActionHistoryAdapter setActionLogs(List<ActionLog> actionLogs) {
             this.actionLogs = actionLogs;
+            if (this.actionLogs == null || this.actionLogs.isEmpty()) {
+                mHistoryEmptyView.setVisibility(View.VISIBLE);
+                mActionHistoryRecyclerView.setVisibility(View.GONE);
+            } else {
+                mHistoryEmptyView.setVisibility(View.GONE);
+                mActionHistoryRecyclerView.setVisibility(View.VISIBLE);
+            }
             notifyDataSetChanged();
             return this;
         }
