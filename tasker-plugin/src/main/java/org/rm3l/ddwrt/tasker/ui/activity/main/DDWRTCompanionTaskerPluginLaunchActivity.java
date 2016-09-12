@@ -54,6 +54,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.common.base.Splitter;
 import com.mikepenz.aboutlibraries.Libs;
 import com.mikepenz.aboutlibraries.LibsBuilder;
 
@@ -387,16 +388,25 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
             final ActionLog actionLog = actionLogs.get(position);
             final String actionName = actionLog.getActionName();
 
-            final Integer drawableResForCommand = getDrawableResForCommand(actionName);
-            if (drawableResForCommand == null) {
-                holder.actionAvatarIV.setVisibility(View.INVISIBLE);
-            } else {
-                holder.actionAvatarIV.setVisibility(View.VISIBLE);
-                holder.actionAvatarIV.setImageDrawable(ContextCompat
-                        .getDrawable(activity, drawableResForCommand));
-            }
+//            final Integer drawableResForCommand = getDrawableResForCommand(actionName);
+//            holder.actionNameTv.setCompoundDrawables(null,
+//                    drawableResForCommand != null ?
+//                            ContextCompat.getDrawable(activity, drawableResForCommand) :
+//                            null, null, null);
 
-            holder.actionNameTv.setText(actionName);
+            if (!TextUtils.isEmpty(actionName)) {
+                if (actionName.length() < "Execute custom command".length()) {
+                    if (actionName.length() < "Wake On LAN".length()) {
+                        holder.actionNameTv.setText("\n\n" + actionName);
+                    } else {
+                        holder.actionNameTv.setText("\n" + actionName);
+                    }
+                } else {
+                    holder.actionNameTv.setText(actionName);
+                }
+            } else {
+                holder.actionNameTv.setText("\n-\n");
+            }
             final String actionLogDate = actionLog.getDate();
             if (TextUtils.isEmpty(actionLogDate)) {
                 holder.dateTv.setText("-");
@@ -461,7 +471,7 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
 
             private final Context mContext;
 
-            private final ImageView actionAvatarIV;
+//            private final ImageView actionAvatarIV;
             private final ImageView actionStatusIV;
             private final TextView dateTv;
             private final TextView actionNameTv;
@@ -471,8 +481,8 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
                 super(itemView);
                 this.mContext = mContext;
 
-                this.actionAvatarIV = (ImageView) itemView
-                        .findViewById(R.id.action_history_log_card_view_action_image);
+//                this.actionAvatarIV = (ImageView) itemView
+//                        .findViewById(R.id.action_history_log_card_view_action_image);
                 this.actionNameTv = (TextView) itemView
                         .findViewById(R.id.action_history_log_card_view_action);
                 this.routerTv = (TextView) itemView
@@ -527,15 +537,13 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
         }
         switch (command) {
             case "Reboot":
-                //TODO
-                return null;
+                return R.drawable.ic_power_settings_new_black_24dp;
             case "Wake On LAN":
-                //TODO
-                return null;
+                return R.drawable.ic_settings_power_black_24dp;
             case "Execute custom command":
             case "Execute script from file":
-                //TODO
-                return null;
+                return R.drawable.ic_action_cli_black;
+            //TODO Add other mappings here
             default:
                 return null;
         }
