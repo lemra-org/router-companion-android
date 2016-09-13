@@ -124,7 +124,7 @@ public class SpeedTestResultRecyclerViewAdapter extends RecyclerView.Adapter<Spe
         if (!isNullOrEmpty(speedTestResultDate)) {
             speedTestResultDate = speedTestResultDate.replaceAll(" ", "\n");
         }
-        testDateView.setText(speedTestResultDate);
+        testDateView.setText("\n" + speedTestResultDate);
 
         ((TextView) containerView.findViewById(R.id.speed_test_result_detail_test_date))
                 .setText(speedTestResult.getDate());
