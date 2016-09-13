@@ -28,6 +28,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -51,6 +52,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static android.text.TextUtils.isEmpty;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.COLUMN_ID;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_FIRMWARE;
@@ -720,6 +722,17 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
 
     @Override
     public Collection<ActionLog> getActionsByOrigin(String origin) {
+        return getActionsByOrigin(origin, null, null, null, null);
+    }
+
+    @Override
+    public Collection<ActionLog> getActionsByRouterByOrigin(String routerUuid, String origin) {
+        return getActionsByRouterByOrigin(routerUuid, origin, null, null, null, null);
+    }
+
+    @Override
+    public Collection<ActionLog> getActionsByOrigin(String origin, String predicate, String groupBy,
+                                                    String having, String orderBy) {
         if (isNullOrEmpty(origin)) {
             return Collections.emptyList();
         }
@@ -731,9 +744,13 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                     .query(TABLE_ACTIONS_AUDIT_LOG,
                             auditActionLogAllColumns,
                             String.format("%s = '%s'",
-                                    TABLE_ACTIONS_AUDIT_LOG_ORIGIN, origin),
-                            null, null, null,
-                            TABLE_ACTIONS_AUDIT_LOG_TRIGGER_DATE + " DESC");
+                                    TABLE_ACTIONS_AUDIT_LOG_ORIGIN, origin) +
+                                    (isEmpty(predicate) ? "" : (" AND ( " + predicate + " )")),
+                            null,
+                            groupBy,
+                            having,
+                            isEmpty(orderBy) ?
+                                    (TABLE_ACTIONS_AUDIT_LOG_TRIGGER_DATE + " DESC") : orderBy);
 
             //noinspection TryFinallyCanBeTryWithResources
             try {
@@ -761,7 +778,9 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     }
 
     @Override
-    public Collection<ActionLog> getActionsByRouterByOrigin(String routerUuid, String origin) {
+    public Collection<ActionLog> getActionsByRouterByOrigin(String routerUuid, String origin,
+                                                            String predicate, String groupBy,
+                                                            String having, String orderBy) {
         if (isNullOrEmpty(routerUuid) || isNullOrEmpty(origin)) {
             return Collections.emptyList();
         }
@@ -774,9 +793,13 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                             auditActionLogAllColumns,
                             String.format("%s = '%s' AND %s = '%s",
                                     TABLE_ACTIONS_AUDIT_LOG_ROUTER_UUID, routerUuid,
-                                    TABLE_ACTIONS_AUDIT_LOG_ORIGIN, origin),
-                            null, null, null,
-                            TABLE_ACTIONS_AUDIT_LOG_TRIGGER_DATE + " DESC");
+                                    TABLE_ACTIONS_AUDIT_LOG_ORIGIN, origin) +
+                                    (isEmpty(predicate) ? "" : (" AND ( " + predicate + " )")),
+                            null,
+                            groupBy,
+                            having,
+                            isEmpty(orderBy) ?
+                                    (TABLE_ACTIONS_AUDIT_LOG_TRIGGER_DATE + " DESC") : orderBy);
 
             //noinspection TryFinallyCanBeTryWithResources
             try {

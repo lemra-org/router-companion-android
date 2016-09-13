@@ -214,7 +214,7 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
     @Override
     public List<SpeedTestResult> getSpeedTestResultsByRouter(@NonNull String router) {
         //TODO
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
@@ -236,12 +236,25 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
 
     @Override
     public Collection<ActionLog> getActionsByOrigin(String origin) {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
     public Collection<ActionLog> getActionsByRouterByOrigin(String routerUuid, String origin) {
-        return null;
+        return Collections.emptyList();
+    }
+
+    @Override
+    public Collection<ActionLog> getActionsByOrigin(String origin, String predicate, String groupBy,
+                                                    String having, String orderBy) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public Collection<ActionLog> getActionsByRouterByOrigin(String routerUuid, String origin,
+                                                            String predicate, String groupBy,
+                                                            String having, String orderBy) {
+        return Collections.emptyList();
     }
 
     @Override

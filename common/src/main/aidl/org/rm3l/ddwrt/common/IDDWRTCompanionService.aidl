@@ -18,7 +18,14 @@ interface IDDWRTCompanionService {
 
     List<ActionLog> getActionsByOrigin(String origin);
 
+    List<ActionLog> getActionsByOriginWithSqlConstraints(String origin, String predicate,
+                                        String groupBy, String having, String orderBy);
+
     List<ActionLog> getActionsByRouterByOrigin(String routerUuid, String origin);
+
+    List<ActionLog> getActionsByRouterByOriginWithSqlConstraints(String routerUuid, String origin,
+                                        String predicate, String groupBy, String having,
+                                        String orderBy);
 
     void clearActionsLogByOrigin(String origin);
 

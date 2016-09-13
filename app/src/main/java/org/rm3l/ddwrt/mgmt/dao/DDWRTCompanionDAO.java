@@ -92,6 +92,13 @@ public interface DDWRTCompanionDAO {
 
     Collection<ActionLog> getActionsByRouterByOrigin(String routerUuid, String origin);
 
+    Collection<ActionLog> getActionsByOrigin(String origin, String predicate, String groupBy,
+                                             String having, String orderBy);
+
+    Collection<ActionLog> getActionsByRouterByOrigin(String routerUuid, String origin,
+                                                     String predicate, String groupBy,
+                                                     String having, String orderBy);
+
     void clearActionsLogByOrigin(String origin);
 
     void clearActionsLogByRouterByOrigin(String routerUuid, String origin);

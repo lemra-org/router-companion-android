@@ -107,11 +107,40 @@ public class DDWRTCompanionServiceImpl extends Service {
         }
 
         @Override
+        public List<ActionLog> getActionsByOriginWithSqlConstraints(String origin, String predicate,
+                                                                    String groupBy,
+                                                                    String having, String orderBy) {
+            if (isEmpty(origin)) {
+                throw new IllegalArgumentException("Origin must not be blank");
+            }
+            final Collection<ActionLog> actionLogCollection = mDao
+                    .getActionsByOrigin(origin, predicate, groupBy, having, orderBy);
+            return new ArrayList<>(actionLogCollection);
+        }
+
+        @Override
         public List<ActionLog> getActionsByRouterByOrigin(String routerUuid, String origin) {
             if (isEmpty(origin) || isEmpty(routerUuid)) {
                 throw new IllegalArgumentException("Origin and Router UUID must not be blank");
             }
-            final Collection<ActionLog> actionLogCollection = mDao.getActionsByRouterByOrigin(routerUuid, origin);
+            final Collection<ActionLog> actionLogCollection = mDao
+                    .getActionsByRouterByOrigin(routerUuid, origin);
+            return new ArrayList<>(actionLogCollection);
+        }
+
+        @Override
+        public List<ActionLog> getActionsByRouterByOriginWithSqlConstraints(String routerUuid,
+                                                                            String origin,
+                                                                            String predicate,
+                                                                            String groupBy,
+                                                                            String having,
+                                                                            String orderBy) {
+            if (isEmpty(origin) || isEmpty(routerUuid)) {
+                throw new IllegalArgumentException("Origin and Router UUID must not be blank");
+            }
+            final Collection<ActionLog> actionLogCollection = mDao
+                    .getActionsByRouterByOrigin(routerUuid, origin,
+                            predicate, groupBy, having, orderBy);
             return new ArrayList<>(actionLogCollection);
         }
 
