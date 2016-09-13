@@ -2040,7 +2040,7 @@ public class WirelessClientsTile
 
                             // Now we create the renderer
                             final XYSeriesRenderer renderer = new XYSeriesRenderer();
-                            renderer.setLineWidth(2);
+                            renderer.setLineWidth(5);
 
                             renderer.setColor(ColorUtils.getColor(inOrOut));
                             // Include low and max value

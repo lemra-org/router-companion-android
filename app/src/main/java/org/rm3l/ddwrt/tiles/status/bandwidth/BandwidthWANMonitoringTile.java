@@ -30,6 +30,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
@@ -51,6 +52,7 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
+import org.apache.commons.io.FileUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -63,6 +65,7 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -74,6 +77,27 @@ import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
 public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
 
     private static final String LOG_TAG = BandwidthWANMonitoringTile.class.getSimpleName();
+
+    /*
+    root@r7000:~# cat /proc/net/dev
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+   br0: 4089595951 20007416    0 3014    0     0          0         0 36941409374 31692808    0    0    0     0       0          0
+ vlan1:       0       0    0    0    0     0          0         0 110064455  885773    0    0    0     0       0          0
+  sit0:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+    lo: 2597144    9051    0    0    0     0          0         0  2597144    9051    0    0    0     0       0          0
+ wl0.1: 27876702  142125    0    0    0 28598621          0         0 306106604  990000  428    0    0     0       0          0
+  eth0: 3412755119 34715262    0   22    0     0          0         0 141077098 20701272    0    0    0     0       0          0
+  eth1: 2354406847 11291259    0    0    0 28598621          0         0 2776692944 16600366  193    0    0     0       0          0
+  eth2: 2915477195 12548189    0    0    0 945775          0         0 1144999882 20021807 3502    0    0     0       0          0
+ip6tnl0:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+ vlan2: 41303011192 34714735    0    0    0     0          0    292833 4243173995 19815491    0    0    0     0       0          0
+ teql0:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+     */
+
+    //Pivot table of all data
+    private static final String READ_IFACE_DATA_FROM_PROC_NET_DEV_FMT =
+            "cat /proc/net/dev | grep \"%s\" | awk '{for( i=2; i<=NF; i++ ){printf( \"%%s\\n\", $i )}; printf( \"--XXX--\\n\");}'";
 
     @NonNull
     private final BandwidthMonitoringTile.BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData =
@@ -122,7 +146,9 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                     updateProgressBarViewSeparator(10);
 
                     //Start by getting information about the WAN iface name
-                    final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences, NVRAMInfo.WAN_IFACE);
+                    final NVRAMInfo nvRamInfoFromRouter = SSHUtils
+                            .getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences,
+                                    NVRAMInfo.WAN_IFACE);
                     updateProgressBarViewSeparator(45);
                     if (nvRamInfoFromRouter == null) {
                         throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
@@ -135,23 +161,18 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                         throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
                     }
 
-                    final String[] netDevWanIfaces = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences, "cat /proc/net/dev | grep \"" + wanIface + "\"");
+                    @SuppressWarnings("MalformedFormatString")
+                    final String[] netDevDataForIface = SSHUtils.getManualProperty(mParentFragmentActivity,
+                            mRouter, mGlobalPreferences,
+                            String.format(READ_IFACE_DATA_FROM_PROC_NET_DEV_FMT, wanIface),
+                            "sleep 1",
+                            String.format(READ_IFACE_DATA_FROM_PROC_NET_DEV_FMT, wanIface));
                     updateProgressBarViewSeparator(60);
-                    if (netDevWanIfaces == null || netDevWanIfaces.length == 0) {
+                    if (netDevDataForIface == null || netDevDataForIface.length < 33) {
                         return null;
                     }
 
-                    String netDevWanIface = netDevWanIfaces[0];
-                    if (netDevWanIface == null) {
-                        return null;
-                    }
-
-                    netDevWanIface = netDevWanIface.replaceAll(wanIface + ":", "");
-
-                    final List<String> netDevWanIfaceList = Splitter.on(" ").omitEmptyStrings().trimResults().splitToList(netDevWanIface);
-                    if (netDevWanIfaceList == null || netDevWanIfaceList.size() <= 15) {
-                        return null;
-                    }
+                    final List<String> netDevWanIfaceList = Arrays.asList(netDevDataForIface);
 
                     final long timestamp = System.currentTimeMillis();
 
@@ -173,37 +194,55 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                     nvRamInfoFromRouter.setProperty(wanIface + "_xmit_carrier", netDevWanIfaceList.get(14));
                     nvRamInfoFromRouter.setProperty(wanIface + "_xmit_compressed", netDevWanIfaceList.get(15));
 
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_bytes_t1", netDevWanIfaceList.get(17));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_packets_t1", netDevWanIfaceList.get(18));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_errs_t1", netDevWanIfaceList.get(19));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_drop_t1", netDevWanIfaceList.get(20));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_fifo_t1", netDevWanIfaceList.get(21));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_frame_t1", netDevWanIfaceList.get(22));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_compressed_t1", netDevWanIfaceList.get(23));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_multicast_t1", netDevWanIfaceList.get(24));
+
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_bytes_t1", netDevWanIfaceList.get(25));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_packets_t1", netDevWanIfaceList.get(26));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_errs_t1", netDevWanIfaceList.get(27));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_drop_t1", netDevWanIfaceList.get(28));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_fifo_t1", netDevWanIfaceList.get(29));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_colls_t1", netDevWanIfaceList.get(30));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_carrier_t1", netDevWanIfaceList.get(31));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_compressed_t1", netDevWanIfaceList.get(32));
+
                     //Ingress
-                    double wanRcvMBytes;
-                    final String wanRcvBytes = nvRamInfoFromRouter.getProperty(wanIface + "_rcv_bytes", "-1");
+                    double wanRcvBytes;
                     try {
-                        wanRcvMBytes = Double.parseDouble(wanRcvBytes) / (1024 * 1024);
-                        if (wanRcvMBytes >= 0.) {
-                            wanRcvMBytes = new BigDecimal(wanRcvMBytes).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                        wanRcvBytes = (Double.parseDouble(nvRamInfoFromRouter.getProperty(wanIface + "_rcv_bytes_t1", "-255")) -
+                                Double.parseDouble(nvRamInfoFromRouter.getProperty(wanIface + "_rcv_bytes", "-1")));
+                        if (wanRcvBytes >= 0.) {
                             bandwidthMonitoringIfaceData.addData("IN",
-                                    new BandwidthMonitoringTile.DataPoint(timestamp, wanRcvMBytes));
+                                    new BandwidthMonitoringTile.DataPoint(timestamp, wanRcvBytes));
                         }
                     } catch (@NonNull final NumberFormatException nfe) {
                         return null;
                     }
-                    nvRamInfoFromRouter.setProperty(wanIface + "_ingress_MB", Double.toString(wanRcvMBytes));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_ingress_MB",
+                            byteCountToDisplaySize(Double.valueOf(wanRcvBytes).longValue()) + "ps");
 
                     //Egress
-                    double wanXmitMBytes;
-                    final String wanXmitBytes = nvRamInfoFromRouter.getProperty(wanIface + "_xmit_bytes", "-1");
+                    double wanXmitBytes;
                     try {
-                        wanXmitMBytes = Double.parseDouble(wanXmitBytes) / (1024 * 1024);
-                        if (wanXmitMBytes >= 0.) {
-                            wanXmitMBytes = new BigDecimal(wanXmitMBytes).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                        wanXmitBytes = (Double.parseDouble(nvRamInfoFromRouter.getProperty(wanIface + "_xmit_bytes_t1", "-255")) -
+                                Double.parseDouble(nvRamInfoFromRouter.getProperty(wanIface + "_xmit_bytes", "-1")));
+                        if (wanXmitBytes >= 0.) {
                             bandwidthMonitoringIfaceData.addData("OUT",
-                                    new BandwidthMonitoringTile.DataPoint(timestamp, wanXmitMBytes));
+                                    new BandwidthMonitoringTile.DataPoint(timestamp, wanXmitBytes));
                         }
 
                     } catch (@NonNull final NumberFormatException nfe) {
                         return null;
                     }
 
-                    nvRamInfoFromRouter.setProperty(wanIface + "_egress_MB", Double.toString(wanXmitMBytes));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_egress_MB",
+                            byteCountToDisplaySize(Double.valueOf(wanXmitBytes).longValue()) + "ps");
 
                     updateProgressBarViewSeparator(90);
 
@@ -289,7 +328,7 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
 
                     // Now we create the renderer
                     final XYSeriesRenderer renderer = new XYSeriesRenderer();
-                    renderer.setLineWidth(2);
+                    renderer.setLineWidth(5);
 
                     renderer.setColor(ColorUtils.getColor(iface));
                     // Include low and max value
@@ -320,12 +359,11 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
 
                 mRenderer.setYLabels(0);
                 mRenderer.addYTextLabel(maxY, byteCountToDisplaySize(Double.valueOf(maxY).longValue())
-                        .replace("bytes", "B"));
+                        .replace("bytes", "B") + "ps");
                 if (maxY != 0 && maxY / 2 >= 9000) {
                     mRenderer.addYTextLabel(maxY / 2, byteCountToDisplaySize(Double.valueOf(maxY / 2).longValue())
-                            .replace("bytes", "B"));
+                            .replace("bytes", "B") + "ps");
                 }
-
 
                 // We want to avoid black border
                 //setting text size of the title
@@ -347,10 +385,10 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                 mRenderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00)); // transparent margins
                 // Disable Pan on two axis
                 mRenderer.setPanEnabled(false, false);
-                mRenderer.setYAxisMax(maxY + 10);
+                mRenderer.setYAxisMax(maxY + 1024);
                 mRenderer.setYAxisMin(minY);
                 mRenderer.setXAxisMin(minX);
-                mRenderer.setXAxisMax(maxX + 10);
+                mRenderer.setXAxisMax(maxX + 1024);
                 mRenderer.setShowGrid(false);
                 mRenderer.setClickEnabled(false);
                 mRenderer.setZoomEnabled(false, false);
@@ -367,6 +405,11 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                 mRenderer.setInScroll(false);
                 mRenderer.setFitLegend(true);
                 mRenderer.setLabelsTextSize(30f);
+                final int blackOrWhite = ContextCompat.getColor(mParentFragmentActivity,
+                        ColorUtils.isThemeLight(mParentFragmentActivity) ? R.color.black : R.color.white);
+                mRenderer.setAxesColor(blackOrWhite);
+                mRenderer.setXLabelsColor(blackOrWhite);
+                mRenderer.setYLabelsColor(0, blackOrWhite);
 
                 final GraphicalView chartView = ChartFactory.getTimeChartView(graphPlaceHolder
                         .getContext(), dataset, mRenderer, null);

@@ -77,31 +77,50 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:textStyle="bold"
             android:visibility="gone" />
 
-        <GridLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:columnCount="3">
+            android:layout_height="300dp"
+            android:layout_margin="5dp">
 
-            <RelativeLayout
+            <LinearLayout
+                android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"
                 android:layout_width="match_parent"
-                android:layout_height="fill_parent"
-                android:layout_columnSpan="3">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
 
-                <LinearLayout
-                    android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"
-                    android:layout_width="match_parent"
-                    android:layout_height="400dp"
-                    android:orientation="vertical"/>
+            <ProgressBar
+                android:id="@+id/tile_status_bandwidth_monitoring_graph_loading_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
 
-                <ProgressBar
-                    android:id="@+id/tile_status_bandwidth_monitoring_graph_loading_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true" />
+        </RelativeLayout>
 
-            </RelativeLayout>
+        <!--<GridLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:columnCount="3">-->
 
-        </GridLayout>
+            <!--<RelativeLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="fill_parent"-->
+                <!--android:layout_columnSpan="3">-->
+
+                <!--<LinearLayout-->
+                    <!--android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="400dp"-->
+                    <!--android:orientation="vertical"/>-->
+
+                <!--<ProgressBar-->
+                    <!--android:id="@+id/tile_status_bandwidth_monitoring_graph_loading_view"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_centerInParent="true" />-->
+
+            <!--</RelativeLayout>-->
+
+        <!--</GridLayout>-->
 
         <com.github.curioustechizen.ago.RelativeTimeTextView
             android:textIsSelectable="true"
