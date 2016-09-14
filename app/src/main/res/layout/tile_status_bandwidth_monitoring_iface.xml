@@ -20,121 +20,119 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tile_status_bandwidth_monitoring"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_weight="0.74"
+    android:orientation="vertical"
+    android:weightSum="1">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.74"
-        android:orientation="vertical"
-        android:weightSum="1">
+        android:id="@+id/tile_status_bandwidth_monitoring_hdr"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="4.0dip">
 
-        <LinearLayout
-            android:id="@+id/tile_status_bandwidth_monitoring_hdr"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="4.0dip">
-
-            <TextView
-                android:id="@+id/tile_status_bandwidth_monitoring_title"
-                android:layout_width="0.0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.0"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:text="@string/bandwidth_usage_mb"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <ProgressBar
-            android:id="@+id/tile_progress_bar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8.0dip"
-            android:layout_marginTop="8.0dip"
-            android:indeterminate="false"
-            android:indeterminateOnly="false" />
-
-        <!-- Error message placeholder -->
         <TextView
-            android:textIsSelectable="true"
-            android:id="@+id/tile_status_bandwidth_monitoring_error"
-            android:layout_width="300dp"
+            android:id="@+id/tile_status_bandwidth_monitoring_title"
+            android:layout_width="0.0dip"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_weight="1.0"
             android:ellipsize="end"
-            android:gravity="center"
             android:singleLine="true"
-            android:text="@string/error_placeholder"
-            android:textColor="@color/ddwrt_purple"
-            android:textStyle="bold"
-            android:visibility="gone" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_margin="5dp">
-
-            <LinearLayout
-                android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"/>
-
-            <ProgressBar
-                android:id="@+id/tile_status_bandwidth_monitoring_graph_loading_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
-
-        </RelativeLayout>
-
-        <!--<GridLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:columnCount="3">-->
-
-            <!--<RelativeLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="fill_parent"-->
-                <!--android:layout_columnSpan="3">-->
-
-                <!--<LinearLayout-->
-                    <!--android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="400dp"-->
-                    <!--android:orientation="vertical"/>-->
-
-                <!--<ProgressBar-->
-                    <!--android:id="@+id/tile_status_bandwidth_monitoring_graph_loading_view"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_centerInParent="true" />-->
-
-            <!--</RelativeLayout>-->
-
-        <!--</GridLayout>-->
-
-        <com.github.curioustechizen.ago.RelativeTimeTextView
-            android:textIsSelectable="true"
-            android:layout_marginTop="5dp"
-            android:id="@+id/tile_last_sync"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:textStyle="italic"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:ellipsize="end"
-            android:gravity="end"
-            android:singleLine="false"
-            android:text="Last sync: "/>
+            android:text="@string/bandwidth_usage_mb"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
 
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/tile_progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8.0dip"
+        android:layout_marginTop="8.0dip"
+        android:indeterminate="false"
+        android:indeterminateOnly="false" />
+
+    <!-- Error message placeholder -->
+    <TextView
+        android:textIsSelectable="true"
+        android:id="@+id/tile_status_bandwidth_monitoring_error"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="@string/error_placeholder"
+        android:textColor="@color/ddwrt_purple"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_margin="5dp">
+
+        <LinearLayout
+            android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+
+        <ProgressBar
+            android:id="@+id/tile_status_bandwidth_monitoring_graph_loading_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/tile_status_bandwidth_monitoring_graph_legend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <View
+            android:id="@+id/tile_status_bandwidth_monitoring_graph_legend_series1_bar"
+            android:layout_width="15dp"
+            android:layout_height="2dp" />
+        <TextView
+            android:id="@+id/tile_status_bandwidth_monitoring_graph_legend_series1_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:textAppearance="?android:textAppearanceSmall"/>
+
+        <View
+            android:id="@+id/tile_status_bandwidth_monitoring_graph_legend_series2_bar"
+            android:layout_width="15dp"
+            android:layout_height="2dp" />
+        <TextView
+            android:id="@+id/tile_status_bandwidth_monitoring_graph_legend_series2_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:textAppearanceSmall"/>
+
+    </LinearLayout>
+
+    <com.github.curioustechizen.ago.RelativeTimeTextView
+        android:textIsSelectable="true"
+        android:layout_marginTop="5dp"
+        android:id="@+id/tile_last_sync"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:textStyle="italic"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:ellipsize="end"
+        android:gravity="end"
+        android:singleLine="false"
+        android:text="Last sync: "/>
+
 </LinearLayout>

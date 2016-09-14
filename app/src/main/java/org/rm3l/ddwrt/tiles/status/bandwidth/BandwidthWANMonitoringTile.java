@@ -52,6 +52,7 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
+import org.achartengine.renderer.XYSeriesRenderer.FillOutsideLine;
 import org.apache.commons.io.FileUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
@@ -288,11 +289,15 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
 
             final Exception exception = data.getException();
 
+            final View legendView = this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_legend);
+
             if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
                 if (exception == null) {
                     errorPlaceHolderView.setVisibility(View.GONE);
                 }
+
+                legendView.setVisibility(View.VISIBLE);
 
                 ((TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_title))
                         .setText(this.mParentFragmentActivity.getResources()
@@ -310,6 +315,7 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
                 final XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
                 final XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
 
+                int i = 0;
                 for (final Map.Entry<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> entry : dataCircularBuffer.entrySet()) {
                     final String iface = entry.getKey();
                     final EvictingQueue<BandwidthMonitoringTile.DataPoint> dataPoints = entry.getValue();
@@ -330,12 +336,35 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
                     final XYSeriesRenderer renderer = new XYSeriesRenderer();
                     renderer.setLineWidth(5);
 
-                    renderer.setColor(ColorUtils.getColor(iface));
+                    final int colorForIface = ColorUtils.getColor(iface);
+                    renderer.setColor(colorForIface);
                     // Include low and max value
                     renderer.setDisplayBoundingPoints(true);
                     // we add point markers
                     renderer.setPointStyle(PointStyle.POINT);
                     renderer.setPointStrokeWidth(1);
+
+                    final FillOutsideLine fill = new FillOutsideLine(FillOutsideLine.Type.BOUNDS_ABOVE);
+                    fill.setColor(colorForIface);
+                    renderer.addFillOutsideLine(fill);
+
+                    if (i == 0) {
+                        this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_legend_series1_bar)
+                            .setBackgroundColor(colorForIface);
+                        final TextView series1TextView = (TextView)
+                                this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_legend_series1_text);
+                        series1TextView.setText(iface);
+                        series1TextView.setTextColor(colorForIface);
+
+                    } else if (i == 1) {
+                        this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_legend_series2_bar)
+                                .setBackgroundColor(colorForIface);
+                        final TextView series2TextView = (TextView)
+                                this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_legend_series2_text);
+                        series2TextView.setText(iface);
+                        series2TextView.setTextColor(colorForIface);
+                    }
+                    i++;
 
                     mRenderer.addSeriesRenderer(renderer);
                 }
@@ -408,6 +437,7 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
                 final int blackOrWhite = ContextCompat.getColor(mParentFragmentActivity,
                         ColorUtils.isThemeLight(mParentFragmentActivity) ? R.color.black : R.color.white);
                 mRenderer.setAxesColor(blackOrWhite);
+                mRenderer.setShowLegend(false);
                 mRenderer.setXLabelsColor(blackOrWhite);
                 mRenderer.setYLabelsColor(0, blackOrWhite);
 
@@ -424,6 +454,7 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
             }
 
             if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+                legendView.setVisibility(View.GONE);
                 //noinspection ThrowableResultOfMethodCallIgnored
                 final Throwable rootCause = Throwables.getRootCause(exception);
                 errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
@@ -441,6 +472,7 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
                 updateProgressBarWithError();
             } else if (exception == null){
+                legendView.setVisibility(View.VISIBLE);
                 updateProgressBarWithSuccess();
                 if (bandwidthMonitoringIfaceData.getData().isEmpty()) {
                     errorPlaceHolderView.setText("Error: No Data!");
