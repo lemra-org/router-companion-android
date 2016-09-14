@@ -274,7 +274,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="dhcp_start_ip">Start IP</string>
     <string name="dhcp_end_ip">End IP</string>
     <string name="client_lease_time">Client Lease Time</string>
-    <string name="bandwidth_usage_mb">Bandwidth Usage (MB)</string>
+    <string name="bandwidth_usage_mb">Bandwidth Usage</string>
     <string name="interfaces">Interfaces</string>
     <string name="bw_lan">LAN</string>
     <string name="bw_wireless">Wireless</string>
