@@ -2523,12 +2523,11 @@ public class WirelessClientsTile
                 mParentFragmentPreferences.getBoolean(getFormattedPrefKey(RT_GRAPHS), false)) {
             //Reschedule next run right away, to have a pseudo realtime effect, regardless of the actual sync pref!
             //TODO Check how much extra load that represents on the router
-            doneWithLoaderInstance(this, loader, TimeUnit.MINUTES.toMillis(1));
+            doneWithLoaderInstance(this, loader, TimeUnit.SECONDS.toMillis(10));
+        } else {
+            //Use classical sync
+            doneWithLoaderInstance(this, loader);
         }
-//        else {
-//            //Use classical sync
-//            doneWithLoaderInstance(this, loader);
-//        }
     }
 
     @NonNull

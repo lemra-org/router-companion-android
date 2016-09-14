@@ -29,24 +29,37 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:orientation="vertical"
     android:weightSum="1">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/tile_status_bandwidth_monitoring_hdr"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1.0"
         android:paddingTop="4.0dip">
 
         <TextView
             android:id="@+id/tile_status_bandwidth_monitoring_title"
-            android:layout_width="0.0dip"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1.0"
             android:ellipsize="end"
             android:singleLine="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:text="@string/bandwidth_usage_mb"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold" />
 
-    </LinearLayout>
+        <ImageButton
+            android:id="@+id/tile_status_bandwidth_monitoring_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/menu"
+            android:src="@drawable/abs__ic_menu_moreoverflow_holo_light" />
+
+    </RelativeLayout>
 
     <ProgressBar
         android:id="@+id/tile_progress_bar"
@@ -72,6 +85,68 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:textColor="@color/ddwrt_purple"
         android:textStyle="bold"
         android:visibility="gone" />
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:columnCount="3"
+        android:layout_marginBottom="20dp">
+
+        <!-- In -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="In"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="8.0dip"
+            android:layout_marginRight="8.0dip"
+            android:text="@string/one_space" />
+
+        <TextView
+            android:textIsSelectable="true"
+            android:id="@+id/tile_status_bandwidth_monitoring_in"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:singleLine="false"
+            android:text="@string/loading" />
+
+        <!-- Out -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Out"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="8.0dip"
+            android:layout_marginRight="8.0dip"
+            android:text="@string/one_space" />
+
+        <TextView
+            android:textIsSelectable="true"
+            android:id="@+id/tile_status_bandwidth_monitoring_out"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:singleLine="false"
+            android:text="@string/loading" />
+
+    </GridLayout>
+
 
     <RelativeLayout
         android:layout_width="match_parent"

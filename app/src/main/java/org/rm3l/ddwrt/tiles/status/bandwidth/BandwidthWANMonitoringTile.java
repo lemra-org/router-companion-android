@@ -33,8 +33,13 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,6 +74,7 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
 
@@ -78,6 +84,8 @@ import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
 public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
 
     private static final String LOG_TAG = BandwidthWANMonitoringTile.class.getSimpleName();
+
+    public static final String RT_GRAPHS = "rt_graphs";
 
     /*
     root@r7000:~# cat /proc/net/dev
@@ -107,9 +115,19 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
     private String wanIface;
     private long mLastSync;
 
+    private NVRAMInfo nvRamInfoFromRouter;
+
+    private Loader<None> mCurrentLoader;
+
     public BandwidthWANMonitoringTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_bandwidth_monitoring_iface,
                 null);
+
+        if (mParentFragmentPreferences != null && !mParentFragmentPreferences.contains(getFormattedPrefKey(RT_GRAPHS))) {
+            mParentFragmentPreferences.edit()
+                    .putBoolean(getFormattedPrefKey(RT_GRAPHS), true)
+                    .apply();
+        }
     }
 
     @Override
@@ -125,7 +143,7 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
     @Nullable
     @Override
     protected Loader<None> getLoader(int id, Bundle args) {
-        return new AsyncTaskLoader<None>(this.mParentFragmentActivity) {
+        this.mCurrentLoader = new AsyncTaskLoader<None>(this.mParentFragmentActivity) {
 
             @Nullable
             @Override
@@ -147,7 +165,7 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
                     updateProgressBarViewSeparator(10);
 
                     //Start by getting information about the WAN iface name
-                    final NVRAMInfo nvRamInfoFromRouter = SSHUtils
+                    nvRamInfoFromRouter = SSHUtils
                             .getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                     NVRAMInfo.WAN_IFACE);
                     updateProgressBarViewSeparator(45);
@@ -255,6 +273,7 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
                 }
             }
         };
+        return mCurrentLoader;
     }
 
     @Nullable
@@ -275,10 +294,80 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
         Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
         try {
+            final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+
             layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_loading_view)
                     .setVisibility(View.GONE);
             layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder)
                     .setVisibility(View.VISIBLE);
+
+            final ImageButton tileMenu =
+                    (ImageButton) layout.findViewById(R.id.tile_status_bandwidth_monitoring_menu);
+
+            if (!isThemeLight) {
+                //Set menu background to white
+                tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+            }
+
+            if (mParentFragmentPreferences == null) {
+                tileMenu.setVisibility(View.INVISIBLE);
+            } else {
+                tileMenu.setVisibility(View.VISIBLE);
+            }
+
+            tileMenu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            final int itemId = item.getItemId();
+                            switch (itemId) {
+                                case R.id.tile_status_bandwidth_realtime_graphs:
+                                    final boolean rtGraphsEnabled = !item.isChecked();
+                                    if (rtGraphsEnabled) {
+                                        //Restart loader
+                                        if (mSupportLoaderManager != null && mCurrentLoader != null) {
+                                            mSupportLoaderManager.restartLoader(
+                                                    mCurrentLoader.getId(),
+                                                    mFragmentArguments,
+                                                    BandwidthWANMonitoringTile.this);
+                                        }
+                                    }
+                                    if (mParentFragmentPreferences != null) {
+                                        mParentFragmentPreferences.edit()
+                                                .putBoolean(getFormattedPrefKey(RT_GRAPHS), rtGraphsEnabled)
+                                                .apply();
+                                    }
+                                    return true;
+                                default:
+                                    break;
+                            }
+                            return false;
+                        }
+                    });
+
+                    final MenuInflater inflater = popup.getMenuInflater();
+                    final Menu menu = popup.getMenu();
+                    inflater.inflate(R.menu.tile_status_bandwidth_monitoring_options, menu);
+
+                    final MenuItem rtMenuItem = menu.findItem(R.id.tile_status_bandwidth_realtime_graphs);
+                    if (mParentFragmentPreferences != null) {
+                        rtMenuItem.setVisible(true);
+                        rtMenuItem
+                                .setEnabled(mParentFragmentPreferences.contains(getFormattedPrefKey(RT_GRAPHS)));
+                        rtMenuItem
+                                .setChecked(mParentFragmentPreferences
+                                        .getBoolean(getFormattedPrefKey(RT_GRAPHS), false));
+                    } else {
+                        rtMenuItem.setVisible(false);
+                    }
+
+                    popup.show();
+                }
+            });
+
 
             //noinspection ConstantConditions
             if (data == null || bandwidthMonitoringIfaceData.getData().isEmpty()) {
@@ -303,6 +392,14 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
                         .setText(this.mParentFragmentActivity.getResources()
                                 .getString(R.string.bandwidth_usage_mb) + (!Strings.isNullOrEmpty(wanIface) ?
                                 (": " + wanIface) : ""));
+
+                final TextView inTextView =
+                        (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_in);
+                final TextView outTextView =
+                        (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_out);
+
+                inTextView.setText(nvRamInfoFromRouter.getProperty(wanIface + "_ingress_MB", "-").replace("bytes", "B"));
+                outTextView.setText(nvRamInfoFromRouter.getProperty(wanIface + "_egress_MB", "-").replace("bytes", "B"));
 
                 final LinearLayout graphPlaceHolder = (LinearLayout) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
                 final Map<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> dataCircularBuffer = bandwidthMonitoringIfaceData.getData();
@@ -435,7 +532,7 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
                 mRenderer.setFitLegend(true);
                 mRenderer.setLabelsTextSize(30f);
                 final int blackOrWhite = ContextCompat.getColor(mParentFragmentActivity,
-                        ColorUtils.isThemeLight(mParentFragmentActivity) ? R.color.black : R.color.white);
+                        isThemeLight ? R.color.black : R.color.white);
                 mRenderer.setAxesColor(blackOrWhite);
                 mRenderer.setShowLegend(false);
                 mRenderer.setXLabelsColor(blackOrWhite);
@@ -483,6 +580,18 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
+            doneLoading(loader);
+        }
+    }
+
+    private void doneLoading(Loader<None> loader) {
+        if (mParentFragmentPreferences != null &&
+                mParentFragmentPreferences.getBoolean(getFormattedPrefKey(RT_GRAPHS), false)) {
+            //Reschedule next run right away, to have a pseudo realtime effect, regardless of the actual sync pref!
+            //TODO Check how much extra load that represents on the router
+            doneWithLoaderInstance(this, loader, TimeUnit.SECONDS.toMillis(10));
+        } else {
+            //Use classical sync
             doneWithLoaderInstance(this, loader);
         }
     }
