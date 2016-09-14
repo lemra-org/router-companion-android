@@ -524,7 +524,38 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_height="300dp"
             android:layout_below="@+id/tile_status_wireless_client_device_details_oui_lastseen_table"
             android:orientation="horizontal"
+            android:layout_marginTop="10dp"
             android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_below="@+id/tile_status_wireless_client_device_details_graph_placeholder"
+            android:id="@+id/tile_status_wireless_client_device_details_graph_legend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <View
+                android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series1_bar"
+                android:layout_width="15dp"
+                android:layout_height="2dp" />
+            <TextView
+                android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series1_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:textAppearance="?android:textAppearanceSmall"/>
+
+            <View
+                android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series2_bar"
+                android:layout_width="15dp"
+                android:layout_height="2dp" />
+            <TextView
+                android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series2_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:textAppearanceSmall"/>
+
+        </LinearLayout>
 
         <TextView
             android:textIsSelectable="true"

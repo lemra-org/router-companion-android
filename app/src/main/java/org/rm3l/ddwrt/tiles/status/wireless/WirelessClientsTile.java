@@ -1534,6 +1534,7 @@ public class WirelessClientsTile
 
             final Exception exception = data.getException();
 
+
             if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
                 mProgressBar.setProgress(97);
@@ -1688,6 +1689,9 @@ public class WirelessClientsTile
 
                     final CardView cardView = (CardView) mParentFragmentActivity.getLayoutInflater()
                             .inflate(R.layout.tile_status_wireless_client, null);
+
+                    final View legendView = cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_legend);
+                    legendView.setVisibility(View.GONE);
 
                     //Create Options Menu
                     final ImageButton tileMenu = (ImageButton)
@@ -2001,9 +2005,12 @@ public class WirelessClientsTile
                     if (hideGraphPlaceHolder) {
                         //Show no data
                         deviceDetailsPlaceHolder.setVisibility(View.GONE);
+                        legendView.setVisibility(View.GONE);
                         noDataView.setVisibility(View.VISIBLE);
 
                     } else {
+
+                        legendView.setVisibility(View.VISIBLE);
 
                         final Map<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> dataCircularBuffer =
                                 bandwidthMonitoringIfaceData.getData();
@@ -2018,6 +2025,7 @@ public class WirelessClientsTile
 
                         final Map<Double, String> yLabels = new HashMap<>();
 
+                        int i = 0;
                         //noinspection ConstantConditions
                         for (final Map.Entry<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> entry : dataCircularBuffer.entrySet()) {
                             final String inOrOut = entry.getKey();
@@ -2042,12 +2050,35 @@ public class WirelessClientsTile
                             final XYSeriesRenderer renderer = new XYSeriesRenderer();
                             renderer.setLineWidth(5);
 
-                            renderer.setColor(ColorUtils.getColor(inOrOut));
+                            final int color = ColorUtils.getColor(inOrOut);
+                            renderer.setColor(color);
                             // Include low and max value
                             renderer.setDisplayBoundingPoints(true);
                             // we add point markers
                             renderer.setPointStyle(PointStyle.POINT);
                             renderer.setPointStrokeWidth(1);
+
+                            final XYSeriesRenderer.FillOutsideLine fill = new XYSeriesRenderer.FillOutsideLine(XYSeriesRenderer.FillOutsideLine.Type.BOUNDS_ABOVE);
+                            fill.setColor(color);
+                            renderer.addFillOutsideLine(fill);
+
+                            if (i == 0) {
+                                cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_legend_series1_bar)
+                                        .setBackgroundColor(color);
+                                final TextView series1TextView = (TextView)
+                                        cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_legend_series1_text);
+                                series1TextView.setText(inOrOut);
+                                series1TextView.setTextColor(color);
+
+                            } else if (i == 1) {
+                                cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_legend_series2_bar)
+                                        .setBackgroundColor(color);
+                                final TextView series2TextView = (TextView)
+                                        cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_legend_series2_text);
+                                series2TextView.setText(inOrOut);
+                                series2TextView.setTextColor(color);
+                            }
+                            i++;
 
                             mRenderer.addSeriesRenderer(renderer);
                         }
@@ -2091,6 +2122,13 @@ public class WirelessClientsTile
                         mRenderer.setExternalZoomEnabled(false);
                         mRenderer.setInScroll(false);
                         mRenderer.setFitLegend(true);
+                        mRenderer.setLabelsTextSize(30f);
+                        final int blackOrWhite = ContextCompat.getColor(mParentFragmentActivity,
+                                ColorUtils.isThemeLight(mParentFragmentActivity) ? R.color.black : R.color.white);
+                        mRenderer.setAxesColor(blackOrWhite);
+                        mRenderer.setShowLegend(false);
+                        mRenderer.setXLabelsColor(blackOrWhite);
+                        mRenderer.setYLabelsColor(0, blackOrWhite);
 
                         final GraphicalView chartView = ChartFactory.getTimeChartView(mParentFragmentActivity, dataset, mRenderer, null);
                         chartView.repaint();
@@ -2215,6 +2253,7 @@ public class WirelessClientsTile
                                     }
                                     if (hideGraphPlaceHolder) {
                                         trafficGraphPlaceHolderView.setVisibility(View.GONE);
+                                        legendView.setVisibility(View.GONE);
                                         if (noDataView.getVisibility() == View.VISIBLE) {
                                             noDataView.setVisibility(View.GONE);
                                         } else {
@@ -2227,6 +2266,12 @@ public class WirelessClientsTile
                                         } else {
                                             trafficGraphPlaceHolderView.setVisibility(View.VISIBLE);
                                         }
+                                        if (legendView.getVisibility() == View.VISIBLE) {
+                                            legendView.setVisibility(View.GONE);
+                                        } else {
+                                            legendView.setVisibility(View.VISIBLE);
+                                        }
+
                                     }
                                     mParentFragmentPreferences.edit()
                                             .putStringSet(expandedClientsPrefKey, clientsExpanded)
@@ -2243,14 +2288,17 @@ public class WirelessClientsTile
                         if (hideGraphPlaceHolder) {
                             noDataView.setVisibility(View.VISIBLE);
                             trafficGraphPlaceHolderView.setVisibility(View.GONE);
+                            legendView.setVisibility(View.GONE);
                         } else {
                             trafficGraphPlaceHolderView.setVisibility(View.VISIBLE);
+                            legendView.setVisibility(View.VISIBLE);
                             noDataView.setVisibility(View.GONE);
                         }
                     } else {
                         //Collapse detailed view
                         ouiAndLastSeenView.setVisibility(View.GONE);
                         trafficGraphPlaceHolderView.setVisibility(View.GONE);
+                        legendView.setVisibility(View.GONE);
                         noDataView.setVisibility(View.GONE);
                     }
 
