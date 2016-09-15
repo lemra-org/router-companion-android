@@ -27,7 +27,7 @@ import android.support.annotation.Nullable;
 
 import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthWANMonitoringTile;
+import org.rm3l.ddwrt.tiles.status.bandwidth.IfacesBandwidthMonitoringTile;
 import org.rm3l.ddwrt.tiles.status.bandwidth.IfacesTile;
 
 import java.util.Arrays;
@@ -44,7 +44,7 @@ public class StatusBandwidthFragment extends AbstractBaseFragment<Collection<DDW
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
         return Arrays.<DDWRTTile>asList(
                 new IfacesTile(this, savedInstanceState, router),
-                new BandwidthWANMonitoringTile(this, savedInstanceState, router));
+                new IfacesBandwidthMonitoringTile(this, savedInstanceState, router));
     }
 
 }
