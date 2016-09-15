@@ -495,6 +495,12 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             //setting the margin size for the graph in the order top, left, bottom, right
             multiRenderer.setMargins(new int[]{30, 30, 30, 30});
 
+//            multiRenderer.setLabelsTextSize(30f);
+            final int blackOrWhite = ContextCompat.getColor(this,
+                    ColorUtils.isThemeLight(this) ? R.color.black : R.color.white);
+            multiRenderer.setAxesColor(blackOrWhite);
+            multiRenderer.setXLabelsColor(blackOrWhite);
+            multiRenderer.setYLabelsColor(0, blackOrWhite);
 
             // Adding inboundRenderer and outboundRenderer to multipleRenderer
             // Note: The order of adding dataseries to dataset and renderers to multipleRenderer
