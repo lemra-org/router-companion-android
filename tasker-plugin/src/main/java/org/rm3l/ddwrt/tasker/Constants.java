@@ -15,6 +15,7 @@ public final class Constants {
 
     //This means we need at least the app built from tag '7.1.0'
     public static final int DDWRT_COMPANION_MIN_VERSION_REQUIRED = 710000;
+    public static final String DDWRT_COMPANION_MIN_VERSION_REQUIRED_STR = "7.1.0";
 
     public static final String FILEPROVIDER_AUTHORITY = (BuildConfig.APPLICATION_ID + ".fileprovider");
 

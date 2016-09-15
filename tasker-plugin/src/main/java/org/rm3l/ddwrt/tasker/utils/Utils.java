@@ -8,14 +8,17 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.common.base.Splitter;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.tasker.Constants;
 import org.rm3l.ddwrt.tasker.exception.DDWRTCompanionPackageVersionRequiredNotFoundException;
 
+import java.util.List;
 import java.util.Locale;
 
 import static org.rm3l.ddwrt.tasker.Constants.DDWRT_COMPANION_MIN_VERSION_REQUIRED;
+import static org.rm3l.ddwrt.tasker.Constants.DDWRT_COMPANION_MIN_VERSION_REQUIRED_STR;
 
 /**
  * Created by rm3l on 07/08/16.
@@ -72,13 +75,14 @@ public final class Utils {
             return null;
         }
         if (ddwrtCompanionAppPackage.versionCode < DDWRT_COMPANION_MIN_VERSION_REQUIRED) {
+            final List<String> versionNameSplit = Splitter.on(" ").splitToList(ddwrtCompanionAppPackage.versionName);
             throw new DDWRTCompanionPackageVersionRequiredNotFoundException(
                     String.format(Locale.US,
                             "Please upgrade DD-WRT Companion app. " +
-                            "Expected at least version %d, but found version %d (%s)",
-                            DDWRT_COMPANION_MIN_VERSION_REQUIRED,
-                            ddwrtCompanionAppPackage.versionCode,
-                            ddwrtCompanionAppPackage.versionName));
+                            "Expected at least version '%s', but found version '%s'",
+                            DDWRT_COMPANION_MIN_VERSION_REQUIRED_STR,
+                            versionNameSplit.isEmpty() ?
+                                    ddwrtCompanionAppPackage.versionName : versionNameSplit.get(0)));
         }
         return ddwrtCompanionAppPackage;
     }

@@ -136,7 +136,7 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
 
         final TextView aboutView = (TextView) findViewById(R.id.tasker_main_about_textview);
         aboutView.setText(getResources().getString(R.string.main_activity_app_description,
-                DDWRT_COMPANION_MIN_VERSION_REQUIRED));
+                Constants.DDWRT_COMPANION_MIN_VERSION_REQUIRED_STR));
 
         mHistoryDescriptionText = findViewById(R.id.tasker_main_history_textview);
 
