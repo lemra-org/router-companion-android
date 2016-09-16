@@ -205,6 +205,65 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
                         throw new DDWRTNoDataException();
                     }
 
+                    String ifacePreviouslySelectedForDisplay = mIfacePreviouslySelectedForDisplay.get();
+
+                    //First try to (quickly) fetch the interface selected details.
+                    //The other interfaces will follow-up in the background
+                    for (final String ifaceRaw : allMonitoredIfaces) {
+                        if (ifaceRaw == null || ifaceRaw.isEmpty()) {
+                            continue;
+                        }
+                        final String iface = ifaceRaw.trim();
+                        if (iface.isEmpty()) {
+                            continue;
+                        }
+
+                        if (!TextUtils.isEmpty(ifacePreviouslySelectedForDisplay)) {
+                            break;
+                        }
+
+                        if (!TextUtils.isEmpty(wanIface)) {
+                            //Find the corresponding line here
+                            if (ifacePreviouslySelectedForDisplay == null && iface.equals(wanIface.trim())) {
+                                mIfacePreviouslySelectedForDisplay.set(iface);
+                                ifacePreviouslySelectedForDisplay = iface;
+                                if (mParentFragmentPreferences != null) {
+                                    mParentFragmentPreferences.edit()
+                                            .putString(getFormattedPrefKey(IFACE_DISPLAYED),
+                                                    ifacePreviouslySelectedForDisplay)
+                                            .apply();
+                                }
+                            }
+                        } else {
+                            //Take the first one
+                            if (ifacePreviouslySelectedForDisplay == null) {
+                                ifacePreviouslySelectedForDisplay = iface;
+                                mIfacePreviouslySelectedForDisplay.set(iface);
+                                if (mParentFragmentPreferences != null) {
+                                    mParentFragmentPreferences.edit()
+                                            .putString(getFormattedPrefKey(IFACE_DISPLAYED),
+                                                    ifacePreviouslySelectedForDisplay)
+                                            .apply();
+                                }
+                            }
+                        }
+                    }
+
+                    //At this point, mIfacePreviouslySelectedForDisplay is not blank.
+                    if (fetchBandwidthDataForIface(ifacePreviouslySelectedForDisplay)) {
+                        //Update title and graph right away
+                        final String iface = ifacePreviouslySelectedForDisplay;
+                        mParentFragmentActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (iface.equals(mIfacePreviouslySelectedForDisplay.get())) {
+                                    //Compare again, just in case user selected something else
+                                    displayGraphForIface(iface);
+                                }
+                            }
+                        });
+                    }
+
                     int i = 5;
                     int j = 100;
                     for (final String ifaceRaw : allMonitoredIfaces) {
@@ -216,132 +275,23 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
                             continue;
                         }
 
-                        if (!TextUtils.isEmpty(wanIface)) {
-                            //Find the corresponding line here
-                            if (mIfacePreviouslySelectedForDisplay.get() == null && iface.equals(wanIface.trim())) {
-                                mIfacePreviouslySelectedForDisplay.set(iface);
-                                if (mParentFragmentPreferences != null) {
-                                    mParentFragmentPreferences.edit()
-                                            .putString(getFormattedPrefKey(IFACE_DISPLAYED),
-                                                    mIfacePreviouslySelectedForDisplay.get())
-                                            .apply();
-                                }
-                            }
-                        } else {
-                            //Take the first one
-                            if (mIfacePreviouslySelectedForDisplay.get() == null) {
-                                mIfacePreviouslySelectedForDisplay.set(iface);
-                                if (mParentFragmentPreferences != null) {
-                                    mParentFragmentPreferences.edit()
-                                            .putString(getFormattedPrefKey(IFACE_DISPLAYED),
-                                                    mIfacePreviouslySelectedForDisplay.get())
-                                            .apply();
-                                }
-                            }
-                        }
-
+                        updateProgressBarViewSeparator(60 + (i++));
                         ifacesMenuIds.forcePut(iface, j++);
 
-                        NVRAMInfo nvramInfo = nvRamInfoFromRouterPerIface.get(iface);
-                        if (nvramInfo == null) {
-                            nvRamInfoFromRouterPerIface.put(iface, new NVRAMInfo());
+                        if (iface.equals(mIfacePreviouslySelectedForDisplay.get())) {
+                            continue;
                         }
-                        nvramInfo = nvRamInfoFromRouterPerIface.get(iface);
 
-                        BandwidthMonitoringTile.BandwidthMonitoringIfaceData
-                                bandwidthMonitoringIfaceData = bandwidthMonitoringIfaceDataMap.get(iface);
-                        if (bandwidthMonitoringIfaceData == null) {
-                            bandwidthMonitoringIfaceDataMap.put(iface,
-                                    new BandwidthMonitoringTile.BandwidthMonitoringIfaceData());
-                        }
-                        bandwidthMonitoringIfaceData = bandwidthMonitoringIfaceDataMap.get(iface);
-
-                        @SuppressWarnings("MalformedFormatString")
-                        final String[] netDevDataForIface = SSHUtils.getManualProperty(mParentFragmentActivity,
-                                mRouter, mGlobalPreferences,
-                                String.format(READ_IFACE_DATA_FROM_PROC_NET_DEV_FMT, iface),
-                                "sleep 1",
-                                String.format(READ_IFACE_DATA_FROM_PROC_NET_DEV_FMT, iface));
-                        updateProgressBarViewSeparator(60 + (i++));
-                        if (netDevDataForIface == null || netDevDataForIface.length < 33) {
+                        if (!fetchBandwidthDataForIface(iface)) {
                             return null;
                         }
-
-                        final List<String> netDevWanIfaceList = Arrays.asList(netDevDataForIface);
-
-                        final long timestamp = System.currentTimeMillis();
-
-                        nvramInfo.setProperty(iface + "_rcv_bytes", netDevWanIfaceList.get(0));
-                        nvramInfo.setProperty(iface + "_rcv_packets", netDevWanIfaceList.get(1));
-                        nvramInfo.setProperty(iface + "_rcv_errs", netDevWanIfaceList.get(2));
-                        nvramInfo.setProperty(iface + "_rcv_drop", netDevWanIfaceList.get(3));
-                        nvramInfo.setProperty(iface + "_rcv_fifo", netDevWanIfaceList.get(4));
-                        nvramInfo.setProperty(iface + "_rcv_frame", netDevWanIfaceList.get(5));
-                        nvramInfo.setProperty(iface + "_rcv_compressed", netDevWanIfaceList.get(6));
-                        nvramInfo.setProperty(iface + "_rcv_multicast", netDevWanIfaceList.get(7));
-
-                        nvramInfo.setProperty(iface + "_xmit_bytes", netDevWanIfaceList.get(8));
-                        nvramInfo.setProperty(iface + "_xmit_packets", netDevWanIfaceList.get(9));
-                        nvramInfo.setProperty(iface + "_xmit_errs", netDevWanIfaceList.get(10));
-                        nvramInfo.setProperty(iface + "_xmit_drop", netDevWanIfaceList.get(11));
-                        nvramInfo.setProperty(iface + "_xmit_fifo", netDevWanIfaceList.get(12));
-                        nvramInfo.setProperty(iface + "_xmit_colls", netDevWanIfaceList.get(13));
-                        nvramInfo.setProperty(iface + "_xmit_carrier", netDevWanIfaceList.get(14));
-                        nvramInfo.setProperty(iface + "_xmit_compressed", netDevWanIfaceList.get(15));
-
-                        nvramInfo.setProperty(iface + "_rcv_bytes_t1", netDevWanIfaceList.get(17));
-                        nvramInfo.setProperty(iface + "_rcv_packets_t1", netDevWanIfaceList.get(18));
-                        nvramInfo.setProperty(iface + "_rcv_errs_t1", netDevWanIfaceList.get(19));
-                        nvramInfo.setProperty(iface + "_rcv_drop_t1", netDevWanIfaceList.get(20));
-                        nvramInfo.setProperty(iface + "_rcv_fifo_t1", netDevWanIfaceList.get(21));
-                        nvramInfo.setProperty(iface + "_rcv_frame_t1", netDevWanIfaceList.get(22));
-                        nvramInfo.setProperty(iface + "_rcv_compressed_t1", netDevWanIfaceList.get(23));
-                        nvramInfo.setProperty(iface + "_rcv_multicast_t1", netDevWanIfaceList.get(24));
-
-                        nvramInfo.setProperty(iface + "_xmit_bytes_t1", netDevWanIfaceList.get(25));
-                        nvramInfo.setProperty(iface + "_xmit_packets_t1", netDevWanIfaceList.get(26));
-                        nvramInfo.setProperty(iface + "_xmit_errs_t1", netDevWanIfaceList.get(27));
-                        nvramInfo.setProperty(iface + "_xmit_drop_t1", netDevWanIfaceList.get(28));
-                        nvramInfo.setProperty(iface + "_xmit_fifo_t1", netDevWanIfaceList.get(29));
-                        nvramInfo.setProperty(iface + "_xmit_colls_t1", netDevWanIfaceList.get(30));
-                        nvramInfo.setProperty(iface + "_xmit_carrier_t1", netDevWanIfaceList.get(31));
-                        nvramInfo.setProperty(iface + "_xmit_compressed_t1", netDevWanIfaceList.get(32));
-
-                        //Ingress
-                        double wanRcvBytes;
-                        try {
-                            wanRcvBytes = (Double.parseDouble(nvramInfo.getProperty(iface + "_rcv_bytes_t1", "-255")) -
-                                    Double.parseDouble(nvramInfo.getProperty(iface + "_rcv_bytes", "-1")));
-                            if (wanRcvBytes >= 0.) {
-                                bandwidthMonitoringIfaceData.addData("IN",
-                                        new BandwidthMonitoringTile.DataPoint(timestamp, wanRcvBytes));
-                            }
-                        } catch (@NonNull final NumberFormatException nfe) {
-                            return null;
-                        }
-                        nvramInfo.setProperty(iface + "_ingress_MB",
-                                byteCountToDisplaySize(Double.valueOf(wanRcvBytes).longValue()) + "ps");
-
-                        //Egress
-                        double wanXmitBytes;
-                        try {
-                            wanXmitBytes = (Double.parseDouble(nvramInfo.getProperty(iface + "_xmit_bytes_t1", "-255")) -
-                                    Double.parseDouble(nvramInfo.getProperty(iface + "_xmit_bytes", "-1")));
-                            if (wanXmitBytes >= 0.) {
-                                bandwidthMonitoringIfaceData.addData("OUT",
-                                        new BandwidthMonitoringTile.DataPoint(timestamp, wanXmitBytes));
-                            }
-
-                        } catch (@NonNull final NumberFormatException nfe) {
-                            return null;
-                        }
-
-                        nvramInfo.setProperty(iface + "_egress_MB",
-                                byteCountToDisplaySize(Double.valueOf(wanXmitBytes).longValue()) + "ps");
 
                     }
 
                     updateProgressBarViewSeparator(90);
+
+                    //Save data at each run
+
 
                     return new None();
 
@@ -349,6 +299,106 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
                     e.printStackTrace();
                     return (None) new None().setException(e);
                 }
+            }
+
+            private boolean fetchBandwidthDataForIface(final String iface) throws Exception {
+                NVRAMInfo nvramInfo = nvRamInfoFromRouterPerIface.get(iface);
+                if (nvramInfo == null) {
+                    nvRamInfoFromRouterPerIface.put(iface, new NVRAMInfo());
+                }
+                nvramInfo = nvRamInfoFromRouterPerIface.get(iface);
+
+                BandwidthMonitoringTile.BandwidthMonitoringIfaceData
+                        bandwidthMonitoringIfaceData = bandwidthMonitoringIfaceDataMap.get(iface);
+                if (bandwidthMonitoringIfaceData == null) {
+                    bandwidthMonitoringIfaceDataMap.put(iface,
+                            new BandwidthMonitoringTile.BandwidthMonitoringIfaceData());
+                }
+                bandwidthMonitoringIfaceData = bandwidthMonitoringIfaceDataMap.get(iface);
+
+                @SuppressWarnings("MalformedFormatString")
+                final String[] netDevDataForIface = SSHUtils.getManualProperty(mParentFragmentActivity,
+                        mRouter, mGlobalPreferences,
+                        String.format(READ_IFACE_DATA_FROM_PROC_NET_DEV_FMT, iface),
+                        "sleep 1",
+                        String.format(READ_IFACE_DATA_FROM_PROC_NET_DEV_FMT, iface));
+                if (netDevDataForIface == null || netDevDataForIface.length < 33) {
+                    return false;
+                }
+
+                final List<String> netDevWanIfaceList = Arrays.asList(netDevDataForIface);
+
+                final long timestamp = System.currentTimeMillis();
+
+                nvramInfo.setProperty(iface + "_rcv_bytes", netDevWanIfaceList.get(0));
+                nvramInfo.setProperty(iface + "_rcv_packets", netDevWanIfaceList.get(1));
+                nvramInfo.setProperty(iface + "_rcv_errs", netDevWanIfaceList.get(2));
+                nvramInfo.setProperty(iface + "_rcv_drop", netDevWanIfaceList.get(3));
+                nvramInfo.setProperty(iface + "_rcv_fifo", netDevWanIfaceList.get(4));
+                nvramInfo.setProperty(iface + "_rcv_frame", netDevWanIfaceList.get(5));
+                nvramInfo.setProperty(iface + "_rcv_compressed", netDevWanIfaceList.get(6));
+                nvramInfo.setProperty(iface + "_rcv_multicast", netDevWanIfaceList.get(7));
+
+                nvramInfo.setProperty(iface + "_xmit_bytes", netDevWanIfaceList.get(8));
+                nvramInfo.setProperty(iface + "_xmit_packets", netDevWanIfaceList.get(9));
+                nvramInfo.setProperty(iface + "_xmit_errs", netDevWanIfaceList.get(10));
+                nvramInfo.setProperty(iface + "_xmit_drop", netDevWanIfaceList.get(11));
+                nvramInfo.setProperty(iface + "_xmit_fifo", netDevWanIfaceList.get(12));
+                nvramInfo.setProperty(iface + "_xmit_colls", netDevWanIfaceList.get(13));
+                nvramInfo.setProperty(iface + "_xmit_carrier", netDevWanIfaceList.get(14));
+                nvramInfo.setProperty(iface + "_xmit_compressed", netDevWanIfaceList.get(15));
+
+                nvramInfo.setProperty(iface + "_rcv_bytes_t1", netDevWanIfaceList.get(17));
+                nvramInfo.setProperty(iface + "_rcv_packets_t1", netDevWanIfaceList.get(18));
+                nvramInfo.setProperty(iface + "_rcv_errs_t1", netDevWanIfaceList.get(19));
+                nvramInfo.setProperty(iface + "_rcv_drop_t1", netDevWanIfaceList.get(20));
+                nvramInfo.setProperty(iface + "_rcv_fifo_t1", netDevWanIfaceList.get(21));
+                nvramInfo.setProperty(iface + "_rcv_frame_t1", netDevWanIfaceList.get(22));
+                nvramInfo.setProperty(iface + "_rcv_compressed_t1", netDevWanIfaceList.get(23));
+                nvramInfo.setProperty(iface + "_rcv_multicast_t1", netDevWanIfaceList.get(24));
+
+                nvramInfo.setProperty(iface + "_xmit_bytes_t1", netDevWanIfaceList.get(25));
+                nvramInfo.setProperty(iface + "_xmit_packets_t1", netDevWanIfaceList.get(26));
+                nvramInfo.setProperty(iface + "_xmit_errs_t1", netDevWanIfaceList.get(27));
+                nvramInfo.setProperty(iface + "_xmit_drop_t1", netDevWanIfaceList.get(28));
+                nvramInfo.setProperty(iface + "_xmit_fifo_t1", netDevWanIfaceList.get(29));
+                nvramInfo.setProperty(iface + "_xmit_colls_t1", netDevWanIfaceList.get(30));
+                nvramInfo.setProperty(iface + "_xmit_carrier_t1", netDevWanIfaceList.get(31));
+                nvramInfo.setProperty(iface + "_xmit_compressed_t1", netDevWanIfaceList.get(32));
+
+                //Ingress
+                double wanRcvBytes;
+                try {
+                    wanRcvBytes = (Double.parseDouble(nvramInfo.getProperty(iface + "_rcv_bytes_t1", "-255")) -
+                            Double.parseDouble(nvramInfo.getProperty(iface + "_rcv_bytes", "-1")));
+                    if (wanRcvBytes >= 0.) {
+                        bandwidthMonitoringIfaceData.addData("IN",
+                                new BandwidthMonitoringTile.DataPoint(timestamp, wanRcvBytes));
+                    }
+                } catch (@NonNull final NumberFormatException nfe) {
+                    return false;
+                }
+                nvramInfo.setProperty(iface + "_ingress_MB",
+                        byteCountToDisplaySize(Double.valueOf(wanRcvBytes).longValue()) + "ps");
+
+                //Egress
+                double wanXmitBytes;
+                try {
+                    wanXmitBytes = (Double.parseDouble(nvramInfo.getProperty(iface + "_xmit_bytes_t1", "-255")) -
+                            Double.parseDouble(nvramInfo.getProperty(iface + "_xmit_bytes", "-1")));
+                    if (wanXmitBytes >= 0.) {
+                        bandwidthMonitoringIfaceData.addData("OUT",
+                                new BandwidthMonitoringTile.DataPoint(timestamp, wanXmitBytes));
+                    }
+
+                } catch (@NonNull final NumberFormatException nfe) {
+                    return false;
+                }
+
+                nvramInfo.setProperty(iface + "_egress_MB",
+                        byteCountToDisplaySize(Double.valueOf(wanXmitBytes).longValue()) + "ps");
+
+                return true;
             }
         };
         return mCurrentLoader;
@@ -530,6 +580,10 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
     }
 
     private void displayGraphForIface(String ifaceStr) {
+
+        if (ifaceStr == null || "".equals(ifaceStr.trim())) {
+            return;
+        }
 
         final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
