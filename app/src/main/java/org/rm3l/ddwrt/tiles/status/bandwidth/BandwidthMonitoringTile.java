@@ -37,6 +37,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoSerializable;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
@@ -65,12 +69,14 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -341,7 +347,8 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
         return null;
     }
 
-    public static class BandwidthMonitoringIfaceData extends RouterData<Map<String, EvictingQueue<DataPoint>>> {
+    public static class BandwidthMonitoringIfaceData
+            extends RouterData<Map<String, EvictingQueue<DataPoint>>> implements KryoSerializable {
 
         public BandwidthMonitoringIfaceData() {
             super();
@@ -358,15 +365,69 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
             data.get(iface).add(point);
             return this;
         }
+
+        @Override
+        public void write(Kryo kryo, Output output) {
+            final Map<String, EvictingQueue<DataPoint>> data = super.getData();
+            final int dataSize = data.size();
+            output.writeInt(dataSize, true);
+            for (final Map.Entry<String, EvictingQueue<DataPoint>> entry : data.entrySet()) {
+                final String key = entry.getKey();
+                final EvictingQueue<DataPoint> value = entry.getValue();
+
+                output.writeString(key);
+                final int size = value.size();
+                output.writeInt(size, true);
+                for (final DataPoint dataPoint : value) {
+                    kryo.writeObjectOrNull(output, dataPoint, DataPoint.class);
+                }
+            }
+        }
+
+        @Override
+        public void read(Kryo kryo, Input input) {
+            final int length = input.readInt(true);
+            final Map<String, EvictingQueue<DataPoint>> data = new ConcurrentHashMap<>(length);
+            for (int i = 0 ; i < length ; i++) {
+                final String key = input.readString();
+
+                final EvictingQueue<DataPoint> dataPoints = EvictingQueue.<DataPoint>create(MAX_DATA_POINTS);
+                final int evictingQueueTotalElements = input.readInt(true);
+                for (int j = 0; j < evictingQueueTotalElements; j++) {
+                    final DataPoint dataPoint = kryo.readObjectOrNull(input, DataPoint.class);
+                    if (dataPoint == null) {
+                        continue;
+                    }
+                    dataPoints.add(dataPoint);
+                }
+
+                data.put(key, dataPoints);
+            }
+
+            setData(data);
+        }
     }
 
-    public static class DataPoint {
-        private final long timestamp;
-        private final double value;
+    public static class DataPoint implements KryoSerializable {
+        private long timestamp;
+        private double value;
+
+        public DataPoint() {
+        }
 
         public DataPoint(long timestamp, double value) {
             this.timestamp = timestamp;
             this.value = value;
+        }
+
+        public DataPoint setTimestamp(long timestamp) {
+            this.timestamp = timestamp;
+            return this;
+        }
+
+        public DataPoint setValue(double value) {
+            this.value = value;
+            return this;
         }
 
         public long getTimestamp() {
@@ -404,6 +465,18 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
                     "timestamp=" + timestamp +
                     ", value=" + value +
                     '}';
+        }
+
+        @Override
+        public void write(Kryo kryo, Output output) {
+            output.writeLong(timestamp);
+            output.writeDouble(value);
+        }
+
+        @Override
+        public void read(Kryo kryo, Input input) {
+            timestamp = input.readLong();
+            value = input.readDouble();
         }
     }
 }
