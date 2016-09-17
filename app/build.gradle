@@ -515,4 +515,7 @@ dependencies {
     compile 'com.stephentuso:welcome:0.7.2'
 
     compile 'com.esotericsoftware:kryo:4.0.0'
+
+    // use the latest 1.x version
+    compile 'org.wordpress:passcodelock:1.3.0'
 }

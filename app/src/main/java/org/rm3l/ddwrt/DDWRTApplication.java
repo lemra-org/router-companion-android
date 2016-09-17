@@ -35,6 +35,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.airbnb.deeplinkdispatch.DeepLinkActivity;
 import com.airbnb.deeplinkdispatch.DeepLinkHandler;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
@@ -42,11 +43,13 @@ import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.picasso.Picasso;
 
+import org.rm3l.ddwrt.deeplinks.RouterActionsDeepLinkActivity;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.wordpress.passcodelock.AppLockManager;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -62,22 +65,11 @@ import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.Utils.isFirstLaunch;
 
-//import org.acra.ACRA;
-//import org.acra.ReportingInteractionMode;
-//import org.acra.annotation.ReportsCrashes;
 
 /**
  * App Main Entry point.
  * Leverages ACRA for capturing eventual app crashes and sending the relevant metrics for further analysis.
  */
-//@ReportsCrashes(
-//        formUri = DDWRTCompanionConstants.ACRA_BACKEND_URL,
-//        mode = ReportingInteractionMode.SILENT,
-//        sharedPreferencesName = DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-//        sharedPreferencesMode = Context.MODE_PRIVATE,
-//        buildConfigClass = BuildConfig.class,
-//        additionalSharedPreferences = {DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY}
-//)
 public class DDWRTApplication extends Application implements Application.ActivityLifecycleCallbacks {
 
     private static final String TAG = DDWRTApplication.class.getSimpleName();
@@ -118,6 +110,15 @@ public class DDWRTApplication extends Application implements Application.Activit
 //        }
 
         registerActivityLifecycleCallbacks(this);
+
+        AppLockManager.getInstance().enableDefaultAppLockIfAvailable(this);
+        if (AppLockManager.getInstance().isAppLockFeatureEnabled()) {
+            /* Disable lockscreen for some activities if needed */
+            AppLockManager.getInstance().getAppLock().setExemptActivities(
+                    new String[]{
+                            DeepLinkActivity.class.getCanonicalName(),
+                            RouterActionsDeepLinkActivity.class.getCanonicalName()});
+        }
 
         if (BuildConfig.DEBUG) {
 //            LeakCanary.install(this);

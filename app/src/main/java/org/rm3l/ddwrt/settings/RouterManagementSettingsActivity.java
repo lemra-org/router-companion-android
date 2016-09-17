@@ -21,18 +21,22 @@
  */
 package org.rm3l.ddwrt.settings;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
+import android.view.MenuItem;
 
 import com.airbnb.deeplinkdispatch.DeepLink;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.wordpress.passcodelock.PasscodePreferenceFragment;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ACRA_ENABLE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ACRA_USER_EMAIL;
@@ -42,6 +46,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_CHOICE_
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_SOUND;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_VIBRATE;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SECURITY_PIN_LOCK_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 @DeepLink({"dd-wrt://settings",
@@ -82,16 +87,34 @@ public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActiv
             // guidelines.
 //            bindPreferenceSummaryToValue(findPreference(ALWAYS_CHECK_CONNECTION_PREF_KEY));
             final Preference themingPreference = findPreference(THEMING_PREF);
-            final CharSequence summary = themingPreference.getSummary();
             if (BuildConfig.WITH_ADS) {
-                themingPreference.setSummary(summary + ". Upgrade to switch");
+                themingPreference.setSummary("Upgrade to switch app theme");
                 themingPreference.setEnabled(false);
             } else {
-                themingPreference.setSummary(summary);
+                themingPreference.setSummary("Theme");
                 themingPreference.setEnabled(true);
             }
 
             bindPreferenceSummaryToValue(themingPreference);
+
+            findPreference(SECURITY_PIN_LOCK_PREF)
+                    .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                        @Override
+                        public boolean onPreferenceClick(Preference preference) {
+                            final PinLockFragment pinLockFragment = new PinLockFragment();
+                            final FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                            transaction.replace(R.id.settings_content_frame, pinLockFragment );
+                            transaction.addToBackStack(null);  // if written, this transaction will be added to backstack
+                            transaction.commit();
+//
+//                            // Display the fragment as the main content.
+//                            getFragmentManager().beginTransaction()
+//                                    .replace(R.id.settings_content_frame, new PinLockFragment())
+//                                    .commit();
+                            return true;
+                        }
+                    });
+
             bindPreferenceSummaryToValue(findPreference(DATA_USAGE_NETWORK_PREF));
 //            bindPreferenceSummaryToValue(findPreference(DATA_SYNC_BACKUP_PREF));
 
@@ -108,6 +131,33 @@ public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActiv
 //            bindPreferenceSummaryToValue(findPreference("acra.syslog.enable"));
 //            bindPreferenceSummaryToValue(findPreference(ACRA_DEVICEID_ENABLE));
             bindPreferenceSummaryToValue(findPreference(ACRA_USER_EMAIL));
+        }
+    }
+
+    public static class PinLockFragment extends PasscodePreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.pref_pin_lock);
+            setHasOptionsMenu(true);
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();
+
+            setPreferences(findPreference(getString(R.string.pref_key_passcode_toggle)),
+                    findPreference(getString(R.string.pref_key_change_passcode)));
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            int id = item.getItemId();
+            if (id == android.R.id.home) {
+                getActivity().finish();
+                return true;
+            }
+            return super.onOptionsItemSelected(item);
         }
     }
 }

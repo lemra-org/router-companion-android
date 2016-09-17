@@ -89,6 +89,8 @@ public final class DDWRTCompanionConstants {
 
     public static final String STORAGE_LOCATION_PREF = "storage.location";
 
+    public static final String SECURITY_PIN_LOCK_PREF = "pref_pin_lock";
+
     public static final String DATA_USAGE_NETWORK_PREF = "data_usage_network";
     public static final String DATA_SYNC_BACKUP_PREF = "data.sync.backup";
     public static final String EMPTY_STRING = "";

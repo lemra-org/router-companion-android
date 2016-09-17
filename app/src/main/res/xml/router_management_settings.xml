@@ -28,6 +28,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         <!-- Theming -->
         <org.rm3l.ddwrt.widgets.LongListPreference
+            android:icon="@drawable/ic_action_image_palette"
             android:defaultValue="30"
             android:entries="@array/pref_theme_titles"
             android:entryValues="@array/pref_theme_values"
@@ -46,11 +47,27 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     </PreferenceCategory>
 
+    <!-- Security -->
+    <PreferenceCategory
+        android:key="security"
+        android:title="Security">
+
+        <!-- PIN Lock -->
+        <Preference
+            android:key="pref_pin_lock"
+            android:title="@string/pin_lock_title"
+            android:summary="@string/pin_lock_summary"
+            android:icon="@drawable/ic_action_action_lock"
+            android:persistent="false" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory
         android:key="data_usage_ctrl"
         android:title="Data Usage Control">
 
         <org.rm3l.ddwrt.widgets.LongListPreference
+            android:icon="@drawable/ic_action_action_settings_ethernet"
             android:defaultValue="444"
             android:entries="@array/data_usage_titles"
             android:entryValues="@array/data_usage_values"
@@ -85,6 +102,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="Notifications">
 
         <org.rm3l.ddwrt.widgets.MySwitchPreference
+            android:icon="@drawable/ic_action_notification_sync"
             android:disableDependentsState="false"
             android:defaultValue="true"
             android:key="notifications.background.service.enable"
@@ -93,6 +111,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:title="Background Service" />
 
         <org.rm3l.ddwrt.widgets.LongListPreference
+            android:icon="@drawable/ic_action_navigation_refresh"
             android:defaultValue="360"
             android:dependency="notifications.background.service.enable"
             android:entries="@array/pref_notifications_sync_frequency_titles"
@@ -103,6 +122,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:title="Background Service Frequency" />
 
         <org.rm3l.ddwrt.widgets.MyMultiSelectListPreference
+            android:icon="@drawable/ic_action_social_notifications"
             android:dialogTitle="Select Notifications"
             android:key="notifications.choice"
             android:summary="Select Notifications you would like to receive"
@@ -113,6 +133,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         <!-- Should be general settings -->
         <RingtonePreference
+            android:icon="@drawable/ic_action_av_volume_down"
             android:title="Notification Sound"
             android:ringtoneType="notification"
             android:key="notifications.sound"
@@ -121,6 +142,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:defaultValue="content://settings/system/notification_sound"/>
 
         <org.rm3l.ddwrt.widgets.MySwitchPreference
+            android:icon="@drawable/ic_action_notification_vibration"
             android:defaultValue="true"
             android:key="notifications.vibrate"
             android:summaryOff="Disabled."
@@ -139,6 +161,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <!--android:title="Debug Mode" />-->
 
         <org.rm3l.ddwrt.widgets.MySwitchPreference
+            android:icon="@drawable/ic_action_action_bug_report"
             android:defaultValue="true"
             android:key="acra.enable"
             android:summaryOff="@string/pref_acra_disabled"
@@ -160,6 +183,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <!--android:title="@string/pref_acra_deviceid" />-->
 
         <EditTextPreference
+            android:icon="@drawable/ic_action_communication_email"
             android:key="acra.user.email"
             android:title="@string/pref_acra_user_email"
             android:summary="@string/pref_acra_user_email_summary"/>

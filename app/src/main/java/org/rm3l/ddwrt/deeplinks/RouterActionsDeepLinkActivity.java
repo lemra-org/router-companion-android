@@ -43,6 +43,7 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.NVRAMParser;
+import org.wordpress.passcodelock.AppLockManager;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -63,6 +64,8 @@ import static org.rm3l.ddwrt.actions.ToggleWANAccessPolicyRouterAction.ENABLE_1;
 import static org.rm3l.ddwrt.actions.ToggleWANAccessPolicyRouterAction.ENABLE_2;
 
 /**
+ * TODO Add 'pinCode' as a parameter in URL, and check against registered one (check if app locking is on)
+ *
  * Created by rm3l on 14/02/16.
  */
 @DeepLink({
@@ -135,6 +138,25 @@ public class RouterActionsDeepLinkActivity extends Activity {
         if (intent.getBooleanExtra(DeepLink.IS_DEEP_LINK, false)) {
             //Deep link
             final Bundle parameters = intent.getExtras();
+
+            if (AppLockManager.getInstance().getAppLock().isPasswordLocked()) {
+                //Check password
+                final String pinCode = parameters.getString("pinCode");
+                if (TextUtils.isEmpty(pinCode)) {
+                    Crashlytics.log(Log.WARN, LOG_TAG,
+                            "PIN Code cannot be blank");
+                    Toast.makeText(this, "PIN Code cannot be blank", Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
+                if (!AppLockManager.getInstance().getAppLock().verifyPassword(pinCode)) {
+                    Crashlytics.log(Log.WARN, LOG_TAG,
+                            "Invalid PIN Code");
+                    Toast.makeText(this, "Invalid PIN Code", Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
+            }
 
             final String origin = parameters.getString("origin");
             if (TextUtils.isEmpty(origin)) {
