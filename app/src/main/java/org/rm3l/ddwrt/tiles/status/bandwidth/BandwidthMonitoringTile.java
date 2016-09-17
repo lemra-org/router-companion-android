@@ -37,10 +37,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.KryoSerializable;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
+//import com.esotericsoftware.kryo.Kryo;
+//import com.esotericsoftware.kryo.KryoSerializable;
+//import com.esotericsoftware.kryo.io.Input;
+//import com.esotericsoftware.kryo.io.Output;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
@@ -348,7 +348,8 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
     }
 
     public static class BandwidthMonitoringIfaceData
-            extends RouterData<Map<String, EvictingQueue<DataPoint>>> implements KryoSerializable {
+            extends RouterData<Map<String, EvictingQueue<DataPoint>>> {
+//            implements KryoSerializable {
 
         public BandwidthMonitoringIfaceData() {
             super();
@@ -366,49 +367,50 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
             return this;
         }
 
-        @Override
-        public void write(Kryo kryo, Output output) {
-            final Map<String, EvictingQueue<DataPoint>> data = super.getData();
-            final int dataSize = data.size();
-            output.writeInt(dataSize, true);
-            for (final Map.Entry<String, EvictingQueue<DataPoint>> entry : data.entrySet()) {
-                final String key = entry.getKey();
-                final EvictingQueue<DataPoint> value = entry.getValue();
-
-                output.writeString(key);
-                final int size = value.size();
-                output.writeInt(size, true);
-                for (final DataPoint dataPoint : value) {
-                    kryo.writeObjectOrNull(output, dataPoint, DataPoint.class);
-                }
-            }
-        }
-
-        @Override
-        public void read(Kryo kryo, Input input) {
-            final int length = input.readInt(true);
-            final Map<String, EvictingQueue<DataPoint>> data = new ConcurrentHashMap<>(length);
-            for (int i = 0 ; i < length ; i++) {
-                final String key = input.readString();
-
-                final EvictingQueue<DataPoint> dataPoints = EvictingQueue.<DataPoint>create(MAX_DATA_POINTS);
-                final int evictingQueueTotalElements = input.readInt(true);
-                for (int j = 0; j < evictingQueueTotalElements; j++) {
-                    final DataPoint dataPoint = kryo.readObjectOrNull(input, DataPoint.class);
-                    if (dataPoint == null) {
-                        continue;
-                    }
-                    dataPoints.add(dataPoint);
-                }
-
-                data.put(key, dataPoints);
-            }
-
-            setData(data);
-        }
+//        @Override
+//        public void write(Kryo kryo, Output output) {
+//            final Map<String, EvictingQueue<DataPoint>> data = super.getData();
+//            final int dataSize = data.size();
+//            output.writeInt(dataSize, true);
+//            for (final Map.Entry<String, EvictingQueue<DataPoint>> entry : data.entrySet()) {
+//                final String key = entry.getKey();
+//                final EvictingQueue<DataPoint> value = entry.getValue();
+//
+//                output.writeString(key);
+//                final int size = value.size();
+//                output.writeInt(size, true);
+//                for (final DataPoint dataPoint : value) {
+//                    kryo.writeObjectOrNull(output, dataPoint, DataPoint.class);
+//                }
+//            }
+//        }
+//
+//        @Override
+//        public void read(Kryo kryo, Input input) {
+//            final int length = input.readInt(true);
+//            final Map<String, EvictingQueue<DataPoint>> data = new ConcurrentHashMap<>(length);
+//            for (int i = 0 ; i < length ; i++) {
+//                final String key = input.readString();
+//
+//                final EvictingQueue<DataPoint> dataPoints = EvictingQueue.<DataPoint>create(MAX_DATA_POINTS);
+//                final int evictingQueueTotalElements = input.readInt(true);
+//                for (int j = 0; j < evictingQueueTotalElements; j++) {
+//                    final DataPoint dataPoint = kryo.readObjectOrNull(input, DataPoint.class);
+//                    if (dataPoint == null) {
+//                        continue;
+//                    }
+//                    dataPoints.add(dataPoint);
+//                }
+//
+//                data.put(key, dataPoints);
+//            }
+//
+//            setData(data);
+//        }
     }
 
-    public static class DataPoint implements KryoSerializable {
+    public static class DataPoint {
+//            implements KryoSerializable {
         private long timestamp;
         private double value;
 
@@ -467,16 +469,16 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
                     '}';
         }
 
-        @Override
-        public void write(Kryo kryo, Output output) {
-            output.writeLong(timestamp);
-            output.writeDouble(value);
-        }
-
-        @Override
-        public void read(Kryo kryo, Input input) {
-            timestamp = input.readLong();
-            value = input.readDouble();
-        }
+//        @Override
+//        public void write(Kryo kryo, Output output) {
+//            output.writeLong(timestamp);
+//            output.writeDouble(value);
+//        }
+//
+//        @Override
+//        public void read(Kryo kryo, Input input) {
+//            timestamp = input.readLong();
+//            value = input.readDouble();
+//        }
     }
 }

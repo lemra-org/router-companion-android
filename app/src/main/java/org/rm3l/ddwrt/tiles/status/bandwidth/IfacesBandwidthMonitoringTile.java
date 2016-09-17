@@ -45,9 +45,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
+//import com.esotericsoftware.kryo.Kryo;
+//import com.esotericsoftware.kryo.io.Input;
+//import com.esotericsoftware.kryo.io.Output;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -138,7 +138,7 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
     private Loader<None> mCurrentLoader;
     private final AtomicReference<String> mIfacePreviouslySelectedForDisplay = new AtomicReference<>(null);
 
-    private Kryo mKryo;
+//    private Kryo mKryo;
 
     public IfacesBandwidthMonitoringTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_bandwidth_monitoring_iface,
@@ -147,13 +147,13 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
         mBandwidthMonitoringData = new File(
                 mParentFragmentActivity.getCacheDir(), this.getClass().getSimpleName() + ".tmp.dat");
 
-        this.mKryo = new Kryo();
-        mKryo.setReferences(false);
-        mKryo.setRegistrationRequired(false);
-        mKryo.register(Map.class);
-        mKryo.register(HashMap.class);
-        mKryo.register(BandwidthMonitoringTile.DataPoint.class);
-        mKryo.register(BandwidthMonitoringTile.BandwidthMonitoringIfaceData.class);
+//        this.mKryo = new Kryo();
+//        mKryo.setReferences(false);
+//        mKryo.setRegistrationRequired(false);
+//        mKryo.register(Map.class);
+//        mKryo.register(HashMap.class);
+//        mKryo.register(BandwidthMonitoringTile.DataPoint.class);
+//        mKryo.register(BandwidthMonitoringTile.BandwidthMonitoringIfaceData.class);
 
 
         if (mParentFragmentPreferences != null && !mParentFragmentPreferences.contains(getFormattedPrefKey(RT_GRAPHS))) {
@@ -195,23 +195,23 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
 
                     mLastSync = System.currentTimeMillis();
 
-                    try {
-                            //Try loading from cache
-                        final InputStream inputStream =
-                                new FileInputStream(mBandwidthMonitoringData);
-                        final Input input = new Input(inputStream);
-                        @SuppressWarnings("unchecked")
-                        final Map<String, BandwidthMonitoringTile.BandwidthMonitoringIfaceData>
-                                readObject =
-                                (HashMap<String, BandwidthMonitoringTile.BandwidthMonitoringIfaceData>)
-                                mKryo.readObject(input, HashMap.class);
-                        if (readObject != null) {
-                            bandwidthMonitoringIfaceDataMap.putAll(readObject);
-                        }
-                        input.close();
-                    } catch (final Exception ignored) {
-                        Crashlytics.logException(ignored);
-                    }
+//                    try {
+//                            //Try loading from cache
+//                        final InputStream inputStream =
+//                                new FileInputStream(mBandwidthMonitoringData);
+//                        final Input input = new Input(inputStream);
+//                        @SuppressWarnings("unchecked")
+//                        final Map<String, BandwidthMonitoringTile.BandwidthMonitoringIfaceData>
+//                                readObject =
+//                                (HashMap<String, BandwidthMonitoringTile.BandwidthMonitoringIfaceData>)
+//                                mKryo.readObject(input, HashMap.class);
+//                        if (readObject != null) {
+//                            bandwidthMonitoringIfaceDataMap.putAll(readObject);
+//                        }
+//                        input.close();
+//                    } catch (final Exception ignored) {
+//                        Crashlytics.logException(ignored);
+//                    }
 
                     updateProgressBarViewSeparator(10);
 
@@ -335,16 +335,16 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
                     updateProgressBarViewSeparator(90);
 
                     //Save data at each run (encrypted)
-                    try {
-                        final OutputStream outputStream =
-                                new DeflaterOutputStream(new FileOutputStream(mBandwidthMonitoringData, false));
-                        final Output output = new Output(outputStream);
-                        mKryo.writeObject(output, bandwidthMonitoringIfaceDataMap);
-                        output.close();
-                    } catch (final Exception ignored) {
-                        //No worries
-                        Crashlytics.logException(ignored);
-                    }
+//                    try {
+//                        final OutputStream outputStream =
+//                                new DeflaterOutputStream(new FileOutputStream(mBandwidthMonitoringData, false));
+//                        final Output output = new Output(outputStream);
+//                        mKryo.writeObject(output, bandwidthMonitoringIfaceDataMap);
+//                        output.close();
+//                    } catch (final Exception ignored) {
+//                        //No worries
+//                        Crashlytics.logException(ignored);
+//                    }
 
                     return new None();
 
