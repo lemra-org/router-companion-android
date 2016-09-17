@@ -45,8 +45,10 @@ import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import org.achartengine.ChartFactory;
@@ -72,6 +74,7 @@ import org.rm3l.ddwrt.utils.Utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -365,6 +368,25 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
             }
             data.get(iface).add(point);
             return this;
+        }
+
+        @Nullable
+        public Map<String, Collection<DataPoint>> toStringListMap() {
+            final Map<String, EvictingQueue<DataPoint>> data = super.getData();
+            if (data == null) {
+                return null;
+            }
+            final Multimap<String, DataPoint> multimap = ArrayListMultimap.create();
+            for (Map.Entry<String, EvictingQueue<DataPoint>> entry : data.entrySet()) {
+                final String key = entry.getKey();
+                final EvictingQueue<DataPoint> value = entry.getValue();
+                if (value != null) {
+                    for (final DataPoint dataPoint : value) {
+                        multimap.put(key, dataPoint);
+                    }
+                }
+            }
+            return multimap.asMap();
         }
 
 //        @Override

@@ -26,6 +26,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.renderscript.ScriptGroup;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -54,6 +55,10 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.HashBiMap;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.stream.JsonReader;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -78,9 +83,13 @@ import org.rm3l.ddwrt.utils.Utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Writer;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -195,23 +204,44 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
 
                     mLastSync = System.currentTimeMillis();
 
-//                    try {
-//                            //Try loading from cache
-//                        final InputStream inputStream =
-//                                new FileInputStream(mBandwidthMonitoringData);
-//                        final Input input = new Input(inputStream);
-//                        @SuppressWarnings("unchecked")
-//                        final Map<String, BandwidthMonitoringTile.BandwidthMonitoringIfaceData>
-//                                readObject =
-//                                (HashMap<String, BandwidthMonitoringTile.BandwidthMonitoringIfaceData>)
-//                                mKryo.readObject(input, HashMap.class);
-//                        if (readObject != null) {
-//                            bandwidthMonitoringIfaceDataMap.putAll(readObject);
-//                        }
-//                        input.close();
-//                    } catch (final Exception ignored) {
-//                        Crashlytics.logException(ignored);
-//                    }
+                    try {
+                            //Try loading from cache
+                        final Gson gson = new GsonBuilder().create();
+                        final JsonReader reader = new JsonReader(new FileReader(mBandwidthMonitoringData));
+                        final Map<String, Map<String, Collection<BandwidthMonitoringTile.DataPoint>>> result =
+                                gson.fromJson(reader, Map.class);
+                        if (!result.isEmpty()) {
+                            bandwidthMonitoringIfaceDataMap.clear();
+                            for (Map.Entry<String, Map<String, Collection<BandwidthMonitoringTile.DataPoint>>> entry : result.entrySet()) {
+                                final String key = entry.getKey();
+                                final Map<String, Collection<BandwidthMonitoringTile.DataPoint>> value = entry.getValue();
+                                if (key == null || value == null) {
+                                    continue;
+                                }
+                                BandwidthMonitoringTile.BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData =
+                                        bandwidthMonitoringIfaceDataMap.get(key);
+                                if (bandwidthMonitoringIfaceData == null) {
+                                    bandwidthMonitoringIfaceData = new BandwidthMonitoringTile.BandwidthMonitoringIfaceData();
+                                }
+                                for (final Map.Entry<String, Collection<BandwidthMonitoringTile.DataPoint>> valueEntry : value.entrySet()) {
+                                    final String valueEntryKey = \"fake-key\";
+                                    final Collection valueEntryValue = valueEntry.getValue();
+                                    for (final Object datapoint : valueEntryValue) {
+                                        final JsonObject jsonObject = gson.toJsonTree(datapoint).getAsJsonObject();
+                                        bandwidthMonitoringIfaceData.addData(valueEntryKey,
+                                                new BandwidthMonitoringTile.DataPoint(jsonObject.get("timestamp").getAsLong(),
+                                                        jsonObject.get("value").getAsDouble()));
+                                    }
+                                }
+
+                                bandwidthMonitoringIfaceDataMap.put(key, bandwidthMonitoringIfaceData);
+                            }
+                        }
+
+                    } catch (final Exception ignored) {
+                        //No worries
+                        ignored.printStackTrace();
+                    }
 
                     updateProgressBarViewSeparator(10);
 
@@ -334,17 +364,40 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
 
                     updateProgressBarViewSeparator(90);
 
-                    //Save data at each run (encrypted)
-//                    try {
-//                        final OutputStream outputStream =
-//                                new DeflaterOutputStream(new FileOutputStream(mBandwidthMonitoringData, false));
-//                        final Output output = new Output(outputStream);
-//                        mKryo.writeObject(output, bandwidthMonitoringIfaceDataMap);
-//                        output.close();
-//                    } catch (final Exception ignored) {
-//                        //No worries
-//                        Crashlytics.logException(ignored);
-//                    }
+                    //Save data at each run
+                    Writer writer = null;
+                    try {
+                        final Map<String, Map<String, Collection<BandwidthMonitoringTile.DataPoint>>> resultToSave = new HashMap<>();
+                        for (Map.Entry<String, BandwidthMonitoringTile.BandwidthMonitoringIfaceData> entry : bandwidthMonitoringIfaceDataMap.entrySet()) {
+                            final BandwidthMonitoringTile.BandwidthMonitoringIfaceData value = entry.getValue();
+                            if (value == null) {
+                                continue;
+                            }
+                            final Map<String, Collection<BandwidthMonitoringTile.DataPoint>> stringListMap = value.toStringListMap();
+                            if (stringListMap == null || stringListMap.isEmpty()) {
+                                continue;
+                            }
+                            resultToSave.put(entry.getKey(), stringListMap);
+                        }
+
+                        if (!resultToSave.isEmpty()) {
+                            writer = new FileWriter(mBandwidthMonitoringData);
+                            final Gson gson = new GsonBuilder().create();
+                            gson.toJson(resultToSave, writer);
+                        }
+
+                    } catch (final Exception ignored) {
+                        //No worries
+                        ignored.printStackTrace();
+                    } finally {
+                        try {
+                            if (writer != null) {
+                                writer.close();
+                            }
+                        } catch (final Exception ignored) {
+                            ignored.printStackTrace();
+                        }
+                    }
 
                     return new None();
 

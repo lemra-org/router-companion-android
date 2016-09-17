@@ -96,6 +96,10 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.stream.JsonReader;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -150,6 +154,9 @@ import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 import org.rm3l.ddwrt.widgets.NetworkTrafficView;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Collection;
@@ -263,6 +270,7 @@ public class WirelessClientsTile
     @NonNull
     private final Map<String, BandwidthMonitoringIfaceData> bandwidthMonitoringIfaceDataPerDevice =
             Maps.newHashMap();
+    private final File mBandwidthMonitoringData;
     private String mCurrentIpAddress;
     private String mCurrentMacAddress;
     private String[] activeClients;
@@ -320,6 +328,9 @@ public class WirelessClientsTile
                         R.string.interstitial_ad_unit_id_open_active_ip_connections_activity);
             }
         });
+
+        mBandwidthMonitoringData = new File(
+                mParentFragmentActivity.getCacheDir(), this.getClass().getSimpleName() + ".tmp.dat");
 
         // Create Options Menu
         final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_status_wireless_clients_menu);
@@ -675,6 +686,45 @@ public class WirelessClientsTile
                         }
                     }
                 });
+
+                try {
+                    //Try loading from cache
+                    final Gson gson = new GsonBuilder().create();
+                    final JsonReader reader = new JsonReader(new FileReader(mBandwidthMonitoringData));
+                    final Map<String, Map<String, Collection<BandwidthMonitoringTile.DataPoint>>> result =
+                            gson.fromJson(reader, Map.class);
+                    if (!result.isEmpty()) {
+                        bandwidthMonitoringIfaceDataPerDevice.clear();
+                        for (Map.Entry<String, Map<String, Collection<BandwidthMonitoringTile.DataPoint>>> entry : result.entrySet()) {
+                            final String key = entry.getKey();
+                            final Map<String, Collection<BandwidthMonitoringTile.DataPoint>> value = entry.getValue();
+                            if (key == null || value == null) {
+                                continue;
+                            }
+                            BandwidthMonitoringTile.BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData =
+                                    bandwidthMonitoringIfaceDataPerDevice.get(key);
+                            if (bandwidthMonitoringIfaceData == null) {
+                                bandwidthMonitoringIfaceData = new BandwidthMonitoringTile.BandwidthMonitoringIfaceData();
+                            }
+                            for (final Map.Entry<String, Collection<BandwidthMonitoringTile.DataPoint>> valueEntry : value.entrySet()) {
+                                final String valueEntryKey = \"fake-key\";
+                                final Collection valueEntryValue = valueEntry.getValue();
+                                for (final Object datapoint : valueEntryValue) {
+                                    final JsonObject jsonObject = gson.toJsonTree(datapoint).getAsJsonObject();
+                                    bandwidthMonitoringIfaceData.addData(valueEntryKey,
+                                            new BandwidthMonitoringTile.DataPoint(jsonObject.get("timestamp").getAsLong(),
+                                                    jsonObject.get("value").getAsDouble()));
+                                }
+                            }
+
+                            bandwidthMonitoringIfaceDataPerDevice.put(key, bandwidthMonitoringIfaceData);
+                        }
+                    }
+
+                } catch (final Exception ignored) {
+                    //No worries
+                    ignored.printStackTrace();
+                }
 
 
                 final ClientDevices devices = new ClientDevices();
@@ -1455,6 +1505,41 @@ public class WirelessClientsTile
                             mParentFragmentPreferences, mRouter, deviceCollection);
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Discovered a total of " + devices.getDevicesCount() + " device(s)!");
+
+                    //Finish by saving BW data at each run
+                    Writer writer = null;
+                    try {
+                        final Map<String, Map<String, Collection<BandwidthMonitoringTile.DataPoint>>> resultToSave = new HashMap<>();
+                        for (Map.Entry<String, BandwidthMonitoringTile.BandwidthMonitoringIfaceData> entry : bandwidthMonitoringIfaceDataPerDevice.entrySet()) {
+                            final BandwidthMonitoringTile.BandwidthMonitoringIfaceData value = entry.getValue();
+                            if (value == null) {
+                                continue;
+                            }
+                            final Map<String, Collection<BandwidthMonitoringTile.DataPoint>> stringListMap = value.toStringListMap();
+                            if (stringListMap == null || stringListMap.isEmpty()) {
+                                continue;
+                            }
+                            resultToSave.put(entry.getKey(), stringListMap);
+                        }
+
+                        if (!resultToSave.isEmpty()) {
+                            writer = new FileWriter(mBandwidthMonitoringData);
+                            final Gson gson = new GsonBuilder().create();
+                            gson.toJson(resultToSave, writer);
+                        }
+
+                    } catch (final Exception ignored) {
+                        //No worries
+                        ignored.printStackTrace();
+                    } finally {
+                        try {
+                            if (writer != null) {
+                                writer.close();
+                            }
+                        } catch (final Exception ignored) {
+                            ignored.printStackTrace();
+                        }
+                    }
 
                     return devices;
 
