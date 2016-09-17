@@ -15,33 +15,59 @@ public class GettingStartedActivity extends WelcomeActivity {
     @Override
     protected WelcomeScreenConfiguration configuration() {
         return new WelcomeScreenBuilder(this)
+
                 .theme(R.style.CustomWelcomeScreenTheme)
+
                 .defaultTitleTypefacePath("Montserrat-Bold.ttf")
                 .defaultHeaderTypefacePath("Montserrat-Bold.ttf")
-                .titlePage(R.drawable.welcome_photo,
-                        "Welcome", R.color.orange_background)
-                .basicPage(R.drawable.welcome_photo,
-                        "Simple to use",
-                        "Add a welcome screen to your app with only a few lines of code.",
+
+                .titlePage(R.drawable.logo_ddwrt_companion__large,
+                        "Welcome. Swipe to get started", R.color.blue_background)
+
+                .basicPage(R.drawable.welcome_screen_easy_fun_management,
+                        "Easy and fun router management",
+                        "Manage and monitor your routers on the go. " +
+                                "Your routers must have DD-WRT firmware installed and SSH configured properly.",
                         R.color.red_background)
+
+                .basicPage(R.drawable.welcome_screen_protect_app,
+                        "Secure",
+                        "You can now PIN-protect the app. Visit the global settings to manage PIN lock.",
+                        R.color.win8_lime)
+
                 .parallaxPage(
                         R.layout.welcome_parallax_example,
-                        "Easy parallax",
-                        "Supply a layout and parallax effects will automatically be applied",
+                        "Automation",
+                        "A 'DD-WRT Companion Tasker Plugin' is now available as a separate application, to make the most of your DD-WRT routers. " +
+                                "Get it on Google Play Store to automate various actions via DD-WRT Companion.",
                         R.color.purple_background,
                         0.2f,
                         2f)
-                .basicPage(R.drawable.welcome_photo,
-                        "Customizable",
-                        "All elements of the welcome screen can be customized easily.",
-                        R.color.blue_background)
+
+                .parallaxPage(R.layout.welcome_parallax_feedback,
+                        "Have your say",
+                        "Sending feedback from within the app is now easier. " +
+                                "Feel free to submit new ideas, file bugs or simply say hello.\n\n" +
+                                "Help available at http://ddwrt-companion.rm3l.org",
+                        R.color.orange_background)
+
+                .basicPage(R.drawable.welcome_screen_notifs_widgets,
+                        "One more thing...",
+                        "Bear in mind you can use Home Screen Widgets and Shortcuts for quicker access to DD-WRT Companion.",
+                        R.color.win8_teal)
+
                 .swipeToDismiss(true)
                 .exitAnimation(android.R.anim.fade_out)
                 .build();
     }
 
-
+    /**
+     * Note: Only change this to a new value if you want everyone who has already used your app to
+     * see the welcome screen again!
+     * This key is used to determine whether or not to show the welcome screen.
+     * @return the welcome key
+     */
     public static String welcomeKey() {
-        return "Main_" + Integer.toString(BuildConfig.VERSION_CODE);
+        return "DD-WRT_Companion_7.1.0";
     }
 }

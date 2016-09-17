@@ -185,7 +185,7 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
 
                         final Bitmap largeIcon = BitmapFactory.decodeResource(
                                 mCtx.getResources(),
-                                R.drawable.ic_launcher_ddwrt_companion);
+                                R.mipmap.ic_launcher_ddwrt_companion);
 
                         final Intent resultIntent = new Intent(mCtx,
                                 DDWRTMainActivity.class);

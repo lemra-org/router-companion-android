@@ -49,6 +49,7 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.welcome.GettingStartedActivity;
 import org.wordpress.passcodelock.AppLockManager;
 
 import java.lang.ref.WeakReference;
@@ -116,6 +117,8 @@ public class DDWRTApplication extends Application implements Application.Activit
             /* Disable lockscreen for some activities if needed */
             AppLockManager.getInstance().getAppLock().setExemptActivities(
                     new String[]{
+                            SplashActivity.class.getCanonicalName(),
+                            GettingStartedActivity.class.getCanonicalName(),
                             DeepLinkActivity.class.getCanonicalName(),
                             RouterActionsDeepLinkActivity.class.getCanonicalName()});
         }

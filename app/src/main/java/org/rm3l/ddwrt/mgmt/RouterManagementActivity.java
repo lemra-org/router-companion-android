@@ -252,7 +252,7 @@ public class RouterManagementActivity
             actionBar.setDisplayHomeAsUpEnabled(false);
             actionBar.setHomeButtonEnabled(false);
             actionBar.setDisplayShowHomeEnabled(true);
-            actionBar.setIcon(R.drawable.ic_launcher_ddwrt_companion);
+            actionBar.setIcon(R.mipmap.ic_launcher_ddwrt_companion);
         }
 
         this.dao = getDao(this);
@@ -372,11 +372,11 @@ public class RouterManagementActivity
             this.openAddRouterForm();
         } else {
             //TODO Uncomment when welcome screen is ready, and comment the line below
-//            welcomeScreen.show(savedInstanceState);
-            initOpenAddRouterFormIfNecessary();
+            welcomeScreen.show(savedInstanceState);
+//            initOpenAddRouterFormIfNecessary();
         }
 
-//        initOpenAddRouterFormIfNecessary();
+        initOpenAddRouterFormIfNecessary();
 
     }
 
