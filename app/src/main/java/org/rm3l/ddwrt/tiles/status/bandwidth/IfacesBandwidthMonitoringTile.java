@@ -707,7 +707,8 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
             renderer.setPointStrokeWidth(1);
 
             final FillOutsideLine fill = new FillOutsideLine(FillOutsideLine.Type.BOUNDS_ABOVE);
-            fill.setColor(colorForIface);
+            //Fill with a slightly transparent version of the original color
+            fill.setColor(android.support.v4.graphics.ColorUtils.setAlphaComponent(colorForIface, 30));
             renderer.addFillOutsideLine(fill);
 
             if (i == 0) {

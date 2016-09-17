@@ -104,6 +104,7 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
+import org.achartengine.renderer.XYSeriesRenderer.FillOutsideLine;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
@@ -2058,8 +2059,9 @@ public class WirelessClientsTile
                             renderer.setPointStyle(PointStyle.POINT);
                             renderer.setPointStrokeWidth(1);
 
-                            final XYSeriesRenderer.FillOutsideLine fill = new XYSeriesRenderer.FillOutsideLine(XYSeriesRenderer.FillOutsideLine.Type.BOUNDS_ABOVE);
-                            fill.setColor(color);
+                            final FillOutsideLine fill = new FillOutsideLine(FillOutsideLine.Type.BOUNDS_ABOVE);
+                            //Fill with a slightly transparent version of the original color
+                            fill.setColor(android.support.v4.graphics.ColorUtils.setAlphaComponent(color, 30));
                             renderer.addFillOutsideLine(fill);
 
                             if (i == 0) {
