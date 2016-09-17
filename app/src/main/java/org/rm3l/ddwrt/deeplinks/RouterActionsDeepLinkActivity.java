@@ -16,6 +16,8 @@ import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
+import org.rm3l.ddwrt.BuildConfig;
+
 import org.rm3l.ddwrt.actions.AbstractRouterAction;
 import org.rm3l.ddwrt.actions.ActionManager;
 import org.rm3l.ddwrt.actions.ClearARPCacheRouterAction;
@@ -143,14 +145,18 @@ public class RouterActionsDeepLinkActivity extends Activity {
                 if (TextUtils.isEmpty(pinCode)) {
                     Crashlytics.log(Log.WARN, LOG_TAG,
                             "PIN Code cannot be blank");
-                    Toast.makeText(this, "PIN Code cannot be blank", Toast.LENGTH_SHORT).show();
+                    if (BuildConfig.DEBUG) {
+                        Toast.makeText(this, "PIN Code cannot be blank", Toast.LENGTH_SHORT).show();
+                    }
                     finish();
                     return;
                 }
                 if (!AppLockManager.getInstance().getAppLock().verifyPassword(pinCode)) {
                     Crashlytics.log(Log.WARN, LOG_TAG,
                             "Invalid PIN Code");
-                    Toast.makeText(this, "Invalid PIN Code", Toast.LENGTH_SHORT).show();
+                    if (BuildConfig.DEBUG) {
+                        Toast.makeText(this, "Invalid PIN Code", Toast.LENGTH_SHORT).show();
+                    }
                     finish();
                     return;
                 }
@@ -160,7 +166,9 @@ public class RouterActionsDeepLinkActivity extends Activity {
             if (TextUtils.isEmpty(origin)) {
                 Crashlytics.log(Log.WARN, LOG_TAG,
                         "Origin cannot be blank");
-                Toast.makeText(this, "Origin cannot be blank", Toast.LENGTH_SHORT).show();
+                if (BuildConfig.DEBUG) {
+                    Toast.makeText(this, "Origin cannot be blank", Toast.LENGTH_SHORT).show();
+                }
                 finish();
                 return;
             }
@@ -189,9 +197,11 @@ public class RouterActionsDeepLinkActivity extends Activity {
             if (mRouters.isEmpty()) {
                 Crashlytics.log(Log.WARN, LOG_TAG,
                         "No routers found matching this query: " + routerUuidOrRouterName);
-                Toast.makeText(this,
-                        "No routers found matching this query: " + routerUuidOrRouterName,
-                        Toast.LENGTH_SHORT).show();
+                if (BuildConfig.DEBUG) {
+                    Toast.makeText(this,
+                            "No routers found matching this query: " + routerUuidOrRouterName,
+                            Toast.LENGTH_SHORT).show();
+                }
                 finish();
                 return;
             }
@@ -245,7 +255,9 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                 .toLowerCase();
                         if (cmd.isEmpty()) {
                             Crashlytics.log(Log.WARN, LOG_TAG, "Missing Custom Command");
-                            Toast.makeText(this, "Missing Custom Command", Toast.LENGTH_SHORT).show();
+                            if (BuildConfig.DEBUG) {
+                                Toast.makeText(this, "Missing Custom Command", Toast.LENGTH_SHORT).show();
+                            }
                             finish();
                             return;
                         }
@@ -262,14 +274,18 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                 .toLowerCase();
                         if (resourceFile.isEmpty()) {
                             Crashlytics.log(Log.WARN, LOG_TAG, "Missing path to file");
-                            Toast.makeText(this, "Missing path to file", Toast.LENGTH_SHORT).show();
+                            if (BuildConfig.DEBUG) {
+                                Toast.makeText(this, "Missing path to file", Toast.LENGTH_SHORT).show();
+                            }
                             finish();
                             return;
                         }
                         final File filePath = new File(resourceFile);
                         if (!filePath.exists()) {
                             Crashlytics.log(Log.WARN, LOG_TAG, "File does not exist: " + resourceFile);
-                            Toast.makeText(this, "File does not exist: " + resourceFile, Toast.LENGTH_SHORT).show();
+                            if (BuildConfig.DEBUG) {
+                                Toast.makeText(this, "File does not exist: " + resourceFile, Toast.LENGTH_SHORT).show();
+                            }
                             finish();
                             return;
                         }
@@ -356,7 +372,9 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                 .toLowerCase();
                         if (deviceMac.isEmpty()) {
                             Crashlytics.log(Log.WARN, LOG_TAG, "Missing MAC");
-                            Toast.makeText(this, "Missing MAC", Toast.LENGTH_SHORT).show();
+                            if (BuildConfig.DEBUG) {
+                                Toast.makeText(this, "Missing MAC", Toast.LENGTH_SHORT).show();
+                            }
                             finish();
                             return;
                         }
@@ -538,7 +556,9 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                 .toLowerCase();
                         if (policyName.isEmpty()) {
                             Crashlytics.log(Log.WARN, LOG_TAG, "Missing policy");
-                            Toast.makeText(this, "Missing Policy", Toast.LENGTH_SHORT).show();
+                            if (BuildConfig.DEBUG) {
+                                Toast.makeText(this, "Missing Policy", Toast.LENGTH_SHORT).show();
+                            }
                             finish();
                             return;
                         }
@@ -664,7 +684,9 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                 .toLowerCase();
                         if (deviceMac.isEmpty()) {
                             Crashlytics.log(Log.WARN, LOG_TAG, "Missing MAC");
-                            Toast.makeText(this, "Missing MAC", Toast.LENGTH_SHORT).show();
+                            if (BuildConfig.DEBUG) {
+                                Toast.makeText(this, "Missing MAC", Toast.LENGTH_SHORT).show();
+                            }
                             finish();
                             return;
                         }
@@ -689,9 +711,11 @@ public class RouterActionsDeepLinkActivity extends Activity {
 
                     default:
                         Crashlytics.log(Log.WARN, LOG_TAG, "Unknown action: [" + action + "]");
-                        Toast.makeText(this,
-                                "Unknown action: [" + action + "]",
-                                Toast.LENGTH_SHORT).show();
+                        if (BuildConfig.DEBUG) {
+                            Toast.makeText(this,
+                                    "Unknown action: [" + action + "]",
+                                    Toast.LENGTH_SHORT).show();
+                        }
                         finish();
                         return;
                 }
@@ -699,9 +723,11 @@ public class RouterActionsDeepLinkActivity extends Activity {
             }
 
             //Execute action right on each router
-            Toast.makeText(RouterActionsDeepLinkActivity.this,
-                    "Executing action: " + action + "...",
-                    Toast.LENGTH_SHORT).show();
+            if (BuildConfig.DEBUG) {
+                Toast.makeText(RouterActionsDeepLinkActivity.this,
+                        "Executing action: " + action + "...",
+                        Toast.LENGTH_SHORT).show();
+            }
             for (final AbstractRouterAction<?> routerActionTask : routerActions) {
                 if (routerActionTask == null) {
                     continue;
