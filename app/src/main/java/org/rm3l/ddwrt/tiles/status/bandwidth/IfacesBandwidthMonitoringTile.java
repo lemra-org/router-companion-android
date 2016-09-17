@@ -777,10 +777,10 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
         mRenderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00)); // transparent margins
         // Disable Pan on two axis
         mRenderer.setPanEnabled(false, false);
-        mRenderer.setYAxisMax(maxY + 1024);
+        mRenderer.setYAxisMax(maxY);
         mRenderer.setYAxisMin(minY);
         mRenderer.setXAxisMin(minX);
-        mRenderer.setXAxisMax(maxX + 1024);
+        mRenderer.setXAxisMax(maxX);
         mRenderer.setShowGrid(false);
         mRenderer.setClickEnabled(false);
         mRenderer.setZoomEnabled(false, false);
