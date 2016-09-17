@@ -79,6 +79,45 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginLeft="4dp"
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:text="App PIN Code"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?android:attr/listDivider"
+                    android:minHeight="1dp"/>
+                <!-- PIN Code-->
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/pin_code_input_layout"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:selectAllOnFocus="true"
+                        android:id="@+id/pin_code"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="PIN Code as set in DD-WRT Companion app, if any"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="textPassword"
+                        android:maxLines="1"/>
+                </android.support.design.widget.TextInputLayout>
+                <CheckBox
+                    android:id="@+id/pin_code_show_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="Show PIN Code"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Select Router"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textStyle="bold"/>

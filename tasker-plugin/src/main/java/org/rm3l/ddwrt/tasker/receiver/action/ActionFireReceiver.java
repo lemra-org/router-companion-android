@@ -21,6 +21,7 @@ import org.rm3l.ddwrt.tasker.exception.DDWRTCompanionPackageVersionRequiredNotFo
 import org.rm3l.ddwrt.tasker.ui.activity.action.ActionEditActivity.SupportedCommand;
 import org.rm3l.ddwrt.tasker.utils.Utils;
 
+import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_APP_PIN_CODE;
 import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_COMMAND_CUSTOM_CMD;
 import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_COMMAND_CUSTOM_IS_VARIABLE;
 import static org.rm3l.ddwrt.tasker.bundle.PluginBundleValues.BUNDLE_COMMAND_CUSTOM_VARIABLE_NAME;
@@ -65,6 +66,9 @@ public final class ActionFireReceiver extends AbstractPluginSettingReceiver {
             }
 
             final int versionCode = bundle.getInt(BUNDLE_EXTRA_INT_VERSION_CODE);
+
+            final String appPinCode = bundle.getString(BUNDLE_APP_PIN_CODE);
+
             final boolean routerIsVariable = bundle.getBoolean(BUNDLE_ROUTER_IS_VARIABLE, false);
             final String routerVariableName = bundle.getString(BUNDLE_ROUTER_VARIABLE_NAME);
             final String routerUuid = bundle.getString(BUNDLE_ROUTER_UUID);
@@ -110,6 +114,10 @@ public final class ActionFireReceiver extends AbstractPluginSettingReceiver {
             deeplinkStringBuilder.append(supportedCommand.actionName.toLowerCase());
 
             deeplinkStringBuilder.append("?origin=").append(BuildConfig.APPLICATION_ID);
+
+            if (!TextUtils.isEmpty(appPinCode)) {
+                deeplinkStringBuilder.append("&pinCode=").append(appPinCode);
+            }
 
             if (commandIsCustom) {
                 deeplinkStringBuilder.append("&cmd=");

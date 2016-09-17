@@ -33,6 +33,7 @@ import static org.rm3l.ddwrt.tasker.Constants.TAG;
 public final class PluginBundleValues {
 
     public static final String BUNDLE_PREFIX = BuildConfig.APPLICATION_ID + ".extra.";
+    public static final String BUNDLE_APP_PIN_CODE = BUNDLE_PREFIX + "APP.PIN_CODE";
     public static final String BUNDLE_OUTPUT_VARIABLE_NAME = BUNDLE_PREFIX + "OUTPUT.VARIABLE_NAME";
     public static final String BUNDLE_OUTPUT_IS_VARIABLE = BUNDLE_PREFIX + "OUTPUT.IS_VARIABLE";
     public static final String BUNDLE_COMMAND_SUPPORTED_PARAM = BUNDLE_PREFIX + "COMMAND.SUPPORTED_PARAM";
@@ -133,6 +134,10 @@ public final class PluginBundleValues {
     public static String getBundleBlurb(Bundle bundle) {
         final StringBuilder stringBuilder = new StringBuilder();
 
+        if (!TextUtils.isEmpty(bundle.getString(BUNDLE_APP_PIN_CODE))) {
+            stringBuilder.append("- App PIN Code set\n");
+        }
+
         if (bundle.getBoolean(BUNDLE_ROUTER_IS_VARIABLE, false)) {
             stringBuilder.append("- Router Variable Name : ")
                     .append(bundle.getString(BUNDLE_ROUTER_VARIABLE_NAME));
@@ -140,7 +145,7 @@ public final class PluginBundleValues {
             stringBuilder.append("- Router : ")
                     .append(bundle.getString(BUNDLE_ROUTER_CANONICAL_READABLE_NAME));
         }
-        stringBuilder.append("\n\n");
+        stringBuilder.append("\n");
         if (bundle.getBoolean(BUNDLE_COMMAND_CUSTOM_IS_VARIABLE, false)) {
             stringBuilder.append("- Command Variable Name : ")
                     .append(bundle.getString(BUNDLE_COMMAND_CUSTOM_VARIABLE_NAME));
@@ -180,6 +185,7 @@ public final class PluginBundleValues {
     }
 
     public static Bundle generateBundle(Context context,
+                                        String appPinCode,
                                         boolean isVariableRouter,
                                         Editable selectedRouterVariableName,
                                         CharSequence selectedRouterUuid,
@@ -199,6 +205,8 @@ public final class PluginBundleValues {
 
         final Bundle result = new Bundle();
         result.putInt(BUNDLE_EXTRA_INT_VERSION_CODE, AppBuildInfo.getVersionCode(context));
+
+        result.putString(BUNDLE_APP_PIN_CODE, appPinCode);
 
         result.putBoolean(BUNDLE_ROUTER_IS_VARIABLE, isVariableRouter);
         if (selectedRouterVariableName != null)

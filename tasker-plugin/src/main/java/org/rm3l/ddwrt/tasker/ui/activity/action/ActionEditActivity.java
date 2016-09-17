@@ -16,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -124,6 +125,8 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
     private boolean mPreviousBundleOutputIsVariable;
     private String mPreviousBundleOutputVariableName;
     private String mPreviousBundleRouterVariableName;
+    private EditText mPinCodeEditText;
+    private String mPreviousBundleAppPinCode;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -176,6 +179,22 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
 
         mLoadingView = (ProgressBar) findViewById(R.id.loading_view);
         mMainContentView = findViewById(R.id.main_content_view);
+
+        mPinCodeEditText = (EditText) findViewById(R.id.pin_code);
+        ((CheckBox) findViewById(R.id.pin_code_show_checkbox))
+                .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (!isChecked) {
+                            mPinCodeEditText.setInputType(
+                                    InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        } else {
+                            mPinCodeEditText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                        }
+                        mPinCodeEditText.requestFocus();
+                        mPinCodeEditText.setSelection(mPinCodeEditText.length());
+                    }
+                });
 
         mSelectedRouterUuid = (TextView) findViewById(R.id.selected_router_uuid);
         mRoutersDropdown = (Spinner) findViewById(R.id.select_router_dropdown);
@@ -262,6 +281,9 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
         Crashlytics.log(Log.DEBUG, Constants.TAG, "previousBundle: " + previousBundle);
 
         mPreviousBundleIntVersionCode = previousBundle.getInt(BUNDLE_EXTRA_INT_VERSION_CODE);
+
+        mPreviousBundleAppPinCode = previousBundle.getString(BUNDLE_APP_PIN_CODE);
+
         mPreviousBundleRouterIsVariable = previousBundle.getBoolean(BUNDLE_ROUTER_IS_VARIABLE, false);
         mPreviousBundleRouterVariableName = previousBundle.getString(BUNDLE_ROUTER_VARIABLE_NAME);
         mPreviousBundleRouterUuid = previousBundle.getString(BUNDLE_ROUTER_UUID);
@@ -306,6 +328,8 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
             return;
         }
 
+        mPinCodeEditText.setText(mPreviousBundleAppPinCode, TextView.BufferType.EDITABLE);
+
         // connect to the service
         conn = new RouterServiceConnection(false);
 
@@ -326,8 +350,12 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
     public Bundle getResultBundle() {
         final boolean isVariableRouter = TextUtils.isEmpty(mSelectedRouterUuid.getText());
         final boolean isCustomCommand = (mCommand == null);
+        final String appPinCode = mPinCodeEditText.getText().toString();
+
         return PluginBundleValues.generateBundle(getApplicationContext(),
-                
+
+                appPinCode,
+
                 isVariableRouter,
                 mSelectedRouterVariable.getText(),
                 mSelectedRouterUuid.getText(),
