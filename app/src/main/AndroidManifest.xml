@@ -93,7 +93,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:backupAgent=".backup.DDWRTCompanionBackupAgent"
         android:fullBackupOnly="true"
         android:hardwareAccelerated="true"
-        android:icon="@drawable/ic_launcher_ddwrt_companion"
+        android:icon="@mipmap/ic_launcher_ddwrt_companion"
         android:label="@string/app_name"
         android:theme="@style/AppThemeDark"
         tools:replace="android:theme,android:icon" >
@@ -127,6 +127,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:exported="false"/>
 
         <activity
+            android:name=".SplashActivity"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".mgmt.RouterManagementActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
@@ -135,8 +145,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <intent-filter>
                 <action android:name="android.intent.action.APP_ERROR" />
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
 
