@@ -45,6 +45,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="General">
 
         <ListPreference
+            android:icon="@drawable/ic_action_action_tab"
             android:defaultValue="DDWRTSortingStrategy"
             android:entries="@array/pref_sorting_strategy_titles"
             android:entryValues="@array/pref_sorting_strategy_values"
@@ -78,6 +79,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="Monitoring">
 
         <org.rm3l.ddwrt.widgets.NumberPickerPreference
+            android:icon="@drawable/ic_action_action_today"
             android:defaultValue="1"
             android:key="wan_cycle_day"
             android:title="WAN Monthly Cycle"
@@ -94,6 +96,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="Speed Test">
 
         <ListPreference
+            android:icon="@drawable/ic_action_hardware_computer"
             android:defaultValue="_random_"
             android:entries="@array/speedtest_servers_titles"
             android:entryValues="@array/speedtest_servers_values"
@@ -103,6 +106,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:title="Server" />
 
         <org.rm3l.ddwrt.widgets.LongListPreference
+            android:icon="@drawable/ic_action_device_data_usage"
             android:defaultValue="100"
             android:entries="@array/routerSpeedTestMaxFileSize_titles"
             android:entryValues="@array/routerSpeedTestMaxFileSize_values"
@@ -112,6 +116,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:title="Max. size of sample data" />
 
         <EditTextPreference
+            android:icon="@drawable/ic_action_action_schedule"
             android:defaultValue="8"
             android:key="routerSpeedTestDurationThresholdSeconds"
             android:title="Data transfer duration threshold (in seconds)"
@@ -133,6 +138,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="Notifications">
 
         <org.rm3l.ddwrt.widgets.MySwitchPreference
+            android:icon="@drawable/ic_action_social_notifications"
             android:disableDependentsState="false"
             android:defaultValue="true"
             android:key="notifications.enable"
@@ -141,6 +147,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:title="Receive Notifications" />
 
         <org.rm3l.ddwrt.widgets.MySwitchPreference
+            android:icon="@drawable/ic_action_device_devices_blue"
             android:dependency="notifications.enable"
             android:defaultValue="true"
             android:key="notifications.connectedHosts.activeOnly"
@@ -156,6 +163,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="VPN &amp; PPTP Clients">
 
         <org.rm3l.ddwrt.widgets.MySwitchPreference
+            android:icon="@drawable/ic_action_notification_vpn_lock_blue"
             android:defaultValue="false"
             android:key="vpn.pptp.toggles.mutually.exclusive"
             android:summaryOff="Disabled."
