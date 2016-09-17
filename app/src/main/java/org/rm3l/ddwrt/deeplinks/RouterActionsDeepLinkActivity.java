@@ -64,8 +64,6 @@ import static org.rm3l.ddwrt.actions.ToggleWANAccessPolicyRouterAction.ENABLE_1;
 import static org.rm3l.ddwrt.actions.ToggleWANAccessPolicyRouterAction.ENABLE_2;
 
 /**
- * TODO Add 'pinCode' as a parameter in URL, and check against registered one (check if app locking is on)
- *
  * Created by rm3l on 14/02/16.
  */
 @DeepLink({
