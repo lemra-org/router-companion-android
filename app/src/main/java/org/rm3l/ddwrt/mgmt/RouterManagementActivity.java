@@ -739,9 +739,14 @@ public class RouterManagementActivity
                 //TODO
                 final String welcomeKey = \"fake-key\";
                 if (resultCode == RESULT_OK) {
-                    Toast.makeText(getApplicationContext(), welcomeKey + " completed", Toast.LENGTH_SHORT).show();
+                    // Code here will run if the welcome screen was completed
+                    if (BuildConfig.DEBUG) {
+                        Toast.makeText(getApplicationContext(), "[DEBUG] " + welcomeKey + " completed", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(getApplicationContext(), welcomeKey + " canceled", Toast.LENGTH_SHORT).show();
+                    if (BuildConfig.DEBUG) {
+                        Toast.makeText(getApplicationContext(), "[DEBUG] " + welcomeKey + " canceled", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 initOpenAddRouterFormIfNecessary();
                 break;

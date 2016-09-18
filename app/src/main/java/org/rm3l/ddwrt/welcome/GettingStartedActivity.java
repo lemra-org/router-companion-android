@@ -4,7 +4,6 @@ import com.stephentuso.welcome.WelcomeScreenBuilder;
 import com.stephentuso.welcome.ui.WelcomeActivity;
 import com.stephentuso.welcome.util.WelcomeScreenConfiguration;
 
-import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 
 /**
@@ -35,8 +34,9 @@ public class GettingStartedActivity extends WelcomeActivity {
                         "You can now PIN-protect the app. Visit the global settings to manage PIN lock.",
                         R.color.win8_lime)
 
+                //TODO Add custom fragment, which includes a button to open the Play Store to download the Tasker Plugin
                 .parallaxPage(
-                        R.layout.welcome_parallax_example,
+                        R.layout.welcome_parallax_automation,
                         "Automation",
                         "A 'DD-WRT Companion Tasker Plugin' is now available as a separate application, to make the most of your DD-WRT routers. " +
                                 "Get it on Google Play Store to automate various actions via DD-WRT Companion.",
