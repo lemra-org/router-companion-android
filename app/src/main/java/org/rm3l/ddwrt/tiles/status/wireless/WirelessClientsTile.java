@@ -2991,6 +2991,9 @@ public class WirelessClientsTile
                 case RESET_COUNTERS:
                     //Also delete local backup (so it does not get restored on the router)
                     synchronized (usageDataLock) {
+                        //Drop local cache
+                        //noinspection ResultOfMethodCallIgnored
+                        mBandwidthMonitoringData.delete();
                         bandwidthMonitoringIfaceDataPerDevice.clear();
                         //noinspection ResultOfMethodCallIgnored
                         DDWRTCompanionConstants.getClientsUsageDataFile(mParentFragmentActivity, router.getUuid())
