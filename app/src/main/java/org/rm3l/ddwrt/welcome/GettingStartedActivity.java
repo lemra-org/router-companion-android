@@ -68,6 +68,6 @@ public class GettingStartedActivity extends WelcomeActivity {
      * @return the welcome key
      */
     public static String welcomeKey() {
-        return "DD-WRT_Companion_7.1.0";
+        return "DD-WRT_Companion__7.1.0";
     }
 }
