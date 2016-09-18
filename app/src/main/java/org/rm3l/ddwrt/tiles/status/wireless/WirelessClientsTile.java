@@ -160,13 +160,16 @@ import java.io.Writer;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -695,6 +698,21 @@ public class WirelessClientsTile
                             gson.fromJson(reader, Map.class);
                     if (!result.isEmpty()) {
                         bandwidthMonitoringIfaceDataPerDevice.clear();
+                        final Comparator<BandwidthMonitoringTile.DataPoint> comparator = new Comparator<BandwidthMonitoringTile.DataPoint>() {
+                            @Override
+                            public int compare(BandwidthMonitoringTile.DataPoint lhs, BandwidthMonitoringTile.DataPoint rhs) {
+                                if (lhs == rhs) {
+                                    return 0;
+                                }
+                                if (rhs == null) {
+                                    return -1;
+                                }
+                                if (lhs == null) {
+                                    return 1;
+                                }
+                                return Long.valueOf(rhs.getTimestamp()).compareTo(lhs.getTimestamp());
+                            }
+                        };
                         for (Map.Entry<String, Map<String, Collection<BandwidthMonitoringTile.DataPoint>>> entry : result.entrySet()) {
                             final String key = entry.getKey();
                             final Map<String, Collection<BandwidthMonitoringTile.DataPoint>> value = entry.getValue();
@@ -709,11 +727,15 @@ public class WirelessClientsTile
                             for (final Map.Entry<String, Collection<BandwidthMonitoringTile.DataPoint>> valueEntry : value.entrySet()) {
                                 final String valueEntryKey = \"fake-key\";
                                 final Collection valueEntryValue = valueEntry.getValue();
+                                //Order datapoints (timestamp ordering)
+                                final SortedSet<BandwidthMonitoringTile.DataPoint> dataPoints = new TreeSet<>(comparator);
                                 for (final Object datapoint : valueEntryValue) {
                                     final JsonObject jsonObject = gson.toJsonTree(datapoint).getAsJsonObject();
-                                    bandwidthMonitoringIfaceData.addData(valueEntryKey,
-                                            new BandwidthMonitoringTile.DataPoint(jsonObject.get("timestamp").getAsLong(),
-                                                    jsonObject.get("value").getAsDouble()));
+                                    dataPoints.add(new BandwidthMonitoringTile.DataPoint(jsonObject.get("timestamp").getAsLong(),
+                                            jsonObject.get("value").getAsDouble()));
+                                }
+                                for (final BandwidthMonitoringTile.DataPoint dataPoint : dataPoints) {
+                                    bandwidthMonitoringIfaceData.addData(valueEntryKey, dataPoint);
                                 }
                             }
 
@@ -725,7 +747,6 @@ public class WirelessClientsTile
                     //No worries
                     ignored.printStackTrace();
                 }
-
 
                 final ClientDevices devices = new ClientDevices();
 
@@ -1523,7 +1544,7 @@ public class WirelessClientsTile
                         }
 
                         if (!resultToSave.isEmpty()) {
-                            writer = new FileWriter(mBandwidthMonitoringData);
+                            writer = new FileWriter(mBandwidthMonitoringData, false);
                             final Gson gson = new GsonBuilder().create();
                             gson.toJson(resultToSave, writer);
                         }
