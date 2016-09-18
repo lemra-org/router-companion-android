@@ -349,6 +349,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <color name="red_background">#D32F2F</color>
     <color name="purple_background">#7B1FA2</color>
 
-    <color name="passcodelock_background">@color/lightTheme_primary_dark</color>
+    <color name="passcodelock_background">@color/background_window</color>
 
 </resources>
