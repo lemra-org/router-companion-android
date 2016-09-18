@@ -60,6 +60,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:icon="@drawable/ic_action_action_lock"
             android:persistent="false" />
 
+        <org.rm3l.ddwrt.widgets.MySwitchPreference
+            android:icon="@drawable/ic_action_action_extension"
+            android:defaultValue="true"
+            android:key="third_party.integration"
+            android:summaryOff="@string/pref_3rd_party_integration_disabled"
+            android:summaryOn="@string/pref_3rd_party_integration_enabled"
+            android:title="@string/pref_3rd_party_integration_title" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

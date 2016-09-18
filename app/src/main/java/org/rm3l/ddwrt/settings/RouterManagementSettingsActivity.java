@@ -47,6 +47,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_SOUND;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_VIBRATE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SECURITY_PIN_LOCK_PREF;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SECURITY_THIRD_PARTY_INTEGRATION;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 @DeepLink({"dd-wrt://settings",
@@ -106,14 +107,11 @@ public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActiv
                             transaction.replace(R.id.settings_content_frame, pinLockFragment );
                             transaction.addToBackStack(null);  // if written, this transaction will be added to backstack
                             transaction.commit();
-//
-//                            // Display the fragment as the main content.
-//                            getFragmentManager().beginTransaction()
-//                                    .replace(R.id.settings_content_frame, new PinLockFragment())
-//                                    .commit();
                             return true;
                         }
                     });
+
+            bindPreferenceSummaryToValue(findPreference(SECURITY_THIRD_PARTY_INTEGRATION));
 
             bindPreferenceSummaryToValue(findPreference(DATA_USAGE_NETWORK_PREF));
 //            bindPreferenceSummaryToValue(findPreference(DATA_SYNC_BACKUP_PREF));
