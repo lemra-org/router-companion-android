@@ -22,6 +22,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ListPreference
+        android:icon="@drawable/ic_action_hardware_computer"
         android:defaultValue="_random_"
         android:entries="@array/speedtest_servers_titles"
         android:entryValues="@array/speedtest_servers_values"
@@ -31,6 +32,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="Server" />
 
     <org.rm3l.ddwrt.widgets.LongListPreference
+        android:icon="@drawable/ic_action_device_data_usage"
         android:defaultValue="100"
         android:entries="@array/routerSpeedTestMaxFileSize_titles"
         android:entryValues="@array/routerSpeedTestMaxFileSize_values"
@@ -40,6 +42,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="Max. size of sample data" />
 
     <EditTextPreference
+        android:icon="@drawable/ic_action_action_schedule"
         android:defaultValue="8"
         android:inputType="number"
         android:key="routerSpeedTestDurationThresholdSeconds"

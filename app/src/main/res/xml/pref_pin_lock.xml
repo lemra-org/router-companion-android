@@ -2,11 +2,13 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <Preference
+        android:icon="@drawable/ic_action_action_lock"
         android:key="@string/pref_key_passcode_toggle"
         android:title="@string/passcode_turn_on"
         android:persistent="false" />
 
     <Preference
+        android:icon="@drawable/ic_action_image_edit"
         android:key="@string/pref_key_change_passcode"
         android:title="@string/passcode_change_passcode"
         android:persistent="false" />
