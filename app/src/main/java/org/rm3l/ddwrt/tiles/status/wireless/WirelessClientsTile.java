@@ -690,63 +690,64 @@ public class WirelessClientsTile
                     }
                 });
 
-                try {
-                    //Try loading from cache
-                    final Gson gson = new GsonBuilder().create();
-                    final JsonReader reader = new JsonReader(new FileReader(mBandwidthMonitoringData));
-                    final Map<String, Map<String, Collection<BandwidthMonitoringTile.DataPoint>>> result =
-                            gson.fromJson(reader, Map.class);
-                    if (!result.isEmpty()) {
-                        bandwidthMonitoringIfaceDataPerDevice.clear();
-                        final Comparator<BandwidthMonitoringTile.DataPoint> comparator = new Comparator<BandwidthMonitoringTile.DataPoint>() {
-                            @Override
-                            public int compare(BandwidthMonitoringTile.DataPoint lhs, BandwidthMonitoringTile.DataPoint rhs) {
-                                if (lhs == rhs) {
-                                    return 0;
-                                }
-                                if (rhs == null) {
-                                    return -1;
-                                }
-                                if (lhs == null) {
-                                    return 1;
-                                }
-                                return Long.valueOf(rhs.getTimestamp()).compareTo(lhs.getTimestamp());
-                            }
-                        };
-                        for (Map.Entry<String, Map<String, Collection<BandwidthMonitoringTile.DataPoint>>> entry : result.entrySet()) {
-                            final String key = entry.getKey();
-                            final Map<String, Collection<BandwidthMonitoringTile.DataPoint>> value = entry.getValue();
-                            if (key == null || value == null) {
-                                continue;
-                            }
-                            BandwidthMonitoringTile.BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData =
-                                    bandwidthMonitoringIfaceDataPerDevice.get(key);
-                            if (bandwidthMonitoringIfaceData == null) {
-                                bandwidthMonitoringIfaceData = new BandwidthMonitoringTile.BandwidthMonitoringIfaceData();
-                            }
-                            for (final Map.Entry<String, Collection<BandwidthMonitoringTile.DataPoint>> valueEntry : value.entrySet()) {
-                                final String valueEntryKey = \"fake-key\";
-                                final Collection valueEntryValue = valueEntry.getValue();
-                                //Order datapoints (timestamp ordering)
-                                final SortedSet<BandwidthMonitoringTile.DataPoint> dataPoints = new TreeSet<>(comparator);
-                                for (final Object datapoint : valueEntryValue) {
-                                    final JsonObject jsonObject = gson.toJsonTree(datapoint).getAsJsonObject();
-                                    dataPoints.add(new BandwidthMonitoringTile.DataPoint(jsonObject.get("timestamp").getAsLong(),
-                                            jsonObject.get("value").getAsDouble()));
-                                }
-                                for (final BandwidthMonitoringTile.DataPoint dataPoint : dataPoints) {
-                                    bandwidthMonitoringIfaceData.addData(valueEntryKey, dataPoint);
-                                }
-                            }
-
-                            bandwidthMonitoringIfaceDataPerDevice.put(key, bandwidthMonitoringIfaceData);
-                        }
-                    }
-
-                } catch (final Exception ignored) {
-                    //No worries
-                    ignored.printStackTrace();
-                }
+                //TODO Disabled for now
+//                try {
+//                    //Try loading from cache
+//                    final Gson gson = new GsonBuilder().create();
+//                    final JsonReader reader = new JsonReader(new FileReader(mBandwidthMonitoringData));
+//                    final Map<String, Map<String, Collection<BandwidthMonitoringTile.DataPoint>>> result =
+//                            gson.fromJson(reader, Map.class);
+//                    if (!result.isEmpty()) {
+//                        bandwidthMonitoringIfaceDataPerDevice.clear();
+//                        final Comparator<BandwidthMonitoringTile.DataPoint> comparator = new Comparator<BandwidthMonitoringTile.DataPoint>() {
+//                            @Override
+//                            public int compare(BandwidthMonitoringTile.DataPoint lhs, BandwidthMonitoringTile.DataPoint rhs) {
+//                                if (lhs == rhs) {
+//                                    return 0;
+//                                }
+//                                if (rhs == null) {
+//                                    return -1;
+//                                }
+//                                if (lhs == null) {
+//                                    return 1;
+//                                }
+//                                return Long.valueOf(rhs.getTimestamp()).compareTo(lhs.getTimestamp());
+//                            }
+//                        };
+//                        for (Map.Entry<String, Map<String, Collection<BandwidthMonitoringTile.DataPoint>>> entry : result.entrySet()) {
+//                            final String key = entry.getKey();
+//                            final Map<String, Collection<BandwidthMonitoringTile.DataPoint>> value = entry.getValue();
+//                            if (key == null || value == null) {
+//                                continue;
+//                            }
+//                            BandwidthMonitoringTile.BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData =
+//                                    bandwidthMonitoringIfaceDataPerDevice.get(key);
+//                            if (bandwidthMonitoringIfaceData == null) {
+//                                bandwidthMonitoringIfaceData = new BandwidthMonitoringTile.BandwidthMonitoringIfaceData();
+//                            }
+//                            for (final Map.Entry<String, Collection<BandwidthMonitoringTile.DataPoint>> valueEntry : value.entrySet()) {
+//                                final String valueEntryKey = \"fake-key\";
+//                                final Collection valueEntryValue = valueEntry.getValue();
+//                                //Order datapoints (timestamp ordering)
+//                                final SortedSet<BandwidthMonitoringTile.DataPoint> dataPoints = new TreeSet<>(comparator);
+//                                for (final Object datapoint : valueEntryValue) {
+//                                    final JsonObject jsonObject = gson.toJsonTree(datapoint).getAsJsonObject();
+//                                    dataPoints.add(new BandwidthMonitoringTile.DataPoint(jsonObject.get("timestamp").getAsLong(),
+//                                            jsonObject.get("value").getAsDouble()));
+//                                }
+//                                for (final BandwidthMonitoringTile.DataPoint dataPoint : dataPoints) {
+//                                    bandwidthMonitoringIfaceData.addData(valueEntryKey, dataPoint);
+//                                }
+//                            }
+//
+//                            bandwidthMonitoringIfaceDataPerDevice.put(key, bandwidthMonitoringIfaceData);
+//                        }
+//                    }
+//
+//                } catch (final Exception ignored) {
+//                    //No worries
+//                    ignored.printStackTrace();
+//                }
 
                 final ClientDevices devices = new ClientDevices();
 
