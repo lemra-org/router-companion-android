@@ -54,7 +54,7 @@ public final class Utils {
                 return ddwrtCompanionAppPackage;
             }
 
-            ddwrtCompanionAppPackage = getPackageInstalled("org.rm3l.ddwrt.lite", packageManager);
+            ddwrtCompanionAppPackage = getPackageInstalled("org.rm3l.ddwrt.free", packageManager);
             if (ddwrtCompanionAppPackage != null) {
                 return ddwrtCompanionAppPackage;
             }
