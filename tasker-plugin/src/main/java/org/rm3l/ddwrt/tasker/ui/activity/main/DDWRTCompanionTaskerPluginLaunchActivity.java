@@ -132,6 +132,22 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
             actionBar.setIcon(R.mipmap.ic_launcher);
         }
 
+        findViewById(R.id.tasker_main_launch_tasker_btn)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        launchTaskerApp();
+                    }
+                });
+
+        findViewById(R.id.tasker_main_launch_ddwrt_companion_btn)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        launchDDWRTCompanionApp();
+                    }
+                });
+
         mErrorView = (TextView) findViewById(R.id.error_placeholder);
 
         final TextView aboutView = (TextView) findViewById(R.id.tasker_main_about_textview);
@@ -292,19 +308,11 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
                 break;
 
             case R.id.launch_ddwrt_companion:
-                final PackageInfo packageInfo = Utils
-                        .getDDWRTCompanionAppPackage(getPackageManager());
-                final String ddwrtCompanionAppPackage = (packageInfo != null ?
-                        packageInfo.packageName : null);
-                final boolean packageNameIsEmpty = TextUtils.isEmpty(ddwrtCompanionAppPackage);
-                ActivityUtils.launchApp(
-                        this,
-                        packageNameIsEmpty ? "org.rm3l.ddwrt" : ddwrtCompanionAppPackage,
-                        true);
+                launchDDWRTCompanionApp();
                 break;
 
             case R.id.launch_tasker:
-                ActivityUtils.launchApp(this,TASKER_PKG_NAME, true);
+                launchTaskerApp();
                 break;
 
             case R.id.ddwrt_companion_tasker_feedback:
@@ -335,6 +343,22 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
                 break;
         }
         return true;
+    }
+
+    private void launchTaskerApp() {
+        ActivityUtils.launchApp(this,TASKER_PKG_NAME, true);
+    }
+
+    private void launchDDWRTCompanionApp() {
+        final PackageInfo packageInfo = Utils
+                .getDDWRTCompanionAppPackage(getPackageManager());
+        final String ddwrtCompanionAppPackage = (packageInfo != null ?
+                packageInfo.packageName : null);
+        final boolean packageNameIsEmpty = TextUtils.isEmpty(ddwrtCompanionAppPackage);
+        ActivityUtils.launchApp(
+                this,
+                packageNameIsEmpty ? "org.rm3l.ddwrt" : ddwrtCompanionAppPackage,
+                true);
     }
 
     public class TaskerActionHistoryAdapter
