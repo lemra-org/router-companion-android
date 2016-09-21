@@ -21,25 +21,27 @@ public class GettingStartedActivity extends WelcomeActivity {
                 .defaultHeaderTypefacePath("Montserrat-Bold.ttf")
 
                 .titlePage(R.drawable.logo_ddwrt_companion__large,
-                        "Welcome. Swipe to get started", R.color.blue_background)
+                        "Welcome. Swipe to get started", R.color.purple_background)
 
                 .basicPage(R.drawable.welcome_screen_easy_fun_management,
                         "Easy and fun router management",
                         "Manage and monitor your routers on the go. " +
                                 "Your routers must have DD-WRT firmware installed and SSH configured properly.",
-                        R.color.red_background)
+                        R.color.purple_background)
 
                 .basicPage(R.drawable.welcome_screen_protect_app,
                         "Secure",
-                        "You can now PIN-protect the app. Visit the global settings to manage PIN lock.",
-                        R.color.win8_lime)
+                        "All of your sensitive info is encrypted locally.\n" +
+                                "And you can now PIN-protect the app. Visit the global settings to manage PIN lock.",
+                        R.color.purple_background)
 
                 //TODO Add custom fragment, which includes a button to open the Play Store to download the Tasker Plugin
                 .parallaxPage(
                         R.layout.welcome_parallax_automation,
                         "Automation",
-                        "A 'DD-WRT Companion Tasker Plugin' is now available as a separate application, to make the most of your DD-WRT routers. " +
-                                "Get it on Google Play Store to automate various actions via DD-WRT Companion.",
+                        "Get the 'DD-WRT Companion Tasker Plugin' app on Google Play Store, " +
+                                "to make the most of your DD-WRT-powered routers.\n" +
+                                "This plugin for Tasker allows you to automate various actions via DD-WRT Companion.",
                         R.color.purple_background,
                         0.2f,
                         2f)
@@ -48,8 +50,8 @@ public class GettingStartedActivity extends WelcomeActivity {
                         "Have your say",
                         "Sending feedback from within the app is now easier. " +
                                 "Feel free to submit new ideas, file bugs or simply say hello.\n\n" +
-                                "Help available at http://ddwrt-companion.rm3l.org",
-                        R.color.orange_background)
+                                "Help and Support: http://ddwrt-companion.rm3l.org",
+                        R.color.purple_background)
 
 //                .basicPage(R.drawable.welcome_screen_notifs_widgets,
 //                        "One more thing...",
