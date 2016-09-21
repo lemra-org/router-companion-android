@@ -475,7 +475,11 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
         mIsCancelled = true;
         super.onDestroy();
         if (conn != null) {
-            unbindService(conn);
+            try {
+                unbindService(conn);
+            } catch (final Exception ignored) {
+                ignored.printStackTrace();
+            }
         }
         ddwrtCompanionService = null;
     }

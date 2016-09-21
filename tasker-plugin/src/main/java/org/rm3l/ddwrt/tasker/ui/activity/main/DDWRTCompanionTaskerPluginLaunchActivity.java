@@ -290,7 +290,12 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbindService(conn);
+        try {
+            unbindService(conn);
+        } catch (final Exception ignored) {
+            //No worries
+            ignored.printStackTrace();
+        }
         ddwrtCompanionService = null;
     }
 
