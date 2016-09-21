@@ -318,6 +318,11 @@
     public static java.lang.String welcomeKey();
 }
 
+
+-keep class me.panavtec.drawableview.** { *; }
+-keep class me.panavtec.drawableview.gestures.** { *; }
+-dontwarn me.panavtec.drawableview.internal.**
+
 #kryo
 #-dontwarn sun.reflect.**
 #-dontwarn java.beans.**
@@ -332,3 +337,14 @@
 #-keep,allowshrinking class sun.nio.ch.** { *; }
 #-dontwarn sun.nio.ch.**
 #-dontwarn sun.misc.**
+
+-dontwarn java.awt.**
+-dontwarn javax.swing.**
+-dontwarn javax.jms.**
+-dontwarn javax.naming.**
+-dontwarn javax.mail.**
+-dontwarn java.beans.**
+-dontwarn java.management.**
+
+
+-dontwarn org.apache.log4j.**

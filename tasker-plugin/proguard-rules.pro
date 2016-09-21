@@ -138,11 +138,24 @@
 
 -dontwarn com.squareup.okhttp.**
 
--keep class com.crashlytics.** { *; }
--keep class com.crashlytics.android.**
+-keep class me.panavtec.drawableview.** { *; }
+-keep class me.panavtec.drawableview.gestures.** { *; }
+-dontwarn me.panavtec.drawableview.internal.**
 
 
 -keep class .R
 -keep class **.R$* {
     <fields>;
 }
+
+
+-dontwarn java.awt.**
+-dontwarn javax.swing.**
+-dontwarn javax.jms.**
+-dontwarn javax.naming.**
+-dontwarn javax.mail.**
+-dontwarn java.beans.**
+-dontwarn java.management.**
+
+
+-dontwarn org.apache.log4j.**
