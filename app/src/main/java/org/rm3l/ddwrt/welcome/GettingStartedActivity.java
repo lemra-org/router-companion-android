@@ -51,10 +51,10 @@ public class GettingStartedActivity extends WelcomeActivity {
                                 "Help available at http://ddwrt-companion.rm3l.org",
                         R.color.orange_background)
 
-                .basicPage(R.drawable.welcome_screen_notifs_widgets,
-                        "One more thing...",
-                        "Bear in mind you can use Home Screen Widgets and Shortcuts for quicker access to DD-WRT Companion.",
-                        R.color.win8_teal)
+//                .basicPage(R.drawable.welcome_screen_notifs_widgets,
+//                        "One more thing...",
+//                        "Bear in mind you can use Home Screen Widgets and Shortcuts for quicker access to DD-WRT Companion.",
+//                        R.color.win8_teal)
 
                 .swipeToDismiss(true)
                 .exitAnimation(android.R.anim.fade_out)
