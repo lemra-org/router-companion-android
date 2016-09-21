@@ -107,16 +107,19 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_height="wrap_content"
                     android:theme="@style/MyButton"
                     android:text="@string/launch_tasker"
-                    android:textColor="@color/white"/>
+                    android:textColor="@color/white"
+                    android:visibility="gone"/>
 
                 <Button
                     android:id="@+id/tasker_main_launch_ddwrt_companion_btn"
                     android:layout_marginTop="5dp"
+                    android:layout_marginBottom="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:theme="@style/MyButton"
                     android:text="@string/launch_ddwrt_companion"
-                    android:textColor="@color/white"/>
+                    android:textColor="@color/white"
+                    android:visibility="gone"/>
 
             </LinearLayout>
     

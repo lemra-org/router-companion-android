@@ -18,7 +18,7 @@
     <string name="launch_ddwrt_companion">Launch DD-WRT Companion</string>
     <string name="app_launcher">App Launcher</string>
     <string name="main_activity_app_description">This Tasker plugin allows you to automate the act of launching commands on remote routers registered in DD-WRT Companion application.\nYou can perform actions from a set of predefined commands, or optionally provide your own commands.\n\nTo use the plugin, you must have both DD-WRT Companion (at least version \'%1$s\') and Tasker applications installed.\nThen open Tasker and DD-WRT Companion will appear as an Action Plugin.</string>
-    <string name="main_activity_app_description_history">\n\nThe History panel below lists all actions sent out to routers for execution via this plugin.</string>
+    <string name="main_activity_app_description_history">\nThe History panel below lists all actions sent out to routers for execution via this plugin.</string>
     <string name="history">History</string>
     <string name="refresh">Refresh</string>
     <string name="delete_all">Delete All</string>
