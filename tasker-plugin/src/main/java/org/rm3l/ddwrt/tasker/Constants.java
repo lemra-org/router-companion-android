@@ -29,7 +29,7 @@ public final class Constants {
     public static final String GOOGLE_API_KEY = \"fake-api-key\";
 
     public static final String AWS_COGNITO_IDENTITY_POOL_ID =
-            "us-east-1:2d76d7a3-17f4-4c78-a5c4-ed3a548fe45b";
+            "us-east-1:f2097772-8b26-4db4-8875-e60eddfe46b8";
     public static final Regions AWS_COGNITO_IDENTITY_POOL_REGION = Regions.US_EAST_1;
     public static final String AWS_S3_BUCKET_NAME = "dd-wrt-companion";
     public static final String AWS_S3_FEEDBACKS_FOLDER_NAME = "feedbacks/tasker";
