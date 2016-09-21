@@ -89,10 +89,11 @@ public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActiv
 //            bindPreferenceSummaryToValue(findPreference(ALWAYS_CHECK_CONNECTION_PREF_KEY));
             final Preference themingPreference = findPreference(THEMING_PREF);
             if (BuildConfig.WITH_ADS) {
-                themingPreference.setSummary("Upgrade to switch app theme");
+                themingPreference.setTitle("Theme (Upgrade to switch)");
+//                themingPreference.setSummary("Upgrade to switch app theme");
                 themingPreference.setEnabled(false);
             } else {
-                themingPreference.setSummary("Theme");
+                themingPreference.setTitle("Theme");
                 themingPreference.setEnabled(true);
             }
 
