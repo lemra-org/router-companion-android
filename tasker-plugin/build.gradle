@@ -50,10 +50,10 @@ final homePath = System.properties['user.home']
 // Will take care of prompting via console or via a dialog form (if no console available, which
 // can be the case if building with Android Studio, or with gradle daemon mode)
 gradle.taskGraph.whenReady { taskGraph ->
-    if (taskGraph.hasTask(':app:assembleRelease') ||
-            taskGraph.hasTask(':app:assembleGenericRelease') ||
-            taskGraph.hasTask(':app:assembleGoogleRelease') ||
-            taskGraph.hasTask(':app:assembleAmazonRelease')) {
+    if (taskGraph.hasTask(':tasker-plugin:assembleRelease') ||
+            taskGraph.hasTask(':tasker-plugin:assembleGenericRelease') ||
+            taskGraph.hasTask(':tasker-plugin:assembleGoogleRelease') ||
+            taskGraph.hasTask(':tasker-plugin:assembleAmazonRelease')) {
 
         def password = ""
         def storeFile = ""
