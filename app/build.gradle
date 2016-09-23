@@ -107,8 +107,11 @@ gradle.taskGraph.whenReady { taskGraph ->
 }
 
 def getVersionName(String flavorName) {
+    //gets tags across all branches, not just the current branch
+    //inspired from https://gist.github.com/rponte/fdc0724dd984088606b0
+    def latestTagGitCommit = "git -C ${rootDir} rev-list --tags --max-count=1".execute().text.trim()
     // Fetch the version according to git latest tag and "how far we are from last tag"
-    def longVersionName = "git -C ${rootDir} describe --tags --long".execute().text.trim()
+    def longVersionName = "git -C ${rootDir} describe --tags --long ${latestTagGitCommit}".execute().text.trim()
     def (fullVersionTag, versionBuild, gitSha) = longVersionName.tokenize('-')
     def (versionMajor, versionMinor, versionPatch) = fullVersionTag.tokenize('.')
     def gitCommitHash = "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
