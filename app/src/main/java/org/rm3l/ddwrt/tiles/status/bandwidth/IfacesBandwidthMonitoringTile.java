@@ -605,8 +605,12 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
                         int orderIdx = 10;
                         //Sort alphabetically (natural ordering)
                         for (final String iface : new TreeSet<>(nvRamInfoFromRouterPerIface.keySet())) {
+                            final Integer ifaceMenuItemId = ifacesMenuIds.get(iface);
+                            if (ifaceMenuItemId == null) {
+                                continue;
+                            }
                             menu.add(R.id.tile_status_bandwidth_iface_selection,
-                                    ifacesMenuIds.get(iface),
+                                    ifaceMenuItemId,
                                     orderIdx++,
                                     iface);
                         }
