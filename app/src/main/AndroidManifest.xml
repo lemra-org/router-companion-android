@@ -528,6 +528,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             </intent-filter>
         </service>
 
+        <!-- Firebase (FCM) -->
+        <service
+            android:name=".service.firebase.DDWRTCompanionFirebaseMessagingService">
+            <!-- message handling beyond receiving notifications on apps in the background -->
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+        <service
+            android:name=".service.firebase.DDWRTCompanionFirebaseInstanceIDService">
+            <!-- handle the creation, rotation, and updating of registration tokens -->
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="bf40a9722838d1959a1a770881926ee96e4b94f1" />

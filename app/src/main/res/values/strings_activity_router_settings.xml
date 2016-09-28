@@ -196,10 +196,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string-array name="notificationsChoice">
         <item>Connected Hosts</item>
         <item>WAN IP Updates</item>
+        <item>DD-WRT Build Updates</item>
     </string-array>
     <string-array name="notificationsChoice_values">
         <item>ConnectedHostsServiceTask</item>
         <item>PublicIPChangesServiceTask</item>
+        <item>DDWRTBuildUpdates</item>
     </string-array>
 
     <string name="speed_test_router_settings">Speed Test Settings</string>

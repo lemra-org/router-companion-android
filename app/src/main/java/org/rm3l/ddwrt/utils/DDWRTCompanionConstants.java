@@ -170,6 +170,7 @@ public final class DDWRTCompanionConstants {
     //TODO Enhancement: allow user to provide their own tile source (along with any creds)
     public static final OnlineTileSourceBase TILE_SOURCE = TileSourceFactory.DEFAULT_TILE_SOURCE;
     public static final String VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE = "vpn.pptp.toggles.mutually.exclusive";
+    public static final String CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES = "DDWRTBuildUpdates";
 
     public static int MB = 1024 * 1024;
 

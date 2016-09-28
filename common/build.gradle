@@ -89,5 +89,5 @@ dependencies {
 
     //Push
 //    compile 'com.google.firebase:firebase-messaging:9.4.0'
-    compile 'com.pusher:pusher-java-client:1.0.0'
+//    compile 'com.pusher:pusher-java-client:1.0.0'
 }

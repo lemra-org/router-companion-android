@@ -64,9 +64,10 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.madx.updatechecker.lib.UpdateRunnable;
-import com.pusher.client.Pusher;
-import com.pusher.client.channel.SubscriptionEventListener;
+//import com.pusher.client.Pusher;
+//import com.pusher.client.channel.SubscriptionEventListener;
 import com.stephentuso.welcome.WelcomeScreenHelper;
 import com.stephentuso.welcome.ui.WelcomeActivity;
 
@@ -97,19 +98,23 @@ import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEBUG_MODE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERSION;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_BG_SERVICE_ENABLE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_CHOICE_PREF;
 
 
 @DeepLink({"dd-wrt://management",
@@ -153,7 +158,7 @@ public class RouterManagementActivity
     private long mBackgroundServiceFrequency;
 
     private CustomTabActivityHelper mCustomTabActivityHelper;
-    private Pusher mPusher;
+//    private Pusher mPusher;
 
     private WelcomeScreenHelper welcomeScreen;
     private boolean mCloseOnActionDone;
@@ -214,21 +219,21 @@ public class RouterManagementActivity
         setContentView(R.layout.activity_router_management);
 
         //FIXME Just a simple test
-        final Map<String, SubscriptionEventListener> pushEventListeners = new HashMap<>();
-        pushEventListeners.put("new_update", new SubscriptionEventListener() {
-            @Override
-            public void onEvent(final String channelName, final String eventName, final String data) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(RouterManagementActivity.this,
-                                "[TEST] New DD-WRT Update: " + channelName + ", " + eventName + ", " + data,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
-        this.mPusher = PushUtils.getPusher("ddwrt_updates", pushEventListeners, false);
+//        final Map<String, SubscriptionEventListener> pushEventListeners = new HashMap<>();
+//        pushEventListeners.put("new_update", new SubscriptionEventListener() {
+//            @Override
+//            public void onEvent(final String channelName, final String eventName, final String data) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Toast.makeText(RouterManagementActivity.this,
+//                                "[TEST] New DD-WRT Update: " + channelName + ", " + eventName + ", " + data,
+//                                Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//            }
+//        });
+//        this.mPusher = PushUtils.getPusher("ddwrt_updates", pushEventListeners, false);
 
         setupCustomTabHelper(this);
 
@@ -394,9 +399,9 @@ public class RouterManagementActivity
     @Override
     protected void onStart() {
         super.onStart();
-        if (this.mPusher != null) {
-            this.mPusher.connect();
-        }
+//        if (this.mPusher != null) {
+//            this.mPusher.connect();
+//        }
         mCustomTabActivityHelper.bindCustomTabsService(this);
     }
 
@@ -404,9 +409,9 @@ public class RouterManagementActivity
     protected void onStop() {
         super.onStop();
         mCustomTabActivityHelper.unbindCustomTabsService(this);
-        if (this.mPusher != null) {
-            this.mPusher.disconnect();
-        }
+//        if (this.mPusher != null) {
+//            this.mPusher.disconnect();
+//        }
     }
 
     @Override
@@ -692,6 +697,19 @@ public class RouterManagementActivity
             case ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE: {
                 // Make sure the request was successful and reload U if necessary
                 if (resultCode == RESULT_OK) {
+                    //If needed, register to DD-WRT Build Updates
+                    final Set<String> notificationChoices = this.mPreferences
+                            .getStringSet(NOTIFICATIONS_CHOICE_PREF, new HashSet<String>());
+                    if (notificationChoices.contains(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES)) {
+                        //Subscribe to topic
+                        FirebaseMessaging.getInstance()
+                                .subscribeToTopic(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES);
+                    } else {
+                        //Unsubscribe from topic
+                        FirebaseMessaging.getInstance()
+                                .unsubscribeFromTopic(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES);
+                    }
+
                     //Reset Crashlytics user email addr
                     final String acraEmailAddr = this.mPreferences
                             .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
