@@ -293,11 +293,16 @@ public final class ImageUtils {
             final Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
-                    requestCreator
-                            .into(contentView,
-                                    iconId,
-                                    notifyID,
-                                    notification);
+                    try {
+                        requestCreator
+                                .into(contentView,
+                                        iconId,
+                                        notifyID,
+                                        notification);
+                    } catch (final Exception ignored) {
+                        ignored.printStackTrace();
+                        Crashlytics.logException(ignored);
+                    }
                 }
             };
             if (mCtx instanceof Activity) {
