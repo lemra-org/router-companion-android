@@ -50,7 +50,8 @@ var (
 	apiKey = \"fake-key\";
 
 	// GCM sender ID
-	senderId = "<your_sender_id>"
+	//FIXME Change before release
+	senderId = "dd-wrt-companion__test"
 
 	// The name of the database to connect to
 	databaseName = "data.db"
