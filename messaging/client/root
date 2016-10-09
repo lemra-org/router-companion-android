@@ -1,1 +1,1 @@
-*	*	*	*	*	"/code/ddwrt-notify.sh http://fcm-app-server:4260/"
+*	*	*	*	*	/bin/sh -c "/code/ddwrt-notify.sh http://fcm-app-server:4260/"
