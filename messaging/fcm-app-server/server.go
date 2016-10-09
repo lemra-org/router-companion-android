@@ -276,9 +276,10 @@ func Handler() http.Handler {
 	})
 	router.Handle("/socket.io/", wsServer)
 
-	// GET /clients
-	// List all registered registration IDs
-	router.HandleFunc("/clients", ListClients).Methods("GET")
+	//Endpoint not needed
+	//	// GET /clients
+	//	// List all registered registration IDs
+	//	router.HandleFunc("/clients", ListClients).Methods("GET")
 
 	// POST /message
 	// Send a new message

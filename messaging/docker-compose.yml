@@ -21,12 +21,19 @@ services:
             - fcm-app-server
     working_dir: /src/gcm-playground/server/
     command: go run server.go
-  
+
+  #
+  # DD-WRT Notifier service: connects to ftp://dd-wrt.com/betas and checks for new updates
+  # If any, it POST a new message to the fcm-app-server service above, so it can push it to FCM for 
+  # notifications on end-user devices
+  #
   dd-wrt-notifier:
     build:
-      context: ./client
+      context: ./dd-wrt-notifier
+    volumes:
+      - /tmp
+      - /data
     networks:
       - internal-api
     working_dir: /code/
     command: /usr/sbin/crond -l 2 -f
-

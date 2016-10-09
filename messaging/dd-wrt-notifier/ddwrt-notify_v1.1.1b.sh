@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # ddwrt-notify version 1.1.1b - 20160708 - max@fuckaround.org
 #
@@ -56,6 +56,11 @@
 #
 #
 #
+
+#
+# Updated by rm3l for DD-WRT Companion
+#
+
 # Do you want notify by email? (yes / no)
 notify=no
 # email sender
@@ -70,10 +75,11 @@ sub="New release available... Cheers!"
 mailer=/usr/bin/mutt
 #
 tmpdir=/tmp
+datadir=/data
 #
 # migrate from 1.0b to 1.1b
 if [ -f ddwrt_ftp_existent ]
-then echo "migrating in progress..." ; mv ddwrt_ftp_existent /home/$USER/.ddwrt_ftp_existent ; echo done
+then echo "migrating in progress..." ; mv ddwrt_ftp_existent ${datadir}/.ddwrt_ftp_existent ; echo done
 else echo
 fi
 #
@@ -94,23 +100,23 @@ echo done
 
 awk '{print $NF}' $tmpdir/ddwrt_ftp_today > $tmpdir/ddwrt_ftp_today_tmp
 
-if [ ! -f /home/$USER/.ddwrt_ftp_existent ];
+if [ ! -f ${datadir}/.ddwrt_ftp_existent ];
 then 
 echo "This is first time you run the script. Initializing in progress..."
-mv $tmpdir/ddwrt_ftp_today_tmp /home/$USER/.ddwrt_ftp_existent
+mv $tmpdir/ddwrt_ftp_today_tmp ${datadir}/.ddwrt_ftp_existent
 rm $tmpdir/ddwrt_ftp_today $tmpdir/ddwrt_to_check
 echo "Done! Execute the script to check dd-wrt updates."
 exit
 fi
 
-grep -v -F -x -f /home/$USER/.ddwrt_ftp_existent $tmpdir/ddwrt_ftp_today_tmp > $tmpdir/ddwrt_to_check
+grep -v -F -x -f ${datadir}/.ddwrt_ftp_existent $tmpdir/ddwrt_ftp_today_tmp > $tmpdir/ddwrt_to_check
 
 if [[ ! -s $tmpdir/ddwrt_to_check ]]
 then echo "No new releases found."
 else
 echo "Possible new release(s) found:"
 cat $tmpdir/ddwrt_to_check
-#cat $tmpdir/ddwrt_to_check >> /home/$USER/.ddwrt_ftp_existent
+#cat $tmpdir/ddwrt_to_check >> ${datadir}/.ddwrt_ftp_existent
 if [ $notify == "yes" ]
 then mutt -s "dd-wrt notify report" $emailto < $tmpdir/ddwrt_to_check
 else echo
