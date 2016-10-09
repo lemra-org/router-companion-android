@@ -1,0 +1,32 @@
+#
+# Compose is a tool for defining and running multi-container Dockerized applications.
+#
+
+version: '2'
+
+networks:
+  # Database management network
+  internal-api:
+
+services:
+  #
+  # Firebase Cloud Messaging (FCM) App Server
+  #
+  fcm-app-server:
+    build:
+      context: ./fcm-app-server
+    networks:
+        internal-api:
+          aliases:
+            - fcm-app-server
+    working_dir: /src/gcm-playground/server/
+    command: go run server.go
+  
+  dd-wrt-notifier:
+    build:
+      context: ./client
+    networks:
+      - internal-api
+    working_dir: /code/
+    command: /usr/sbin/crond -l 2 -f
+
