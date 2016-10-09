@@ -1,7 +1,7 @@
 FROM gliderlabs/alpine:3.3
 
 # Install lftp
-RUN apk add --update lftp \
+RUN apk add --update lftp curl \
 	&& rm -rf /var/cache/apk/*
 
 RUN mkdir -p /code

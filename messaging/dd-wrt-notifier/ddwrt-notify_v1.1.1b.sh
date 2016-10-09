@@ -62,17 +62,17 @@
 #
 
 # Do you want notify by email? (yes / no)
-notify=no
-# email sender
-emailto=max@fuckaround.org
+notify=yes
 # subject
-sub="New release available... Cheers!"
+sub="New DD-WRT release available!"
+
+# FCM Topic
+FCM_TOPIC="/topics/DDWRTBuildUpdates"
+
 #
 #
 # END OF CONFIG #
 #
-# check 1) if mutt is installed 2) the correct path
-mailer=/usr/bin/mutt
 #
 tmpdir=/tmp
 datadir=/data
@@ -111,18 +111,31 @@ fi
 
 grep -v -F -x -f ${datadir}/.ddwrt_ftp_existent $tmpdir/ddwrt_ftp_today_tmp > $tmpdir/ddwrt_to_check
 
+
 if [[ ! -s $tmpdir/ddwrt_to_check ]]
 then echo "No new releases found."
 else
 echo "Possible new release(s) found:"
 cat $tmpdir/ddwrt_to_check
 #cat $tmpdir/ddwrt_to_check >> ${datadir}/.ddwrt_ftp_existent
-if [ $notify == "yes" ]
-then mutt -s "dd-wrt notify report" $emailto < $tmpdir/ddwrt_to_check
-else echo
-fi
+
+echo "Send dd-wrt notify report..."
+curl -k -i -X POST http://fcm-app-server:4260/message \
+	-d'\
+	{\
+		"protocol":"HTTP", \
+		"message": { \
+			"to":"'${FCM_TOPIC}'", \
+			"data": {\
+				"message":"Possible new releases", \
+				"releases": "'`cat $tmpdir/ddwrt_to_check`'"\
+			}\
+		}\
+	}'
+#mutt -s "dd-wrt notify report" $emailto < $tmpdir/ddwrt_to_check
 
 fi
+
 rm $tmpdir/ddwrt_ftp_today
 rm $tmpdir/ddwrt_ftp_today_tmp
 rm $tmpdir/ddwrt_to_check

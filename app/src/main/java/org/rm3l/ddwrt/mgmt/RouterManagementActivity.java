@@ -355,6 +355,19 @@ public class RouterManagementActivity
             }
         });
 
+        //If needed, register to DD-WRT Build Updates
+        final Set<String> notificationChoices = this.mPreferences
+                .getStringSet(NOTIFICATIONS_CHOICE_PREF, new HashSet<String>());
+        if (notificationChoices.contains(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES)) {
+            //Subscribe to topic
+            FirebaseMessaging.getInstance()
+                    .subscribeToTopic(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES);
+        } else {
+            //Unsubscribe from topic
+            FirebaseMessaging.getInstance()
+                    .unsubscribeFromTopic(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES);
+        }
+
         Utils.requestAppPermissions(this);
 
         //No need to restart the background service each time - this is correctly handled by Android

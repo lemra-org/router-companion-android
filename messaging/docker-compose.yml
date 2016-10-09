@@ -23,8 +23,10 @@ services:
     command: go run server.go
 
   #
-  # DD-WRT Notifier service: connects to ftp://dd-wrt.com/betas and checks for new updates
-  # If any, it POST a new message to the fcm-app-server service above, so it can push it to FCM for 
+  # DD-WRT Notifier service: connects to ftp://dd-wrt.com/betas and 
+  # checks for new updates.
+  # If any, it POSTs a new message to the fcm-app-server service above, 
+  # so the latter can push it to FCM for 
   # notifications on end-user devices
   #
   dd-wrt-notifier:
