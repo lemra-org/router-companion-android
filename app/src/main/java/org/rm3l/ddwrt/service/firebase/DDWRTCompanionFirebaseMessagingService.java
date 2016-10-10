@@ -1,10 +1,12 @@
 package org.rm3l.ddwrt.service.firebase;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
+import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -14,6 +16,9 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+
+import java.util.Map;
 
 /**
  * This is required if you want to do any message handling beyond receiving notifications on
@@ -26,6 +31,16 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 public class DDWRTCompanionFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = DDWRTCompanionFirebaseMessagingService.class.getSimpleName();
+
+    public static final int FCM_NOTIFICATION_ID = 27635;
+
+    private Context mApplicationContext;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mApplicationContext = getApplicationContext();
+    }
 
     /**
      * Called when message is received.
@@ -50,8 +65,9 @@ public class DDWRTCompanionFirebaseMessagingService extends FirebaseMessagingSer
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
         // Check if message contains a data payload.
-        if (remoteMessage.getData().size() > 0) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+        final Map<String, String> remoteMessageData = remoteMessage.getData();
+        if (remoteMessageData.size() > 0) {
+            Log.d(TAG, "Message data payload: " + remoteMessageData);
         }
 
         // Check if message contains a notification payload.
@@ -61,9 +77,8 @@ public class DDWRTCompanionFirebaseMessagingService extends FirebaseMessagingSer
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
-        sendNotification(String.format("From: %s\n- Message payload: %s\n- Notification Body: %s",
-                remoteMessage.getFrom(), remoteMessage.getData(), remoteMessage.getNotification() != null ?
-                    remoteMessage.getNotification().getBody() : "NULL"));
+        sendNotification("A new DD-WRT Build is available",
+                remoteMessageData.get("releases"));
     }
     // [END receive_message]
 
@@ -72,25 +87,47 @@ public class DDWRTCompanionFirebaseMessagingService extends FirebaseMessagingSer
      *
      * @param messageBody FCM message body received.
      */
-    private void sendNotification(String messageBody) {
+    private void sendNotification(String title, String messageBody) {
         Intent intent = new Intent(this, RouterManagementActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                FCM_NOTIFICATION_ID /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+//        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher_ddwrt_companion)
-                .setContentTitle("FCM Message")
+                .setContentTitle(title)
                 .setContentText(messageBody)
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
+                .setAutoCancel(true);
+
+        //Notification sound, if required
+        final SharedPreferences sharedPreferences = mApplicationContext.getSharedPreferences(
+                DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                Context.MODE_PRIVATE);
+        final String ringtoneUri = sharedPreferences
+                .getString(DDWRTCompanionConstants.NOTIFICATIONS_SOUND, null);
+        if (ringtoneUri != null) {
+            notificationBuilder.setSound(Uri.parse(ringtoneUri), AudioManager.STREAM_NOTIFICATION);
+        }
+
+        if (!sharedPreferences
+                .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_VIBRATE, true)) {
+            notificationBuilder
+                    .setDefaults(Notification.DEFAULT_LIGHTS)
+                    .setVibrate(DDWRTCompanionConstants.NO_VIBRATION_PATTERN);
+//                    if (ringtoneUri != null) {
+//                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
+//                    } else {
+//                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS);
+//                    }
+        }
+        notificationBuilder.setContentIntent(pendingIntent);
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        notificationManager.notify(FCM_NOTIFICATION_ID /* ID of notification */, notificationBuilder.build());
     }
 
 }

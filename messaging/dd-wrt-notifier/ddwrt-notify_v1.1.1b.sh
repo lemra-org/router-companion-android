@@ -111,6 +111,17 @@ fi
 
 grep -v -F -x -f ${datadir}/.ddwrt_ftp_existent $tmpdir/ddwrt_ftp_today_tmp > $tmpdir/ddwrt_to_check
 
+#echo
+#echo "*** ddwrt_ftp_existent ***"
+#cat ${datadir}/.ddwrt_ftp_existent
+
+#echo
+#echo "*** ddwrt_ftp_today_tmp ***"
+#cat $tmpdir/ddwrt_ftp_today_tmp
+#echo
+#echo
+
+cat $tmpdir/ddwrt_ftp_today_tmp > ${datadir}/.ddwrt_ftp_existent
 
 if [[ ! -s $tmpdir/ddwrt_to_check ]]
 then echo "No new releases found."
@@ -120,18 +131,26 @@ cat $tmpdir/ddwrt_to_check
 #cat $tmpdir/ddwrt_to_check >> ${datadir}/.ddwrt_ftp_existent
 
 echo "Send dd-wrt notify report..."
-curl -k -i -X POST http://fcm-app-server:4260/message \
-	-d'\
-	{\
-		"protocol":"HTTP", \
-		"message": { \
-			"to":"'${FCM_TOPIC}'", \
-			"data": {\
-				"message":"Possible new releases", \
-				"releases": "'`cat $tmpdir/ddwrt_to_check`'"\
-			}\
-		}\
-	}'
+echo "{"\
+		"\"protocol\": \"HTTP\", "\
+		"\"message\": { "\
+			"\"to\": \"${FCM_TOPIC}\", "\
+			"\"data\": { "\
+				"\"message\": \"Possible new releases\", "\
+				"\"releases\": \"`cat $tmpdir/ddwrt_to_check`\" "\
+			"}"\
+		"}"\
+	"}" | python -c 'import json,sys; print json.dumps(json.loads(sys.stdin.read()))' > \
+	${tmpdir}/ddwrt-notify-report-json.msg.json
+
+cat $tmpdir/ddwrt-notify-report-json.msg.json
+
+curl -k -i -H'Content-Type: application/json' -H'Accept: application/json' \
+	http://fcm-app-server:4260/message \
+	-d@${tmpdir}/ddwrt-notify-report-json.msg.json
+	
+rm -rf ${tmpdir}/ddwrt-notify-report-json.msg.json
+
 #mutt -s "dd-wrt notify report" $emailto < $tmpdir/ddwrt_to_check
 
 fi
