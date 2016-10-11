@@ -137,7 +137,7 @@ echo "{"\
 			"\"to\": \"${FCM_TOPIC}\", "\
 			"\"data\": { "\
 				"\"message\": \"Possible new releases\", "\
-				"\"releases\": \"`cat $tmpdir/ddwrt_to_check`\" "\
+				"\"releases\": \"`head -n 1 $tmpdir/ddwrt_to_check`\" "\
 			"}"\
 		"}"\
 	"}" | python -c 'import json,sys; print json.dumps(json.loads(sys.stdin.read()))' > \
