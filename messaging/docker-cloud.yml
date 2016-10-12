@@ -6,7 +6,7 @@ fcm-app-server:
   command: go run server.go
 
 dd-wrt-notifier:
-  image: rm3l/private-repo:ddwrt-companion-notifier_0.1
+  image: rm3l/private-repo:ddwrt-companion-notifier_0.1.1
   autoredeploy: true
   volumes:
     - /tmp
