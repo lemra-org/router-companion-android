@@ -31,12 +31,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -45,6 +47,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,8 +89,12 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter;
+import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperViewHolder;
+import co.paulburke.android.itemtouchhelperdemo.helper.OnStartDragListener;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
@@ -101,7 +108,8 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OPENED_AT_LEAST_ONCE_
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.getClientsUsageDataFile;
 
 public class RouterListRecycleViewAdapter extends
-        RecyclerView.Adapter<RouterListRecycleViewAdapter.ViewHolder> implements Filterable {
+        RecyclerView.Adapter<RouterListRecycleViewAdapter.ViewHolder>
+        implements ItemTouchHelperAdapter, Filterable {
 
     public static final String EMPTY = "(empty)";
     final DDWRTCompanionDAO dao;
@@ -114,6 +122,8 @@ public class RouterListRecycleViewAdapter extends
 
     @Nullable
     private InterstitialAd mInterstitialAd;
+
+    private OnStartDragListener mDragStartListener;
 
     public RouterListRecycleViewAdapter(final Context context, final List<Router> results) {
         routersList = results;
@@ -178,6 +188,11 @@ public class RouterListRecycleViewAdapter extends
                 R.string.interstitial_ad_unit_id_router_list_to_router_main);
     }
 
+    public RouterListRecycleViewAdapter setDragStartListener(OnStartDragListener mDragStartListener) {
+        this.mDragStartListener = mDragStartListener;
+        return this;
+    }
+
     public List<Router> getRoutersList() {
         return routersList;
     }
@@ -215,6 +230,21 @@ public class RouterListRecycleViewAdapter extends
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         final Router routerAt = routersList.get(position);
+
+        // Start a drag whenever the handle view it touched
+        if (holder.handleView != null) {
+            holder.handleView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (mDragStartListener != null) {
+                        if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                            mDragStartListener.onStartDrag(holder);
+                        }
+                    }
+                    return false;
+                }
+            });
+        }
 
         holder.routerUuid.setText(routerAt.getUuid());
         final String routerAtName = routerAt.getName();
@@ -315,22 +345,22 @@ public class RouterListRecycleViewAdapter extends
             @Override
             public void run() {
 
-                setClickListenerForNestedView(
-                        holder.routerViewParent,
-                        new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                //Open Router
-                                doOpenRouterDetails(routerAt);
-                            }
-                        },
-                        new View.OnLongClickListener() {
-                            @Override
-                            public boolean onLongClick(View v) {
-                                createContextualPopupMenu(v, routerAt);
-                                return true;
-                            }
-                        });
+//                setClickListenerForNestedView(
+//                        holder.routerViewParent,
+//                        new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                //Open Router
+//                                doOpenRouterDetails(routerAt);
+//                            }
+//                        },
+//                        new View.OnLongClickListener() {
+//                            @Override
+//                            public boolean onLongClick(View v) {
+//                                createContextualPopupMenu(v, routerAt);
+//                                return true;
+//                            }
+//                        });
 
                 // The bounds for the delegate view (an ImageButton
                 // in this example)
@@ -538,10 +568,32 @@ public class RouterListRecycleViewAdapter extends
         return mFilter;
     }
 
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(routersList, i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(routersList, i, i - 1);
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        routersList.remove(position);
+        notifyItemRemoved(position);
+    }
+
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements
+            ItemTouchHelperViewHolder {
 
         @NonNull
         final TextView routerName;
@@ -572,12 +624,16 @@ public class RouterListRecycleViewAdapter extends
 
         private final View routerViewParent;
 
+        public final ImageView handleView;
+
         public ViewHolder(Context context, View itemView) {
             super(itemView);
             mContext = context;
 
             this.itemView = itemView;
             this.routerViewParent = this.itemView.findViewById(R.id.router_view_parent);
+
+            this.handleView = (ImageView) this.itemView.findViewById(R.id.router_view_handle);
 
             this.routerName = (TextView) this.itemView.findViewById(R.id.router_name);
             this.routerIp = (TextView) this.itemView.findViewById(R.id.router_ip_address);
@@ -593,6 +649,30 @@ public class RouterListRecycleViewAdapter extends
             this.routerAvatarImage = (ImageView) this.itemView.findViewById(R.id.router_avatar);
 
             this.routerUsernameAndProtoView = this.itemView.findViewById(R.id.router_username_and_proto);
+        }
+
+        @Override
+        public void onItemSelected() {
+            itemView.setBackgroundColor(Color.LTGRAY);
+//            if (ColorUtils.isThemeLight(mContext)) {
+//                itemView.setBackgroundColor(ContextCompat
+//                        .getColor(mContext, R.color.cardview_dark_background));
+//            } else {
+//                itemView.setBackgroundColor(ContextCompat
+//                        .getColor(mContext, R.color.cardview_light_background));
+//            }
+        }
+
+        @Override
+        public void onItemClear() {
+            if (ColorUtils.isThemeLight(mContext)) {
+                itemView.setBackgroundColor(ContextCompat
+                        .getColor(mContext, R.color.cardview_light_background));
+            } else {
+                itemView.setBackgroundColor(ContextCompat
+                        .getColor(mContext, R.color.cardview_dark_background));
+            }
+//            itemView.setBackgroundColor(0);
         }
 
     }

@@ -161,7 +161,24 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:background="@android:color/transparent"
                 android:visibility="gone"/>
 
+            <ImageView
+                android:id="@+id/router_view_handle"
+                android:layout_width="?listPreferredItemHeight"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_alignParentBottom="true"
+                android:scaleType="center"
+                android:src="@drawable/ic_reorder_grey_500_24dp" />
+
         </RelativeLayout>
+
+        <!--<ImageView-->
+            <!--android:id="@+id/router_view_handle"-->
+            <!--android:layout_width="?listPreferredItemHeight"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_gravity="center_vertical|right"-->
+            <!--android:scaleType="center"-->
+            <!--android:src="@drawable/ic_reorder_grey_500_24dp" />-->
 
     </LinearLayout>
 

@@ -48,6 +48,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -81,6 +82,7 @@ import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.help.ChangelogActivity;
 import org.rm3l.ddwrt.help.HelpActivity;
+import org.rm3l.ddwrt.mgmt.adapters.RouterListItemTouchHelperCallback;
 import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
@@ -104,6 +106,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
@@ -285,6 +288,11 @@ public class RouterManagementActivity
         // specify an adapter (see also next example)
         mAdapter = new RouterListRecycleViewAdapter(this, this.dao.getAllRouters());
         mRecyclerView.setAdapter(mAdapter);
+
+        final ItemTouchHelper.Callback callback =
+                new RouterListItemTouchHelperCallback((ItemTouchHelperAdapter) mAdapter);
+        final ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(mRecyclerView);
 
 //        final RecyclerView.ItemDecoration itemDecoration =
 //                new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
