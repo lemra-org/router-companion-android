@@ -121,7 +121,7 @@ grep -v -F -x -f ${datadir}/.ddwrt_ftp_existent $tmpdir/ddwrt_ftp_today_tmp > $t
 #echo
 #echo
 
-cat $tmpdir/ddwrt_ftp_today_tmp > ${datadir}/.ddwrt_ftp_existent
+cp -r $tmpdir/ddwrt_ftp_today_tmp ${datadir}/.ddwrt_ftp_existent
 
 if [[ ! -s $tmpdir/ddwrt_to_check ]]
 then echo "No new releases found."
