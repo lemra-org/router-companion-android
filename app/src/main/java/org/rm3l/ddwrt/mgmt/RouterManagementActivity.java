@@ -107,6 +107,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter;
+import co.paulburke.android.itemtouchhelperdemo.helper.OnStartDragListener;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
@@ -127,7 +128,9 @@ public class RouterManagementActivity
         implements View.OnClickListener,
         RouterMgmtDialogListener,
         SearchView.OnQueryTextListener,
-        SwipeRefreshLayout.OnRefreshListener, CustomTabActivityHelper.ConnectionCallback {
+        SwipeRefreshLayout.OnRefreshListener,
+        CustomTabActivityHelper.ConnectionCallback,
+        OnStartDragListener {
 
     public static final int ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE = 111;
     public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
@@ -165,13 +168,12 @@ public class RouterManagementActivity
 
     private WelcomeScreenHelper welcomeScreen;
     private boolean mCloseOnActionDone;
+    private ItemTouchHelper mItemTouchHelper;
 
     @NonNull
     public static DDWRTCompanionDAO getDao(Context context) {
         return DDWRTCompanionSqliteDAOImpl.getInstance();
     }
-
-
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -291,8 +293,8 @@ public class RouterManagementActivity
 
         final ItemTouchHelper.Callback callback =
                 new RouterListItemTouchHelperCallback((ItemTouchHelperAdapter) mAdapter);
-        final ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-        touchHelper.attachToRecyclerView(mRecyclerView);
+        this.mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
 //        final RecyclerView.ItemDecoration itemDecoration =
 //                new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
@@ -400,6 +402,11 @@ public class RouterManagementActivity
             welcomeScreen.show(savedInstanceState);
         }
 
+    }
+
+    @Override
+    public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
+        mItemTouchHelper.startDrag(viewHolder);
     }
 
     private void setupCustomTabHelper(final CustomTabActivityHelper.ConnectionCallback cb) {

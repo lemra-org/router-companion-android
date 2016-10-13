@@ -33,9 +33,11 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MotionEventCompat;
@@ -87,9 +89,12 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter;
@@ -112,8 +117,10 @@ public class RouterListRecycleViewAdapter extends
         implements ItemTouchHelperAdapter, Filterable {
 
     public static final String EMPTY = "(empty)";
+    public static final String ITEM_DISMISS_POS = "ITEM_DISMISS_POS";
+    public static final String POSITION_PREF_KEY_PREF = "pos::";
     final DDWRTCompanionDAO dao;
-    private final Context context;
+    private final Activity activity;
     private final Resources resources;
     private final SharedPreferences mGlobalPreferences;
     private final Filter mFilter;
@@ -124,15 +131,19 @@ public class RouterListRecycleViewAdapter extends
     private InterstitialAd mInterstitialAd;
 
     private OnStartDragListener mDragStartListener;
+    private final OnItemDismissSnackBarCallback onItemDismissSnackBarCallback;
 
-    public RouterListRecycleViewAdapter(final Context context, final List<Router> results) {
+    public RouterListRecycleViewAdapter(final Activity activity, final List<Router> results) {
         routersList = results;
-        this.context = context;
-        this.mGlobalPreferences = context.getSharedPreferences(
+        this.activity = activity;
+        this.mGlobalPreferences = activity.getSharedPreferences(
                 DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-        this.dao = RouterManagementActivity.getDao(context);
-        resources = context.getResources();
+        this.dao = RouterManagementActivity.getDao(activity);
+        resources = activity.getResources();
         selectedItems = new SparseBooleanArray();
+
+        onItemDismissSnackBarCallback = new OnItemDismissSnackBarCallback();
+
         mFilter = new Filter() {
             @Override
             protected FilterResults performFiltering(final CharSequence constraint) {
@@ -157,7 +168,7 @@ public class RouterListRecycleViewAdapter extends
                                     //Filter on visible fields (Name, Remote IP, Firmware and SSH Username, Method, router model)
                                     final Router.RouterFirmware routerFirmware = input.getRouterFirmware();
                                     final Router.RouterConnectionProtocol routerConnectionProtocol = input.getRouterConnectionProtocol();
-                                    final String inputModel = context.getSharedPreferences(input.getUuid(), Context.MODE_PRIVATE)
+                                    final String inputModel = activity.getSharedPreferences(input.getUuid(), Context.MODE_PRIVATE)
                                             .getString(NVRAMInfo.MODEL, "");
                                     //noinspection ConstantConditions
                                     return containsIgnoreCase(input.getName(), constraint)
@@ -184,7 +195,7 @@ public class RouterListRecycleViewAdapter extends
             }
         };
 
-        mInterstitialAd = AdUtils.requestNewInterstitial(context,
+        mInterstitialAd = AdUtils.requestNewInterstitial(activity,
                 R.string.interstitial_ad_unit_id_router_list_to_router_main);
     }
 
@@ -199,6 +210,18 @@ public class RouterListRecycleViewAdapter extends
 
     public void setRoutersList(final List<Router> results) {
         routersList = results;
+        //Re-order per what has been saved in the preferences
+        Collections.sort(routersList, new Comparator<Router>() {
+            @Override
+            public int compare(Router o1, Router o2) {
+                final String o1PosPrefKey = \"fake-key\";
+                final String o2PosPrefKey = \"fake-key\";
+
+                final int o1Pos = mGlobalPreferences.getInt(o1PosPrefKey, -o1.getId());
+                final int o2Pos = mGlobalPreferences.getInt(o2PosPrefKey, -o2.getId());
+                return o1Pos - o2Pos;
+            }
+        });
     }
 
     @NonNull
@@ -210,19 +233,19 @@ public class RouterListRecycleViewAdapter extends
         // set the view's size, margins, paddings and layout parameters
         // ...
         final CardView cardView = (CardView) v.findViewById(R.id.router_item_cardview);
-        if (ColorUtils.isThemeLight(context)) {
+        if (ColorUtils.isThemeLight(activity)) {
             //Light
             cardView.setCardBackgroundColor(ContextCompat
-                    .getColor(context, R.color.cardview_light_background));
+                    .getColor(activity, R.color.cardview_light_background));
         } else {
             //Default is Dark
             cardView.setCardBackgroundColor(ContextCompat
-                    .getColor(context, R.color.cardview_dark_background));
+                    .getColor(activity, R.color.cardview_dark_background));
         }
 
 //        return new ViewHolder(this.context,
 //                RippleViewCreator.addRippleToView(v));
-        return new ViewHolder(this.context, v);
+        return new ViewHolder(this.activity, v);
     }
 
     @Override
@@ -279,7 +302,7 @@ public class RouterListRecycleViewAdapter extends
             holder.routerUsernameAndProtoView.setVisibility(View.VISIBLE);
         }
 
-        final String routerModelStr = Router.getRouterModel(context, routerAt);
+        final String routerModelStr = Router.getRouterModel(activity, routerAt);
         if (Strings.isNullOrEmpty(routerModelStr) || "-".equals(routerModelStr)) {
             holder.routerModel.setVisibility(View.GONE);
         } else {
@@ -287,17 +310,17 @@ public class RouterListRecycleViewAdapter extends
             holder.routerModel.setVisibility(View.VISIBLE);
         }
 
-        final boolean isThemeLight = ColorUtils.isThemeLight(this.context);
+        final boolean isThemeLight = ColorUtils.isThemeLight(this.activity);
 
         if (!isThemeLight) {
             //Set menu background to white
             holder.routerMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
             holder.routerOpenButton.setImageResource(R.drawable.ic_action_av_play_arrow_dark);
             holder.routerAvatarImage.setBackgroundColor(ContextCompat
-                    .getColor(context, R.color.cardview_dark_background));
+                    .getColor(activity, R.color.cardview_dark_background));
         } else {
             holder.routerAvatarImage.setBackgroundColor(ContextCompat
-                    .getColor(context, R.color.cardview_light_background));
+                    .getColor(activity, R.color.cardview_light_background));
         }
 
         holder.routerOpenButton.setOnClickListener(new View.OnClickListener() {
@@ -330,7 +353,7 @@ public class RouterListRecycleViewAdapter extends
             };
 
             //Download image in the background
-            Utils.downloadImageForRouter(context,
+            Utils.downloadImageForRouter(activity,
                     routerModelStr,
                     holder.routerAvatarImage,
                     null,
@@ -377,12 +400,22 @@ public class RouterListRecycleViewAdapter extends
                         doOpenRouterDetails(routerAt);
                     }
                 }, null);
+//
+                if (holder.handleView != null) {
+                    setClickListenerForNestedView(holder.handleView,
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mDragStartListener.onStartDrag(holder);
+                                }
+                            }, null);
+                }
             }
         });
     }
 
     private void createContextualPopupMenu(View v, Router routerAt) {
-        final PopupMenu popup = new PopupMenu(context, v);
+        final PopupMenu popup = new PopupMenu(activity, v);
         popup.setOnMenuItemClickListener(new RouterItemMenuOnClickListener(routerAt));
         final MenuInflater inflater = popup.getMenuInflater();
         final Menu menu = popup.getMenu();
@@ -489,9 +522,9 @@ public class RouterListRecycleViewAdapter extends
 
                 //Also Remove Usage Data Created
                 //noinspection ResultOfMethodCallIgnored
-                getClientsUsageDataFile(context, router.getUuid()).delete();
+                getClientsUsageDataFile(activity, router.getUuid()).delete();
 
-                final SharedPreferences sharedPreferences = this.context.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE);
+                final SharedPreferences sharedPreferences = this.activity.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE);
 
                 if (sharedPreferences.getBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, false)) {
                     //Opened at least once, meaning that usage data might have been created.
@@ -501,7 +534,7 @@ public class RouterListRecycleViewAdapter extends
                         public void run() {
                             try {
                                 //Delete iptables chains created for monitoring and wan access (in a thread)
-                                SSHUtils.runCommands(context, context
+                                SSHUtils.runCommands(activity, activity
                                                 .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
                                         router,
                                         Joiner.on(" ; ").skipNulls(),
@@ -580,13 +613,79 @@ public class RouterListRecycleViewAdapter extends
             }
         }
         notifyItemMoved(fromPosition, toPosition);
+
+        //Save all positions in shared preferences
+        int idx = 0;
+        final SharedPreferences.Editor editor = mGlobalPreferences.edit();
+        for (final Router router : routersList) {
+            editor.putInt(POSITION_PREF_KEY_PREF + router.getUuid(), idx++);
+        }
+        editor.apply();
+        Utils.requestBackup(activity);
+
         return true;
     }
 
     @Override
     public void onItemDismiss(int position) {
-        routersList.remove(position);
-        notifyItemRemoved(position);
+                final Bundle dismissBundle = new Bundle();
+        dismissBundle.putInt(ITEM_DISMISS_POS, position);
+        SnackbarUtils.buildSnackbar(activity,
+                String.format("Router '%s' will be removed...",
+                        routersList.get(position).getCanonicalHumanReadableName()),
+                "Undo",
+                Snackbar.LENGTH_LONG,
+                onItemDismissSnackBarCallback,
+                null,
+                true);
+    }
+
+    private class OnItemDismissSnackBarCallback implements SnackbarCallback {
+
+        @Override
+        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+        }
+
+        @Override
+        public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+            undoDismissEffect(bundle);
+        }
+
+        @Override
+        public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
+            undoDismissEffect(bundle);
+        }
+
+        @Override
+        public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
+            if (bundle == null) {
+                return;
+            }
+            final int itemDismissPos = bundle.getInt(ITEM_DISMISS_POS);
+            dao.deleteRouter(routersList.get(itemDismissPos).getUuid());
+            routersList.remove(itemDismissPos);
+            notifyItemRemoved(itemDismissPos);
+        }
+
+        @Override
+        public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+            undoDismissEffect(bundle);
+        }
+
+        @Override
+        public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
+            undoDismissEffect(bundle);
+        }
+
+        private void undoDismissEffect(@Nullable Bundle bundle) {
+            if (bundle == null) {
+                return;
+            }
+            //Undo add effect
+            final int itemDismissPos = bundle.getInt(ITEM_DISMISS_POS);
+            notifyItemInserted(itemDismissPos);
+        }
     }
 
     // Provide a reference to the views for each data item
@@ -697,12 +796,12 @@ public class RouterListRecycleViewAdapter extends
                     return true;
                 case R.id.action_actions_ssh_router: {
                     //Open an SSH Client app, if any
-                    Router.openSSHConsole(mRouter, context);
+                    Router.openSSHConsole(mRouter, activity);
                 }
                     return true;
                 case R.id.action_actions_reboot_routers: {
 
-                    new AlertDialog.Builder(context)
+                    new AlertDialog.Builder(activity)
                             .setIcon(R.drawable.ic_action_alert_warning)
                             .setTitle("Reboot Router?")
                             .setMessage("Are you sure you wish to continue? ")
@@ -713,12 +812,12 @@ public class RouterListRecycleViewAdapter extends
 
                                     final String infoMsg = String.format("Rebooting '%s' (%s)...",
                                             mRouter.getDisplayName(), mRouter.getRemoteIpAddress());
-                                    if (context instanceof Activity) {
-                                        Utils.displayMessage((Activity) context,
+                                    if (activity instanceof Activity) {
+                                        Utils.displayMessage((Activity) activity,
                                                 infoMsg,
                                                 Style.INFO);
                                     } else {
-                                        Toast.makeText(context, infoMsg, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(activity, infoMsg, Toast.LENGTH_SHORT).show();
                                     }
 
 
@@ -729,12 +828,12 @@ public class RouterListRecycleViewAdapter extends
                                             //No error
                                             final String msg = String.format("Action '%s' executed successfully",
                                                     routerAction.toString());
-                                            if (context instanceof Activity) {
-                                                Utils.displayMessage((Activity) context,
+                                            if (activity instanceof Activity) {
+                                                Utils.displayMessage((Activity) activity,
                                                         msg,
                                                         Style.CONFIRM);
                                             } else {
-                                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
                                             }
                                         }
 
@@ -744,17 +843,17 @@ public class RouterListRecycleViewAdapter extends
                                             final String msg = String.format("Error: %s",
                                                     Utils.handleException(exception).first);
 
-                                            if (context instanceof Activity) {
-                                                Utils.displayMessage((Activity) context,
+                                            if (activity instanceof Activity) {
+                                                Utils.displayMessage((Activity) activity,
                                                         msg,
                                                         Style.ALERT);
                                             } else {
-                                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     };
 
-                                    ActionManager.runTasks(new RebootRouterAction(mRouter, context,
+                                    ActionManager.runTasks(new RebootRouterAction(mRouter, activity,
                                             rebootRouterActionListener,
                                             mGlobalPreferences));
 
@@ -778,13 +877,13 @@ public class RouterListRecycleViewAdapter extends
                     return true;
                 case R.id.menu_router_list_delete: {
                     if (itemPos == null || itemPos < 0) {
-                        Toast.makeText(context, "Internal Error - please try again later", Toast.LENGTH_SHORT)
+                        Toast.makeText(activity, "Internal Error - please try again later", Toast.LENGTH_SHORT)
                                 .show();
                         ReportingUtils.reportException(null, new IllegalStateException("Weird routerPosition: " + itemPos));
                         return true;
                     }
 
-                    new AlertDialog.Builder(context)
+                    new AlertDialog.Builder(activity)
                             .setIcon(R.drawable.ic_action_alert_warning)
                             .setTitle("Delete Router?")
                             .setMessage("You'll lose this record!")
@@ -798,16 +897,16 @@ public class RouterListRecycleViewAdapter extends
                                         openAddRouterForm();
                                     }
 
-//                                    if (context instanceof Activity) {
-//                                        Crouton.makeText((Activity) context,
+//                                    if (activity instanceof Activity) {
+//                                        Crouton.makeText((Activity) activity,
 //                                                "Record deleted", Style.CONFIRM).show();
 //                                    } else {
-//                                        Toast.makeText(context, "Record deleted", Toast.LENGTH_SHORT)
+//                                        Toast.makeText(activity, "Record deleted", Toast.LENGTH_SHORT)
 //                                                .show();
 //                                    }
 
                                     //Request Backup
-                                    Utils.requestBackup(context);
+                                    Utils.requestBackup(activity);
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -827,7 +926,7 @@ public class RouterListRecycleViewAdapter extends
                 }
                 return true;
                 case R.id.menu_router_list_add_shortcut: {
-                    mRouter.addHomeScreenShortcut(context);
+                    mRouter.addHomeScreenShortcut(activity);
                 }
                 return true;
                 default:
@@ -840,11 +939,11 @@ public class RouterListRecycleViewAdapter extends
     private void doOpenRouterDetails(@NonNull final Router router) {
         final String routerUuid = router.getUuid();
 
-        final Intent ddWrtMainIntent = new Intent(context, DDWRTMainActivity.class);
+        final Intent ddWrtMainIntent = new Intent(activity, DDWRTMainActivity.class);
         ddWrtMainIntent.putExtra(ROUTER_SELECTED, routerUuid);
 
         final SharedPreferences routerSharedPreferences =
-                context.getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
+                activity.getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
         if (!routerSharedPreferences.getBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, false)) {
             routerSharedPreferences.edit()
                     .putBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, true)
@@ -853,7 +952,7 @@ public class RouterListRecycleViewAdapter extends
 
         if (BuildConfig.WITH_ADS &&
                 mInterstitialAd != null &&
-                AdUtils.canDisplayInterstialAd(context)) {
+                AdUtils.canDisplayInterstialAd(activity)) {
             mInterstitialAd.setAdListener(new AdListener() {
                 @Override
                 public void onAdClosed() {
@@ -876,7 +975,7 @@ public class RouterListRecycleViewAdapter extends
 //                    final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
 //                    alertDialog.show();
 //                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                final ProgressDialog alertDialog = ProgressDialog.show(context,
+                final ProgressDialog alertDialog = ProgressDialog.show(activity,
                         "Loading Router details", "Please wait...", true);
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -891,7 +990,7 @@ public class RouterListRecycleViewAdapter extends
 //                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
 //                alertDialog.show();
 //                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-            final ProgressDialog alertDialog = ProgressDialog.show(context,
+            final ProgressDialog alertDialog = ProgressDialog.show(activity,
                     "Loading Router details", "Please wait...", true);
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -904,20 +1003,20 @@ public class RouterListRecycleViewAdapter extends
     }
 
     private void startActivity(Intent ddWrtMainIntent) {
-        if (context instanceof Activity) {
-            RouterManagementActivity.startActivity((Activity) context, null, ddWrtMainIntent);
+        if (activity instanceof Activity) {
+            RouterManagementActivity.startActivity((Activity) activity, null, ddWrtMainIntent);
         } else {
             //Start in a much more classical way
-            context.startActivity(ddWrtMainIntent);
+            activity.startActivity(ddWrtMainIntent);
         }
     }
 
     private void openAddRouterForm() {
-        if (!(context instanceof FragmentActivity)) {
-            ReportingUtils.reportException(null, new IllegalStateException("context is NOT an FragmentActivity"));
+        if (!(activity instanceof FragmentActivity)) {
+            ReportingUtils.reportException(null, new IllegalStateException("activity is NOT an FragmentActivity"));
             return;
         }
-        final FragmentActivity activity = (FragmentActivity) context;
+//        final FragmentActivity activity = (FragmentActivity) activity;
 //        final FragmentManager fragmentManager = activity.getSupportFragmentManager();
 
 //        final Fragment addRouter = fragmentManager
@@ -932,24 +1031,24 @@ public class RouterListRecycleViewAdapter extends
         if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS) &&
                 allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
             //Download the full version to unlock this version
-            Utils.displayUpgradeMessage(context, "Manage a new Router");
+            Utils.displayUpgradeMessage(activity, "Manage a new Router");
             return;
         }
 
 //        final DialogFragment addFragment = new RouterAddDialogFragment();
 //        addFragment.show(fragmentManager, ADD_ROUTER_FRAGMENT_TAG);
 
-        final Intent intent = new Intent(context, ManageRouterFragmentActivity.class);
+        final Intent intent = new Intent(activity, ManageRouterFragmentActivity.class);
         intent.putExtra(RouterWizardAction.ROUTER_WIZARD_ACTION, RouterWizardAction.ADD);
         activity.startActivityForResult(intent, NEW_ROUTER_ADDED);
     }
 
     private void openUpdateRouterForm(@Nullable Router router) {
-        if (!(context instanceof FragmentActivity)) {
-            ReportingUtils.reportException(null, new IllegalStateException("context is NOT an FragmentActivity"));
+        if (!(activity instanceof FragmentActivity)) {
+            ReportingUtils.reportException(null, new IllegalStateException("activity is NOT an FragmentActivity"));
             return;
         }
-        final FragmentActivity activity = (FragmentActivity) context;
+//        final FragmentActivity activity = (FragmentActivity) activity;
 //        final FragmentManager fragmentManager = activity.getSupportFragmentManager();
 
         if (router != null) {
@@ -959,23 +1058,23 @@ public class RouterListRecycleViewAdapter extends
 //            updateFragment.setArguments(args);
 //            updateFragment.show(fragmentManager, UPDATE_ROUTER_FRAGMENT_TAG);
 
-            final Intent intent = new Intent(context, ManageRouterFragmentActivity.class);
+            final Intent intent = new Intent(activity, ManageRouterFragmentActivity.class);
             intent.putExtra(ROUTER_SELECTED, router.getUuid());
             intent.putExtra(RouterWizardAction.ROUTER_WIZARD_ACTION, RouterWizardAction.EDIT);
             activity.startActivityForResult(intent, ROUTER_UPDATED);
 
         } else {
-            Toast.makeText(context, "Entry no longer exists", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "Entry no longer exists", Toast.LENGTH_SHORT).show();
         }
 
     }
 
     private void openDuplicateRouterForm(@Nullable Router router) {
-        if (!(context instanceof FragmentActivity)) {
-            ReportingUtils.reportException(null, new IllegalStateException("context is NOT an FragmentActivity"));
+        if (!(activity instanceof FragmentActivity)) {
+            ReportingUtils.reportException(null, new IllegalStateException("activity is NOT an FragmentActivity"));
             return;
         }
-        final FragmentActivity activity = (FragmentActivity) context;
+//        final FragmentActivity activity = (FragmentActivity) context;
 //        final FragmentManager fragmentManager = activity.getSupportFragmentManager();
 
         //Display Donate Message if trying to add more than the max routers for Free version
@@ -984,7 +1083,7 @@ public class RouterListRecycleViewAdapter extends
         if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS) &&
                 allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
             //Download the full version to unlock this version
-            Utils.displayUpgradeMessage(context, "Duplicate Router");
+            Utils.displayUpgradeMessage(activity, "Duplicate Router");
             return;
         }
 
@@ -994,12 +1093,12 @@ public class RouterListRecycleViewAdapter extends
 //            args.putString(ROUTER_SELECTED, router.getUuid());
 //            copyFragment.setArguments(args);
 //            copyFragment.show(fragmentManager, COPY_ROUTER);
-            final Intent intent = new Intent(context, ManageRouterFragmentActivity.class);
+            final Intent intent = new Intent(activity, ManageRouterFragmentActivity.class);
             intent.putExtra(ROUTER_SELECTED, router.getUuid());
             intent.putExtra(RouterWizardAction.ROUTER_WIZARD_ACTION, RouterWizardAction.COPY);
             activity.startActivityForResult(intent, NEW_ROUTER_ADDED);
         } else {
-            Toast.makeText(context, "Entry no longer exists", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "Entry no longer exists", Toast.LENGTH_SHORT).show();
         }
     }
 

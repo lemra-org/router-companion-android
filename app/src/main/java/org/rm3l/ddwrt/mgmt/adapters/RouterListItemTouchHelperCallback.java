@@ -15,6 +15,6 @@ public class RouterListItemTouchHelperCallback extends SimpleItemTouchHelperCall
 
     @Override
     public boolean isItemViewSwipeEnabled() {
-        return false;
+        return true;
     }
 }
