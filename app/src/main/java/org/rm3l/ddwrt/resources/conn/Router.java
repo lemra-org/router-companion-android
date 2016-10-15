@@ -144,6 +144,8 @@ public class Router implements Serializable {
      */
     private int id = -1;
 
+    private int orderIndex = -1;
+
     /**
      * the router name
      */
@@ -435,6 +437,15 @@ public class Router implements Serializable {
     @NonNull
     public Router setPassword(@Nullable final String password, final boolean encrypt) {
         this.password = encrypt ? e(password) : password;
+        return this;
+    }
+
+    public int getOrderIndex() {
+        return orderIndex;
+    }
+
+    public Router setOrderIndex(int orderIndex) {
+        this.orderIndex = orderIndex;
         return this;
     }
 

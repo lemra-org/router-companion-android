@@ -55,6 +55,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static android.text.TextUtils.isEmpty;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.COLUMN_ID;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ORDER_INDEX;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_FIRMWARE;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_IP;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_NAME;
@@ -130,7 +131,8 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             ROUTER_USERNAME,
             ROUTER_PASSWORD,
             ROUTER_PRIVKEY,
-            ROUTER_FIRMWARE};
+            ROUTER_FIRMWARE,
+            ORDER_INDEX};
 
     @NonNull
     private static final String[] wanTrafficAllColumns = {
@@ -164,7 +166,8 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_FILESIZE,
             TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_DURATION,
             TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_FILESIZE,
-            TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_DURATION};
+            TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_DURATION,
+            ORDER_INDEX};
 
     @NonNull
     private static final String[] auditActionLogAllColumns = {
@@ -175,7 +178,8 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             TABLE_ACTIONS_AUDIT_LOG_TRIGGER_DATE,
             TABLE_ACTIONS_AUDIT_LOG_ACTION_NAME,
             TABLE_ACTIONS_AUDIT_LOG_ACTION_DATA,
-            TABLE_ACTIONS_AUDIT_LOG_ACTION_STATUS};
+            TABLE_ACTIONS_AUDIT_LOG_ACTION_STATUS,
+            ORDER_INDEX};
 
     public static synchronized void initialize(Context context) {
         if (instance == null) {
@@ -306,7 +310,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             final List<Router> routers = new ArrayList<>();
             final Cursor cursor = instance.openDatabase()
                     .query(TABLE_ROUTERS,
-                            routersAllColumns, null, null, null, null, COLUMN_ID + " DESC");
+                            routersAllColumns, null, null, null, null, ORDER_INDEX + " ASC");
 
             //noinspection TryFinallyCanBeTryWithResources
             try {
@@ -343,7 +347,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                     .query(TABLE_ROUTERS,
                             routersAllColumns, String.format(ROUTER_UUID + "='%s'", uuid),
                             null, null, null,
-                            COLUMN_ID + " DESC");
+                            ORDER_INDEX + " ASC");
 
             //noinspection TryFinallyCanBeTryWithResources
             try {
@@ -374,7 +378,8 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             final Cursor cursor = instance.openDatabase()
                     .query(TABLE_ROUTERS,
                             routersAllColumns,
-                            String.format(COLUMN_ID + "=%d", id), null, null, null, COLUMN_ID + " DESC");
+                            String.format(COLUMN_ID + "=%d", id), null, null, null,
+                            ORDER_INDEX + " ASC");
             //noinspection TryFinallyCanBeTryWithResources
             try {
                 if (cursor.getCount() > 0) {
@@ -407,7 +412,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                             routersAllColumns,
                             String.format(ROUTER_NAME + "=%s",
                                     name != null ? ("'" + name.replaceAll("'", "''") + "'") : "NULL"),
-                            null, null, null, COLUMN_ID + " DESC");
+                            null, null, null, ORDER_INDEX + " ASC");
 
             //noinspection TryFinallyCanBeTryWithResources
             try {
@@ -454,7 +459,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             }
             database.setTransactionSuccessful();
                 
-                return 1l;
+            return 1L;
         } catch (final RuntimeException e) {
             ReportingUtils.reportException(null, e);
             return null;
@@ -899,6 +904,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         router.setPassword(cursor.getString(8), false);
         router.setPrivKey(cursor.getString(9), false);
         router.setRouterFirmware(cursor.getString(10));
+        router.setOrderIndex(cursor.getInt(11));
 
         return router;
     }
@@ -975,6 +981,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         if (routerFirmware != null) {
             values.put(ROUTER_FIRMWARE, routerFirmware.toString());
         }
+        values.put(ORDER_INDEX, router.getOrderIndex());
         return values;
     }
 
@@ -1042,13 +1049,13 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     private ContentValues getContentValuesFromActionAuditLog(@NonNull ActionLog actionLog) {
         ContentValues values = new ContentValues();
 
-        values.put(DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_UUID, actionLog.getUuid());
-        values.put(DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_ORIGIN, actionLog.getOriginPackageName());
-        values.put(DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_ROUTER_UUID, actionLog.getRouter());
-        values.put(DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_TRIGGER_DATE, actionLog.getDate());
-        values.put(DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_ACTION_NAME, actionLog.getActionName());
-        values.put(DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_ACTION_DATA, actionLog.getActionData());
-        values.put(DDWRTCompanionSqliteOpenHelper.TABLE_ACTIONS_AUDIT_LOG_ACTION_STATUS, actionLog.getStatus());
+        values.put(TABLE_ACTIONS_AUDIT_LOG_UUID, actionLog.getUuid());
+        values.put(TABLE_ACTIONS_AUDIT_LOG_ORIGIN, actionLog.getOriginPackageName());
+        values.put(TABLE_ACTIONS_AUDIT_LOG_ROUTER_UUID, actionLog.getRouter());
+        values.put(TABLE_ACTIONS_AUDIT_LOG_TRIGGER_DATE, actionLog.getDate());
+        values.put(TABLE_ACTIONS_AUDIT_LOG_ACTION_NAME, actionLog.getActionName());
+        values.put(TABLE_ACTIONS_AUDIT_LOG_ACTION_DATA, actionLog.getActionData());
+        values.put(TABLE_ACTIONS_AUDIT_LOG_ACTION_STATUS, actionLog.getStatus());
 
         return values;
     }

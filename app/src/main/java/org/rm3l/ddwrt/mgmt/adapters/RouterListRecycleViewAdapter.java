@@ -44,6 +44,7 @@ import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -95,7 +96,9 @@ import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter;
 import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperViewHolder;
@@ -116,6 +119,8 @@ public class RouterListRecycleViewAdapter extends
         RecyclerView.Adapter<RouterListRecycleViewAdapter.ViewHolder>
         implements ItemTouchHelperAdapter, Filterable {
 
+    private static final String TAG = RouterListRecycleViewAdapter.class.getSimpleName();
+
     public static final String EMPTY = "(empty)";
     public static final String ITEM_DISMISS_POS = "ITEM_DISMISS_POS";
     public static final String POSITION_PREF_KEY_PREF = "pos::";
@@ -134,7 +139,7 @@ public class RouterListRecycleViewAdapter extends
     private final OnItemDismissSnackBarCallback onItemDismissSnackBarCallback;
 
     public RouterListRecycleViewAdapter(final Activity activity, final List<Router> results) {
-        routersList = results;
+        this.setRoutersList(results);
         this.activity = activity;
         this.mGlobalPreferences = activity.getSharedPreferences(
                 DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
@@ -210,18 +215,29 @@ public class RouterListRecycleViewAdapter extends
 
     public void setRoutersList(final List<Router> results) {
         routersList = results;
-        //Re-order per what has been saved in the preferences
-        Collections.sort(routersList, new Comparator<Router>() {
-            @Override
-            public int compare(Router o1, Router o2) {
-                final String o1PosPrefKey = \"fake-key\";
-                final String o2PosPrefKey = \"fake-key\";
-
-                final int o1Pos = mGlobalPreferences.getInt(o1PosPrefKey, -o1.getId());
-                final int o2Pos = mGlobalPreferences.getInt(o2PosPrefKey, -o2.getId());
-                return o1Pos - o2Pos;
+        if (routersList != null) {
+            //FIXME Just for test
+            for (final Router router : routersList) {
+                Crashlytics.log(Log.DEBUG, TAG,
+                        "XXX orderIndex for '" + router.getCanonicalHumanReadableName() +
+                                "' : " + router.getOrderIndex());
             }
-        });
+            //END FIXME
+
+            //Re-order just in case
+            Collections.sort(routersList, new Comparator<Router>() {
+                @Override
+                public int compare(Router o1, Router o2) {
+                    return o1.getOrderIndex() - o2.getOrderIndex();
+//                final String o1PosPrefKey = \"fake-key\";
+//                final String o2PosPrefKey = \"fake-key\";
+//
+//                final int o1Pos = mGlobalPreferences.getInt(o1PosPrefKey, -o1.getId());
+//                final int o2Pos = mGlobalPreferences.getInt(o2PosPrefKey, -o2.getId());
+//                return o1Pos - o2Pos;
+                }
+            });
+        }
     }
 
     @NonNull
@@ -607,22 +623,25 @@ public class RouterListRecycleViewAdapter extends
             for (int i = fromPosition; i < toPosition; i++) {
                 Collections.swap(routersList, i, i + 1);
             }
+
         } else {
             for (int i = fromPosition; i > toPosition; i--) {
                 Collections.swap(routersList, i, i - 1);
             }
         }
-        notifyItemMoved(fromPosition, toPosition);
 
-        //Save all positions in shared preferences
-        int idx = 0;
-        final SharedPreferences.Editor editor = mGlobalPreferences.edit();
-        for (final Router router : routersList) {
-            editor.putInt(POSITION_PREF_KEY_PREF + router.getUuid(), idx++);
+        //Persist indexes
+        for (int orderIdx = 0; orderIdx < routersList.size(); orderIdx++) {
+            final Router router = routersList.get(orderIdx);
+            final int existingOrderIndex = router.getOrderIndex();
+            router.setOrderIndex(orderIdx);
+            dao.updateRouter(router);
+            Crashlytics.log(Log.DEBUG, TAG,
+                    "XXX Router '" + router.getCanonicalHumanReadableName() + "' new position: "
+                            + existingOrderIndex + " => " + orderIdx);
         }
-        editor.apply();
-        Utils.requestBackup(activity);
 
+        notifyItemMoved(fromPosition, toPosition);
         return true;
     }
 
