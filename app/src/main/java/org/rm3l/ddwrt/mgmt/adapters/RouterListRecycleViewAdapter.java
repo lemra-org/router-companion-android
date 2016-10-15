@@ -384,22 +384,24 @@ public class RouterListRecycleViewAdapter extends
             @Override
             public void run() {
 
-//                setClickListenerForNestedView(
-//                        holder.routerViewParent,
-//                        new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                //Open Router
-//                                doOpenRouterDetails(routerAt);
-//                            }
-//                        },
+                setClickListenerForNestedView(
+                        holder.routerViewParent,
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //Open Router
+                                doOpenRouterDetails(routerAt);
+                            }
+                        },
 //                        new View.OnLongClickListener() {
 //                            @Override
 //                            public boolean onLongClick(View v) {
 //                                createContextualPopupMenu(v, routerAt);
 //                                return true;
 //                            }
-//                        });
+//                        }
+                        null
+                );
 
                 // The bounds for the delegate view (an ImageButton
                 // in this example)
