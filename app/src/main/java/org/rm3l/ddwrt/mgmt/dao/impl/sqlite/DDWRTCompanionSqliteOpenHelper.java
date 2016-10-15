@@ -196,7 +196,7 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
      update DATABASE_TABLES_TO_CREATE (for newer installs), and
      add an entry into DATABASE_UPGRADES map
     */
-    private static final int DATABASE_VERSION = 16;
+    private static final int DATABASE_VERSION = 18;
 
     //TODO Don't forget to add new SQL here if a new table is to be created!
     private static final String[] DATABASE_TABLES_TO_CREATE = new String[] {
@@ -256,6 +256,10 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
         DATABASE_UPGRADES.put(16,
                 String.format("ALTER TABLE %s ADD COLUMN %s INTEGER NOT NULL DEFAULT 1000; ",
                         TABLE_ROUTERS, ORDER_INDEX));
+        //Migrate
+        DATABASE_UPGRADES.put(18,
+                String.format("UPDATE %s SET %s = (0 - %s); ",
+                        TABLE_ROUTERS, ORDER_INDEX, COLUMN_ID));
     }
 
     public DDWRTCompanionSqliteOpenHelper(Context context) {
