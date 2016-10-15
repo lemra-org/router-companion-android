@@ -216,25 +216,11 @@ public class RouterListRecycleViewAdapter extends
     public void setRoutersList(final List<Router> results) {
         routersList = results;
         if (routersList != null) {
-            //FIXME Just for test
-            for (final Router router : routersList) {
-                Crashlytics.log(Log.DEBUG, TAG,
-                        "XXX orderIndex for '" + router.getCanonicalHumanReadableName() +
-                                "' : " + router.getOrderIndex());
-            }
-            //END FIXME
-
             //Re-order just in case
             Collections.sort(routersList, new Comparator<Router>() {
                 @Override
                 public int compare(Router o1, Router o2) {
                     return o1.getOrderIndex() - o2.getOrderIndex();
-//                final String o1PosPrefKey = \"fake-key\";
-//                final String o2PosPrefKey = \"fake-key\";
-//
-//                final int o1Pos = mGlobalPreferences.getInt(o1PosPrefKey, -o1.getId());
-//                final int o2Pos = mGlobalPreferences.getInt(o2PosPrefKey, -o2.getId());
-//                return o1Pos - o2Pos;
                 }
             });
         }

@@ -99,6 +99,8 @@ import org.rm3l.ddwrt.welcome.GettingStartedActivity;
 import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -813,6 +815,33 @@ public class RouterManagementActivity
                             RouterManagementActivity.this.mAdapter.notifyDataSetChanged();
                             break;
                         case INSERTED:
+                            //Rebuild list so as to add the new router on top
+                            //We assume the item with the highest id is the latest added,
+                            // and, as such, should be on top of the list
+                            final List<Router> routerList = new ArrayList<>(allRouters);
+                            Collections.sort(routerList, new Comparator<Router>() {
+                                @Override
+                                public int compare(Router o1, Router o2) {
+                                    return o2.getId() - o1.getId();
+                                }
+                            });
+                            for (int i = 0; i < routerList.size(); i++) {
+                                final Router router = routerList.get(i);
+                                final int previousOrderIdx = router.getOrderIndex();
+                                if (i == position) {
+                                    router.setOrderIndex(i);
+                                } else {
+                                    router.setOrderIndex(previousOrderIdx + 1);
+                                }
+                                final int newOrderIndex = router.getOrderIndex();
+                                Crashlytics.log(Log.DEBUG, LOG_TAG,
+                                        "XXX Router '" +
+                                                router.getCanonicalHumanReadableName() + "' " +
+                                        "new position: " + previousOrderIdx + " => " + newOrderIndex);
+
+                                dao.updateRouter(router);
+                            }
+
                             RouterManagementActivity.this.mAdapter.notifyItemInserted(position);
                             break;
                         case REMOVED:
