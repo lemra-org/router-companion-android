@@ -134,6 +134,17 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
 
     @Override
     public List<Router> getAllRouters() {
+        final List<Router> allRouters = new ArrayList<>();
+        for (final Router router : DB.values()) {
+            if (!router.isArchived()) {
+                allRouters.add(router);
+            }
+        }
+        return allRouters;
+    }
+
+    @Override
+    public List<Router> getAllRoutersIncludingArchived() {
         return Lists.newArrayList(DB.values());
     }
 

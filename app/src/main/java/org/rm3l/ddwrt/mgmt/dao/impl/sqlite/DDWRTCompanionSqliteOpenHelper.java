@@ -46,6 +46,7 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
      */
 
     public static final String ORDER_INDEX = "order_idx";
+    public static final String ARCHIVED = "archived";
 
     public static final String TABLE_ROUTERS = "routers";
     public static final String COLUMN_ID = "_id";
@@ -196,7 +197,7 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
      update DATABASE_TABLES_TO_CREATE (for newer installs), and
      add an entry into DATABASE_UPGRADES map
     */
-    private static final int DATABASE_VERSION = 18;
+    private static final int DATABASE_VERSION = 20;
 
     //TODO Don't forget to add new SQL here if a new table is to be created!
     private static final String[] DATABASE_TABLES_TO_CREATE = new String[] {
@@ -260,6 +261,11 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
         DATABASE_UPGRADES.put(18,
                 String.format("UPDATE %s SET %s = (0 - %s); ",
                         TABLE_ROUTERS, ORDER_INDEX, COLUMN_ID));
+
+        //Support ordering in lists
+        DATABASE_UPGRADES.put(20,
+                String.format("ALTER TABLE %s ADD COLUMN %s INTEGER NOT NULL DEFAULT 0 CHECK (%s IN (0,1)); ",
+                        TABLE_ROUTERS, ARCHIVED, ARCHIVED));
     }
 
     public DDWRTCompanionSqliteOpenHelper(Context context) {

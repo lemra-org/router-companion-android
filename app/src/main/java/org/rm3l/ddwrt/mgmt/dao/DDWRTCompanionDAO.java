@@ -47,6 +47,8 @@ public interface DDWRTCompanionDAO {
 
     List<Router> getAllRouters();
 
+    List<Router> getAllRoutersIncludingArchived();
+
     @Nullable
     Router getRouter(String uuid);
 

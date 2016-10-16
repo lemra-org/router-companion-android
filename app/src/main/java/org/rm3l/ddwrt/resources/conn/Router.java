@@ -147,6 +147,12 @@ public class Router implements Serializable {
     private int orderIndex = -1;
 
     /**
+     * Archived or not (may be used to hide routers, w/o actually deleting them). This is useful
+     * for example for a "Swipe-to-dismiss-with-undo" feature
+     */
+    private boolean archived;
+
+    /**
      * the router name
      */
     @Nullable
@@ -355,6 +361,26 @@ public class Router implements Serializable {
                         return sshSession;
                     }
                 });
+    }
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public int getArchivedAsInt() {
+        return (archived ? 1 : 0);
+    }
+
+    public Router setArchived(boolean archived) {
+        this.archived = archived;
+        return this;
+    }
+
+    public Router setArchivedFromInt(final int archived) {
+        if (archived != 0 && archived != 1) {
+            throw new IllegalArgumentException("Invalid arg: " + archived + ". Accepted values: 0 or 1");
+        }
+        return this.setArchived(archived == 1);
     }
 
     /**

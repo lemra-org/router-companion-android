@@ -54,6 +54,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static android.text.TextUtils.isEmpty;
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ARCHIVED;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.COLUMN_ID;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ORDER_INDEX;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_FIRMWARE;
@@ -132,7 +133,8 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             ROUTER_PASSWORD,
             ROUTER_PRIVKEY,
             ROUTER_FIRMWARE,
-            ORDER_INDEX};
+            ORDER_INDEX,
+            ARCHIVED};
 
     @NonNull
     private static final String[] wanTrafficAllColumns = {
@@ -310,7 +312,12 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             final List<Router> routers = new ArrayList<>();
             final Cursor cursor = instance.openDatabase()
                     .query(TABLE_ROUTERS,
-                            routersAllColumns, null, null, null, null, ORDER_INDEX + " ASC");
+                            routersAllColumns,
+                            ARCHIVED + "=0", //Hide archived items
+                            null,
+                            null,
+                            null,
+                            ORDER_INDEX + " ASC");
 
             //noinspection TryFinallyCanBeTryWithResources
             try {
@@ -334,7 +341,44 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         } finally {
             instance.closeDatabase();
         }
+    }
 
+    @Override
+    public List<Router> getAllRoutersIncludingArchived() {
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
+        try {
+            final List<Router> routers = new ArrayList<>();
+            final Cursor cursor = instance.openDatabase()
+                    .query(TABLE_ROUTERS,
+                            routersAllColumns,
+                            null, //No filter
+                            null,
+                            null,
+                            null,
+                            ORDER_INDEX + " ASC");
+
+            //noinspection TryFinallyCanBeTryWithResources
+            try {
+                if (cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    while (!cursor.isAfterLast()) {
+                        final Router router = cursorToRouter(cursor);
+                        routers.add(router);
+                        cursor.moveToNext();
+                    }
+                }
+            } finally {
+                // make sure to close the cursor
+                cursor.close();
+            }
+
+            return routers;
+        } catch (final RuntimeException e) {
+            ReportingUtils.reportException(null, e);
+            throw e;
+        } finally {
+            instance.closeDatabase();
+        }
     }
 
     @Nullable
@@ -345,7 +389,8 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
 
             final Cursor cursor = instance.openDatabase()
                     .query(TABLE_ROUTERS,
-                            routersAllColumns, String.format(ROUTER_UUID + "='%s'", uuid),
+                            routersAllColumns,
+                            String.format(ROUTER_UUID + "='%s'", uuid),
                             null, null, null,
                             ORDER_INDEX + " ASC");
 
@@ -905,6 +950,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         router.setPrivKey(cursor.getString(9), false);
         router.setRouterFirmware(cursor.getString(10));
         router.setOrderIndex(cursor.getInt(11));
+        router.setArchivedFromInt(cursor.getInt(12));
 
         return router;
     }
@@ -982,6 +1028,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             values.put(ROUTER_FIRMWARE, routerFirmware.toString());
         }
         values.put(ORDER_INDEX, router.getOrderIndex());
+        values.put(ARCHIVED, router.getArchivedAsInt());
         return values;
     }
 

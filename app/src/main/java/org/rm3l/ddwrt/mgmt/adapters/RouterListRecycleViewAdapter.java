@@ -629,6 +629,9 @@ public class RouterListRecycleViewAdapter extends
     public void onItemDismiss(final RecyclerView mRecyclerView, final RecyclerView.ViewHolder viewHolder) {
 
         final int position = viewHolder.getAdapterPosition();
+
+        Crashlytics.log(Log.DEBUG, TAG, "XXX onItemDismiss: position = " + position);
+
         final Router router = routersList.get(position);
 
         final Snackbar snackbar = Snackbar.make(mRecyclerView,
@@ -637,11 +640,14 @@ public class RouterListRecycleViewAdapter extends
                 .setAction("UNDO", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final int position = viewHolder.getAdapterPosition();
-                        //Re-insert the router, with the same UUID. DB ID will change,
-                        // but we are preserving the order
-                        dao.insertRouter(router);
-                        setRoutersList(dao.getAllRouters());
+//                        final int position = viewHolder.getAdapterPosition();
+                        Crashlytics.log(Log.DEBUG, TAG, "XXX onItemDismiss UNDO Click: position = " + position);
+
+                        //Unarchive
+                        router.setArchived(false);
+                        dao.updateRouter(router);
+                        routersList.add(position, router);
+//                        setRoutersList(dao.getAllRouters());
                         notifyItemInserted(position);
                         mRecyclerView.scrollToPosition(position);
                     }
@@ -653,10 +659,12 @@ public class RouterListRecycleViewAdapter extends
         final TextView textView = (TextView)
                 snackbarView.findViewById(android.support.design.R.id.snackbar_text);
         textView.setTextColor(Color.YELLOW);
-        
         snackbar.show();
+
+        router.setArchived(true);
+        dao.updateRouter(router); //Actual archive
         routersList.remove(position);
-        dao.deleteRouter(router.getUuid()); //Actual delete
+//        dao.deleteRouter(router.getUuid()); //Actual delete
         notifyItemRemoved(position);
     }
 

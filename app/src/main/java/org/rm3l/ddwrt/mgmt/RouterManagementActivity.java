@@ -843,6 +843,7 @@ public class RouterManagementActivity
                             }
 
                             RouterManagementActivity.this.mAdapter.notifyItemInserted(position);
+                            mRecyclerView.scrollToPosition(position);
                             break;
                         case REMOVED:
                             RouterManagementActivity.this.mAdapter.notifyItemRemoved(position);
