@@ -89,8 +89,6 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
-import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
-import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -633,8 +631,6 @@ public class RouterListRecycleViewAdapter extends
         final int position = viewHolder.getAdapterPosition();
         final Router router = routersList.get(position);
 
-        final List<Router> originalList = new ArrayList<>(routersList);
-
         final Snackbar snackbar = Snackbar.make(mRecyclerView,
                 String.format("Removing Router '%s'...", router.getCanonicalHumanReadableName()),
                 Snackbar.LENGTH_LONG)
@@ -645,12 +641,19 @@ public class RouterListRecycleViewAdapter extends
                         //Re-insert the router, with the same UUID. DB ID will change,
                         // but we are preserving the order
                         dao.insertRouter(router);
-                        originalList.add(position, router);
-                        setRoutersList(originalList);
+                        setRoutersList(dao.getAllRouters());
                         notifyItemInserted(position);
                         mRecyclerView.scrollToPosition(position);
                     }
-                });
+                })
+                .setActionTextColor(Color.RED);
+
+        final View snackbarView = snackbar.getView();
+        snackbarView.setBackgroundColor(Color.DKGRAY);
+        final TextView textView = (TextView)
+                snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(Color.YELLOW);
+        
         snackbar.show();
         routersList.remove(position);
         dao.deleteRouter(router.getUuid()); //Actual delete
