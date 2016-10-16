@@ -33,7 +33,6 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -96,9 +95,7 @@ import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter;
 import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperViewHolder;
@@ -136,7 +133,6 @@ public class RouterListRecycleViewAdapter extends
     private InterstitialAd mInterstitialAd;
 
     private OnStartDragListener mDragStartListener;
-    private final OnItemDismissSnackBarCallback onItemDismissSnackBarCallback;
 
     public RouterListRecycleViewAdapter(final Activity activity, final List<Router> results) {
         this.setRoutersList(results);
@@ -146,8 +142,6 @@ public class RouterListRecycleViewAdapter extends
         this.dao = RouterManagementActivity.getDao(activity);
         resources = activity.getResources();
         selectedItems = new SparseBooleanArray();
-
-        onItemDismissSnackBarCallback = new OnItemDismissSnackBarCallback();
 
         mFilter = new Filter() {
             @Override
@@ -634,65 +628,33 @@ public class RouterListRecycleViewAdapter extends
     }
 
     @Override
-    public void onItemDismiss(int position) {
-                final Bundle dismissBundle = new Bundle();
-        dismissBundle.putInt(ITEM_DISMISS_POS, position);
-        SnackbarUtils.buildSnackbar(activity,
-                String.format("Router '%s' will be removed...",
-                        routersList.get(position).getCanonicalHumanReadableName()),
-                "Undo",
-                Snackbar.LENGTH_LONG,
-                onItemDismissSnackBarCallback,
-                null,
-                true);
-    }
+    public void onItemDismiss(final RecyclerView mRecyclerView, final RecyclerView.ViewHolder viewHolder) {
 
-    private class OnItemDismissSnackBarCallback implements SnackbarCallback {
+        final int position = viewHolder.getAdapterPosition();
+        final Router router = routersList.get(position);
 
-        @Override
-        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+        final List<Router> originalList = new ArrayList<>(routersList);
 
-        }
-
-        @Override
-        public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
-            undoDismissEffect(bundle);
-        }
-
-        @Override
-        public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
-            undoDismissEffect(bundle);
-        }
-
-        @Override
-        public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
-            if (bundle == null) {
-                return;
-            }
-            final int itemDismissPos = bundle.getInt(ITEM_DISMISS_POS);
-            dao.deleteRouter(routersList.get(itemDismissPos).getUuid());
-            routersList.remove(itemDismissPos);
-            notifyItemRemoved(itemDismissPos);
-        }
-
-        @Override
-        public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
-            undoDismissEffect(bundle);
-        }
-
-        @Override
-        public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
-            undoDismissEffect(bundle);
-        }
-
-        private void undoDismissEffect(@Nullable Bundle bundle) {
-            if (bundle == null) {
-                return;
-            }
-            //Undo add effect
-            final int itemDismissPos = bundle.getInt(ITEM_DISMISS_POS);
-            notifyItemInserted(itemDismissPos);
-        }
+        final Snackbar snackbar = Snackbar.make(mRecyclerView,
+                String.format("Removing Router '%s'...", router.getCanonicalHumanReadableName()),
+                Snackbar.LENGTH_LONG)
+                .setAction("UNDO", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final int position = viewHolder.getAdapterPosition();
+                        //Re-insert the router, with the same UUID. DB ID will change,
+                        // but we are preserving the order
+                        dao.insertRouter(router);
+                        originalList.add(position, router);
+                        setRoutersList(originalList);
+                        notifyItemInserted(position);
+                        mRecyclerView.scrollToPosition(position);
+                    }
+                });
+        snackbar.show();
+        routersList.remove(position);
+        dao.deleteRouter(router.getUuid()); //Actual delete
+        notifyItemRemoved(position);
     }
 
     // Provide a reference to the views for each data item

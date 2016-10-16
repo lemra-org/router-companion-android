@@ -294,7 +294,7 @@ public class RouterManagementActivity
         mRecyclerView.setAdapter(mAdapter);
 
         final ItemTouchHelper.Callback callback =
-                new RouterListItemTouchHelperCallback((ItemTouchHelperAdapter) mAdapter);
+                new RouterListItemTouchHelperCallback(mRecyclerView, (ItemTouchHelperAdapter) mAdapter);
         this.mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 

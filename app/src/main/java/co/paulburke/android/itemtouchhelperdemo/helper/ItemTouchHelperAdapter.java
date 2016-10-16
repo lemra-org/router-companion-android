@@ -49,10 +49,12 @@ public interface ItemTouchHelperAdapter {
      * Implementations should call {@link RecyclerView.Adapter#notifyItemRemoved(int)} after
      * adjusting the underlying data to reflect this removal.
      *
-     * @param position The position of the item dismissed.
+     *
+     * @param mRecyclerView
+     * @param viewHolder The view holder.
      *
      * @see RecyclerView#getAdapterPositionFor(RecyclerView.ViewHolder)
      * @see RecyclerView.ViewHolder#getAdapterPosition()
      */
-    void onItemDismiss(int position);
+    void onItemDismiss(RecyclerView mRecyclerView, RecyclerView.ViewHolder viewHolder);
 }

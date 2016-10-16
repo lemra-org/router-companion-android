@@ -1,5 +1,7 @@
 package org.rm3l.ddwrt.mgmt.adapters;
 
+import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
+
 import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter;
 import co.paulburke.android.itemtouchhelperdemo.helper.SimpleItemTouchHelperCallback;
 
@@ -9,8 +11,8 @@ import co.paulburke.android.itemtouchhelperdemo.helper.SimpleItemTouchHelperCall
 
 public class RouterListItemTouchHelperCallback extends SimpleItemTouchHelperCallback {
 
-    public RouterListItemTouchHelperCallback(ItemTouchHelperAdapter adapter) {
-        super(adapter);
+    public RouterListItemTouchHelperCallback(RecyclerViewEmptySupport recyclerView, ItemTouchHelperAdapter mAdapter) {
+        super(recyclerView, mAdapter);
     }
 
     @Override

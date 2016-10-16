@@ -21,6 +21,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
+import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
+
 /**
  * An implementation of {@link ItemTouchHelper.Callback} that enables basic drag & drop and
  * swipe-to-dismiss. Drag events are automatically started by an item long-press.<br/>
@@ -35,8 +37,10 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public static final float ALPHA_FULL = 1.0f;
 
     protected final ItemTouchHelperAdapter mAdapter;
+    private final RecyclerView mRecyclerView;
 
-    public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter) {
+    public SimpleItemTouchHelperCallback(RecyclerView recyclerView, ItemTouchHelperAdapter adapter) {
+        mRecyclerView = recyclerView;
         mAdapter = adapter;
     }
 
@@ -76,9 +80,9 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
     }
 
     @Override
-    public void onSwiped(RecyclerView.ViewHolder viewHolder, int i) {
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
         // Notify the adapter of the dismissal
-        mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+        mAdapter.onItemDismiss(mRecyclerView, viewHolder);
     }
 
     @Override
