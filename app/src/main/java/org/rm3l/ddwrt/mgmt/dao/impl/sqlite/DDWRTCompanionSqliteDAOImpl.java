@@ -168,8 +168,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_FILESIZE,
             TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_DURATION,
             TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_FILESIZE,
-            TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_DURATION,
-            ORDER_INDEX};
+            TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_DURATION};
 
     @NonNull
     private static final String[] auditActionLogAllColumns = {
@@ -180,8 +179,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             TABLE_ACTIONS_AUDIT_LOG_TRIGGER_DATE,
             TABLE_ACTIONS_AUDIT_LOG_ACTION_NAME,
             TABLE_ACTIONS_AUDIT_LOG_ACTION_DATA,
-            TABLE_ACTIONS_AUDIT_LOG_ACTION_STATUS,
-            ORDER_INDEX};
+            TABLE_ACTIONS_AUDIT_LOG_ACTION_STATUS};
 
     public static synchronized void initialize(Context context) {
         if (instance == null) {
