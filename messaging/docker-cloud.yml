@@ -1,12 +1,12 @@
 fcm-app-server:
-  image: rm3l/private-repo:ddwrt-companion-fcm-app-server_0.2
+  image: rm3l/private-repo:ddwrt-companion-fcm-app-server_0.2.2
   autoredeploy: true
   target_num_containers: 1
   working_dir: /src/gcm-playground/server/
   command: go run server.go
 
 dd-wrt-notifier:
-  image: rm3l/private-repo:ddwrt-companion-notifier_0.2
+  image: rm3l/private-repo:ddwrt-companion-notifier_0.2.2
   autoredeploy: true
   volumes:
     - /tmp
