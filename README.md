@@ -1,6 +1,8 @@
 DD-WRT Companion
 ===============
 
+NOTE: Project has been relocated to [git.rm3l.org](http://git.rm3l.org:8888/)
+
 TL;DR
 -------
 This mobile DD-WRT Companion lets you connect to, monitor and manage your DD-WRT routers on the go. 
