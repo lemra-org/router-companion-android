@@ -181,12 +181,12 @@ public class RouterListRecycleViewAdapter extends
                 return oReturn;
             }
 
+            @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 final Object values = results.values;
                 if (values instanceof List) {
-                    //noinspection unchecked
-                    setRoutersList((List<Router>) values);
+                    setRoutersList(new ArrayList<>((List<Router>) values));
                     notifyDataSetChanged();
                 }
             }
