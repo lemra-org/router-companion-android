@@ -3,7 +3,11 @@ package org.rm3l.ddwrt.tiles.dashboard.network;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -311,6 +315,16 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
         try {
             //Set tiles
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+
+            final TextView wanInternetTextView = (TextView) layout.findViewById(R.id.tile_network_map_wan_internet_text);
+            final Drawable drawable = ContextCompat.getDrawable(mParentFragmentActivity, R.drawable.internet);
+//            drawable.setBounds(0, 0, (int)(drawable.getIntrinsicWidth() * 0.5),
+//                    (int)(drawable.getIntrinsicHeight() * 0.5));
+            //Scale to 70x70
+            final Drawable d = new BitmapDrawable(mParentFragmentActivity.getResources(),
+                    Bitmap.createScaledBitmap(((BitmapDrawable) drawable).getBitmap(), 170, 170, true));
+
+            wanInternetTextView.setCompoundDrawablesWithIntrinsicBounds(d, null, null, null);
 
             layout.findViewById(R.id.tile_network_map_loading_view)
                     .setVisibility(View.GONE);

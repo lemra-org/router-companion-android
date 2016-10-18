@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/internet"
+        android:drawable="@drawable/internet"
+        android:width="70dp"
+        android:height="70dp" />
+
+</layer-list>
