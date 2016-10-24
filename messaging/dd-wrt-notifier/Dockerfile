@@ -1,4 +1,4 @@
-FROM gliderlabs/alpine:3.3
+FROM gliderlabs/alpine:edge
 
 # Install lftp
 RUN apk add --update lftp curl python\
