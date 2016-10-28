@@ -41,8 +41,10 @@ import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
+import com.squareup.leakcanary.LeakCanary;
 import com.squareup.picasso.Picasso;
 
+import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.rm3l.ddwrt.deeplinks.RouterActionsDeepLinkActivity;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.rm3l.ddwrt.utils.ColorUtils;
@@ -124,7 +126,7 @@ public class DDWRTApplication extends Application implements Application.Activit
         }
 
         if (BuildConfig.DEBUG) {
-//            LeakCanary.install(this);
+            LeakCanary.install(this);
             Stetho.initializeWithDefaults(this);
         }
 
@@ -206,6 +208,8 @@ public class DDWRTApplication extends Application implements Application.Activit
             //Default is Dark
             setTheme(R.style.AppThemeDark);
         }
+
+        OpenStreetMapTileProviderConstants.setUserAgentValue(BuildConfig.APPLICATION_ID);
     }
 
     @Override
