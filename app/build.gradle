@@ -409,6 +409,16 @@ play {
 //Dependencies
 dependencies {
 
+    // Unit testing dependencies
+    testCompile 'junit:junit:4.12'
+    // Set this dependency if you want to use the Hamcrest matcher library
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
+    // more stuff, e.g., Mockito
+
+    // Required for instrumented tests
+    androidTestCompile 'com.android.support:support-annotations:25.0.0'
+    androidTestCompile 'com.android.support.test:runner:0.5'
+
     // Latest one on maven central
 //    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:+'
 
