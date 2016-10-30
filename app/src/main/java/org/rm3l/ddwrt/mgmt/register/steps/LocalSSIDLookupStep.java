@@ -234,7 +234,7 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
                             if (wifiManager != null) {
                                 final DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
                                 if (dhcpInfo != null) {
-                                    ipEditText.setText(Utils.intToIp(dhcpInfo.gateway), EDITABLE);
+                                    ipEditText.setText(Utils.decimalToIp4(dhcpInfo.gateway), EDITABLE);
                                 }
                             }
                         } catch (final Exception e) {

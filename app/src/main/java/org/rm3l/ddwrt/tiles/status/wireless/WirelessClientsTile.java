@@ -98,8 +98,6 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonReader;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -154,22 +152,18 @@ import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 import org.rm3l.ddwrt.widgets.NetworkTrafficView;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -661,7 +655,7 @@ public class WirelessClientsTile
                     final WifiManager wifiManager = (WifiManager) mParentFragmentActivity.getSystemService(Context.WIFI_SERVICE);
                     final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
 
-                    mCurrentIpAddress = Utils.intToIp(connectionInfo.getIpAddress());
+                    mCurrentIpAddress = Utils.decimalToIp4(connectionInfo.getIpAddress());
                     mCurrentMacAddress = connectionInfo.getMacAddress();
                 } catch (@NonNull final Exception e) {
                     e.printStackTrace();

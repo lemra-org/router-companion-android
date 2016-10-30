@@ -134,7 +134,7 @@ public class BasicDetailsStep extends MaterialWizardStep {
                 if (wifiManager != null) {
                     final DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
                     if (dhcpInfo != null) {
-                        routerIpOrDnsEt.setText(Utils.intToIp(dhcpInfo.gateway));
+                        routerIpOrDnsEt.setText(Utils.decimalToIp4(dhcpInfo.gateway));
                     }
                 }
             }

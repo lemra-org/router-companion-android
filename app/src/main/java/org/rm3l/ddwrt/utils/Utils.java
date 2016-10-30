@@ -222,12 +222,61 @@ public final class Utils {
     }
 
     @NonNull
-    public static String intToIp(final int i) {
+    public static String decimalToIp4(long ip) {
+//        return (i & 0xFF) + "." +
+//                ((i >> 8) & 0xFF) + "." +
+//                ((i >> 16) & 0xFF) + "." +
+//                ((i >> 24) & 0xFF);
+        final StringBuilder result = new StringBuilder(15);
+        for (int i = 0; i < 4; i++) {
+            result.insert(0,Long.toString(ip & 0xff));
+            if (i < 3) {
+                result.insert(0,'.');
+            }
+            ip = ip >> 8;
+        }
+        return result.toString();
+    }
 
-        return (i & 0xFF) + "." +
-                ((i >> 8) & 0xFF) + "." +
-                ((i >> 16) & 0xFF) + "." +
-                ((i >> 24) & 0xFF);
+    @NonNull
+    public static long ip4ToDecimal(@NonNull final int[] ipParts) {
+        if (ipParts.length != 4) {
+            throw new IllegalArgumentException("Invalid IPv4");
+        }
+        int result = 0;
+
+
+        for (int i = 3; i >= 0; i--) {
+            final int ip = ipParts[3 - i];
+            checkIp4Part(ip);
+
+            //left shifting 24,16,8,0 and bitwise OR
+
+            //1. 192 << 24
+            //1. 168 << 16
+            //1. 1   << 8
+            //1. 2   << 0
+            result |= ip << (i * 8);
+
+        }
+
+        /*
+        //Another way of doing this
+        for (int i = 0, ipPartsLength = ipParts.length; i < ipPartsLength; i++) {
+            final int ipPart = ipParts[i];
+            checkIp4Part(ipPart);
+            final int power = 3 - i;
+            result += ipPart * Math.pow(256, power);
+        }
+
+         */
+        return result;
+    }
+
+    private static void checkIp4Part(final int ipPart) {
+        if (ipPart < 0 || ipPart > 255) {
+            throw new IllegalArgumentException("Invalid IPv4 part");
+        }
     }
 
     @Nullable

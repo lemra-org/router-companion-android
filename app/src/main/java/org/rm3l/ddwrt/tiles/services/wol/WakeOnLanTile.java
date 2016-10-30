@@ -220,7 +220,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
             final WifiManager wifiManager = (WifiManager) mParentFragmentActivity.getSystemService(Context.WIFI_SERVICE);
             final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
 
-            final String mCurrentIpAddress = Utils.intToIp(connectionInfo.getIpAddress());
+            final String mCurrentIpAddress = Utils.decimalToIp4(connectionInfo.getIpAddress());
             final String mCurrentMacAddress = connectionInfo.getMacAddress();
 
             if (wakeOnLanTile != null) {
