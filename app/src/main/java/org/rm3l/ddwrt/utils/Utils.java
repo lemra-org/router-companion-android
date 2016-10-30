@@ -159,7 +159,7 @@ public final class Utils {
         }
     }
 
-    @Nullable
+    @NonNull
     public static String[] getLines(@NonNull BufferedReader bufferedReader) throws IOException {
         final List<String> lines = Lists.newArrayList();
         for (String line; (line = bufferedReader.readLine()) != null; ) {

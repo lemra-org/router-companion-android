@@ -40,6 +40,9 @@ import java.nio.charset.Charset;
  */
 public final class DDWRTCompanionConstants {
 
+    public static final String LINE_SEPARATOR =
+            System.getProperty("line.separator");
+
     public static final Charset CHARSET = Charset.forName(CharEncoding.UTF_8);
 
     //Defaut ato-refresh interval: 5 minutes
