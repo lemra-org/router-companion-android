@@ -144,4 +144,21 @@ public class UtilsTest {
         Utils.ip4ToDecimal(new int[] {192, 567, 77});
     }
 
+    @Test
+    public void testTruncateText_NullStr() {
+        Assert.assertNull(Utils.truncateText(null, 0));
+    }
+
+    @Test(expected = StringIndexOutOfBoundsException.class)
+    public void testTruncateText_NegativeMaxLength() {
+        Assert.assertEquals("Hey",
+                Utils.truncateText("Hey", -1));
+    }
+
+    @Test
+    public void testTruncateText_PositiveMaxLen() {
+        Assert.assertEquals("Hey bro...",
+                Utils.truncateText("Hey brothers and sisters!", "Hey brothe".length()));
+    }
+
 }
