@@ -1,0 +1,173 @@
+.menu-left {
+	display: inline;
+	float: left;
+	margin-top: 10px;
+	margin-left: 13px;
+	margin-right: 13px;
+}
+
+.menu-right {
+	float: right;
+}
+
+#nav {
+	position:fixed;
+	width:100%;
+	border-top:1px solid #ea0b25;
+	text-transform:uppercase;
+	font-weight:600;
+	font-size:1.125em;
+	/*padding:1em 0;*/
+	background:#ededed;
+	z-index:999;
+}
+
+a.logo[href] {
+  cursor: pointer;
+}
+
+.logo {
+  display: inline-block;
+  width: 50px;
+  height: 43px;
+  background-image: url("../images/logo_ddwrt_companion.png");
+}
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+  .logo {
+    background-image: url("../images/logo_ddwrt_companion.png");
+    background-size: 50px 43px;
+  }
+}
+
+
+.nav-hidden {
+	display:none;
+}
+
+.nav-displayed {
+	display:block;
+    background: #ededed;
+}
+
+@media screen and (max-width: 40em) {
+	/* We don't care about scrolling here, as a little menu is displayed */
+	.nav-hidden , .nav-displayed {
+		display:none;
+	}
+}
+
+
+#nav ul {
+	padding:0;
+	margin:0;
+}
+
+#nav li {
+	display:inline-block;
+	padding:0.5em 0.5em;
+}
+
+.lt-ie8 {
+	display:inline;
+	zoom:1;
+}
+
+#nav a {
+	color:#333333;
+	text-decoration:none;
+}
+
+#nav a:hover {
+	border-bottom:4px solid #ea0b25;
+}
+
+.clear {
+    clear: both;
+    display: block;
+    overflow: hidden;
+    visibility: hidden;
+    width: 0;
+    height: 0;
+}
+
+#main-menu {
+	padding-top:5.688em;
+}
+
+.slicknav_menu {
+	display:none;
+}
+
+#mobileMenu {
+    display: none;
+}
+
+@media screen and (max-width: 40em) {
+	/* #menu is the original menu */
+	.js #main-menu {
+		display:none;
+	}
+	
+	.js .slicknav_menu {
+		display:block;
+	}
+
+	.js #mobileMenu {
+		display:block;
+	}
+}
+
+
+#main-menu li .signup {
+	position: relative;
+	padding: 8px 20px;
+	margin: 20px 0 0 0;  
+	font: bold 14px Arial, Helvetica;
+	text-transform: uppercase;
+	text-decoration: none;
+	display: inline-block;       
+	background-color: #72ce3f;
+	background-image: -moz-linear-gradient(#72ce3f, #62bc30);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#72ce3f), to(#62bc30));    
+	background-image: -webkit-linear-gradient(#72ce3f, #62bc30);
+	background-image: -o-linear-gradient(#72ce3f, #62bc30);
+	background-image: -ms-linear-gradient(#72ce3f, #62bc30);
+	background-image: linear-gradient(#72ce3f, #62bc30);
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;     
+	text-shadow: 0 1px 0 rgba(0,0,0,.3);        
+	-moz-box-shadow: 0 1px 0 rgba(255, 255, 255, .5), 0 2px 0 rgba(0, 0, 0, .7);
+	-webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, .5), 0 2px 0 rgba(0, 0, 0, .7);
+	box-shadow: 0 1px 0 rgba(255, 255, 255, .5), 0 2px 0 rgba(0, 0, 0, .7);
+}
+
+#main-menu li .signup .signup-text {
+	color: #fff;
+}
+
+##main-menu li .signup .logo-white {
+	color: #fff;
+}
+
+#main-menu li .signup .logo-black {
+	color: #000;
+}
+
+#main-menu li .signup:hover {
+	background-color: #62bc30;
+	background-image: -moz-linear-gradient(#62bc30, #72ce3f);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#62bc30), to(#72ce3f));      
+	background-image: -webkit-linear-gradient(#62bc30, #72ce3f);
+	background-image: -o-linear-gradient(#62bc30, #72ce3f);
+	background-image: -ms-linear-gradient(#62bc30, #72ce3f);
+	background-image: linear-gradient(#62bc30, #72ce3f); 
+}
+
+#main-menu li .signup:active, #main-menu li .signup:focus {
+	background: #62bc30;       
+	top: 2px;
+	-moz-box-shadow: 0 0 3px rgba(0, 0, 0, .7) inset;
+	-webkit-box-shadow: 0 0 3px rgba(0, 0, 0, .7) inset;
+	box-shadow: 0 0 3px rgba(0, 0, 0, .7) inset; 
+}
