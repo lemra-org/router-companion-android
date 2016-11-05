@@ -223,19 +223,19 @@ public final class Utils {
 
     @NonNull
     public static String decimalToIp4(long ip) {
-//        return (i & 0xFF) + "." +
-//                ((i >> 8) & 0xFF) + "." +
-//                ((i >> 16) & 0xFF) + "." +
-//                ((i >> 24) & 0xFF);
-        final StringBuilder result = new StringBuilder(15);
-        for (int i = 0; i < 4; i++) {
-            result.insert(0,Long.toString(ip & 0xff));
-            if (i < 3) {
-                result.insert(0,'.');
-            }
-            ip = ip >> 8;
-        }
-        return result.toString();
+        return (ip & 0xFF) + "." +
+                ((ip >> 8) & 0xFF) + "." +
+                ((ip >> 16) & 0xFF) + "." +
+                ((ip >> 24) & 0xFF);
+//        final StringBuilder result = new StringBuilder(15);
+//        for (int i = 0; i < 4; i++) {
+//            result.insert(0,Long.toString(ip & 0xff));
+//            if (i < 3) {
+//                result.insert(0,'.');
+//            }
+//            ip = ip >> 8;
+//        }
+//        return result.toString();
     }
 
     @NonNull
