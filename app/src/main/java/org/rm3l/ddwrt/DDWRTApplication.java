@@ -126,7 +126,7 @@ public class DDWRTApplication extends Application implements Application.Activit
         }
 
         if (BuildConfig.DEBUG) {
-            LeakCanary.install(this);
+//            LeakCanary.install(this);
             Stetho.initializeWithDefaults(this);
         }
 
