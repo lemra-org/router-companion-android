@@ -78,14 +78,14 @@
             })});
         </script>
 
-        <script type="text/javascript">
-            window.doorbellOptions = {
-                appKey: 'a-key'
-            };
-            (function(d, t) {
-                var g = d.createElement(t);g.id = 'doorbellScript';g.type = 'text/javascript';g.async = true;g.src = 'https://embed.doorbell.io/button/1824?t='+(new Date().getTime());(d.getElementsByTagName('head')[0]||d.getElementsByTagName('body')[0]).appendChild(g);
-            }(document, 'script'));
-        </script>
+        <!--<script type="text/javascript">-->
+            <!--window.doorbellOptions = {-->
+                <!--appKey: 'a-key'-->
+            <!--};-->
+            <!--(function(d, t) {-->
+                <!--var g = d.createElement(t);g.id = 'doorbellScript';g.type = 'text/javascript';g.async = true;g.src = 'https://embed.doorbell.io/button/1824?t='+(new Date().getTime());(d.getElementsByTagName('head')[0]||d.getElementsByTagName('body')[0]).appendChild(g);-->
+            <!--}(document, 'script'));-->
+        <!--</script>-->
 
         <script type="text/javascript">
           (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -101,23 +101,21 @@
     <body>
         <div id="mobileMenu"></div>
         <div id="nav" class="nav-hidden">
-            <div class="container">
-                <div class="menu-left">
-                    <a href="/" class="logo"></a>
-                </div>
-                <div class="menu-right">
-                    <ul class="menu" id="main-menu">
-                        <li><a class="scroll" href="#about">About</a></li>
-                        <li><a class="scroll" href="#features">Features</a></li>
-                        <li><a class="scroll" href="#testimonials">Testimonials</a></li>
-                        <li><a class="scroll" href="#screenshots">Screenshots</a></li>
-                        <li><a class="scroll" href="#plans">Plans</a></li>
-                        <li><a target="_blank" href="http://ddwrt-companion.rm3l.org">Support</a></li>
-                        <li><a class="signup scroll" href="#get"><span class="signup-text">Get it!</span></a></li>
-                    </ul>
-                </div>
-                <div class="clear"></div>
+            <div id="main-menu-logo" class="menu-left">
+                <a href="/" class="logo"></a>
             </div>
+            <div class="menu-right">
+                <ul class="menu" id="main-menu">
+                    <li><a class="scroll" href="#about">About</a></li>
+                    <li><a class="scroll" href="#features">Features</a></li>
+                    <li><a class="scroll" href="#testimonials">Testimonials</a></li>
+                    <li><a class="scroll" href="#screenshots">Screenshots</a></li>
+                    <li><a class="scroll" href="#plans">Plans</a></li>
+                    <li><a target="_blank" href="http://ddwrt-companion.rm3l.org">Support</a></li>
+                    <li><a class="signup scroll" href="#get"><span class="signup-text">Get it!</span></a></li>
+                </ul>
+            </div>
+            <!--<div class="clear"></div>-->
         </div>
 
         <section id="hero-section" class="hero">
@@ -135,13 +133,29 @@ your Android and DD-WRT devices.</p>
                             <a href="https://www.amazon.com/Lemra-DD-WRT-Companion/dp/B00RN7HEI4" target="_blank" class="store-badge amazon-badge"></a>
                         </div>
                     </div>
-                    <div class="phone">
-                        <img src="images/phone-front-white.png" class="bg" />
-                        <video id="vid" autoplay loop class="content">
-                            <source src="https://s3.amazonaws.com/dd-wrt-companion/media/demo.mp4" type="video/mp4">
-                            <source src="https://s3.amazonaws.com/dd-wrt-companion/media/demo.webm" type="video/webm">
-                            Your browser does not support the 'video' tag. We suggest you upgrade your browser.
-                        </video>
+                    <!--<div class="phone">-->
+                        <!--<img src="images/phone-front-white.png" class="bg" />-->
+                        <!--<video id="vid" autoplay loop class="content">-->
+                            <!--<source src="https://s3.amazonaws.com/dd-wrt-companion/media/demo.mp4" type="video/mp4">-->
+                            <!--<source src="https://s3.amazonaws.com/dd-wrt-companion/media/demo.webm" type="video/webm">-->
+                            <!--Your browser does not support the 'video' tag. We suggest you upgrade your browser.-->
+                        <!--</video>-->
+                    <!--</div>-->
+                    <div class="ar-runner" style="margin-left: -31px; margin-right: -31px;margin-bottom: 22px;cursor: auto;position: relative;width: 288px;height: 580px;display: inline-block;">
+                        <img src="images/google_nexus_5x_black_v.png" class="ar-frame" style="display: inline-block; position: relative; top: 0; left: 0; width: 288px; height: 580px;"/>
+                        <div class="ar-demo" style="position: absolute; width: 257px; height: 456px; left: 14px; top: 58px;">
+                            <div class="ar-screens" style="position: absolute; overflow: hidden; width: 257px; height: 456px;">
+                                <div class="ar-screen" style="width: 257px; height: 456px; z-index: auto; background-color: rgb(255, 255, 255); display: block;">
+                                    <div class="ar-o2 vi" style="width: 257px; height: 459px; top: -1px; left: 0px; display: block;">
+                                        <video id="vid" autoplay loop poster="videos/poster4video.png">
+                                            <source src="https://s3.amazonaws.com/dd-wrt-companion/media/demo.mp4" type="video/mp4">
+                                            <source src="https://s3.amazonaws.com/dd-wrt-companion/media/demo.webm" type="video/webm">
+                                            Your browser does not support the 'video' tag. We suggest you upgrade your browser.
+                                        </video>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -152,8 +166,8 @@ your Android and DD-WRT devices.</p>
                 </div>
                 <div class="row">
                     <div class="phone">
-                        <img src="images/phone-front-white.png" class="bg" />
-                        <img src="videos/poster.jpg" class="content" />
+                        <!--<img src="images/phone-front-white.png" class="bg" />-->
+                        <img src="videos/poster.png" class="content" />
                     </div>
                 </div>
                 <!-- <div class="row">

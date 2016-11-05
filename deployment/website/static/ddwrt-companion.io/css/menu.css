@@ -13,13 +13,15 @@
 #nav {
 	position:fixed;
 	width:100%;
-	border-top:1px solid #ea0b25;
+	/*border-top:1px solid #ea0b25;*/
 	text-transform:uppercase;
 	font-weight:600;
 	font-size:1.125em;
 	/*padding:1em 0;*/
 	background:#ededed;
 	z-index:999;
+	padding-left: 17%;
+    padding-right: 17%;
 }
 
 a.logo[href] {
@@ -34,7 +36,7 @@ a.logo[href] {
 }
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .logo {
-    background-image: url("../images/logo_ddwrt_companion.png");
+    background-image: url("../images/logo_ddwrt_companion@2x.png");
     background-size: 50px 43px;
   }
 }
@@ -104,6 +106,10 @@ a.logo[href] {
 
 @media screen and (max-width: 40em) {
 	/* #menu is the original menu */
+	.js #main-menu-logo {
+	    display:none;
+	}
+
 	.js #main-menu {
 		display:none;
 	}
