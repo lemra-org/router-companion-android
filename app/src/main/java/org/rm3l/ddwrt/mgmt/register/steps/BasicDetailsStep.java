@@ -125,7 +125,8 @@ public class BasicDetailsStep extends MaterialWizardStep {
         //and set default values by using Context Variables
         uuidTv.setText(uuid);
         routerNameEt.setText(routerName);
-        if (routerIpOrDns != null) {
+
+        if (!TextUtils.isEmpty(routerIpOrDns)) {
             routerIpOrDnsEt.setText(routerIpOrDns);
         } else {
             if (TextUtils.isEmpty(routerIpOrDnsEt.getText())) {
@@ -134,7 +135,8 @@ public class BasicDetailsStep extends MaterialWizardStep {
                 if (wifiManager != null) {
                     final DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
                     if (dhcpInfo != null) {
-                        routerIpOrDnsEt.setText(Utils.decimalToIp4(dhcpInfo.gateway));
+                        routerIpOrDns = Utils.decimalToIp4(dhcpInfo.gateway);
+                        routerIpOrDnsEt.setText(routerIpOrDns);
                     }
                 }
             }
