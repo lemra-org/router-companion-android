@@ -1,6 +1,10 @@
 DD-WRT Companion
 ===============
 
+[![Join the chat at https://gitter.im/rm3l/ddwrt-companion](https://badges.gitter.im/rm3l/ddwrt-companion.svg)](https://gitter.im/rm3l/ddwrt-companion?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+[![Join the chat at https://gitter.im/DD-WRT-Companion/Lobby](https://badges.gitter.im/DD-WRT-Companion/Lobby.svg)](https://gitter.im/DD-WRT-Companion/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 NOTE: Project has been relocated to [git.rm3l.org](http://git.rm3l.org:8888/)
 
 TL;DR
