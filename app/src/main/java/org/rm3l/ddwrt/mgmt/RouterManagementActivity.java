@@ -23,7 +23,10 @@
 package org.rm3l.ddwrt.mgmt;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -74,6 +77,7 @@ import com.stephentuso.welcome.ui.WelcomeActivity;
 
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.DDWRTApplication;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.about.AboutDialog;
 import org.rm3l.ddwrt.actions.ActionManager;
@@ -113,6 +117,7 @@ import co.paulburke.android.itemtouchhelperdemo.helper.OnStartDragListener;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
+import static org.rm3l.ddwrt.DDWRTApplication.DEBUG_LEAKCANARY_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEBUG_MODE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
@@ -490,6 +495,10 @@ public class RouterManagementActivity
         debugOnlyTools.setEnabled(BuildConfig.DEBUG);
         debugOnlyTools.setVisible(BuildConfig.DEBUG);
 
+        final boolean debugLeakCanary = mPreferences.getBoolean(DEBUG_LEAKCANARY_PREF_KEY, false);
+        Crashlytics.log(Log.DEBUG, LOG_TAG, "XXX debug_leakcanary: " + debugLeakCanary);
+        menu.findItem(R.id.debug_leakcanary).setChecked(debugLeakCanary);
+
         final MenuItem donateMenuItem = menu.findItem(R.id.router_list_donate);
         if (donateMenuItem != null) {
             donateMenuItem.setVisible(BuildConfig.DONATIONS);
@@ -568,6 +577,33 @@ public class RouterManagementActivity
                                         new Intent(RouterManagementActivity.this, ChangelogActivity.class));
                             }
                         }, false);
+                return true;
+
+            case R.id.debug_leakcanary:
+
+                if (BuildConfig.DEBUG) {
+                    final boolean checked = item.isChecked();
+                    item.setChecked(!checked);
+                    mPreferences.edit().putBoolean(DEBUG_LEAKCANARY_PREF_KEY, !checked).commit();
+                    Utils.requestBackup(RouterManagementActivity.this);
+                    //Restart activity
+                    final ProgressDialog alertDialog = ProgressDialog.show(this,
+                            String.format("%sabling LeakCanary", checked ? "Dis" : "En"), "Please wait...", true);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            alertDialog.cancel();
+                            final PendingIntent intent = PendingIntent.getActivity(getBaseContext(), 0,
+                                    new Intent(getIntent()), PendingIntent.FLAG_CANCEL_CURRENT);
+                            final AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                            manager.set(AlarmManager.RTC, System.currentTimeMillis() + 100, intent);
+                            System.exit(2);
+                        }
+                    }, 2000);
+
+                } else {
+                    Crashlytics.log(Log.WARN, LOG_TAG, "LeakCanary menu option should not be visible...");
+                }
                 return true;
 
             case R.id.debug_welcome_screen:

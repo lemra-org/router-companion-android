@@ -72,6 +72,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <!--<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>-->
 
+    <!-- Protection level: ??? -->
+    <!-- To write NFC tag (for WiFi networks), or 'Touch to connect' feature -->
+    <uses-permission android:name="android.permission.NFC" />
+
     <!--
     This is a situation where we want a dependency but
     not the permissions that the dependency wants.

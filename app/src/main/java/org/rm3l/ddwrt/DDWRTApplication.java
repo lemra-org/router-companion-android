@@ -26,6 +26,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -64,6 +65,7 @@ import java.util.Map;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import io.fabric.sdk.android.Fabric;
 
+import static android.content.Context.MODE_PRIVATE;
 import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.Utils.isFirstLaunch;
@@ -86,11 +88,16 @@ public class DDWRTApplication extends Application implements Application.Activit
     private static final List<String> FDROID_INSTALLER_PACKAGE_NAMES =
             Collections.singletonList("org.fdroid.fdroid.installer");
 
+    public static final String DEBUG_LEAKCANARY_PREF_KEY = \"fake-key\";
+
     private static WeakReference<Activity> mCurrentActivity;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        final SharedPreferences appPreferences =
+                getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE);
 
 //        if (BuildConfig.DEBUG) {
 //            //Enable Strict Mode in DEBUG mode
@@ -126,8 +133,17 @@ public class DDWRTApplication extends Application implements Application.Activit
         }
 
         if (BuildConfig.DEBUG) {
-//            LeakCanary.install(this);
             Stetho.initializeWithDefaults(this);
+        }
+
+        if (BuildConfig.DEBUG &&
+                appPreferences.getBoolean(DEBUG_LEAKCANARY_PREF_KEY, false)) {
+            Log.d(TAG, "--> Start w/ LeakCanary...");
+            LeakCanary.install(this);
+        } else {
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "--> Start w/o LeakCanary...");
+            }
         }
 
         final IntentFilter intentFilter = new IntentFilter(DeepLinkHandler.ACTION);
@@ -175,7 +191,7 @@ public class DDWRTApplication extends Application implements Application.Activit
         Crashlytics.setBool("DEBUG", BuildConfig.DEBUG);
         Crashlytics.setBool("WITH_ADS", BuildConfig.WITH_ADS);
 
-        final String acraEmailAddr = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE)
+        final String acraEmailAddr = appPreferences
                 .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
         Crashlytics.setUserEmail(acraEmailAddr);
 
@@ -186,8 +202,7 @@ public class DDWRTApplication extends Application implements Application.Activit
 
             final Map<String, Object> eventMap = new HashMap<>();
             final String lastKnownVersionStr =
-                    getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                            Context.MODE_PRIVATE)
+                    appPreferences
                         .getString(DDWRTCompanionConstants.LAST_KNOWN_VERSION, null);
             eventMap.put("PREVIOUS_VERSION",
                     lastKnownVersionStr != null ? lastKnownVersionStr : "???");
