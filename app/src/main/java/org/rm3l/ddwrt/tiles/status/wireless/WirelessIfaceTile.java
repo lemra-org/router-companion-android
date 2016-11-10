@@ -122,6 +122,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     public static final String IFACE_STATE = "_iface_state";
     public static final String PHYSICAL_IFACE_STATE_ACTION = "PHYSICAL_IFACE_STATE_ACTION";
 
+    private WriteWifiConfigToNfcDialog mWifiToNfcDialog;
+
     @NonNull
     private final String iface;
 
@@ -188,8 +190,14 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
                 inflater.inflate(R.menu.tile_wireless_iface_options, menu);
 
+                final MenuItem qrCodeMenuItem = menu.findItem(R.id.tile_status_wireless_iface_qrcode);
+                final MenuItem writeNfcMenuItem = menu.findItem(R.id.tile_status_wireless_iface_write_nfc);
                 if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && wifiPassword == null)) {
-                    menu.findItem(R.id.tile_status_wireless_iface_qrcode).setEnabled(false);
+                    qrCodeMenuItem.setEnabled(false);
+                    writeNfcMenuItem.setEnabled(false);
+                } else {
+                    qrCodeMenuItem.setEnabled(true);
+                    writeNfcMenuItem.setEnabled(true);
                 }
 
                 popup.show();
@@ -980,6 +988,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     public boolean onMenuItemClick(MenuItem item) {
         final String routerUuid = mRouter.getUuid();
         final int itemId = item.getItemId();
+        final String wifiSsidNullToEmpty = nullToEmpty(wifiSsid);
         switch (itemId) {
             case R.id.tile_status_wireless_iface_qrcode: {
                 if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && wifiPassword == null)) {
@@ -990,7 +999,6 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                 }
                 //https://github.com/zxing/zxing/wiki/Barcode-Contents
                 //noinspection ConstantConditions
-                final String wifiSsidNullToEmpty = nullToEmpty(wifiSsid);
                 final String wifiQrCodeString = String.format("WIFI:S:%s;T:%s;P:%s;%s;",
                         escapeString(wifiSsidNullToEmpty),
                         wifiEncryptionType.toString().toUpperCase(),
@@ -1016,6 +1024,20 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                 }, 2500);
             }
                 return true;
+
+            case R.id.tile_status_wireless_iface_write_nfc: {
+                if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && wifiPassword == null)) {
+                    //menu item should have been disabled, but anyways, you never know :)
+                    Toast.makeText(mParentFragmentActivity,
+                            "Missing parameters to write NFC tag - try again later", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                mWifiToNfcDialog = new WriteWifiConfigToNfcDialog(mParentFragmentActivity,
+                        wifiSsidNullToEmpty, nullToEmpty(wifiPassword));
+                mWifiToNfcDialog.show();
+            }
+                return true;
+
             case R.id.tile_status_wireless_iface_traffic_shaping: {
                 if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                     //Download the full version to unlock this version
@@ -1126,8 +1148,6 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                     Utils.displayUpgradeMessage(mParentFragmentActivity, "Edit Wireless Security Settings");
                     return true;
                 }
-
-                final String wifiSsidNullToEmpty = nullToEmpty(wifiSsid);
 
                 final NVRAMInfo nvramInfo = new NVRAMInfo()
                         .setProperty(WirelessIfaceTile.IFACE, this.iface)

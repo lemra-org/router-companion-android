@@ -569,5 +569,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="new_router">New router</string>
     <string name="register_new_router">Register a new router</string>
     <string name="new_router_disabled">New router (disabled)</string>
+    <string name="write_to_nfc_tag">Write to NFC tag</string>
+    <string name="status_write_success">Success!</string>
+    <string name="status_failed_to_write">Unable to write data to NFC tag. If the problem persists, try a different tag</string>
+    <string name="status_tag_not_writable">NFC tag is not writeable. Please use a different tag.</string>
+    <string name="status_invalid_password">Invalid password, try again.</string>
+    <string name="status_awaiting_tap">Tap a tag to write...</string>
+    <string name="setup_wifi_nfc_tag">Set up Wi-Fi NFC Tag</string>
+    <string name="write_tag">Write</string>
+    <string name="done_label">DONE</string>
 
 </resources>
