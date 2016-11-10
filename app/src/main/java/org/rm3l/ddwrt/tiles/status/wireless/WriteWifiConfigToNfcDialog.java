@@ -64,7 +64,7 @@ class WriteWifiConfigToNfcDialog extends AlertDialog implements View.OnClickList
 
         setView(mView);
         setInverseBackgroundForced(true);
-        setTitle(R.string.setup_wifi_nfc_tag);
+        setTitle(R.string.write_to_nfc_tag);
         setCancelable(true);
         setButton(DialogInterface.BUTTON_NEUTRAL,
                 mContext.getResources().getString(R.string.write_tag), (OnClickListener) null);
