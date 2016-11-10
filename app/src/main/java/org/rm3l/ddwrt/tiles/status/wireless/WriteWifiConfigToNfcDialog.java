@@ -80,6 +80,7 @@ class WriteWifiConfigToNfcDialog extends AlertDialog implements View.OnClickList
         mSubmitButton = getButton(DialogInterface.BUTTON_NEUTRAL);
         mSubmitButton.setOnClickListener(this);
         mSubmitButton.setEnabled(true);
+        mSubmitButton.performClick();
 
         mCancelButton = getButton(DialogInterface.BUTTON_NEGATIVE);
     }
