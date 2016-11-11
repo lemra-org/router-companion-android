@@ -78,7 +78,7 @@ public class WifiSharingActivity extends AppCompatActivity {
         mSsid = intent.getStringExtra(SSID);
 //        mWifiQrCodeString = intent.getStringExtra(WIFI_QR_CODE);
 
-        mTitle = ("WiFi QR Code: " + mSsid);
+        mTitle = ("WiFi Sharing: " + mSsid);
 
         final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(this);
         final Router router;
