@@ -76,6 +76,7 @@ import org.rm3l.ddwrt.resources.ProcNetDevTransmit;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.tiles.status.wireless.share.WifiSharingActivity;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
@@ -990,7 +991,55 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         final int itemId = item.getItemId();
         final String wifiSsidNullToEmpty = nullToEmpty(wifiSsid);
         switch (itemId) {
+            case R.id.tile_status_wireless_iface_share: {
+                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                    //Download the full version to unlock this version
+                    Utils.displayUpgradeMessage(mParentFragmentActivity, "Share Wi-Fi via QR Code or NFC");
+                    return true;
+                }
+                if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && wifiPassword == null)) {
+                    //menu item should have been disabled, but anyways, you never know :)
+                    Toast.makeText(mParentFragmentActivity,
+                            "Missing parameters to generate QR-Code - try again later", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                //https://github.com/zxing/zxing/wiki/Barcode-Contents
+                //noinspection ConstantConditions
+                final String wifiQrCodeString = String.format("WIFI:S:%s;T:%s;P:%s;%s;",
+                        escapeString(wifiSsidNullToEmpty),
+                        wifiEncryptionType.toString().toUpperCase(),
+                        escapeString(nullToEmpty(wifiPassword)),
+                        wifiSsidNullToEmpty.isEmpty() ? "H:true" : "");
+
+
+                final Intent intent = new Intent(mParentFragmentActivity, WifiSharingActivity.class);
+                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
+                intent.putExtra(WirelessIfaceQrCodeActivity.SSID, wifiSsidNullToEmpty);
+                intent.putExtra(WirelessIfaceQrCodeActivity.WIFI_QR_CODE, wifiQrCodeString);
+
+                final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                        String.format("Generating QR Code and NFC tag data for '%s'", wifiSsidNullToEmpty),
+                        false, false);
+                alertDialog.show();
+                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mParentFragmentActivity.startActivity(intent);
+                        alertDialog.cancel();
+                    }
+                }, 2500);
+            }
+
+                return true;
+
+                //Deprecated
             case R.id.tile_status_wireless_iface_qrcode: {
+                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                    //Download the full version to unlock this version
+                    Utils.displayUpgradeMessage(mParentFragmentActivity, "Generate Wi-Fi QR Code");
+                    return true;
+                }
                 if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && wifiPassword == null)) {
                     //menu item should have been disabled, but anyways, you never know :)
                     Toast.makeText(mParentFragmentActivity,
@@ -1026,6 +1075,11 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                 return true;
 
             case R.id.tile_status_wireless_iface_write_nfc: {
+                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                    //Download the full version to unlock this version
+                    Utils.displayUpgradeMessage(mParentFragmentActivity, "Write Wi-Fi to NFC Tag");
+                    return true;
+                }
                 if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && wifiPassword == null)) {
                     //menu item should have been disabled, but anyways, you never know :)
                     Toast.makeText(mParentFragmentActivity,

@@ -578,5 +578,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="setup_wifi_nfc_tag">Set up Wi-Fi NFC Tag</string>
     <string name="write_tag">Write</string>
     <string name="done_label">DONE</string>
+    <string name="wifi_sharing">Wifi Sharing</string>
 
 </resources>
