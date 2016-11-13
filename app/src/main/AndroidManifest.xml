@@ -233,15 +233,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:value=".main.DDWRTMainActivity" />
         </activity>
         <!-- Deprecated -->
-        <activity
-            android:name=".tiles.status.wireless.WirelessIfaceQrCodeActivity"
-            android:label="@string/wifi_qr_code"
-            android:parentActivityName=".main.DDWRTMainActivity"
-            android:windowSoftInputMode="adjustResize" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".main.DDWRTMainActivity" />
-        </activity>
+        <!--<activity-->
+            <!--android:name=".tiles.status.wireless.WirelessIfaceQrCodeActivity"-->
+            <!--android:label="@string/wifi_qr_code"-->
+            <!--android:parentActivityName=".main.DDWRTMainActivity"-->
+            <!--android:windowSoftInputMode="adjustResize" >-->
+            <!--<meta-data-->
+                <!--android:name="android.support.PARENT_ACTIVITY"-->
+                <!--android:value=".main.DDWRTMainActivity" />-->
+        <!--</activity>-->
         <activity
             android:name=".tiles.status.wireless.share.WifiSharingActivity"
             android:label="@string/wifi_sharing"

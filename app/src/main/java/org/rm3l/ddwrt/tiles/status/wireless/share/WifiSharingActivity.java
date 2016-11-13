@@ -29,6 +29,10 @@ import org.rm3l.ddwrt.utils.Utils;
 public class WifiSharingActivity extends AppCompatActivity {
 
     public static final String SSID = "SSID";
+    public static final String ENC_TYPE = "ENC_TYPE";
+    public static final String PWD = "PWD";
+
+    public static final String WIFI_SHARING_DATA = "WIFI_SHARING_DATA";
 
     //Declaring All The Variables Needed
 
@@ -40,7 +44,8 @@ public class WifiSharingActivity extends AppCompatActivity {
     private String mRouterUuid;
     private String mSsid;
     private String mTitle;
-
+    private String mWifiEncType;
+    private String mWifiPassword;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -51,9 +56,9 @@ public class WifiSharingActivity extends AppCompatActivity {
         if (themeLight) {
             //Light
             setTheme(R.style.AppThemeLight);
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(ContextCompat.getColor(this,
-//                            android.R.color.white));
+            getWindow().getDecorView()
+                    .setBackgroundColor(ContextCompat.getColor(this,
+                            android.R.color.white));
         } else {
             //Default is Dark
             setTheme(R.style.AppThemeDark);
@@ -76,6 +81,8 @@ public class WifiSharingActivity extends AppCompatActivity {
         final Intent intent = getIntent();
         mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
         mSsid = intent.getStringExtra(SSID);
+        mWifiEncType = intent.getStringExtra(ENC_TYPE);
+        mWifiPassword = intent.getStringExtra(PWD);
 //        mWifiQrCodeString = intent.getStringExtra(WIFI_QR_CODE);
 
         mTitle = ("WiFi Sharing: " + mSsid);
@@ -107,7 +114,8 @@ public class WifiSharingActivity extends AppCompatActivity {
         the default action bar thus making the toolbar work like a normal
         action bar.
          */
-        viewPagerAdapter = new WifiSharingViewPagerAdapter(getSupportFragmentManager());
+        viewPagerAdapter = new WifiSharingViewPagerAdapter(
+                getSupportFragmentManager(), mRouterUuid, mSsid, mWifiEncType, mWifiPassword);
         viewPager.setAdapter(viewPagerAdapter);
         setSupportActionBar(mToolbar);
 
@@ -156,8 +164,6 @@ public class WifiSharingActivity extends AppCompatActivity {
          */
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-
-
     }
 
     @Override

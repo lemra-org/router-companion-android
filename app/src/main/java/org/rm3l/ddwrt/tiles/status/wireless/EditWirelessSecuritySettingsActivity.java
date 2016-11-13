@@ -42,6 +42,7 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.tiles.status.wireless.share.WifiSharingActivity;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
@@ -118,9 +119,9 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
         if (themeLight) {
             //Light
             setTheme(R.style.AppThemeLight);
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(ContextCompat.getColor(this,
-//                            android.R.color.white));
+            getWindow().getDecorView()
+                    .setBackgroundColor(ContextCompat.getColor(this,
+                            android.R.color.white));
         } else {
             //Default is Dark
             setTheme(R.style.AppThemeDark);
@@ -162,7 +163,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
 
         mParentIface = mNvramInfo.getProperty(WirelessIfaceTile.PARENT_IFACE);
 
-        mSsid = mNvramInfo.getProperty(WirelessIfaceQrCodeActivity.SSID,
+        mSsid = mNvramInfo.getProperty(WifiSharingActivity.SSID,
                 DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY);
 
         mHwAddr = mNvramInfo.getProperty(HWADDR,

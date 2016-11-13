@@ -7,21 +7,29 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import org.rm3l.ddwrt.tiles.status.wireless.share.fragments.WifiSharingNfcFragment;
 import org.rm3l.ddwrt.tiles.status.wireless.share.fragments.WifiSharingQrCodeFragment;
 
+import java.io.Serializable;
+
 /**
  * Created by rm3l on 11/11/2016.
  */
 
 public class WifiSharingViewPagerAdapter extends FragmentStatePagerAdapter {
 
-    public WifiSharingViewPagerAdapter(FragmentManager fm) {
+    private final WifiSharingData mWifiSharingData;
+
+    public WifiSharingViewPagerAdapter(FragmentManager fm,
+                                       String mRouterUuid, String mSsid,
+                                       String mWifiEncType, String mWifiPassword) {
         super(fm);
+        this.mWifiSharingData =
+                new WifiSharingData(mRouterUuid, mSsid, mWifiEncType, mWifiPassword);
     }
 
     @Override
     public Fragment getItem(int position) {
         switch (position) {
             case 0 :
-                return new WifiSharingQrCodeFragment();
+                return WifiSharingQrCodeFragment.newInstance(mWifiSharingData);
             case 1:
                 return new WifiSharingNfcFragment();
             default:
@@ -33,5 +41,20 @@ public class WifiSharingViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         return 2;           // As there are only 2 Tabs
+    }
+
+    public static final class WifiSharingData implements Serializable {
+
+        public final String mRouterUuid;
+        public final String mSsid;
+        public final String mWifiEncType;
+        public final String mWifiPassword;
+
+        public WifiSharingData(String mRouterUuid, String mSsid, String mWifiEncType, String mWifiPassword) {
+            this.mRouterUuid = mRouterUuid;
+            this.mSsid = mSsid;
+            this.mWifiEncType = mWifiEncType;
+            this.mWifiPassword = mWifiPassword;
+        }
     }
 }

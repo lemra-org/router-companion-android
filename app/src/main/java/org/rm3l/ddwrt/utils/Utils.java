@@ -109,7 +109,6 @@ import fr.nicolaspomepuy.discreetapprate.RetryPolicy;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.util.TypedValue.COMPLEX_UNIT_DIP;
-import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AD_FREE_APP_APPLICATION_ID;
@@ -127,6 +126,8 @@ public final class Utils {
     public static final String TAG = Utils.class.getSimpleName();
     public static final Random RANDOM = new Random();
     public static final String BEHAVIOR = "Behavior";
+
+    public static final String UTF_8 = "UTF-8";
 
     private static AtomicLong nextLoaderId = new AtomicLong(1);
 
@@ -701,7 +702,7 @@ public final class Utils {
             hex[index++] = HEX_CHAR_TABLE[v >>> 4];
             hex[index++] = HEX_CHAR_TABLE[v & 0xF];
         }
-        return new String(hex, UTF_8);
+        return new String(hex, com.google.common.base.Charsets.UTF_8);
     }
 
     public static String getHexString(short[] raw) {
@@ -713,7 +714,7 @@ public final class Utils {
             hex[index++] = HEX_CHAR_TABLE[v >>> 4];
             hex[index++] = HEX_CHAR_TABLE[v & 0xF];
         }
-        return new String(hex, UTF_8);
+        return new String(hex, com.google.common.base.Charsets.UTF_8);
     }
 
     public static String getHexString(short raw){
@@ -721,7 +722,7 @@ public final class Utils {
         int v = raw & 0xFF;
         hex[0] = HEX_CHAR_TABLE[v >>> 4];
         hex[1] = HEX_CHAR_TABLE[v & 0xF];
-        return new String(hex, UTF_8);
+        return new String(hex, com.google.common.base.Charsets.UTF_8);
     }
 
     public static void hideSoftKeyboard(@Nullable final Activity activity) {
@@ -940,5 +941,18 @@ public final class Utils {
         return (context.getResources().getConfiguration().screenLayout
                 & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
     }
+
+
+    @Nullable
+    public static String guessAppropriateEncoding(@NonNull final CharSequence contents) {
+        // Very crude at the moment
+        for (int i = 0; i < contents.length(); i++) {
+            if (contents.charAt(i) > 0xFF) {
+                return UTF_8;
+            }
+        }
+        return null;
+    }
+
 
 }

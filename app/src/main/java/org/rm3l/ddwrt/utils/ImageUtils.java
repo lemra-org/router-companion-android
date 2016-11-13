@@ -3,6 +3,7 @@ package org.rm3l.ddwrt.utils;
 import android.app.Activity;
 import android.app.Notification;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -16,6 +17,11 @@ import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
@@ -29,10 +35,12 @@ import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
 
 import java.net.URLEncoder;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.rm3l.ddwrt.utils.Utils.guessAppropriateEncoding;
 import static org.rm3l.ddwrt.utils.Utils.reportException;
 
 /**
@@ -41,6 +49,9 @@ import static org.rm3l.ddwrt.utils.Utils.reportException;
 public final class ImageUtils {
 
     private static final String TAG = ImageUtils.class.getSimpleName();
+
+    private static final int WHITE = 0xFFFFFFFF;
+    private static final int BLACK = 0xFF000000;
 
     private static TextDrawable.IBuilder TEXTDRAWABLE_BUILDER = TextDrawable.builder()
             .beginConfig()
@@ -387,5 +398,43 @@ public final class ImageUtils {
             super(routerModel);
         }
     }
+
+
+    @Nullable
+    public static Bitmap encodeAsBitmap(String contents, BarcodeFormat format, int imgWidth, int imgHeight) throws WriterException {
+        if (contents == null) {
+            return null;
+        }
+        Map<EncodeHintType, Object> hints = null;
+        final String encoding = guessAppropriateEncoding(contents);
+        if (encoding != null) {
+            hints = new EnumMap<>(EncodeHintType.class);
+            hints.put(EncodeHintType.CHARACTER_SET, encoding);
+        }
+        final MultiFormatWriter writer = new MultiFormatWriter();
+        final BitMatrix result;
+        try {
+            result = writer.encode(contents, format, imgWidth, imgHeight, hints);
+        } catch (IllegalArgumentException iae) {
+            // Unsupported format
+            return null;
+        }
+        final int width = result.getWidth();
+        final int height = result.getHeight();
+        final int[] pixels = new int[width * height];
+        for (int y = 0; y < height; y++) {
+            final int offset = y * width;
+            for (int x = 0; x < width; x++) {
+                pixels[offset + x] = result.get(x, y) ? BLACK : WHITE;
+            }
+        }
+
+        final Bitmap bitmap = Bitmap.createBitmap(width, height,
+                Bitmap.Config.ARGB_8888);
+        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+
+        return bitmap;
+    }
+
 
 }

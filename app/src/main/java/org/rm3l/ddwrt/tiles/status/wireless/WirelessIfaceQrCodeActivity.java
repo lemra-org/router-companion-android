@@ -56,6 +56,7 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.common.base.Strings;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -67,9 +68,11 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.tiles.status.wireless.share.WifiSharingActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
@@ -85,15 +88,15 @@ import java.util.Map;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.escapeString;
+import static org.rm3l.ddwrt.utils.ImageUtils.encodeAsBitmap;
 
+@Deprecated
 public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
 
-    public static final String WIFI_QR_CODE = "WIFI_QR_CODE";
-    public static final String SSID = "SSID";
     public static final int COMPRESSION_QUALITY = 100;
     public static final int DEFAULT_BITMAP_WIDTH = 600;
     public static final int DEFAULT_BITMAP_HEIGHT = 300;
-    public static final String UTF_8 = "UTF-8";
     private static final String LOG_TAG = WirelessIfaceQrCodeActivity.class.getSimpleName();
     /**
      * ***********************************************************
@@ -105,8 +108,6 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
      * http://code.google.com/p/zxing/source/browse/trunk/android/src/com/google/zxing/client/android/encode/QRCodeEncoder.java
      */
 
-    private static final int WHITE = 0xFFFFFFFF;
-    private static final int BLACK = 0xFF000000;
     private Toolbar mToolbar;
     private String mTitle;
     private String mRouterUuid;
@@ -122,53 +123,6 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
     @Nullable
     private InterstitialAd mInterstitialAd;
     private Bitmap mBitmapToExport;
-
-    @Nullable
-    private static Bitmap encodeAsBitmap(String contents, BarcodeFormat format, int imgWidth, int imgHeight) throws WriterException {
-        if (contents == null) {
-            return null;
-        }
-        Map<EncodeHintType, Object> hints = null;
-        final String encoding = guessAppropriateEncoding(contents);
-        if (encoding != null) {
-            hints = new EnumMap<>(EncodeHintType.class);
-            hints.put(EncodeHintType.CHARACTER_SET, encoding);
-        }
-        final MultiFormatWriter writer = new MultiFormatWriter();
-        final BitMatrix result;
-        try {
-            result = writer.encode(contents, format, imgWidth, imgHeight, hints);
-        } catch (IllegalArgumentException iae) {
-            // Unsupported format
-            return null;
-        }
-        final int width = result.getWidth();
-        final int height = result.getHeight();
-        final int[] pixels = new int[width * height];
-        for (int y = 0; y < height; y++) {
-            final int offset = y * width;
-            for (int x = 0; x < width; x++) {
-                pixels[offset + x] = result.get(x, y) ? BLACK : WHITE;
-            }
-        }
-
-        final Bitmap bitmap = Bitmap.createBitmap(width, height,
-                Bitmap.Config.ARGB_8888);
-        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
-
-        return bitmap;
-    }
-
-    @Nullable
-    private static String guessAppropriateEncoding(@NonNull final CharSequence contents) {
-        // Very crude at the moment
-        for (int i = 0; i < contents.length(); i++) {
-            if (contents.charAt(i) > 0xFF) {
-                return UTF_8;
-            }
-        }
-        return null;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,8 +153,17 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
 
         final Intent intent = getIntent();
         mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
-        mSsid = intent.getStringExtra(SSID);
-        mWifiQrCodeString = intent.getStringExtra(WIFI_QR_CODE);
+        mSsid = Strings.nullToEmpty(intent.getStringExtra(WifiSharingActivity.SSID));
+        final String wifiEncryptionType = intent.getStringExtra(WifiSharingActivity.ENC_TYPE);
+        final String wifiPassword = intent.getStringExtra(WifiSharingActivity.PWD);
+
+        //https://github.com/zxing/zxing/wiki/Barcode-Contents
+        //noinspection ConstantConditions
+        mWifiQrCodeString = String.format("WIFI:S:%s;T:%s;P:%s;%s;",
+                escapeString(mSsid),
+                wifiEncryptionType,
+                escapeString(nullToEmpty(wifiPassword)),
+                mSsid.isEmpty() ? "H:true" : "");
 
         mTitle = ("WiFi QR Code: " + mSsid);
 

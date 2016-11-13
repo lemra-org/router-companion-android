@@ -101,6 +101,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.TemperatureUnit.CELSIUS;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.TemperatureUnit.FAHRENHEIT;
+import static org.rm3l.ddwrt.tiles.status.wireless.share.WifiSharingActivity.SSID;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.COLON;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY;
@@ -1003,19 +1004,13 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                             "Missing parameters to generate QR-Code - try again later", Toast.LENGTH_SHORT).show();
                     return true;
                 }
-                //https://github.com/zxing/zxing/wiki/Barcode-Contents
-                //noinspection ConstantConditions
-                final String wifiQrCodeString = String.format("WIFI:S:%s;T:%s;P:%s;%s;",
-                        escapeString(wifiSsidNullToEmpty),
-                        wifiEncryptionType.toString().toUpperCase(),
-                        escapeString(nullToEmpty(wifiPassword)),
-                        wifiSsidNullToEmpty.isEmpty() ? "H:true" : "");
-
 
                 final Intent intent = new Intent(mParentFragmentActivity, WifiSharingActivity.class);
                 intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
-                intent.putExtra(WirelessIfaceQrCodeActivity.SSID, wifiSsidNullToEmpty);
-                intent.putExtra(WirelessIfaceQrCodeActivity.WIFI_QR_CODE, wifiQrCodeString);
+                intent.putExtra(SSID, wifiSsidNullToEmpty);
+                intent.putExtra(WifiSharingActivity.ENC_TYPE, wifiEncryptionType.toString().toUpperCase());
+                intent.putExtra(WifiSharingActivity.PWD, wifiPassword);
+//                intent.putExtra(WirelessIfaceQrCodeActivity.WIFI_QR_CODE, wifiQrCodeString);
 
                 final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
                         String.format("Generating QR Code and NFC tag data for '%s'", wifiSsidNullToEmpty),
@@ -1046,19 +1041,12 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                             "Missing parameters to generate QR-Code - try again later", Toast.LENGTH_SHORT).show();
                     return true;
                 }
-                //https://github.com/zxing/zxing/wiki/Barcode-Contents
-                //noinspection ConstantConditions
-                final String wifiQrCodeString = String.format("WIFI:S:%s;T:%s;P:%s;%s;",
-                        escapeString(wifiSsidNullToEmpty),
-                        wifiEncryptionType.toString().toUpperCase(),
-                        escapeString(nullToEmpty(wifiPassword)),
-                        wifiSsidNullToEmpty.isEmpty() ? "H:true" : "");
-
 
                 final Intent intent = new Intent(mParentFragmentActivity, WirelessIfaceQrCodeActivity.class);
                 intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
-                intent.putExtra(WirelessIfaceQrCodeActivity.SSID, wifiSsidNullToEmpty);
-                intent.putExtra(WirelessIfaceQrCodeActivity.WIFI_QR_CODE, wifiQrCodeString);
+                intent.putExtra(SSID, wifiSsidNullToEmpty);
+                intent.putExtra(WifiSharingActivity.ENC_TYPE, wifiEncryptionType.toString().toUpperCase());
+                intent.putExtra(WifiSharingActivity.PWD, wifiPassword);
 
                 final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
                         String.format("Generating QR Code for '%s'", wifiSsidNullToEmpty), false, false);
@@ -1206,7 +1194,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                 final NVRAMInfo nvramInfo = new NVRAMInfo()
                         .setProperty(WirelessIfaceTile.IFACE, this.iface)
                         .setProperty(WirelessIfaceTile.PARENT_IFACE, nullToEmpty(this.parentIface))
-                        .setProperty(WirelessIfaceQrCodeActivity.SSID, wifiSsidNullToEmpty)
+                        .setProperty(SSID, wifiSsidNullToEmpty)
                         .setProperty(EditWirelessSecuritySettingsActivity.HWADDR,
                                 nullToEmpty(hwAddr));
                 if (mNvramInfo != null) {
@@ -1215,7 +1203,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
                 final Intent intent = new Intent(mParentFragmentActivity, EditWirelessSecuritySettingsActivity.class);
                 intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
-                intent.putExtra(WirelessIfaceQrCodeActivity.SSID, wifiSsidNullToEmpty);
+                intent.putExtra(SSID, wifiSsidNullToEmpty);
                 intent.putExtra(EditWirelessSecuritySettingsActivity.WIRELESS_SECURITY_NVRAMINFO,
                         nvramInfo);
 
@@ -1242,7 +1230,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     }
 
     @NonNull
-    private String escapeString(@NonNull final String string) {
+    public static String escapeString(@NonNull final String string) {
         final List<Character> toEscape = Arrays.asList('\\', ';', ',', ':', '"');
         String output = "";
         for (int i = 0; i < string.length(); i++) {
