@@ -27,7 +27,7 @@ import java.io.IOException;
 /**
  * Created by rm3l on 10/11/2016.
  */
-class WriteWifiConfigToNfcDialog extends AlertDialog implements View.OnClickListener {
+public class WriteWifiConfigToNfcDialog extends AlertDialog implements View.OnClickListener {
 
     private static final String NFC_TOKEN_MIME_TYPE = "application/vnd.wfa.wsc";
 
@@ -49,7 +49,7 @@ class WriteWifiConfigToNfcDialog extends AlertDialog implements View.OnClickList
     private TextView mLabelView;
     private ProgressBar mProgressBar;
 
-    WriteWifiConfigToNfcDialog(Activity context, final String ssid, final String password) {
+    public WriteWifiConfigToNfcDialog(Activity context, final String ssid, final String password) {
         super(context);
         mContext = context;
         mWakeLock = ((PowerManager) context.getSystemService(Context.POWER_SERVICE))

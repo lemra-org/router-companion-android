@@ -31,7 +31,7 @@ public class WifiSharingViewPagerAdapter extends FragmentStatePagerAdapter {
             case 0 :
                 return WifiSharingQrCodeFragment.newInstance(mWifiSharingData);
             case 1:
-                return new WifiSharingNfcFragment();
+                return WifiSharingNfcFragment.newInstance(mWifiSharingData);
             default:
                 break;
         }
