@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#dfdfdf"
     android:layout_height="match_parent"
     tools:context=".tiles.status.wireless.share.WifiSharingActivity">
@@ -19,7 +20,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tile_status_wireless_sharing_toolbar"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        app:tabTextColor="@color/LightGrey"
+        app:tabSelectedTextColor="@color/white"
+        app:tabIndicatorColor="@color/win8_lime"
+        app:tabIndicatorHeight="4dp" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/tile_status_wireless_sharing_viewpager"

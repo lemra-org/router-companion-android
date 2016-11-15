@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    tools:context=".tiles.status.wireless.share.fragments.WifiSharingQrCodeFragment">
 
     <ScrollView
         android:id="@+id/tile_status_wireless_iface_qrcode_content"

@@ -993,11 +993,6 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         final String wifiSsidNullToEmpty = nullToEmpty(wifiSsid);
         switch (itemId) {
             case R.id.tile_status_wireless_iface_share: {
-                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                    //Download the full version to unlock this version
-                    Utils.displayUpgradeMessage(mParentFragmentActivity, "Share Wi-Fi via QR Code or NFC");
-                    return true;
-                }
                 if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && wifiPassword == null)) {
                     //menu item should have been disabled, but anyways, you never know :)
                     Toast.makeText(mParentFragmentActivity,

@@ -584,5 +584,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="error_wep_to_nfc_not_supported">Writing WEP configuration to NFC tag is not supported</string>
     <string name="error_turn_nfc_on">Please turn NFC on</string>
     <string name="error_nfc_not_available">NFC is not available on your device</string>
+    <string name="write_wifi_to_nfc_tag">Write Wifi To NFC Tag</string>
 
 </resources>

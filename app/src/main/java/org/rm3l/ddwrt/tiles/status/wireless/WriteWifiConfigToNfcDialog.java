@@ -1,7 +1,6 @@
 package org.rm3l.ddwrt.tiles.status.wireless;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.nfc.FormatException;
@@ -14,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.annotation.RequiresApi;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.tiles.status.wireless.share.WifiSharingActivity;
 
 import java.io.IOException;
 
@@ -58,19 +59,29 @@ public class WriteWifiConfigToNfcDialog extends AlertDialog implements View.OnCl
         mPassword = password;
     }
 
+    public void init() {
+
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         mView = getLayoutInflater().inflate(R.layout.write_wifi_config_to_nfc, null);
 
         setView(mView);
-        setInverseBackgroundForced(true);
+//        setInverseBackgroundForced(true);
         setTitle(R.string.write_to_nfc_tag);
-        setCancelable(true);
+        setCancelable(false);
         setButton(DialogInterface.BUTTON_NEUTRAL,
                 mContext.getResources().getString(R.string.write_tag), (OnClickListener) null);
         setButton(DialogInterface.BUTTON_NEGATIVE,
                 mContext.getResources().getString(R.string.cancel),
-                (OnClickListener) null);
+                new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        ((WifiSharingActivity) mContext).disableTagWriteMode();
+                        dialogInterface.dismiss();
+                    }
+                });
 
         mLabelView = (TextView) mView.findViewById(R.id.password_label);
         mProgressBar = (ProgressBar) mView.findViewById(R.id.progress_bar);
