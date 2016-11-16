@@ -1,4 +1,4 @@
-package org.rm3l.ddwrt.tiles.status.wireless.share.fragments;
+package org.rm3l.ddwrt.tiles.status.wireless.share.qrcode;
 
 import android.Manifest;
 import android.content.Intent;
@@ -19,20 +19,14 @@ import android.support.v4.content.FileProvider;
 import android.support.v4.content.PermissionChecker;
 import android.text.Html;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.common.base.Strings;
 import com.google.zxing.BarcodeFormat;
 
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
-import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceQrCodeActivity;
-import org.rm3l.ddwrt.tiles.status.wireless.share.WifiSharingActivity;
-import org.rm3l.ddwrt.tiles.status.wireless.share.WifiSharingViewPagerAdapter;
 import org.rm3l.ddwrt.tiles.status.wireless.share.WifiSharingViewPagerAdapter.WifiSharingData;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
@@ -59,8 +53,8 @@ import static org.rm3l.ddwrt.utils.ImageUtils.encodeAsBitmap;
 public class WifiSharingQrCodeFragment extends Fragment {
 
     public static final int COMPRESSION_QUALITY = 100;
-    public static final int DEFAULT_BITMAP_WIDTH = 600;
-    public static final int DEFAULT_BITMAP_HEIGHT = 300;
+    public static final int DEFAULT_BITMAP_WIDTH = 400;
+    public static final int DEFAULT_BITMAP_HEIGHT = 100;
     private File mFileToShare;
 
     public static Fragment newInstance(WifiSharingData wifiSharingData) {

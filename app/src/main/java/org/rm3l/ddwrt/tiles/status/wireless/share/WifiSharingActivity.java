@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NfcAdapter;
@@ -20,7 +19,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
@@ -31,9 +29,8 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
-import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile;
-import org.rm3l.ddwrt.tiles.status.wireless.WriteWifiConfigToNfcDialog;
-import org.rm3l.ddwrt.tiles.status.wireless.share.fragments.WifiSharingNfcFragment;
+import org.rm3l.ddwrt.tiles.status.wireless.share.nfc.WriteWifiConfigToNfcDialog;
+import org.rm3l.ddwrt.tiles.status.wireless.share.nfc.WifiSharingNfcFragment;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.Utils;
@@ -46,6 +43,9 @@ import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.WirelessEnc
 public class WifiSharingActivity extends AppCompatActivity {
 
     public static final String TAG = WifiSharingActivity.class.getSimpleName();
+
+
+    private static final String SAVED_WIFI_NFC_DIALOG_STATE = "wifi_nfc_dlg_state";
 
     public static final String SSID = "SSID";
     public static final String ENC_TYPE = "ENC_TYPE";
@@ -71,10 +71,11 @@ public class WifiSharingActivity extends AppCompatActivity {
     private NfcAdapter nfcAdapter;
     private BroadcastReceiver nfcStateChangeBroadcastReceiver;
 
-    private AlertDialog writeTagDialog;
+    private WriteWifiConfigToNfcDialog writeTagDialog;
     private PendingIntent nfcPendingIntent;
 
     private String[][] nfcTechLists;
+
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -204,7 +205,7 @@ public class WifiSharingActivity extends AppCompatActivity {
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         writeTagDialog = new WriteWifiConfigToNfcDialog(this,
-                mSsid, Strings.nullToEmpty(mWifiPassword));
+                mSsid, Strings.nullToEmpty(mWifiPassword), mWifiEncType);
 
 //        writeTagDialog = new AlertDialog.Builder(this)
 //                .setTitle(getString(R.string.write_to_tag))
@@ -311,7 +312,7 @@ public class WifiSharingActivity extends AppCompatActivity {
         isInWriteMode = true;
         writeTagDialog.dismiss();
         writeTagDialog = new WriteWifiConfigToNfcDialog(this,
-                mSsid, Strings.nullToEmpty(mWifiPassword));
+                mSsid, Strings.nullToEmpty(mWifiPassword), mWifiEncType);
         writeTagDialog.show();
     }
 

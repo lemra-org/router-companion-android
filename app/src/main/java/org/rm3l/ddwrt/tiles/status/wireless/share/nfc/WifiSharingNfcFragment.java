@@ -1,4 +1,4 @@
-package org.rm3l.ddwrt.tiles.status.wireless.share.fragments;
+package org.rm3l.ddwrt.tiles.status.wireless.share.nfc;
 
 import android.content.Intent;
 import android.os.Build;
@@ -15,10 +15,7 @@ import android.widget.Toast;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile;
-import org.rm3l.ddwrt.tiles.status.wireless.WriteWifiConfigToNfcDialog;
 import org.rm3l.ddwrt.tiles.status.wireless.share.WifiSharingActivity;
-import org.rm3l.ddwrt.tiles.status.wireless.share.WifiSharingViewPagerAdapter;
 import org.rm3l.ddwrt.tiles.status.wireless.share.WifiSharingViewPagerAdapter.WifiSharingData;
 import org.rm3l.ddwrt.utils.Utils;
 

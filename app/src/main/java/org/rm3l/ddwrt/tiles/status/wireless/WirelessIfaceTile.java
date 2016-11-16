@@ -77,6 +77,7 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.wireless.share.WifiSharingActivity;
+import org.rm3l.ddwrt.tiles.status.wireless.share.nfc.WriteWifiConfigToNfcDialog;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
@@ -192,14 +193,11 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
                 inflater.inflate(R.menu.tile_wireless_iface_options, menu);
 
-                final MenuItem qrCodeMenuItem = menu.findItem(R.id.tile_status_wireless_iface_qrcode);
-                final MenuItem writeNfcMenuItem = menu.findItem(R.id.tile_status_wireless_iface_write_nfc);
+                final MenuItem shareMenuItem = menu.findItem(R.id.tile_status_wireless_iface_share);
                 if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && wifiPassword == null)) {
-                    qrCodeMenuItem.setEnabled(false);
-                    writeNfcMenuItem.setEnabled(false);
+                    shareMenuItem.setEnabled(false);
                 } else {
-                    qrCodeMenuItem.setEnabled(true);
-                    writeNfcMenuItem.setEnabled(true);
+                    shareMenuItem.setEnabled(true);
                 }
 
                 popup.show();
@@ -1021,58 +1019,6 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                 }, 2500);
             }
 
-                return true;
-
-                //Deprecated
-            case R.id.tile_status_wireless_iface_qrcode: {
-                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                    //Download the full version to unlock this version
-                    Utils.displayUpgradeMessage(mParentFragmentActivity, "Generate Wi-Fi QR Code");
-                    return true;
-                }
-                if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && wifiPassword == null)) {
-                    //menu item should have been disabled, but anyways, you never know :)
-                    Toast.makeText(mParentFragmentActivity,
-                            "Missing parameters to generate QR-Code - try again later", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-
-                final Intent intent = new Intent(mParentFragmentActivity, WirelessIfaceQrCodeActivity.class);
-                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
-                intent.putExtra(SSID, wifiSsidNullToEmpty);
-                intent.putExtra(WifiSharingActivity.ENC_TYPE, wifiEncryptionType.toString().toUpperCase());
-                intent.putExtra(WifiSharingActivity.PWD, wifiPassword);
-
-                final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                        String.format("Generating QR Code for '%s'", wifiSsidNullToEmpty), false, false);
-                alertDialog.show();
-                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mParentFragmentActivity.startActivity(intent);
-                        alertDialog.cancel();
-                    }
-                }, 2500);
-            }
-                return true;
-
-            case R.id.tile_status_wireless_iface_write_nfc: {
-                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                    //Download the full version to unlock this version
-                    Utils.displayUpgradeMessage(mParentFragmentActivity, "Write Wi-Fi to NFC Tag");
-                    return true;
-                }
-                if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && wifiPassword == null)) {
-                    //menu item should have been disabled, but anyways, you never know :)
-                    Toast.makeText(mParentFragmentActivity,
-                            "Missing parameters to write NFC tag - try again later", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-                mWifiToNfcDialog = new WriteWifiConfigToNfcDialog(mParentFragmentActivity,
-                        wifiSsidNullToEmpty, nullToEmpty(wifiPassword));
-                mWifiToNfcDialog.show();
-            }
                 return true;
 
             case R.id.tile_status_wireless_iface_traffic_shaping: {

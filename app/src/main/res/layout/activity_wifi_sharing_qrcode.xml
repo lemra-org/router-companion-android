@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    tools:context=".tiles.status.wireless.share.fragments.WifiSharingQrCodeFragment">
+    tools:context=".tiles.status.wireless.share.qrcode.WifiSharingQrCodeFragment">
 
     <ScrollView
         android:id="@+id/tile_status_wireless_iface_qrcode_content"

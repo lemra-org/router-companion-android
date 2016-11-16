@@ -4,8 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import org.rm3l.ddwrt.tiles.status.wireless.share.fragments.WifiSharingNfcFragment;
-import org.rm3l.ddwrt.tiles.status.wireless.share.fragments.WifiSharingQrCodeFragment;
+import org.rm3l.ddwrt.tiles.status.wireless.share.nfc.WifiSharingNfcFragment;
+import org.rm3l.ddwrt.tiles.status.wireless.share.qrcode.WifiSharingQrCodeFragment;
 
 import java.io.Serializable;
 

@@ -1,4 +1,4 @@
-package org.rm3l.ddwrt.tiles.status.wireless;
+package org.rm3l.ddwrt.tiles.status.wireless.share.nfc;
 
 import android.app.Activity;
 import android.content.Context;
@@ -19,30 +19,37 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.crashlytics.android.Crashlytics;
 
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile;
+import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.WirelessEncryptionTypeForQrCode;
 import org.rm3l.ddwrt.tiles.status.wireless.share.WifiSharingActivity;
 
 import java.io.IOException;
+import java.util.Arrays;
+
+import be.brunoparmentier.wifikeyshare.model.WifiAuthType;
+import be.brunoparmentier.wifikeyshare.model.WifiNetwork;
+import be.brunoparmentier.wifikeyshare.utils.NfcUtils;
 
 /**
  * Created by rm3l on 10/11/2016.
  */
 public class WriteWifiConfigToNfcDialog extends AlertDialog implements View.OnClickListener {
 
-    private static final String NFC_TOKEN_MIME_TYPE = "application/vnd.wfa.wsc";
-
-    private static final String TAG = WriteWifiConfigToNfcDialog.class.getName();
-    private static final String PASSWORD_FORMAT = "102700%s%s";
-    private static final int HEX_RADIX = 16;
-    private static final char[] hexArray = "0123456789ABCDEF".toCharArray();
-    private static final String NETWORK_ID = "network_id";
-    private static final String SECURITY = "security";
+    private static final String TAG = WriteWifiConfigToNfcDialog.class.getSimpleName();
+    private static final String NETWORK_ID = "NETWORK_ID";
+    private static final String SECURITY = "SECURITY";
+    public static final String ENC_TYPE = "ENC_TYPE";
 
     private final PowerManager.WakeLock mWakeLock;
     private final String mSsid;
     private final String mPassword;
     private final Activity mContext;
+    private final String mWifiEncType;
 
     private View mView;
     private Button mSubmitButton;
@@ -50,17 +57,15 @@ public class WriteWifiConfigToNfcDialog extends AlertDialog implements View.OnCl
     private TextView mLabelView;
     private ProgressBar mProgressBar;
 
-    public WriteWifiConfigToNfcDialog(Activity context, final String ssid, final String password) {
+    public WriteWifiConfigToNfcDialog(Activity context, final String ssid, final String password,
+                                      final String mWifiEncType) {
         super(context);
         mContext = context;
         mWakeLock = ((PowerManager) context.getSystemService(Context.POWER_SERVICE))
                 .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WriteWifiConfigToNfcDialog:wakeLock");
         mSsid = ssid;
         mPassword = password;
-    }
-
-    public void init() {
-
+        this.mWifiEncType = mWifiEncType;
     }
 
     @Override
@@ -101,16 +106,14 @@ public class WriteWifiConfigToNfcDialog extends AlertDialog implements View.OnCl
     public void onClick(View v) {
         mWakeLock.acquire();
 
-        String passwordHex = byteArrayToHexString(mPassword.getBytes());
+        final NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(mContext);
 
-        final int pwdLength = mPassword.length();
-        String passwordLength = pwdLength >= HEX_RADIX
-                ? Integer.toString(pwdLength, HEX_RADIX)
-                : "0" + Character.forDigit(pwdLength, HEX_RADIX);
-
-        passwordHex = String.format(PASSWORD_FORMAT, passwordLength, passwordHex).toUpperCase();
-
-        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(mContext);
+        if (nfcAdapter == null) {
+            // Stop here, we definitely need NFC
+            Toast.makeText(mContext, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
+            dismiss();
+            return;
+        }
 
         nfcAdapter.enableReaderMode(mContext, new NfcAdapter.ReaderCallback() {
                     @Override
@@ -131,23 +134,54 @@ public class WriteWifiConfigToNfcDialog extends AlertDialog implements View.OnCl
         mProgressBar.setVisibility(View.VISIBLE);
     }
 
-//    public void saveState(Bundle state) {
-//        state.putInt(NETWORK_ID, mNetworkId);
-//        state.putInt(SECURITY, mSecurity);
-//    }
+    public void saveState(Bundle state) {
+        state.putString(NETWORK_ID, mSsid);
+        state.putString(SECURITY, mPassword);
+        state.putString(ENC_TYPE, mWifiEncType);
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void handleWriteNfcEvent(Tag tag) {
         Ndef ndef = Ndef.get(tag);
 
-        if (ndef != null) {
-            if (ndef.isWritable()) {
-                NdefRecord record = NdefRecord.createMime(
-                        NFC_TOKEN_MIME_TYPE,
-                        hexStringToByteArray(mPassword));
-                try {
-                    ndef.connect();
-                    ndef.writeNdefMessage(new NdefMessage(record));
+        try {
+            if (ndef != null) {
+                ndef.connect();
+
+                if (ndef.isWritable()) {
+                    final WifiAuthType wifiAuthType;
+
+                    final WirelessEncryptionTypeForQrCode encryptionType =
+                            WirelessEncryptionTypeForQrCode.valueOf(mWifiEncType);
+                    switch (encryptionType) {
+                        case NONE:
+                            wifiAuthType = WifiAuthType.OPEN;
+                            break;
+                        case WEP:
+                            wifiAuthType = WifiAuthType.WEP;
+                            break;
+                        case WPA:
+                            wifiAuthType = WifiAuthType.WPA2_PSK;
+                            break;
+                        default:
+                            throw new IllegalStateException();
+                    }
+
+                    final WifiNetwork wifiNetwork = new WifiNetwork(mSsid, wifiAuthType, mPassword, false);
+                    final NdefMessage ndefMessage = NfcUtils.generateNdefMessage(wifiNetwork);
+
+                    final int size = ndefMessage.toByteArray().length;
+
+                    if (ndef.getMaxSize() < size) {
+                        final String errorMsg = "Cannot write to this tag. Message size (" + size
+                                + " bytes) exceeds this tag's capacity of "
+                                + ndef.getMaxSize() + " bytes.";
+                        setViewText(mLabelView, errorMsg);
+                        Crashlytics.log(Log.ERROR, TAG, errorMsg);
+                        return;
+                    }
+
+                    ndef.writeNdefMessage(ndefMessage);
                     mContext.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -156,22 +190,22 @@ public class WriteWifiConfigToNfcDialog extends AlertDialog implements View.OnCl
                     });
                     setViewText(mLabelView, R.string.status_write_success);
                     setViewText(mCancelButton, R.string.done_label);
-                } catch (IOException e) {
-                    setViewText(mLabelView, R.string.status_failed_to_write);
-                    Log.e(TAG, "Unable to write Wi-Fi config to NFC tag.", e);
-                    return;
-                } catch (FormatException e) {
-                    setViewText(mLabelView, R.string.status_failed_to_write);
-                    Log.e(TAG, "Unable to write Wi-Fi config to NFC tag.", e);
-                    return;
+
+                } else {
+                    setViewText(mLabelView, R.string.status_tag_not_writable);
+                    Crashlytics.log(Log.ERROR, TAG, "Tag is not writable");
                 }
             } else {
-                setViewText(mLabelView, R.string.status_tag_not_writable);
-                Log.e(TAG, "Tag is not writable");
+                setViewText(mLabelView, "NFC tag is not writeable because it does not support NDEF. " +
+                        "Please use a different one supporting NDEF technology.");
+                final String[] techList = tag.getTechList();
+                Crashlytics.log(Log.ERROR, TAG,
+                        "Tag does not support NDEF. Tech List: " + Arrays.toString(techList));
             }
-        } else {
-            setViewText(mLabelView, R.string.status_tag_not_writable);
-            Log.e(TAG, "Tag does not support NDEF");
+        } catch (Exception e) {
+            setViewText(mLabelView, R.string.status_failed_to_write);
+            Log.e(TAG, "Unable to write Wi-Fi config to NFC tag.", e);
+            Crashlytics.logException(e);
         }
     }
 
@@ -184,35 +218,17 @@ public class WriteWifiConfigToNfcDialog extends AlertDialog implements View.OnCl
         super.dismiss();
     }
 
-
     private void setViewText(final TextView view, final int resid) {
+        setViewText(view, mContext.getString(resid));
+    }
+
+    private void setViewText(final TextView view, final CharSequence text) {
         mContext.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                view.setText(resid);
+                view.setText(text);
             }
         });
     }
 
-    private static byte[] hexStringToByteArray(String s) {
-        int len = s.length();
-        byte[] data = new byte[len / 2];
-
-        for (int i = 0; i < len; i += 2) {
-            data[i / 2] = (byte) ((Character.digit(s.charAt(i), HEX_RADIX) << 4)
-                    + Character.digit(s.charAt(i + 1), HEX_RADIX));
-        }
-
-        return data;
-    }
-
-    private static String byteArrayToHexString(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
-    }
 }
