@@ -1,8 +1,10 @@
 package org.rm3l.ddwrt.tiles.status.wireless.share;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v7.app.AppCompatActivity;
 
 import org.rm3l.ddwrt.tiles.status.wireless.share.nfc.WifiSharingNfcFragment;
 import org.rm3l.ddwrt.tiles.status.wireless.share.qrcode.WifiSharingQrCodeFragment;
@@ -15,12 +17,15 @@ import java.io.Serializable;
 
 public class WifiSharingViewPagerAdapter extends FragmentStatePagerAdapter {
 
+    private final Context mContext;
+
     private final WifiSharingData mWifiSharingData;
 
-    public WifiSharingViewPagerAdapter(FragmentManager fm,
+    public WifiSharingViewPagerAdapter(AppCompatActivity activity,
                                        String mRouterUuid, String mSsid,
                                        String mWifiEncType, String mWifiPassword) {
-        super(fm);
+        super(activity.getSupportFragmentManager());
+        this.mContext = activity;
         this.mWifiSharingData =
                 new WifiSharingData(mRouterUuid, mSsid, mWifiEncType, mWifiPassword);
     }
@@ -40,7 +45,11 @@ public class WifiSharingViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;           // As there are only 2 Tabs
+        // NFC isn't available on the device - just QR Code
+        if (!mContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)) {
+            return 1;
+        }
+        return 2; //QR-Code + NFC
     }
 
     public static final class WifiSharingData implements Serializable {

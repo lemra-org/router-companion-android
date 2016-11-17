@@ -180,6 +180,7 @@ public class NfcUtils {
             case WPA_PSK:
                 authType = AUTH_TYPE_WPA_PSK;
                 break;
+            case WPA:
             case WPA2_PSK:
                 authType = AUTH_TYPE_WPA2_PSK;
                 break;

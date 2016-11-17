@@ -24,7 +24,10 @@ public enum WifiAuthType {
     WPA_PSK("WPA PSK"),
     WPA_EAP("WPA EAP"),
     WPA2_EAP("WPA2 EAP"),
-    WPA2_PSK("WPA2 PSK");
+    WPA2_PSK("WPA2 PSK"),
+
+    NONE("Open"),
+    WPA("WPA");
 
     private final String printableName;
 

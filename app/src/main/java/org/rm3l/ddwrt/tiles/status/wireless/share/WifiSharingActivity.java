@@ -35,6 +35,10 @@ import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import be.brunoparmentier.wifikeyshare.model.WifiAuthType;
+import be.brunoparmentier.wifikeyshare.model.WifiNetwork;
+import be.brunoparmentier.wifikeyshare.utils.NfcUtils;
+
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.WirelessEncryptionTypeForQrCode.WEP;
 
 /**
@@ -148,7 +152,7 @@ public class WifiSharingActivity extends AppCompatActivity {
         action bar.
          */
         viewPagerAdapter = new WifiSharingViewPagerAdapter(
-                getSupportFragmentManager(), mRouterUuid, mSsid, mWifiEncType, mWifiPassword);
+                this, mRouterUuid, mSsid, mWifiEncType, mWifiPassword);
         viewPager.setAdapter(viewPagerAdapter);
         setSupportActionBar(mToolbar);
 
@@ -228,7 +232,9 @@ public class WifiSharingActivity extends AppCompatActivity {
         if (isNfcAvailable()) {
             initializeNfcStateChangeListener();
             setupForegroundDispatch();
-//            nfcAdapter.setNdefPushMessage(NfcUtils.generateNdefMessage(wifiNetwork), this);
+            final WifiNetwork wifiNetwork = new WifiNetwork(mSsid, WifiAuthType.valueOf(mWifiEncType),
+                    mWifiPassword, false);
+            nfcAdapter.setNdefPushMessage(NfcUtils.generateNdefMessage(wifiNetwork), this);
         }
     }
 

@@ -101,7 +101,6 @@ public class WriteWifiConfigToNfcDialog extends AlertDialog implements View.OnCl
         mCancelButton = getButton(DialogInterface.BUTTON_NEGATIVE);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onClick(View v) {
         mWakeLock.acquire();
@@ -115,17 +114,30 @@ public class WriteWifiConfigToNfcDialog extends AlertDialog implements View.OnCl
             return;
         }
 
-        nfcAdapter.enableReaderMode(mContext, new NfcAdapter.ReaderCallback() {
-                    @Override
-                    public void onTagDiscovered(Tag tag) {
-                        handleWriteNfcEvent(tag);
-                    }
-                }, NfcAdapter.FLAG_READER_NFC_A |
-                        NfcAdapter.FLAG_READER_NFC_B |
-                        NfcAdapter.FLAG_READER_NFC_BARCODE |
-                        NfcAdapter.FLAG_READER_NFC_F |
-                        NfcAdapter.FLAG_READER_NFC_V,
-                null);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            nfcAdapter.enableReaderMode(mContext, new NfcAdapter.ReaderCallback() {
+                        @Override
+                        public void onTagDiscovered(Tag tag) {
+                            handleWriteNfcEvent(tag);
+                        }
+                    }, NfcAdapter.FLAG_READER_NFC_A |
+                            NfcAdapter.FLAG_READER_NFC_B |
+                            NfcAdapter.FLAG_READER_NFC_BARCODE |
+                            NfcAdapter.FLAG_READER_NFC_F |
+                            NfcAdapter.FLAG_READER_NFC_V,
+                    null);
+        } else {
+            //Pre-KK devices
+            final WifiNetwork wifiNetwork = new WifiNetwork(
+                    mSsid,
+                    WifiAuthType.valueOf(mWifiEncType),
+                    mPassword, false);
+            nfcAdapter.setNdefPushMessage(NfcUtils.generateNdefMessage(wifiNetwork), mContext);
+//            //TODO Pre-KK devices
+//            // Stop here, we definitely need NFC
+//            Toast.makeText(mContext, "This device doesn't support writing NFC tags.", Toast.LENGTH_LONG).show();
+//            dismiss();
+        }
 
         mSubmitButton.setVisibility(View.GONE);
 
@@ -140,7 +152,6 @@ public class WriteWifiConfigToNfcDialog extends AlertDialog implements View.OnCl
         state.putString(ENC_TYPE, mWifiEncType);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void handleWriteNfcEvent(Tag tag) {
         Ndef ndef = Ndef.get(tag);
 
@@ -149,23 +160,23 @@ public class WriteWifiConfigToNfcDialog extends AlertDialog implements View.OnCl
                 ndef.connect();
 
                 if (ndef.isWritable()) {
-                    final WifiAuthType wifiAuthType;
+                    final WifiAuthType wifiAuthType = WifiAuthType.valueOf(mWifiEncType);
 
-                    final WirelessEncryptionTypeForQrCode encryptionType =
-                            WirelessEncryptionTypeForQrCode.valueOf(mWifiEncType);
-                    switch (encryptionType) {
-                        case NONE:
-                            wifiAuthType = WifiAuthType.OPEN;
-                            break;
-                        case WEP:
-                            wifiAuthType = WifiAuthType.WEP;
-                            break;
-                        case WPA:
-                            wifiAuthType = WifiAuthType.WPA2_PSK;
-                            break;
-                        default:
-                            throw new IllegalStateException();
-                    }
+//                    final WirelessEncryptionTypeForQrCode encryptionType =
+//                            WirelessEncryptionTypeForQrCode.valueOf(mWifiEncType);
+//                    switch (encryptionType) {
+//                        case NONE:
+//                            wifiAuthType = WifiAuthType.OPEN;
+//                            break;
+//                        case WEP:
+//                            wifiAuthType = WifiAuthType.WEP;
+//                            break;
+//                        case WPA:
+//                            wifiAuthType = WifiAuthType.WPA2_PSK;
+//                            break;
+//                        default:
+//                            throw new IllegalStateException();
+//                    }
 
                     final WifiNetwork wifiNetwork = new WifiNetwork(mSsid, wifiAuthType, mPassword, false);
                     final NdefMessage ndefMessage = NfcUtils.generateNdefMessage(wifiNetwork);
