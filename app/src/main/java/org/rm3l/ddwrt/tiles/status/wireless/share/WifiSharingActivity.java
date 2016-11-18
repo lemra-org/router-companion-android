@@ -206,7 +206,13 @@ public class WifiSharingActivity extends AppCompatActivity {
         changes when a viewpager page changes.
          */
 
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+//        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        viewPager.addOnPageChangeListener(new
+                TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        // Now we'll add a tab selected listener to set ViewPager's current item
+        tabLayout.addOnTabSelectedListener(new
+                TabLayout.ViewPagerOnTabSelectedListener(viewPager));
 
         writeTagDialog = new WriteWifiConfigToNfcDialog(this,
                 mSsid, Strings.nullToEmpty(mWifiPassword), mWifiEncType);
