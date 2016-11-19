@@ -1445,13 +1445,13 @@ public class RouterManagementActivity
     @Override
     public void onCustomTabsConnected() {
         //We may make UI changes
-        Crashlytics.log(Log.INFO, LOG_TAG, "onCustomTabsConnected");
+        Crashlytics.log(Log.DEBUG, LOG_TAG, "onCustomTabsConnected");
     }
 
     @Override
     public void onCustomTabsDisconnected() {
         //We may make UI changes
-        Crashlytics.log(Log.INFO, LOG_TAG, "onCustomTabsDisconnected");
+        Crashlytics.log(Log.DEBUG, LOG_TAG, "onCustomTabsDisconnected");
     }
 
     public enum RoutersListRefreshCause {

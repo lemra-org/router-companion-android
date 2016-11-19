@@ -2211,13 +2211,13 @@ public class DDWRTMainActivity extends AppCompatActivity
     @Override
     public void onCustomTabsConnected() {
         //We may make UI changes
-        Crashlytics.log(Log.INFO, TAG, "onCustomTabsConnected");
+        Crashlytics.log(Log.DEBUG, TAG, "onCustomTabsConnected");
     }
 
     @Override
     public void onCustomTabsDisconnected() {
         //We may make UI changes
-        Crashlytics.log(Log.INFO, TAG, "onCustomTabsDisconnected");
+        Crashlytics.log(Log.DEBUG, TAG, "onCustomTabsDisconnected");
     }
 
     public class NetworkChangeReceiver extends BroadcastReceiver {
