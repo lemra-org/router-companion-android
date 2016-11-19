@@ -76,7 +76,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!-- To write NFC tag (for WiFi networks), or 'Touch to connect' feature -->
     <uses-permission android:name="android.permission.NFC" />
     <!-- NFC is an option here. The app still functions if NFC isn't present -->
-    <uses-feature android:name="android.hardware.nfc" android:required="false" />
+    <!--<uses-feature android:name="android.hardware.nfc" android:required="false" />-->
 
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 

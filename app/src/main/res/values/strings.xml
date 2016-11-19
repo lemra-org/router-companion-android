@@ -585,5 +585,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="error_turn_nfc_on">Please turn NFC on</string>
     <string name="error_nfc_not_available">NFC is not available on your device</string>
     <string name="write_wifi_to_nfc_tag">Write Wifi To NFC Tag</string>
+    <string name="share_via_nfc_or_qr_code">Share via NFC or QR-Code</string>
+    <string name="share_via_qr_code">Share via QR-Code</string>
 
 </resources>

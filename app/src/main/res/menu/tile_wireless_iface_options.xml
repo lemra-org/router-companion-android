@@ -53,7 +53,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <item
         android:id="@+id/tile_status_wireless_iface_share"
         android:orderInCategory="2"
-        android:title="Share via NFC or QR-Code"
+        android:title="@string/share_via_nfc_or_qr_code"
         app:showAsAction="never" />
 
     <!-- tc filter add dev $IF_LAN parent 1: protocol ip prio 7 u32 match ip dst 0.0.0.0/0 flowid 1:190 -->

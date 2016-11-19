@@ -95,6 +95,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
+import be.brunoparmentier.wifikeyshare.utils.NfcUtils;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -198,6 +199,11 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                     shareMenuItem.setEnabled(false);
                 } else {
                     shareMenuItem.setEnabled(true);
+                }
+                if (NfcUtils.hasNFCHardware(mParentFragmentActivity)) {
+                    shareMenuItem.setTitle(R.string.share_via_nfc_or_qr_code);
+                } else {
+                    shareMenuItem.setTitle(R.string.share_via_qr_code);
                 }
 
                 popup.show();
@@ -1006,7 +1012,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 //                intent.putExtra(WirelessIfaceQrCodeActivity.WIFI_QR_CODE, wifiQrCodeString);
 
                 final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                        String.format("Generating QR Code and NFC tag data for '%s'", wifiSsidNullToEmpty),
+                        String.format("Generating data to share for '%s'", wifiSsidNullToEmpty),
                         false, false);
                 alertDialog.show();
                 ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);

@@ -18,12 +18,16 @@
 
 package be.brunoparmentier.wifikeyshare.utils;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.wifi.WifiConfiguration;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.NdefFormatable;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.IOException;
@@ -351,5 +355,19 @@ public class NfcUtils {
         } else if (authType == AUTH_TYPE_OPEN) {
             allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
         }
+    }
+
+    public static boolean hasNFCHardware(@Nullable final Context context) {
+        if (context == null) {
+            return false;
+        }
+        final boolean hasNfcSystemFeature = context.getPackageManager()
+                .hasSystemFeature(PackageManager.FEATURE_NFC);
+        if (!hasNfcSystemFeature) {
+            return false;
+        }
+        //Just in case some manufactures (such as HTC) do not report the FEATURE_NFC appropriately
+        final NfcAdapter defaultAdapter = NfcAdapter.getDefaultAdapter(context);
+        return (defaultAdapter != null);
     }
 }

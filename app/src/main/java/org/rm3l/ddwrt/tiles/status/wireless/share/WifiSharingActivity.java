@@ -171,7 +171,6 @@ public class WifiSharingActivity extends AppCompatActivity {
          */
 
         final TabLayout.Tab qrCode = tabLayout.newTab();
-        final TabLayout.Tab nfc = tabLayout.newTab();
 
         /*
         Setting Title text for our tabs respectively
@@ -179,8 +178,6 @@ public class WifiSharingActivity extends AppCompatActivity {
 //        qrCode.setText("QR Code");
         qrCode.setIcon(R.drawable.ic_qrcode_white_24dp);
 
-        nfc.setIcon(R.drawable.ic_nfc_white_24dp);
-//        nfc.setText("NFC");
 
         /*
         Adding the tab view to our tablayout at appropriate positions
@@ -188,7 +185,13 @@ public class WifiSharingActivity extends AppCompatActivity {
         the tablayout and like wise for other tabs as well
          */
         tabLayout.addTab(qrCode, 0);
-        tabLayout.addTab(nfc, 1);
+
+        if (NfcUtils.hasNFCHardware(this)) {
+            final TabLayout.Tab nfc = tabLayout.newTab();
+            nfc.setIcon(R.drawable.ic_nfc_white_24dp);
+//        nfc.setText("NFC");
+            tabLayout.addTab(nfc, 1);
+        }
 
         /*
         TabTextColor sets the color for the title of the tabs, passing a ColorStateList here makes

@@ -1,7 +1,6 @@
 package org.rm3l.ddwrt.tiles.status.wireless.share;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +9,8 @@ import org.rm3l.ddwrt.tiles.status.wireless.share.nfc.WifiSharingNfcFragment;
 import org.rm3l.ddwrt.tiles.status.wireless.share.qrcode.WifiSharingQrCodeFragment;
 
 import java.io.Serializable;
+
+import be.brunoparmentier.wifikeyshare.utils.NfcUtils;
 
 /**
  * Created by rm3l on 11/11/2016.
@@ -46,7 +47,7 @@ public class WifiSharingViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         // NFC isn't available on the device - just QR Code
-        if (!mContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)) {
+        if (!NfcUtils.hasNFCHardware(mContext)) {
             return 1;
         }
         return 2; //QR-Code + NFC
