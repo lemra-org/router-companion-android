@@ -73,7 +73,8 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
             ROUTER_USERNAME + " TEXT NOT NULL, " +
             ROUTER_PASSWORD + " TEXT DEFAULT NULL, " +
             ROUTER_PRIVKEY + " TEXT DEFAULT NULL, " +
-            ROUTER_FIRMWARE + " TEXT DEFAULT NULL" +
+            ROUTER_FIRMWARE + " TEXT DEFAULT NULL, " +
+            ORDER_INDEX + " INTEGER NOT NULL DEFAULT 1000" +
             ");";
 
     /*
