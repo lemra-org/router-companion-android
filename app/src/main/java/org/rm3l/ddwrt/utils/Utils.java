@@ -459,13 +459,31 @@ public final class Utils {
             //Only On Wi-Fi
             final ConnectivityManager connMgr = (ConnectivityManager) ctx.
                     getSystemService(Context.CONNECTIVITY_SERVICE);
-            final NetworkInfo wifiNetworkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-            final boolean isWifiConn = wifiNetworkInfo.isConnected();
-            final NetworkInfo mobileNetworkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-            final boolean isMobileConn = mobileNetworkInfo.isConnected();
-            Crashlytics.log(Log.DEBUG, TAG, "Wifi connected: " + isWifiConn);
-            Crashlytics.log(Log.DEBUG, TAG, "Mobile connected: " + isMobileConn);
-            return !(isMobileConn && !isWifiConn);
+            final NetworkInfo activeNetworkInfo = connMgr.getActiveNetworkInfo(); //default route to outgoing connections
+            if (activeNetworkInfo == null) {
+                Crashlytics.log(Log.DEBUG, TAG, "No active connection");
+                throw new DDWRTCompanionException("An active network connection is needed");
+            }
+
+            //Just for debugging
+            if (activeNetworkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+                Crashlytics.log(Log.DEBUG, TAG, "Active Network Connection Type: WIFI");
+            } else if (activeNetworkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
+                Crashlytics.log(Log.DEBUG, TAG, "Active Network Connection Type: MOBILE");
+            }
+            //END Debugging
+
+            if (activeNetworkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
+                //Forbid even if network is not connected,
+                // because user has expressed the requirement not to use such network
+                return false;
+            }
+
+//            final NetworkInfo wifiNetworkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+//            final boolean isWifiConn = wifiNetworkInfo.isConnected();
+//            final NetworkInfo mobileNetworkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+//            final boolean isMobileConn = mobileNetworkInfo.isConnected();
+//            return !(isMobileConn && !isWifiConn);
         }
         return true;
     }
@@ -530,8 +548,15 @@ public final class Utils {
         if (connectivityManager == null) {
             return null;
         }
-        final NetworkInfo myNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (myNetworkInfo == null || !myNetworkInfo.isConnected()) {
+
+        final NetworkInfo myNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        if (myNetworkInfo == null ||
+                myNetworkInfo.getType() != ConnectivityManager.TYPE_WIFI) {
+            return null;
+        }
+
+//        final NetworkInfo myNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (!myNetworkInfo.isConnected()) {
             return null;
         }
 
