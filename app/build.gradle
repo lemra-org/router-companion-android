@@ -508,6 +508,10 @@ dependencies {
         transitive = true;
     }
 
+    compile ('org.rm3l:maoni-doorbell:0.1.1') {
+        transitive = false;
+    }
+
     //LeakCanary - to detect memory leaks (only in debug flavor)
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
