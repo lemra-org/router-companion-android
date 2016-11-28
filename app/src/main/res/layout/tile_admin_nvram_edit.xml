@@ -83,7 +83,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/tile_admin_nvram_edit_value"
                     android:layout_weight="1"
                     android:layout_width="fill_parent"
-                    android:layout_height="0dip"
+                    android:layout_height="wrap_content"
                     android:hint="@string/nvram_var_value"
                     android:isScrollContainer="true"
                     android:drawableBottom="@android:color/holo_blue_dark"
