@@ -78,7 +78,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
                 android:layout_marginTop="4dp">
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:selectAllOnFocus="true"
                     android:id="@+id/tile_admin_nvram_edit_value"
                     android:layout_weight="1"
@@ -90,7 +90,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="textMultiLine" >
                     <requestFocus/>
-                </EditText>
+                </android.support.design.widget.TextInputEditText>
             </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>

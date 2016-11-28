@@ -80,7 +80,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:selectAllOnFocus="true"
                     android:id="@+id/router_add_local_ssid_lookup_ip"
                     android:layout_width="match_parent"
@@ -102,7 +102,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:selectAllOnFocus="true"
                     android:id="@+id/router_add_local_ssid_lookup_port"
                     android:layout_width="match_parent"

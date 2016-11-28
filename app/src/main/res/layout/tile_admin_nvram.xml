@@ -100,7 +100,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:selectAllOnFocus="true"
                     android:id="@+id/tile_admin_nvram_filter"
                     android:layout_width="match_parent"

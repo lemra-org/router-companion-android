@@ -204,7 +204,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <EditText
+                    <android.support.design.widget.TextInputEditText
                         android:selectAllOnFocus="true"
                         android:id="@+id/openvpn_client_settings_ca_cert"
                         android:layout_width="fill_parent"
@@ -238,21 +238,21 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                <EditText
-                    android:selectAllOnFocus="true"
-                    android:id="@+id/openvpn_client_settings_public_client_cert"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dip"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_weight="1"
-                    android:drawableBottom="@android:color/holo_blue_dark"
-                    android:hint="@string/openvpncl_setting_public_client_cert_hint"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="textMultiLine"
-                    android:isScrollContainer="true" />
+                    <android.support.design.widget.TextInputEditText
+                        android:selectAllOnFocus="true"
+                        android:id="@+id/openvpn_client_settings_public_client_cert"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dip"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_weight="1"
+                        android:drawableBottom="@android:color/holo_blue_dark"
+                        android:hint="@string/openvpncl_setting_public_client_cert_hint"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="textMultiLine"
+                        android:isScrollContainer="true" />
                 </android.support.design.widget.TextInputLayout>
 
                 <!-- Private Client Key -->
@@ -271,7 +271,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <EditText
+                    <android.support.design.widget.TextInputEditText
                         android:selectAllOnFocus="true"
                         android:id="@+id/openvpn_client_settings_private_client_key"
                         android:layout_width="fill_parent"
@@ -499,7 +499,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginTop="@dimen/activity_vertical_margin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-                        <EditText
+                        <android.support.design.widget.TextInputEditText
                             android:selectAllOnFocus="true"
                             android:id="@+id/openvpn_client_settings_advanced_options_tls_auth_key"
                             android:layout_width="fill_parent"
@@ -532,7 +532,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginTop="@dimen/activity_vertical_margin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-                        <EditText
+                        <android.support.design.widget.TextInputEditText
                             android:selectAllOnFocus="true"
                             android:id="@+id/openvpn_client_settings_advanced_options_additional_config"
                             android:layout_width="fill_parent"
@@ -565,7 +565,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginTop="@dimen/activity_vertical_margin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-                        <EditText
+                        <android.support.design.widget.TextInputEditText
                             android:selectAllOnFocus="true"
                             android:id="@+id/openvpn_client_settings_advanced_options_policy_based_routing"
                             android:layout_width="fill_parent"
@@ -598,21 +598,21 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginTop="@dimen/activity_vertical_margin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-                    <EditText
-                        android:selectAllOnFocus="true"
-                        android:id="@+id/openvpn_client_settings_advanced_options_pkcs12_key"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dip"
-                        android:layout_marginBottom="4dp"
-                        android:layout_marginLeft="4dp"
-                        android:layout_marginRight="4dp"
-                        android:layout_marginTop="4dp"
-                        android:layout_weight="1"
-                        android:drawableBottom="@android:color/holo_blue_dark"
-                        android:hint="@string/openvpncl_setting_pkcs12_key_hint"
-                        android:imeOptions="flagNoExtractUi"
-                        android:inputType="textMultiLine"
-                        android:isScrollContainer="true" />
+                        <android.support.design.widget.TextInputEditText
+                            android:selectAllOnFocus="true"
+                            android:id="@+id/openvpn_client_settings_advanced_options_pkcs12_key"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dip"
+                            android:layout_marginBottom="4dp"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_weight="1"
+                            android:drawableBottom="@android:color/holo_blue_dark"
+                            android:hint="@string/openvpncl_setting_pkcs12_key_hint"
+                            android:imeOptions="flagNoExtractUi"
+                            android:inputType="textMultiLine"
+                            android:isScrollContainer="true" />
                     </android.support.design.widget.TextInputLayout>
 
                     <!-- Static Key -->
@@ -631,7 +631,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginTop="@dimen/activity_vertical_margin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-                        <EditText
+                        <android.support.design.widget.TextInputEditText
                             android:selectAllOnFocus="true"
                             android:id="@+id/openvpn_client_settings_advanced_options_static_key"
                             android:layout_width="fill_parent"
