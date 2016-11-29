@@ -72,9 +72,9 @@ public final class DDWRTCompanionConstants {
             "8" +
             "I";
 
-    public static final String REMOTE_HELP_WEBSITE = "http://ddwrt-companion.rm3l.org";
+    public static final String REMOTE_HELP_WEBSITE = "http://help.ddwrt-companion.rm3l.org";
 
-    public static final String REMOTE_HELP_WEBSITE_CHANGELOG = "http://ddwrt-companion.rm3l.org/doc/release-notes.html";
+    public static final String REMOTE_HELP_WEBSITE_CHANGELOG = "http://help.ddwrt-companion.rm3l.org/doc/release-notes.html";
 
     public static final int DOORBELL_APPID = 0;
     public static final String DOORBELL_APIKEY = \"fake-api-key\";
