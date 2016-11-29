@@ -163,6 +163,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:orderInCategory="2"
                     android:title="Force show welcome screen"
                     app:showAsAction="never" />
+                <item
+                    android:id="@+id/debug_restore_deleted_routers"
+                    android:orderInCategory="3"
+                    android:title="Restore deleted routers"
+                    app:showAsAction="never" />
             </menu>
         </item>
 

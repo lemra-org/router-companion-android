@@ -584,11 +584,14 @@ public class RouterManagementActivity
                 if (BuildConfig.DEBUG) {
                     final boolean checked = item.isChecked();
                     item.setChecked(!checked);
-                    mPreferences.edit().putBoolean(DEBUG_LEAKCANARY_PREF_KEY, !checked).commit();
+                    final boolean commit =
+                            mPreferences.edit().putBoolean(DEBUG_LEAKCANARY_PREF_KEY, !checked)
+                                    .commit();
                     Utils.requestBackup(RouterManagementActivity.this);
                     //Restart activity
                     final ProgressDialog alertDialog = ProgressDialog.show(this,
-                            String.format("%sabling LeakCanary", checked ? "Dis" : "En"), "Please wait...", true);
+                            String.format("%sabling LeakCanary", checked ? "Dis" : "En"),
+                            "Preference update commit: " + commit + ". Please wait...", true);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -602,13 +605,44 @@ public class RouterManagementActivity
                     }, 2000);
 
                 } else {
-                    Crashlytics.log(Log.WARN, LOG_TAG, "LeakCanary menu option should not be visible...");
+                    Crashlytics.log(Log.WARN, LOG_TAG,
+                            "[DEBUG] LeakCanary menu option should not be visible...");
                 }
                 return true;
 
             case R.id.debug_welcome_screen:
-                if (welcomeScreen != null) {
-                    welcomeScreen.forceShow();
+                if (BuildConfig.DEBUG) {
+                    if (welcomeScreen != null) {
+                        welcomeScreen.forceShow();
+                    }
+                } else {
+                    Crashlytics.log(Log.WARN, LOG_TAG,
+                            "[DEBUG] 'Force-show welcome screen' menu option should not be visible...");
+                }
+                return true;
+
+            case R.id.debug_restore_deleted_routers:
+                if (BuildConfig.DEBUG) {
+                    final List<Router> allRoutersIncludingArchived = dao.getAllRoutersIncludingArchived();
+                    int nbRoutersRestored = 0;
+                    for (final Router potentiallyArchivedRouter : allRoutersIncludingArchived) {
+                        if (potentiallyArchivedRouter == null
+                                || !potentiallyArchivedRouter.isArchived()) {
+                            continue;
+                        }
+                        potentiallyArchivedRouter.setArchived(false);
+                        dao.updateRouter(potentiallyArchivedRouter);
+                        nbRoutersRestored++;
+                    }
+                    if (nbRoutersRestored > 0) {
+                        doRefreshRoutersListWithSpinner(RoutersListRefreshCause.DATA_SET_CHANGED, null);
+                        final String msg = "[DEBUG] Restored " + nbRoutersRestored + " routers.";
+                        Crashlytics.log(Log.DEBUG, LOG_TAG, msg);
+                        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Crashlytics.log(Log.WARN, LOG_TAG,
+                            "[DEBUG] 'Restore deleted routers' menu option should not be visible...");
                 }
                 return true;
 
