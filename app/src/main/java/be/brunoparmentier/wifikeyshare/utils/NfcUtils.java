@@ -170,9 +170,10 @@ public class NfcUtils {
                 NfcUtils.NFC_TOKEN_MIME_TYPE.getBytes(Charset.forName("US-ASCII")),
                 new byte[0],
                 payload);
-        NdefRecord aarRecord = NdefRecord.createApplicationRecord(PACKAGE_NAME);
+//        NdefRecord aarRecord = NdefRecord.createApplicationRecord(PACKAGE_NAME);
 
-        return new NdefMessage(new NdefRecord[] {mimeRecord, aarRecord});
+//        return new NdefMessage(new NdefRecord[] {mimeRecord, aarRecord});
+        return new NdefMessage(new NdefRecord[] {mimeRecord});
     }
 
     private static byte[] generateNdefPayload(WifiNetwork wifiNetwork) {

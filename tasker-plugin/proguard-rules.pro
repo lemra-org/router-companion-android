@@ -78,6 +78,12 @@
 #
 # disagrees with instructions provided by Guava project: https://code.google.com/p/guava-libraries/wiki/UsingProGuardWithGuava
 
+-dontwarn com.google.errorprone.annotations.**
+-dontwarn om.google.j2objc.annotations.**
+
+-dontwarn com.google.common.collect.**
+
+
 -keep class com.google.common.io.Resources {
     public static <methods>;
 }

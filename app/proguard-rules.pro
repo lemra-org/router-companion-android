@@ -268,6 +268,11 @@
 #
 # disagrees with instructions provided by Guava project: https://code.google.com/p/guava-libraries/wiki/UsingProGuardWithGuava
 
+-dontwarn com.google.errorprone.annotations.**
+-dontwarn om.google.j2objc.annotations.**
+
+-dontwarn com.google.common.collect.**
+
 -keep class com.google.common.io.Resources {
     public static <methods>;
 }
@@ -285,6 +290,12 @@
 
 -keep class com.google.common.collect.MapMakerInternalMap$ReferenceEntry
 -keep class com.google.common.cache.LocalCache$ReferenceEntry
+
+-dontwarn com.google.common.collect.MinMaxPriorityQueue
+
+-keepclasseswithmembers public class * {
+    public static void main(java.lang.String[]);
+}
 
 # http://stackoverflow.com/questions/9120338/proguard-configuration-for-guava-with-obfuscation-and-optimization
 -dontwarn javax.annotation.**
