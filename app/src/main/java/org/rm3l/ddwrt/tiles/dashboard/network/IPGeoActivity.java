@@ -46,6 +46,8 @@ import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 import org.rm3l.ddwrt.widgets.map.MyOwnItemizedOverlay;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -258,9 +260,10 @@ public class IPGeoActivity extends AppCompatActivity {
                                             nullToEmpty(ipWhoisInfo.getLatitude()),
                                             nullToEmpty(ipWhoisInfo.getLongitude())),
                                     publicIpPoint);
+                            final ArrayList<OverlayItem> overlayItems = new ArrayList<>();
+                            overlayItems.add(overlayItem);
                             final MyOwnItemizedOverlay overlay =
-                                    new MyOwnItemizedOverlay(IPGeoActivity.this,
-                                            Collections.singletonList(overlayItem));
+                                    new MyOwnItemizedOverlay(IPGeoActivity.this, overlayItems);
 
                             mapController.setCenter(publicIpPoint);
 

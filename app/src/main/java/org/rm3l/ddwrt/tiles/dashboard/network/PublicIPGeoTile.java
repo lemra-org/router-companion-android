@@ -50,6 +50,7 @@ import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 import org.rm3l.ddwrt.widgets.map.MyOwnItemizedOverlay;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
@@ -424,9 +425,10 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                                     nullToEmpty(mIPWhoisInfoWithGeo.getLatitude()),
                                     nullToEmpty(mIPWhoisInfoWithGeo.getLongitude())),
                             publicIpPoint);
+                    final ArrayList<OverlayItem> overlayItems = new ArrayList<>();
+                    overlayItems.add(overlayItem);
                     final MyOwnItemizedOverlay overlay =
-                            new MyOwnItemizedOverlay(mParentFragmentActivity,
-                                    Collections.singletonList(overlayItem));
+                            new MyOwnItemizedOverlay(mParentFragmentActivity, overlayItems);
                     map.getOverlays().add(overlay);
                 }
 
