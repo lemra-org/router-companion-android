@@ -305,8 +305,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                 final EditText filterEditText = (EditText) this.layout.findViewById(R.id.tile_status_router_syslog_filter);
 
                 syslogState.setText(syslogdEnabledPropertyValue == null ? "-" : (isSyslogEnabled ? "Enabled" : "Disabled"));
-
-                syslogState.setVisibility(mDisplayStatus ? View.VISIBLE : View.GONE);
+                syslogState.setVisibility(syslogdEnabledPropertyValue == null ? View.VISIBLE : View.GONE);
 
                 final TextView logTextView = (TextView) syslogContentView;
                 if (isSyslogEnabled) {
