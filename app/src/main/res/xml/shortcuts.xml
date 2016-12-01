@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- TODO
-        android:icon="@drawable/compose_icon"
-        -->
     <shortcut
         android:shortcutId="register-router"
         android:enabled="true"
+        android:icon="@drawable/ic_action_content_add_box"
         android:shortcutShortLabel="@string/new_router"
         android:shortcutLongLabel="@string/register_new_router"
         android:shortcutDisabledMessage="@string/new_router_disabled">

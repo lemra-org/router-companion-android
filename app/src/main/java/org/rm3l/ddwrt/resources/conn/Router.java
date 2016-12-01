@@ -27,7 +27,10 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -68,7 +71,9 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -1194,25 +1199,60 @@ public class Router implements Serializable {
         //Add home-screen shortcut to this router
         final Intent shortcutIntent = new Intent(contextForshortcut, DDWRTMainActivity.class);
 //                    mShortcutIntent.setClassName("com.example.androidapp", "SampleIntent");
+        shortcutIntent.setAction(Intent.ACTION_VIEW);
         shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         shortcutIntent.putExtra(ROUTER_SELECTED, getUuid());
 
-        final Intent addIntent = new Intent();
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, canonicalHumanReadableName);
-        addIntent.putExtra("duplicate", false);  // Just create once
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
-                Intent.ShortcutIconResource.fromContext(contextForshortcut,
-                        demoRouter ?
-                                R.drawable.demo_router : R.drawable.router));
+        Intent addIntent = null;
 
-        addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-        contextForshortcut.sendBroadcast(addIntent);
+        final ShortcutManager shortcutManager;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
+            shortcutManager = contextForshortcut.getSystemService(ShortcutManager.class);
+            final ShortcutInfo shortcut = new ShortcutInfo.Builder(
+                    contextForshortcut, getUuid())
+                    .setShortLabel(getName())
+                    .setLongLabel(canonicalHumanReadableName)
+                    .setIcon(Icon.createWithResource(context, demoRouter ?
+                            R.drawable.demo_router : R.drawable.router))
+                    .setIntent(shortcutIntent)
+                    .build();
 
-        Toast.makeText(contextForshortcut,
-                "Home Launcher Shortcut added for " + canonicalHumanReadableName,
-                Toast.LENGTH_SHORT).show();
+            final List<ShortcutInfo> dynamicShortcuts = shortcutManager.getDynamicShortcuts();
+            boolean exists = false;
+            if (dynamicShortcuts != null) {
+                for (final ShortcutInfo dynamicShortcut : dynamicShortcuts) {
+                    if (dynamicShortcut == null) {
+                        continue;
+                    }
+                    if (getUuid().equals(dynamicShortcut.getId())) {
+                        exists = true;
+                        break;
+                    }
+                }
+            }
+            if (exists) {
+                shortcutManager.updateShortcuts(Collections.singletonList(shortcut));
+            } else {
+                shortcutManager.addDynamicShortcuts(Collections.singletonList(shortcut));
+            }
+        } else {
+            addIntent = new Intent();
+            addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+            addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, canonicalHumanReadableName);
+            addIntent.putExtra("duplicate", false);  // Just create once
+            addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
+                    Intent.ShortcutIconResource.fromContext(contextForshortcut,
+                            demoRouter ?
+                                    R.drawable.demo_router : R.drawable.router));
+
+            addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+            contextForshortcut.sendBroadcast(addIntent);
+
+            Toast.makeText(contextForshortcut,
+                    "Home Launcher Shortcut added for " + canonicalHumanReadableName,
+                    Toast.LENGTH_SHORT).show();
+        }
                 
         if (!demoRouter) {
             //Leverage Picasso to fetch router icon, if available
@@ -1221,7 +1261,8 @@ public class Router implements Serializable {
                 ImageUtils.downloadImageFromUrl(contextForshortcut,
                     getRouterAvatarUrl(getRouterModel(contextForshortcut, this),
                     mAvatarDownloadOpts),
-                    this.new RouterShortcutAvatarDownloader(contextForshortcut, addIntent),
+                    this.new RouterShortcutAvatarDownloader(
+                            contextForshortcut, shortcutIntent, addIntent),
                     null, null, null);
 
             } catch (final Exception e) {
@@ -1274,14 +1315,19 @@ public class Router implements Serializable {
         private final Context mApplicationContext;
 
         @Nullable
-        private final Intent mShortcutIntent;
+        private final Intent mHomeLauncherShortcutIntent;
+
+        @Nullable
+        private final Intent mOpenRouterShortcutIntent;
 
         final int mIconSize;
 
         private RouterShortcutAvatarDownloader(@Nullable final Context applicationContext,
-                                               @Nullable final Intent shortcutIntent) {
+                                               @Nullable final Intent openRouterIntent,
+                                               @Nullable final Intent homeLauncherShortcutIntent) {
             this.mApplicationContext = applicationContext;
-            this.mShortcutIntent = shortcutIntent;
+            this.mOpenRouterShortcutIntent = openRouterIntent;
+            this.mHomeLauncherShortcutIntent = homeLauncherShortcutIntent;
             if (this.mApplicationContext != null) {
                 this.mIconSize = (int) this.mApplicationContext.
                         getResources().getDimension(android.R.dimen.app_icon_size);
@@ -1308,25 +1354,59 @@ public class Router implements Serializable {
         @Override
         public void onBitmapLoaded(android.graphics.Bitmap bitmap, Picasso.LoadedFrom from) {
             //Callback when an image has been successfully loaded.
-            if (mApplicationContext == null || mShortcutIntent == null) {
+            if (mApplicationContext == null || mOpenRouterShortcutIntent == null) {
                 return;
             }
 
-            //Update home launcher shortcut with actual icon: uninstall then install with new icon
-            mShortcutIntent.setAction("com.android.launcher.action.UNINSTALL_SHORTCUT");
-            mApplicationContext.sendBroadcast(mShortcutIntent);
+            final ShortcutManager shortcutManager;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
+                shortcutManager = mApplicationContext.getSystemService(ShortcutManager.class);
+                final String canonicalHumanReadableName = getCanonicalHumanReadableName();
+                final ShortcutInfo shortcut = new ShortcutInfo.Builder(
+                        mApplicationContext, getUuid())
+                        .setShortLabel(getName())
+                        .setLongLabel(canonicalHumanReadableName)
+                        .setIcon(Icon.createWithBitmap(bitmap))
+                        .setIntent(mOpenRouterShortcutIntent)
+                        .build();
 
-            //Now update icon from bitmap
-            //Might be needed to call the following lines:
-            if (this.mIconSize > 0) {
-                mShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON,
-                        Bitmap.createScaledBitmap(bitmap, this.mIconSize, this.mIconSize, false));
+                final List<ShortcutInfo> dynamicShortcuts = shortcutManager.getDynamicShortcuts();
+                boolean exists = false;
+                if (dynamicShortcuts != null) {
+                    for (final ShortcutInfo dynamicShortcut : dynamicShortcuts) {
+                        if (dynamicShortcut == null) {
+                            continue;
+                        }
+                        if (getUuid().equals(dynamicShortcut.getId())) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                }
+                if (exists) {
+                    shortcutManager.updateShortcuts(Collections.singletonList(shortcut));
+                } else {
+                    shortcutManager.addDynamicShortcuts(Collections.singletonList(shortcut));
+                }
             } else {
-                mShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
-            }
+                if (mHomeLauncherShortcutIntent != null) {
+                    //Update home launcher shortcut with actual icon: uninstall then install with new icon
+                    mHomeLauncherShortcutIntent.setAction("com.android.launcher.action.UNINSTALL_SHORTCUT");
+                    mApplicationContext.sendBroadcast(mHomeLauncherShortcutIntent);
 
-            mShortcutIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-            mApplicationContext.sendBroadcast(mShortcutIntent);
+                    //Now update icon from bitmap
+                    //Might be needed to call the following lines:
+                    if (this.mIconSize > 0) {
+                        mHomeLauncherShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON,
+                                Bitmap.createScaledBitmap(bitmap, this.mIconSize, this.mIconSize, false));
+                    } else {
+                        mHomeLauncherShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
+                    }
+
+                    mHomeLauncherShortcutIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+                    mApplicationContext.sendBroadcast(mHomeLauncherShortcutIntent);
+                }
+            }
         }
 
         @Override
