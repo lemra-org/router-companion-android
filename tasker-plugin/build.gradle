@@ -243,6 +243,9 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
+
+            //Android-Debug-Database
+            resValue("string", "PORT_NUMBER", "8081")
         }
     }
 }
@@ -320,4 +323,6 @@ dependencies {
     compile 'com.stephentuso:welcome:0.7.2'
 
     compile 'com.sothree.slidinguppanel:library:3.3.1'
+
+    debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
 }
