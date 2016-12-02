@@ -422,10 +422,6 @@ public class RouterListRecycleViewAdapter extends
                 .setVisible(true);
         menu.findItem(R.id.menu_router_item_open)
                 .setEnabled(true);
-        //#199: we will leverage automatic app shortcuts instead
-        menu.findItem(R.id.menu_router_list_add_home_shortcut)
-                .setVisible(
-                        android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.N_MR1);
         popup.show();
     }
 

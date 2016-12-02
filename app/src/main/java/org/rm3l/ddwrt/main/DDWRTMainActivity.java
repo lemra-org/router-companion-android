@@ -1083,10 +1083,6 @@ public class DDWRTMainActivity extends AppCompatActivity
             }
         }
 
-        //#199: we will leverage automatic app shortcuts instead
-        menu.findItem(R.id.main_add_home_shortcut).setVisible(
-                android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.N_MR1);
-
         return super.onCreateOptionsMenu(menu);
     }
 
