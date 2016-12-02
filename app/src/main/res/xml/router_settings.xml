@@ -168,7 +168,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:key="vpn.pptp.toggles.mutually.exclusive"
             android:summaryOff="Disabled."
             android:summaryOn="Enabled. At the moment, toggling either PPTP or OpenVPN requires your router to be rebooted. Toggling either PPTP Client or OpenVPN Client will ask you to also toggle OpenVPN Client or PPTP Client, respectively."
-            android:title="Ask to make VPN Toogles mutually exclusive"/>
+            android:title="Ask to make VPN toggles mutually exclusive"/>
 
     </PreferenceCategory>
 
