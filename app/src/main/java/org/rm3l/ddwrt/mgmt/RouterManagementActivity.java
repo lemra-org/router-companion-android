@@ -36,6 +36,7 @@ import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -208,6 +209,18 @@ public class RouterManagementActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Dynamic shortcuts are not preserved during backup/restore
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            final ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
+            // Application restored. Need to re-publish dynamic shortcuts.
+            if (shortcutManager.getPinnedShortcuts().size() > 0) {
+                // Pinned shortcuts have been restored. Use
+                // updateShortcuts(List) to make sure they
+                // contain up-to-date information.
+                shortcutManager.updateShortcuts(shortcutManager.getPinnedShortcuts());
+            }
+        }
 
         final Intent intent = getIntent();
         handleIntent(intent);
