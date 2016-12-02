@@ -103,9 +103,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </item>
 
     <item
-        android:id="@+id/menu_router_list_add_shortcut"
+        android:id="@+id/menu_router_list_add_home_shortcut"
         android:orderInCategory="6"
-        android:title="Add Shortcut"
+        android:title="Add Home Shortcut"
         app:showAsAction="ifRoom" />
 
 </menu>

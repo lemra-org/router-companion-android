@@ -33,9 +33,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -63,9 +60,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -1082,6 +1077,10 @@ public class DDWRTMainActivity extends AppCompatActivity
             }
         }
 
+        //#199: we will leverage automatic app shortcuts instead
+        menu.findItem(R.id.main_add_home_shortcut).setVisible(
+                android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.N_MR1);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -1325,7 +1324,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                 });
             }
                 return true;
-            case R.id.main_add_shortcut: {
+            case R.id.main_add_home_shortcut: {
                 mRouter.addHomeScreenShortcut(this);
             }
                 return true;

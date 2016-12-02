@@ -1204,55 +1204,21 @@ public class Router implements Serializable {
         shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         shortcutIntent.putExtra(ROUTER_SELECTED, getUuid());
 
-        Intent addIntent = null;
+        final Intent addIntent = new Intent();
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, canonicalHumanReadableName);
+        addIntent.putExtra("duplicate", false);  // Just create once
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
+                Intent.ShortcutIconResource.fromContext(contextForshortcut,
+                        demoRouter ?
+                                R.drawable.demo_router : R.drawable.router));
 
-        final ShortcutManager shortcutManager;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
-            shortcutManager = contextForshortcut.getSystemService(ShortcutManager.class);
-            final ShortcutInfo shortcut = new ShortcutInfo.Builder(
-                    contextForshortcut, getUuid())
-                    .setShortLabel(getName())
-                    .setLongLabel(canonicalHumanReadableName)
-                    .setIcon(Icon.createWithResource(context, demoRouter ?
-                            R.drawable.demo_router : R.drawable.router))
-                    .setIntent(shortcutIntent)
-                    .build();
+        addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+        contextForshortcut.sendBroadcast(addIntent);
 
-            final List<ShortcutInfo> dynamicShortcuts = shortcutManager.getDynamicShortcuts();
-            boolean exists = false;
-            if (dynamicShortcuts != null) {
-                for (final ShortcutInfo dynamicShortcut : dynamicShortcuts) {
-                    if (dynamicShortcut == null) {
-                        continue;
-                    }
-                    if (getUuid().equals(dynamicShortcut.getId())) {
-                        exists = true;
-                        break;
-                    }
-                }
-            }
-            if (exists) {
-                shortcutManager.updateShortcuts(Collections.singletonList(shortcut));
-            } else {
-                shortcutManager.addDynamicShortcuts(Collections.singletonList(shortcut));
-            }
-        } else {
-            addIntent = new Intent();
-            addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-            addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, canonicalHumanReadableName);
-            addIntent.putExtra("duplicate", false);  // Just create once
-            addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
-                    Intent.ShortcutIconResource.fromContext(contextForshortcut,
-                            demoRouter ?
-                                    R.drawable.demo_router : R.drawable.router));
-
-            addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-            contextForshortcut.sendBroadcast(addIntent);
-
-            Toast.makeText(contextForshortcut,
-                    "Home Launcher Shortcut added for " + canonicalHumanReadableName,
-                    Toast.LENGTH_SHORT).show();
-        }
+        Toast.makeText(contextForshortcut,
+                "Home Launcher Shortcut added for " + canonicalHumanReadableName,
+                Toast.LENGTH_SHORT).show();
                 
         if (!demoRouter) {
             //Leverage Picasso to fetch router icon, if available
@@ -1358,54 +1324,22 @@ public class Router implements Serializable {
                 return;
             }
 
-            final ShortcutManager shortcutManager;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
-                shortcutManager = mApplicationContext.getSystemService(ShortcutManager.class);
-                final String canonicalHumanReadableName = getCanonicalHumanReadableName();
-                final ShortcutInfo shortcut = new ShortcutInfo.Builder(
-                        mApplicationContext, getUuid())
-                        .setShortLabel(getName())
-                        .setLongLabel(canonicalHumanReadableName)
-                        .setIcon(Icon.createWithBitmap(bitmap))
-                        .setIntent(mOpenRouterShortcutIntent)
-                        .build();
+            if (mHomeLauncherShortcutIntent != null) {
+                //Update home launcher shortcut with actual icon: uninstall then install with new icon
+                mHomeLauncherShortcutIntent.setAction("com.android.launcher.action.UNINSTALL_SHORTCUT");
+                mApplicationContext.sendBroadcast(mHomeLauncherShortcutIntent);
 
-                final List<ShortcutInfo> dynamicShortcuts = shortcutManager.getDynamicShortcuts();
-                boolean exists = false;
-                if (dynamicShortcuts != null) {
-                    for (final ShortcutInfo dynamicShortcut : dynamicShortcuts) {
-                        if (dynamicShortcut == null) {
-                            continue;
-                        }
-                        if (getUuid().equals(dynamicShortcut.getId())) {
-                            exists = true;
-                            break;
-                        }
-                    }
-                }
-                if (exists) {
-                    shortcutManager.updateShortcuts(Collections.singletonList(shortcut));
+                //Now update icon from bitmap
+                //Might be needed to call the following lines:
+                if (this.mIconSize > 0) {
+                    mHomeLauncherShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON,
+                            Bitmap.createScaledBitmap(bitmap, this.mIconSize, this.mIconSize, false));
                 } else {
-                    shortcutManager.addDynamicShortcuts(Collections.singletonList(shortcut));
+                    mHomeLauncherShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
                 }
-            } else {
-                if (mHomeLauncherShortcutIntent != null) {
-                    //Update home launcher shortcut with actual icon: uninstall then install with new icon
-                    mHomeLauncherShortcutIntent.setAction("com.android.launcher.action.UNINSTALL_SHORTCUT");
-                    mApplicationContext.sendBroadcast(mHomeLauncherShortcutIntent);
 
-                    //Now update icon from bitmap
-                    //Might be needed to call the following lines:
-                    if (this.mIconSize > 0) {
-                        mHomeLauncherShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON,
-                                Bitmap.createScaledBitmap(bitmap, this.mIconSize, this.mIconSize, false));
-                    } else {
-                        mHomeLauncherShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
-                    }
-
-                    mHomeLauncherShortcutIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-                    mApplicationContext.sendBroadcast(mHomeLauncherShortcutIntent);
-                }
+                mHomeLauncherShortcutIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+                mApplicationContext.sendBroadcast(mHomeLauncherShortcutIntent);
             }
         }
 

@@ -32,6 +32,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
+import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -86,6 +89,7 @@ import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.help.ChangelogActivity;
 import org.rm3l.ddwrt.help.HelpActivity;
+import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.adapters.RouterListItemTouchHelperCallback;
 import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
@@ -97,6 +101,7 @@ import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.common.utils.PushUtils;
+import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.customtabs.CustomTabActivityHelper;
 import org.rm3l.ddwrt.welcome.GettingStartedActivity;
@@ -438,6 +443,83 @@ public class RouterManagementActivity
 //            this.mPusher.connect();
 //        }
         mCustomTabActivityHelper.bindCustomTabsService(this);
+
+        //#199: app shortcuts
+        setDynamicAppShortcuts();
+    }
+
+    private void setDynamicAppShortcuts() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
+            final ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
+            final List<Router> allRouters = dao.getAllRouters();
+            if (!allRouters.isEmpty()) {
+                final int nbRoutersOnFile = allRouters.size();
+
+                final List<Router> maxRoutersEligibleForAppShortcuts = new ArrayList<>(4);
+                final List<Router> nonDemoRoutersEligibleForAppShortcuts = new ArrayList<>(4);
+                for (int i = 0; i <= 3; i++) {
+                    //We have a limit of 5 app shortcuts (dynamic and static combined),
+                    // and a static one is already added. So keep the 4 most recent only
+                    if (i >= nbRoutersOnFile) {
+                        break;
+                    }
+                    final Router router = allRouters.get(i);
+                    if (router == null) {
+                        continue;
+                    }
+                    maxRoutersEligibleForAppShortcuts.add(router);
+                    if (!Utils.isDemoRouter(router)) {
+                        nonDemoRoutersEligibleForAppShortcuts.add(router);
+                    }
+                }
+
+                final List<ShortcutInfo> shortcutInfoList = new ArrayList<>(4);
+                for (final Router router : maxRoutersEligibleForAppShortcuts) {
+                    final String routerUuid = router.getUuid();
+                    final boolean demoRouter = Utils.isDemoRouter(router);
+                    final String routerName = router.getName();
+                    final String routerCanonicalHumanReadableName =
+                            router.getCanonicalHumanReadableName();
+
+                    final Intent shortcutIntent = new Intent(this, DDWRTMainActivity.class);
+                    shortcutIntent.setAction(Intent.ACTION_VIEW);
+                    shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    shortcutIntent.putExtra(ROUTER_SELECTED, routerUuid);
+
+                    final ShortcutInfo shortcut = new ShortcutInfo.Builder(this, routerUuid)
+                            .setShortLabel(routerName)
+                            .setLongLabel(routerCanonicalHumanReadableName)
+                            .setIcon(Icon.createWithResource(this, demoRouter ?
+                                    R.drawable.demo_router : R.drawable.router))
+                            .setIntent(shortcutIntent)
+                            .build();
+
+                    shortcutInfoList.add(shortcut);
+                }
+                shortcutManager.setDynamicShortcuts(shortcutInfoList);
+
+                //Trigger download of avatars (for non-demo routers)
+                for (final Router router : nonDemoRoutersEligibleForAppShortcuts) {
+                    //Leverage Picasso to fetch router icon, if available
+                    try {
+
+                        ImageUtils.downloadImageFromUrl(this,
+                                Router.getRouterAvatarUrl(Router.getRouterModel(this, router),
+                                        Router.mAvatarDownloadOpts),
+                                new RouterAvatarDownloadTargetForAppShortcut(
+                                        this, router, true),
+                                null, null, null);
+
+                    } catch (final Exception e) {
+                        //No worries
+                        Utils.reportException(this, e);
+                    }
+                }
+
+            }
+
+        }
     }
 
     @Override
@@ -922,6 +1004,8 @@ public class RouterManagementActivity
                             RouterManagementActivity.this.mAdapter.notifyItemChanged(position);
                             break;
                     }
+
+                    setDynamicAppShortcuts();
                 } finally {
                     setRefreshActionButtonState(false);
                     mSwipeRefreshLayout.setEnabled(true);
