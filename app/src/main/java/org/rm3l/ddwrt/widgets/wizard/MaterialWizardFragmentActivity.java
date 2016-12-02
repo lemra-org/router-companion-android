@@ -1,6 +1,8 @@
 package org.rm3l.ddwrt.widgets.wizard;
 
 import android.content.Intent;
+import android.content.pm.ShortcutManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v4.app.FragmentActivity;
@@ -9,9 +11,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.register.ManageRouterWizard;
 import org.rm3l.ddwrt.mgmt.register.resources.RouterWizardAction;
+import org.rm3l.ddwrt.utils.AppShortcutUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
@@ -58,8 +63,16 @@ public abstract class MaterialWizardFragmentActivity extends FragmentActivity {
             }
             final int routerWizardAction = intent.getIntExtra(ROUTER_WIZARD_ACTION,
                     RouterWizardAction.ADD);
+            if (routerWizardAction == RouterWizardAction.ADD) {
+                //#199: report app shortcut
+                AppShortcutUtils.reportShortcutUsed(this, "register-router");
+            }
             fragment.setAction(routerWizardAction);
             args.putInt(ROUTER_WIZARD_ACTION, routerWizardAction);
+        } else {
+            //By default, this is an "Add Router" operation
+            //#199: report app shortcut
+            AppShortcutUtils.reportShortcutUsed(this, "register-router");
         }
         fragment.setArguments(args);
         fragmentTransaction.add(R.id.wizard_add_router_fragment_container,

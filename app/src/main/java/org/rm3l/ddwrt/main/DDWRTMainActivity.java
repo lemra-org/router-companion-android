@@ -32,6 +32,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.ShortcutManager;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -131,6 +132,7 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterSettingsActivity;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.AdUtils;
+import org.rm3l.ddwrt.utils.AppShortcutUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ReportingUtils;
@@ -340,6 +342,10 @@ public class DDWRTMainActivity extends AppCompatActivity
             finish();
             return;
         }
+
+        //#199: report app shortcut
+        AppShortcutUtils.reportShortcutUsed(this, uuid);
+
         // Connect your client
         mClient.connect();
 
