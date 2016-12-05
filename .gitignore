@@ -46,3 +46,4 @@ local.properties
 .DS_Store
 
 node_modules
+infer-out
