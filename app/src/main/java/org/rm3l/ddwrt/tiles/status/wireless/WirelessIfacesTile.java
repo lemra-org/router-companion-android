@@ -42,6 +42,7 @@ import android.widget.ImageButton;
 
 import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
+import com.google.common.base.Strings;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -58,13 +59,17 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public class WirelessIfacesTile extends IfacesTile {
 
@@ -73,7 +78,7 @@ public class WirelessIfacesTile extends IfacesTile {
     public static final String WL_NO_OUTPUT = "WL_NO_OUTPUT";
 
     @NonNull
-    private List<WirelessIfaceTile> mWirelessIfaceTiles = new CopyOnWriteArrayList<>();
+    private List<WirelessIfaceTile> mWirelessIfaceTiles = new ArrayList<>();
 
     private final AtomicBoolean viewsBuilt = new AtomicBoolean(true);
 
@@ -135,7 +140,7 @@ public class WirelessIfacesTile extends IfacesTile {
                         .getWirelessIfaceTiles(args, mParentFragmentActivity, mParentFragment, mRouter);
 
                 if (wirelessIfaceTiles != null) {
-                    mWirelessIfaceTiles = new CopyOnWriteArrayList<>(wirelessIfaceTiles);
+                    mWirelessIfaceTiles = new ArrayList<>(wirelessIfaceTiles);
 
                     final int size = wirelessIfaceTiles.size();
 
@@ -333,7 +338,26 @@ public class WirelessIfacesTile extends IfacesTile {
                 data = new NVRAMInfo().setException(preliminaryCheckException);
             }
 
+            Collections.sort(mWirelessIfaceTiles, new Comparator<WirelessIfaceTile>() {
+                @Override
+                public int compare(WirelessIfaceTile tile0, WirelessIfaceTile tile1) {
+                    if (tile0 == tile1) {
+                        return 0;
+                    }
+                    if (tile0 == null) {
+                        return 1;
+                    }
+                    if (tile1 == null) {
+                        return -1;
+                    }
+                    final String tile0Iface = tile0.getIface();
+                    final String tile1Iface = tile1.getIface();
+                    return nullToEmpty(tile0Iface)
+                            .compareToIgnoreCase(nullToEmpty(tile1Iface));
+                }
+            });
 
+            int i = 0;
             for (final WirelessIfaceTile tile : mWirelessIfaceTiles) {
                 if (tile == null) {
                     continue;
@@ -372,7 +396,7 @@ public class WirelessIfacesTile extends IfacesTile {
                     }
                 }
                 if (tileViewGroupLayout != null) {
-                    container.addView(tileViewGroupLayout);
+                    container.addView(tileViewGroupLayout, i++);
                 }
             }
 

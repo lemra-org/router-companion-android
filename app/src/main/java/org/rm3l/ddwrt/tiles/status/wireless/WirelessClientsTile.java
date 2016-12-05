@@ -157,6 +157,7 @@ import java.io.Writer;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -276,7 +277,24 @@ public class WirelessClientsTile
     @Nullable
     private List<String> broadcastAddresses;
     private File wrtbwmonScriptPath;
-    private Map<Device, View> currentDevicesViewsMap = Maps.newHashMap();
+    private Map<Device, View> currentDevicesViewsMap = Maps.newTreeMap(new Comparator<Device>() {
+        @Override
+        public int compare(Device dev0, Device dev1) {
+            if (dev0 == dev1) {
+                return 0;
+            }
+            if (dev0 == null) {
+                return 1;
+            }
+            if (dev1 == null) {
+                return -1;
+            }
+            final String dev0Name = dev0.getAliasOrSystemName();
+            final String dev1Name = dev1.getAliasOrSystemName();
+            return nullToEmpty(dev0Name)
+                    .compareToIgnoreCase(nullToEmpty(dev1Name));
+        }
+    });
     private String mUsageDbBackupPath = null;
 
     private Loader<ClientDevices> mCurrentLoader;
@@ -2554,10 +2572,11 @@ public class WirelessClientsTile
 
                 newDevices = applyCurrentSortingStrategy(newDevices);
 
+                int i = 0;
                 for (final Device dev : newDevices) {
                     final View view = currentDevicesViewsMap.get(dev);
                     if (view != null) {
-                        clientsContainer.addView(view);
+                        clientsContainer.addView(view, i++);
                     }
                 }
 

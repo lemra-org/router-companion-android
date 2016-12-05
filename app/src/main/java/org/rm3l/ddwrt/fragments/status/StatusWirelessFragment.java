@@ -47,10 +47,10 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.NVRAMParser;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 
@@ -113,7 +113,7 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
                 return null;
             }
 
-            final List<String> splitToList = new CopyOnWriteArrayList<>();
+            final List<String> splitToList = new ArrayList<>();
 
             for (final String wirelessSsid : wirelessSsids) {
                 if (wirelessSsid == null ||

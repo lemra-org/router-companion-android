@@ -91,7 +91,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
@@ -338,7 +337,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                     nvramInfo.setProperty(WIRELESS_IFACE + (wlIface.equals(parentIface) ? "_parent" : ""),
                             wlIface);
 
-                    final List<String> activePhysicalIfacesList = new CopyOnWriteArrayList<>();
+                    final List<String> activePhysicalIfacesList = new ArrayList<>();
                     //Get list of active physical ifaces
                     final String[] ifconfigResultActive = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                             mGlobalPreferences,
@@ -352,7 +351,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                         }
                     }
 
-                    final List<String> allPhysicalIfacesList = new CopyOnWriteArrayList<>();
+                    final List<String> allPhysicalIfacesList = new ArrayList<>();
                     //Get list of active physical ifaces
                     final String[] ifconfigResultAll = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                             mGlobalPreferences,
