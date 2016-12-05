@@ -325,4 +325,6 @@ dependencies {
     compile 'com.sothree.slidinguppanel:library:3.3.1'
 
     debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
+
+    compile 'com.facebook.device.yearclass:yearclass:2.0.0'
 }

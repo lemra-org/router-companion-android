@@ -21,6 +21,7 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.facebook.device.yearclass.YearClass;
 import com.google.gson.GsonBuilder;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -90,6 +91,9 @@ public class MaoniFeedbackHandler implements Handler {
     public static final String PROPERTY_BUILD_FLAVOR = "BUILD_FLAVOR";
     public static final String PROPERTY_BUILD_TYPE = "BUILD_TYPE";
     public static final String PROPERTY_BUILD_VERSION_NAME = "BUILD_VERSION_NAME";
+
+    public static final String PROPERTY_DEVICE_YEAR_CLASS = "Device Year Class";
+
     private final SharedPreferences mGlobalPreferences;
 
     public MaoniFeedbackHandler(Activity context, Router router) {
@@ -137,6 +141,9 @@ public class MaoniFeedbackHandler implements Handler {
         //Also add build related properties
         properties.put(PROPERTY_BUILD_FLAVOR, BuildConfig.FLAVOR);
         properties.put(PROPERTY_BUILD_TYPE, BuildConfig.BUILD_TYPE);
+
+        properties.put(PROPERTY_DEVICE_YEAR_CLASS,
+                YearClass.get(mContext.getApplicationContext()));
 
         final String emailText = mEmail.getText().toString();
 

@@ -543,6 +543,10 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:9.8.0'
 
     debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
+
+    compile 'com.facebook.device.yearclass:yearclass:2.0.0'
+
+    compile 'io.hypertrack:smart-scheduler:0.0.2'
 }
 
 // Add to the bottom of the file
