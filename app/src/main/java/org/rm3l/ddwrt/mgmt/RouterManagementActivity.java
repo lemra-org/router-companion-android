@@ -214,11 +214,21 @@ public class RouterManagementActivity
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
             final ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
             // Application restored. Need to re-publish dynamic shortcuts.
-            if (shortcutManager.getPinnedShortcuts().size() > 0) {
+            final List<ShortcutInfo> pinnedShortcuts = shortcutManager.getPinnedShortcuts();
+            if (!pinnedShortcuts.isEmpty()) {
                 // Pinned shortcuts have been restored. Use
                 // updateShortcuts(List) to make sure they
                 // contain up-to-date information.
-                shortcutManager.updateShortcuts(shortcutManager.getPinnedShortcuts());
+                final List<ShortcutInfo> dynamicPinnedShortcutsToUpdate = new ArrayList<>();
+                for (final ShortcutInfo pinnedShortcut : pinnedShortcuts) {
+                    if (pinnedShortcut == null) {
+                        continue;
+                    }
+                    if (pinnedShortcut.isDynamic()) {
+                        dynamicPinnedShortcutsToUpdate.add(pinnedShortcut);
+                    }
+                }
+                shortcutManager.updateShortcuts(dynamicPinnedShortcutsToUpdate);
             }
         }
 
