@@ -449,10 +449,8 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
 
                     //Unhide 3g signal text
                     final TextView wan3gSignalFieldView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_3g_signal_field);
-                    final TextView wan3gSignalSeparatorView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_3g_signal_separator);
                     final TextView wan3gSignalView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_3g_signal);
                     wan3gSignalFieldView.setVisibility(View.VISIBLE);
-                    wan3gSignalSeparatorView.setVisibility(View.VISIBLE);
                     wan3gSignalView.setVisibility(View.VISIBLE);
                     wan3gSignalView.setText(data.getProperty(NVRAMInfo.WAN_3_G_SIGNAL, "-"));
 
@@ -489,17 +487,13 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
 
                 //Public IP and Reverse DNS
                 final TextView internetIpTitle = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_internet_ip_title);
-                final TextView internetIpSep = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_internet_ip_sep);
                 final TextView internetIpTextView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_internet_ip);
                 final TextView rDnsTitle = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_rdns_title);
-                final TextView rDnsSep = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_rdns_sep);
                 final TextView rDnsTextView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_rdns);
                 if (!checkActualInternetConnectivity) {
                     internetIpTitle.setVisibility(View.GONE);
-                    internetIpSep.setVisibility(View.GONE);
                     internetIpTextView.setVisibility(View.GONE);
                     rDnsTitle.setVisibility(View.GONE);
-                    rDnsSep.setVisibility(View.GONE);
                     rDnsTextView.setVisibility(View.GONE);
                 } else {
                     final String publicIp = data.getProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, null);
@@ -512,13 +506,11 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                     if (publicIp != null && publicIp.equalsIgnoreCase(wanIpText)) {
                         //Hide public IP in this case
                         internetIpTitle.setVisibility(View.GONE);
-                        internetIpSep.setVisibility(View.GONE);
                         internetIpTextView.setVisibility(View.GONE);
                     }
                     final String revDnsPtr = data.getProperty(REVERSE_DNS_PTR);
                     if (Strings.isNullOrEmpty(revDnsPtr)) {
                         rDnsTitle.setVisibility(View.GONE);
-                        rDnsSep.setVisibility(View.GONE);
                         rDnsTextView.setVisibility(View.GONE);
                     } else {
                         rDnsTextView.setText(revDnsPtr);
