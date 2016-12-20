@@ -246,6 +246,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="loading_router_name">Loading Router Name…</string>
     <string name="fetching_wan_ip">Fetching WAN IP…</string>
     <string name="router_state_model">Model</string>
+    <string name="router_state_os_version">OS Version</string>
     <string name="router_state_firmware">Firmware</string>
     <string name="router_state_kernel">Kernel</string>
     <string name="router_state_lan_ip">LAN IP</string>

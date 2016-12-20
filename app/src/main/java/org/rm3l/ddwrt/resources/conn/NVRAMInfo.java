@@ -41,6 +41,7 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String ROUTER_NAME = "router_name";
     public static final String WAN_IPADDR = "wan_ipaddr";
     public static final String MODEL = "DD_BOARD";
+    public static final String OS_VERSION = "os_version";
     public static final String DIST_TYPE = "dist_type";
     public static final String LAN_IPADDR = "lan_ipaddr";
     public static final String FIRMWARE = "firmware";

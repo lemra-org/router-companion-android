@@ -22,14 +22,23 @@
 
 package org.rm3l.ddwrt.tiles.status.router;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -45,8 +54,10 @@ import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.activity.OpenWebManagementPageActivity;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.resources.PublicIPInfo;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -55,13 +66,16 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.customtabs.CustomTabActivityHelper;
 
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
+import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.ddwrt.tiles.dashboard.network.NetworkTopologyMapTile.INTERNET_CONNECTIVITY_PUBLIC_IP;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRT_SCM_CHANGESET_URL_BASE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOK;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.UNKNOWN;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
@@ -142,7 +156,9 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                                     .setProperty(NVRAMInfo.WAN_IPADDR, "1.2.3.4")
                                     .setProperty(NVRAMInfo.MODEL, "Router Model Family")
                                     .setProperty(NVRAMInfo.DIST_TYPE, "Linux 2.4.37 #7583 Sat Oct 10 mips")
-                                    .setProperty(NVRAMInfo.LAN_IPADDR, "255.255.255.255");
+                                    .setProperty(NVRAMInfo.LAN_IPADDR, "255.255.255.255")
+                                    .setProperty(NVRAMInfo.OS_VERSION,
+                                            Integer.toString(1 + new Random().nextInt(65535)));
                         } else {
                             nvramInfoTmp =
                                     SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
@@ -150,7 +166,8 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                                             NVRAMInfo.WAN_IPADDR,
                                             NVRAMInfo.MODEL,
                                             NVRAMInfo.DIST_TYPE,
-                                            NVRAMInfo.LAN_IPADDR);
+                                            NVRAMInfo.LAN_IPADDR,
+                                            NVRAMInfo.OS_VERSION);
                         }
                         updateProgressBarViewSeparator(50);
                     } finally {
@@ -379,6 +396,50 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
 
                 ((TextView) layout.findViewById(R.id.tile_status_router_router_state_name))
                         .setText(routerNameNull ? "-" : routerName);
+
+                //OS Version
+                final TextView osVersionTv = (TextView)
+                        this.layout.findViewById(R.id.tile_status_router_router_state_os_version);
+                final String osVersion = data.getProperty(NVRAMInfo.OS_VERSION);
+                if (TextUtils.isEmpty(osVersion)) {
+                    osVersionTv.setText("-");
+                    osVersionTv.setOnClickListener(null);
+                } else {
+
+                    osVersionTv.setMovementMethod(LinkMovementMethod.getInstance());
+                    osVersionTv.setText(osVersion, TextView.BufferType.SPANNABLE);
+
+                    final Spannable osVersionAsSpannable = (Spannable) osVersionTv.getText();
+
+                    final String changesetUrl = String.format("%s/%s",
+                            DDWRT_SCM_CHANGESET_URL_BASE, osVersion);
+                    osVersionAsSpannable.setSpan(
+                            new ClickableSpan() {
+                                @Override
+                                public void onClick(View view) {
+                                    //Open link to Changeset
+                                    final String routerUuid = mRouter.getUuid();
+                                    CustomTabActivityHelper.openCustomTab(mParentFragmentActivity, null,
+                                            changesetUrl, routerUuid, null,
+                                            new CustomTabActivityHelper.CustomTabFallback() {
+                                                @Override
+                                                public void openUri(Activity activity, Uri uri) {
+                                                    //Otherwise, default to a classic WebView implementation
+                                                    final Intent webManagementIntent = new Intent(
+                                                            mParentFragmentActivity, OpenWebManagementPageActivity.class);
+                                                    webManagementIntent.putExtra(ROUTER_SELECTED,
+                                                            routerUuid);
+                                                    webManagementIntent
+                                                            .putExtra(OpenWebManagementPageActivity.URL_TO_OPEN, changesetUrl);
+                                                    activity.startActivity(webManagementIntent);
+                                                }
+                                            }, false);
+                                }
+                            },
+                            0,
+                            osVersion.length(),
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
 
                 //WAN IP
                 final String wanIpText = data.getProperty(NVRAMInfo.WAN_IPADDR, "-");

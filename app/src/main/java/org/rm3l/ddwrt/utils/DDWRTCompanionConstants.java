@@ -213,6 +213,9 @@ public final class DDWRTCompanionConstants {
 
     public static final String GOOGLE_API_KEY = \"fake-api-key\";
 
+    public static final String DDWRT_SCM_URL = "http://svn.dd-wrt.com";
+    public static final String DDWRT_SCM_CHANGESET_URL_BASE = DDWRT_SCM_URL + "/changeset/";
+
     public static class Permissions {
         public static final int INTERNET = 1;
         public static final int NETSTATE = 2;

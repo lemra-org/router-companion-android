@@ -126,6 +126,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_height="wrap_content"
                 android:layout_marginRight="8.0dip"
                 android:layout_marginEnd="8.0dip"
+                android:text="@string/router_state_os_version"
+                android:textStyle="bold" />
+            <TextView
+                android:textIsSelectable="true"
+                android:id="@+id/tile_status_router_router_state_os_version"
+                android:clickable="true"
+                android:layout_width="0dip"
+                android:layout_gravity="fill_horizontal"
+                android:text="@string/loading" />
+
+            <!-- FW -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8.0dip"
+                android:layout_marginEnd="8.0dip"
                 android:text="@string/router_state_firmware"
                 android:textStyle="bold" />
             <TextView
