@@ -181,12 +181,8 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
             //Set tiles
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-            layout.findViewById(R.id.tile_status_time_header_loading_view)
-                    .setVisibility(View.GONE);
             layout.findViewById(R.id.tile_status_time_loading_view)
                     .setVisibility(View.GONE);
-            layout.findViewById(R.id.tile_status_time_current_date)
-                    .setVisibility(View.VISIBLE);
             layout.findViewById(R.id.tile_status_time_grid_layout)
                     .setVisibility(View.VISIBLE);
 
@@ -206,8 +202,6 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
 
                 //Current Date
                 final String currentDate = data.getProperty(NVRAMInfo.CURRENT_DATE, "-");
-                ((TextView) this.layout.findViewById(R.id.tile_status_time_current_date))
-                        .setText(currentDate);
                 ((TextView) layout.findViewById(R.id.tile_status_time_current_time))
                         .setText(currentDate);
 
