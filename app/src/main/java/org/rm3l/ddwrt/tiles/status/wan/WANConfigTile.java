@@ -530,7 +530,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                 final String wanDns = data.getProperty(NVRAMInfo.WAN_DNS);
                 final String wanGetDns = data.getProperty(NVRAMInfo.WAN_GET_DNS);
                 final String property = (wanDns != null ? wanDns : (wanGetDns != null ? wanGetDns : "-"));
-                wanDNSView.setText(property.replaceAll(" ", "\n"));
+                wanDNSView.setText(property.replaceAll(" ", ", "));
 
                 if ("dhcp".equalsIgnoreCase(wanProto)) {
                     tileMenu.setVisibility(View.VISIBLE);
