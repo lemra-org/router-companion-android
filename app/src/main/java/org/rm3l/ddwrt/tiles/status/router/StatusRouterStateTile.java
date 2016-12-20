@@ -350,8 +350,6 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                     .setVisibility(View.GONE);
             layout.findViewById(R.id.tile_status_router_router_state_gridLayout)
                     .setVisibility(View.VISIBLE);
-            layout.findViewById(R.id.tile_status_router_router_state_header_layout)
-                    .setVisibility(View.VISIBLE);
 
             if (data == null) {
                 data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
@@ -383,19 +381,14 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                         .setText(routerNameNull ? "-" : routerName);
 
                 //WAN IP
-                final TextView wanIpView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_wan_ip);
                 final String wanIpText = data.getProperty(NVRAMInfo.WAN_IPADDR, "-");
-                wanIpView.setText(wanIpText);
-
                 final TextView wanIpViewDetail = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_wan_ip_detail);
                 wanIpViewDetail.setText(wanIpText);
 
                 final TextView internetIpTitle = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_internet_ip_title);
-                final TextView internetIpSep = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_internet_ip_sep);
                 final TextView internetIpTextView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_internet_ip);
                 if (!checkActualInternetConnectivity) {
                     internetIpTitle.setVisibility(View.GONE);
-                    internetIpSep.setVisibility(View.GONE);
                     internetIpTextView.setVisibility(View.GONE);
                 } else {
                     final String publicIp = data.getProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, null);
@@ -408,7 +401,6 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                     if (publicIp != null && publicIp.equalsIgnoreCase(wanIpText)) {
                         //Hide public IP in this case
                         internetIpTitle.setVisibility(View.GONE);
-                        internetIpSep.setVisibility(View.GONE);
                         internetIpTextView.setVisibility(View.GONE);
                     }
 

@@ -588,5 +588,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="share_via_nfc_or_qr_code">Share via NFC or QR-Code</string>
     <string name="share_via_qr_code">Share via QR-Code</string>
     <string name="add_shortcut_to_home_screen">Add shortcut to home screen</string>
+    <string name="last_sync">Last sync:</string>
+    <string name="public_ip">Public IP</string>
+    <string name="wan_ip">WAN IP</string>
 
 </resources>
