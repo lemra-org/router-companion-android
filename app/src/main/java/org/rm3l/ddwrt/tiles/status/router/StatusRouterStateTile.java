@@ -200,7 +200,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                                 if (!Strings.isNullOrEmpty(uptimeCmd)) {
                                     final String elapsedFromUptime = Utils.removeLastChar(uptimeCmd.trim());
                                     if (!Strings.isNullOrEmpty(elapsedFromUptime)) {
-                                        uptime += ("\n(up " + elapsedFromUptime + ")");
+                                        uptime += (" (up " + elapsedFromUptime + ")");
                                     }
                                 }
                                 nvramInfo.setProperty(NVRAMInfo.UPTIME, uptime);
