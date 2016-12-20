@@ -71,6 +71,7 @@ import org.rm3l.ddwrt.utils.customtabs.CustomTabActivityHelper;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
@@ -166,8 +167,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                                             NVRAMInfo.WAN_IPADDR,
                                             NVRAMInfo.MODEL,
                                             NVRAMInfo.DIST_TYPE,
-                                            NVRAMInfo.LAN_IPADDR,
-                                            NVRAMInfo.OS_VERSION);
+                                            NVRAMInfo.LAN_IPADDR);
                         }
                         updateProgressBarViewSeparator(50);
                     } finally {
@@ -233,7 +233,20 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
 
                             if (otherCmds.length >= 5) {
                                 //Firmware
-                                nvramInfo.setProperty(NVRAMInfo.FIRMWARE, otherCmds[4]);
+                                final String fwString = otherCmds[4];
+                                nvramInfo.setProperty(NVRAMInfo.FIRMWARE, fwString);
+
+                                final List<String> strings = Splitter.on("rev:")
+                                        .omitEmptyStrings().trimResults().splitToList(fwString);
+                                if (strings.size() >= 2) {
+                                    try {
+                                        nvramInfo.setProperty(NVRAMInfo.OS_VERSION,
+                                                Long.toString(Long.parseLong(
+                                                        strings.get(1).trim())));
+                                    } catch (final NumberFormatException nfe) {
+                                        //No worries
+                                    }
+                                }
                             }
                         }
 
