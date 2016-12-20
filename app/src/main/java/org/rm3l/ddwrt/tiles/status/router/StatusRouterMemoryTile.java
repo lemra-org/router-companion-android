@@ -355,14 +355,8 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
             //Set tiles
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-            layout.findViewById(R.id.tile_status_router_router_mem_header_loading_view)
-                    .setVisibility(View.GONE);
             layout.findViewById(R.id.tile_status_router_router_mem_loading_view)
                     .setVisibility(View.GONE);
-            layout.findViewById(R.id.tile_status_router_router_mem_total)
-                    .setVisibility(View.VISIBLE);
-//            layout.findViewById(R.id.tile_status_router_router_mem_grid_layout)
-//                    .setVisibility(View.VISIBLE);
 
             if (data == null) {
                 data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
@@ -384,10 +378,8 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                 TextView pbText;
 
                 //Total
-                final TextView memTotalView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_total);
                 property = data.getProperty(NVRAMInfo.MEMORY_TOTAL);
                 final String memTotalKb = property != null ? (property + " kB") : "-";
-                memTotalView.setText(memTotalKb);
 
                 ((TextView) layout.findViewById(R.id.tile_status_router_router_mem_total_available))
                         .setText(memTotalKb);

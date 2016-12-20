@@ -27,53 +27,25 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:baselineAligned="false"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/tile_status_router_router_mem_hdr"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingTop="4.0dip">
 
-        <RelativeLayout
-            android:layout_width="fill_parent"
+        <TextView
+            android:textIsSelectable="true"
+            android:id="@+id/tile_status_router_router_mem_title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="4.0dip">
+            android:layout_gravity="start"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text="@string/memory"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tile_status_router_router_mem_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:ellipsize="end"
-                android:text="@string/memory"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold"
-                android:maxLines="1" />
-
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/tile_status_router_router_mem_total"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:text="@string/loading_total"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:visibility="gone"
-                android:maxLines="1" />
-
-        </RelativeLayout>
-
-        <ProgressBar
-            android:id="@+id/tile_status_router_router_mem_header_loading_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
-
-    </RelativeLayout>
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/tile_progress_bar"
