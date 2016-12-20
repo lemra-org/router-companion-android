@@ -261,8 +261,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="router_mem_used">Used</string>
     <string name="loading_clock">Loading Clock…</string>
     <string name="router_cpu_cpu">CPU</string>
-    <string name="router_cpu_cpu_model">CPU Model</string>
-    <string name="router_cpu_cpu_cores">CPU Cores</string>
+    <string name="router_cpu_cpu_model">Model</string>
+    <string name="router_cpu_cpu_cores"># Cores</string>
     <string name="router_cpu_load_avg">Load Average</string>
     <string name="lan_status">LAN Status</string>
     <string name="lan_status_mac">MAC</string>
@@ -592,5 +592,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="last_sync">Last sync:</string>
     <string name="public_ip">Public IP</string>
     <string name="wan_ip">WAN IP</string>
+    <string name="router_cpu_cpu_speed">Speed</string>
 
 </resources>
