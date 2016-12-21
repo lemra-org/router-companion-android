@@ -1685,11 +1685,9 @@ public class DDWRTMainActivity extends AppCompatActivity
                     final long prefSyncIntervalMillis = mPreferences.getLong(AUTO_REFRESH_INTERVAL_SECONDS_PREF, -1l);
                     final String prefSortingStrategy = mPreferences.getString(SORTING_STRATEGY_PREF, "");
                     final boolean withAutoRefresh = mPreferences.getBoolean(AUTO_REFRESH_PREF, false);
-//                    if (this.mWithAutoRefresh != withAutoRefresh ||
-//                            this.mCurrentSyncInterval != prefSyncIntervalMillis ||
-//                            !this.mCurrentSortingStrategy.equals(prefSortingStrategy)) {
-                    //Sync Interval and Auto-Refresh flag are reloaded at each loader run
-                    if (!this.mCurrentSortingStrategy.equals(prefSortingStrategy)) {
+                    if (this.mWithAutoRefresh != withAutoRefresh ||
+                            this.mCurrentSyncInterval != prefSyncIntervalMillis ||
+                            !this.mCurrentSortingStrategy.equals(prefSortingStrategy)) {
                         //Reload UI
                         final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Reloading UI...", false, false);
                         alertDialog.show();
