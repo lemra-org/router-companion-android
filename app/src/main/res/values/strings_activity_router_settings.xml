@@ -55,6 +55,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="pref_title_sync_frequency">Sync frequency</string>
     <string-array name="pref_sync_frequency_titles">
         <item>Never. I will refresh manually</item>
+        <item>Every 5 seconds</item>
         <item>Every 10 seconds</item>
         <item>Every 30 seconds</item>
         <item>Every 1 minute</item>
@@ -70,6 +71,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </string-array>
     <string-array name="pref_sync_frequency_values">
         <item>-1</item>
+        <item>5</item>
         <item>10</item>
         <item>30</item>
         <item>60</item>

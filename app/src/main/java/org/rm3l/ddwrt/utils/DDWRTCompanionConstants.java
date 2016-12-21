@@ -86,6 +86,7 @@ public final class DDWRTCompanionConstants {
 
     public static final String WAN_CYCLE_DAY_PREF = "wan_cycle_day";
 
+    public static final String AUTO_REFRESH_PREF = "auto_refresh.enable";
     public static final String AUTO_REFRESH_INTERVAL_SECONDS_PREF = "routerDataPullIntervalSeconds";
     public static final String SORTING_STRATEGY_PREF = "sortingStrategy";
     public static final String THEMING_PREF = "theming";

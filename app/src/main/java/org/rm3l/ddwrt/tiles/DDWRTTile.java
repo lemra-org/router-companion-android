@@ -65,6 +65,9 @@ import org.rm3l.ddwrt.utils.Utils;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AUTO_REFRESH_INTERVAL_SECONDS_PREF;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AUTO_REFRESH_PREF;
+
 /**
  * Abstract DDWRT Tile
  */
@@ -304,18 +307,22 @@ public abstract class DDWRTTile<T>
 
     protected <T extends DDWRTTile> void doneWithLoaderInstance(final T tile, @NonNull final Loader loader,
                                                                 @Nullable final int... additionalButtonsToMakeVisible) {
-//        doneWithLoaderInstance(tile, loader,
-//                this.mParentFragmentPreferences != null ?
-//                        this.mParentFragmentPreferences.
-//                                getLong(DDWRTCompanionConstants.AUTO_REFRESH_INTERVAL_SECONDS_PREF, -1) * 1000 :
-//                        -1,
-//                additionalButtonsToMakeVisible);
+        final boolean isAutoRefreshEnabled = (this.mParentFragmentPreferences != null &&
+                this.mParentFragmentPreferences.getBoolean(AUTO_REFRESH_PREF, false));
+        Crashlytics.log(Log.DEBUG, LOG_TAG, "isAutoRefreshEnabled: " + isAutoRefreshEnabled);
+        doneWithLoaderInstance(tile, loader,
+                isAutoRefreshEnabled ?
+                        (this.mParentFragmentPreferences != null ?
+                                this.mParentFragmentPreferences.
+                                        getLong(AUTO_REFRESH_INTERVAL_SECONDS_PREF, -1) * 1000 : -1)
+                        : -1,
+                additionalButtonsToMakeVisible);
 
         //No auto-refresh, now that user can refresh data manually
-        doneWithLoaderInstance(tile,
-                loader,
-                -1l,
-                additionalButtonsToMakeVisible);
+//        doneWithLoaderInstance(tile,
+//                loader,
+//                -1l,
+//                additionalButtonsToMakeVisible);
     }
 
     @Nullable

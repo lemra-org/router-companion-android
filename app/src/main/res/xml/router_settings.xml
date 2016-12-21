@@ -57,9 +57,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </PreferenceCategory>
 
     <!-- Data & Sync -->
-    <!--<PreferenceCategory-->
-        <!--android:key="@string/pref_header_data_sync"-->
-        <!--android:title="Data &amp; Sync">-->
+    <PreferenceCategory
+        android:key="@string/pref_header_data_sync"
+        android:title="Data &amp; Sync">
 
         <!--<org.rm3l.ddwrt.widgets.LongListPreference-->
             <!--android:defaultValue="3600000"-->
@@ -70,7 +70,25 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <!--android:positiveButtonText="@null"-->
             <!--android:title="Auto-refresh interval" />-->
 
-    <!--</PreferenceCategory>-->
+        <org.rm3l.ddwrt.widgets.MySwitchPreference
+            android:icon="@drawable/ic_action_notification_sync"
+            android:disableDependentsState="false"
+            android:defaultValue="false"
+            android:key="auto_refresh.enable"
+            android:summaryOff="Disabled. You can still pull to refresh manually."
+            android:summaryOn="Enabled."
+            android:title="Auto-refresh" />
+
+        <org.rm3l.ddwrt.widgets.EditTextLongPreference
+            android:icon="@drawable/ic_action_navigation_refresh"
+            android:dependency="auto_refresh.enable"
+            android:inputType="number"
+            android:defaultValue="60"
+            android:key="routerDataPullIntervalSeconds"
+            android:title="Auto-refresh interval (in seconds)"
+            android:summary="Auto-refresh interval"/>
+
+    </PreferenceCategory>
 
 
     <!-- Monitoring -->

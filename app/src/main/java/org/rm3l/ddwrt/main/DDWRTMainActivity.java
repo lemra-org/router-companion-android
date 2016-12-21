@@ -174,6 +174,7 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.REMOTE_MGT_HTTPS;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.WAN_IPADDR;
 import static org.rm3l.ddwrt.resources.conn.Router.RouterFirmware;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AUTO_REFRESH_INTERVAL_SECONDS_PREF;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AUTO_REFRESH_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_THEME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
@@ -231,6 +232,7 @@ public class DDWRTMainActivity extends AppCompatActivity
     private int mTabPosition = 0;
     private String mCurrentSortingStrategy;
     private long mCurrentSyncInterval;
+    private boolean mWithAutoRefresh;
     @NonNull
     private SharedPreferences mGlobalPreferences;
     @NonNull
@@ -400,6 +402,7 @@ public class DDWRTMainActivity extends AppCompatActivity
         //Load from Shared Preferences
         this.mCurrentSortingStrategy = mPreferences.getString(SORTING_STRATEGY_PREF, "");
         this.mCurrentSyncInterval = mPreferences.getLong(AUTO_REFRESH_INTERVAL_SECONDS_PREF, -10l);
+        this.mWithAutoRefresh = mPreferences.getBoolean(AUTO_REFRESH_PREF, false);
 
         mIsThemeLight = ColorUtils.isThemeLight(this);
         if (mIsThemeLight) {
@@ -1680,10 +1683,14 @@ public class DDWRTMainActivity extends AppCompatActivity
                 // Make sure the request was successful and reload UI if necessary
                 if (resultCode == RESULT_OK) {
                     final SharedPreferences mPreferences = this.getSharedPreferences(this.mRouterUuid, Context.MODE_PRIVATE);
-                    final long prefSyncIntervalMillis = mPreferences.getLong(AUTO_REFRESH_INTERVAL_SECONDS_PREF, -10l);
+                    final long prefSyncIntervalMillis = mPreferences.getLong(AUTO_REFRESH_INTERVAL_SECONDS_PREF, -1l);
                     final String prefSortingStrategy = mPreferences.getString(SORTING_STRATEGY_PREF, "");
-                    if (this.mCurrentSyncInterval != prefSyncIntervalMillis ||
-                            !this.mCurrentSortingStrategy.equals(prefSortingStrategy)) {
+                    final boolean withAutoRefresh = mPreferences.getBoolean(AUTO_REFRESH_PREF, false);
+//                    if (this.mWithAutoRefresh != withAutoRefresh ||
+//                            this.mCurrentSyncInterval != prefSyncIntervalMillis ||
+//                            !this.mCurrentSortingStrategy.equals(prefSortingStrategy)) {
+                    //Sync Interval and Auto-Refresh flag are reloaded at each loader run
+                    if (!this.mCurrentSortingStrategy.equals(prefSortingStrategy)) {
                         //Reload UI
                         final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Reloading UI...", false, false);
                         alertDialog.show();
