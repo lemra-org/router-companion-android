@@ -17,7 +17,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.PermissionChecker;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +44,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.escapeString;
 import static org.rm3l.ddwrt.tiles.status.wireless.share.WifiSharingActivity.WIFI_SHARING_DATA;
 import static org.rm3l.ddwrt.utils.ImageUtils.encodeAsBitmap;
+import static org.rm3l.ddwrt.utils.Utils.fromHtml;
 
 /**
  * Created by rm3l on 11/11/2016.
@@ -192,7 +192,7 @@ public class WifiSharingQrCodeFragment extends Fragment {
                     sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
                     sendIntent.putExtra(Intent.EXTRA_SUBJECT, String.format("QR Code for Wireless Network '%s'", mSsid));
                     sendIntent.setType("text/html");
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(String.format("%s%s",
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, fromHtml(String.format("%s%s",
                             ((TextView) rootView.findViewById(R.id.tile_status_wireless_iface_qrcode_note)).getText(),
                             Utils.getShareIntentFooter()).replaceAll("\n","<br/>")));
 

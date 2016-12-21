@@ -47,7 +47,6 @@ import android.support.v4.content.Loader;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.SwitchCompat;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
@@ -110,6 +109,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.resources.Encrypted.d;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WAN_CYCLE_DAY_PREF;
+import static org.rm3l.ddwrt.utils.Utils.fromHtml;
 import static org.rm3l.ddwrt.utils.WANTrafficUtils.HIDDEN_;
 import static org.rm3l.ddwrt.utils.WANTrafficUtils.TOTAL_DL_CURRENT_MONTH;
 import static org.rm3l.ddwrt.utils.WANTrafficUtils.TOTAL_DL_CURRENT_MONTH_MB;
@@ -948,7 +948,7 @@ public class WANMonthlyTrafficTile
                                                     String.format("Backup of WAN Monthly Traffic on Router '%s'",
                                                             mRouter.getCanonicalHumanReadableName()));
                                             shareIntent.setType("text/html");
-                                            shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
+                                            shareIntent.putExtra(Intent.EXTRA_TEXT, fromHtml(
                                                     ("Backup Date: " + backupDate + "\n\n").replaceAll("\n", "<br/>") +
                                                             Utils.getShareIntentFooter()));
                                             shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);

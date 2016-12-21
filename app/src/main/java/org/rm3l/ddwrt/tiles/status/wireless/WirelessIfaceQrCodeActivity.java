@@ -32,7 +32,6 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -44,7 +43,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -58,10 +56,6 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Strings;
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -72,7 +66,6 @@ import org.rm3l.ddwrt.tiles.status.wireless.share.WifiSharingActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
-import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
@@ -82,14 +75,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.EnumMap;
-import java.util.Map;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.escapeString;
 import static org.rm3l.ddwrt.utils.ImageUtils.encodeAsBitmap;
+import static org.rm3l.ddwrt.utils.Utils.fromHtml;
 
 @Deprecated
 public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
@@ -461,7 +453,7 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
         sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
         sendIntent.putExtra(Intent.EXTRA_SUBJECT, String.format("QR Code for Wireless Network '%s'", mSsid));
         sendIntent.setType("text/html");
-        sendIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(String.format("%s%s",
+        sendIntent.putExtra(Intent.EXTRA_TEXT, fromHtml(String.format("%s%s",
             ((TextView) findViewById(R.id.tile_status_wireless_iface_qrcode_note)).getText(),
                 Utils.getShareIntentFooter()).replaceAll("\n","<br/>")));
 

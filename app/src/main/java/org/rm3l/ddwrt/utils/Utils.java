@@ -517,7 +517,7 @@ public final class Utils {
     }
 
     public static Spannable linkifyHtml(@NonNull final String html, final int linkifyMask) {
-        final Spanned text = Html.fromHtml(html);
+        final Spanned text = fromHtml(html);
         final URLSpan[] currentSpans = text.getSpans(0, text.length(), URLSpan.class);
 
         final SpannableString buffer = new SpannableString(text);
@@ -775,6 +775,15 @@ public final class Utils {
         if (imm != null) {
             // only will trigger it if no physical keyboard is open
             imm.showSoftInput(view, 0);
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    public static Spanned fromHtml(String source) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return Html.fromHtml(source, Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            return Html.fromHtml(source);
         }
     }
 

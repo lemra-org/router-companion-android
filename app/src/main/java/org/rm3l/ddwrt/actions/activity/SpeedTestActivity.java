@@ -32,7 +32,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -109,6 +108,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_MAX
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER_AUTO;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER_RANDOM;
+import static org.rm3l.ddwrt.utils.Utils.fromHtml;
 
 /**
  * Created by rm3l on 20/12/15.
@@ -1218,7 +1218,7 @@ public class SpeedTestActivity extends AppCompatActivity
                 String.format("Speed Test Results for Router '%s'",
                         mOriginalRouter.getCanonicalHumanReadableName()));
         sendIntent.putExtra(Intent.EXTRA_TEXT,
-                Html.fromHtml(String.format("%s\n\n%s",
+                fromHtml(String.format("%s\n\n%s",
                         Joiner.on("\n").skipNulls().join(csvTextOutput),
                         Utils.getShareIntentFooter())
                         .replaceAll("\n", "<br/>")));

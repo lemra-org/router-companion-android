@@ -34,7 +34,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -100,6 +99,7 @@ import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.rm3l.ddwrt.main.DDWRTMainActivity.IMPORT_ALIASES_FRAGMENT_TAG;
 import static org.rm3l.ddwrt.main.DDWRTMainActivity.MAIN_ACTIVITY_ACTION;
+import static org.rm3l.ddwrt.utils.Utils.fromHtml;
 
 /**
  * Created by rm3l on 13/12/15.
@@ -766,7 +766,7 @@ public class ManageRouterAliasesActivity
                                             String.format("Aliases Backup for Router '%s'",
                                                     mRouter.getCanonicalHumanReadableName()));
                                     shareIntent.setType("text/html");
-                                    shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
+                                    shareIntent.putExtra(Intent.EXTRA_TEXT, fromHtml(
                                             ("Backup Date: " + backupDate + "\n\n" +
                                                     aliasesStr + "\n\n\n").replaceAll("\n", "<br/>") +
                                                     Utils.getShareIntentFooter()));

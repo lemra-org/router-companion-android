@@ -34,16 +34,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.SwitchCompat;
-import android.text.Html;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.method.ScrollingMovementMethod;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -61,8 +57,6 @@ import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.Session;
 
 import org.rm3l.ddwrt.BuildConfig;
@@ -76,13 +70,9 @@ import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.utils.FontUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
-import org.rm3l.ddwrt.utils.ViewGroupUtils;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -96,7 +86,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SYSLOG;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SYSLOGD_ENABLE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.LINE_SEPARATOR;
+import static org.rm3l.ddwrt.utils.Utils.fromHtml;
 
 /**
  *
@@ -375,10 +365,10 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                     } else {
                         scrollView.setVisibility(View.VISIBLE);
 
-                        logTextView.setMovementMethod(new ScrollingMovementMethod());
+//                        logTextView.setMovementMethod(new ScrollingMovementMethod());
 
                         logTextView.append(new SpannableStringBuilder()
-                                .append(Html.fromHtml("<br/>"))
+                                .append(fromHtml("<br/>"))
                                 .append(newSyslogSpan));
                     }
 
@@ -487,7 +477,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     private Spanned findAndHighlightOutput(@NonNull final CharSequence text, @NonNull final String textToFind) {
         final Matcher matcher = Pattern.compile("(" + Pattern.quote(textToFind) + ")", Pattern.CASE_INSENSITIVE)
                 .matcher(text);
-        return Html.fromHtml(matcher.replaceAll(Matcher.quoteReplacement(FONT_COLOR_MATCHING_HTML) + "$1" + Matcher.quoteReplacement(SLASH_FONT_HTML))
+        return fromHtml(matcher.replaceAll(Matcher.quoteReplacement(FONT_COLOR_MATCHING_HTML) + "$1" + Matcher.quoteReplacement(SLASH_FONT_HTML))
                 .replaceAll(Pattern.quote("\n"), Matcher.quoteReplacement("<br/>")));
     }
 

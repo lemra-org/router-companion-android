@@ -20,7 +20,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.FileProvider;
-import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -65,6 +64,7 @@ import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.WAN_MONTHLY_TRAFFIC_ACTION;
 import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.ddwrt.utils.Utils.fromHtml;
 
 /**
  * Created by rm3l on 10/05/15.
@@ -539,7 +539,7 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
                                                     String.format("Backup of WAN Monthly Traffic on Router '%s'",
                                                             mRouter.getCanonicalHumanReadableName()));
                                             shareIntent.setType("text/html");
-                                            shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
+                                            shareIntent.putExtra(Intent.EXTRA_TEXT, fromHtml(
                                                     ("Backup Date: " + backupDate + "\n\n").replaceAll("\n", "<br/>") +
                                                             Utils.getShareIntentFooter()));
                                             shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);

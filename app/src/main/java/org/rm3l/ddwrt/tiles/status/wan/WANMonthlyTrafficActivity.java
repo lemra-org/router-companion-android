@@ -44,7 +44,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -96,6 +95,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
+import static org.rm3l.ddwrt.utils.Utils.fromHtml;
 
 public class WANMonthlyTrafficActivity extends AppCompatActivity {
 
@@ -757,7 +757,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
         sendIntent.putExtra(Intent.EXTRA_SUBJECT,
                 String.format("WAN Monthly Traffic for Router '%s': %s", mRouterDisplay, mCycleItem.getLabelWithYears()));
         sendIntent.putExtra(Intent.EXTRA_TEXT,
-                Html.fromHtml(String.format("Traffic Breakdown\n\n>>> Total Inbound: %d B (%s) / Total Outbound: %d B (%s) <<<\n\n%s" +
+                fromHtml(String.format("Traffic Breakdown\n\n>>> Total Inbound: %d B (%s) / Total Outbound: %d B (%s) <<<\n\n%s" +
                                 "%s",
                         totalInBytes, byteCountToDisplaySize(Double.valueOf(totalInBytes).longValue())
                                 .replace("bytes", "B"),

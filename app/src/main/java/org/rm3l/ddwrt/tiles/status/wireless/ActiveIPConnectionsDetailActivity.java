@@ -49,7 +49,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -123,6 +122,7 @@ import static org.rm3l.ddwrt.tiles.status.wireless.stats.ActiveIPConnectionsStat
 import static org.rm3l.ddwrt.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_SOURCE;
 import static org.rm3l.ddwrt.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.SEPARATOR;
 import static org.rm3l.ddwrt.utils.Utils.getEscapedFileName;
+import static org.rm3l.ddwrt.utils.Utils.fromHtml;
 
 public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
@@ -906,7 +906,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         }
         body += Utils.getShareIntentFooter();
 
-        sendIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(body.replaceAll("\n", "<br/>")));
+        sendIntent.putExtra(Intent.EXTRA_TEXT, fromHtml(body.replaceAll("\n", "<br/>")));
 
         sendIntent.setData(uriForFile);
 //        sendIntent.setType("text/plain");

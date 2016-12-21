@@ -38,7 +38,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -66,6 +65,7 @@ import java.io.OutputStream;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.ddwrt.utils.Utils.fromHtml;
 
 public class RouterCpuInfoActivity extends AppCompatActivity {
 
@@ -379,7 +379,7 @@ public class RouterCpuInfoActivity extends AppCompatActivity {
                         mRouter.getCanonicalHumanReadableName()));
 
         sendIntent.putExtra(Intent.EXTRA_TEXT,
-                Html.fromHtml(String.format("%s%s",
+                fromHtml(String.format("%s%s",
                         mCpuInfoMultiLine, Utils.getShareIntentFooter())
                         .replaceAll("\n", "<br/>")));
 

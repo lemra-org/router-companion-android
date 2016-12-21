@@ -46,7 +46,6 @@ import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -103,6 +102,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
+import static org.rm3l.ddwrt.utils.Utils.fromHtml;
 
 public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuItemClickListener {
 
@@ -545,7 +545,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         }
 
         sendIntent.putExtra(Intent.EXTRA_TEXT,
-                Html.fromHtml(Utils.getShareIntentFooter()));
+                fromHtml(Utils.getShareIntentFooter()));
 
         sendIntent.setData(uriForFile);
 //        sendIntent.setType("text/plain");

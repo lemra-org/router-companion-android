@@ -32,7 +32,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.pm.ShortcutManager;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -55,7 +54,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -182,6 +180,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERS
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_SECONDS;
+import static org.rm3l.ddwrt.utils.Utils.fromHtml;
 import static org.rm3l.ddwrt.web.WebUtils.DO_NOT_VERIFY;
 import static org.rm3l.ddwrt.web.WebUtils.trustAllHosts;
 
@@ -1920,7 +1919,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                             String.format("Backup of Router '%s'",
                                                     mRouter.getCanonicalHumanReadableName()));
                                     shareIntent.setType("text/html");
-                                    shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
+                                    shareIntent.putExtra(Intent.EXTRA_TEXT, fromHtml(
                                             ("Backup Date: " + backupDate + "\n\n" +
                                                     "You may restore your router later using this Backup Configuration file.\n" +
                                                     "Restoring can be performed either via the 'DD-WRT Companion' app, or using " +
@@ -2185,7 +2184,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                             String.format("Aliases Backup for Router '%s'",
                                     mRouter.getCanonicalHumanReadableName()));
                     shareIntent.setType("text/html");
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, fromHtml(
                             ("Backup Date: " + backupDate + "\n\n" +
                                     aliasesStr + "\n\n\n").replaceAll("\n", "<br/>") +
                                     Utils.getShareIntentFooter()));
