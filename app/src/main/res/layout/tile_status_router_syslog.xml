@@ -22,198 +22,166 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tile_status_router_syslog"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.74"
-        android:orientation="vertical">
+    <RelativeLayout
+        android:id="@+id/tile_status_router_syslog_hdr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <RelativeLayout
-            android:id="@+id/tile_status_router_syslog_hdr"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="4.0dip">
-
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="4.0dip">
-
-                <TextView
-                    android:id="@+id/tile_status_router_syslog_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="@string/syslog"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textStyle="bold" />
-
-                <android.support.v7.widget.SwitchCompat
-                    android:id="@+id/tile_status_router_syslog_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:checked="false"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    android:textOff="OFF"
-                    android:textOn="ON"
-                    android:visibility="gone" />
-
-            </RelativeLayout>
-
-            <ProgressBar
-                android:id="@+id/tile_status_router_syslog_header_loading_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
-
-        </RelativeLayout>
-
-        <ProgressBar
-            android:id="@+id/tile_progress_bar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8.0dip"
-            android:layout_marginTop="8.0dip"
-            android:indeterminate="false"
-            android:indeterminateOnly="false" />
-
-        <!-- Error message placeholder -->
         <TextView
             android:textIsSelectable="true"
-            android:id="@+id/tile_status_router_syslog_error"
-            android:layout_width="300dp"
+            android:id="@+id/tile_status_router_syslog_title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:ellipsize="end"
-            android:gravity="center"
-            android:singleLine="true"
-            android:text="@string/error_placeholder"
-            android:textColor="@color/ddwrt_purple"
-            android:textStyle="bold"
+            android:paddingTop="4.0dip"
+            android:maxLines="1"
+            android:text="@string/syslog"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
+
+        <ProgressBar
+            android:id="@+id/tile_status_router_syslog_header_loading_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/tile_status_router_syslog_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:checked="false"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textOff="OFF"
+            android:textOn="ON"
             android:visibility="gone" />
 
-        <GridLayout
-            android:layout_width="fill_parent"
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/tile_progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8.0dip"
+        android:layout_marginTop="8.0dip"
+        android:indeterminate="false"
+        android:indeterminateOnly="false" />
+
+    <!-- Error message placeholder -->
+    <TextView
+        android:textIsSelectable="true"
+        android:id="@+id/tile_status_router_syslog_error"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:text="@string/error_placeholder"
+        android:textColor="@color/ddwrt_purple"
+        android:textStyle="bold"
+        android:visibility="gone"
+        android:maxLines="1" />
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="2">
+
+        <!-- Status -->
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:columnCount="3">
+            android:text="Status"
+            android:textStyle="bold"
+            android:layout_marginRight="8.0dip"
+            android:layout_marginEnd="8.0dip" />
+        <TextView
+            android:textIsSelectable="true"
+            android:id="@+id/tile_status_router_syslog_state"
+            android:layout_width="0dip"
+            android:layout_gravity="fill_horizontal"
+            android:text="@string/loading" />
 
-            <!-- Status -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Status"
-                android:textStyle="bold" />
+    </GridLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space" />
+    <!-- Filter -->
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1.0dip">
 
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/tile_status_router_syslog_state"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:singleLine="true"
-                android:text="@string/loading" />
-
-        </GridLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/tile_status_router_syslog_filter"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="1.0dip"
-            android:weightSum="1">
+            android:layout_weight="1.02"
+            android:drawableBottom="@android:color/holo_blue_dark"
+            android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
+            android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
+            android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
+            android:drawableStart="@drawable/abs__ic_search_api_holo_light"
+            android:hint="@string/syslog_filter_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
+            android:textColor="@android:color/holo_blue_dark" />
+    </android.support.design.widget.TextInputLayout>
 
-            <!-- Filter -->
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/tile_status_router_syslog_filter"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.02"
-                    android:drawableBottom="@android:color/holo_blue_dark"
-                    android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
-                    android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
-                    android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
-                    android:drawableStart="@drawable/abs__ic_search_api_holo_light"
-                    android:hint="@string/syslog_filter_hint"
-                    android:imeOptions="actionSearch"
-                    android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
-                    android:textColor="@android:color/holo_blue_dark" />
-            </android.support.design.widget.TextInputLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        </LinearLayout>
+        <ProgressBar
+            android:id="@+id/tile_status_router_syslog_content_loading_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
 
         <org.rm3l.ddwrt.widgets.ScrollViewWithLimitedHeight
             android:id="@+id/tile_status_router_syslog_content_scrollview"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:fillViewport="true"
-            android:scrollbars="vertical|horizontal">
+            android:scrollbars="vertical|horizontal"
+            android:background="@color/material_drawer_dark_selected">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/tile_status_router_syslog_content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="bottom"
-                    android:maxLength="9000"
-                    android:maxLines="200"
-                    android:singleLine="false"
-                    android:visibility="gone" />
-
-                <ProgressBar
-                    android:id="@+id/tile_status_router_syslog_content_loading_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true" />
-
-                <com.github.curioustechizen.ago.RelativeTimeTextView
-                    android:textIsSelectable="true"
-                    android:layout_marginTop="5dp"
-                    android:id="@+id/tile_last_sync"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_below="@+id/tile_status_router_syslog_content"
-                    android:layout_alignParentRight="true"
-                    android:textStyle="italic"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    android:layout_alignParentBottom="true"
-                    android:ellipsize="end"
-                    android:gravity="end"
-                    android:singleLine="false"
-                    android:text="Last sync: "/>
-
-            </RelativeLayout>
+            <TextView
+                android:textIsSelectable="true"
+                android:id="@+id/tile_status_router_syslog_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:maxLength="9000"
+                android:maxLines="200"
+                android:visibility="gone" />
 
         </org.rm3l.ddwrt.widgets.ScrollViewWithLimitedHeight>
 
+        <com.github.curioustechizen.ago.RelativeTimeTextView
+            android:textIsSelectable="true"
+            android:layout_marginTop="15dp"
+            android:layout_below="@+id/tile_status_router_syslog_content_scrollview"
+            android:id="@+id/tile_last_sync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:textStyle="italic"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:layout_alignParentBottom="true"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:maxLines="1"
+            android:text="Last sync: "/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

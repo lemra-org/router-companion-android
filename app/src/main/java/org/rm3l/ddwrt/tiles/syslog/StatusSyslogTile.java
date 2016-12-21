@@ -26,12 +26,15 @@ package org.rm3l.ddwrt.tiles.syslog;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.SwitchCompat;
@@ -40,6 +43,7 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.method.ScrollingMovementMethod;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -48,6 +52,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +61,9 @@ import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.Session;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -68,9 +76,12 @@ import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.utils.FontUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -83,6 +94,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SYSLOG;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SYSLOGD_ENABLE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.LINE_SEPARATOR;
 
 /**
  *
@@ -102,12 +114,14 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     protected long mLastSync;
     private AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
     private AsyncTaskLoader<NVRAMInfo> mLoader;
+    private Session mSshSession;
 
     public StatusSyslogTile(@NonNull Fragment parentFragment, @Nullable final ViewGroup parentViewGroup,
                             @NonNull Bundle arguments, @Nullable final String tileTitle,
                             final boolean displayStatus, Router router, @Nullable final String grep) {
         super(parentFragment, arguments, router, R.layout.tile_status_router_syslog,
                 null);
+
         this.mGrep = grep;
         this.mDisplayStatus = displayStatus;
         if (!isNullOrEmpty(tileTitle)) {
@@ -116,7 +130,6 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
         }
 
         this.parentViewGroup = parentViewGroup;
-
     }
 
     public boolean canChildScrollUp() {
@@ -163,6 +176,16 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + StatusSyslogTile.class + ": routerInfo=" +
                             mRouter + " / nbRunsLoader=" + nbRunsLoader);
 
+                    final String cmd = String.format("tail -n %d /tmp/var/log/messages %s",
+                            MAX_LOG_LINES, isNullOrEmpty(mGrep) ? "" : " | grep -i -E \"" + mGrep + "\"");
+
+                    if (Looper.myLooper() == null) {
+                        //Check for this - otherwise it yields the following error:
+                        // "only one looper may be created per thread")
+                        //cf. http://stackoverflow.com/questions/23038682/java-lang-runtimeexception-only-one-looper-may-be-created-per-thread
+                        Looper.prepare();
+                    }
+
                     if (mRefreshing.getAndSet(true)) {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
@@ -200,8 +223,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                             try {
                                 //Get last log lines
                                 logs = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
-                                        mGlobalPreferences, String.format("tail -n %d /tmp/var/log/messages %s",
-                                                MAX_LOG_LINES, isNullOrEmpty(mGrep) ? "" : " | grep -i -E \"" + mGrep + "\""));
+                                        mGlobalPreferences, cmd);
                             } finally {
                                 updateProgressBarViewSeparator(70);
                                 if (logs != null) {
@@ -305,16 +327,20 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                 final EditText filterEditText = (EditText) this.layout.findViewById(R.id.tile_status_router_syslog_filter);
 
                 syslogState.setText(syslogdEnabledPropertyValue == null ? "-" : (isSyslogEnabled ? "Enabled" : "Disabled"));
-                syslogState.setVisibility(syslogdEnabledPropertyValue == null ? View.VISIBLE : View.GONE);
+                syslogState.setVisibility(View.VISIBLE);
 
                 final TextView logTextView = (TextView) syslogContentView;
                 if (isSyslogEnabled) {
+                    logTextView.setTypeface(Typeface.MONOSPACE);
+                    logTextView.setTextColor(ContextCompat.getColor(mParentFragmentActivity,
+                            R.color.white));
 
                     //Highlight textToFind for new log lines
                     final String newSyslog = data.getProperty(SYSLOG, EMPTY_STRING);
 
                     //Hide container if no data at all (no existing data, and incoming data is empty too)
-                    final View scrollView = layout.findViewById(R.id.tile_status_router_syslog_content_scrollview);
+                    final ScrollView scrollView = (ScrollView) layout
+                                    .findViewById(R.id.tile_status_router_syslog_content_scrollview);
 
                     //noinspection ConstantConditions
                     Spanned newSyslogSpan = new SpannableString(newSyslog);
@@ -413,6 +439,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                         }
                     });
 
+                    scrollView.fullScroll(View.FOCUS_DOWN);
                 }
 
                 //Update last sync
