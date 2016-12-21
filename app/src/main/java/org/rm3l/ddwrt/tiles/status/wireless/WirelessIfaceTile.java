@@ -999,7 +999,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                 if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && wifiPassword == null)) {
                     //menu item should have been disabled, but anyways, you never know :)
                     Toast.makeText(mParentFragmentActivity,
-                            "Missing parameters to generate QR-Code - try again later", Toast.LENGTH_SHORT).show();
+                            "Missing parameters to share WiFi network - try again later", Toast.LENGTH_SHORT).show();
                     return true;
                 }
 
