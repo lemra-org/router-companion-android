@@ -380,6 +380,7 @@ public class WirelessClientsTile
                     rtMenuItem
                             .setChecked(mParentFragmentPreferences
                                     .getBoolean(getFormattedPrefKey(RT_GRAPHS), false));
+                    rtMenuItem.setVisible(false);
                 } else {
                     rtMenuItem.setVisible(false);
                 }
@@ -2636,7 +2637,8 @@ public class WirelessClientsTile
             mProgressBarDesc.setText(null);
             mProgressBarDesc.setVisibility(View.GONE);
             mProgressBar.setVisibility(View.GONE);
-            doneLoading(loader);
+            doneWithLoaderInstance(this, loader);
+//            doneLoading(loader);
         }
     }
 
