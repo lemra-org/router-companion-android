@@ -73,7 +73,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.madx.updatechecker.lib.UpdateRunnable;
+//import com.madx.updatechecker.lib.UpdateRunnable;
 //import com.pusher.client.Pusher;
 //import com.pusher.client.channel.SubscriptionEventListener;
 import com.stephentuso.welcome.WelcomeScreenHelper;
@@ -419,12 +419,12 @@ public class RouterManagementActivity
 //        BootReceiver.doStartBackgroundServiceIfNeeded(this);
 
         /* Use this when you want to run a background update check */
-        final UpdateRunnable updateRunnable =
-                new UpdateRunnable(this, new Handler());
-        if (StringUtils.startsWithIgnoreCase(FLAVOR, "google")) {
-            //This library currently supports Google Play only
-            updateRunnable.start();
-        }
+//        final UpdateRunnable updateRunnable =
+//                new UpdateRunnable(this, new Handler());
+//        if (StringUtils.startsWithIgnoreCase(FLAVOR, "google")) {
+//            //This library currently supports Google Play only
+//            updateRunnable.start();
+//        }
 
         Utils.displayRatingBarIfNeeded(this);
 

@@ -5,7 +5,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.View;
 
-import com.madx.updatechecker.lib.UpdateRunnable;
+//import com.madx.updatechecker.lib.UpdateRunnable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
@@ -27,16 +27,16 @@ public class ChangelogActivity extends WebActivity {
         if (checkForUpdatesButton != null &&
                 StringUtils.startsWithIgnoreCase(FLAVOR, "google")) {
             //This library currently supports Google Play only
-            checkForUpdatesButton.setVisibility(View.VISIBLE);
-            checkForUpdatesButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    /* Use this if an update check is explicitly requested by a user action */
-                    new UpdateRunnable(ChangelogActivity.this, new Handler())
-                            .force(true)
-                            .start();
-                }
-            });
+            checkForUpdatesButton.setVisibility(View.GONE);
+//            checkForUpdatesButton.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    /* Use this if an update check is explicitly requested by a user action */
+//                    new UpdateRunnable(ChangelogActivity.this, new Handler())
+//                            .force(true)
+//                            .start();
+//                }
+//            });
 
         } else {
             if (checkForUpdatesButton != null) {
