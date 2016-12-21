@@ -20,4 +20,4 @@
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
 
-include ':app', ':tasker-plugin', ':common'
+include ':app', ':tasker-plugin', ':common', ':emulatorview'
