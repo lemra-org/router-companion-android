@@ -22,10 +22,10 @@ public class FontUtils {
         TTF(".ttf"),
         OTF(".otf");
 
-        private final String ext;
+        private final String extension;
 
-        FontType(String ext) {
-            this.ext = ext;
+        FontType(String extension) {
+            this.extension = extension;
         }
     }
 
@@ -35,7 +35,7 @@ public class FontUtils {
         Typeface typeface = FONTS_CACHE.getIfPresent(fontName);
         if (typeface == null) {
             typeface = Typeface.createFromAsset(context.getAssets(), "fonts/" + fontName +
-                    (fontType == null ? "" : fontType.ext));
+                    (fontType == null ? "" : fontType.extension));
             FONTS_CACHE.put(fontName, typeface);
         }
         return typeface;

@@ -94,12 +94,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/tile_status_router_syslog_gridlayout"
         android:columnCount="2">
 
         <!-- Status -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/tile_status_router_syslog_state_title"
             android:text="Status"
             android:textStyle="bold"
             android:layout_marginRight="8.0dip"
@@ -113,75 +115,81 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     </GridLayout>
 
-    <!-- Filter -->
-    <android.support.design.widget.TextInputLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="1.0dip">
+        android:orientation="vertical">
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/tile_status_router_syslog_filter"
+        <!-- Filter -->
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.02"
-            android:drawableBottom="@android:color/holo_blue_dark"
-            android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
-            android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
-            android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
-            android:drawableStart="@drawable/abs__ic_search_api_holo_light"
-            android:hint="@string/syslog_filter_hint"
-            android:imeOptions="actionSearch"
-            android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
-            android:textColor="@android:color/holo_blue_dark" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/tile_status_router_syslog_filter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableBottom="@android:color/holo_blue_dark"
+                android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
+                android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
+                android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
+                android:drawableStart="@drawable/abs__ic_search_api_holo_light"
+                android:hint="@string/syslog_filter_hint"
+                android:imeOptions="actionSearch"
+                android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
+                android:textColor="@android:color/holo_blue_dark" />
+        </android.support.design.widget.TextInputLayout>
 
-        <ProgressBar
-            android:id="@+id/tile_status_router_syslog_content_loading_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <org.rm3l.ddwrt.widgets.ScrollViewWithLimitedHeight
-            android:id="@+id/tile_status_router_syslog_content_scrollview"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:fillViewport="true"
-            android:scrollbars="vertical|horizontal"
-            android:background="@color/material_drawer_dark_selected">
-
-            <TextView
+            <com.github.curioustechizen.ago.RelativeTimeTextView
                 android:textIsSelectable="true"
-                android:id="@+id/tile_status_router_syslog_content"
+                android:layout_marginTop="15dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:id="@+id/tile_last_sync"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="bottom"
-                android:maxLength="9000"
-                android:maxLines="200"
-                android:visibility="gone" />
+                android:textStyle="italic"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:ellipsize="end"
+                android:gravity="end"
+                android:maxLines="1"
+                android:text="Last sync: "/>
 
-        </org.rm3l.ddwrt.widgets.ScrollViewWithLimitedHeight>
+            <ProgressBar
+                android:id="@+id/tile_status_router_syslog_content_loading_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
 
-        <com.github.curioustechizen.ago.RelativeTimeTextView
-            android:textIsSelectable="true"
-            android:layout_marginTop="15dp"
-            android:layout_below="@+id/tile_status_router_syslog_content_scrollview"
-            android:id="@+id/tile_last_sync"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:textStyle="italic"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:layout_alignParentBottom="true"
-            android:ellipsize="end"
-            android:gravity="end"
-            android:maxLines="1"
-            android:text="Last sync: "/>
+            <ScrollView
+                android:id="@+id/tile_status_router_syslog_content_scrollview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical|horizontal"
+                android:fillViewport="true"
+                android:background="@color/material_drawer_dark_selected"
+                android:paddingBottom="15dp">
 
-    </RelativeLayout>
+                <TextView
+                    android:textIsSelectable="true"
+                    android:id="@+id/tile_status_router_syslog_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="bottom"
+                    android:maxLength="9000"
+                    android:maxLines="200"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:visibility="gone" />
+
+            </ScrollView>
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

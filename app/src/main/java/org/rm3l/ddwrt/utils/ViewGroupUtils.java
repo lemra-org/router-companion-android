@@ -36,6 +36,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -244,6 +245,16 @@ public final class ViewGroupUtils {
             return;
         }
         textView.setFilters(new InputFilter[] { new InputFilter.LengthFilter(maxLength) });
+    }
+
+    public static void scrollScrollViewToBottom(@NonNull final ScrollView scrollLayout) {
+        final View lastChild = scrollLayout.getChildAt(scrollLayout.getChildCount() - 1);
+        final int bottom = lastChild.getBottom() + scrollLayout.getPaddingBottom();
+        final int sy = scrollLayout.getScrollY();
+        final int sh = scrollLayout.getHeight();
+        final int delta = bottom - (sy + sh);
+
+        scrollLayout.smoothScrollBy(0, delta);
     }
 
 }

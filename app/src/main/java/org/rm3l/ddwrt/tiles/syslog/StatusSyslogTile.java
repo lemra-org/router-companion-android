@@ -79,6 +79,7 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.FontUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.ViewGroupUtils;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
@@ -90,6 +91,7 @@ import java.util.regex.Pattern;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+import static android.support.v4.content.ContextCompat.getColor;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SYSLOG;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SYSLOGD_ENABLE;
@@ -326,14 +328,17 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                 final View syslogContentView = this.layout.findViewById(R.id.tile_status_router_syslog_content);
                 final EditText filterEditText = (EditText) this.layout.findViewById(R.id.tile_status_router_syslog_filter);
 
-                syslogState.setText(syslogdEnabledPropertyValue == null ? "-" : (isSyslogEnabled ? "Enabled" : "Disabled"));
-                syslogState.setVisibility(View.VISIBLE);
+                syslogState.setText(syslogdEnabledPropertyValue == null ?
+                        "-" : (isSyslogEnabled ? "Enabled" : "Disabled"));
+
+                layout.findViewById(R.id.tile_status_router_syslog_gridlayout)
+                        .setVisibility(syslogdEnabledPropertyValue == null ?
+                                View.VISIBLE : View.GONE);
 
                 final TextView logTextView = (TextView) syslogContentView;
                 if (isSyslogEnabled) {
                     logTextView.setTypeface(Typeface.MONOSPACE);
-                    logTextView.setTextColor(ContextCompat.getColor(mParentFragmentActivity,
-                            R.color.white));
+                    logTextView.setTextColor(getColor(mParentFragmentActivity, R.color.white));
 
                     //Highlight textToFind for new log lines
                     final String newSyslog = data.getProperty(SYSLOG, EMPTY_STRING);
@@ -439,11 +444,13 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                         }
                     });
 
+                    scrollView.requestFocus();
                     scrollView.fullScroll(View.FOCUS_DOWN);
                 }
 
                 //Update last sync
                 final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                lastSyncView.setTextColor(getColor(mParentFragmentActivity, R.color.DarkGray));
                 lastSyncView.setReferenceTime(mLastSync);
                 lastSyncView.setPrefix("Last sync: ");
             }
@@ -468,7 +475,6 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
             } else if (exception == null){
                 updateProgressBarWithSuccess();
             }
-
 
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
