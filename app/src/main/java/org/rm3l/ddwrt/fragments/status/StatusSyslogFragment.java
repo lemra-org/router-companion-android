@@ -51,19 +51,19 @@ public class StatusSyslogFragment extends AbstractBaseFragment {
         return tiles;
     }
 
-    @NonNull
-    protected int getRootViewType() {
-        return RootViewType_LINEAR_LAYOUT;
-    }
+//    @NonNull
+//    protected int getRootViewType() {
+//        return RootViewType_LINEAR_LAYOUT;
+//    }
 
-    @Override
-    protected boolean canChildScrollUp() {
-        final List<DDWRTTile> tiles = this.getTiles(null);
-        if (tiles == null || tiles.isEmpty()) {
-            return false;
-        }
-        final DDWRTTile tile = tiles.get(0);
-        return (tile instanceof StatusSyslogTile &&
-                ((StatusSyslogTile) tile).canChildScrollUp());
-    }
+//    @Override
+//    protected boolean canChildScrollUp() {
+//        final List<DDWRTTile> tiles = this.getTiles(null);
+//        if (tiles == null || tiles.isEmpty()) {
+//            return false;
+//        }
+//        final DDWRTTile tile = tiles.get(0);
+//        return (tile instanceof StatusSyslogTile &&
+//                ((StatusSyslogTile) tile).canChildScrollUp());
+//    }
 }

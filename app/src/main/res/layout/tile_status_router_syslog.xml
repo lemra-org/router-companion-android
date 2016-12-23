@@ -52,17 +52,32 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_height="wrap_content"
             android:layout_centerInParent="true" />
 
-        <android.support.v7.widget.SwitchCompat
-            android:id="@+id/tile_status_router_syslog_status"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:checked="false"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textOff="OFF"
-            android:textOn="ON"
-            android:visibility="gone" />
+            android:layout_alignParentRight="true">
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/tile_status_router_syslog_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textOff="OFF"
+                android:textOn="ON"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/tile_status_router_syslog_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/menu"
+                android:src="@drawable/abs__ic_menu_moreoverflow_holo_light" />
+
+        </LinearLayout>
 
     </RelativeLayout>
 
@@ -123,8 +138,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!-- Filter -->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.8">
+            android:layout_height="wrap_content">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/tile_status_router_syslog_filter"
@@ -143,8 +157,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="5">
+            android:layout_height="wrap_content"
+            android:background="@color/material_drawer_dark_selected">
 
             <ProgressBar
                 android:id="@+id/tile_status_router_syslog_content_loading_view"
@@ -152,6 +166,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true" />
 
+            <TextView
+                android:textIsSelectable="true"
+                android:id="@+id/tile_status_router_syslog_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:visibility="gone" />
+
+            <!-- Deprecated -->
             <ScrollView
                 android:id="@+id/tile_status_router_syslog_content_scrollview"
                 android:layout_width="match_parent"
@@ -159,31 +182,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:scrollbars="vertical|horizontal"
                 android:fillViewport="true"
                 android:background="@color/material_drawer_dark_selected"
-                android:paddingBottom="15dp">
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/tile_status_router_syslog_content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="bottom"
-                    android:maxLength="9000"
-                    android:maxLines="200"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    android:visibility="gone" />
-
-            </ScrollView>
+                android:paddingBottom="15dp"
+                android:visibility="gone" />
 
         </RelativeLayout>
 
         <com.github.curioustechizen.ago.RelativeTimeTextView
-            android:layout_weight="0.8"
             android:textIsSelectable="true"
             android:layout_marginTop="15dp"
             android:layout_gravity="bottom|end"
             android:id="@+id/tile_last_sync"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:textStyle="italic"
             android:textAppearance="?android:textAppearanceSmall"
             android:ellipsize="end"

@@ -24,6 +24,7 @@
 
 package org.rm3l.ddwrt.tiles.syslog;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -37,17 +38,23 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.SwitchCompat;
+import android.text.Layout;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,6 +77,7 @@ import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -96,13 +104,15 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
     protected static final String LOG_TAG = StatusSyslogTile.class.getSimpleName();
     protected static final Joiner LOGS_JOINER = Joiner.on("\n").useForNull(EMPTY_STRING);
-    protected static final int MAX_LOG_LINES = 15;
     private static final String FONT_COLOR_MATCHING_HTML = "<font color='#009900'>";
     private static final String SLASH_FONT_HTML = "</font>";
     private static final String LAST_SEARCH = "lastSearch";
+    public static final String LOGS_TO_VIEW_PREF = "logs_to_view";
+    public static final int MAX_LOG_LINES = 15;
     @Nullable
     private final String mGrep;
     private final boolean mDisplayStatus;
+    private final ImageButton mTileMenu;
     protected long mLastSync;
     private AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
     private AsyncTaskLoader<NVRAMInfo> mLoader;
@@ -122,30 +132,118 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
         }
 
         this.parentViewGroup = parentViewGroup;
-    }
 
-    public boolean canChildScrollUp() {
-        final View syslogContentScrollView = layout
-                .findViewById(R.id.tile_status_router_syslog_content_scrollview);
-        final boolean canScrollVertically = ViewCompat.canScrollVertically(
-                syslogContentScrollView,
-                -1);
-        if (!canScrollVertically) {
-            return canScrollVertically;
+        // Create Options Menu
+        mTileMenu = (ImageButton) layout.findViewById(R.id.tile_status_router_syslog_menu);
+        if (!ColorUtils.isThemeLight(mParentFragmentActivity)) {
+            //Set menu background to white
+            mTileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
         }
+        mTileMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        final int itemId = item.getItemId();
+                        switch (itemId) {
+                            case R.id.tile_status_syslog_view_last25:
+                                //TODO
+                                //Save preference
+                                if (mParentFragmentPreferences != null) {
+                                    mParentFragmentPreferences.edit()
+                                            .putInt(getFormattedPrefKey(LOGS_TO_VIEW_PREF), 25)
+                                            .apply();
+                                }
+                                return true;
+                            case R.id.tile_status_syslog_view_last50:
+                                //TODO
+                                //Save preference
+                                if (mParentFragmentPreferences != null) {
+                                    mParentFragmentPreferences.edit()
+                                            .putInt(getFormattedPrefKey(LOGS_TO_VIEW_PREF), 50)
+                                            .apply();
+                                }
+                                return true;
+                            case R.id.tile_status_syslog_view_last100:
+                                //TODO
+                                //Save preference
+                                if (mParentFragmentPreferences != null) {
+                                    mParentFragmentPreferences.edit()
+                                            .putInt(getFormattedPrefKey(LOGS_TO_VIEW_PREF), 100)
+                                            .apply();
+                                }
+                                return true;
+                            case R.id.tile_status_syslog_view_all:
+                                //TODO Open up new activity with RecyclerView
+                                return true;
+                            case R.id.tile_status_syslog_view_share:
+                                //TODO
+                                return true;
+                            default:
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                final MenuInflater inflater = popup.getMenuInflater();
+                final Menu menu = popup.getMenu();
+                inflater.inflate(R.menu.tile_status_syslog_options, menu);
 
-        //TODO ScrollView can scroll vertically,
-        // but detect whether the touch was done outside of the scroll view
-        // (in which case we should return false)
+                if (mParentFragmentPreferences != null) {
+                    final int nbLogsToView = mParentFragmentPreferences
+                            .getInt(getFormattedPrefKey(LOGS_TO_VIEW_PREF), 50);
+                    final Integer menuItemToCheck;
+                    switch (nbLogsToView) {
+                        case 25:
+                            menuItemToCheck = R.id.tile_status_syslog_view_last25;
+                            break;
+                        case 50:
+                            menuItemToCheck = R.id.tile_status_syslog_view_last50;
+                            break;
+                        case 100:
+                            menuItemToCheck = R.id.tile_status_syslog_view_last100;
+                            break;
+                        default:
+                            menuItemToCheck = null;
+                            break;
+                    }
+                    if (menuItemToCheck != null) {
+                        final MenuItem menuItem = menu.findItem(menuItemToCheck);
+                        if (menuItem != null) {
+                            menuItem.setChecked(true);
+                        }
+                    }
+                }
 
-        return canScrollVertically;
+                popup.show();
+            }
+        });
     }
 
-    @Override
-    public boolean isEmbeddedWithinScrollView() {
-//        return false;
-        return BuildConfig.WITH_ADS && super.isEmbeddedWithinScrollView();
-    }
+//    public boolean canChildScrollUp() {
+//        final View syslogContentScrollView = layout
+//                .findViewById(R.id.tile_status_router_syslog_content_scrollview);
+//        final boolean canScrollVertically = ViewCompat.canScrollVertically(
+//                syslogContentScrollView,
+//                -1);
+//        if (!canScrollVertically) {
+//            return canScrollVertically;
+//        }
+//
+//        //TODO ScrollView can scroll vertically,
+//        // but detect whether the touch was done outside of the scroll view
+//        // (in which case we should return false)
+//
+//        return canScrollVertically;
+//    }
+
+//    @Override
+//    public boolean isEmbeddedWithinScrollView() {
+////        return false;
+//        return BuildConfig.WITH_ADS && super.isEmbeddedWithinScrollView();
+//    }
 
     @Override
     public int getTileHeaderViewId() {
@@ -168,8 +266,15 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + StatusSyslogTile.class + ": routerInfo=" +
                             mRouter + " / nbRunsLoader=" + nbRunsLoader);
 
+                    final int maxLogLines = (mParentFragmentPreferences != null ?
+                            mParentFragmentPreferences
+                                    .getInt(getFormattedPrefKey(LOGS_TO_VIEW_PREF), 50) :
+                            50);
+
+                    @SuppressLint("DefaultLocale")
                     final String cmd = String.format("tail -n %d /tmp/var/log/messages %s",
-                            MAX_LOG_LINES, isNullOrEmpty(mGrep) ? "" : " | grep -i -E \"" + mGrep + "\"");
+                            maxLogLines,
+                            isNullOrEmpty(mGrep) ? "" : " | grep -i -E \"" + mGrep + "\"");
 
                     if (Looper.myLooper() == null) {
                         //Check for this - otherwise it yields the following error:
@@ -325,6 +430,8 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                         .setVisibility(syslogdEnabledPropertyValue == null ?
                                 View.VISIBLE : View.GONE);
 
+                mTileMenu.setEnabled(syslogdEnabledPropertyValue != null);
+
                 final TextView logTextView = (TextView) syslogContentView;
                 if (isSyslogEnabled) {
                     logTextView.setTypeface(Typeface.MONOSPACE);
@@ -332,10 +439,6 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
                     //Highlight textToFind for new log lines
                     final String newSyslog = data.getProperty(SYSLOG, EMPTY_STRING);
-
-                    //Hide container if no data at all (no existing data, and incoming data is empty too)
-                    final ScrollView scrollView = (ScrollView) layout
-                                    .findViewById(R.id.tile_status_router_syslog_content_scrollview);
 
                     //noinspection ConstantConditions
                     Spanned newSyslogSpan = new SpannableString(newSyslog);
@@ -360,17 +463,17 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 //                    newSyslogSpan = findAndHighlightOutput(newSyslog, existingSearch);
 //                }
 
-                    if (isNullOrEmpty(logTextView.getText().toString()) && isNullOrEmpty(newSyslog)) {
-                        scrollView.setVisibility(View.INVISIBLE);
-                    } else {
-                        scrollView.setVisibility(View.VISIBLE);
+//                    if (!isNullOrEmpty(logTextView.getText().toString()) && !isNullOrEmpty(newSyslog)) {
+////                        logTextView.setMovementMethod(new ScrollingMovementMethod());
+//
+//                        logTextView.setText(new SpannableStringBuilder()
+//                                .append(fromHtml("<br/>"))
+//                                .append(newSyslogSpan));
+//                    }
 
-//                        logTextView.setMovementMethod(new ScrollingMovementMethod());
-
-                        logTextView.append(new SpannableStringBuilder()
-                                .append(fromHtml("<br/>"))
-                                .append(newSyslogSpan));
-                    }
+                    logTextView.setText(new SpannableStringBuilder()
+                            .append(fromHtml("<br/>"))
+                            .append(newSyslogSpan));
 
                     filterEditText.setOnTouchListener(new View.OnTouchListener() {
                         @Override
@@ -433,9 +536,6 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                             return false;
                         }
                     });
-
-                    scrollView.requestFocus();
-                    scrollView.fullScroll(View.FOCUS_DOWN);
                 }
 
                 //Update last sync
