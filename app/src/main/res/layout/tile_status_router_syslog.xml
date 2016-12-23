@@ -158,7 +158,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/material_drawer_dark_selected">
+            android:background="@color/material_drawer_dark_selected"
+            android:paddingLeft="5dp"
+            android:paddingStart="5dp"
+            android:paddingRight="5dp"
+            android:paddingEnd="5dp">
 
             <ProgressBar
                 android:id="@+id/tile_status_router_syslog_content_loading_view"

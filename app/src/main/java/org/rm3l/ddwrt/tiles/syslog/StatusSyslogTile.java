@@ -26,6 +26,7 @@ package org.rm3l.ddwrt.tiles.syslog;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -74,6 +75,7 @@ import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.SetNVRAMVariablesAction;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -147,44 +149,48 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         final int itemId = item.getItemId();
+
+                        final int nbLinesToView;
                         switch (itemId) {
-                            case R.id.tile_status_syslog_view_last25:
-                                //TODO
-                                //Save preference
-                                if (mParentFragmentPreferences != null) {
-                                    mParentFragmentPreferences.edit()
-                                            .putInt(getFormattedPrefKey(LOGS_TO_VIEW_PREF), 25)
-                                            .apply();
-                                }
-                                return true;
-                            case R.id.tile_status_syslog_view_last50:
-                                //TODO
-                                //Save preference
-                                if (mParentFragmentPreferences != null) {
-                                    mParentFragmentPreferences.edit()
-                                            .putInt(getFormattedPrefKey(LOGS_TO_VIEW_PREF), 50)
-                                            .apply();
-                                }
-                                return true;
-                            case R.id.tile_status_syslog_view_last100:
-                                //TODO
-                                //Save preference
-                                if (mParentFragmentPreferences != null) {
-                                    mParentFragmentPreferences.edit()
-                                            .putInt(getFormattedPrefKey(LOGS_TO_VIEW_PREF), 100)
-                                            .apply();
-                                }
-                                return true;
-                            case R.id.tile_status_syslog_view_all:
-                                //TODO Open up new activity with RecyclerView
-                                return true;
                             case R.id.tile_status_syslog_view_share:
                                 //TODO
                                 return true;
-                            default:
+                            case R.id.tile_status_syslog_view_last25:
+                                nbLinesToView= 25;
                                 break;
+                            case R.id.tile_status_syslog_view_last50:
+                                nbLinesToView= 50;
+                                break;
+                            case R.id.tile_status_syslog_view_last100:
+                                nbLinesToView= 100;
+                                break;
+                            case R.id.tile_status_syslog_view_all:
+                                nbLinesToView= -1;
+                                break;
+                            default:
+                                return false;
                         }
-                        return false;
+
+                        if (nbLinesToView == -1) {
+                            final Intent viewSyslogIntent = new Intent(mParentFragmentActivity,
+                                    ViewSyslogActivity.class);
+                            viewSyslogIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
+                                    mRouter.getUuid());
+                            mParentFragmentActivity.startActivity(viewSyslogIntent);
+                            return true;
+                        }
+
+                        //Save preference
+                        if (mParentFragmentPreferences != null) {
+                            mParentFragmentPreferences.edit()
+                                    .putInt(getFormattedPrefKey(LOGS_TO_VIEW_PREF), nbLinesToView)
+                                    .apply();
+                        }
+                        Utils.displayMessage(mParentFragmentActivity,
+                                "Last " + nbLinesToView + " lines will be displayed upon next sync.",
+                                Style.CONFIRM);
+
+                        return true;
                     }
                 });
                 final MenuInflater inflater = popup.getMenuInflater();
@@ -540,7 +546,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
                 //Update last sync
                 final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
-                lastSyncView.setTextColor(getColor(mParentFragmentActivity, R.color.DarkGray));
+//                lastSyncView.setTextColor(getColor(mParentFragmentActivity, R.color.DarkGray));
                 lastSyncView.setReferenceTime(mLastSync);
                 lastSyncView.setPrefix("Last sync: ");
             }
