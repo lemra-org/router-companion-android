@@ -143,8 +143,7 @@ public final class DDWRTCompanionConstants {
     @Deprecated
     public static final String ADBUDDIZ_PUBLISHER_KEY = \"fake-key\";
 
-    public static final String SUPPORT_WEBSITE = "http://rm3l.org/apps/ddwrt-companion/ddwrt/" +
-            ((BuildConfig.WITH_ADS ? "_" : "") + "home");
+    public static final String SUPPORT_WEBSITE = "http://rm3l.org/apps/ddwrt-companion/ddwrt/home";
     public static final String ACRA_USER_EMAIL = "acra.user.email";
     public static final String ACRA_DEVICEID_ENABLE = "acra.deviceid.enable";
     public static final String ACRA_ENABLE = "acra.enable";
