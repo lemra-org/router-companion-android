@@ -107,7 +107,7 @@ public class ViewSyslogActivity extends AppCompatActivity {
         //TODO
         mToolbar = (Toolbar) findViewById(R.id.tile_status_router_cpuinfo_view_toolbar);
         if (mToolbar != null) {
-            mToolbar.setTitle("Syslog");
+            mToolbar.setTitle("Logs");
             mToolbar.setSubtitle(String.format("%s (%s:%d)",
                     mRouter.getDisplayName(),
                     mRouter.getRemoteIpAddress(),
