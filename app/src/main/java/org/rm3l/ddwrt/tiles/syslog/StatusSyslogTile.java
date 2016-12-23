@@ -106,7 +106,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
     protected static final String LOG_TAG = StatusSyslogTile.class.getSimpleName();
     protected static final Joiner LOGS_JOINER = Joiner.on("\n").useForNull(EMPTY_STRING);
-    private static final String FONT_COLOR_MATCHING_HTML = "<font color='#009900'>";
+    private static final String FONT_COLOR_MATCHING_HTML = "<font color='#ffff00'>";
     private static final String SLASH_FONT_HTML = "</font>";
     private static final String LAST_SEARCH = "lastSearch";
     public static final String LOGS_TO_VIEW_PREF = "logs_to_view";
