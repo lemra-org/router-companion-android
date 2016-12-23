@@ -24,25 +24,33 @@
 
 package org.rm3l.ddwrt.tiles.syslog;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.Loader;
+import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.SwitchCompat;
 import android.text.Layout;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -80,12 +88,21 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -93,6 +110,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static android.support.v4.content.ContextCompat.getColor;
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SYSLOG;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SYSLOGD_ENABLE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
@@ -120,6 +138,9 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     private AsyncTaskLoader<NVRAMInfo> mLoader;
     private Session mSshSession;
 
+    private final AtomicReference<String> mLogs = new AtomicReference<>();
+    private File mFileToShare;
+
     public StatusSyslogTile(@NonNull Fragment parentFragment, @Nullable final ViewGroup parentViewGroup,
                             @NonNull Bundle arguments, @Nullable final String tileTitle,
                             final boolean displayStatus, Router router, @Nullable final String grep) {
@@ -146,27 +167,34 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
             public void onClick(View v) {
                 final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @SuppressLint("DefaultLocale")
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         final int itemId = item.getItemId();
 
                         final int nbLinesToView;
                         switch (itemId) {
+
                             case R.id.tile_status_syslog_view_share:
-                                //TODO
+                                StatusSyslogTile.this.dumpAndShareLogs();
                                 return true;
+
                             case R.id.tile_status_syslog_view_last25:
                                 nbLinesToView= 25;
                                 break;
+
                             case R.id.tile_status_syslog_view_last50:
                                 nbLinesToView= 50;
                                 break;
+
                             case R.id.tile_status_syslog_view_last100:
                                 nbLinesToView= 100;
                                 break;
+
                             case R.id.tile_status_syslog_view_all:
                                 nbLinesToView= -1;
                                 break;
+
                             default:
                                 return false;
                         }
@@ -197,6 +225,10 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                 final Menu menu = popup.getMenu();
                 inflater.inflate(R.menu.tile_status_syslog_options, menu);
 
+                //Hide 'Share' menu item if we do not have any logs (yet!)
+                menu.findItem(R.id.tile_status_syslog_view_share)
+                        .setVisible(!TextUtils.isEmpty(mLogs.get()));
+
                 if (mParentFragmentPreferences != null) {
                     final int nbLogsToView = mParentFragmentPreferences
                             .getInt(getFormattedPrefKey(LOGS_TO_VIEW_PREF), 50);
@@ -226,6 +258,148 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                 popup.show();
             }
         });
+    }
+
+    @SuppressLint("DefaultLocale")
+    private void dumpAndShareLogs() {
+        final int nbLogsToView = mParentFragmentPreferences
+                .getInt(getFormattedPrefKey(LOGS_TO_VIEW_PREF), 50);
+        final String logs = mLogs.get();
+        if (TextUtils.isEmpty(logs)) {
+            Utils.displayMessage(mParentFragmentActivity,
+                    "No data to share - please try again later",
+                    Style.ALERT);
+            return;
+        }
+
+        if (PermissionChecker.checkSelfPermission(mParentFragmentActivity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_GRANTED) {
+            // permission was granted, yay! Do the
+            // contacts-related task you need to do.
+            mFileToShare = new File(mParentFragmentActivity.getCacheDir(),
+                    Utils.getEscapedFileName(String.format(
+                            "Logs_%d__%s",
+                            nbLogsToView,
+                            nullToEmpty(mRouter.getUuid()))) + ".txt");
+
+            Exception exception = null;
+            OutputStream outputStream = null;
+            try {
+                outputStream = new BufferedOutputStream(
+                        new FileOutputStream(mFileToShare, false));
+                //noinspection ConstantConditions
+                outputStream.write(logs.getBytes());
+                outputStream.flush();
+            } catch (IOException e) {
+                exception = e;
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (outputStream != null) {
+                        outputStream.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (exception != null) {
+                Utils.displayMessage(mParentFragmentActivity,
+                        "Error while trying to share CPU Info - please try again later",
+                        Style.ALERT);
+                return;
+            }
+
+            final Uri uriForFile = FileProvider
+                    .getUriForFile(mParentFragmentActivity,
+                            DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY, mFileToShare);
+            mParentFragmentActivity
+                    .grantUriPermission(
+                            mParentFragmentActivity.getComponentName()
+                                    .getPackageName(),
+                            uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            final Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+            sendIntent.putExtra(Intent.EXTRA_SUBJECT,
+                    String.format("Logs (last %d lines) for Router '%s'",
+                            nbLogsToView,
+                            mRouter.getCanonicalHumanReadableName()));
+            sendIntent.setType("text/html");
+            sendIntent.putExtra(Intent.EXTRA_TEXT,
+                    fromHtml(String.format("%s",
+//                            logs,
+                            Utils.getShareIntentFooter())
+                            .replaceAll("\n", "<br/>")));
+
+            sendIntent.setData(uriForFile);
+            sendIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            mParentFragmentActivity.startActivity(
+                    Intent.createChooser(sendIntent,  "Share Router logs"));
+
+        } else {
+            //Permission requests
+            // Should we show an explanation?
+            if (ActivityCompat
+                    .shouldShowRequestPermissionRationale(
+                            mParentFragmentActivity,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                SnackbarUtils.buildSnackbar(mParentFragmentActivity,
+                        "Storage access is required to share logs.",
+                        "OK",
+                        Snackbar.LENGTH_INDEFINITE,
+                        new SnackbarCallback() {
+                            @Override
+                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
+                                //Request permission
+                                ActivityCompat.requestPermissions(mParentFragmentActivity,
+                                        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                        DDWRTCompanionConstants.Permissions.STORAGE);
+                            }
+
+                            @Override
+                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+                        },
+                        null,
+                        true);
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(mParentFragmentActivity,
+                        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        DDWRTCompanionConstants.Permissions.STORAGE);
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
     }
 
 //    public boolean canChildScrollUp() {
@@ -337,6 +511,8 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                     }
                     updateProgressBarViewSeparator(90);
 
+                    mLogs.set(nvramInfo.getProperty(SYSLOG));
+
                     return nvramInfo;
 
                 } catch (@NonNull final Exception e) {
@@ -436,7 +612,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                         .setVisibility(syslogdEnabledPropertyValue == null ?
                                 View.VISIBLE : View.GONE);
 
-                mTileMenu.setEnabled(syslogdEnabledPropertyValue != null);
+//                mTileMenu.setEnabled(syslogdEnabledPropertyValue != null);
 
                 final TextView logTextView = (TextView) syslogContentView;
                 if (isSyslogEnabled) {
