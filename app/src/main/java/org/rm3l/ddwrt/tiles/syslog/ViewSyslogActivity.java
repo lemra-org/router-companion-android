@@ -230,7 +230,7 @@ public class ViewSyslogActivity extends AppCompatActivity
             }
         });
 
-        onRefresh();
+        refreshData();
     }
 
     private void handleIntent(Intent intent) {
@@ -397,6 +397,10 @@ public class ViewSyslogActivity extends AppCompatActivity
                 onBackPressed();
                 return true;
 
+            case R.id.menu_refresh:
+                refreshData();
+                return true;
+
             case R.id.action_feedback:
                 Utils.openFeedbackForm(this, mRouter);
                 return true;
@@ -477,10 +481,17 @@ public class ViewSyslogActivity extends AppCompatActivity
 
     @Override
     public void onRefresh() {
-        //don't forget to call #warmumpForSharing() once everything is done loading
-        mSwipeRefreshLayout.setRefreshing(true);
-        mSwipeRefreshLayout.setEnabled(false);
+        performAsyncDataLoading();
+    }
 
+    private void refreshData() {
+        // Signal SwipeRefreshLayout to start the progress indicator
+        mSwipeRefreshLayout.setRefreshing(true);
+        this.performAsyncDataLoading();
+    }
+
+    private void performAsyncDataLoading() {
+        //don't forget to call #warmumpForSharing() once everything is done loading
         MultiThreadingManager.getSyslogViewTasksExecutor()
                 .execute(new UiRelatedTask<Exception>() {
                     @Override
@@ -513,7 +524,6 @@ public class ViewSyslogActivity extends AppCompatActivity
                                 mAdapter.notifyDataSetChanged();
                             }
                         } finally {
-                            mSwipeRefreshLayout.setEnabled(true);
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
                     }
