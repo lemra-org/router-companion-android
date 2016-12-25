@@ -15,6 +15,7 @@ public final class MultiThreadingManager {
     private static final String WEB_TASK_TYPE = "Web";
     private static final String SPEED_TEST_TASK_TYPE = "SpeedTest";
     private static final String RESOLUTION_TASK_TYPE = "ResolutionTask";
+    private static final String FULL_SYSLOG_TASK_TYPE = "ViewFullSyslogTask";
 
     private MultiThreadingManager() {
     }
@@ -58,6 +59,14 @@ public final class MultiThreadingManager {
         return Needle
                 .onBackgroundThread()
                 .withTaskType(RESOLUTION_TASK_TYPE);
+    }
+
+    public static Executor getSyslogViewTasksExecutor() {
+        return Needle
+                .onBackgroundThread()
+                .withTaskType(FULL_SYSLOG_TASK_TYPE)
+                //Has to be executed serially, one thread at a time
+                .serially();
     }
 
 }
