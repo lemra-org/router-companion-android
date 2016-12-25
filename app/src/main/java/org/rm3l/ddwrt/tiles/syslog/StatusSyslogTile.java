@@ -176,7 +176,12 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                         switch (itemId) {
 
                             case R.id.tile_status_syslog_view_share:
-                                StatusSyslogTile.this.dumpAndShareLogs();
+                                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                                    Utils.displayUpgradeMessage(mParentFragmentActivity,
+                                            "Share Router Logs");
+                                } else {
+                                    StatusSyslogTile.this.dumpAndShareLogs();
+                                }
                                 return true;
 
                             case R.id.tile_status_syslog_view_last25:
