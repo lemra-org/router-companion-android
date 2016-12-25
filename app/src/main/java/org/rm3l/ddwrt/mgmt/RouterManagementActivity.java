@@ -977,7 +977,7 @@ public class RouterManagementActivity
     }
 
     private void doRefreshRoutersListWithSpinner(@NonNull final RoutersListRefreshCause cause, final Integer position) {
-        mSwipeRefreshLayout.setEnabled(false);
+//        mSwipeRefreshLayout.setEnabled(false);
         setRefreshActionButtonState(true);
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -1031,7 +1031,7 @@ public class RouterManagementActivity
                     setDynamicAppShortcuts();
                 } finally {
                     setRefreshActionButtonState(false);
-                    mSwipeRefreshLayout.setEnabled(true);
+//                    mSwipeRefreshLayout.setEnabled(true);
                 }
             }
         }, 1000);

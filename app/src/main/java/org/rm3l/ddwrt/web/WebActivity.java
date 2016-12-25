@@ -152,12 +152,12 @@ public abstract class WebActivity extends AppCompatActivity implements SwipeRefr
             final String url = this.getUrl();
             if (!TextUtils.isEmpty(url)) {
                 mWebview.loadUrl(url);
-                mSwipeRefreshLayout.setEnabled(true);
+//                mSwipeRefreshLayout.setEnabled(true);
             } else {
-                mSwipeRefreshLayout.setEnabled(false);
+//                mSwipeRefreshLayout.setEnabled(false);
             }
         } else {
-            mSwipeRefreshLayout.setEnabled(false);
+//            mSwipeRefreshLayout.setEnabled(false);
         }
     }
 

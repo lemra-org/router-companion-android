@@ -572,7 +572,7 @@ public class OpenWebManagementPageActivity extends WebActivity {
                 mErrorTextView.setVisibility(View.GONE);
                 mWebview.loadUrl(mUrl);
             }
-            mSwipeRefreshLayout.setEnabled(true);
+//            mSwipeRefreshLayout.setEnabled(true);
         }
 
         class Result {

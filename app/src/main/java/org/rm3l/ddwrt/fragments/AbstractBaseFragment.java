@@ -1031,7 +1031,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
 //        mSwipeRefreshLayout.addView(this.getLayout(inflater, container, savedInstanceState));
         mSwipeRefreshLayout.addView(rootView);
 
-        mSwipeRefreshLayout.setEnabled(isSwipeRefreshLayoutEnabled());
+//        mSwipeRefreshLayout.setEnabled(isSwipeRefreshLayoutEnabled());
 
         initLoaders();
 
@@ -1229,7 +1229,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
         ReportingUtils.reportEvent(ReportingUtils.EVENT_MANUAL_REFRESH, eventMap);
 
         if (mSwipeRefreshLayout != null) {
-            mSwipeRefreshLayout.setEnabled(false);
+//            mSwipeRefreshLayout.setEnabled(false);
             mSwipeRefreshLayout.setRefreshing(true);
         }
 
@@ -1257,7 +1257,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                                 final int currentNbOfRefreshes = nbRefreshes.incrementAndGet();
                                 if (currentNbOfRefreshes >= totalNbTiles) {
                                     if (mSwipeRefreshLayout != null) {
-                                        mSwipeRefreshLayout.setEnabled(true);
+//                                        mSwipeRefreshLayout.setEnabled(true);
                                         mSwipeRefreshLayout.setRefreshing(false);
                                     }
                                 }
@@ -1280,7 +1280,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
 
                 } else {
                     if (mSwipeRefreshLayout != null) {
-                        mSwipeRefreshLayout.setEnabled(true);
+//                        mSwipeRefreshLayout.setEnabled(true);
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
                 }
