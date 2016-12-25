@@ -54,6 +54,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -313,6 +314,32 @@ public class ViewSyslogActivity extends AppCompatActivity
                 // app-defined int constant. The callback method gets the
                 // result of the request.
             }
+        }
+
+        //Search
+        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
+        final SearchView searchView = (SearchView) menu
+                .findItem(R.id.tile_status_syslog_full_search).getActionView();
+
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        searchView.setOnQueryTextListener(this);
+
+        // Get the search close button image view
+        final ImageView closeButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
+        if (closeButton != null) {
+            // Set on click listener
+            closeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Reset views
+                    mAdapter.setLogs(mLogsAtomicRef.get());
+                    mAdapter.notifyDataSetChanged();
+                    //Hide it now
+                    searchView.setIconified(true);
+                }
+            });
         }
 
         final MenuItem shareMenuItem = menu.findItem(R.id.tile_status_syslog_full_share);
