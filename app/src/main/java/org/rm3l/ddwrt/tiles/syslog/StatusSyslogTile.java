@@ -214,6 +214,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                                     ViewSyslogActivity.class);
                             viewSyslogIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
                                     mRouter.getUuid());
+                            viewSyslogIntent.putExtra(ViewSyslogActivity.FILTER_TEXT, mGrep);
                             mParentFragmentActivity.startActivity(viewSyslogIntent);
                             return true;
                         }

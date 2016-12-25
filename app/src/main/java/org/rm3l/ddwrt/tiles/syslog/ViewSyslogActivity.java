@@ -104,11 +104,14 @@ public class ViewSyslogActivity extends AppCompatActivity
     private static final String LOG_TAG = ViewSyslogActivity.class.getSimpleName();
     public static final String CAT_TMP_VAR_LOG_MESSAGES = "cat /tmp/var/log/messages";
 
+    public static final String FILTER_TEXT = "FILTER_TEXT";
+
     private SharedPreferences mGlobalPreferences;
 
     private ShareActionProvider mShareActionProvider;
     private String mRouterUuid;
     private File mFileToShare;
+    private String mInitialFilterText;
 
     private Toolbar mToolbar;
     private Router mRouter;
@@ -119,6 +122,7 @@ public class ViewSyslogActivity extends AppCompatActivity
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private final AtomicReference<List<? extends CharSequence>> mLogsAtomicRef = new AtomicReference<>();
+    private SearchView mSearchView;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -149,6 +153,8 @@ public class ViewSyslogActivity extends AppCompatActivity
             finish();
             return;
         }
+
+        mInitialFilterText = intent.getStringExtra(FILTER_TEXT);
 
         handleIntent(getIntent());
 
@@ -324,15 +330,15 @@ public class ViewSyslogActivity extends AppCompatActivity
         //Search
         final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 
-        final SearchView searchView = (SearchView) menu
+        mSearchView = (SearchView) menu
                 .findItem(R.id.tile_status_syslog_full_search).getActionView();
 
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
-        searchView.setOnQueryTextListener(this);
+        mSearchView.setOnQueryTextListener(this);
 
         // Get the search close button image view
-        final ImageView closeButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
+        final ImageView closeButton = (ImageView) mSearchView.findViewById(R.id.search_close_btn);
         if (closeButton != null) {
             // Set on click listener
             closeButton.setOnClickListener(new View.OnClickListener() {
@@ -343,10 +349,16 @@ public class ViewSyslogActivity extends AppCompatActivity
                     mAdapter.setLogs(mLogsAtomicRef.get());
                     mAdapter.notifyDataSetChanged();
                     //Hide it now
-                    searchView.setIconified(true);
+                    mSearchView.setIconified(true);
                     setRefreshingState(false);
                 }
             });
+        }
+
+        if (!TextUtils.isEmpty(mInitialFilterText)) {
+            if (mSearchView != null) {
+                mSearchView.setQuery(mInitialFilterText, true);
+            }
         }
 
         final MenuItem shareMenuItem = menu.findItem(R.id.tile_status_syslog_full_share);
@@ -515,6 +527,11 @@ public class ViewSyslogActivity extends AppCompatActivity
         // Signal SwipeRefreshLayout to start the progress indicator
         setRefreshingState(true);
         this.performAsyncDataLoading();
+        if (!TextUtils.isEmpty(mInitialFilterText)) {
+            if (mSearchView != null) {
+                mSearchView.setQuery(mInitialFilterText, true);
+            }
+        }
     }
 
     private void performAsyncDataLoading() {
