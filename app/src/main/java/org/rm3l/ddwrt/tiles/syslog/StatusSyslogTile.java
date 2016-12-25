@@ -197,6 +197,11 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                                 break;
 
                             case R.id.tile_status_syslog_view_all:
+                                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                                    Utils.displayUpgradeMessage(mParentFragmentActivity,
+                                            "View All Logs");
+                                    return true;
+                                }
                                 nbLinesToView= -1;
                                 break;
 
