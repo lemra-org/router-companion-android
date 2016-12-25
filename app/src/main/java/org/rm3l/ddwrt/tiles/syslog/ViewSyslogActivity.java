@@ -574,7 +574,6 @@ public class ViewSyslogActivity extends AppCompatActivity
 
         private List<String> mLogs;
         private final ViewSyslogActivity activity;
-        private final Filter mFilter;
 
         RouterSyslogRecyclerViewAdapter(final ViewSyslogActivity activity) {
             this(activity, null);
@@ -583,41 +582,6 @@ public class ViewSyslogActivity extends AppCompatActivity
         RouterSyslogRecyclerViewAdapter(final ViewSyslogActivity activity, final List<String> mLogs) {
             this.activity = activity;
             this.mLogs = mLogs;
-            this.mFilter = new Filter() {
-                @Override
-                protected FilterResults performFiltering(final CharSequence constraint) {
-                    final FilterResults oReturn = new FilterResults();
-                    if (mLogs == null || mLogs.isEmpty()) {
-                        return oReturn;
-                    }
-
-                    if (TextUtils.isEmpty(constraint)) {
-                        oReturn.values = mLogs;
-                    } else {
-                        //Filter aliases list
-                        oReturn.values = FluentIterable
-                                .from(mLogs)
-                                .filter(new Predicate<String>() {
-                                    @Override
-                                    public boolean apply(String input) {
-                                        return input != null && containsIgnoreCase(input, constraint);
-                                    }
-                                }).toList();
-                    }
-
-                    return oReturn;
-                }
-
-                @Override
-                protected void publishResults(CharSequence constraint, FilterResults results) {
-                    final Object values = results.values;
-                    if (values instanceof List) {
-                        //noinspection unchecked
-                        setLogs((List<String>) values);
-                        notifyDataSetChanged();
-                    }
-                }
-            };
         }
 
         public RouterSyslogRecyclerViewAdapter setLogs(List<String> logs) {
@@ -662,7 +626,41 @@ public class ViewSyslogActivity extends AppCompatActivity
 
         @Override
         public Filter getFilter() {
-            return mFilter;
+            return new Filter() {
+                @Override
+                protected FilterResults performFiltering(final CharSequence constraint) {
+                    final FilterResults oReturn = new FilterResults();
+                    if (mLogs == null || mLogs.isEmpty()) {
+                        return oReturn;
+                    }
+
+                    if (TextUtils.isEmpty(constraint)) {
+                        oReturn.values = mLogs;
+                    } else {
+                        //Filter aliases list
+                        oReturn.values = FluentIterable
+                                .from(mLogs)
+                                .filter(new Predicate<String>() {
+                                    @Override
+                                    public boolean apply(String input) {
+                                        return input != null && containsIgnoreCase(input, constraint);
+                                    }
+                                }).toList();
+                    }
+
+                    return oReturn;
+                }
+
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    final Object values = results.values;
+                    if (values instanceof List) {
+                        //noinspection unchecked
+                        setLogs((List<String>) values);
+                        notifyDataSetChanged();
+                    }
+                }
+            };
         }
 
         static class ViewHolder extends RecyclerView.ViewHolder {
