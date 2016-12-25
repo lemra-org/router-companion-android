@@ -46,6 +46,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -59,9 +60,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.R;
@@ -115,7 +118,7 @@ public class ViewSyslogActivity extends AppCompatActivity
     private RouterSyslogRecyclerViewAdapter mAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private final AtomicReference<List<String>> mLogsAtomicRef = new AtomicReference<>();
+    private final AtomicReference<List<? extends CharSequence>> mLogsAtomicRef = new AtomicReference<>();
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -237,8 +240,10 @@ public class ViewSyslogActivity extends AppCompatActivity
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             final String query = intent.getStringExtra(SearchManager.QUERY);
             if (query == null) {
+                setRefreshingState(true);
                 mAdapter.setLogs(mLogsAtomicRef.get());
                 mAdapter.notifyDataSetChanged();
+                setRefreshingState(false);
                 return;
             }
             mAdapter.getFilter().filter(query);
@@ -334,10 +339,12 @@ public class ViewSyslogActivity extends AppCompatActivity
                 @Override
                 public void onClick(View v) {
                     //Reset views
+                    setRefreshingState(true);
                     mAdapter.setLogs(mLogsAtomicRef.get());
                     mAdapter.notifyDataSetChanged();
                     //Hide it now
                     searchView.setIconified(true);
+                    setRefreshingState(false);
                 }
             });
         }
@@ -395,6 +402,14 @@ public class ViewSyslogActivity extends AppCompatActivity
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
                 onBackPressed();
+                return true;
+
+            case R.id.tile_status_syslog_full_sort:
+                setRefreshingState(true);
+                //Now tell adapter to sort data
+                mAdapter.toggleSorting();
+                mAdapter.notifyDataSetChanged();
+                setRefreshingState(false);
                 return true;
 
             case R.id.menu_refresh:
@@ -466,17 +481,29 @@ public class ViewSyslogActivity extends AppCompatActivity
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        return false;
+        if (TextUtils.isEmpty(query)) {
+            setRefreshingState(true);
+            mAdapter.setLogs(mLogsAtomicRef.get());
+            mAdapter.notifyDataSetChanged();
+            setRefreshingState(false);
+        } else {
+            mAdapter.getFilter().filter(query);
+        }
+        return true;
+    }
+
+    public void setRefreshingState(final boolean state) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(state);
+            }
+        });
     }
 
     @Override
     public boolean onQueryTextChange(String s) {
-        if (TextUtils.isEmpty(s)) {
-            return false;
-        }
-
-        mAdapter.getFilter().filter(s);
-        return true;
+        return false;
     }
 
     @Override
@@ -486,7 +513,7 @@ public class ViewSyslogActivity extends AppCompatActivity
 
     private void refreshData() {
         // Signal SwipeRefreshLayout to start the progress indicator
-        mSwipeRefreshLayout.setRefreshing(true);
+        setRefreshingState(true);
         this.performAsyncDataLoading();
     }
 
@@ -524,7 +551,7 @@ public class ViewSyslogActivity extends AppCompatActivity
                                 mAdapter.notifyDataSetChanged();
                             }
                         } finally {
-                            mSwipeRefreshLayout.setRefreshing(false);
+                            setRefreshingState(false);
                         }
                     }
                 });
@@ -532,7 +559,7 @@ public class ViewSyslogActivity extends AppCompatActivity
 
     private void warmumpForSharing() {
 
-        final List<String> currentLogs = mLogsAtomicRef.get();
+        final List<? extends CharSequence> currentLogs = mLogsAtomicRef.get();
         if (currentLogs == null || currentLogs.isEmpty()) {
             Crashlytics.log(Log.DEBUG, LOG_TAG, "Sharing unavailable - no data");
             return;
@@ -582,19 +609,19 @@ public class ViewSyslogActivity extends AppCompatActivity
             extends RecyclerView.Adapter<RouterSyslogRecyclerViewAdapter.ViewHolder>
             implements Filterable {
 
-        private List<String> mLogs;
+        private List<? extends CharSequence> mLogs;
         private final ViewSyslogActivity activity;
 
         RouterSyslogRecyclerViewAdapter(final ViewSyslogActivity activity) {
             this(activity, null);
         }
 
-        RouterSyslogRecyclerViewAdapter(final ViewSyslogActivity activity, final List<String> mLogs) {
+        RouterSyslogRecyclerViewAdapter(final ViewSyslogActivity activity, final List<CharSequence> mLogs) {
             this.activity = activity;
             this.mLogs = mLogs;
         }
 
-        public RouterSyslogRecyclerViewAdapter setLogs(List<String> logs) {
+        public RouterSyslogRecyclerViewAdapter setLogs(List<? extends CharSequence> logs) {
             this.mLogs = logs;
             return this;
         }
@@ -625,7 +652,7 @@ public class ViewSyslogActivity extends AppCompatActivity
                         Toast.LENGTH_SHORT).show();
                 return;
             }
-            final String log = mLogs.get(position);
+            final CharSequence log = mLogs.get(position);
             holder.itemView.setText(log);
         }
 
@@ -639,6 +666,7 @@ public class ViewSyslogActivity extends AppCompatActivity
             return new Filter() {
                 @Override
                 protected FilterResults performFiltering(final CharSequence constraint) {
+                    activity.setRefreshingState(true);
                     final FilterResults oReturn = new FilterResults();
                     if (mLogs == null || mLogs.isEmpty()) {
                         return oReturn;
@@ -650,12 +678,22 @@ public class ViewSyslogActivity extends AppCompatActivity
                         //Filter aliases list
                         oReturn.values = FluentIterable
                                 .from(mLogs)
-                                .filter(new Predicate<String>() {
+                                .filter(new Predicate<CharSequence>() {
                                     @Override
-                                    public boolean apply(String input) {
+                                    public boolean apply(CharSequence input) {
                                         return input != null && containsIgnoreCase(input, constraint);
                                     }
-                                }).toList();
+                                })
+                                .transform(new Function<CharSequence, Spanned>() {
+                                    @javax.annotation.Nullable
+                                    @Override
+                                    public Spanned apply(@javax.annotation.Nullable CharSequence input) {
+                                        return StatusSyslogTile.findAndHighlightOutput(
+                                                input == null ? "" : input,
+                                                constraint.toString());
+                                    }
+                                })
+                                .toList();
                     }
 
                     return oReturn;
@@ -666,11 +704,16 @@ public class ViewSyslogActivity extends AppCompatActivity
                     final Object values = results.values;
                     if (values instanceof List) {
                         //noinspection unchecked
-                        setLogs((List<String>) values);
+                        setLogs((List<? extends CharSequence>) values);
                         notifyDataSetChanged();
                     }
+                    activity.setRefreshingState(false);
                 }
             };
+        }
+
+        public void toggleSorting() {
+            setLogs(Lists.reverse(mLogs));
         }
 
         static class ViewHolder extends RecyclerView.ViewHolder {

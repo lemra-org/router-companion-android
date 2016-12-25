@@ -766,7 +766,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     }
 
     @NonNull
-    private Spanned findAndHighlightOutput(@NonNull final CharSequence text, @NonNull final String textToFind) {
+    public static Spanned findAndHighlightOutput(@NonNull final CharSequence text, @NonNull final String textToFind) {
         final Matcher matcher = Pattern.compile("(" + Pattern.quote(textToFind) + ")", Pattern.CASE_INSENSITIVE)
                 .matcher(text);
         return fromHtml(matcher.replaceAll(Matcher.quoteReplacement(FONT_COLOR_MATCHING_HTML) + "$1" + Matcher.quoteReplacement(SLASH_FONT_HTML))
