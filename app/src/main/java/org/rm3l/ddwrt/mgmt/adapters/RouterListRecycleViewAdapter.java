@@ -402,7 +402,9 @@ public class RouterListRecycleViewAdapter extends
                             new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    mDragStartListener.onStartDrag(holder);
+                                    if (mDragStartListener != null) {
+                                        mDragStartListener.onStartDrag(holder);
+                                    }
                                 }
                             }, null);
                 }
