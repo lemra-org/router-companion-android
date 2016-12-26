@@ -18,18 +18,22 @@ import com.google.common.base.Splitter;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.api.urlshortener.goo_gl.GooGlService;
 import org.rm3l.ddwrt.api.urlshortener.goo_gl.resources.GooGlData;
-import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.NetworkUtils;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.GOOGLE_API_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_CHOICE_PREF;
 
 /**
  * This is required if you want to do any message handling beyond receiving notifications on
@@ -51,10 +55,15 @@ public class DDWRTCompanionFirebaseMessagingService extends FirebaseMessagingSer
     private Context mApplicationContext;
     private GooGlService mGooGlService;
 
+    private SharedPreferences mGlobalPreferences;
+
     @Override
     public void onCreate() {
         super.onCreate();
         mApplicationContext = getApplicationContext();
+        mGlobalPreferences = getSharedPreferences(
+                DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                Context.MODE_PRIVATE);
         mGooGlService = NetworkUtils
                 .createApiService(DDWRTCompanionConstants.URL_SHORTENER_API_BASE_URL,
                         GooGlService.class);
@@ -71,7 +80,19 @@ public class DDWRTCompanionFirebaseMessagingService extends FirebaseMessagingSer
 
         try {
 
-            //TODO Check whether notifications are enabled
+            //This is a premium feature
+            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                Crashlytics.log(Log.DEBUG, TAG, "[Firebase] DD-WRT Build Updates feature is *premium*!");
+                return;
+            }
+
+            //Is user interested in DD-WRT Build updates?
+            final Set<String> notificationChoices = this.mGlobalPreferences
+                    .getStringSet(NOTIFICATIONS_CHOICE_PREF, new HashSet<String>());
+            if (!notificationChoices.contains(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES)) {
+                Crashlytics.log(Log.DEBUG, TAG, "[Firebase] Not interested in DD-WRT Build Updates!");
+                return;
+            }
 
             // [START_EXCLUDE]
             // There are two types of messages data messages and notification messages. Data messages are handled
@@ -85,17 +106,20 @@ public class DDWRTCompanionFirebaseMessagingService extends FirebaseMessagingSer
 
             // TODO(developer): Handle FCM messages here.
             // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-            Log.d(TAG, "From: " + remoteMessage.getFrom());
+            Crashlytics.log(Log.DEBUG, TAG,
+                    "[Firebase] From: " + remoteMessage.getFrom());
 
             // Check if message contains a data payload.
             final Map<String, String> remoteMessageData = remoteMessage.getData();
             if (remoteMessageData.size() > 0) {
-                Log.d(TAG, "Message data payload: " + remoteMessageData);
+                Crashlytics.log(Log.DEBUG, TAG,
+                        "[Firebase] Message data payload: " + remoteMessageData);
             }
 
             // Check if message contains a notification payload.
             if (remoteMessage.getNotification() != null) {
-                Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+                Crashlytics.log(Log.DEBUG, TAG,
+                        "[Firebase] Message Notification Body: " + remoteMessage.getNotification().getBody());
             }
 
             // Also if you intend on generating your own notifications as a result of a received FCM
@@ -142,7 +166,7 @@ public class DDWRTCompanionFirebaseMessagingService extends FirebaseMessagingSer
                         .setLongUrl(releaseLink))
                 .execute().body().getId();
 
-        Crashlytics.log(Log.DEBUG, TAG, "releaseLinkShortened: [" + releaseLinkShortened + "]");
+        Crashlytics.log(Log.DEBUG, TAG, "[Firebase] releaseLinkShortened: [" + releaseLinkShortened + "]");
 
         // pending implicit intent to view url
         final Intent resultIntent = new Intent(Intent.ACTION_VIEW);
@@ -171,16 +195,13 @@ public class DDWRTCompanionFirebaseMessagingService extends FirebaseMessagingSer
                 .setAutoCancel(true);
 
         //Notification sound, if required
-        final SharedPreferences sharedPreferences = mApplicationContext.getSharedPreferences(
-                DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                Context.MODE_PRIVATE);
-        final String ringtoneUri = sharedPreferences
+        final String ringtoneUri = mGlobalPreferences
                 .getString(DDWRTCompanionConstants.NOTIFICATIONS_SOUND, null);
         if (ringtoneUri != null) {
             notificationBuilder.setSound(Uri.parse(ringtoneUri), AudioManager.STREAM_NOTIFICATION);
         }
 
-        if (!sharedPreferences
+        if (!mGlobalPreferences
                 .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_VIBRATE, true)) {
             notificationBuilder
                     .setDefaults(Notification.DEFAULT_LIGHTS)
