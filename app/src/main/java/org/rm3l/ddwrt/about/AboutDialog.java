@@ -36,6 +36,8 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.TextView;
 
+import com.google.common.base.Charsets;
+
 import org.apache.commons.io.IOUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -102,7 +104,7 @@ public class AboutDialog extends Dialog {
     @Nullable
     private String readRawTextFile(int id) {
         try {
-            return IOUtils.toString(mContext.getResources().openRawResource(id));
+            return IOUtils.toString(mContext.getResources().openRawResource(id), Charsets.UTF_8);
         } catch (final IOException e) {
             e.printStackTrace();
         }
