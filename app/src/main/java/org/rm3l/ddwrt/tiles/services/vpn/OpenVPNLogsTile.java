@@ -47,6 +47,7 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SYSLOGD_ENABLE;
 public class OpenVPNLogsTile extends StatusSyslogTile {
 
     public static final String OPENVPN = "openvpn";
+    public static final String FULL_LOGS_RETRIEVAL_CMD = "cat /tmp/var/log/messages | grep -i -E \"" + OPENVPN + "\"";
 
     public OpenVPNLogsTile(@NonNull Fragment parentFragment, @Nullable ViewGroup parentViewGroup, @NonNull Bundle arguments, Router router) {
         super(parentFragment, parentViewGroup, arguments, "OpenVPN Logs", false, router, OPENVPN);
@@ -151,4 +152,9 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
         };
     }
 
+    @NonNull
+    @Override
+    protected CharSequence getFullLogsRetrievalCommand() {
+        return FULL_LOGS_RETRIEVAL_CMD;
+    }
 }

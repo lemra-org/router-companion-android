@@ -123,6 +123,9 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
 
     protected static final String LOG_TAG = StatusSyslogTile.class.getSimpleName();
+
+    public static final String CAT_TMP_VAR_LOG_MESSAGES = "cat /tmp/var/log/messages";
+
     protected static final Joiner LOGS_JOINER = Joiner.on("\n").useForNull(EMPTY_STRING);
     private static final String FONT_COLOR_MATCHING_HTML = "<font color='#ffff00'>";
     private static final String SLASH_FONT_HTML = "</font>";
@@ -215,6 +218,9 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                             viewSyslogIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
                                     mRouter.getUuid());
                             viewSyslogIntent.putExtra(ViewSyslogActivity.FILTER_TEXT, mGrep);
+                            viewSyslogIntent.putExtra(ViewSyslogActivity.WINDOW_TITLE, getTitle());
+                            viewSyslogIntent.putExtra(ViewSyslogActivity.FULL_LOGS_RETRIEVAL_COMMAND,
+                                    getFullLogsRetrievalCommand());
                             mParentFragmentActivity.startActivity(viewSyslogIntent);
                             return true;
                         }
@@ -269,6 +275,11 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                 popup.show();
             }
         });
+    }
+
+    @NonNull
+    protected CharSequence getFullLogsRetrievalCommand() {
+        return CAT_TMP_VAR_LOG_MESSAGES;
     }
 
     @SuppressLint("DefaultLocale")

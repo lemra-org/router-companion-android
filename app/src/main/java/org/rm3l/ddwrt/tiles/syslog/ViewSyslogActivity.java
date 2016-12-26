@@ -102,9 +102,10 @@ public class ViewSyslogActivity extends AppCompatActivity
         SearchView.OnQueryTextListener{
 
     private static final String LOG_TAG = ViewSyslogActivity.class.getSimpleName();
-    public static final String CAT_TMP_VAR_LOG_MESSAGES = "cat /tmp/var/log/messages";
 
     public static final String FILTER_TEXT = "FILTER_TEXT";
+    public static final String WINDOW_TITLE = "WINDOW_TITLE";
+    public static final String FULL_LOGS_RETRIEVAL_COMMAND = "FULL_LOGS_RETRIEVAL_COMMAND";
 
     private SharedPreferences mGlobalPreferences;
 
@@ -123,6 +124,8 @@ public class ViewSyslogActivity extends AppCompatActivity
 
     private final AtomicReference<List<? extends CharSequence>> mLogsAtomicRef = new AtomicReference<>();
     private SearchView mSearchView;
+    private String mWindowTitleFromBundle;
+    private String mFullLogsRetrievalCommand;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -154,13 +157,17 @@ public class ViewSyslogActivity extends AppCompatActivity
             return;
         }
 
+        mFullLogsRetrievalCommand = intent.getStringExtra(FULL_LOGS_RETRIEVAL_COMMAND);
+
         mInitialFilterText = intent.getStringExtra(FILTER_TEXT);
 
         handleIntent(getIntent());
 
         mToolbar = (Toolbar) findViewById(R.id.tile_status_syslog_full_view_toolbar);
         if (mToolbar != null) {
-            mToolbar.setTitle("Logs");
+            mWindowTitleFromBundle = intent.getStringExtra(WINDOW_TITLE);
+            mToolbar.setTitle(TextUtils.isEmpty(mWindowTitleFromBundle) ?
+                    "Logs" : mWindowTitleFromBundle);
             mToolbar.setSubtitle(String.format("%s (%s:%d)",
                     mRouter.getDisplayName(),
                     mRouter.getRemoteIpAddress(),
@@ -393,7 +400,7 @@ public class ViewSyslogActivity extends AppCompatActivity
                     // functionality that depends on this permission.
                     Crashlytics.log(Log.WARN, LOG_TAG, "Boo! Permission denied for #" + requestCode);
                     Utils.displayMessage(this,
-                            "Sharing of Router CPU logs will be unavailable",
+                            "Sharing of Router logs will be unavailable",
                             Style.INFO);
                     if (optionsMenu != null) {
                         final MenuItem menuItem = optionsMenu
@@ -469,7 +476,9 @@ public class ViewSyslogActivity extends AppCompatActivity
         //sendIntent.setType("text/plain");
         sendIntent.setType("text/html");
         sendIntent.putExtra(Intent.EXTRA_SUBJECT,
-                String.format("Full Logs for Router '%s'",
+                String.format("Full %s for Router '%s'",
+                        TextUtils.isEmpty(mWindowTitleFromBundle) ?
+                                "Logs" : mWindowTitleFromBundle,
                         mRouter.getCanonicalHumanReadableName()));
 
         sendIntent.putExtra(Intent.EXTRA_TEXT,
@@ -547,7 +556,9 @@ public class ViewSyslogActivity extends AppCompatActivity
                                             ViewSyslogActivity.this,
                                             mRouter,
                                             mGlobalPreferences,
-                                            CAT_TMP_VAR_LOG_MESSAGES)));
+                                            TextUtils.isEmpty(mFullLogsRetrievalCommand) ?
+                                                    StatusSyslogTile.CAT_TMP_VAR_LOG_MESSAGES :
+                                                    mFullLogsRetrievalCommand)));
                             return null;
                         } catch (final Exception e) {
                             return e;
@@ -613,7 +624,7 @@ public class ViewSyslogActivity extends AppCompatActivity
 
             if (exception != null) {
                 Utils.displayMessage(this,
-                        "Error while trying to share CPU Info - please try again later",
+                        "Error while trying to share Router logs - please try again later",
                         Style.ALERT);
                 return;
             }
