@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -65,7 +66,9 @@ class RouterAvatarDownloadTargetForAppShortcut implements Target {
             shortcutIntent.putExtra(ROUTER_SELECTED, routerUuid);
 
             final ShortcutInfo shortcut = new ShortcutInfo.Builder(mContext, routerUuid)
-                    .setShortLabel(routerName)
+                    .setShortLabel(TextUtils.isEmpty(routerName) ?
+                            (router.getRemoteIpAddress() + ":" + router.getRemotePort()) :
+                            routerName)
                     .setLongLabel(routerCanonicalHumanReadableName)
                     .setIcon(Icon.createWithBitmap(bitmap))
                     .setIntent(shortcutIntent)

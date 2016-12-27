@@ -511,7 +511,9 @@ public class RouterManagementActivity
                     shortcutIntent.putExtra(ROUTER_SELECTED, routerUuid);
 
                     final ShortcutInfo shortcut = new ShortcutInfo.Builder(this, routerUuid)
-                            .setShortLabel(TextUtils.isEmpty(routerName) ? "-" : routerName)
+                            .setShortLabel(TextUtils.isEmpty(routerName) ?
+                                    (router.getRemoteIpAddress() + ":" + router.getRemotePort()) :
+                                    routerName)
                             .setLongLabel(routerCanonicalHumanReadableName)
                             .setIcon(Icon.createWithResource(this, demoRouter ?
                                     R.drawable.demo_router : R.drawable.router))
