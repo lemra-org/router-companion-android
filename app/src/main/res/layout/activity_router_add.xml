@@ -185,7 +185,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginLeft="4dp"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="Router Firmware" />
+                android:text="Router Firmware"
+                android:visibility="gone" />
 
             <Spinner
                 android:id="@+id/router_add_firmware"
@@ -195,7 +196,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:entries="@array/router_firmwares_array"
                 android:entryValues="@array/router_firmwares_array_values"
                 android:imeOptions="flagNoExtractUi"
-                android:prompt="@string/router_firmware_select"/>
+                android:prompt="@string/router_firmware_select"
+                android:visibility="gone"/>
 
             <!-- Connection Protocol -->
             <TextView
