@@ -219,9 +219,15 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                             nbDhcpLeases.set(new Random().nextInt(30));
                         } else {
                             final String[] activeDhcpLeases = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
-                                    "cat /tmp/dnsmasq.leases 2>/dev/null");
+                                    "cat /tmp/dnsmasq.leases 2>/dev/null || echo \"N_A\"\"");
                             if (activeDhcpLeases != null) {
-                                nbDhcpLeases.set(activeDhcpLeases.length);
+                                if (activeDhcpLeases.length == 0 ||
+                                        !"N_A".equals(activeDhcpLeases[0])) {
+                                    nbDhcpLeases.set(activeDhcpLeases.length);
+                                } else {
+                                    //File does not exist
+                                    nbDhcpLeases.set(-1);
+                                }
                             }
                         }
 
