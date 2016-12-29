@@ -29,6 +29,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
@@ -338,6 +339,10 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                         pbText.setText(propertyUtilization + "%");
                         pb.setVisibility(View.VISIBLE);
                         pbText.setVisibility(View.VISIBLE);
+                        if (propertyUtilization >= 50) {
+                            pbText.setTextColor(
+                                    ContextCompat.getColor(mParentFragmentActivity, R.color.white));
+                        }
                     } else {
                         pb.setVisibility(View.GONE);
                         pbText.setVisibility(View.GONE);
