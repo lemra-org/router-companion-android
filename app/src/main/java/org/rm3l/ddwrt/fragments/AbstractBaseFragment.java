@@ -964,7 +964,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                         if (isThemeLight) {
                             if (titleTextView != null) {
                                 titleTextView.setTextColor(ContextCompat.getColor(activity,
-                                        android.R.color.holo_blue_dark));
+                                        R.color.lightTheme_primary)); //Same color is used for both light and dark themes
                             }
                         }
                         viewGroupLayout.setBackgroundColor(ContextCompat
