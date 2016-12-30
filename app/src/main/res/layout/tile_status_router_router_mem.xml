@@ -155,6 +155,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <TextView
                         android:textIsSelectable="true"
                         android:id="@+id/tile_status_router_router_mem_free_usage_text"
+                        android:textColor="@color/white"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -205,6 +206,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <TextView
                         android:textIsSelectable="true"
                         android:id="@+id/tile_status_router_router_mem_used_usage_text"
+                        android:textColor="@color/white"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -255,6 +257,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <TextView
                         android:textIsSelectable="true"
                         android:id="@+id/tile_status_router_router_mem_buffers_usage_text"
+                        android:textColor="@color/white"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -305,6 +308,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <TextView
                         android:textIsSelectable="true"
                         android:id="@+id/tile_status_router_router_mem_cached_usage_text"
+                        android:textColor="@color/white"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -355,6 +359,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <TextView
                         android:textIsSelectable="true"
                         android:id="@+id/tile_status_router_router_mem_active_usage_text"
+                        android:textColor="@color/white"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -405,6 +410,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <TextView
                         android:textIsSelectable="true"
                         android:id="@+id/tile_status_router_router_mem_inactive_usage_text"
+                        android:textColor="@color/white"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
