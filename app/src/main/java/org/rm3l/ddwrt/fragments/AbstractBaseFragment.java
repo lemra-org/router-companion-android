@@ -961,11 +961,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment
 
 
                         final TextView titleTextView = (TextView) viewGroupLayout.findViewById(ddwrtTile.getTileTitleViewId());
-                        if (isThemeLight) {
-                            if (titleTextView != null) {
-                                titleTextView.setTextColor(ContextCompat.getColor(activity,
-                                        R.color.lightTheme_primary)); //Same color is used for both light and dark themes
-                            }
+                        if (titleTextView != null) {
+                            titleTextView.setTextColor(ContextCompat.getColor(activity,
+                                    R.color.lightTheme_primary)); //Same color is used for both light and dark themes
                         }
                         viewGroupLayout.setBackgroundColor(ContextCompat
                                 .getColor(activity, android.R.color.transparent));

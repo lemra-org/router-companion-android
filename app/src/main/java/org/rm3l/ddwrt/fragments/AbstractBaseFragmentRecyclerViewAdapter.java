@@ -62,11 +62,9 @@ public class AbstractBaseFragmentRecyclerViewAdapter
         final boolean isThemeLight = ColorUtils.isThemeLight(mContext);
 
         final TextView titleTextView = (TextView) viewGroupLayout.findViewById(ddwrtTile.getTileTitleViewId());
-        if (isThemeLight) {
-            if (titleTextView != null) {
-                titleTextView.setTextColor(ContextCompat.getColor(mContext,
-                        R.color.lightTheme_primary)); //Same color is used for both light and dark themes
-            }
+        if (titleTextView != null) {
+            titleTextView.setTextColor(ContextCompat.getColor(mContext,
+                    R.color.lightTheme_primary)); //Same color is used for both light and dark themes
         }
         viewGroupLayout.setBackgroundColor(ContextCompat
                 .getColor(mContext, android.R.color.transparent));
