@@ -74,6 +74,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+import static android.text.TextUtils.isEmpty;
 import static org.rm3l.ddwrt.tiles.dashboard.network.NetworkTopologyMapTile.INTERNET_CONNECTIVITY_PUBLIC_IP;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOK;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.UNKNOWN;
@@ -521,7 +522,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                 final TextView wanDNSView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_dns);
                 final String wanDns = data.getProperty(NVRAMInfo.WAN_DNS);
                 final String wanGetDns = data.getProperty(NVRAMInfo.WAN_GET_DNS);
-                final String property = (wanDns != null ? wanDns : (wanGetDns != null ? wanGetDns : "-"));
+                final String property = (!isEmpty(wanDns) ? wanDns : (!isEmpty(wanGetDns) ? wanGetDns : "-"));
                 wanDNSView.setText(property.replaceAll(" ", ", "));
 
                 if ("dhcp".equalsIgnoreCase(wanProto)) {
