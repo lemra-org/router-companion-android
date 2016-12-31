@@ -53,7 +53,9 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -163,7 +165,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                             otherCmds = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                     mGlobalPreferences,
                                     "uptime | awk -F'average:' '{ print $2}'",
-                                    GREP_MODEL_PROC_CPUINFO + "| uniq",
+                                    GREP_MODEL_PROC_CPUINFO + "| tr '\\n' '#'; echo",
                                     GREP_MODEL_PROC_CPUINFO + "| wc -l");
                         }
 
@@ -180,8 +182,12 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                                 //Model
                                 final String modelNameLine = otherCmds[1];
                                 if (modelNameLine != null) {
-                                    nvramInfo.setProperty(NVRAMInfo.CPU_MODEL,
-                                            modelNameLine.trim());
+                                    final Set<String> list = new HashSet<>(Splitter.on("#")
+                                            .trimResults().omitEmptyStrings().splitToList(modelNameLine));
+                                    if (!list.isEmpty()) {
+                                        nvramInfo.setProperty(NVRAMInfo.CPU_MODEL,
+                                                list.iterator().next());
+                                    }
                                 }
                             }
                             if (otherCmds.length >= 3) {
