@@ -1143,7 +1143,7 @@ public class WirelessClientsTile
                                                     String.format("( /usr/sbin/wl -i `/usr/sbin/nvram get %s_ifname` rssi %s || /usr/sbin/wl_atheros -i `/usr/sbin/nvram get %s_ifname` rssi %s ; " +
                                                                     "/bin/echo \" \"; /usr/sbin/wl -i `/usr/sbin/nvram get %s_ifname` noise || /usr/sbin/wl_atheros -i `/usr/sbin/nvram get %s_ifname` noise ) | " +
                                                                     "/usr/bin/tr -d '\\n' | /usr/bin/awk '{print $1-$2}'",
-                                                            iface, macAddress.toUpperCase(), iface, macAddress, iface, iface));
+                                                            iface, macAddress.toUpperCase(), iface, macAddress.toUpperCase(), iface, iface));
                                             Crashlytics.log(Log.DEBUG, LOG_TAG, "ssidAndrssiAndSNROutput: " + Arrays.toString(ssidAndrssiAndSNROutput));
                                             if (ssidAndrssiAndSNROutput == null || ssidAndrssiAndSNROutput.length == 0) {
                                                 //Try again. iface might represent the actual physical interface. We must try to fetch the wl one instead
@@ -1157,7 +1157,7 @@ public class WirelessClientsTile
                                                             String.format("( /usr/sbin/wl -i `/usr/sbin/nvram get %s_ifname` rssi %s || /usr/sbin/wl_atheros -i `/usr/sbin/nvram get %s_ifname` rssi %s ; " +
                                                                             "/bin/echo \" \"; /usr/sbin/wl -i `/usr/sbin/nvram get %s_ifname` noise || /usr/sbin/wl_atheros -i `/usr/sbin/nvram get %s_ifname` noise ) | " +
                                                                             "/usr/bin/tr -d '\\n' | /usr/bin/awk '{print $1-$2}'",
-                                                                    realWlIface, macAddress.toUpperCase(), realWlIface, macAddress, realWlIface, realWlIface));
+                                                                    realWlIface, macAddress.toUpperCase(), realWlIface, macAddress.toUpperCase(), realWlIface, realWlIface));
                                                 }
                                             }
                                             Crashlytics.log(Log.DEBUG, LOG_TAG, "ssidAndrssiAndSNROutput: " + Arrays.toString(ssidAndrssiAndSNROutput));
