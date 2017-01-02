@@ -51,12 +51,14 @@ import android.widget.Toast;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.ActionManager;
@@ -422,12 +424,12 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                         final Long txBps = ifaceRxAndTxRates.get(IfaceStatsType.TX_BYTES);
                         if (rxBps != null) {
                             nvramInfo.setProperty(wlIface + "_rx_rate_human_readable",
-                                    rxBps + " B\n(" + FileUtils.byteCountToDisplaySize(rxBps)
+                                    rxBps + " B (" + FileUtils.byteCountToDisplaySize(rxBps)
                                             + ")");
                         }
                         if (txBps != null) {
                             nvramInfo.setProperty(wlIface + "_tx_rate_human_readable",
-                                    txBps + " B\n(" + FileUtils.byteCountToDisplaySize(txBps) + ")");
+                                    txBps + " B (" + FileUtils.byteCountToDisplaySize(txBps) + ")");
                         }
 
                         //Packet Info
@@ -443,12 +445,12 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                                 if (packetsInfo != null) {
                                     final long rxErrors = Long.parseLong(packetsInfo[1]);
                                     nvramInfo.setProperty(wlIface + "_rx_packets",
-                                            String.format("%s\n(%s)",
+                                            String.format("%s (%s)",
                                                     packetsInfo[0], rxErrors <= 0 ? "no error" :
                                                             (rxErrors + String.format(" error%s", rxErrors > 1 ? "s" : ""))));
                                     final long txErrors = Long.parseLong(packetsInfo[3]);
                                     nvramInfo.setProperty(wlIface + "_tx_packets",
-                                            String.format("%s\n(%s)",
+                                            String.format("%s (%s)",
                                                     packetsInfo[2], txErrors <= 0 ? "no error" :
                                                             (txErrors + String.format(" error%s", txErrors > 1 ? "s" : ""))));
                                 }
@@ -461,7 +463,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                             if (receive != null) {
                                 final int rxErrors = receive.getRxErrors();
                                 nvramInfo.setProperty(wlIface + "_rx_packets",
-                                        String.format("%s\n(%s)",
+                                        String.format("%s (%s)",
                                                 receive.getRxPackets(), rxErrors <= 0 ? "no error" :
                                                         (rxErrors + String.format(" error%s", rxErrors > 1 ? "s" : ""))));
                             }
@@ -469,7 +471,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                             if (transmit != null) {
                                 final int txErrors = transmit.getTxErrors();
                                 nvramInfo.setProperty(wlIface + "_tx_packets",
-                                        String.format("%s\n(%s)",
+                                        String.format("%s (%s)",
                                                 transmit.getTxPackets(), txErrors <= 0 ? "no error" :
                                                         (txErrors + String.format(" error%s", txErrors > 1 ? "s" : ""))));
                             }
@@ -972,8 +974,17 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         final TextView noiseView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_noise_dBm);
         final String noiseProp = data.getProperty(this.iface + "_noise", data.getProperty(this.parentIface + "_noise",
                 defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null));
-        if (noiseProp != null) {
-            noiseView.setText(isNullOrEmpty(noiseProp) ? "-" : (noiseProp + " dBm"));
+        if (Strings.isNullOrEmpty(noiseProp)) {
+            noiseView.setText(EMPTY_VALUE_TO_DISPLAY);
+        } else if (NumberUtils.isParsable(noiseProp) || NumberUtils.isCreatable(noiseProp)) {
+            noiseView.setText(noiseProp + " dBm");
+        } else {
+            final List<String> strings = Splitter.on("(").limit(2).splitToList(noiseProp);
+            if (strings.size() >= 2) {
+                noiseView.setText(strings.get(0) + "dBm (" + strings.get(1));
+            } else {
+                noiseView.setText(noiseProp);
+            }
         }
 
 //            //Update last sync
