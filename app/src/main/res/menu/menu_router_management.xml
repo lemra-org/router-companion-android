@@ -153,19 +153,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:visible="false">
             <menu>
                 <item
+                    android:id="@+id/debug_open_sharedprefs"
+                    android:title="Shared Preferences"
+                    app:showAsAction="never"/>
+                <item
                     android:id="@+id/debug_leakcanary"
-                    android:orderInCategory="1"
                     android:title="Toggle LeakCanary"
                     app:showAsAction="never"
                     android:checkable="true"/>
                 <item
                     android:id="@+id/debug_welcome_screen"
-                    android:orderInCategory="2"
                     android:title="Force show welcome screen"
                     app:showAsAction="never" />
                 <item
                     android:id="@+id/debug_restore_deleted_routers"
-                    android:orderInCategory="3"
                     android:title="Restore deleted routers"
                     app:showAsAction="never" />
             </menu>

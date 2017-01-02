@@ -76,6 +76,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 //import com.madx.updatechecker.lib.UpdateRunnable;
 //import com.pusher.client.Pusher;
 //import com.pusher.client.channel.SubscriptionEventListener;
+import com.sloydev.preferator.Preferator;
 import com.stephentuso.welcome.WelcomeScreenHelper;
 import com.stephentuso.welcome.ui.WelcomeActivity;
 
@@ -684,6 +685,15 @@ public class RouterManagementActivity
                                         new Intent(RouterManagementActivity.this, ChangelogActivity.class));
                             }
                         }, false);
+                return true;
+
+            case R.id.debug_open_sharedprefs:
+                if (BuildConfig.DEBUG) {
+                    Preferator.launch(this);
+                } else {
+                    Crashlytics.log(Log.WARN, LOG_TAG,
+                            "[DEBUG] SharedPreferences menu option should not be visible...");
+                }
                 return true;
 
             case R.id.debug_leakcanary:
