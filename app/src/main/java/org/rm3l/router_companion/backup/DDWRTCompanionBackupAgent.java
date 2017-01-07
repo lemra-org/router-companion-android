@@ -39,7 +39,7 @@ import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.router_companion.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper;
 import org.rm3l.router_companion.resources.conn.Router;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ReportingUtils;
 
 import java.io.IOException;
@@ -67,7 +67,7 @@ public class DDWRTCompanionBackupAgent extends BackupAgentHelper {
 
         //Preferences
         final SharedPreferencesBackupHelper prefs = new SharedPreferencesBackupHelper(this,
-                DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY);
+                RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY);
         addHelper(PREFERENCES, prefs);
     }
 

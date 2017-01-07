@@ -50,7 +50,7 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.status.wan.WANConfigTile;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.SSHUtils;
 
 import java.util.List;
@@ -170,7 +170,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
                                 if (landevVifsNVRAMInfo == null) {
                                     continue;
                                 }
-                                final String landevVifsNVRAMInfoProp = landevVifsNVRAMInfo.getProperty(landevVifsKeyword, DDWRTCompanionConstants.EMPTY_STRING);
+                                final String landevVifsNVRAMInfoProp = landevVifsNVRAMInfo.getProperty(landevVifsKeyword, RouterCompanionAppConstants.EMPTY_STRING);
                                 if (landevVifsNVRAMInfoProp == null) {
                                     continue;
                                 }

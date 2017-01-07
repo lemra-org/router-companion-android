@@ -55,7 +55,7 @@ import org.rm3l.router_companion.multithreading.MultiThreadingManager;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
@@ -89,7 +89,7 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
 
     public NVRAMDataRecyclerViewAdapter(FragmentActivity context, Router router, NVRAMInfo nvramInfo) {
         this.context = context;
-        this.mGlobalPreferences = context.getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+        this.mGlobalPreferences = context.getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         this.router = router;
         this.fragmentManager = context.getSupportFragmentManager();
         //noinspection ConstantConditions

@@ -89,7 +89,7 @@ import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_STATI
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_TLSAUTH;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_TLSCIP;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_TUNTAP;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
 public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
 

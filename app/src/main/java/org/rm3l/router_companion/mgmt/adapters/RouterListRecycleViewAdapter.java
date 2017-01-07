@@ -85,7 +85,7 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.status.wireless.WirelessClientsTile;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
@@ -104,11 +104,11 @@ import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.NEW_ROUTER_ADDED;
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_UPDATED;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERSION;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.OPENED_AT_LEAST_ONCE_PREF_KEY;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.getClientsUsageDataFile;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.MAX_ROUTERS_FREE_VERSION;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.OPENED_AT_LEAST_ONCE_PREF_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.getClientsUsageDataFile;
 
 public class RouterListRecycleViewAdapter extends
         RecyclerView.Adapter<RouterListRecycleViewAdapter.ViewHolder>
@@ -136,7 +136,7 @@ public class RouterListRecycleViewAdapter extends
         this.setRoutersList(results);
         this.activity = activity;
         this.mGlobalPreferences = activity.getSharedPreferences(
-                DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+                RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         this.dao = RouterManagementActivity.getDao(activity);
         resources = activity.getResources();
         selectedItems = new SparseBooleanArray();
@@ -278,7 +278,7 @@ public class RouterListRecycleViewAdapter extends
         final boolean isDemoRouter = Utils.isDemoRouter(remoteIpAddress);
 
         holder.routerIp.setText(isDemoRouter ?
-                DDWRTCompanionConstants.DEMO :
+                RouterCompanionAppConstants.DEMO :
                 (remoteIpAddress + ":" + routerAt.getRemotePort()));
         holder.routerConnProto.setText(routerAt.getRouterConnectionProtocol().toString());
         holder.routerUsername.setText(routerAt.getUsernamePlain());
@@ -545,7 +545,7 @@ public class RouterListRecycleViewAdapter extends
                                         "iptables -F DDWRTCompanion",
                                         "iptables -X DDWRTCompanion",
 
-                                        "rm -f " + DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE,
+                                        "rm -f " + RouterCompanionAppConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE,
                                         "rm -f /tmp/.DDWRTCompanion_traffic_55.tmp",
                                         "rm -f /tmp/.DDWRTCompanion_traffic_66.tmp",
                                         "rm -f " + WirelessClientsTile.USAGE_DB,
@@ -945,7 +945,7 @@ public class RouterListRecycleViewAdapter extends
                 public void onAdOpened() {
                     mGlobalPreferences.edit()
                             .putLong(
-                                    DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                    RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
                                     System.currentTimeMillis())
                             .apply();
                 }

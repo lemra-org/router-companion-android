@@ -42,7 +42,7 @@ import org.apache.commons.io.IOUtils;
 import org.rm3l.router_companion.BuildConfig;
 import org.rm3l.router_companion.R;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.Utils;
 
 import java.io.IOException;
@@ -146,7 +146,7 @@ public class AboutDialog extends Dialog {
                             .replaceAll(APP_NAME_INFO_TXT, mContext.getString(mContext.getApplicationInfo().labelRes))
                             .replaceAll(VERSION_CODE_INFO_TXT, String.valueOf(BuildConfig.VERSION_CODE))
                             .replaceAll(VERSION_NAME_INFO_TXT, BuildConfig.VERSION_NAME)
-                            .replaceAll(SUPPORT_WEBSITE_HREF, DDWRTCompanionConstants.SUPPORT_WEBSITE));
+                            .replaceAll(SUPPORT_WEBSITE_HREF, RouterCompanionAppConstants.SUPPORT_WEBSITE));
         }
         tv.setVisibility(fileFound ? View.VISIBLE : View.GONE);
 

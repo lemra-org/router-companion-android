@@ -53,7 +53,7 @@ import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.Utils;
 
 import java.util.HashSet;
@@ -68,7 +68,7 @@ import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WOL_INTERVAL;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WOL_MACS;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WOL_PASSWD;
 import static org.rm3l.router_companion.tiles.services.wol.WakeOnLanDaemonTile.WOL_DAEMON_NVRAMINFO;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
 public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
 
@@ -198,7 +198,7 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
         ((EditText) findViewById(R.id.wol_daemon_settings_mac_addresses))
                 .setText(Joiner.on("\n").skipNulls().join(
                         Splitter.on(" ").omitEmptyStrings().split(
-                                mNvramInfo.getProperty(WOL_MACS, DDWRTCompanionConstants.EMPTY_STRING))), EDITABLE);
+                                mNvramInfo.getProperty(WOL_MACS, RouterCompanionAppConstants.EMPTY_STRING))), EDITABLE);
     }
 
     @Override

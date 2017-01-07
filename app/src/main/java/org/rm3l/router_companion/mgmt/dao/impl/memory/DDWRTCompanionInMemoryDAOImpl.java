@@ -33,7 +33,7 @@ import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.router_companion.resources.SpeedTestResult;
 import org.rm3l.router_companion.resources.WANTrafficData;
 import org.rm3l.router_companion.resources.conn.Router;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,7 +59,7 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
     private Context ctx;
 
     public DDWRTCompanionInMemoryDAOImpl() {
-        if (DDWRTCompanionConstants.TEST_MODE) {
+        if (RouterCompanionAppConstants.TEST_MODE) {
             populateDB();
         }
         ctx = null;

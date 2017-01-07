@@ -38,7 +38,7 @@ import org.rm3l.router_companion.R;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.Utils;
 
 /**
@@ -280,11 +280,11 @@ public abstract class WebActivity extends AppCompatActivity implements SwipeRefr
                 @Override
                 public void onAdOpened() {
                     //Save preference
-                    getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                    getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                             Context.MODE_PRIVATE)
                             .edit()
                             .putLong(
-                                    DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                    RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
                                     System.currentTimeMillis())
                             .apply();
                 }

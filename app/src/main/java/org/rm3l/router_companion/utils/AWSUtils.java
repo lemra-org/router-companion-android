@@ -31,8 +31,8 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.AWS_COGNITO_IDENTITY_POOL_ID;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.AWS_COGNITO_IDENTITY_POOL_REGION;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.AWS_COGNITO_IDENTITY_POOL_ID;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.AWS_COGNITO_IDENTITY_POOL_REGION;
 
 /**
  * Created by rm3l on 01/08/16.

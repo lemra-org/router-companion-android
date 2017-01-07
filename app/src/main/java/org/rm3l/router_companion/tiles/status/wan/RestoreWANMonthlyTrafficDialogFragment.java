@@ -47,7 +47,7 @@ import org.rm3l.router_companion.actions.RouterRestoreDialogListener;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.AdUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.Utils;
 
 import java.io.File;
@@ -63,7 +63,7 @@ import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.router_companion.tiles.status.wan.WANMonthlyTrafficTile.WAN_MONTHLY_TRAFFIC_ACTION;
 import static org.rm3l.router_companion.tiles.status.wan.WANMonthlyTrafficTile.WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.router_companion.utils.Utils.fromHtml;
 
 /**
@@ -527,7 +527,7 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
                                             final Date backupDate = (Date) (((Object[]) returnData)[0]);
 
                                             final Uri uriForFile = FileProvider.getUriForFile(mCtx,
-                                                    DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
+                                                    RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY,
                                                     localBackupFile);
                                             mCtx.grantUriPermission(
                                                     mCtx.getPackageName(),
@@ -576,7 +576,7 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
                                 },
                                 mCtx
                                         .getSharedPreferences(
-                                                DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                                                RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                                                 Context.MODE_PRIVATE)));
                         return;
                     default:

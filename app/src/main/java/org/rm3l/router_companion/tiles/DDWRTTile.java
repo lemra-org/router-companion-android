@@ -58,15 +58,15 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.service.tasks.RouterInfoForFeedbackServiceTask;
 import org.rm3l.router_companion.service.tasks.RouterModelUpdaterServiceTask;
 import org.rm3l.router_companion.utils.AdUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.AUTO_REFRESH_INTERVAL_SECONDS_PREF;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.AUTO_REFRESH_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.AUTO_REFRESH_INTERVAL_SECONDS_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.AUTO_REFRESH_PREF;
 
 /**
  * Abstract DDWRT Tile
@@ -128,7 +128,7 @@ public abstract class DDWRTTile<T>
         this.mParentFragmentPreferences = ((router != null && this.mParentFragmentActivity != null) ? this.mParentFragmentActivity
                 .getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE) : null);
         this.mGlobalPreferences = (this.mParentFragmentActivity != null ? this.mParentFragmentActivity
-                .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE) : null);
+                .getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE) : null);
         this.mRouter = router;
         this.mSupportLoaderManager = this.mParentFragment.getLoaderManager();
         this.mFragmentArguments = arguments;
@@ -377,7 +377,7 @@ public abstract class DDWRTTile<T>
                         //Save preference
                         mGlobalPreferences.edit()
                                 .putLong(
-                                        DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                        RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
                                         System.currentTimeMillis())
                                 .apply();
                     }

@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEBUG_MODE;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEBUG_MODE;
 
 public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
 

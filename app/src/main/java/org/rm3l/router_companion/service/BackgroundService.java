@@ -19,7 +19,7 @@ import org.rm3l.router_companion.service.tasks.PublicIPChangesServiceTask;
 import org.rm3l.router_companion.service.tasks.RouterInfoForFeedbackServiceTask;
 import org.rm3l.router_companion.service.tasks.RouterModelUpdaterServiceTask;
 import org.rm3l.router_companion.service.tasks.RouterWebInterfaceParametersUpdaterServiceTask;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ReportingUtils;
 
 import java.util.ArrayList;
@@ -54,9 +54,9 @@ public class BackgroundService extends IntentService {
         try {
         // check the global background data setting
             final SharedPreferences sharedPreferences =
-                    getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+                    getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
             sharedPreferences.edit()
-                    .putLong(DDWRTCompanionConstants.BG_SERVICE_LAST_HANDLE, System.currentTimeMillis())
+                    .putLong(RouterCompanionAppConstants.BG_SERVICE_LAST_HANDLE, System.currentTimeMillis())
                     .apply();
 
             final ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
@@ -79,7 +79,7 @@ public class BackgroundService extends IntentService {
             //According to user preference
             final Set<String> notificationsChoiceSet =
                     sharedPreferences
-                            .getStringSet(DDWRTCompanionConstants.NOTIFICATIONS_CHOICE_PREF, new HashSet<String>());
+                            .getStringSet(RouterCompanionAppConstants.NOTIFICATIONS_CHOICE_PREF, new HashSet<String>());
             Crashlytics.log(Log.DEBUG,  TAG, "notificationsChoiceSet: " + notificationsChoiceSet);
             if (notificationsChoiceSet.contains(ConnectedHostsServiceTask.class.getSimpleName())) {
                 tasks.add(new ConnectedHostsServiceTask(BackgroundService.this));

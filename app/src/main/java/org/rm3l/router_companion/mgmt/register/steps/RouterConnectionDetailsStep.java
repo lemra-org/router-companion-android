@@ -44,7 +44,7 @@ import org.rm3l.router_companion.utils.ViewGroupUtils;
 import org.rm3l.router_companion.widgets.wizard.MaterialWizardStep;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.MAX_PRIVKEY_SIZE_BYTES;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.MAX_PRIVKEY_SIZE_BYTES;
 import static org.rm3l.router_companion.utils.Utils.toHumanReadableByteCount;
 
 /**

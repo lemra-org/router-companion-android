@@ -28,7 +28,7 @@ import org.rm3l.router_companion.main.DDWRTMainActivity;
 import org.rm3l.router_companion.resources.PublicIPInfo;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
@@ -118,8 +118,8 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
             return;
         }
 
-        if (!mCtx.getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                Context.MODE_PRIVATE).getStringSet(DDWRTCompanionConstants.NOTIFICATIONS_CHOICE_PREF,
+        if (!mCtx.getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                Context.MODE_PRIVATE).getStringSet(RouterCompanionAppConstants.NOTIFICATIONS_CHOICE_PREF,
                 new HashSet<String>()).contains(PublicIPChangesServiceTask.class.getSimpleName())) {
             Crashlytics.log(Log.DEBUG,  LOG_TAG, "PublicIPChangesServiceTask notifications disabled");
             return;
@@ -168,7 +168,7 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
 
                 //Now display notification
                 final boolean notificationsEnabled = routerPreferences
-                        .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_ENABLE, true);
+                        .getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_ENABLE, true);
 
                 Crashlytics.log(Log.DEBUG,  LOG_TAG, "NOTIFICATIONS_ENABLE=" + notificationsEnabled);
 
@@ -224,18 +224,18 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
 
                         //Notification sound, if required
                         final SharedPreferences sharedPreferences = mCtx.getSharedPreferences(
-                                DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                                RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                                 Context.MODE_PRIVATE);
                         final String ringtoneUri = sharedPreferences
-                                .getString(DDWRTCompanionConstants.NOTIFICATIONS_SOUND, null);
+                                .getString(RouterCompanionAppConstants.NOTIFICATIONS_SOUND, null);
                         if (ringtoneUri != null) {
                             mBuilder.setSound(Uri.parse(ringtoneUri), AudioManager.STREAM_NOTIFICATION);
                         }
                         if (!sharedPreferences
-                                .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_VIBRATE, true)) {
+                                .getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_VIBRATE, true)) {
                             mBuilder
                                     .setDefaults(Notification.DEFAULT_LIGHTS)
-                                    .setVibrate(DDWRTCompanionConstants.NO_VIBRATION_PATTERN);
+                                    .setVibrate(RouterCompanionAppConstants.NO_VIBRATION_PATTERN);
     //                    if (ringtoneUri != null) {
     //                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
     //                    } else {

@@ -40,7 +40,7 @@ import org.rm3l.router_companion.resources.Encrypted;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.service.tasks.RouterInfoForFeedbackServiceTask;
 import org.rm3l.router_companion.service.tasks.RouterModelUpdaterServiceTask;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
@@ -54,7 +54,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.router_companion.utils.Utils.isDemoRouter;
 
 /**
@@ -267,7 +267,7 @@ public class ReviewStep extends MaterialWizardStep {
             routerNameView.setText(isNullOrEmpty(routerName) ? "-" : routerName);
 
             if (Utils.isDemoRouter(routerIpOrDns)) {
-                routerIpOrDnsView.setText(DDWRTCompanionConstants.DEMO);
+                routerIpOrDnsView.setText(RouterCompanionAppConstants.DEMO);
             } else {
                 routerIpOrDnsView.setText(isNullOrEmpty(routerIpOrDns) ? "-" : routerIpOrDns);
             }

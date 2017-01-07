@@ -49,7 +49,6 @@ import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.rm3l.router_companion.deeplinks.RouterActionsDeepLinkActivity;
 import org.rm3l.router_companion.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.welcome.GettingStartedActivity;
@@ -66,7 +65,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import io.fabric.sdk.android.Fabric;
 
 import static org.rm3l.router_companion.BuildConfig.FLAVOR;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.router_companion.utils.Utils.isFirstLaunch;
 
 
@@ -191,7 +190,7 @@ public class RouterCompanionApplication extends Application implements Applicati
         Crashlytics.setBool("WITH_ADS", BuildConfig.WITH_ADS);
 
         final String acraEmailAddr = appPreferences
-                .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
+                .getString(RouterCompanionAppConstants.ACRA_USER_EMAIL, null);
         Crashlytics.setUserEmail(acraEmailAddr);
 
         //We must initialize Fabric prior to calling this
@@ -202,7 +201,7 @@ public class RouterCompanionApplication extends Application implements Applicati
             final Map<String, Object> eventMap = new HashMap<>();
             final String lastKnownVersionStr =
                     appPreferences
-                        .getString(DDWRTCompanionConstants.LAST_KNOWN_VERSION, null);
+                        .getString(RouterCompanionAppConstants.LAST_KNOWN_VERSION, null);
             eventMap.put("PREVIOUS_VERSION",
                     lastKnownVersionStr != null ? lastKnownVersionStr : "???");
             eventMap.put("UPDATE", lastKnownVersionStr != null);

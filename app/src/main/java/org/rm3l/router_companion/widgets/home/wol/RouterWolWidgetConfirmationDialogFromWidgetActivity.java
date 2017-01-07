@@ -20,7 +20,7 @@ import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.Device;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.services.wol.WakeOnLanTile;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.widgets.ConfirmDialogAsActivity;
 
@@ -187,7 +187,7 @@ public class RouterWolWidgetConfirmationDialogFromWidgetActivity extends Confirm
                                     }
                                 }
                             },
-                            getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
+                            getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
                             device,
                             device.getWolPort(),
                             mBroadcastAddresses);

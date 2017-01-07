@@ -75,7 +75,7 @@ import org.rm3l.router_companion.resources.WANTrafficData;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.WANTrafficUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
@@ -93,8 +93,8 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.EMPTY_STRING;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.MB;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.MB;
 import static org.rm3l.router_companion.utils.Utils.fromHtml;
 
 public class WANMonthlyTrafficActivity extends AppCompatActivity {
@@ -249,11 +249,11 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                 @Override
                 public void onAdOpened() {
                     //Save preference
-                    getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                    getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                             Context.MODE_PRIVATE)
                             .edit()
                             .putLong(
-                                    DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                    RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
                                     System.currentTimeMillis())
                             .apply();
                 }
@@ -575,7 +575,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                                 //Request permission
                                 ActivityCompat.requestPermissions(WANMonthlyTrafficActivity.this,
                                         new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                        DDWRTCompanionConstants.Permissions.STORAGE);
+                                        RouterCompanionAppConstants.Permissions.STORAGE);
                             }
 
                             @Override
@@ -599,7 +599,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
                         new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        DDWRTCompanionConstants.Permissions.STORAGE);
+                        RouterCompanionAppConstants.Permissions.STORAGE);
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
@@ -665,7 +665,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                                            String permissions[], int[] grantResults) {
 
         switch (requestCode) {
-            case DDWRTCompanionConstants.Permissions.STORAGE: {
+            case RouterCompanionAppConstants.Permissions.STORAGE: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -736,7 +736,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
         }
 
         final Uri uriForFile = FileProvider
-                .getUriForFile(this, DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY, file);
+                .getUriForFile(this, RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY, file);
 
         mShareActionProvider.setOnShareTargetSelectedListener(new ShareActionProvider.OnShareTargetSelectedListener() {
             @Override

@@ -59,7 +59,7 @@ import org.rm3l.router_companion.R;
 import org.rm3l.router_companion.common.resources.RouterInfo;
 import org.rm3l.router_companion.main.DDWRTMainActivity;
 import org.rm3l.router_companion.tiles.services.wol.WakeOnLanTile;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
@@ -949,11 +949,11 @@ public class Router implements Serializable {
 
     public static String getRouterAvatarUrl(@Nullable final String routerModel,
                                             @Nullable final String[] opts) throws UnsupportedEncodingException {
-        return String.format("%s/%s/%s.jpg", DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
+        return String.format("%s/%s/%s.jpg", RouterCompanionAppConstants.IMAGE_CDN_URL_PREFIX,
                 Joiner
                         .on(",")
                         .skipNulls().join(opts != null ?
-                        opts : DDWRTCompanionConstants.CLOUDINARY_OPTS),
+                        opts : RouterCompanionAppConstants.CLOUDINARY_OPTS),
                 URLEncoder.encode(nullToEmpty(routerModel).toLowerCase().replaceAll("\\s+", ""),
                         Charsets.UTF_8.name()));
     }

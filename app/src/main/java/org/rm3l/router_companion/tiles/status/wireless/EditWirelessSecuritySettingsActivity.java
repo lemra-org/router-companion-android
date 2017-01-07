@@ -44,7 +44,7 @@ import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.status.wireless.share.WifiSharingActivity;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.Utils;
 
 import java.security.MessageDigest;
@@ -58,7 +58,7 @@ import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.router_companion.tiles.status.wireless.WirelessIfaceTile.WL_SECURITY_NVRAMINFO;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.router_companion.utils.Utils.getHexString;
 
 /**
@@ -159,15 +159,15 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
         }
 
         mPhyIface = mNvramInfo.getProperty(WirelessIfaceTile.IFACE,
-                DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY);
+                RouterCompanionAppConstants.EMPTY_VALUE_TO_DISPLAY);
 
         mParentIface = mNvramInfo.getProperty(WirelessIfaceTile.PARENT_IFACE);
 
         mSsid = mNvramInfo.getProperty(WifiSharingActivity.SSID,
-                DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY);
+                RouterCompanionAppConstants.EMPTY_VALUE_TO_DISPLAY);
 
         mHwAddr = mNvramInfo.getProperty(HWADDR,
-                DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY);
+                RouterCompanionAppConstants.EMPTY_VALUE_TO_DISPLAY);
 
         final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(this);
         final Router router;

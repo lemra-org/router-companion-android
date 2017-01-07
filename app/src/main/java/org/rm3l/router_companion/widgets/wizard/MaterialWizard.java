@@ -39,7 +39,7 @@ import org.rm3l.router_companion.events.wizard.WizardStepVisibleToUserEvent;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.register.resources.RouterWizardAction;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.widgets.ViewPagerWithAllowedSwipeDirection;
 
@@ -254,7 +254,7 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
         }
 
         final SharedPreferences globalPrefs = context
-                .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                .getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                         Context.MODE_PRIVATE);
 
         final String wizardContextJson = globalPrefs.getString(CURRENT_WIZARD_CONTEXT_PREF_KEY,
@@ -272,7 +272,7 @@ public abstract class MaterialWizard extends WizardFragment implements View.OnCl
     public void onWizardComplete() {
         super.onWizardComplete();
         final SharedPreferences globalPrefs = this.getContext()
-                .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                .getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                         Context.MODE_PRIVATE);
         globalPrefs.edit().remove(CURRENT_WIZARD_CONTEXT_PREF_KEY).apply();
 //        //Do whatever you want to do once the Wizard is complete

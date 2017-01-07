@@ -63,7 +63,7 @@ import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.status.wireless.WirelessIfaceTile;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
@@ -115,7 +115,7 @@ import static org.rm3l.router_companion.tiles.services.vpn.client.EditOpenVPNCli
 import static org.rm3l.router_companion.tiles.status.wireless.WirelessIfaceTile.CAT_SYS_CLASS_NET_S_STATISTICS;
 import static org.rm3l.router_companion.tiles.status.wireless.WirelessIfaceTile.IfaceStatsType.RX_BYTES;
 import static org.rm3l.router_companion.tiles.status.wireless.WirelessIfaceTile.IfaceStatsType.TX_BYTES;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE;
 
 public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
         implements DDWRTTile.ActivityResultListener, UndoBarController.AdvancedUndoListener, RouterActionListener {
@@ -567,7 +567,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
         //State
         final String statusKey = \"fake-key\";
-                defaultValuesIfNotFound ? DDWRTCompanionConstants.EMPTY_STRING : null);
+                defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
         if (statusKey != null) {
             final String statusValue;
             switch (statusKey) {

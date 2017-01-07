@@ -32,16 +32,16 @@ import com.airbnb.deeplinkdispatch.DeepLink;
 import org.rm3l.router_companion.R;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.AUTO_REFRESH_INTERVAL_SECONDS_PREF;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.AUTO_REFRESH_PREF;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.NOTIFICATIONS_CONNECTED_HOSTS_ACTIVE_ONLY;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.NOTIFICATIONS_ENABLE;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.WAN_CYCLE_DAY_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.AUTO_REFRESH_INTERVAL_SECONDS_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.AUTO_REFRESH_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_CONNECTED_HOSTS_ACTIVE_ONLY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_ENABLE;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_SERVER;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.SORTING_STRATEGY_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.WAN_CYCLE_DAY_PREF;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On

@@ -89,7 +89,7 @@ import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.WANTrafficUtils;
@@ -107,8 +107,8 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.router_companion.resources.Encrypted.d;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.EMPTY_STRING;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.WAN_CYCLE_DAY_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.WAN_CYCLE_DAY_PREF;
 import static org.rm3l.router_companion.utils.Utils.fromHtml;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.HIDDEN_;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.TOTAL_DL_CURRENT_MONTH;
@@ -279,7 +279,7 @@ public class WANMonthlyTrafficTile
                                 //Request permission
                                 ActivityCompat.requestPermissions(mParentFragmentActivity,
                                         new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                        DDWRTCompanionConstants.Permissions.STORAGE);
+                                        RouterCompanionAppConstants.Permissions.STORAGE);
                             }
 
                             @Override
@@ -303,7 +303,7 @@ public class WANMonthlyTrafficTile
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(mParentFragmentActivity,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        DDWRTCompanionConstants.Permissions.STORAGE);
+                        RouterCompanionAppConstants.Permissions.STORAGE);
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
@@ -936,7 +936,7 @@ public class WANMonthlyTrafficTile
                                             final Date backupDate = (Date) (((Object[]) returnData)[0]);
 
                                             final Uri uriForFile = FileProvider.getUriForFile(mParentFragmentActivity,
-                                                    DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
+                                                    RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY,
                                                     localBackupFile);
                                             mParentFragmentActivity.grantUriPermission(
                                                     mParentFragmentActivity.getPackageName(),

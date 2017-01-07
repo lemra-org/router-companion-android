@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 
 import org.rm3l.router_companion.resources.conn.Router;
 
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
 /**
  * Created by rm3l on 05/07/15.

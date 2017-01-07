@@ -12,7 +12,7 @@ import org.rm3l.router_companion.mgmt.register.steps.BasicDetailsStep;
 import org.rm3l.router_companion.mgmt.register.steps.LocalSSIDLookupStep;
 import org.rm3l.router_companion.mgmt.register.steps.ReviewStep;
 import org.rm3l.router_companion.mgmt.register.steps.RouterConnectionDetailsStep;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.widgets.wizard.MaterialWizard;
 import org.rm3l.router_companion.widgets.wizard.WizardStepVerifiable;
 
@@ -76,7 +76,7 @@ public class ManageRouterWizard extends MaterialWizard {
     protected Intent getActivityIntentToReturnUponClose() {
         final Intent intent = new Intent();
         final String wizardRouter = getContext()
-                .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                .getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                     Context.MODE_PRIVATE)
                 .getString(ManageRouterWizard.class.getSimpleName(), null);
         if (wizardRouter != null && !wizardRouter.isEmpty()) {

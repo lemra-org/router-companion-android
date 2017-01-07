@@ -10,7 +10,7 @@ import android.widget.Button;
 import org.rm3l.router_companion.BuildConfig;
 import org.rm3l.router_companion.R;
 
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.AD_FREE_APP_APPLICATION_ID;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.AD_FREE_APP_APPLICATION_ID;
 
 /**
  * Created by rm3l on 01/05/15.

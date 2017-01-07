@@ -32,7 +32,7 @@ import org.rm3l.router_companion.utils.Utils;
 
 import static android.widget.TextView.BufferType.EDITABLE;
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.EMPTY_STRING;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
 
 public class AdminCommandsTile extends DDWRTTile<Void> {
 

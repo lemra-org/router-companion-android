@@ -26,8 +26,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.EMPTY_STRING;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.MB;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.MB;
 
 /**
  * Created by rm3l on 12/11/15.

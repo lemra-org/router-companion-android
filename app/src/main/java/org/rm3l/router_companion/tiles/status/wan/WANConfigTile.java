@@ -63,7 +63,7 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.service.tasks.PublicIPChangesServiceTask;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 
@@ -76,8 +76,8 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static android.text.TextUtils.isEmpty;
 import static org.rm3l.router_companion.tiles.dashboard.network.NetworkTopologyMapTile.INTERNET_CONNECTIVITY_PUBLIC_IP;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.NOK;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.UNKNOWN;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.NOK;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.UNKNOWN;
 import static org.rm3l.router_companion.utils.Utils.isDemoRouter;
 
 public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnMenuItemClickListener {
@@ -148,7 +148,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                 try {
                     if (mParentFragmentPreferences != null) {
                         checkActualInternetConnectivity = mParentFragmentPreferences
-                                .getBoolean(DDWRTCompanionConstants.OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF, true);
+                                .getBoolean(RouterCompanionAppConstants.OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF, true);
                     }
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + WANConfigTile.class + ": routerInfo=" +

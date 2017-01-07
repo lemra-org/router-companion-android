@@ -20,7 +20,7 @@
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
 
-package org.rm3l.router_companion.utils;
+package org.rm3l.router_companion;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -38,7 +38,7 @@ import java.nio.charset.Charset;
 /**
  * App Constants
  */
-public final class DDWRTCompanionConstants {
+public final class RouterCompanionAppConstants {
 
     public static final String LINE_SEPARATOR =
             System.getProperty("line.separator");
@@ -224,7 +224,7 @@ public final class DDWRTCompanionConstants {
         public static final int STORAGE_LOCATION = 5;
     }
 
-    private DDWRTCompanionConstants() {
+    private RouterCompanionAppConstants() {
     }
 
     @NonNull

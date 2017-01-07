@@ -99,7 +99,7 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.settings.RouterManagementSettingsActivity;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.customtabs.CustomTabActivityHelper;
@@ -119,14 +119,14 @@ import co.paulburke.android.itemtouchhelperdemo.helper.OnStartDragListener;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_LEAKCANARY_PREF_KEY;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEBUG_MODE;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERSION;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.NOTIFICATIONS_BG_SERVICE_ENABLE;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.THEMING_PREF;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.NOTIFICATIONS_CHOICE_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEBUG_MODE;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.MAX_ROUTERS_FREE_VERSION;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_BG_SERVICE_ENABLE;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.THEMING_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_CHOICE_PREF;
 
 
 @DeepLink({"dd-wrt://management",
@@ -236,7 +236,7 @@ public class RouterManagementActivity
                 Context.MODE_PRIVATE, R.xml.router_management_settings, false);
 
         mPreferences = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-        mCurrentTheme = mPreferences.getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
+        mCurrentTheme = mPreferences.getLong(THEMING_PREF, RouterCompanionAppConstants.DEFAULT_THEME);
         if (ColorUtils.isThemeLight(this)) {
             //Light
             setTheme(R.style.AppThemeLight);
@@ -443,9 +443,9 @@ public class RouterManagementActivity
         mCustomTabActivityHelper = new CustomTabActivityHelper();
         mCustomTabActivityHelper.setConnectionCallback(cb);
         mCustomTabActivityHelper.mayLaunchUrl(
-                Uri.parse(DDWRTCompanionConstants.REMOTE_HELP_WEBSITE), null, null);
+                Uri.parse(RouterCompanionAppConstants.REMOTE_HELP_WEBSITE), null, null);
         mCustomTabActivityHelper.mayLaunchUrl(
-                Uri.parse(DDWRTCompanionConstants.REMOTE_HELP_WEBSITE_CHANGELOG), null, null);
+                Uri.parse(RouterCompanionAppConstants.REMOTE_HELP_WEBSITE_CHANGELOG), null, null);
     }
 
     private void initOpenAddRouterFormIfNecessary() {
@@ -660,7 +660,7 @@ public class RouterManagementActivity
 
             case R.id.help:
                 CustomTabActivityHelper.openCustomTab(RouterManagementActivity.this, null,
-                        DDWRTCompanionConstants.REMOTE_HELP_WEBSITE, null, null,
+                        RouterCompanionAppConstants.REMOTE_HELP_WEBSITE, null, null,
                         new CustomTabActivityHelper.CustomTabFallback() {
                             @Override
                             public void openUri(Activity activity, Uri uri) {
@@ -671,7 +671,7 @@ public class RouterManagementActivity
                 return true;
             case R.id.changelog:
                 CustomTabActivityHelper.openCustomTab(RouterManagementActivity.this, null,
-                        DDWRTCompanionConstants.REMOTE_HELP_WEBSITE_CHANGELOG, null, null,
+                        RouterCompanionAppConstants.REMOTE_HELP_WEBSITE_CHANGELOG, null, null,
                         new CustomTabActivityHelper.CustomTabFallback() {
                             @Override
                             public void openUri(Activity activity, Uri uri) {
@@ -923,7 +923,7 @@ public class RouterManagementActivity
 
                     //Reset Crashlytics user email addr
                     final String acraEmailAddr = this.mPreferences
-                            .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
+                            .getString(RouterCompanionAppConstants.ACRA_USER_EMAIL, null);
                     Crashlytics.setUserEmail(acraEmailAddr);
 
                     if (this.mCurrentTheme != this.mPreferences.getLong(THEMING_PREF, -1l) ||
@@ -1079,10 +1079,10 @@ public class RouterManagementActivity
                 @Override
                 public void onAdOpened() {
                     //Save preference
-                    getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                    getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                             Context.MODE_PRIVATE).edit()
                             .putLong(
-                                    DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                    RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
                                     System.currentTimeMillis())
                             .apply();
                 }

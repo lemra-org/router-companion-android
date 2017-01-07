@@ -34,7 +34,7 @@ import org.rm3l.router_companion.mgmt.register.ManageRouterFragmentActivity;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.widgets.home.wol.WOLWidgetProvider;
@@ -48,7 +48,7 @@ import java.util.Map;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERSION;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.MAX_ROUTERS_FREE_VERSION;
 
 
 /**
@@ -56,7 +56,7 @@ import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.MAX_ROUTER
  */
 public class RouterActionsWidgetConfigureActivity extends AppCompatActivity implements RouterMgmtDialogListener {
 
-    private static final String PREFS_NAME = DDWRTCompanionConstants.WIDGETS_PREFERENCES_KEY;
+    private static final String PREFS_NAME = RouterCompanionAppConstants.WIDGETS_PREFERENCES_KEY;
     private static final String PREF_PREFIX_KEY = \"fake-key\";
     public static final String TAG = RouterActionsWidgetConfigureActivity.class.getSimpleName();
 

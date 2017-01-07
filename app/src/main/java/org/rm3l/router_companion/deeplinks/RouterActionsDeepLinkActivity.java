@@ -62,8 +62,8 @@ import java.util.UUID;
 import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterAction.DISABLE;
 import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterAction.ENABLE_1;
 import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterAction.ENABLE_2;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.SECURITY_THIRD_PARTY_INTEGRATION;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.SECURITY_THIRD_PARTY_INTEGRATION;
 
 /**
  * Created by rm3l on 14/02/16.

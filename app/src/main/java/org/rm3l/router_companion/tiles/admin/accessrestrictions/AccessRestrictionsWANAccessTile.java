@@ -75,7 +75,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterAction.DISABLE;
 import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterAction.ENABLE_1;
 import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterAction.ENABLE_2;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.EMPTY_STRING;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
 
 /**
  * WAN Access Policies tile

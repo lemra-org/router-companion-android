@@ -20,7 +20,7 @@ import org.rm3l.router_companion.BuildConfig;
 import org.rm3l.router_companion.R;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.AdUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
 
@@ -98,8 +98,8 @@ public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
         final com.avocarrot.androidsdk.AvocarrotCustom avocarrotCustom =
                 new com.avocarrot.androidsdk.AvocarrotCustom(
                         mParentFragmentActivity,
-                        DDWRTCompanionConstants.AVOCARROT_APIKEY,
-                        DDWRTCompanionConstants.AVOCARROT_LIST_PLACEMENT_KEY
+                        RouterCompanionAppConstants.AVOCARROT_APIKEY,
+                        RouterCompanionAppConstants.AVOCARROT_LIST_PLACEMENT_KEY
                 );
         avocarrotCustom.setSandbox(BuildConfig.DEBUG);
         avocarrotCustom.setLogger(true, "ALL");

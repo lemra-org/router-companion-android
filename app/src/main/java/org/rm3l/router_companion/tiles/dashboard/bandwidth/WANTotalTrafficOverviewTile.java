@@ -56,8 +56,8 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.MB;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.WAN_CYCLE_DAY_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.MB;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.WAN_CYCLE_DAY_PREF;
 import static org.rm3l.router_companion.utils.Utils.isDemoRouter;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.DAILY_TRAFF_DATA_SPLITTER;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.HIDDEN_;

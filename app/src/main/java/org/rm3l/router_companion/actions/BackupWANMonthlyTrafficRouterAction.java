@@ -20,7 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.rm3l.router_companion.common.resources.audit.ActionLog;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 
@@ -32,8 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.CHARSET;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.MB;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.CHARSET;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.MB;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.DAILY_TRAFF_DATA_SPLITTER;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.MONTHLY_TRAFF_DATA_SPLITTER;
 
@@ -145,7 +145,7 @@ public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<St
                 nvramInfoWithTraffData.setProperty(key.toString(), value.toString());
 
                 final String monthAndYear = key.toString().replace("traff-",
-                        DDWRTCompanionConstants.EMPTY_STRING);
+                        RouterCompanionAppConstants.EMPTY_STRING);
 
                 final List<String> monthAndYearList = splitter.splitToList(monthAndYear);
                 if (monthAndYearList.size() < 2) {

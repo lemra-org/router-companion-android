@@ -62,7 +62,7 @@ import java.util.Set;
 
 import static android.widget.TextView.BufferType.EDITABLE;
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.EMPTY_STRING;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
 
 public abstract class AbstractToolboxTile extends DDWRTTile<None> {
 

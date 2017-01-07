@@ -54,7 +54,7 @@ import org.rm3l.router_companion.widgets.NumberPickerPreference;
 import java.util.Map;
 import java.util.Set;
 
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
 public abstract class AbstractDDWRTSettingsActivity extends AppCompatActivity {
 

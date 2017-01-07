@@ -52,7 +52,7 @@ import org.rm3l.router_companion.prefs.sort.SortingStrategy;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 
 import java.util.ArrayList;
 
@@ -119,7 +119,7 @@ public class PageSlidingTabStripFragment extends Fragment {
                 getChildFragmentManager(), getResources(),
                 String.format("%s.%s",
                         SortingStrategy.class.getPackage().getName(),
-                        sharedPreferences.getString(DDWRTCompanionConstants.SORTING_STRATEGY_PREF, SortingStrategy.DEFAULT)
+                        sharedPreferences.getString(RouterCompanionAppConstants.SORTING_STRATEGY_PREF, SortingStrategy.DEFAULT)
                 ),
                 routerUuid);
     }

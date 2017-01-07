@@ -13,13 +13,14 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 
 import org.rm3l.router_companion.BuildConfig;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.concurrent.TimeUnit;
 
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DELAY_BETWEEN_TWO_CONSECUTIVE_INTERSTITIAL_ADS_MINUTES;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DELAY_BETWEEN_TWO_CONSECUTIVE_INTERSTITIAL_ADS_MINUTES;
 
 public final class AdUtils {
 
@@ -111,8 +112,8 @@ public final class AdUtils {
             return false;
         }
         long lastInterstitialAd = ctx.getSharedPreferences(
-                DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                .getLong(DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF, -1l);
+                RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                .getLong(RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF, -1l);
         return lastInterstitialAd < 0l ||
                 (TimeUnit.MINUTES
                         .convert(

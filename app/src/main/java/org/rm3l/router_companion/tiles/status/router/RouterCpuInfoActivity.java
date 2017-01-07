@@ -51,7 +51,7 @@ import org.rm3l.router_companion.R;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
@@ -198,7 +198,7 @@ public class RouterCpuInfoActivity extends AppCompatActivity {
                                 //Request permission
                                 ActivityCompat.requestPermissions(RouterCpuInfoActivity.this,
                                         new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                        DDWRTCompanionConstants.Permissions.STORAGE);
+                                        RouterCompanionAppConstants.Permissions.STORAGE);
                             }
 
                             @Override
@@ -222,7 +222,7 @@ public class RouterCpuInfoActivity extends AppCompatActivity {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
                         new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        DDWRTCompanionConstants.Permissions.STORAGE);
+                        RouterCompanionAppConstants.Permissions.STORAGE);
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
@@ -284,7 +284,7 @@ public class RouterCpuInfoActivity extends AppCompatActivity {
                                            String permissions[], int[] grantResults) {
 
         switch (requestCode) {
-            case DDWRTCompanionConstants.Permissions.STORAGE: {
+            case RouterCompanionAppConstants.Permissions.STORAGE: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -357,7 +357,7 @@ public class RouterCpuInfoActivity extends AppCompatActivity {
         }
 
         final Uri uriForFile = FileProvider
-                .getUriForFile(this, DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY, file);
+                .getUriForFile(this, RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY, file);
 
         mShareActionProvider.setOnShareTargetSelectedListener(new ShareActionProvider.OnShareTargetSelectedListener() {
             @Override

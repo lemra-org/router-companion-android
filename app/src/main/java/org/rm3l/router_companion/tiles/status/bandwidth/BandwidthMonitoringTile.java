@@ -67,7 +67,7 @@ import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 
@@ -198,7 +198,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
 
     public void fillIfaceDataPoint(@NonNull final String iface) {
 
-        if (DDWRTCompanionConstants.TEST_MODE || BW_MONIT_TEST || Utils.isDemoRouter(mRouter)) {
+        if (RouterCompanionAppConstants.TEST_MODE || BW_MONIT_TEST || Utils.isDemoRouter(mRouter)) {
             //FIXME TEST MODE
             final double random = new Random().nextDouble() * 1024;
 

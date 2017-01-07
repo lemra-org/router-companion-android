@@ -15,7 +15,7 @@ import org.codepond.wizardroid.persistence.ContextVariable;
 import org.rm3l.router_companion.events.bus.BusSingleton;
 import org.rm3l.router_companion.events.wizard.WizardStepVisibleToUserEvent;
 import org.rm3l.router_companion.resources.Encrypted;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -156,7 +156,7 @@ public abstract class MaterialWizardStep extends WizardStep implements WizardSte
 
         try {
             final SharedPreferences globalPrefs = getContext()
-                    .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                    .getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                             Context.MODE_PRIVATE);
 
             final Gson gson = MaterialWizard.GSON_BUILDER.create();

@@ -12,7 +12,7 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 
 import org.rm3l.router_companion.service.BackgroundService;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 
 public class BootReceiver extends WakefulBroadcastReceiver {
 
@@ -38,15 +38,15 @@ public class BootReceiver extends WakefulBroadcastReceiver {
         final PendingIntent pi = cancelExistingBackgroundService(context, am);
 
         final SharedPreferences preferences = context
-                .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                .getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                         Context.MODE_PRIVATE);
 
         final boolean bgServiceEnabled = preferences
-                .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_BG_SERVICE_ENABLE, true);
+                .getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_BG_SERVICE_ENABLE, true);
         final long minutes = preferences.getLong(
-                DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1l);
+                RouterCompanionAppConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1l);
         final long bgServiceLastHandleMillis =
-                preferences.getLong(DDWRTCompanionConstants.BG_SERVICE_LAST_HANDLE, -1l);
+                preferences.getLong(RouterCompanionAppConstants.BG_SERVICE_LAST_HANDLE, -1l);
 
         Crashlytics.log(Log.DEBUG,  LOG_TAG, "<bgServiceEnabled,minutes> = <" + bgServiceEnabled + "," + minutes + ">");
 

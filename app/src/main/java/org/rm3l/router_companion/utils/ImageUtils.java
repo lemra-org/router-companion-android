@@ -30,6 +30,7 @@ import com.squareup.picasso.Transformation;
 
 import org.rm3l.router_companion.BuildConfig;
 import org.rm3l.router_companion.R;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.main.DDWRTMainActivity;
 import org.rm3l.router_companion.resources.conn.Router;
@@ -159,11 +160,11 @@ public final class ImageUtils {
                                               @Nullable final Callback callback) {
         try {
             final String routerModelNormalized = routerModel.toLowerCase().replaceAll("\\s+", "");
-            final String url = String.format("%s/%s/%s.jpg", DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
+            final String url = String.format("%s/%s/%s.jpg", RouterCompanionAppConstants.IMAGE_CDN_URL_PREFIX,
                     Joiner
                             .on(",")
                             .skipNulls().join(opts != null ?
-                            opts : DDWRTCompanionConstants.CLOUDINARY_OPTS),
+                            opts : RouterCompanionAppConstants.CLOUDINARY_OPTS),
                     URLEncoder.encode(routerModelNormalized, Charsets.UTF_8.name()));
 
             downloadImageFromUrl(context,

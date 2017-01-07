@@ -8,7 +8,7 @@ import android.view.View;
 
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.router_companion.R;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.web.WebActivity;
 
 import static org.rm3l.router_companion.BuildConfig.FLAVOR;
@@ -57,6 +57,6 @@ public class ChangelogActivity extends WebActivity {
     @NonNull
     @Override
     public String getUrl() {
-        return DDWRTCompanionConstants.REMOTE_HELP_WEBSITE_CHANGELOG;
+        return RouterCompanionAppConstants.REMOTE_HELP_WEBSITE_CHANGELOG;
     }
 }

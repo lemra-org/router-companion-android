@@ -81,7 +81,7 @@ import static org.rm3l.router_companion.resources.conn.NVRAMInfo.SSHD_RSA_HOST_K
 import static org.rm3l.router_companion.resources.conn.Router.RouterFirmware;
 import static org.rm3l.router_companion.resources.conn.Router.RouterFirmware.DDWRT;
 import static org.rm3l.router_companion.resources.conn.Router.RouterFirmware.OPENWRT;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.EMPTY_STRING;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
 import static org.rm3l.router_companion.utils.Utils.checkDataSyncAlllowedByUsagePreference;
 
 /**

@@ -63,8 +63,8 @@ import static org.rm3l.router_companion.resources.conn.NVRAMInfo.HTTP_WANPORT;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.LAN_IPADDR;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.REMOTE_MGT_HTTPS;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WAN_IPADDR;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.EMPTY_STRING;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
 import static org.rm3l.router_companion.web.WebUtils.DO_NOT_VERIFY;
 import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
 

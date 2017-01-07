@@ -31,7 +31,7 @@ import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import java.util.List;
 
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.EMPTY_STRING;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
 
 /**
  * Parser utilities for manipulating result of remote command execution

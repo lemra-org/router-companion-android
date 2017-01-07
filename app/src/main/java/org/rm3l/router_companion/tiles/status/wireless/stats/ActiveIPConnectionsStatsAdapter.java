@@ -27,7 +27,7 @@ import com.google.common.collect.TreeMultimap;
 import org.rm3l.router_companion.R;
 import org.rm3l.router_companion.tiles.status.wireless.ActiveIPConnectionsDetailActivity;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.ViewGroupUtils;
 
@@ -249,7 +249,7 @@ public class ActiveIPConnectionsStatsAdapter extends Adapter<ActiveIPConnections
                 ViewGroupUtils.exportViewToFile(activity, holder.itemView, file);
                 holder.shareImageButton.setVisibility(View.VISIBLE);
                 final Uri uriForFile = FileProvider
-                        .getUriForFile(activity, DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY, file);
+                        .getUriForFile(activity, RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY, file);
                 final Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);

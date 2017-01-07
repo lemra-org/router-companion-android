@@ -54,9 +54,9 @@ import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WOL_INTERVAL;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WOL_MACS;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WOL_PASSWD;
 import static org.rm3l.router_companion.tiles.services.wol.EditWOLDaemonSettingsActivity.WOL_DAEMON_HOSTNAMES_PREF_KEY;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.EMPTY_STRING;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_VALUE_TO_DISPLAY;
 
 /**
  * Created by rm3l on 10/04/15.

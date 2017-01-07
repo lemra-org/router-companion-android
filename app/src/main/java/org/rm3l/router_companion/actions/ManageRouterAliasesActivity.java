@@ -72,7 +72,7 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.status.wireless.WirelessClientsTile;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.StorageUtils;
 import org.rm3l.router_companion.utils.Utils;
@@ -395,7 +395,7 @@ public class ManageRouterAliasesActivity
                                 //Request permission
                                 ActivityCompat.requestPermissions(ManageRouterAliasesActivity.this,
                                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                        DDWRTCompanionConstants.Permissions.STORAGE);
+                                        RouterCompanionAppConstants.Permissions.STORAGE);
                             }
 
                             @Override
@@ -419,7 +419,7 @@ public class ManageRouterAliasesActivity
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        DDWRTCompanionConstants.Permissions.STORAGE);
+                        RouterCompanionAppConstants.Permissions.STORAGE);
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
@@ -464,7 +464,7 @@ public class ManageRouterAliasesActivity
                                            String permissions[], int[] grantResults) {
 
         switch (requestCode) {
-            case DDWRTCompanionConstants.Permissions.STORAGE: {
+            case RouterCompanionAppConstants.Permissions.STORAGE: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -754,7 +754,7 @@ public class ManageRouterAliasesActivity
                                     //Now allow user to share file if needed
                                     final Uri uriForFile = FileProvider.getUriForFile(
                                             ManageRouterAliasesActivity.this,
-                                            DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
+                                            RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY,
                                             outputFile);
                                     ManageRouterAliasesActivity.this.grantUriPermission(
                                             ManageRouterAliasesActivity.this.getPackageName(),

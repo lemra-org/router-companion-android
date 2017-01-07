@@ -105,10 +105,10 @@ import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.rm3l.router_companion.tiles.status.wireless.WirelessIfaceTile.TemperatureUnit.CELSIUS;
 import static org.rm3l.router_companion.tiles.status.wireless.WirelessIfaceTile.TemperatureUnit.FAHRENHEIT;
 import static org.rm3l.router_companion.tiles.status.wireless.share.WifiSharingActivity.SSID;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.COLON;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.EMPTY_STRING;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.SPACE;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.COLON;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_VALUE_TO_DISPLAY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.SPACE;
 
 /**
  *

@@ -17,9 +17,9 @@ import org.rm3l.router_companion.BuildConfig;
 import java.util.Map;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.ACRA_ENABLE;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.ACRA_USER_EMAIL;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ACRA_ENABLE;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ACRA_USER_EMAIL;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
 //import org.acra.ACRA;
 

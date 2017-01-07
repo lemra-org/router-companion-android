@@ -32,9 +32,9 @@ import com.airbnb.deeplinkdispatch.DeepLink;
 import org.rm3l.router_companion.R;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_SERVER;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On

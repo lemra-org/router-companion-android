@@ -27,7 +27,7 @@ import com.google.zxing.BarcodeFormat;
 
 import org.rm3l.router_companion.R;
 import org.rm3l.router_companion.tiles.status.wireless.share.WifiSharingViewPagerAdapter.WifiSharingData;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
@@ -183,7 +183,7 @@ public class WifiSharingQrCodeFragment extends Fragment {
 
 
                     final Uri uriForFile = FileProvider
-                            .getUriForFile(activity, DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY, mFileToShare);
+                            .getUriForFile(activity, RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY, mFileToShare);
                     activity.grantUriPermission(activity.getComponentName().getPackageName(),
                             uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
@@ -233,7 +233,7 @@ public class WifiSharingQrCodeFragment extends Fragment {
                                         //Request permission
                                         ActivityCompat.requestPermissions(activity,
                                                 new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                                DDWRTCompanionConstants.Permissions.STORAGE);
+                                                RouterCompanionAppConstants.Permissions.STORAGE);
                                     }
 
                                     @Override
@@ -257,7 +257,7 @@ public class WifiSharingQrCodeFragment extends Fragment {
                         // No explanation needed, we can request the permission.
                         ActivityCompat.requestPermissions(activity,
                                 new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                DDWRTCompanionConstants.Permissions.STORAGE);
+                                RouterCompanionAppConstants.Permissions.STORAGE);
                         // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                         // app-defined int constant. The callback method gets the
                         // result of the request.

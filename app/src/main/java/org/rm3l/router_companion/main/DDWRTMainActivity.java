@@ -132,7 +132,7 @@ import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.AppShortcutUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.StorageUtils;
@@ -171,15 +171,15 @@ import static org.rm3l.router_companion.resources.conn.NVRAMInfo.LAN_IPADDR;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.REMOTE_MGT_HTTPS;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WAN_IPADDR;
 import static org.rm3l.router_companion.resources.conn.Router.RouterFirmware;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.AUTO_REFRESH_INTERVAL_SECONDS_PREF;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.AUTO_REFRESH_PREF;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_THEME;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.EMPTY_STRING;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERSION;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.THEMING_PREF;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.TILE_REFRESH_SECONDS;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.AUTO_REFRESH_INTERVAL_SECONDS_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.AUTO_REFRESH_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_THEME;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.MAX_ROUTERS_FREE_VERSION;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.SORTING_STRATEGY_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.THEMING_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.TILE_REFRESH_SECONDS;
 import static org.rm3l.router_companion.utils.Utils.fromHtml;
 import static org.rm3l.router_companion.web.WebUtils.DO_NOT_VERIFY;
 import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
@@ -376,7 +376,7 @@ public class DDWRTMainActivity extends AppCompatActivity
 
         //Report
         final Map<String, Object> eventMap = new HashMap<>();
-        eventMap.put("Model", Utils.isDemoRouter(router) ? DDWRTCompanionConstants.DEMO :
+        eventMap.put("Model", Utils.isDemoRouter(router) ? RouterCompanionAppConstants.DEMO :
                 Router.getRouterModel(this, router));
         ReportingUtils.reportEvent(ReportingUtils.EVENT_ROUTER_OPENED, eventMap);
 
@@ -418,7 +418,7 @@ public class DDWRTMainActivity extends AppCompatActivity
         // Inherit theme for router - this is for SettingsActivity,
         // because we are overriding the getSharedPreferences() method
         final long mCurrentTheme = this.mGlobalPreferences.getLong(THEMING_PREF,
-                DDWRTCompanionConstants.DEFAULT_THEME);
+                RouterCompanionAppConstants.DEFAULT_THEME);
         mPreferences.edit()
                 .putLong(THEMING_PREF, mCurrentTheme)
                 .apply();
@@ -457,7 +457,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                         final String routerModelNormalized = routerModel.toLowerCase().replaceAll("\\s+", "");
                         try {
                             final String url = String.format("%s/%s/%s",
-                                    DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
+                                    RouterCompanionAppConstants.IMAGE_CDN_URL_PREFIX,
                                     Joiner
                                             .on(",")
                                             .skipNulls().join(opts),
@@ -578,7 +578,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                     //Save preference
                                     mGlobalPreferences.edit()
                                             .putLong(
-                                                    DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                                    RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
                                                     System.currentTimeMillis())
                                             .apply();
                                 }
@@ -727,7 +727,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                 case 1001:
                                     //Help
                                     CustomTabActivityHelper.openCustomTab(DDWRTMainActivity.this, null,
-                                            DDWRTCompanionConstants.REMOTE_HELP_WEBSITE, mRouterUuid, null,
+                                            RouterCompanionAppConstants.REMOTE_HELP_WEBSITE, mRouterUuid, null,
                                             new CustomTabActivityHelper.CustomTabFallback() {
                                                 @Override
                                                 public void openUri(Activity activity, Uri uri) {
@@ -739,7 +739,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                 case 1002:
                                     //Changelog
                                     CustomTabActivityHelper.openCustomTab(DDWRTMainActivity.this, null,
-                                            DDWRTCompanionConstants.REMOTE_HELP_WEBSITE_CHANGELOG, mRouterUuid, null,
+                                            RouterCompanionAppConstants.REMOTE_HELP_WEBSITE_CHANGELOG, mRouterUuid, null,
                                             new CustomTabActivityHelper.CustomTabFallback() {
                                                 @Override
                                                 public void openUri(Activity activity, Uri uri) {
@@ -847,9 +847,9 @@ public class DDWRTMainActivity extends AppCompatActivity
         mCustomTabActivityHelper = new CustomTabActivityHelper();
         mCustomTabActivityHelper.setConnectionCallback(cb);
         mCustomTabActivityHelper.mayLaunchUrl(
-                Uri.parse(DDWRTCompanionConstants.REMOTE_HELP_WEBSITE), null, null);
+                Uri.parse(RouterCompanionAppConstants.REMOTE_HELP_WEBSITE), null, null);
         mCustomTabActivityHelper.mayLaunchUrl(
-                Uri.parse(DDWRTCompanionConstants.REMOTE_HELP_WEBSITE_CHANGELOG), null, null);
+                Uri.parse(RouterCompanionAppConstants.REMOTE_HELP_WEBSITE_CHANGELOG), null, null);
     }
 
     @Override
@@ -1108,7 +1108,7 @@ public class DDWRTMainActivity extends AppCompatActivity
 
             case R.id.help:
                 CustomTabActivityHelper.openCustomTab(DDWRTMainActivity.this, null,
-                        DDWRTCompanionConstants.REMOTE_HELP_WEBSITE, mRouterUuid, null,
+                        RouterCompanionAppConstants.REMOTE_HELP_WEBSITE, mRouterUuid, null,
                         new CustomTabActivityHelper.CustomTabFallback() {
                             @Override
                             public void openUri(Activity activity, Uri uri) {
@@ -1121,7 +1121,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                 return true;
             case R.id.changelog:
                 CustomTabActivityHelper.openCustomTab(DDWRTMainActivity.this, null,
-                        DDWRTCompanionConstants.REMOTE_HELP_WEBSITE_CHANGELOG, mRouterUuid, null,
+                        RouterCompanionAppConstants.REMOTE_HELP_WEBSITE_CHANGELOG, mRouterUuid, null,
                         new CustomTabActivityHelper.CustomTabFallback() {
                             @Override
                             public void openUri(Activity activity, Uri uri) {
@@ -1760,7 +1760,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                         String.format("%s.%s",
                                 SortingStrategy.class.getPackage().getName(),
                                 getSharedPreferences(mRouterUuid, Context.MODE_PRIVATE)
-                                        .getString(DDWRTCompanionConstants.SORTING_STRATEGY_PREF,
+                                        .getString(RouterCompanionAppConstants.SORTING_STRATEGY_PREF,
                                                 SortingStrategy.DEFAULT)
                         ),
                         mRouterUuid);
@@ -1906,7 +1906,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                     final Date backupDate = (Date) (((Object[]) returnData)[0]);
 
                                     final Uri uriForFile = FileProvider.getUriForFile(DDWRTMainActivity.this,
-                                            DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
+                                            RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY,
                                             localBackupFile);
                                     grantUriPermission(getPackageName(),
                                             uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -2029,7 +2029,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                     final String routerModelNormalized = routerModel.toLowerCase().replaceAll("\\s+", "");
                     try {
                         final String url = String.format("%s/%s/%s",
-                                DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
+                                RouterCompanionAppConstants.IMAGE_CDN_URL_PREFIX,
                                 Joiner
                                         .on(",")
                                         .skipNulls().join(opts),
@@ -2170,7 +2170,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                     //Now allow user to share file if needed
                     final Uri uriForFile = FileProvider.getUriForFile(
                             this,
-                            DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
+                            RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY,
                             outputFile);
                     this.grantUriPermission(
                             this.getPackageName(),
@@ -2254,7 +2254,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                            @NonNull int[] grantResults) {
 
         switch (requestCode) {
-            case DDWRTCompanionConstants.Permissions.STORAGE: {
+            case RouterCompanionAppConstants.Permissions.STORAGE: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

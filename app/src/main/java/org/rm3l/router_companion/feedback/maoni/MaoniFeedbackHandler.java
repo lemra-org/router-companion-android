@@ -36,7 +36,7 @@ import org.rm3l.router_companion.multithreading.MultiThreadingManager;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.AWSUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.NetworkUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.maoni.common.contract.Handler;
@@ -52,13 +52,13 @@ import needle.UiRelatedProgressTask;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.AWS_S3_BUCKET_NAME;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.AWS_S3_FEEDBACKS_FOLDER_NAME;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.AWS_S3_FEEDBACK_PENDING_TRANSFER_PREF;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.AWS_S3_LOGS_FOLDER_NAME;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DOORBELL_APIKEY;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DOORBELL_APPID;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.GOOGLE_API_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.AWS_S3_BUCKET_NAME;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.AWS_S3_FEEDBACKS_FOLDER_NAME;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.AWS_S3_FEEDBACK_PENDING_TRANSFER_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.AWS_S3_LOGS_FOLDER_NAME;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DOORBELL_APIKEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DOORBELL_APPID;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.GOOGLE_API_KEY;
 
 /**
  * Created by rm3l on 13/05/16.
@@ -97,12 +97,12 @@ public class MaoniFeedbackHandler implements Handler {
         this.mContext = context;
         this.mRouter = router;
         mGlobalPreferences = context.getSharedPreferences(
-                DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                 Context.MODE_PRIVATE);
         mDoorbellService = NetworkUtils
                 .createApiService(FEEDBACK_API_BASE_URL, DoorbellService.class);
         mGooGlService = NetworkUtils
-                .createApiService(DDWRTCompanionConstants.URL_SHORTENER_API_BASE_URL,
+                .createApiService(RouterCompanionAppConstants.URL_SHORTENER_API_BASE_URL,
                         GooGlService.class);
     }
 
@@ -167,7 +167,7 @@ public class MaoniFeedbackHandler implements Handler {
         } else {
             //Set user-defined email if any
             emailAddr = mGlobalPreferences
-                    .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
+                    .getString(RouterCompanionAppConstants.ACRA_USER_EMAIL, null);
         }
         mEmail.setText(emailAddr, TextView.BufferType.EDITABLE);
 
@@ -272,7 +272,7 @@ public class MaoniFeedbackHandler implements Handler {
 
                     final SharedPreferences preferences =
                             mContext.getSharedPreferences(
-                                    DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                                    RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                                     Context.MODE_PRIVATE);
                     final Integer pendingTransferId;
                     if (preferences.contains(AWS_S3_FEEDBACK_PENDING_TRANSFER_PREF)) {
@@ -361,7 +361,7 @@ public class MaoniFeedbackHandler implements Handler {
 
                     final SharedPreferences preferences =
                             mContext.getSharedPreferences(
-                                    DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                                    RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                                     Context.MODE_PRIVATE);
                     final Integer pendingTransferId;
                     if (preferences.contains(AWS_S3_FEEDBACK_PENDING_TRANSFER_PREF)) {
@@ -498,7 +498,7 @@ public class MaoniFeedbackHandler implements Handler {
                                                 UNKNOWN,
                                         TextUtils.isEmpty(routerInfoText) ?
                                                 "" : routerInfoText,
-                                        DDWRTCompanionConstants.Q_A_WEBSITE),
+                                        RouterCompanionAppConstants.Q_A_WEBSITE),
                                 null,
                                 GSON_BUILDER.create().toJson(properties),
                                 new String[0])

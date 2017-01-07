@@ -39,7 +39,7 @@ import org.rm3l.router_companion.resources.IPWhoisInfo;
 import org.rm3l.router_companion.tiles.status.wireless.ActiveIPConnectionsDetailActivity;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
@@ -160,7 +160,7 @@ public class IPGeoActivity extends AppCompatActivity {
                                 //Request permission
                                 ActivityCompat.requestPermissions(IPGeoActivity.this,
                                         new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                        DDWRTCompanionConstants.Permissions.STORAGE);
+                                        RouterCompanionAppConstants.Permissions.STORAGE);
                             }
 
                             @Override
@@ -184,7 +184,7 @@ public class IPGeoActivity extends AppCompatActivity {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
                         new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        DDWRTCompanionConstants.Permissions.STORAGE);
+                        RouterCompanionAppConstants.Permissions.STORAGE);
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
@@ -218,7 +218,7 @@ public class IPGeoActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            map.setTileSource(DDWRTCompanionConstants.TILE_SOURCE);
+                            map.setTileSource(RouterCompanionAppConstants.TILE_SOURCE);
                             map.setBuiltInZoomControls(true);
                             map.setMultiTouchControls(true);
 
@@ -345,7 +345,7 @@ public class IPGeoActivity extends AppCompatActivity {
                                            String permissions[], int[] grantResults) {
 
         switch (requestCode) {
-            case DDWRTCompanionConstants.Permissions.STORAGE: {
+            case RouterCompanionAppConstants.Permissions.STORAGE: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

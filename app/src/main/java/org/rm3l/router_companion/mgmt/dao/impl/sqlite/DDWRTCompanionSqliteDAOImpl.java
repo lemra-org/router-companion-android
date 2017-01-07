@@ -38,7 +38,7 @@ import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.router_companion.resources.SpeedTestResult;
 import org.rm3l.router_companion.resources.WANTrafficData;
 import org.rm3l.router_companion.resources.conn.Router;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
 
@@ -244,7 +244,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
 
             //Report
             final Map<String, Object> eventMap = new HashMap<>();
-            eventMap.put("Model", Utils.isDemoRouter(newRouter) ? DDWRTCompanionConstants.DEMO :
+            eventMap.put("Model", Utils.isDemoRouter(newRouter) ? RouterCompanionAppConstants.DEMO :
                     Router.getRouterModel(mContext, newRouter));
             ReportingUtils.reportEvent(ReportingUtils.EVENT_ROUTER_ADDED, eventMap);
 
@@ -271,7 +271,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
 
             //Report
             final Map<String, Object> eventMap = new HashMap<>();
-            eventMap.put("Model", Utils.isDemoRouter(routerUpdated) ? DDWRTCompanionConstants.DEMO :
+            eventMap.put("Model", Utils.isDemoRouter(routerUpdated) ? RouterCompanionAppConstants.DEMO :
                     Router.getRouterModel(mContext, routerUpdated));
             ReportingUtils.reportEvent(ReportingUtils.EVENT_ROUTER_UPDATED, eventMap);
 

@@ -16,7 +16,7 @@ import org.rm3l.router_companion.actions.RouterAction;
 import org.rm3l.router_companion.actions.RouterActionListener;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.conn.Router;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.widgets.ConfirmDialogAsActivity;
 
@@ -93,7 +93,7 @@ public class RouterRebootWidgetConfirmationDialogFromWidgetActivity extends Conf
                                 });
                             }
                         },
-                        RouterRebootWidgetConfirmationDialogFromWidgetActivity.this.getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE))
+                        RouterRebootWidgetConfirmationDialogFromWidgetActivity.this.getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE))
                 );
             }
         };

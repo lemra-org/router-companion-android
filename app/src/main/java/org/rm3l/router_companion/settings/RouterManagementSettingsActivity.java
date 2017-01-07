@@ -34,20 +34,20 @@ import com.airbnb.deeplinkdispatch.DeepLink;
 
 import org.rm3l.router_companion.BuildConfig;
 import org.rm3l.router_companion.R;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.wordpress.passcodelock.PasscodePreferenceFragment;
 
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.ACRA_ENABLE;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.ACRA_USER_EMAIL;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DATA_USAGE_NETWORK_PREF;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.NOTIFICATIONS_BG_SERVICE_ENABLE;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.NOTIFICATIONS_CHOICE_PREF;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.NOTIFICATIONS_SOUND;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.NOTIFICATIONS_VIBRATE;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.SECURITY_PIN_LOCK_PREF;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.SECURITY_THIRD_PARTY_INTEGRATION;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.THEMING_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ACRA_ENABLE;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ACRA_USER_EMAIL;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DATA_USAGE_NETWORK_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_BG_SERVICE_ENABLE;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_CHOICE_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_SOUND;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_VIBRATE;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.SECURITY_PIN_LOCK_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.SECURITY_THIRD_PARTY_INTEGRATION;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.THEMING_PREF;
 
 @DeepLink({"dd-wrt://settings",
         "ddwrt://settings"})
@@ -55,7 +55,7 @@ public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActiv
 
     @Override
     public SharedPreferences getSharedPreferences(String name, int mode) {
-        return super.getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, mode);
+        return super.getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, mode);
     }
 
     @NonNull

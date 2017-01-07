@@ -31,7 +31,7 @@ import org.rm3l.router_companion.resources.Device;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.SSHUtils;
 
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
 
 public class DisableWANAccessRouterAction extends AbstractRouterAction<Void> {
 

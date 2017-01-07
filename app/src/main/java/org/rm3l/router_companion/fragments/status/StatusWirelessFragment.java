@@ -43,7 +43,7 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.status.wireless.WirelessIfaceTile;
 import org.rm3l.router_companion.tiles.status.wireless.WirelessIfacesTile;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.NVRAMParser;
 import org.rm3l.router_companion.utils.SSHUtils;
 
@@ -86,7 +86,7 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
                     router);
 
             SharedPreferences sharedPreferences = activity
-                    .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                    .getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                             Context.MODE_PRIVATE);
             final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(activity, router,
                     sharedPreferences,
@@ -193,7 +193,7 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
                     if (landevVifsNVRAMInfo == null) {
                         continue;
                     }
-                    final String landevVifsNVRAMInfoProp = landevVifsNVRAMInfo.getProperty(landevVifsKeyword, DDWRTCompanionConstants.EMPTY_STRING);
+                    final String landevVifsNVRAMInfoProp = landevVifsNVRAMInfo.getProperty(landevVifsKeyword, RouterCompanionAppConstants.EMPTY_STRING);
                     if (landevVifsNVRAMInfoProp == null) {
                         continue;
                     }

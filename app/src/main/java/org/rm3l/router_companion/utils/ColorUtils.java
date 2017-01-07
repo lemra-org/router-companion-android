@@ -35,6 +35,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 
 import java.util.Collection;
@@ -45,8 +46,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_THEME;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.THEMING_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_THEME;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.THEMING_PREF;
 
 public final class ColorUtils {
 
@@ -162,7 +163,7 @@ public final class ColorUtils {
             });
             return false;
         }
-        return (context.getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+        return (context.getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
                 .getLong(THEMING_PREF, DEFAULT_THEME) == LIGHT_THEME);
     }
 }

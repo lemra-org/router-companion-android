@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 
 import java.util.Calendar;
 
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.WAN_CYCLE_DAY_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.WAN_CYCLE_DAY_PREF;
 
 /**
  * Created by rm3l on 11/11/15.

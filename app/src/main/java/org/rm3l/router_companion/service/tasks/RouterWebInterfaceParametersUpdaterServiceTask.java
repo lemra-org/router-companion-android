@@ -18,7 +18,7 @@ import static org.rm3l.router_companion.resources.conn.NVRAMInfo.HTTP_ENABLE;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.HTTP_LANPORT;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.HTTP_WANPORT;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.REMOTE_MGT_HTTPS;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_HTTP_PORT;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_HTTP_PORT;
 
 /**
  * Created by rm3l on 30/07/15.

@@ -33,7 +33,7 @@ import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedExcept
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 
@@ -363,7 +363,7 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
 
         //State
         String statusKey = \"fake-key\";
-                defaultValuesIfNotFound ? DDWRTCompanionConstants.EMPTY_STRING : null);
+                defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
         if (statusKey != null) {
             final String statusValue;
             switch (statusKey) {
@@ -383,7 +383,7 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
 
         //Broadcast Support
         statusKey = \"fake-key\";
-                defaultValuesIfNotFound ? DDWRTCompanionConstants.EMPTY_STRING : null);
+                defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
         if (statusKey != null) {
             final String statusValue;
             switch (statusKey) {
@@ -403,7 +403,7 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
 
         //Force MPPE Encryption
         statusKey = \"fake-key\";
-                defaultValuesIfNotFound ? DDWRTCompanionConstants.EMPTY_STRING : null);
+                defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
         if (statusKey != null) {
             final String statusValue;
             switch (statusKey) {
@@ -437,7 +437,7 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
 
         //Radius
         statusKey = \"fake-key\";
-                defaultValuesIfNotFound ? DDWRTCompanionConstants.EMPTY_STRING : null);
+                defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
         if (statusKey != null) {
             final String statusValue;
             switch (statusKey) {

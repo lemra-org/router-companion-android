@@ -13,7 +13,7 @@ import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.AdUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 
 import java.io.File;
 import java.io.InputStream;
@@ -53,7 +53,7 @@ public class RestoreWANMonthlyTrafficFromBackupAction extends AbstractRouterActi
 
             FileUtils.copyInputStreamToFile(mBackupFileInputStream, tempFile);
 
-            final List<String> fileLines = Files.readLines(tempFile, DDWRTCompanionConstants.CHARSET);
+            final List<String> fileLines = Files.readLines(tempFile, RouterCompanionAppConstants.CHARSET);
             final NVRAMInfo linesToNVRAM = new NVRAMInfo();
 
             final Splitter splitter = Splitter.on("=").omitEmptyStrings();

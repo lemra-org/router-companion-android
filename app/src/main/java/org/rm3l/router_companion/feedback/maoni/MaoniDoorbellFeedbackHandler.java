@@ -16,7 +16,7 @@ import org.rm3l.router_companion.R;
 import org.rm3l.router_companion.api.urlshortener.goo_gl.GooGlService;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.NetworkUtils;
 import org.rm3l.maoni.common.model.Feedback;
 import org.rm3l.maoni.doorbell.MaoniDoorbellListener;
@@ -77,10 +77,10 @@ public class MaoniDoorbellFeedbackHandler extends MaoniDoorbellListener implemen
         this.mContext = activity;
         this.mRouter = router;
         mGlobalPreferences = activity.getSharedPreferences(
-                DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                 Context.MODE_PRIVATE);
         mGooGlService = NetworkUtils
-                .createApiService(DDWRTCompanionConstants.URL_SHORTENER_API_BASE_URL,
+                .createApiService(RouterCompanionAppConstants.URL_SHORTENER_API_BASE_URL,
                         GooGlService.class);
 
     }
@@ -114,7 +114,7 @@ public class MaoniDoorbellFeedbackHandler extends MaoniDoorbellListener implemen
         } else {
             //Set user-defined email if any
             emailAddr = mGlobalPreferences
-                    .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
+                    .getString(RouterCompanionAppConstants.ACRA_USER_EMAIL, null);
         }
         mEmail.setText(emailAddr, TextView.BufferType.EDITABLE);
 

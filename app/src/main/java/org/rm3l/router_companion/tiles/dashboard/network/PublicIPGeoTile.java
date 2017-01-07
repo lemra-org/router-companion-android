@@ -43,7 +43,7 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.status.wireless.ActiveIPConnectionsDetailActivity;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
@@ -111,7 +111,7 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                                 //Request permission
                                 ActivityCompat.requestPermissions(mParentFragmentActivity,
                                         new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                        DDWRTCompanionConstants.Permissions.STORAGE);
+                                        RouterCompanionAppConstants.Permissions.STORAGE);
                             }
 
                             @Override
@@ -135,7 +135,7 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(mParentFragmentActivity,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        DDWRTCompanionConstants.Permissions.STORAGE);
+                        RouterCompanionAppConstants.Permissions.STORAGE);
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
@@ -383,7 +383,7 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
 
                 final MapView map = (MapView)
                         layout.findViewById(R.id.tile_public_ip_geo_map);
-                map.setTileSource(DDWRTCompanionConstants.TILE_SOURCE);
+                map.setTileSource(RouterCompanionAppConstants.TILE_SOURCE);
 
                 //Night mode
 //                map.getController().setInvertedTiles(!isThemeLight);

@@ -141,7 +141,7 @@ import org.rm3l.router_companion.tiles.status.wireless.sort.impl.LastSeenClients
 import org.rm3l.router_companion.tiles.status.wireless.sort.impl.TopTalkersClientsSortingVisitorImpl;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.NVRAMParser;
 import org.rm3l.router_companion.utils.NetworkUtils;
@@ -178,11 +178,11 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
 import static org.rm3l.router_companion.main.DDWRTMainActivity.ROUTER_ACTION;
 import static org.rm3l.router_companion.tiles.status.bandwidth.BandwidthMonitoringTile.BandwidthMonitoringIfaceData;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.getClientsUsageDataFile;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_VALUE_TO_DISPLAY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.getClientsUsageDataFile;
 
 public class WirelessClientsTile
         extends DDWRTTile<ClientDevices>
@@ -472,7 +472,7 @@ public class WirelessClientsTile
                                         //Save preference
                                         mGlobalPreferences.edit()
                                                 .putLong(
-                                                        DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                                        RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
                                                         System.currentTimeMillis())
                                                 .apply();
                                     }
@@ -597,7 +597,7 @@ public class WirelessClientsTile
                                         new String[]{
                                                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                                 Manifest.permission.ACCESS_COARSE_LOCATION},
-                                        DDWRTCompanionConstants.Permissions.STORAGE);
+                                        RouterCompanionAppConstants.Permissions.STORAGE);
                             }
 
                             @Override
@@ -623,7 +623,7 @@ public class WirelessClientsTile
                         new String[]{
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                 Manifest.permission.ACCESS_COARSE_LOCATION},
-                        DDWRTCompanionConstants.Permissions.STORAGE_LOCATION);
+                        RouterCompanionAppConstants.Permissions.STORAGE_LOCATION);
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
@@ -1257,7 +1257,7 @@ public class WirelessClientsTile
                         macToDevice.put(macAddr, dev);
                     }
 
-                    String remoteChecksum = DDWRTCompanionConstants.EMPTY_STRING;
+                    String remoteChecksum = RouterCompanionAppConstants.EMPTY_STRING;
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Before usageDataLock");
 
@@ -1733,7 +1733,7 @@ public class WirelessClientsTile
                                         //Save preference
                                         mGlobalPreferences.edit()
                                                 .putLong(
-                                                        DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                                        RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
                                                         System.currentTimeMillis())
                                                 .apply();
                                     }
@@ -2034,7 +2034,7 @@ public class WirelessClientsTile
                                                 //Save preference
                                                 mGlobalPreferences.edit()
                                                         .putLong(
-                                                                DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                                                RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
                                                                 System.currentTimeMillis())
                                                         .apply();
                                             }
@@ -2502,7 +2502,7 @@ public class WirelessClientsTile
                                                     //Save preference
                                                     mGlobalPreferences.edit()
                                                             .putLong(
-                                                                    DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                                                    RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
                                                                     System.currentTimeMillis())
                                                             .apply();
                                                 }
@@ -3012,7 +3012,7 @@ public class WirelessClientsTile
                         mBandwidthMonitoringData.delete();
                         bandwidthMonitoringIfaceDataPerDevice.clear();
                         //noinspection ResultOfMethodCallIgnored
-                        DDWRTCompanionConstants.getClientsUsageDataFile(mParentFragmentActivity, router.getUuid())
+                        RouterCompanionAppConstants.getClientsUsageDataFile(mParentFragmentActivity, router.getUuid())
                                 .delete();
                     }
                     break;

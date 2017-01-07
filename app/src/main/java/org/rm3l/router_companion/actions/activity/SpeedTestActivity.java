@@ -69,7 +69,7 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.settings.RouterSpeedTestSettingsActivity;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
@@ -98,16 +98,16 @@ import mbanje.kurt.fabbutton.FabButton;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.CHARSET;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB_DEFAULT;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER_AUTO;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER_RANDOM;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.CHARSET;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB_DEFAULT;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_SERVER;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_SERVER_AUTO;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_SERVER_RANDOM;
 import static org.rm3l.router_companion.utils.Utils.fromHtml;
 
 /**
@@ -371,7 +371,7 @@ public class SpeedTestActivity extends AppCompatActivity
 
         mRouterPreferences = getSharedPreferences(routerSelectedUuid, Context.MODE_PRIVATE);
         mGlobalPreferences =
-                getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                         Context.MODE_PRIVATE);
 
         this.mMessageReceiver = new NetworkChangeReceiver();
@@ -522,7 +522,7 @@ public class SpeedTestActivity extends AppCompatActivity
                                 //Request permission
                                 ActivityCompat.requestPermissions(SpeedTestActivity.this,
                                         new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                        DDWRTCompanionConstants.Permissions.STORAGE);
+                                        RouterCompanionAppConstants.Permissions.STORAGE);
                             }
 
                             @Override
@@ -546,7 +546,7 @@ public class SpeedTestActivity extends AppCompatActivity
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
                         new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        DDWRTCompanionConstants.Permissions.STORAGE);
+                        RouterCompanionAppConstants.Permissions.STORAGE);
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
@@ -639,7 +639,7 @@ public class SpeedTestActivity extends AppCompatActivity
                                            String permissions[], int[] grantResults) {
 
         switch (requestCode) {
-            case DDWRTCompanionConstants.Permissions.STORAGE: {
+            case RouterCompanionAppConstants.Permissions.STORAGE: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -764,11 +764,11 @@ public class SpeedTestActivity extends AppCompatActivity
                 @Override
                 public void onAdOpened() {
                     //Save preference
-                    getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                    getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                             Context.MODE_PRIVATE)
                             .edit()
                             .putLong(
-                                    DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                    RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
                                     System.currentTimeMillis())
                             .apply();
                 }
@@ -839,7 +839,7 @@ public class SpeedTestActivity extends AppCompatActivity
 
         ImageUtils.downloadImageFromUrl(ctx,
                 String.format("%s/%s.png",
-                        DDWRTCompanionConstants.COUNTRY_API_SERVER_FLAG,
+                        RouterCompanionAppConstants.COUNTRY_API_SERVER_FLAG,
                         countryCodeSplitted.isEmpty() ? countryCode : countryCodeSplitted.get(0)),
                 imageView,
                 null,
@@ -1085,7 +1085,7 @@ public class SpeedTestActivity extends AppCompatActivity
                                 //Request permission
                                 ActivityCompat.requestPermissions(SpeedTestActivity.this,
                                         new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                        DDWRTCompanionConstants.Permissions.STORAGE);
+                                        RouterCompanionAppConstants.Permissions.STORAGE);
                             }
 
                             @Override
@@ -1109,7 +1109,7 @@ public class SpeedTestActivity extends AppCompatActivity
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
                         new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        DDWRTCompanionConstants.Permissions.STORAGE);
+                        RouterCompanionAppConstants.Permissions.STORAGE);
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
@@ -1199,7 +1199,7 @@ public class SpeedTestActivity extends AppCompatActivity
         }
 
         final Uri uriForFile = FileProvider
-                .getUriForFile(this, DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY, file);
+                .getUriForFile(this, RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY, file);
 
         mShareActionProvider.setOnShareTargetSelectedListener(new ShareActionProvider.OnShareTargetSelectedListener() {
             @Override

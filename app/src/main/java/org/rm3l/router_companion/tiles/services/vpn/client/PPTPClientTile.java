@@ -35,7 +35,7 @@ import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedExcept
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
@@ -58,7 +58,7 @@ import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_CLIENT_SR
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_CLIENT_SRVSUB;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_CLIENT_SRVSUBMSK;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_CLIENT_SRVUSER;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE;
 
 /**
  * Created by rm3l on 06/09/15.
@@ -377,7 +377,7 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
 
         //State
         final String statusKey = \"fake-key\";
-                defaultValuesIfNotFound ? DDWRTCompanionConstants.EMPTY_STRING : null);
+                defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
         if (statusKey != null) {
             final String statusValue;
             switch (statusKey) {
@@ -446,7 +446,7 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
 
         //NAT
         final String natStatusKey = \"fake-key\";
-                defaultValuesIfNotFound ? DDWRTCompanionConstants.EMPTY_STRING : null);
+                defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
         if (natStatusKey != null) {
             final String statusValue;
             switch (natStatusKey) {

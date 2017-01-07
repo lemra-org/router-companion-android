@@ -53,8 +53,8 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.NOK;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.UNKNOWN;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.NOK;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.UNKNOWN;
 import static org.rm3l.router_companion.utils.Utils.isDemoRouter;
 
 public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {

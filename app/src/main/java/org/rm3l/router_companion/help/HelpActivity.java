@@ -3,7 +3,7 @@ package org.rm3l.router_companion.help;
 import android.support.annotation.NonNull;
 
 import org.rm3l.router_companion.R;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.web.WebActivity;
 
 /**
@@ -24,7 +24,7 @@ public class HelpActivity extends WebActivity {
     @NonNull
     @Override
     public String getUrl() {
-        return DDWRTCompanionConstants.REMOTE_HELP_WEBSITE;
+        return RouterCompanionAppConstants.REMOTE_HELP_WEBSITE;
     }
 
 

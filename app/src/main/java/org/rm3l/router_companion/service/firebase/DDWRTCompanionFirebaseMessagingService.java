@@ -22,7 +22,7 @@ import org.rm3l.router_companion.BuildConfig;
 import org.rm3l.router_companion.R;
 import org.rm3l.router_companion.api.urlshortener.goo_gl.GooGlService;
 import org.rm3l.router_companion.api.urlshortener.goo_gl.resources.GooGlData;
-import org.rm3l.router_companion.utils.DDWRTCompanionConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.NetworkUtils;
 
 import java.io.IOException;
@@ -31,9 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.GOOGLE_API_KEY;
-import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.NOTIFICATIONS_CHOICE_PREF;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.GOOGLE_API_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_CHOICE_PREF;
 
 /**
  * This is required if you want to do any message handling beyond receiving notifications on
@@ -62,10 +62,10 @@ public class DDWRTCompanionFirebaseMessagingService extends FirebaseMessagingSer
         super.onCreate();
         mApplicationContext = getApplicationContext();
         mGlobalPreferences = getSharedPreferences(
-                DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                 Context.MODE_PRIVATE);
         mGooGlService = NetworkUtils
-                .createApiService(DDWRTCompanionConstants.URL_SHORTENER_API_BASE_URL,
+                .createApiService(RouterCompanionAppConstants.URL_SHORTENER_API_BASE_URL,
                         GooGlService.class);
     }
 
@@ -196,16 +196,16 @@ public class DDWRTCompanionFirebaseMessagingService extends FirebaseMessagingSer
 
         //Notification sound, if required
         final String ringtoneUri = mGlobalPreferences
-                .getString(DDWRTCompanionConstants.NOTIFICATIONS_SOUND, null);
+                .getString(RouterCompanionAppConstants.NOTIFICATIONS_SOUND, null);
         if (ringtoneUri != null) {
             notificationBuilder.setSound(Uri.parse(ringtoneUri), AudioManager.STREAM_NOTIFICATION);
         }
 
         if (!mGlobalPreferences
-                .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_VIBRATE, true)) {
+                .getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_VIBRATE, true)) {
             notificationBuilder
                     .setDefaults(Notification.DEFAULT_LIGHTS)
-                    .setVibrate(DDWRTCompanionConstants.NO_VIBRATION_PATTERN);
+                    .setVibrate(RouterCompanionAppConstants.NO_VIBRATION_PATTERN);
 //                    if (ringtoneUri != null) {
 //                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
 //                    } else {
