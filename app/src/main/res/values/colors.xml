@@ -40,8 +40,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <color name="ddwrt_tile_title">@color/ddwrt_200</color>
     <color name="ddwrt_statusbar">@color/ddwrt_700</color>
 
-    <color name="lightTheme_primary">@color/ddwrt_primary</color>
-    <color name="lightTheme_primary_dark">@color/ddwrt_statusbar</color>
+    <color name="lightTheme_primary">#3F51B5</color>
+    <color name="lightTheme_primary_dark">#303F9F</color>
     <color name="lightTheme_primary_light">#B2DFDB</color>
     <color name="lightTheme_text_icons">#FFFFFF</color>
     <color name="lightTheme_accent">#FF9800</color>
@@ -50,8 +50,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <color name="lightTheme_divider_text">#B6B6B6</color>
     <color name="lightTheme_windowBgColor">#FAFAFA</color>
 
-    <color name="darkTheme_windowBgColor">#303030</color>
-    <color name="darkTheme_primary">#1A5180</color>
+    <color name="darkTheme_windowBgColor">#607D8B</color>
+    <color name="darkTheme_primary">#455A64</color>
     <color name="darkTheme_primary_dark">#10314D</color>
     <color name="darkTheme_primary_light">#CFD8DC</color>
     <color name="darkTheme_text_icons">#212121</color>
@@ -60,7 +60,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <color name="darkTheme_secondary_text">#727272</color>
     <color name="darkTheme_divider_text">#B6B6B6</color>
 
-    <color name="color_accent">@color/ddwrt_200</color>
+    <color name="color_accent">@color/win8_teal</color>
 
     <color name="theme_primary">#3f51b5</color>
     <color name="theme_primary_dark">#303f9f</color>

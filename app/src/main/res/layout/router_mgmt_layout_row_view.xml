@@ -85,7 +85,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/ddwrt_300" />
+                android:textColor="@color/ddwrt_green" />
 
             <TextView
                 android:text="IP Address"
