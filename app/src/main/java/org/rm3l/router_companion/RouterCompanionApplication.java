@@ -74,9 +74,9 @@ import static org.rm3l.router_companion.utils.Utils.isFirstLaunch;
  * App Main Entry point.
  * Leverages ACRA for capturing eventual app crashes and sending the relevant metrics for further analysis.
  */
-public class DDWRTApplication extends Application implements Application.ActivityLifecycleCallbacks {
+public class RouterCompanionApplication extends Application implements Application.ActivityLifecycleCallbacks {
 
-    private static final String TAG = DDWRTApplication.class.getSimpleName();
+    private static final String TAG = RouterCompanionApplication.class.getSimpleName();
 
     private static final List<String> GOOGLE_INSTALLER_PACKAGE_NAMES =
             Arrays.asList("com.android.vending", "com.google.android.feedback");

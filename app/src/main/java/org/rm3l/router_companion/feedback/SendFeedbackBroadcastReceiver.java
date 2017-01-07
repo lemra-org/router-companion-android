@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 
-import org.rm3l.router_companion.DDWRTApplication;
+import org.rm3l.router_companion.RouterCompanionApplication;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.customtabs.CustomTabActivityHelper;
@@ -29,7 +29,7 @@ public class SendFeedbackBroadcastReceiver extends BroadcastReceiver {
             return;
         }
 
-        final Activity currentActivity = DDWRTApplication.getCurrentActivity();
+        final Activity currentActivity = RouterCompanionApplication.getCurrentActivity();
         if (currentActivity == null) {
             Toast.makeText(context, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
             Crashlytics.log(Log.WARN, TAG, "Unable to retrieve current activity");

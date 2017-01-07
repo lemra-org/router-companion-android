@@ -118,7 +118,7 @@ import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter;
 import co.paulburke.android.itemtouchhelperdemo.helper.OnStartDragListener;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-import static org.rm3l.router_companion.DDWRTApplication.DEBUG_LEAKCANARY_PREF_KEY;
+import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_LEAKCANARY_PREF_KEY;
 import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES;
 import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEBUG_MODE;
 import static org.rm3l.router_companion.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
