@@ -59,7 +59,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                     android:id="@+id/router_add_local_ssid_lookup_ssid"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

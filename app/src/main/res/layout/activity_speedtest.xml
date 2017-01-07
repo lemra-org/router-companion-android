@@ -573,7 +573,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         </RelativeLayout>
 
         <!-- RecyclerView -->
-        <org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport
+        <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
             android:id="@+id/speedtest_results_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -25,7 +25,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="org.rm3l.ddwrt.tiles.services.wol.EditWOLDaemonSettingsActivity">
+    tools:context="org.rm3l.router_companion.tiles.services.wol.EditWOLDaemonSettingsActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/wol_daemon_settings_toolbar"
@@ -75,7 +75,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Interval (in seconds)" />
 
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                     android:id="@+id/wol_daemon_settings_interval"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -98,7 +98,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Hostname" />
 
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                     android:id="@+id/wol_daemon_settings_hostname"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

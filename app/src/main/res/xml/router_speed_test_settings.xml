@@ -31,7 +31,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:positiveButtonText="@null"
         android:title="Server" />
 
-    <org.rm3l.ddwrt.widgets.LongListPreference
+    <org.rm3l.router_companion.widgets.LongListPreference
         android:icon="@drawable/ic_action_device_data_usage"
         android:defaultValue="100"
         android:entries="@array/routerSpeedTestMaxFileSize_titles"

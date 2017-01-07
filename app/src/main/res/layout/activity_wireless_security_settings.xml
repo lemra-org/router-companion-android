@@ -25,7 +25,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="org.rm3l.ddwrt.tiles.status.wireless.EditWirelessSecuritySettingsActivity">
+    tools:context="org.rm3l.router_companion.tiles.status.wireless.EditWirelessSecuritySettingsActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/wireless_security_settings_toolbar"
@@ -246,7 +246,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Key Renewal Interval (seconds)" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                     android:id="@+id/wireless_security_settings_wpa_personal_key_renewal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -326,7 +326,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Key Renewal Interval (seconds)" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                     android:id="@+id/wireless_security_settings_wpa2_personal_key_renewal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -406,7 +406,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Key Renewal Interval (seconds)" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                     android:id="@+id/wireless_security_settings_wpa2_personal_mixed_key_renewal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -456,7 +456,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Radius Auth Server Address" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                     android:id="@+id/wireless_security_settings_wpa_enterprise_radius_ip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -477,7 +477,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Radius Auth Server Port" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                     android:id="@+id/wireless_security_settings_wpa_enterprise_radius_port"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -529,7 +529,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Key Renewal Interval (seconds)" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                     android:id="@+id/wireless_security_settings_wpa_enterprise_key_renewal_port"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -579,7 +579,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Radius Auth Server Address" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                     android:id="@+id/wireless_security_settings_wpa2_enterprise_radius_ip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -600,7 +600,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Radius Auth Server Port" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                     android:id="@+id/wireless_security_settings_wpa2_enterprise_radius_port"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -652,7 +652,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Key Renewal Interval (seconds)" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                     android:id="@+id/wireless_security_settings_wpa2_enterprise_key_renewal_port"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -702,7 +702,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Radius Auth Server Address" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                     android:id="@+id/wireless_security_settings_wpa2_enterprise_mixed_radius_ip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -723,7 +723,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Radius Auth Server Port" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                     android:id="@+id/wireless_security_settings_wpa2_enterprise_mixed_radius_port"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -775,7 +775,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Key Renewal Interval (seconds)" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                     android:id="@+id/wireless_security_settings_wpa2_enterprise_mixed_key_renewal_port"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -826,7 +826,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Radius Auth Server Address" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                     android:id="@+id/wireless_security_settings_radius_ip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -847,7 +847,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Radius Auth Server Port" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                     android:id="@+id/wireless_security_settings_radius_port"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

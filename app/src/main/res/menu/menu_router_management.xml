@@ -23,7 +23,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="org.rm3l.ddwrt.mgmt.RouterManagementActivity">
+    tools:context="org.rm3l.router_companion.mgmt.RouterManagementActivity">
 
     <item
         android:id="@+id/router_list_actionbar_add"

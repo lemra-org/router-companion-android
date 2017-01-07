@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:configure="org.rm3l.ddwrt.widgets.home.wol.WOLWidgetConfigureActivity"
+    android:configure="org.rm3l.router_companion.widgets.home.wol.WOLWidgetConfigureActivity"
     android:initialKeyguardLayout="@layout/wolwidget"
     android:initialLayout="@layout/wolwidget"
     android:previewImage="@drawable/wol_widget_preview"

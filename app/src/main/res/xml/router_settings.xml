@@ -70,7 +70,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <!--android:positiveButtonText="@null"-->
             <!--android:title="Auto-refresh interval" />-->
 
-        <org.rm3l.ddwrt.widgets.MySwitchPreference
+        <org.rm3l.router_companion.widgets.MySwitchPreference
             android:icon="@drawable/ic_action_notification_sync"
             android:disableDependentsState="false"
             android:defaultValue="false"
@@ -79,7 +79,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:summaryOn="Enabled."
             android:title="Auto-refresh" />
 
-        <org.rm3l.ddwrt.widgets.EditTextLongPreference
+        <org.rm3l.router_companion.widgets.EditTextLongPreference
             android:icon="@drawable/ic_action_navigation_refresh"
             android:dependency="auto_refresh.enable"
             android:inputType="number"
@@ -96,7 +96,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:key="@string/pref_header_wan_monitoring"
         android:title="Monitoring">
 
-        <org.rm3l.ddwrt.widgets.NumberPickerPreference
+        <org.rm3l.router_companion.widgets.NumberPickerPreference
             android:icon="@drawable/ic_action_action_today"
             android:defaultValue="1"
             android:key="wan_cycle_day"
@@ -123,7 +123,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:positiveButtonText="@null"
             android:title="Server" />
 
-        <org.rm3l.ddwrt.widgets.LongListPreference
+        <org.rm3l.router_companion.widgets.LongListPreference
             android:icon="@drawable/ic_action_device_data_usage"
             android:defaultValue="100"
             android:entries="@array/routerSpeedTestMaxFileSize_titles"
@@ -155,7 +155,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:key="@string/pref_header_notifications"
         android:title="Notifications">
 
-        <org.rm3l.ddwrt.widgets.MySwitchPreference
+        <org.rm3l.router_companion.widgets.MySwitchPreference
             android:icon="@drawable/ic_action_social_notifications"
             android:disableDependentsState="false"
             android:defaultValue="true"
@@ -164,7 +164,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:summaryOn="Enabled for this router."
             android:title="Receive Notifications" />
 
-        <org.rm3l.ddwrt.widgets.MySwitchPreference
+        <org.rm3l.router_companion.widgets.MySwitchPreference
             android:icon="@drawable/ic_action_device_devices_blue"
             android:dependency="notifications.enable"
             android:defaultValue="true"
@@ -180,7 +180,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:key="vpn_pptp"
         android:title="VPN &amp; PPTP Clients">
 
-        <org.rm3l.ddwrt.widgets.MySwitchPreference
+        <org.rm3l.router_companion.widgets.MySwitchPreference
             android:icon="@drawable/ic_action_notification_vpn_lock_blue"
             android:defaultValue="false"
             android:key="vpn.pptp.toggles.mutually.exclusive"

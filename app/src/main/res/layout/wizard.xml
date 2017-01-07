@@ -77,7 +77,7 @@
             **You MUST have this ViewPager as the container for wizard's steps  **
             **********************************************************************
         -->
-        <org.rm3l.ddwrt.widgets.ViewPagerWithAllowedSwipeDirection
+        <org.rm3l.router_companion.widgets.ViewPagerWithAllowedSwipeDirection
             android:id="@+id/step_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

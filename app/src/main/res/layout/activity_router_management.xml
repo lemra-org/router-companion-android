@@ -28,7 +28,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    tools:context="org.rm3l.ddwrt.mgmt.RouterManagementActivity">
+    tools:context="org.rm3l.router_companion.mgmt.RouterManagementActivity">
 
     <include layout="@layout/activity_router_management_toolbar" />
 
@@ -53,7 +53,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport
+            <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
                 android:id="@+id/routersListView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

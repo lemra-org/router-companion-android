@@ -25,7 +25,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="org.rm3l.ddwrt.tiles.services.vpn.client.EditOpenVPNClientSettingsActivity">
+    tools:context="org.rm3l.router_companion.tiles.services.vpn.client.EditOpenVPNClientSettingsActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/openvpn_client_settings_toolbar"
@@ -76,7 +76,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="@string/openvpncl_setting_server_ip_or_name" />
 
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                     android:id="@+id/openvpn_client_settings_server_ip_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -97,7 +97,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="@string/openvpncl_setting_server_port" />
 
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                     android:id="@+id/openvpn_client_settings_port"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -385,7 +385,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginTop="@dimen/activity_vertical_margin"
                         android:text="@string/openvpncl_setting_ip_address" />
 
-                    <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                    <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                         android:id="@+id/openvpn_client_settings_ip_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -406,7 +406,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginTop="@dimen/activity_vertical_margin"
                         android:text="@string/openvpncl_setting_subnet_mask" />
 
-                    <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                    <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                         android:id="@+id/openvpn_client_settings_subnet_mask"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -427,7 +427,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginTop="@dimen/activity_vertical_margin"
                         android:text="@string/openvpncl_setting_tunnel_mtu" />
 
-                    <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                    <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                         android:id="@+id/openvpn_client_settings_tunnel_mtu_setting"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -450,7 +450,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginTop="@dimen/activity_vertical_margin"
                         android:text="@string/openvpncl_setting_tunnel_udp_fragment" />
 
-                    <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+                    <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
                         android:id="@+id/openvpn_client_settings_tunnel_udp_fragment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

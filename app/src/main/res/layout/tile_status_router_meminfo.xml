@@ -24,7 +24,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="org.rm3l.ddwrt.tiles.status.router.RouterMemInfoActivity">
+    tools:context="org.rm3l.router_companion.tiles.status.router.RouterMemInfoActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/tile_status_router_meminfo_view_toolbar"

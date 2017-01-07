@@ -105,7 +105,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:visibility="invisible" />
 
         <!-- Filter -->
-        <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+        <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
             android:id="@+id/tile_toolbox_abstract_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

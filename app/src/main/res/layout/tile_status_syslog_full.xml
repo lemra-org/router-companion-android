@@ -24,7 +24,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="org.rm3l.ddwrt.tiles.syslog.ViewSyslogActivity">
+    tools:context="org.rm3l.router_companion.tiles.syslog.ViewSyslogActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/tile_status_syslog_full_view_toolbar"
@@ -38,7 +38,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport
+        <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
             android:id="@+id/tile_status_syslog_full_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -27,7 +27,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="General">
 
         <!-- Theming -->
-        <org.rm3l.ddwrt.widgets.LongListPreference
+        <org.rm3l.router_companion.widgets.LongListPreference
             android:icon="@drawable/ic_action_image_palette"
             android:defaultValue="30"
             android:entries="@array/pref_theme_titles"
@@ -60,7 +60,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:icon="@drawable/ic_action_action_lock"
             android:persistent="false" />
 
-        <org.rm3l.ddwrt.widgets.MySwitchPreference
+        <org.rm3l.router_companion.widgets.MySwitchPreference
             android:icon="@drawable/ic_action_action_extension"
             android:defaultValue="true"
             android:key="third_party.integration"
@@ -74,7 +74,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:key="data_usage_ctrl"
         android:title="Data Usage Control">
 
-        <org.rm3l.ddwrt.widgets.LongListPreference
+        <org.rm3l.router_companion.widgets.LongListPreference
             android:icon="@drawable/ic_action_action_settings_ethernet"
             android:defaultValue="444"
             android:entries="@array/data_usage_titles"
@@ -109,7 +109,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:key="@string/pref_header_notifications"
         android:title="Notifications">
 
-        <org.rm3l.ddwrt.widgets.MySwitchPreference
+        <org.rm3l.router_companion.widgets.MySwitchPreference
             android:icon="@drawable/ic_action_notification_sync"
             android:disableDependentsState="false"
             android:defaultValue="true"
@@ -118,7 +118,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:summaryOn="Enabled. You may get notifications even if you are not using the app. Notifications can be managed in each router settings."
             android:title="Background Service" />
 
-        <org.rm3l.ddwrt.widgets.LongListPreference
+        <org.rm3l.router_companion.widgets.LongListPreference
             android:icon="@drawable/ic_action_navigation_refresh"
             android:defaultValue="360"
             android:dependency="notifications.background.service.enable"
@@ -129,7 +129,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:positiveButtonText="@null"
             android:title="Background Service Frequency" />
 
-        <org.rm3l.ddwrt.widgets.MyMultiSelectListPreference
+        <org.rm3l.router_companion.widgets.MyMultiSelectListPreference
             android:icon="@drawable/ic_action_social_notifications"
             android:dialogTitle="Select Notifications"
             android:key="notifications.choice"
@@ -149,7 +149,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:showSilent="true"
             android:defaultValue="content://settings/system/notification_sound"/>
 
-        <org.rm3l.ddwrt.widgets.MySwitchPreference
+        <org.rm3l.router_companion.widgets.MySwitchPreference
             android:icon="@drawable/ic_action_notification_vibration"
             android:defaultValue="true"
             android:key="notifications.vibrate"
@@ -168,7 +168,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <!--android:summaryOn="On"-->
             <!--android:title="Debug Mode" />-->
 
-        <org.rm3l.ddwrt.widgets.MySwitchPreference
+        <org.rm3l.router_companion.widgets.MySwitchPreference
             android:icon="@drawable/ic_action_action_bug_report"
             android:defaultValue="true"
             android:key="acra.enable"

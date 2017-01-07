@@ -14,7 +14,7 @@
     sothree:umanoParallaxOffset="100dp"
     sothree:umanoScrollableView="@+id/tile_status_active_ip_connections_stats_recycler_view"
     sothree:umanoDragView="@+id/active_ip_connections_stats"
-    tools:context="org.rm3l.ddwrt.tiles.status.wireless.ActiveIPConnectionsDetailActivity">
+    tools:context="org.rm3l.router_companion.tiles.status.wireless.ActiveIPConnectionsDetailActivity">
 
     <!-- MAIN CONTENT -->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -77,7 +77,7 @@
                 android:id="@+id/tile_status_active_ip_connections_view_recyclerview_linearlayout"
                 android:visibility="gone">
 
-                <org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport
+                <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
                     android:id="@+id/tile_status_active_ip_connections_recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -137,7 +137,7 @@
 
         </RelativeLayout>
 
-        <org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport
+        <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
             android:id="@+id/tile_status_active_ip_connections_stats_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
