@@ -9,7 +9,7 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 
-import org.rm3l.router_companion.common.IDDWRTCompanionService;
+import org.rm3l.router_companion.common.IRouterCompanionService;
 import org.rm3l.router_companion.common.resources.RouterInfo;
 import org.rm3l.router_companion.common.resources.audit.ActionLog;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
@@ -25,9 +25,9 @@ import static android.text.TextUtils.isEmpty;
 /**
  * Created by rm3l on 07/08/16.
  */
-public class DDWRTCompanionServiceImpl extends Service {
+public class RouterCompanionServiceImpl extends Service {
 
-    private static final String TAG = DDWRTCompanionServiceImpl.class.getSimpleName();
+    private static final String TAG = RouterCompanionServiceImpl.class.getSimpleName();
 
     private DDWRTCompanionDAO mDao;
 
@@ -44,7 +44,7 @@ public class DDWRTCompanionServiceImpl extends Service {
         return mBinder;
     }
 
-    private final IDDWRTCompanionService.Stub mBinder = new IDDWRTCompanionService.Stub() {
+    private final IRouterCompanionService.Stub mBinder = new IRouterCompanionService.Stub() {
 
         @Override
         public List<RouterInfo> getAllRouters() throws RemoteException {

@@ -1,10 +1,10 @@
-// IDDWRTCompanionService.aidl
-package org.rm3l.ddwrt.common;
+// IRouterCompanionService.aidl
+package org.rm3l.router_companion.common;
 
-import org.rm3l.ddwrt.common.resources.RouterInfo;
-import org.rm3l.ddwrt.common.resources.audit.ActionLog;
+import org.rm3l.router_companion.common.resources.RouterInfo;
+import org.rm3l.router_companion.common.resources.audit.ActionLog;
 
-interface IDDWRTCompanionService {
+interface IRouterCompanionService {
 
     List<RouterInfo> getAllRouters();
 

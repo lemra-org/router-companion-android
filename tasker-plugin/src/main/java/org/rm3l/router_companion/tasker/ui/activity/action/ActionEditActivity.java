@@ -42,7 +42,7 @@ import com.twofortyfouram.log.Lumberjack;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.rm3l.router_companion.common.IDDWRTCompanionService;
+import org.rm3l.router_companion.common.IRouterCompanionService;
 import org.rm3l.router_companion.common.resources.RouterInfo;
 import org.rm3l.router_companion.common.utils.ActivityUtils;
 import org.rm3l.router_companion.tasker.Constants;
@@ -64,7 +64,7 @@ import static org.rm3l.router_companion.tasker.bundle.PluginBundleValues.*;
 @NotThreadSafe
 public class ActionEditActivity extends AbstractAppCompatPluginActivity {
 
-    public static final String DDWRT_COMPANION_SERVICE_NAME = "org.rm3l.ddwrt.IDDWRTCompanionService";
+    public static final String DDWRT_COMPANION_SERVICE_NAME = "org.rm3l.ddwrt.IRouterCompanionService";
 
     private static final int REGISTER_ROUTER_REQUEST = 1;
 
@@ -75,7 +75,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
 
 
     /** Service to which this client will bind */
-    private IDDWRTCompanionService ddwrtCompanionService;
+    private IRouterCompanionService routerCompanionService;
 
     private String ddwrtCompanionAppPackage;
 
@@ -309,7 +309,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
         if (conn != null) {
             unbindService(conn);
         }
-        ddwrtCompanionService = null;
+        routerCompanionService = null;
 
         try {
             final PackageInfo packageInfo = Utils
@@ -456,7 +456,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
         if (conn != null) {
             unbindService(conn);
         }
-        ddwrtCompanionService = null;
+        routerCompanionService = null;
 
         // connect to the service
         conn = new RouterServiceConnection(true);
@@ -481,7 +481,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
                 ignored.printStackTrace();
             }
         }
-        ddwrtCompanionService = null;
+        routerCompanionService = null;
     }
 
     @Override
@@ -514,7 +514,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
         /** is called once the bind succeeds */
         public void onServiceConnected(ComponentName name, IBinder service) {
             Crashlytics.log(Log.DEBUG, Constants.TAG, "Service connected");
-            ddwrtCompanionService = IDDWRTCompanionService.Stub.asInterface(service);
+            routerCompanionService = IRouterCompanionService.Stub.asInterface(service);
 
             mErrorPlaceholder.setVisibility(View.GONE);
             mLoadingView.setVisibility(View.GONE);
@@ -523,7 +523,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
 
             final List<RouterInfo> allRouters;
             try {
-                allRouters = ddwrtCompanionService.getAllRouters();
+                allRouters = routerCompanionService.getAllRouters();
             } catch (RemoteException e) {
                 Crashlytics.logException(e);
                 e.printStackTrace();
@@ -768,7 +768,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
             mErrorPlaceholder.setVisibility(View.VISIBLE);
             mLoadingView.setVisibility(View.VISIBLE);
             mMainContentView.setEnabled(false);
-            ddwrtCompanionService = null;
+            routerCompanionService = null;
         }
 
     }

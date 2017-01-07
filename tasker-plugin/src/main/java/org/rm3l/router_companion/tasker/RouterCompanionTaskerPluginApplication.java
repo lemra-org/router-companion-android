@@ -22,7 +22,7 @@ import static org.rm3l.router_companion.tasker.Constants.*;
  * This application is non-essential for the plug-in's operation; it simply enables debugging
  * options globally for the app.
  */
-public class DDWRTCompanionTaskerPluginApplication extends Application implements Application.ActivityLifecycleCallbacks {
+public class RouterCompanionTaskerPluginApplication extends Application implements Application.ActivityLifecycleCallbacks {
 
     private static WeakReference<Activity> mCurrentActivity;
 

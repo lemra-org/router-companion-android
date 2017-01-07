@@ -56,7 +56,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
          applicable Service) should be put into a different process. This example plug-in
          creates two processes. -->
     <application
-        android:name="org.rm3l.router_companion.tasker.DDWRTCompanionTaskerPluginApplication"
+        android:name="org.rm3l.router_companion.tasker.RouterCompanionTaskerPluginApplication"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:fullBackupOnly="true"
@@ -82,7 +82,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         </provider>
 
         <activity
-            android:name="org.rm3l.router_companion.tasker.ui.activity.main.DDWRTCompanionTaskerPluginLaunchActivity"
+            android:name="org.rm3l.router_companion.tasker.ui.activity.main.RouterCompanionTaskerPluginLaunchActivity"
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" >

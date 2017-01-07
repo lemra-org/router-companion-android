@@ -56,7 +56,7 @@ import com.crashlytics.android.Crashlytics;
 import com.mikepenz.aboutlibraries.Libs;
 import com.mikepenz.aboutlibraries.LibsBuilder;
 
-import org.rm3l.router_companion.common.IDDWRTCompanionService;
+import org.rm3l.router_companion.common.IRouterCompanionService;
 import org.rm3l.router_companion.common.resources.RouterInfo;
 import org.rm3l.router_companion.common.resources.audit.ActionLog;
 import org.rm3l.router_companion.common.utils.ActivityUtils;
@@ -80,10 +80,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * EntryPoint Activity
  */
-public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity {
+public class RouterCompanionTaskerPluginLaunchActivity extends AppCompatActivity {
 
     /** Service to which this client will bind */
-    private IDDWRTCompanionService ddwrtCompanionService;
+    private IRouterCompanionService routerCompanionService;
     /** Connection to the service (inner class) */
     private RouterServiceConnection conn;
 
@@ -184,7 +184,7 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
                     @Override
                     public void onClick(View view) {
                         ActivityUtils.openPlayStoreForPackage(
-                                DDWRTCompanionTaskerPluginLaunchActivity.this, "org.rm3l.ddwrt");
+                                RouterCompanionTaskerPluginLaunchActivity.this, "org.rm3l.ddwrt");
                     }
                 });
                 mErrorView.setText("DD-WRT Companion app *not* found !");
@@ -213,7 +213,7 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
                 @Override
                 public void onClick(View view) {
                     ActivityUtils.openPlayStoreForPackage(
-                            DDWRTCompanionTaskerPluginLaunchActivity.this, "org.rm3l.ddwrt");
+                            RouterCompanionTaskerPluginLaunchActivity.this, "org.rm3l.ddwrt");
                 }
             });
             mErrorView.setText(e.getMessage());
@@ -230,14 +230,14 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
                 mClearHistory.set(false);
                 //Reload adapter data
                 unbindService(conn);
-                ddwrtCompanionService = null;
+                routerCompanionService = null;
 
                 // connect to the service
                 conn = new RouterServiceConnection();
 
                 // name must match the service's Intent filter in the Service Manifest file
                 final Intent intent = new Intent(ActionEditActivity.DDWRT_COMPANION_SERVICE_NAME);
-                intent.setPackage(DDWRTCompanionTaskerPluginLaunchActivity.this.ddwrtCompanionAppPackage);
+                intent.setPackage(RouterCompanionTaskerPluginLaunchActivity.this.ddwrtCompanionAppPackage);
                 // bind to the Service, create it if it's not already there
                 bindService(intent, conn, Context.BIND_AUTO_CREATE);
             }
@@ -246,7 +246,7 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
         clearAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new AlertDialog.Builder(DDWRTCompanionTaskerPluginLaunchActivity.this)
+                new AlertDialog.Builder(RouterCompanionTaskerPluginLaunchActivity.this)
                         .setIcon(R.drawable.ic_warning_black_24dp)
                         .setTitle("Clear All?")
                         .setMessage("You'll lose the history of all actions performed by this plugin!")
@@ -257,14 +257,14 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
                                 mClearHistory.set(true);
                                 //Reload adapter data
                                 unbindService(conn);
-                                ddwrtCompanionService = null;
+                                routerCompanionService = null;
 
                                 // connect to the service
                                 conn = new RouterServiceConnection();
 
                                 // name must match the service's Intent filter in the Service Manifest file
                                 final Intent intent = new Intent(ActionEditActivity.DDWRT_COMPANION_SERVICE_NAME);
-                                intent.setPackage(DDWRTCompanionTaskerPluginLaunchActivity.this.ddwrtCompanionAppPackage);
+                                intent.setPackage(RouterCompanionTaskerPluginLaunchActivity.this.ddwrtCompanionAppPackage);
                                 // bind to the Service, create it if it's not already there
                                 bindService(intent, conn, Context.BIND_AUTO_CREATE);
                             }
@@ -291,7 +291,7 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
             //No worries
             ignored.printStackTrace();
         }
-        ddwrtCompanionService = null;
+        routerCompanionService = null;
     }
 
     @Override
@@ -368,13 +368,13 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
 
         private List<ActionLog> actionLogs;
 
-        private IDDWRTCompanionService service;
+        private IRouterCompanionService service;
 
         public TaskerActionHistoryAdapter() {
-            this.activity = DDWRTCompanionTaskerPluginLaunchActivity.this;
+            this.activity = RouterCompanionTaskerPluginLaunchActivity.this;
         }
 
-        public TaskerActionHistoryAdapter setService(IDDWRTCompanionService service) {
+        public TaskerActionHistoryAdapter setService(IRouterCompanionService service) {
             this.service = service;
             return this;
         }
@@ -534,17 +534,17 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             Crashlytics.log(Log.DEBUG, Constants.TAG, "Service connected");
             mErrorView.setVisibility(View.GONE);
-            ddwrtCompanionService = IDDWRTCompanionService.Stub.asInterface(service);
+            routerCompanionService = IRouterCompanionService.Stub.asInterface(service);
 
             mSlidingUpPanel.setVisibility(View.VISIBLE);
             mHistoryDescriptionText.setVisibility(View.VISIBLE);
 
-            mHistoryAdapter.setService(ddwrtCompanionService);
+            mHistoryAdapter.setService(routerCompanionService);
             try {
                 if (mClearHistory.getAndSet(false)) {
-                    ddwrtCompanionService.clearActionsLogByOrigin(BuildConfig.APPLICATION_ID);
+                    routerCompanionService.clearActionsLogByOrigin(BuildConfig.APPLICATION_ID);
                 }
-                mHistoryAdapter.setActionLogs(ddwrtCompanionService
+                mHistoryAdapter.setActionLogs(routerCompanionService
                         .getActionsByOrigin(BuildConfig.APPLICATION_ID));
             }  catch (RemoteException e) {
                 Crashlytics.logException(e);
@@ -554,7 +554,7 @@ public class DDWRTCompanionTaskerPluginLaunchActivity extends AppCompatActivity 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             Crashlytics.log(Log.WARN, Constants.TAG, "Service has unexpectedly disconnected");
-            ddwrtCompanionService = null;
+            routerCompanionService = null;
             mHistoryAdapter.setService(null);
             mErrorView.setText("Connection to DD-WRT Companion application unexpectedly disconnected. Please reload and try again.");
             mErrorView.setOnClickListener(null);

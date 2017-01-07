@@ -550,10 +550,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
             android:enabled="true" />
 
-        <service android:name="org.rm3l.router_companion.service.DDWRTCompanionServiceImpl">
+        <service android:name="org.rm3l.router_companion.service.RouterCompanionServiceImpl">
             <intent-filter>
                 <!-- Filter to communicate with the tasker plugin only -->
-                <action android:name="org.rm3l.ddwrt.IDDWRTCompanionService" />
+                <action android:name="org.rm3l.router_companion.IDDWRTCompanionService" />
             </intent-filter>
         </service>
 
