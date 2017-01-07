@@ -157,7 +157,7 @@ public class BasicDetailsStep extends MaterialWizardStep {
             routerName = routerSelected.getName();
             routerIpOrDns = routerSelected.getRemoteIpAddress();
             if (routerSelected.getRouterFirmware() != null) {
-                routerFirmware = routerSelected.getRouterFirmware().toString();
+                routerFirmware = routerSelected.getRouterFirmware().getDisplayName();
             }
             isDemoModeStr = Boolean.toString(Utils.isDemoRouter(routerSelected));
         }

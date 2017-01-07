@@ -1093,11 +1093,15 @@ public class Router implements Serializable {
     public static final int RouterFirmware_OPENWRT = 2;
     public static final int RouterFirmware_DEMO = 3;
     public static final int RouterFirmware_UNKNOWN = 4;
+    public static final int RouterFirmware_AUTO = 5;
+    public static final int RouterFirmware_TOMATO = 6;
 
     public enum RouterFirmware {
         DDWRT("DD-WRT"),
         OPENWRT("OpenWrt (Beta)"),
+        TOMATO("Tomato (Beta)"),
         DEMO("Demo"),
+        AUTO("Auto-detect"),
         UNKNOWN("???");
 
         @NonNull

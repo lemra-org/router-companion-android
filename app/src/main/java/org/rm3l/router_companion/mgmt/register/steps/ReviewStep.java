@@ -54,6 +54,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.router_companion.utils.Utils.isDemoRouter;
 
@@ -377,7 +378,9 @@ public class ReviewStep extends MaterialWizardStep {
     }
 
     private Router buildRouter()  {
-        final Router router = new Router(getContext());
+        final Context context = getContext();
+
+        final Router router = new Router(context);
         if (routerSelected != null &&
                 action != RouterWizardAction.ADD &&
                 action != RouterWizardAction.COPY) {
@@ -392,16 +395,39 @@ public class ReviewStep extends MaterialWizardStep {
                 connectionProtocol != null ?
                         Router.RouterConnectionProtocol.valueOf(connectionProtocol) :
                         Router.RouterConnectionProtocol.SSH);
-        //FIXME To change when we will support other formwares
-        router.setRouterFirmware(Router.RouterFirmware.DDWRT);
-//        final int pos = (((Spinner) d.findViewById(R.id.router_add_firmware))).getSelectedItemPosition();
-//        final String[] fwStringArray = d.getContext().getResources().getStringArray(R.array.router_firmwares_array_values);
-//        if (fwStringArray != null && pos < fwStringArray.length) {
-//            final String fwSelection = fwStringArray[pos];
-//            if (!"auto".equals(fwSelection)) {
-//                router.setRouterFirmware(fwSelection);
-//            } // else we will try to guess
-//        } // else we will try to guess
+        int fwPositionInStringArrayValues = -1;
+        final String[] fwTitlesArray = context.getResources()
+                .getStringArray(R.array.router_firmwares_array);
+        for (int i = 0, fwTitlesArrayLength = fwTitlesArray.length; i < fwTitlesArrayLength; i++) {
+            final String fwTitle = fwTitlesArray[i];
+            if (nullToEmpty(routerFirmware).equals(fwTitle)) {
+                fwPositionInStringArrayValues = i;
+                break;
+            }
+        }
+        Crashlytics.log(Log.DEBUG, TAG, "fwPositionInStringArrayValues=" +
+                fwPositionInStringArrayValues + ", for '" + routerFirmware + "'");
+        if (fwPositionInStringArrayValues < 0) {
+            //TODO Unknown - should we try to guess?
+            Crashlytics.logException(
+                    new DDWRTCompanionException("fwPositionInStringArrayValues < 0"));
+            router.setRouterFirmware(Router.RouterFirmware.AUTO);
+        } else {
+            final String[] fwStringArray = context.getResources()
+                    .getStringArray(R.array.router_firmwares_array_values);
+            if (fwPositionInStringArrayValues < fwStringArray.length) {
+                final String fwSelection = fwStringArray[fwPositionInStringArrayValues];
+                Crashlytics.log(Log.DEBUG, TAG, "fwSelection=" +
+                        fwSelection + ", for '" + routerFirmware + "'");
+                if ("auto".equals(fwSelection)) {
+                    router.setRouterFirmware(Router.RouterFirmware.AUTO);
+                } else {
+                    router.setRouterFirmware(fwSelection);
+                }
+            } else {
+                router.setRouterFirmware(Router.RouterFirmware.AUTO);
+            }
+        }
 
         router.setUsername(username, true);
 //        router.setStrictHostKeyChecking(((CheckBox) d.findViewById(R.id.router_add_is_strict_host_key_checking)).isChecked());

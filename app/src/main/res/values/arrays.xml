@@ -62,14 +62,14 @@
         <!--<item>-Autodetect-</item>-->
         <item>DD-WRT</item>
         <!--<item>OpenWrt (Beta)</item>-->
-        <!--<item>Tomato</item>-->
+        <item>Tomato (Beta)</item>
     </string-array>
 
     <string-array name="router_firmwares_array_values">
         <!--<item>auto</item>-->
         <item>DDWRT</item>
         <!--<item>OPENWRT</item>-->
-        <!--<item>TOMATO</item>-->
+        <item>TOMATO</item>
     </string-array>
 
     <string-array name="openvpn_client_settings_tunnel_device_array">
