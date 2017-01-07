@@ -1,4 +1,4 @@
-package org.rm3l.router_companion;
+package org.rm3l.router_companion.deeplinks;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -46,6 +46,7 @@ import com.squareup.leakcanary.LeakCanary;
 import com.squareup.picasso.Picasso;
 
 import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
+import org.rm3l.router_companion.deeplinks.DeepLinkReceiver;
 import org.rm3l.router_companion.deeplinks.RouterActionsDeepLinkActivity;
 import org.rm3l.router_companion.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.rm3l.router_companion.utils.ColorUtils;
