@@ -66,8 +66,7 @@
             android:text="Firmware"
             android:textStyle="bold"
             android:layout_marginTop="10dp"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:visibility="gone"/>
+            android:textAppearance="?android:textAppearanceMedium"/>
         <TextView
             android:textIsSelectable="true"
             android:id="@+id/wizard_add_router_review_router_firmware"
@@ -76,8 +75,7 @@
             android:layout_gravity="start"
             android:ellipsize="end"
             android:gravity="start"
-            android:singleLine="false"
-            android:visibility="gone" />
+            android:singleLine="false" />
 
         <!-- Router Connection Proto -->
         <TextView
