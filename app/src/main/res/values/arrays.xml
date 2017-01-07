@@ -59,14 +59,14 @@
     <!-- TODO Other items disabled for now, until we get the right implementation for OpenWrt
     (and provide an external no-launcher app plugin for it) -->
     <string-array name="router_firmwares_array">
-        <!--<item>-Autodetect-</item>-->
+        <item>-Auto-detect-</item>
         <item>DD-WRT</item>
         <!--<item>OpenWrt (Beta)</item>-->
         <item>Tomato (Beta)</item>
     </string-array>
 
     <string-array name="router_firmwares_array_values">
-        <!--<item>auto</item>-->
+        <item>auto</item>
         <item>DDWRT</item>
         <!--<item>OPENWRT</item>-->
         <item>TOMATO</item>

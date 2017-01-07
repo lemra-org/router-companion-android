@@ -82,6 +82,7 @@ import static org.rm3l.router_companion.resources.conn.Router.RouterFirmware;
 import static org.rm3l.router_companion.resources.conn.Router.RouterFirmware.DDWRT;
 import static org.rm3l.router_companion.resources.conn.Router.RouterFirmware.OPENWRT;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
+import static org.rm3l.router_companion.resources.conn.Router.RouterFirmware.TOMATO;
 import static org.rm3l.router_companion.utils.Utils.checkDataSyncAlllowedByUsagePreference;
 
 /**
@@ -110,8 +111,9 @@ public final class SSHUtils {
 
     static {
         FIRMWARE_AUTODETECT_CMDS.put(DDWRT, "grep -qi \"dd-wrt\" /tmp/loginprompt");
-        FIRMWARE_AUTODETECT_CMDS.put(OPENWRT, "uname -a | grep -qi \"openwrt\"");
+        FIRMWARE_AUTODETECT_CMDS.put(TOMATO, "grep -qi \"tomato\" /tmp/etc/motd");
         //TODO Add other firmware commands
+//        FIRMWARE_AUTODETECT_CMDS.put(OPENWRT, "uname -a | grep -qi \"openwrt\"");
     }
 
     static {
@@ -149,7 +151,8 @@ public final class SSHUtils {
                 jschSession.connect(connectTimeoutMillis);
             }
 
-            if (router.getRouterFirmware() == null) {
+            final RouterFirmware routerFirmware = router.getRouterFirmware();
+            if (routerFirmware == null || RouterFirmware.AUTO.equals(routerFirmware)) {
                 //AutoDetect firmware
                 ChannelExec channelExec = null;
                 InputStream in = null;
@@ -165,7 +168,7 @@ public final class SSHUtils {
                         final RouterFirmware fw = routerFirmwareCmdEntry.getKey();
                         autoDetectCommand[i++] = String.format("( %s && echo \"%s\" )", cmd, fw.name());
                     }
-                    autoDetectCommand[i] = ("( echo " + RouterFirmware.UNKNOWN + " )");
+                    autoDetectCommand[i] = ("( echo \"" + RouterFirmware.UNKNOWN + "\" )");
 
                     channelExec.setCommand(Joiner.on(" || ").skipNulls().join(autoDetectCommand));
                     channelExec.setInputStream(null);
@@ -174,7 +177,7 @@ public final class SSHUtils {
                     channelExec.connect();
 
                     final String[] output = Utils.getLines(new BufferedReader(new InputStreamReader(in)));
-                    if (output == null || output.length == 0) {
+                    if (output.length == 0) {
                         router.setRouterFirmware(RouterFirmware.UNKNOWN);
                     } else {
                         router.setRouterFirmware(RouterFirmware.valueOf(output[0]));
