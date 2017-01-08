@@ -225,13 +225,6 @@ public abstract class AbstractBaseFragment<T> extends Fragment
             }
         }
 
-        //FIXME Once full support of other firmwares is implemented
-        if (routerFirmwareForFragments == null ||
-                RouterFirmware.UNKNOWN.equals(routerFirmwareForFragments)) {
-            routerFirmwareForFragments = RouterFirmware.DDWRT;
-        }
-        //FIXME End
-
         if (mNoDataFragment == null) {
             mNoDataFragment = AbstractBaseFragment.newInstance(
                     activity,
