@@ -48,6 +48,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalCause;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.util.concurrent.Striped;
 import com.google.gson.Gson;
 import com.jcraft.jsch.JSch;
@@ -57,6 +58,8 @@ import com.squareup.picasso.Target;
 
 import org.rm3l.router_companion.R;
 import org.rm3l.router_companion.common.resources.RouterInfo;
+import org.rm3l.router_companion.fragments.AbstractBaseFragment;
+import org.rm3l.router_companion.fragments.FragmentTabDescription;
 import org.rm3l.router_companion.main.DDWRTMainActivity;
 import org.rm3l.router_companion.tiles.services.wol.WakeOnLanTile;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
@@ -81,6 +84,8 @@ import java.util.concurrent.locks.Lock;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.router_companion.fragments.AbstractBaseFragment.getTabsForDDWRT;
+import static org.rm3l.router_companion.fragments.AbstractBaseFragment.getTabsForOpenWRT;
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.router_companion.resources.Encrypted.d;
 import static org.rm3l.router_companion.resources.Encrypted.e;
@@ -1097,18 +1102,23 @@ public class Router implements Serializable {
 //    public static final int RouterFirmware_TOMATO = 6;
 
     public enum RouterFirmware {
-        DDWRT("DD-WRT"),
-        OPENWRT("OpenWrt (Beta)"),
-        TOMATO("Tomato (Beta)"),
-        DEMO("Demo"),
-        AUTO("Auto-detect"),
-        UNKNOWN("???");
+        DDWRT("DD-WRT", getTabsForDDWRT()),
+        OPENWRT("OpenWrt (Beta)", null /*getTabsForOpenWRT()*/), //TODO Not supported as yet
+        TOMATO("Tomato (Beta)", getTabsForDDWRT()), //TODO Same tabs as DD-WRT (for now)
+        DEMO("Demo", getTabsForDDWRT()),
+        AUTO("Auto-detect", null),
+        UNKNOWN("???", null);
 
         @NonNull
-        final String displayName;
+        public final String displayName;
 
-        RouterFirmware(@NonNull final String displayName) {
+        @Nullable
+        public final ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> fragmentTabs;
+
+        RouterFirmware(@NonNull final String displayName,
+                       ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> fragmentTabs) {
             this.displayName = displayName;
+            this.fragmentTabs = fragmentTabs;
         }
 
         @NonNull

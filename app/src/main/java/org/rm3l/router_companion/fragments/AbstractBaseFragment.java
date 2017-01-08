@@ -150,24 +150,6 @@ public abstract class AbstractBaseFragment<T> extends Fragment
     public static final int RootViewType_RECYCLER_VIEW = 1;
     public static final int RootViewType_LINEAR_LAYOUT = 2;
 
-    private static final Map<RouterFirmware,
-            ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>>>
-            allTabs = new HashMap<>();
-    static {
-        //DD-WRT
-        final ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> tabsForDDWRT = getTabsForDDWRT();
-        allTabs.put(RouterFirmware.DDWRT, tabsForDDWRT);
-
-        //Demo (same as DD-WRT, actually)
-        allTabs.put(RouterFirmware.DEMO, tabsForDDWRT);
-
-        //Tomato (same as DD-WRT, actually)
-        allTabs.put(RouterFirmware.TOMATO, tabsForDDWRT);
-
-        //OpenWRT - TODO
-        allTabs.put(RouterFirmware.OPENWRT, getTabsForOpenWRT());
-    }
-
     @Nullable
     public static AbstractBaseFragment newInstance(Activity activity, @NonNull final Class<? extends AbstractBaseFragment> clazz,
                                                    @NonNull final CharSequence parentSectionTitle, @NonNull final CharSequence tabTitle,
@@ -259,7 +241,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
         }
 
         final ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> tabDescriptionMultimap =
-                allTabs.get(routerFirmwareForFragments);
+                routerFirmwareForFragments.fragmentTabs;
         if (tabDescriptionMultimap == null) {
             //Unknown
             ReportingUtils.reportException(
@@ -291,7 +273,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
     }
 
     @NonNull
-    private static ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> getTabsForDDWRT() {
+    public static ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> getTabsForDDWRT() {
         final ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> tabsForDDWRT = ArrayListMultimap.create();
         //1- Dashboard: {Network, Bandwidth, System}
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> dashboardTabs
@@ -544,7 +526,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
     }
 
     @NonNull
-    private static ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> getTabsForOpenWRT() {
+    public static ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> getTabsForOpenWRT() {
         final ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> tabsForOpenWRT = ArrayListMultimap.create();
         //1- Dashboard: {Network, Bandwidth, System}
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> dashboardTabs
