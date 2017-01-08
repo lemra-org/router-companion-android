@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -503,15 +504,25 @@ public final class SSHUtils {
             }
         }
 
+        final RouterFirmware routerFirmware = router.getRouterFirmware();
+        if (routerFirmware == null) {
+            throw new UnknownRouterFirmwareException();
+        }
+        final String nvramPath = routerFirmware.nvramPath;
+        if (TextUtils.isEmpty(nvramPath)) {
+            throw new UnknownRouterFirmwareException("Unknwon NVRAM path for firmware");
+        }
+
         final String[] nvramShow = SSHUtils.getManualProperty(ctx, router,
-                globalPreferences, "/usr/sbin/nvram show" + (grep.isEmpty() ? "" : (" | grep -E \"" +
+                globalPreferences, nvramPath + " show" + (grep.isEmpty() ? "" : (" | grep -E \"" +
                         Joiner.on("|").join(grep) + "\"")));
 
         final String[] varsToFix = new String[MULTI_OUTPUT_NVRAM_VARS.size()];
         int i = 0;
         for (final String multiOutputNvramVar : MULTI_OUTPUT_NVRAM_VARS) {
             final String[] completeValue = getMultiOutput ?
-                    SSHUtils.getManualProperty(ctx, router, globalPreferences, "/usr/sbin/nvram get " + multiOutputNvramVar) : null;
+                    SSHUtils.getManualProperty(ctx, router, globalPreferences,
+                            nvramPath + " get " + multiOutputNvramVar) : null;
             varsToFix[i++] = (multiOutputNvramVar + "=" + (completeValue != null ? JOINER_CARRIAGE_RETURN.join(completeValue) : EMPTY_STRING));
         }
 

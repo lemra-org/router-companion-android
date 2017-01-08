@@ -1102,12 +1102,12 @@ public class Router implements Serializable {
 //    public static final int RouterFirmware_TOMATO = 6;
 
     public enum RouterFirmware {
-        DDWRT("DD-WRT", getTabsForDDWRT()),
-        OPENWRT("OpenWrt (Beta)", null /*getTabsForOpenWRT()*/), //TODO Not supported as yet
-        TOMATO("Tomato (Beta)", getTabsForDDWRT()), //TODO Same tabs as DD-WRT (for now)
-        DEMO("Demo", getTabsForDDWRT()),
-        AUTO("Auto-detect", null),
-        UNKNOWN("???", null);
+        DDWRT("DD-WRT", getTabsForDDWRT(), "/usr/sbin/nvram"),
+        OPENWRT("OpenWrt (Beta)", null /*getTabsForOpenWRT()*/, null), //TODO Not supported as yet
+        TOMATO("Tomato (Beta)", getTabsForDDWRT(), "/bin/nvram"), //TODO Same tabs as DD-WRT (for now)
+        DEMO("Demo", getTabsForDDWRT(), null),
+        AUTO("Auto-detect", null, null),
+        UNKNOWN("???", null, null);
 
         @NonNull
         public final String displayName;
@@ -1115,10 +1115,15 @@ public class Router implements Serializable {
         @Nullable
         public final ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> fragmentTabs;
 
+        @Nullable
+        public final String nvramPath;
+
         RouterFirmware(@NonNull final String displayName,
-                       ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> fragmentTabs) {
+                       ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> fragmentTabs,
+                       final String nvramPath) {
             this.displayName = displayName;
             this.fragmentTabs = fragmentTabs;
+            this.nvramPath = nvramPath;
         }
 
         @NonNull
