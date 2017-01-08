@@ -989,5 +989,10 @@ public final class Utils {
         return null;
     }
 
+    @NonNull
+    public static SharedPreferences getGlobalSharedPreferences(@NonNull final Context ctx) {
+        return ctx.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE);
+    }
+
 
 }

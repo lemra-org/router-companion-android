@@ -1089,12 +1089,12 @@ public class Router implements Serializable {
         PUBLIC_PRIVATE_KEY;
     }
 
-    public static final int RouterFirmware_DDWRT = 1;
-    public static final int RouterFirmware_OPENWRT = 2;
-    public static final int RouterFirmware_DEMO = 3;
-    public static final int RouterFirmware_UNKNOWN = 4;
-    public static final int RouterFirmware_AUTO = 5;
-    public static final int RouterFirmware_TOMATO = 6;
+//    public static final int RouterFirmware_DDWRT = 1;
+//    public static final int RouterFirmware_OPENWRT = 2;
+//    public static final int RouterFirmware_DEMO = 3;
+//    public static final int RouterFirmware_UNKNOWN = 4;
+//    public static final int RouterFirmware_AUTO = 5;
+//    public static final int RouterFirmware_TOMATO = 6;
 
     public enum RouterFirmware {
         DDWRT("DD-WRT"),
