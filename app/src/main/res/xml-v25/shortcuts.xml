@@ -9,8 +9,8 @@
         android:shortcutDisabledMessage="@string/new_router_disabled">
         <!-- FIXME Change fo other flavors (Lite, ...) -->
         <intent
-            android:action="org.rm3l.router_companion.OPEN_ADD_ROUTER_WIZARD"
-            android:targetPackage="org.rm3l.router_companion"
+            android:action="org.rm3l.ddwrt.OPEN_ADD_ROUTER_WIZARD"
+            android:targetPackage="org.rm3l.ddwrt"
             android:targetClass="org.rm3l.router_companion.mgmt.RouterManagementActivity">
             <extra android:name="CLOSE_ON_ACTION_DONE" android:value="true" />
         </intent>
