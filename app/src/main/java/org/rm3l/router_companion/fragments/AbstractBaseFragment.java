@@ -161,6 +161,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment
         //Demo (same as DD-WRT, actually)
         allTabs.put(RouterFirmware.DEMO, tabsForDDWRT);
 
+        //Tomato (same as DD-WRT, actually)
+        allTabs.put(RouterFirmware.TOMATO, tabsForDDWRT);
+
         //OpenWRT - TODO
         allTabs.put(RouterFirmware.OPENWRT, getTabsForOpenWRT());
     }
