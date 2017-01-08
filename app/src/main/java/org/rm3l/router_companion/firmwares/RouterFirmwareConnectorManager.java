@@ -17,12 +17,12 @@ import org.rm3l.router_companion.resources.conn.Router.RouterFirmware;
  */
 public final class RouterFirmwareConnectorManager {
 
-    private static final LoadingCache<RouterFirmware, RouterFirmwareConnector> CONNECTORS =
+    private static final LoadingCache<RouterFirmware, AbstractRouterFirmwareConnector> CONNECTORS =
             CacheBuilder.newBuilder()
             .maximumSize(RouterFirmware.values().length)
-            .build(new CacheLoader<RouterFirmware, RouterFirmwareConnector>() {
+            .build(new CacheLoader<RouterFirmware, AbstractRouterFirmwareConnector>() {
                 @Override
-                public RouterFirmwareConnector load(@NonNull RouterFirmware firmware) throws Exception {
+                public AbstractRouterFirmwareConnector load(@NonNull RouterFirmware firmware) throws Exception {
                     switch (firmware) {
                         case DEMO:
                             return new DemoFirmwareConnector();
@@ -46,7 +46,7 @@ public final class RouterFirmwareConnectorManager {
     private RouterFirmwareConnectorManager() {
     }
 
-    public static RouterFirmwareConnector getConnector(@NonNull final Router router) {
+    public static AbstractRouterFirmwareConnector getConnector(@NonNull final Router router) {
         final RouterFirmware routerFirmware = router.getRouterFirmware();
         if (routerFirmware == null) {
             throw new IllegalArgumentException("routerFirmware is NULL");
@@ -54,11 +54,11 @@ public final class RouterFirmwareConnectorManager {
         return getConnector(routerFirmware);
     }
 
-    public static RouterFirmwareConnector getConnector(@NonNull final RouterFirmware routerFirmware) {
+    public static AbstractRouterFirmwareConnector getConnector(@NonNull final RouterFirmware routerFirmware) {
         return CONNECTORS.getUnchecked(routerFirmware);
     }
 
-    public static RouterFirmwareConnector getConnector(@NonNull final String routerFirmware) {
+    public static AbstractRouterFirmwareConnector getConnector(@NonNull final String routerFirmware) {
         return getConnector(RouterFirmware.valueOf(routerFirmware));
     }
 }
