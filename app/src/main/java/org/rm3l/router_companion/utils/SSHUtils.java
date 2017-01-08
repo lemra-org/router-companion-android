@@ -42,6 +42,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.rm3l.router_companion.BuildConfig;
 import org.rm3l.router_companion.actions.RouterAction;
 import org.rm3l.router_companion.actions.RouterStreamActionListener;
+import org.rm3l.router_companion.exceptions.UnknownRouterFirmwareException;
 import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
@@ -201,6 +202,11 @@ public final class SSHUtils {
                 }
             } else if (Utils.isDemoRouter(router)) {
                 router.setRouterFirmware(RouterFirmware.DEMO);
+            }
+
+            if (RouterFirmware.UNKNOWN.equals(router.getRouterFirmware())) {
+                throw new UnknownRouterFirmwareException(
+                        "Could not detect router firmware. Please go back and pick one from the list.");
             }
 
             try {

@@ -32,6 +32,7 @@ import org.codepond.wizardroid.Wizard;
 import org.codepond.wizardroid.WizardStep;
 import org.rm3l.router_companion.R;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
+import org.rm3l.router_companion.exceptions.UnknownRouterFirmwareException;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.router_companion.mgmt.register.ManageRouterWizard;
@@ -609,10 +610,17 @@ public class ReviewStep extends MaterialWizardStep {
             Router router = result.getResult();
             if (e != null) {
                 final Throwable rootCause = Throwables.getRootCause(e);
+                final String messagePrefix;
+                if (e instanceof UnknownRouterFirmwareException ||
+                        rootCause instanceof UnknownRouterFirmwareException) {
+                    messagePrefix = "";
+                } else {
+                    messagePrefix = (getString(R.string.router_add_connection_unsuccessful) + ": ");
+                }
                 SnackbarUtils.buildSnackbar(getContext(),
                         getView(), Color.RED,
-                        getString(R.string.router_add_connection_unsuccessful) +
-                                ": " + (rootCause != null ? rootCause.getMessage() : e.getMessage()),
+                        messagePrefix
+                                + (rootCause != null ? rootCause.getMessage() : e.getMessage()),
                         Color.WHITE,
                         null, Color.YELLOW,
                         Snackbar.LENGTH_LONG, null, null, true);
