@@ -67,9 +67,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <color name="lightTheme_divider_text">#B6B6B6</color>
     <color name="lightTheme_windowBgColor">#FAFAFA</color>
 
-    <color name="darkTheme_windowBgColor">#607D8B</color>
-    <color name="darkTheme_primary">#455A64</color>
-    <color name="darkTheme_primary_dark">#10314D</color>
+    <color name="darkTheme_windowBgColor">#303030</color>
+    <color name="darkTheme_primary">#607D8B</color>
+    <color name="darkTheme_primary_dark">#455A64</color>
     <color name="darkTheme_primary_light">#CFD8DC</color>
     <color name="darkTheme_text_icons">#212121</color>
     <color name="darkTheme_accent">#4CAF50</color>
