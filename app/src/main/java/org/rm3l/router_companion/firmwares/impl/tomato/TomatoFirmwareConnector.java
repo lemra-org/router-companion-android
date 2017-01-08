@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector;
+import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
+import org.rm3l.router_companion.firmwares.impl.tomato.tile_data_workers.dashboard.network.NetworkTopologyMapTileWorker;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.SSHUtils;
@@ -18,6 +20,13 @@ import org.rm3l.router_companion.utils.Utils;
 public class TomatoFirmwareConnector extends AbstractRouterFirmwareConnector {
 
     public static final String MODEL = "t_model_name";
+
+    @Override
+    public NVRAMInfo getDataForNetworkTopologyMapTile(@NonNull Context context,
+                                                         @NonNull Router router,
+                                                         @Nullable RemoteDataRetrievalListener dataRetrievalListener) throws Exception {
+        return NetworkTopologyMapTileWorker.getDataForNetworkTopologyMapTile(context, router, dataRetrievalListener);
+    }
 
     @Override
     @Nullable

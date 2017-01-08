@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.Patterns;
@@ -35,6 +36,8 @@ import org.rm3l.router_companion.R;
 import org.rm3l.router_companion.actions.activity.SpeedTestActivity;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
+import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
 import org.rm3l.router_companion.main.DDWRTMainActivity;
 import org.rm3l.router_companion.resources.PublicIPInfo;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
@@ -45,6 +48,7 @@ import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 
+import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -111,7 +115,6 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
             }
         };
 
-
         final FloatingActionButton speedtestFab =
                 (FloatingActionButton) layout.findViewById(R.id.tile_network_map_speedtest);
 
@@ -171,128 +174,48 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                     mTempRouterUuid = UUID.randomUUID().toString();
                     mRouterCopy = new Router(mParentFragmentActivity, mRouter).setUuid(mTempRouterUuid);
 
-                    final NVRAMInfo nvramInfo = new NVRAMInfo();
+                    updateProgressBarViewSeparator(20);
 
-                    NVRAMInfo nvramInfoTmp = null;
-                    try {
-                        updateProgressBarViewSeparator(20);
-                        if (isDemoRouter(mRouter)) {
-                            nvramInfoTmp = new NVRAMInfo()
-                                    .setProperty(NVRAMInfo.ROUTER_NAME, "Demo Router (Test Data)")
-                                    .setProperty(NVRAMInfo.WAN_IPADDR, "1.2.3.4")
-                                    .setProperty(NVRAMInfo.LAN_IPADDR, "192.168.78.254")
-                                    .setProperty(NVRAMInfo.OPENVPNCL_ENABLE,
-                                            Integer.toString(new Random().nextInt(2)))
-                                    .setProperty(NVRAMInfo.OPENVPNCL_REMOTEIP, "my.remote.vpn.servi.ce")
-                                    .setProperty(NVRAMInfo.OPENVPNCL_REMOTEPORT, "1234");
-                        } else {
-                            nvramInfoTmp =
-                                    SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                                            mGlobalPreferences,
-                                            NVRAMInfo.ROUTER_NAME,
-                                            NVRAMInfo.WAN_IPADDR,
-                                            NVRAMInfo.LAN_IPADDR,
-                                            NVRAMInfo.OPENVPNCL_ENABLE,
-                                            NVRAMInfo.OPENVPNCL_REMOTEIP,
-                                            NVRAMInfo.OPENVPNCL_REMOTEPORT);
-                        }
-                    } finally {
-                        if (nvramInfoTmp != null) {
-                            nvramInfo.putAll(nvramInfoTmp);
-                        }
-                        updateProgressBarViewSeparator(45);
+                    final NVRAMInfo nvramInfo = RouterFirmwareConnectorManager.getConnector(mRouterCopy)
+                            .getDataForNetworkTopologyMapTile(mParentFragmentActivity, mRouter,
+                                    new RemoteDataRetrievalListener() {
+                                        @Override
+                                        public void onProgressUpdate(int progress) {
+                                            updateProgressBarViewSeparator(progress);
+                                        }
+
+                                        @Override
+                                        public void doRegardlessOfStatus() {
+                                            runBgServiceTaskAsync();
+                                        }
+                                    });
+                    if (nvramInfo == null) {
+                        throw new DDWRTNoDataException();
+                    }
+
+                    final Properties nvramInfoData = nvramInfo.getData();
+                    if (nvramInfoData != null) {
                         //Active clients
-                        if (isDemoRouter(mRouter)) {
-                            nbActiveClients.set(new Random().nextInt(20));
-                        } else {
-                            final String[] activeClients = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
-                                    "arp -a 2>/dev/null");
-                            if (activeClients != null) {
-                                nbActiveClients.set(activeClients.length);
+                        if (nvramInfoData.containsKey("NB_ACTIVE_CLIENTS")) {
+                            final String activeClientsProperty =
+                                    (String) nvramInfoData.remove("NB_ACTIVE_CLIENTS");
+                            if (!TextUtils.isEmpty(activeClientsProperty)) {
+                                nbActiveClients.set(Integer.parseInt(activeClientsProperty));
                             }
                         }
 
-                        updateProgressBarViewSeparator(60);
                         //Active DHCP Leases
-                        if (isDemoRouter(mRouter)) {
-                            nbDhcpLeases.set(new Random().nextInt(30));
-                        } else {
-                            final String[] activeDhcpLeases = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
-                                    "cat /tmp/dnsmasq.leases 2>/dev/null || echo \"N_A\"\"");
-                            if (activeDhcpLeases != null) {
-                                if (activeDhcpLeases.length == 0 ||
-                                        !"N_A".equals(activeDhcpLeases[0])) {
-                                    nbDhcpLeases.set(activeDhcpLeases.length);
-                                } else {
-                                    //File does not exist
-                                    nbDhcpLeases.set(-1);
-                                }
+                        if (nvramInfoData.containsKey("NB_DHCP_LEASES")) {
+                            final String dhcpLeasesProperty =
+                                    (String) nvramInfoData.remove("NB_DHCP_LEASES");
+                            if (!TextUtils.isEmpty(dhcpLeasesProperty)) {
+                                nbDhcpLeases.set(Integer.parseInt(dhcpLeasesProperty));
                             }
-                        }
-
-                        updateProgressBarViewSeparator(85);
-
-                        try {
-
-                            if (isDemoRouter(mRouter)) {
-                                final long nbRunsLoaderModulo = (nbRunsLoader % 5);
-                                if (nbRunsLoaderModulo == 0) {
-                                    //nbRunsLoader = 5k
-                                    nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP,
-                                            "52." + (1 + new Random().nextInt(252)) + "." +
-                                                    (1 + new Random().nextInt(252))
-                                                    + "." +
-                                                    (1 + new Random().nextInt(252)));
-                                } else if (nbRunsLoaderModulo == 1) {
-                                    //nbRunsLoader = 5k + 1
-                                    nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
-                                } else if (nbRunsLoaderModulo == 2) {
-                                    //nbRunsLoader = 5k + 2
-                                    nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
-                                }
-                            } else {
-                                //Check actual connections to the outside from the router
-                                final CharSequence applicationName = Utils.getApplicationName(mParentFragmentActivity);
-                                final String[] wanPublicIpCmdStatus = SSHUtils.getManualProperty(mParentFragmentActivity,
-                                        mRouterCopy, mGlobalPreferences,
-//                                        "echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazip.com 80"
-                                        String.format("echo -e \"" +
-                                                        "GET / HTTP/1.1\\r\\n" +
-                                                        "Host:%s\\r\\n" +
-                                                        "User-Agent:%s/%s\\r\\n\" " +
-                                                        "| /usr/bin/nc %s %d",
-                                                PublicIPInfo.ICANHAZIP_HOST,
-                                                applicationName != null ? applicationName : BuildConfig.APPLICATION_ID,
-                                                BuildConfig.VERSION_NAME,
-                                                PublicIPInfo.ICANHAZIP_HOST,
-                                                PublicIPInfo.ICANHAZIP_PORT));
-                                if (wanPublicIpCmdStatus == null || wanPublicIpCmdStatus.length == 0) {
-                                    nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
-                                } else {
-                                    final String wanPublicIp = wanPublicIpCmdStatus[wanPublicIpCmdStatus.length - 1]
-                                            .trim();
-                                    if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
-                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
-
-                                        PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
-                                                mRouterCopy, mParentFragmentPreferences,
-                                                wanPublicIpCmdStatus,
-                                                nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
-
-                                    } else {
-                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
-                                    }
-                                }
-                            }
-                        } catch (final Exception e) {
-                            e.printStackTrace();
-                            nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
-                        } finally {
-                            runBgServiceTaskAsync();
                         }
                     }
 
                     return nvramInfo;
+
                 } catch (@NonNull final Exception e) {
                     e.printStackTrace();
                     return new NVRAMInfo().setException(e);

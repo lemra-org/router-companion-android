@@ -86,6 +86,7 @@ import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.exceptions.DDWRTDataSyncOnMobileNetworkNotAllowedException;
 import org.rm3l.router_companion.feedback.maoni.MaoniFeedbackHandler;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
+import org.rm3l.router_companion.resources.PublicIPInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
@@ -992,6 +993,21 @@ public final class Utils {
     @NonNull
     public static SharedPreferences getGlobalSharedPreferences(@NonNull final Context ctx) {
         return ctx.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE);
+    }
+
+    public static String getCommandForInternetIPResolution(Context context) {
+        final CharSequence applicationName = Utils.getApplicationName(context);
+//                                        "echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazip.com 80"
+        return String.format("echo -e \"" +
+                        "GET / HTTP/1.1\\r\\n" +
+                        "Host:%s\\r\\n" +
+                        "User-Agent:%s/%s\\r\\n\" " +
+                        "| /usr/bin/nc %s %d",
+                PublicIPInfo.ICANHAZIP_HOST,
+                applicationName != null ? applicationName : BuildConfig.APPLICATION_ID,
+                BuildConfig.VERSION_NAME,
+                PublicIPInfo.ICANHAZIP_HOST,
+                PublicIPInfo.ICANHAZIP_PORT);
     }
 
 

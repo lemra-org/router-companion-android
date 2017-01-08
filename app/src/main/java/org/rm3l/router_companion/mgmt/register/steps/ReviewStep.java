@@ -396,37 +396,41 @@ public class ReviewStep extends MaterialWizardStep {
                 connectionProtocol != null ?
                         Router.RouterConnectionProtocol.valueOf(connectionProtocol) :
                         Router.RouterConnectionProtocol.SSH);
-        int fwPositionInStringArrayValues = -1;
-        final String[] fwTitlesArray = context.getResources()
-                .getStringArray(R.array.router_firmwares_array);
-        for (int i = 0, fwTitlesArrayLength = fwTitlesArray.length; i < fwTitlesArrayLength; i++) {
-            final String fwTitle = fwTitlesArray[i];
-            if (nullToEmpty(routerFirmware).equals(fwTitle)) {
-                fwPositionInStringArrayValues = i;
-                break;
-            }
-        }
-        Crashlytics.log(Log.DEBUG, TAG, "fwPositionInStringArrayValues=" +
-                fwPositionInStringArrayValues + ", for '" + routerFirmware + "'");
-        if (fwPositionInStringArrayValues < 0) {
-            //TODO Unknown - should we try to guess?
-            Crashlytics.logException(
-                    new DDWRTCompanionException("fwPositionInStringArrayValues < 0"));
-            router.setRouterFirmware(Router.RouterFirmware.AUTO);
+        if (Utils.isDemoRouter(router)) {
+            router.setRouterFirmware(Router.RouterFirmware.DEMO);
         } else {
-            final String[] fwStringArray = context.getResources()
-                    .getStringArray(R.array.router_firmwares_array_values);
-            if (fwPositionInStringArrayValues < fwStringArray.length) {
-                final String fwSelection = fwStringArray[fwPositionInStringArrayValues];
-                Crashlytics.log(Log.DEBUG, TAG, "fwSelection=" +
-                        fwSelection + ", for '" + routerFirmware + "'");
-                if ("auto".equals(fwSelection)) {
-                    router.setRouterFirmware(Router.RouterFirmware.AUTO);
-                } else {
-                    router.setRouterFirmware(fwSelection);
+            int fwPositionInStringArrayValues = -1;
+            final String[] fwTitlesArray = context.getResources()
+                    .getStringArray(R.array.router_firmwares_array);
+            for (int i = 0, fwTitlesArrayLength = fwTitlesArray.length; i < fwTitlesArrayLength; i++) {
+                final String fwTitle = fwTitlesArray[i];
+                if (nullToEmpty(routerFirmware).equals(fwTitle)) {
+                    fwPositionInStringArrayValues = i;
+                    break;
                 }
-            } else {
+            }
+            Crashlytics.log(Log.DEBUG, TAG, "fwPositionInStringArrayValues=" +
+                    fwPositionInStringArrayValues + ", for '" + routerFirmware + "'");
+            if (fwPositionInStringArrayValues < 0) {
+                //TODO Unknown - should we try to guess?
+                Crashlytics.logException(
+                        new DDWRTCompanionException("fwPositionInStringArrayValues < 0"));
                 router.setRouterFirmware(Router.RouterFirmware.AUTO);
+            } else {
+                final String[] fwStringArray = context.getResources()
+                        .getStringArray(R.array.router_firmwares_array_values);
+                if (fwPositionInStringArrayValues < fwStringArray.length) {
+                    final String fwSelection = fwStringArray[fwPositionInStringArrayValues];
+                    Crashlytics.log(Log.DEBUG, TAG, "fwSelection=" +
+                            fwSelection + ", for '" + routerFirmware + "'");
+                    if ("auto".equals(fwSelection)) {
+                        router.setRouterFirmware(Router.RouterFirmware.AUTO);
+                    } else {
+                        router.setRouterFirmware(fwSelection);
+                    }
+                } else {
+                    router.setRouterFirmware(Router.RouterFirmware.AUTO);
+                }
             }
         }
 

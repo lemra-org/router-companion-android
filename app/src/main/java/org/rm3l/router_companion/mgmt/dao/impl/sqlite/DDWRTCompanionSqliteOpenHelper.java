@@ -33,6 +33,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
+import org.rm3l.router_companion.BuildConfig;
 import org.rm3l.router_companion.resources.conn.Router;
 
 import java.util.Collection;
@@ -199,7 +200,7 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
      update DATABASE_TABLES_TO_CREATE (for newer installs), and
      add an entry into DATABASE_UPGRADES map
     */
-    private static final int DATABASE_VERSION = 20;
+    private static final int DATABASE_VERSION = 22;
 
     //TODO Don't forget to add new SQL here if a new table is to be created!
     private static final String[] DATABASE_TABLES_TO_CREATE = new String[] {
@@ -217,13 +218,13 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
         DATABASE_UPGRADES.put(2,
                 String.format("ALTER TABLE %s ADD COLUMN %s TEXT DEFAULT NULL; ",
                         TABLE_ROUTERS, ROUTER_FIRMWARE));
-        DATABASE_UPGRADES.put(2,
-                String.format("UPDATE %s SET %s=\"%s\";",
-                        TABLE_ROUTERS, ROUTER_FIRMWARE, Router.RouterFirmware.DDWRT));
+//        DATABASE_UPGRADES.put(2,
+//                String.format("UPDATE %s SET %s=\"%s\";",
+//                        TABLE_ROUTERS, ROUTER_FIRMWARE, Router.RouterFirmware.DDWRT));
 
         //V4: Add Router Firmware: Fix following 3.0.0 update
-        DATABASE_UPGRADES.put(4, String.format("UPDATE %s SET %s=\"%s\";",
-                TABLE_ROUTERS, ROUTER_FIRMWARE, Router.RouterFirmware.DDWRT));
+//        DATABASE_UPGRADES.put(4, String.format("UPDATE %s SET %s=\"%s\";",
+//                TABLE_ROUTERS, ROUTER_FIRMWARE, Router.RouterFirmware.DDWRT));
 
         //V6: Add Router Firmware: Add DB for WAN Traffic Data
         DATABASE_UPGRADES.put(6, TABLE_WAN_TRAFFIC_CREATE);
@@ -268,6 +269,11 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
         DATABASE_UPGRADES.put(20,
                 String.format("ALTER TABLE %s ADD COLUMN %s INTEGER NOT NULL DEFAULT 0 CHECK (%s IN (0,1)); ",
                         TABLE_ROUTERS, ARCHIVED, ARCHIVED));
+
+        //Set correct value for Demo Routers
+        DATABASE_UPGRADES.put(22,
+                String.format("UPDATE %s SET %s=\"DEMO\" WHERE %s=\"%s\"; ",
+                        TABLE_ROUTERS, ROUTER_FIRMWARE, ROUTER_IP, BuildConfig.APPLICATION_ID));
     }
 
     public DDWRTCompanionSqliteOpenHelper(Context context) {

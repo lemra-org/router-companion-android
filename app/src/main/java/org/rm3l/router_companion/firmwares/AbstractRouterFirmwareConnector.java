@@ -30,6 +30,12 @@ public abstract class AbstractRouterFirmwareConnector {
         return routerModel;
     }
 
+    public abstract NVRAMInfo getDataForNetworkTopologyMapTile(@NonNull Context context,
+                                                                  @NonNull Router router,
+                                                                  @Nullable RemoteDataRetrievalListener dataRetrievalListener)
+            throws Exception;
+
+
     @Nullable
     protected abstract String goGetRouterModel(@NonNull Context context, @NonNull Router router)
             throws Exception;
