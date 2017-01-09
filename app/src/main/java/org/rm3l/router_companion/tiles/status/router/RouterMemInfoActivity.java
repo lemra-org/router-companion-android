@@ -86,33 +86,6 @@ public class RouterMemInfoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        final boolean themeLight = ColorUtils.isThemeLight(this);
-        if (themeLight) {
-            //Light
-            setTheme(R.style.AppThemeLight);
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(ContextCompat.getColor(this,
-//                            android.R.color.white));
-        } else {
-            //Default is Dark
-            setTheme(R.style.AppThemeDark);
-        }
-
-        setContentView(R.layout.tile_status_router_meminfo);
-
-        if (themeLight) {
-            final Resources resources = getResources();
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(
-//                            ContextCompat.getColor(this,
-//                                    android.R.color.white));
-//            ((TextView) findViewById(R.id.tile_status_router_meminfo))
-//                    .setTextColor(
-//                            ContextCompat.getColor(this,
-//                                    R.color.black));
-        }
-
         final Intent intent = getIntent();
         mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
 
@@ -124,6 +97,21 @@ public class RouterMemInfoActivity extends AppCompatActivity {
             finish();
             return;
         }
+        ColorUtils.setAppTheme(this, mRouter.getRouterFirmware(), false);
+
+//        final boolean themeLight = ColorUtils.isThemeLight(this);
+//        if (themeLight) {
+//            //Light
+//            setTheme(R.style.AppThemeLight);
+////            getWindow().getDecorView()
+////                    .setBackgroundColor(ContextCompat.getColor(this,
+////                            android.R.color.white));
+//        } else {
+//            //Default is Dark
+//            setTheme(R.style.AppThemeDark);
+//        }
+
+        setContentView(R.layout.tile_status_router_meminfo);
 
         mToolbar = (Toolbar) findViewById(R.id.tile_status_router_meminfo_view_toolbar);
         if (mToolbar != null) {

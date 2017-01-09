@@ -84,28 +84,6 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        final boolean themeLight = ColorUtils.isThemeLight(this);
-        if (themeLight) {
-            //Light
-            setTheme(R.style.AppThemeLight);
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(ContextCompat.getColor(this,
-//                            android.R.color.white));
-        } else {
-            //Default is Dark
-            setTheme(R.style.AppThemeDark);
-        }
-
-        setContentView(R.layout.activity_wol_daemon_settings);
-
-        if (themeLight) {
-            final Resources resources = getResources();
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(
-//                            ContextCompat.getColor(this, android.R.color.white));
-        }
-
         final Intent intent = getIntent();
         mNvramInfo = (NVRAMInfo) intent.getSerializableExtra(WOL_DAEMON_NVRAMINFO);
 
@@ -129,6 +107,22 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
             finish();
             return;
         }
+
+        ColorUtils.setAppTheme(this, router.getRouterFirmware(), false);
+
+        final boolean themeLight = ColorUtils.isThemeLight(this);
+//        if (themeLight) {
+//            //Light
+//            setTheme(R.style.AppThemeLight);
+////            getWindow().getDecorView()
+////                    .setBackgroundColor(ContextCompat.getColor(this,
+////                            android.R.color.white));
+//        } else {
+//            //Default is Dark
+//            setTheme(R.style.AppThemeDark);
+//        }
+
+        setContentView(R.layout.activity_wol_daemon_settings);
 
         mToolbar = (Toolbar) findViewById(R.id.wol_daemon_settings_toolbar);
         if (mToolbar != null) {

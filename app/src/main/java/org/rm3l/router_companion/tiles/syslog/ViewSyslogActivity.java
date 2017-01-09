@@ -131,20 +131,6 @@ public class ViewSyslogActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        this.mGlobalPreferences = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-
-        final boolean themeLight = ColorUtils.isThemeLight(this);
-        if (themeLight) {
-            //Light
-            setTheme(R.style.AppThemeLight);
-        } else {
-            //Default is Dark
-            setTheme(R.style.AppThemeDark);
-        }
-
-        setContentView(R.layout.tile_status_syslog_full);
-
         final Intent intent = getIntent();
         mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
 
@@ -156,6 +142,21 @@ public class ViewSyslogActivity extends AppCompatActivity
             finish();
             return;
         }
+        this.mGlobalPreferences = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+
+//        final boolean themeLight = ColorUtils.isThemeLight(this);
+        ColorUtils.setAppTheme(this, mRouter.getRouterFirmware(), false);
+//        if (themeLight) {
+//            //Light
+//            setTheme(R.style.AppThemeLight);
+//        } else {
+//            //Default is Dark
+//            setTheme(R.style.AppThemeDark);
+//        }
+
+        setContentView(R.layout.tile_status_syslog_full);
+
+
 
         mFullLogsRetrievalCommand = intent.getStringExtra(FULL_LOGS_RETRIEVAL_COMMAND);
 

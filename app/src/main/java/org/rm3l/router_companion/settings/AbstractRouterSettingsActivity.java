@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.conn.Router;
+import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
 
 import java.util.Locale;
@@ -86,6 +87,8 @@ public abstract class AbstractRouterSettingsActivity extends AbstractDDWRTSettin
 
         //Need to call super.onCreate prior to calling finish()
         super.onCreate(savedInstanceState);
+
+        ColorUtils.setAppTheme(this, mRouter.getRouterFirmware(), false);
 
         if (doFinish) {
             finish();

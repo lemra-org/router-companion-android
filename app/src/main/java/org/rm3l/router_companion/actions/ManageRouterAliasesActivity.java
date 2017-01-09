@@ -160,21 +160,6 @@ public class ManageRouterAliasesActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mIsThemeLight = ColorUtils.isThemeLight(this);
-        if (mIsThemeLight) {
-            //Light
-            setTheme(R.style.AppThemeLight);
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(ContextCompat.getColor(this,
-//                            R.color.GhostWhite));
-        } else {
-            //Default is Dark
-            setTheme(R.style.AppThemeDark);
-        }
-
-        setContentView(R.layout.activity_manage_router_aliases);
-
         final Intent intent = getIntent();
 
         final String routerSelected =
@@ -188,6 +173,24 @@ public class ManageRouterAliasesActivity
             finish();
             return;
         }
+
+        mIsThemeLight = ColorUtils.isThemeLight(this);
+
+        ColorUtils.setAppTheme(this, mRouter.getRouterFirmware(), false);
+//        if (mIsThemeLight) {
+//            //Light
+//            setTheme(R.style.AppThemeLight);
+////            getWindow().getDecorView()
+////                    .setBackgroundColor(ContextCompat.getColor(this,
+////                            R.color.GhostWhite));
+//        } else {
+//            //Default is Dark
+//            setTheme(R.style.AppThemeDark);
+//        }
+
+        setContentView(R.layout.activity_manage_router_aliases);
+
+
 
         handleIntent(getIntent());
 
@@ -1202,31 +1205,36 @@ public class ManageRouterAliasesActivity
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-            final FragmentActivity fragmentActivity = getActivity();
-
-            if (ColorUtils.isThemeLight(fragmentActivity)) {
-                //Light
-                fragmentActivity.setTheme(R.style.AppThemeLight);
-//                fragmentActivity.getWindow().getDecorView()
-//                        .setBackgroundColor(ContextCompat.getColor(fragmentActivity,
-//                                android.R.color.white));
-            } else {
-                //Default is Dark
-                fragmentActivity.setTheme(R.style.AppThemeDark);
-            }
-
             final Bundle arguments = getArguments();
             this.mMacAddr = arguments.getCharSequence(MAC_ADDRESS);
             this.mAlias = arguments.getCharSequence(ALIAS);
 
+            final FragmentActivity fragmentActivity = getActivity();
+
             final String routerUuid = arguments.getString(RouterManagementActivity.ROUTER_SELECTED);
-            if (isNullOrEmpty(routerUuid)) {
+            final Router router;
+            if (isNullOrEmpty(routerUuid) ||
+                    (router = RouterManagementActivity.getDao(fragmentActivity).getRouter(routerUuid)) == null) {
                 Toast.makeText(fragmentActivity, "Invalid Router", Toast.LENGTH_SHORT).show();
                 dismiss();
                 return;
             }
+
             routerPreferences = fragmentActivity
                     .getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
+
+            ColorUtils.setAppTheme(fragmentActivity, router.getRouterFirmware(), false);
+
+//            if (ColorUtils.isThemeLight(fragmentActivity)) {
+//                //Light
+//                fragmentActivity.setTheme(R.style.AppThemeLight);
+////                fragmentActivity.getWindow().getDecorView()
+////                        .setBackgroundColor(ContextCompat.getColor(fragmentActivity,
+////                                android.R.color.white));
+//            } else {
+//                //Default is Dark
+//                fragmentActivity.setTheme(R.style.AppThemeDark);
+//            }
         }
 
         @NonNull

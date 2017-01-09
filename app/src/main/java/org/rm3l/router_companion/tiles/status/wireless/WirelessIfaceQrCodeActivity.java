@@ -119,32 +119,36 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final Intent intent = getIntent();
+        mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+        final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(this);
+        final Router router;
+        if ((router = dao.getRouter(mRouterUuid)) == null) {
+            Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        ColorUtils.setAppTheme(this, router.getRouterFirmware(), false);
 
         final boolean themeLight = ColorUtils.isThemeLight(this);
-        if (themeLight) {
-            //Light
-            setTheme(R.style.AppThemeLight);
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(ContextCompat.getColor(this,
-//                            android.R.color.white));
-        } else {
-            //Default is Dark
-            setTheme(R.style.AppThemeDark);
-        }
+//        if (themeLight) {
+//            //Light
+//            setTheme(R.style.AppThemeLight);
+////            getWindow().getDecorView()
+////                    .setBackgroundColor(ContextCompat.getColor(this,
+////                            android.R.color.white));
+//        } else {
+//            //Default is Dark
+//            setTheme(R.style.AppThemeDark);
+//        }
 
         setContentView(R.layout.tile_status_wireless_iface_qrcode);
-
-        if (themeLight) {
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(
-//                            ContextCompat.getColor(this, android.R.color.white));
-        }
 
         mInterstitialAd = AdUtils.requestNewInterstitial(this,
                 R.string.interstitial_ad_unit_id_wireless_network_generate_qr_code);
 
-        final Intent intent = getIntent();
-        mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+
         mSsid = Strings.nullToEmpty(intent.getStringExtra(WifiSharingActivity.SSID));
         final String wifiEncryptionType = intent.getStringExtra(WifiSharingActivity.ENC_TYPE);
         final String wifiPassword = intent.getStringExtra(WifiSharingActivity.PWD);
@@ -159,13 +163,6 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
 
         mTitle = ("WiFi QR Code: " + mSsid);
 
-        final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(this);
-        final Router router;
-        if ((router = dao.getRouter(mRouterUuid)) == null) {
-            Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
 
         mToolbar = (Toolbar) findViewById(R.id.tile_status_wireless_iface_qrcode_window_toolbar);
         if (mToolbar != null) {

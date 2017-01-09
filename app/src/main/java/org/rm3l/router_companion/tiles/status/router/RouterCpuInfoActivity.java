@@ -87,32 +87,6 @@ public class RouterCpuInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final boolean themeLight = ColorUtils.isThemeLight(this);
-        if (themeLight) {
-            //Light
-            setTheme(R.style.AppThemeLight);
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(ContextCompat.getColor(this,
-//                            android.R.color.white));
-        } else {
-            //Default is Dark
-            setTheme(R.style.AppThemeDark);
-        }
-
-        setContentView(R.layout.tile_status_router_cpuinfo);
-
-        if (themeLight) {
-            final Resources resources = getResources();
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(
-//                            ContextCompat.getColor(this,
-//                                    android.R.color.white));
-//            ((TextView) findViewById(R.id.tile_status_router_cpuinfo))
-//                    .setTextColor(
-//                            ContextCompat.getColor(this,
-//                                    R.color.black));
-        }
-
         final Intent intent = getIntent();
         mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
 
@@ -124,6 +98,22 @@ public class RouterCpuInfoActivity extends AppCompatActivity {
             finish();
             return;
         }
+
+        ColorUtils.setAppTheme(this, mRouter.getRouterFirmware(), false);
+
+        final boolean themeLight = ColorUtils.isThemeLight(this);
+//        if (themeLight) {
+//            //Light
+//            setTheme(R.style.AppThemeLight);
+////            getWindow().getDecorView()
+////                    .setBackgroundColor(ContextCompat.getColor(this,
+////                            android.R.color.white));
+//        } else {
+//            //Default is Dark
+//            setTheme(R.style.AppThemeDark);
+//        }
+
+        setContentView(R.layout.tile_status_router_cpuinfo);
 
         mToolbar = (Toolbar) findViewById(R.id.tile_status_router_cpuinfo_view_toolbar);
         if (mToolbar != null) {

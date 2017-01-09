@@ -301,21 +301,6 @@ public class SpeedTestActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mIsThemeLight = ColorUtils.isThemeLight(this);
-        if (mIsThemeLight) {
-            //Light
-            setTheme(R.style.AppThemeLight);
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(ContextCompat.getColor(this,
-//                            android.R.color.white));
-        } else {
-            //Default is Dark
-            setTheme(R.style.AppThemeDark);
-        }
-
-        setContentView(R.layout.activity_speedtest);
-
         final Intent intent = getIntent();
 
         final String routerSelectedUuid =
@@ -329,6 +314,23 @@ public class SpeedTestActivity extends AppCompatActivity
             finish();
             return;
         }
+
+        mIsThemeLight = ColorUtils.isThemeLight(this);
+
+        ColorUtils.setAppTheme(this, mOriginalRouter.getRouterFirmware(), false);
+
+//        if (mIsThemeLight) {
+//            //Light
+//            setTheme(R.style.AppThemeLight);
+////            getWindow().getDecorView()
+////                    .setBackgroundColor(ContextCompat.getColor(this,
+////                            android.R.color.white));
+//        } else {
+//            //Default is Dark
+//            setTheme(R.style.AppThemeDark);
+//        }
+
+        setContentView(R.layout.activity_speedtest);
 
 //        mSpeedTestRunning = new AtomicBoolean(false);
         

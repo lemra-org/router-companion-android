@@ -85,16 +85,18 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
 
         final FragmentActivity fragmentActivity = getActivity();
 
-        if (ColorUtils.isThemeLight(fragmentActivity)) {
-            //Light
-            fragmentActivity.setTheme(R.style.AppThemeLight);
-//            fragmentActivity.getWindow().getDecorView()
-//                    .setBackgroundColor(ContextCompat.getColor(fragmentActivity,
-//                            android.R.color.white));
-        } else {
-            //Default is Dark
-            fragmentActivity.setTheme(R.style.AppThemeDark);
-        }
+        ColorUtils.setAppTheme(fragmentActivity, null, false);
+
+//        if (ColorUtils.isThemeLight(fragmentActivity)) {
+//            //Light
+//            fragmentActivity.setTheme(R.style.AppThemeLight);
+////            fragmentActivity.getWindow().getDecorView()
+////                    .setBackgroundColor(ContextCompat.getColor(fragmentActivity,
+////                            android.R.color.white));
+//        } else {
+//            //Default is Dark
+//            fragmentActivity.setTheme(R.style.AppThemeDark);
+//        }
 
         final Bundle arguments = getArguments();
         this.mKey = \"fake-key\";

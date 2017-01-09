@@ -129,21 +129,6 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        themeLight = ColorUtils.isThemeLight(this);
-        if (themeLight) {
-            //Light
-            setTheme(R.style.AppThemeLight);
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(ContextCompat.getColor(this,
-//                            android.R.color.white));
-        } else {
-            //Default is Dark
-            setTheme(R.style.AppThemeDark);
-        }
-
-        setContentView(R.layout.tile_status_wan_monthly_traffic_chart);
-
         dao = RouterManagementActivity.getDao(this);
 
         final Intent intent = getIntent();
@@ -159,6 +144,24 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             finish();
             return;
         }
+
+        themeLight = ColorUtils.isThemeLight(this);
+        ColorUtils.setAppTheme(this, mRouter.getRouterFirmware(), false);
+
+//        if (themeLight) {
+//            //Light
+//            setTheme(R.style.AppThemeLight);
+////            getWindow().getDecorView()
+////                    .setBackgroundColor(ContextCompat.getColor(this,
+////                            android.R.color.white));
+//        } else {
+//            //Default is Dark
+//            setTheme(R.style.AppThemeDark);
+//        }
+
+        setContentView(R.layout.tile_status_wan_monthly_traffic_chart);
+
+
 
         final String mRouterName = mRouter.getName();
         final boolean mRouterNameNullOrEmpty = isNullOrEmpty(mRouterName);

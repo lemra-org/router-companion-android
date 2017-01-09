@@ -217,13 +217,14 @@ public class RouterCompanionApplication extends Application implements Applicati
             ReportingUtils.reportEvent(ReportingUtils.EVENT_FIRST_LAUNCH, eventMap);
         }
 
-        if (ColorUtils.isThemeLight(getApplicationContext())) {
-            //Light
-            setTheme(R.style.AppThemeLight);
-        } else {
-            //Default is Dark
-            setTheme(R.style.AppThemeDark);
-        }
+        ColorUtils.setAppTheme(this, null, false);
+//        if (ColorUtils.isThemeLight(getApplicationContext())) {
+//            //Light
+//            setTheme(R.style.AppThemeLight);
+//        } else {
+//            //Default is Dark
+//            setTheme(R.style.AppThemeDark);
+//        }
 
         OpenStreetMapTileProviderConstants.setUserAgentValue(BuildConfig.APPLICATION_ID);
     }

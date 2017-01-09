@@ -114,28 +114,6 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        final boolean themeLight = ColorUtils.isThemeLight(this);
-        if (themeLight) {
-            //Light
-            setTheme(R.style.AppThemeLight);
-            getWindow().getDecorView()
-                    .setBackgroundColor(ContextCompat.getColor(this,
-                            android.R.color.white));
-        } else {
-            //Default is Dark
-            setTheme(R.style.AppThemeDark);
-        }
-
-        setContentView(R.layout.activity_wireless_security_settings);
-
-        if (themeLight) {
-            final Resources resources = getResources();
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(
-//                            ContextCompat.getColor(this, android.R.color.white));
-        }
-
         final Intent intent = getIntent();
         mNvramInfo = (NVRAMInfo) intent.getSerializableExtra(WIRELESS_SECURITY_NVRAMINFO);
 
@@ -158,6 +136,33 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
             return;
         }
 
+        final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(this);
+        final Router router;
+        if ((router = dao.getRouter(mRouterUuid)) == null) {
+            Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        ColorUtils.setAppTheme(this, router != null ? router.getRouterFirmware() : null, false);
+
+        final boolean themeLight = ColorUtils.isThemeLight(this);
+//        if (themeLight) {
+//            //Light
+////            setTheme(R.style.AppThemeLight);
+//            getWindow().getDecorView()
+//                    .setBackgroundColor(ContextCompat.getColor(this,
+//                            android.R.color.white));
+//        }
+//        else {
+//            //Default is Dark
+//            setTheme(R.style.AppThemeDark);
+//        }
+
+        setContentView(R.layout.activity_wireless_security_settings);
+
+
+
         mPhyIface = mNvramInfo.getProperty(WirelessIfaceTile.IFACE,
                 RouterCompanionAppConstants.EMPTY_VALUE_TO_DISPLAY);
 
@@ -168,14 +173,6 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
 
         mHwAddr = mNvramInfo.getProperty(HWADDR,
                 RouterCompanionAppConstants.EMPTY_VALUE_TO_DISPLAY);
-
-        final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(this);
-        final Router router;
-        if ((router = dao.getRouter(mRouterUuid)) == null) {
-            Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
 
         mToolbar = (Toolbar) findViewById(R.id.wireless_security_settings_toolbar);
         if (mToolbar != null) {

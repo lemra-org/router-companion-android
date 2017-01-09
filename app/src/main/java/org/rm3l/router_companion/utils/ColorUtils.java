@@ -23,6 +23,7 @@
 package org.rm3l.router_companion.utils;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -172,7 +173,7 @@ public final class ColorUtils {
                 .getLong(THEMING_PREF, DEFAULT_THEME) == LIGHT_THEME);
     }
 
-    public static <T extends AppCompatActivity> void setAppTheme(
+    public static <T extends ContextWrapper> void setAppTheme(
             @NonNull final T activity, @Nullable final RouterFirmware routerFirmware,
             final boolean transparentStatusBar) {
 
@@ -199,7 +200,7 @@ public final class ColorUtils {
         }
     }
 
-    public static <T extends AppCompatActivity> void setDefaultTheme(
+    public static <T extends ContextWrapper> void setDefaultTheme(
             @NonNull T activity, boolean transparentStatusBar) {
 
         if (isThemeLight(activity)) {

@@ -153,27 +153,6 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final boolean themeLight = ColorUtils.isThemeLight(this);
-        if (themeLight) {
-            //Light
-            setTheme(R.style.AppThemeLight);
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(ContextCompat.getColor(this,
-//                            android.R.color.white));
-        } else {
-            //Default is Dark
-            setTheme(R.style.AppThemeDark);
-        }
-
-        setContentView(R.layout.activity_openvpn_client_settings);
-
-        if (themeLight) {
-            final Resources resources = getResources();
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(
-//                            ContextCompat.getColor(this, android.R.color.white));
-        }
-
         final Intent intent = getIntent();
 
         mRouterUuid = intent.getStringExtra(ROUTER_SELECTED);
@@ -190,6 +169,21 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
             finish();
             return;
         }
+
+        final boolean themeLight = ColorUtils.isThemeLight(this);
+        ColorUtils.setAppTheme(this, router.getRouterFirmware(), false);
+//        if (themeLight) {
+//            //Light
+//            setTheme(R.style.AppThemeLight);
+////            getWindow().getDecorView()
+////                    .setBackgroundColor(ContextCompat.getColor(this,
+////                            android.R.color.white));
+//        } else {
+//            //Default is Dark
+//            setTheme(R.style.AppThemeDark);
+//        }
+
+        setContentView(R.layout.activity_openvpn_client_settings);
 
         mToolbar = (Toolbar) findViewById(R.id.openvpn_client_settings_toolbar);
         if (mToolbar != null) {

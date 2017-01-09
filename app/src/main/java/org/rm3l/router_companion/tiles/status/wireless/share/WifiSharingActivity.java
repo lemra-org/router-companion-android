@@ -84,18 +84,29 @@ public class WifiSharingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final Intent intent = getIntent();
+        mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+        final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(this);
+        final Router router;
+        if ((router = dao.getRouter(mRouterUuid)) == null) {
+            Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        ColorUtils.setAppTheme(this, router.getRouterFirmware(), false);
 
         final boolean themeLight = ColorUtils.isThemeLight(this);
-        if (themeLight) {
-            //Light
-            setTheme(R.style.AppThemeLight);
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(ContextCompat.getColor(this,
-//                            android.R.color.white));
-        } else {
-            //Default is Dark
-            setTheme(R.style.AppThemeDark);
-        }
+//        if (themeLight) {
+//            //Light
+//            setTheme(R.style.AppThemeLight);
+////            getWindow().getDecorView()
+////                    .setBackgroundColor(ContextCompat.getColor(this,
+////                            android.R.color.white));
+//        } else {
+//            //Default is Dark
+//            setTheme(R.style.AppThemeDark);
+//        }
 
         setContentView(R.layout.activity_wifi_sharing);
 
@@ -111,8 +122,7 @@ public class WifiSharingActivity extends AppCompatActivity {
         mInterstitialAd = AdUtils.requestNewInterstitial(this,
                 R.string.interstitial_ad_unit_id_wireless_network_generate_qr_code);
 
-        final Intent intent = getIntent();
-        mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+
         mSsid = intent.getStringExtra(SSID);
         mWifiEncType = intent.getStringExtra(ENC_TYPE);
         mWifiPassword = intent.getStringExtra(PWD);
@@ -120,13 +130,7 @@ public class WifiSharingActivity extends AppCompatActivity {
 
         mTitle = ("WiFi Sharing: " + mSsid);
 
-        final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(this);
-        final Router router;
-        if ((router = dao.getRouter(mRouterUuid)) == null) {
-            Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
+
 
         if (mToolbar != null) {
             mToolbar.setTitle(mTitle);

@@ -63,17 +63,19 @@ public abstract class WebActivity extends AppCompatActivity implements SwipeRefr
 
         super.onCreate(savedInstanceState);
 
-        final boolean themeLight = ColorUtils.isThemeLight(this);
-        if (themeLight) {
-            //Light
-            setTheme(R.style.AppThemeLight);
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(ContextCompat.getColor(this,
-//                            android.R.color.white));
-        } else {
-            //Default is Dark
-            setTheme(R.style.AppThemeDark);
-        }
+        ColorUtils.setAppTheme(this, null, false);
+
+//        final boolean themeLight = ColorUtils.isThemeLight(this);
+//        if (themeLight) {
+//            //Light
+//            setTheme(R.style.AppThemeLight);
+////            getWindow().getDecorView()
+////                    .setBackgroundColor(ContextCompat.getColor(this,
+////                            android.R.color.white));
+//        } else {
+//            //Default is Dark
+//            setTheme(R.style.AppThemeDark);
+//        }
 
         setContentView(R.layout.activity_web);
 
@@ -82,14 +84,6 @@ public abstract class WebActivity extends AppCompatActivity implements SwipeRefr
 
         AdUtils.buildAndDisplayAdViewIfNeeded(this,
                 (AdView) findViewById(R.id.web_adView));
-
-        if (themeLight) {
-            final Resources resources = getResources();
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(
-//                            ContextCompat.getColor(this,
-//                                    android.R.color.white));
-        }
 
         mToolbar = (Toolbar) findViewById(R.id.web_toolbar);
         if (mToolbar != null) {

@@ -87,6 +87,7 @@ import org.rm3l.router_companion.lookup.IPGeoLookupService;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.IPConntrack;
 import org.rm3l.router_companion.resources.IPWhoisInfo;
+import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
@@ -323,25 +324,22 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
         mDestinationIpToCountry = new HashMap<>();
 
+        final Router router = RouterManagementActivity.getDao(this).getRouter(mRouterUuid);
+        ColorUtils.setAppTheme(this, router != null ? router.getRouterFirmware() : null, false);
+
         final boolean themeLight = ColorUtils.isThemeLight(this);
-        if (themeLight) {
-            //Light
-            setTheme(R.style.AppThemeLight);
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(ContextCompat.getColor(this,
-//                            android.R.color.white));
-        } else {
-            //Default is Dark
-            setTheme(R.style.AppThemeDark);
-        }
+//        if (themeLight) {
+//            //Light
+//            setTheme(R.style.AppThemeLight);
+////            getWindow().getDecorView()
+////                    .setBackgroundColor(ContextCompat.getColor(this,
+////                            android.R.color.white));
+//        } else {
+//            //Default is Dark
+//            setTheme(R.style.AppThemeDark);
+//        }
 
         setContentView(R.layout.tile_status_active_ip_connections);
-
-        if (themeLight) {
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(
-//                            ContextCompat.getColor(this, android.R.color.white));
-        }
 
         AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.tile_status_active_ip_connections_view_adView));
 

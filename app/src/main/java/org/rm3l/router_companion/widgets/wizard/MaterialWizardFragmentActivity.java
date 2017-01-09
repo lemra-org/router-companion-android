@@ -10,8 +10,10 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import org.rm3l.ddwrt.R;
+import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.register.ManageRouterWizard;
 import org.rm3l.router_companion.mgmt.register.resources.RouterWizardAction;
+import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.AppShortcutUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
 
@@ -34,15 +36,29 @@ public abstract class MaterialWizardFragmentActivity extends FragmentActivity {
 
         super.onCreate(savedInstanceState);
 
-        if (ColorUtils.isThemeLight(this)) {
-            //Light
-            setTheme(R.style.AppThemeLight);
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(ContextCompat.getColor(this, R.color.GhostWhite));
+        final Intent intent = getIntent();
+        if (intent != null) {
+            final String routerSelected = intent.getStringExtra(ROUTER_SELECTED);
+            if (routerSelected != null) {
+                final Router router = RouterManagementActivity.getDao(this).getRouter(routerSelected);
+                ColorUtils.setAppTheme(this, router != null ? router.getRouterFirmware() : null, false);
+            } else {
+                ColorUtils.setAppTheme(this, null, false);
+            }
+
         } else {
-            //Default is Dark
-            setTheme(R.style.AppThemeDark);
+            ColorUtils.setAppTheme(this, null, false);
         }
+
+//        if (ColorUtils.isThemeLight(this)) {
+//            //Light
+//            setTheme(R.style.AppThemeLight);
+////            getWindow().getDecorView()
+////                    .setBackgroundColor(ContextCompat.getColor(this, R.color.GhostWhite));
+//        } else {
+//            //Default is Dark
+//            setTheme(R.style.AppThemeDark);
+//        }
 
         setContentView(getContentView());
 
@@ -51,7 +67,6 @@ public abstract class MaterialWizardFragmentActivity extends FragmentActivity {
 
         final ManageRouterWizard fragment = new ManageRouterWizard();
         final Bundle args = new Bundle();
-        final Intent intent = getIntent();
         if (intent != null) {
             final String routerSelected = intent.getStringExtra(ROUTER_SELECTED);
             if (routerSelected != null) {

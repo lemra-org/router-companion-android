@@ -36,6 +36,7 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.IPWhoisInfo;
+import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.status.wireless.ActiveIPConnectionsDetailActivity;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
@@ -75,27 +76,10 @@ public class IPGeoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final boolean themeLight = ColorUtils.isThemeLight(this);
-        if (themeLight) {
-            //Light
-            setTheme(R.style.AppThemeLight);
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(ContextCompat.getColor(this,
-//                            android.R.color.white));
-        } else {
-            //Default is Dark
-            setTheme(R.style.AppThemeDark);
-        }
-
-        setContentView(R.layout.activity_ip_geo);
-
-        mInterstitialAd = AdUtils.requestNewInterstitial(this,
-                R.string.interstitial_ad_unit_id_wireless_network_generate_qr_code);
-
         final Intent intent = getIntent();
 
         final String publicIpToGeolocate = intent.getStringExtra(PUBLIC_IP_TO_DISPLAY);
-        
+
         if (isNullOrEmpty(publicIpToGeolocate)) {
             Toast.makeText(
                     this, "Don't know what to geo-locate - please try again later.",
@@ -105,6 +89,28 @@ public class IPGeoActivity extends AppCompatActivity {
         }
 
         mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+
+        final Router router = RouterManagementActivity.getDao(this).getRouter(mRouterUuid);
+        ColorUtils.setAppTheme(this, router != null ? router.getRouterFirmware() : null, false);
+
+        final boolean themeLight = ColorUtils.isThemeLight(this);
+//        if (themeLight) {
+//            //Light
+//            setTheme(R.style.AppThemeLight);
+////            getWindow().getDecorView()
+////                    .setBackgroundColor(ContextCompat.getColor(this,
+////                            android.R.color.white));
+//        } else {
+//            //Default is Dark
+//            setTheme(R.style.AppThemeDark);
+//        }
+
+        setContentView(R.layout.activity_ip_geo);
+
+        mInterstitialAd = AdUtils.requestNewInterstitial(this,
+                R.string.interstitial_ad_unit_id_wireless_network_generate_qr_code);
+
+
 
         AdUtils.buildAndDisplayAdViewIfNeeded(this, 
                 (AdView) findViewById(R.id.activity_ip_geo_adView));
