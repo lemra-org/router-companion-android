@@ -59,6 +59,7 @@ public final class NetworkTopologyMapTileWorker {
             if (dataRetrievalListener != null) {
                 dataRetrievalListener.onProgressUpdate(60);
             }
+
             //Active DHCP Leases
             final String[] activeDhcpLeases = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
                     "cat /tmp/dnsmasq.leases 2>/dev/null || echo \"N_A\"\"");
