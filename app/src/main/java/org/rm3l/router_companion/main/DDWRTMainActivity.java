@@ -508,20 +508,8 @@ public class DDWRTMainActivity extends AppCompatActivity
                         .withIdentifier(MANAGE_ROUTERS);
 
         //Set Drawer Header Background
-        final int drawerHeaderDrawable = R.drawable.nav_drawer_header_bg;
-//        if (routerFirmware != null) {
-//            switch (routerFirmware) {
-//                case DDWRT:
-//                    drawerHeaderDrawable = R.drawable.logo_ddwrt;
-//                    break;
-//                //TODO Add other logos down here
-//                default:
-//                    drawerHeaderDrawable = R.drawable.router_picker_background;
-//                    break;
-//            }
-//        } else {
-//            drawerHeaderDrawable = R.drawable.router_picker_background;
-//        }
+        final int drawerHeaderDrawable = (routerFirmware != null ?
+                routerFirmware.drawerHeaderBackgroundDrawable : R.drawable.router_picker_background);
         mDrawerHeaderResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .addProfiles(iProfiles)

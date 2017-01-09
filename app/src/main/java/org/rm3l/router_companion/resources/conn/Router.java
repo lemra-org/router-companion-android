@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
@@ -1102,15 +1103,18 @@ public class Router implements Serializable {
 //    public static final int RouterFirmware_TOMATO = 6;
 
     public enum RouterFirmware {
-        DDWRT("DD-WRT", getTabsForDDWRT(), "/usr/sbin/nvram"),
-        OPENWRT("OpenWrt (Beta)", null /*getTabsForOpenWRT()*/, null), //TODO Not supported as yet
-        TOMATO("Tomato (Beta)", getTabsForDDWRT(), "/bin/nvram"), //TODO Same tabs as DD-WRT (for now)
-        DEMO("Demo", getTabsForDDWRT(), null),
-        AUTO("Auto-detect", null, null),
-        UNKNOWN("???", null, null);
+        DDWRT("DD-WRT", null, getTabsForDDWRT(), "/usr/sbin/nvram"),
+        OPENWRT("OpenWrt (Beta)", null, null /*getTabsForOpenWRT()*/, null), //TODO Not supported as yet
+        TOMATO("Tomato (Beta)", R.drawable.tomato_nav_drawer_header_bg, getTabsForDDWRT(), "/bin/nvram"), //TODO Same tabs as DD-WRT (for now)
+        DEMO("Demo", null, getTabsForDDWRT(), null),
+        AUTO("Auto-detect", null, null, null),
+        UNKNOWN("???", null, null, null);
 
         @NonNull
         public final String displayName;
+
+        @DrawableRes
+        public final int drawerHeaderBackgroundDrawable;
 
         @Nullable
         public final ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> fragmentTabs;
@@ -1119,9 +1123,16 @@ public class Router implements Serializable {
         public final String nvramPath;
 
         RouterFirmware(@NonNull final String displayName,
-                       ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> fragmentTabs,
-                       final String nvramPath) {
+                       @Nullable final Integer drawerHeaderBackgroundDrawable,
+                       @Nullable ArrayListMultimap<Integer,
+                               FragmentTabDescription<? extends AbstractBaseFragment>> fragmentTabs,
+                       @Nullable final String nvramPath) {
             this.displayName = displayName;
+            if (drawerHeaderBackgroundDrawable == null) {
+                this.drawerHeaderBackgroundDrawable = R.drawable.nav_drawer_header_bg;
+            } else {
+                this.drawerHeaderBackgroundDrawable = drawerHeaderBackgroundDrawable;
+            }
             this.fragmentTabs = fragmentTabs;
             this.nvramPath = nvramPath;
         }
