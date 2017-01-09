@@ -237,16 +237,19 @@ public class RouterManagementActivity
 
         mPreferences = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         mCurrentTheme = mPreferences.getLong(THEMING_PREF, RouterCompanionAppConstants.DEFAULT_THEME);
-        if (ColorUtils.isThemeLight(this)) {
-            //Light
-            setTheme(R.style.AppThemeLight);
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(ContextCompat.getColor(this,
-//                            R.color.GhostWhite));
-        } else {
-            //Default is Dark
-            setTheme(R.style.AppThemeDark);
-        }
+
+        ColorUtils.setAppTheme(this, null, false);
+
+//        if (ColorUtils.isThemeLight(this)) {
+//            //Light
+//            setTheme(R.style.AppThemeLight);
+////            getWindow().getDecorView()
+////                    .setBackgroundColor(ContextCompat.getColor(this,
+////                            R.color.GhostWhite));
+//        } else {
+//            //Default is Dark
+//            setTheme(R.style.AppThemeDark);
+//        }
 
         mBackgroundServiceEnabled = mPreferences.getBoolean(NOTIFICATIONS_BG_SERVICE_ENABLE, false);
         mBackgroundServiceFrequency = mPreferences.getLong(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1);

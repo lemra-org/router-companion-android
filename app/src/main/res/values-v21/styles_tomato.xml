@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+DD-WRT Companion is a mobile app that lets you connect to,
+monitor and manage your DD-WRT routers on the go.
+
+Copyright (C) 2014  Armel Soro
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
+-->
+
+<resources>
+
+    <style name="TOMATO_AppThemeLight" parent="Theme.AppCompat.Light.NoActionBar">
+        <!--<item name="windowNoTitle">true</item>-->
+        <!--<item name="windowActionBar">false</item>-->
+        <item name="colorPrimary">@color/tomato_primary</item>
+        <item name="colorPrimaryDark">@color/tomato_statusbar</item>
+
+        <!--<item name="android:textColorPrimary">@color/lightTheme_text_icons</item>-->
+
+        <item name="windowActionBar">false</item>
+        <item name="colorAccent">@color/tomato_color_accent</item>
+
+        <!--<item name="drawerArrowStyle">@style/DrawerArrowStyle</item>-->
+        <item name="textColor">@color/lightTheme_primary_text</item>
+        <item name="android:windowBackground">@color/lightTheme_windowBgColor</item>
+
+        <!--<item name="android:colorBackground">@color/lightTheme_windowBgColor</item>-->
+
+        <!--<item name="actionModeBackground">@color/holo_green_dark</item>-->
+        <!--<item name="dropDownListViewStyle">@style/MyDropDownListView</item>-->
+        <!--<item name="spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowNoTitle">true</item>
+
+        <item name="android:textColor">@color/lightTheme_primary_text</item>
+
+        <!--<item name="android:actionModeBackground">@color/holo_green_dark</item>-->
+        <!--<item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>-->
+        <!--<item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
+        <!--<item name="android:fitsSystemWindows">true</item>-->
+
+        <!--<item name="android:windowActionBarOverlay">true</item>-->
+
+        <!--<item name="android:windowBackground">@android:color/background_light</item>-->
+        <!--<item name="android:colorBackground">@android:color/background_light</item>-->
+
+
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/tomato_statusbar</item>
+
+        <!-- MaterialDrawer specific values -->
+        <item name="material_drawer_background">@color/material_drawer_background</item>
+        <item name="material_drawer_primary_text">@color/material_drawer_primary_text</item>
+        <item name="material_drawer_primary_icon">@color/material_drawer_primary_icon</item>
+        <item name="material_drawer_secondary_text">@color/material_drawer_secondary_text</item>
+        <item name="material_drawer_hint_text">@color/material_drawer_hint_text</item>
+        <item name="material_drawer_hint_icon">@color/material_drawer_hint_icon</item>
+        <item name="material_drawer_divider">@color/material_drawer_divider</item>
+        <item name="material_drawer_selected">@color/material_drawer_selected</item>
+        <item name="material_drawer_selected_text">@color/lightTheme_primary</item>
+        <item name="material_drawer_header_selection_text">
+            @color/material_drawer_header_selection_text
+        </item>
+    </style>
+
+    <style name="TOMATO_AppThemeDark" parent="Theme.AppCompat.NoActionBar">
+        <!--<item name="windowNoTitle">true</item>-->
+        <!--<item name="windowActionBar">false</item>-->
+        <item name="colorPrimary">@color/tomato_primary</item>
+        <item name="colorPrimaryDark">@color/tomato_statusbar</item>
+        <!--<item name="drawerArrowStyle">@style/DrawerArrowStyle</item>-->
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+
+        <item name="colorAccent">@color/tomato_color_accent</item>
+
+        <item name="android:textColor">@color/darkTheme_primary_text</item>
+
+        <item name="android:windowBackground">@color/darkTheme_windowBgColor</item>
+
+        <!--<item name="android:colorBackground">@color/darkTheme_windowBgColor</item>-->
+
+        <!--<item name="android:actionModeBackground">@color/holo_green_dark</item>-->
+        <!--<item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>-->
+        <!--<item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
+        <item name="textColor">@color/darkTheme_primary_text</item>
+        <!--<item name="actionModeBackground">@color/holo_green_dark</item>-->
+        <!--<item name="dropDownListViewStyle">@style/MyDropDownListView</item>-->
+        <!--<item name="spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
+        <!--<item name="android:fitsSystemWindows">true</item>-->
+
+        <!--<item name="android:windowActionBarOverlay">true</item>-->
+
+
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/tomato_statusbar</item>
+
+        <!-- MaterialDrawer specific values -->
+        <item name="material_drawer_background">@color/material_drawer_dark_background</item>
+        <item name="material_drawer_primary_text">@color/material_drawer_dark_primary_text</item>
+        <item name="material_drawer_primary_icon">@color/material_drawer_dark_primary_icon</item>
+        <item name="material_drawer_secondary_text">@color/material_drawer_dark_secondary_text
+        </item>
+        <item name="material_drawer_hint_text">@color/material_drawer_dark_hint_text</item>
+        <item name="material_drawer_hint_icon">@color/material_drawer_dark_hint_icon</item>
+        <item name="material_drawer_divider">@color/material_drawer_dark_divider</item>
+        <item name="material_drawer_selected">@color/material_drawer_dark_selected</item>
+        <item name="material_drawer_selected_text">@color/material_drawer_dark_selected_text</item>
+        <item name="material_drawer_header_selection_text">
+            @color/material_drawer_header_selection_text
+        </item>
+
+    </style>
+
+
+    <style name="TOMATO_AppThemeLight.StatusBarTransparent" parent="TOMATO_AppThemeLight">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="TOMATO_AppThemeDark.StatusBarTransparent" parent="TOMATO_AppThemeDark">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+</resources>

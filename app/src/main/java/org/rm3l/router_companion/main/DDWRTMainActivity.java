@@ -404,16 +404,14 @@ public class DDWRTMainActivity extends AppCompatActivity
         this.mWithAutoRefresh = mPreferences.getBoolean(AUTO_REFRESH_PREF, false);
 
         mIsThemeLight = ColorUtils.isThemeLight(this);
-        if (mIsThemeLight) {
-            //Light
-            setTheme(R.style.AppThemeLight_StatusBarTransparent);
-//            getWindow().getDecorView()
-//                    .setBackgroundColor(ContextCompat.getColor(this,
-//                            R.color.GhostWhite));
-        } else {
-            //Default is Dark
-            setTheme(R.style.AppThemeDark_StatusBarTransparent);
-        }
+        ColorUtils.setAppTheme(this, mRouter.getRouterFirmware(), true);
+//        if (mIsThemeLight) {
+//            //Light
+//            setTheme(R.style.AppThemeLight_StatusBarTransparent);
+//        } else {
+//            //Default is Dark
+//            setTheme(R.style.AppThemeDark_StatusBarTransparent);
+//        }
 
         // Inherit theme for router - this is for SettingsActivity,
         // because we are overriding the getSharedPreferences() method

@@ -96,6 +96,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.List;
@@ -1008,6 +1009,17 @@ public final class Utils {
                 BuildConfig.VERSION_NAME,
                 PublicIPInfo.ICANHAZIP_HOST,
                 PublicIPInfo.ICANHAZIP_PORT);
+    }
+
+    public static int getResId(String resourceName, Class<?> clazz) {
+        try {
+            final Field idField = clazz.getDeclaredField(resourceName);
+            return idField.getInt(idField);
+        } catch (NoSuchFieldException e) {
+            throw new IllegalArgumentException("Field not found: " + clazz + "#" + resourceName);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("Access exception: " + clazz + "#" + resourceName);
+        }
     }
 
 

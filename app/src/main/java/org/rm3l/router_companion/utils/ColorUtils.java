@@ -26,6 +26,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StyleRes;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -35,8 +37,11 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 
+import org.rm3l.router_companion.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
+import org.rm3l.router_companion.resources.conn.Router;
+import org.rm3l.router_companion.resources.conn.Router.RouterFirmware;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -165,5 +170,44 @@ public final class ColorUtils {
         }
         return (context.getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
                 .getLong(THEMING_PREF, DEFAULT_THEME) == LIGHT_THEME);
+    }
+
+    public static <T extends AppCompatActivity> void setAppTheme(
+            @NonNull final T activity, @Nullable final RouterFirmware routerFirmware,
+            final boolean transparentStatusBar) {
+
+        boolean useDefaultStyle = (routerFirmware == null ||
+                RouterFirmware.AUTO == routerFirmware ||
+                RouterFirmware.UNKNOWN == routerFirmware);
+        if (useDefaultStyle) {
+            setDefaultTheme(activity, transparentStatusBar);
+        } else {
+            final boolean themeLight = isThemeLight(activity);
+            try {
+                //Determine style by intropsection
+                @StyleRes final int styleResId = Utils.getResId(
+                        String.format("%s_AppTheme%s%s",
+                                routerFirmware.name(),
+                                themeLight ? "Light" : "Dark",
+                                transparentStatusBar ? "_StatusBarTransparent" : ""),
+                        R.style.class);
+                activity.setTheme(styleResId);
+            } catch (final Exception e) {
+                Crashlytics.logException(e);
+                setDefaultTheme(activity, transparentStatusBar);
+            }
+        }
+    }
+
+    public static <T extends AppCompatActivity> void setDefaultTheme(
+            @NonNull T activity, boolean transparentStatusBar) {
+
+        if (isThemeLight(activity)) {
+            activity.setTheme(transparentStatusBar ?
+                    R.style.AppThemeLight_StatusBarTransparent : R.style.AppThemeLight);
+        } else {
+            activity.setTheme(transparentStatusBar ?
+                    R.style.AppThemeDark_StatusBarTransparent : R.style.AppThemeDark);
+        }
     }
 }

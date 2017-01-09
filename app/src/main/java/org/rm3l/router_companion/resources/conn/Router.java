@@ -1103,10 +1103,28 @@ public class Router implements Serializable {
 //    public static final int RouterFirmware_TOMATO = 6;
 
     public enum RouterFirmware {
-        DDWRT("DD-WRT", null, getTabsForDDWRT(), "/usr/sbin/nvram"),
-        OPENWRT("OpenWrt (Beta)", null, null /*getTabsForOpenWRT()*/, null), //TODO Not supported as yet
-        TOMATO("Tomato (Beta)", R.drawable.tomato_nav_drawer_header_bg, getTabsForDDWRT(), "/bin/nvram"), //TODO Same tabs as DD-WRT (for now)
-        DEMO("Demo", null, getTabsForDDWRT(), null),
+        DDWRT("DD-WRT",
+                null,
+                getTabsForDDWRT(),
+                "/usr/sbin/nvram"),
+
+        //TODO Not supported as yet
+        OPENWRT("OpenWrt (Beta)",
+                null,
+                null /*getTabsForOpenWRT()*/,
+                null),
+
+        TOMATO("Tomato (Beta)",
+                R.drawable.tomato_nav_drawer_header_bg,
+                //TODO Same tabs as DD-WRT (for now)
+                getTabsForDDWRT(),
+                "/bin/nvram"),
+
+        DEMO("Demo",
+                null,
+                getTabsForDDWRT(),
+                null),
+
         AUTO("Auto-detect", null, null, null),
         UNKNOWN("???", null, null, null);
 
