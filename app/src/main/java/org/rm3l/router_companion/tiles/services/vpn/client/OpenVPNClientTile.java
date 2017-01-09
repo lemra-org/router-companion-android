@@ -49,8 +49,8 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.io.FileUtils;
-import org.rm3l.router_companion.BuildConfig;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.actions.ActionManager;
 import org.rm3l.router_companion.actions.RouterAction;
 import org.rm3l.router_companion.actions.RouterActionListener;

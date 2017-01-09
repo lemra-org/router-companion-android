@@ -50,8 +50,8 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 import org.apache.commons.lang3.StringUtils;
-import org.rm3l.router_companion.BuildConfig;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.actions.activity.OpenWebManagementPageActivity;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;

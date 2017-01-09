@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.rm3l.router_companion.BuildConfig;
+import org.rm3l.ddwrt.BuildConfig;
 
 import java.io.BufferedReader;
 import java.io.IOException;

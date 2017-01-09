@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.utils.ColorUtils;
 
 public class RippleViewCreator extends FrameLayout

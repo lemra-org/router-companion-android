@@ -27,7 +27,7 @@ import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.actions.ActionManager;
 import org.rm3l.router_companion.actions.RouterAction;
 import org.rm3l.router_companion.actions.RouterActionListener;

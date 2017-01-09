@@ -39,7 +39,7 @@ import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;

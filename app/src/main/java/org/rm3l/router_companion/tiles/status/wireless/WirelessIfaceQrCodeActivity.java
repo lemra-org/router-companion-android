@@ -57,8 +57,8 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Strings;
 import com.google.zxing.BarcodeFormat;
 
-import org.rm3l.router_companion.BuildConfig;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.router_companion.resources.conn.Router;

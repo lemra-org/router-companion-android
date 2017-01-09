@@ -41,7 +41,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 
 import java.io.BufferedOutputStream;
 import java.io.File;

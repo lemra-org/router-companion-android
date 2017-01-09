@@ -31,7 +31,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 
 public class NavigationDrawerArrayAdapter extends ArrayAdapter<NavigationDrawerMenuItem> {
 

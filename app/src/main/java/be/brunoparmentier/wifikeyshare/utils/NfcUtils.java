@@ -35,7 +35,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.BitSet;
 
-import org.rm3l.router_companion.BuildConfig;
+import org.rm3l.ddwrt.BuildConfig;
 import be.brunoparmentier.wifikeyshare.model.WifiNetwork;
 
 /**

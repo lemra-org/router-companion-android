@@ -10,7 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.commons.lang3.StringUtils;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.actions.RouterAction;
 import org.rm3l.router_companion.actions.RouterActionListener;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;

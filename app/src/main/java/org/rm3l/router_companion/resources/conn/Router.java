@@ -57,7 +57,7 @@ import com.jcraft.jsch.Session;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.common.resources.RouterInfo;
 import org.rm3l.router_companion.fragments.AbstractBaseFragment;
 import org.rm3l.router_companion.fragments.FragmentTabDescription;

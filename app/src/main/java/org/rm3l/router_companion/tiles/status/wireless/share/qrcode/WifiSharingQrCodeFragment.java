@@ -25,7 +25,7 @@ import android.widget.TextView;
 
 import com.google.zxing.BarcodeFormat;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.tiles.status.wireless.share.WifiSharingViewPagerAdapter.WifiSharingData;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.Utils;

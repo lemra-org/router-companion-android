@@ -1,6 +1,6 @@
 package org.rm3l.router_companion.api.feedback;
 
-import org.rm3l.router_companion.BuildConfig;
+import org.rm3l.ddwrt.BuildConfig;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;

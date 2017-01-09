@@ -44,8 +44,8 @@ import android.widget.Toast;
 
 import com.google.common.base.Throwables;
 
-import org.rm3l.router_companion.BuildConfig;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.actions.AbstractRouterAction;
 import org.rm3l.router_companion.actions.ActionManager;
 import org.rm3l.router_companion.actions.RouterAction;

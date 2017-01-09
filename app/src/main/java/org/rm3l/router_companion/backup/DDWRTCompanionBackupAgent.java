@@ -33,7 +33,7 @@ import android.support.annotation.Nullable;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
-import org.rm3l.router_companion.BuildConfig;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;

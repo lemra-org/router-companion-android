@@ -16,8 +16,8 @@ import com.avocarrot.androidsdk.CustomModel;
 import com.google.android.gms.ads.AdView;
 import com.squareup.picasso.Callback;
 
-import org.rm3l.router_companion.BuildConfig;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.RouterCompanionAppConstants;

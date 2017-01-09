@@ -96,8 +96,8 @@ import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
-import org.rm3l.router_companion.BuildConfig;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.about.AboutDialog;
 import org.rm3l.router_companion.actions.ActionManager;
 import org.rm3l.router_companion.actions.BackupRouterAction;

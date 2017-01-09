@@ -73,7 +73,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="org.rm3l.router_companion.tasker.fileprovider"
+            android:authorities="org.rm3l.ddwrt.tasker.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true" >
             <meta-data

@@ -1,6 +1,6 @@
 package org.rm3l.router_companion.lookup;
 
-import org.rm3l.router_companion.BuildConfig;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.router_companion.resources.MACOUIVendor;
 
 import retrofit2.Call;

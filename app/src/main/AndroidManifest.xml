@@ -22,7 +22,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="org.rm3l.router_companion" >
+    package="org.rm3l.ddwrt" >
 
     <!-- "Normal Permission" -->
     <!-- To connect to the router, and donation providers such as Flattr, as well as Feedback Server -->
@@ -116,7 +116,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!-- FIXME Change this for the free app to 'org.rm3l.ddwrt.free.fileprovider' -->
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="org.rm3l.router_companion.fileprovider"
+            android:authorities="org.rm3l.ddwrt.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true" >
             <meta-data

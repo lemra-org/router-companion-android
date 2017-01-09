@@ -1,6 +1,6 @@
 package org.rm3l.router_companion.api.urlshortener.goo_gl;
 
-import org.rm3l.router_companion.BuildConfig;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.router_companion.api.urlshortener.goo_gl.resources.GooGlData;
 
 import retrofit2.Call;

@@ -26,7 +26,7 @@ import android.support.annotation.NonNull;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Ordering;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.resources.Device;
 import org.rm3l.router_companion.tiles.status.wireless.sort.ClientsSortingVisitor;
 

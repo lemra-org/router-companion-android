@@ -32,7 +32,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import org.apache.commons.lang3.StringUtils;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.main.DDWRTMainActivity;
 import org.rm3l.router_companion.resources.Device;
 import org.rm3l.router_companion.resources.MACOUIVendor;

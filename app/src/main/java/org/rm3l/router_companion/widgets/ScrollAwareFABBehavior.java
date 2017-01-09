@@ -14,7 +14,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 
 /**
  * Created by rm3l on 16/12/15.

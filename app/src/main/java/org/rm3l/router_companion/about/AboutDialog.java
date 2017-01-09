@@ -39,8 +39,8 @@ import android.widget.TextView;
 import com.google.common.base.Charsets;
 
 import org.apache.commons.io.IOUtils;
-import org.rm3l.router_companion.BuildConfig;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.Utils;

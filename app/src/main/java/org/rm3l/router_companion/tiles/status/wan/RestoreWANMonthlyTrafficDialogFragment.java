@@ -35,8 +35,8 @@ import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Strings;
 
-import org.rm3l.router_companion.BuildConfig;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.actions.ActionManager;
 import org.rm3l.router_companion.actions.BackupWANMonthlyTrafficRouterAction;
 import org.rm3l.router_companion.actions.RestoreWANMonthlyTrafficFromBackupAction;

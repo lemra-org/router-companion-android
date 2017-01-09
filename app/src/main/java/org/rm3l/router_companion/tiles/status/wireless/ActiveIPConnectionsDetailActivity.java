@@ -81,7 +81,7 @@ import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
 import com.squareup.picasso.Callback;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.lookup.IPGeoLookupService;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;

@@ -34,7 +34,7 @@ import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.widget.ProgressBar;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 
 public class TextProgressBar extends ProgressBar {
 

@@ -54,8 +54,8 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import org.rm3l.router_companion.BuildConfig;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.fragments.access.AccessRestrictionsWANAccessFragment;
 import org.rm3l.router_companion.fragments.admin.AdminCommandsFragment;
 import org.rm3l.router_companion.fragments.admin.AdminNVRAMFragment;

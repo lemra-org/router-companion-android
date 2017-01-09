@@ -45,7 +45,7 @@ import android.view.ViewGroup;
 import com.android.common.view.SlidingTabLayout;
 import com.crashlytics.android.Crashlytics;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.main.DDWRTMainActivity;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.prefs.sort.SortingStrategy;

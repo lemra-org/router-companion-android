@@ -67,7 +67,7 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.multithreading.MultiThreadingManager;
 import org.rm3l.router_companion.resources.conn.Router;

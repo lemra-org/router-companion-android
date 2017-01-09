@@ -20,7 +20,7 @@ import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.router_companion.main.DDWRTMainActivity;

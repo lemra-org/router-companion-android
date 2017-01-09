@@ -29,7 +29,7 @@ import android.support.annotation.NonNull;
 
 import com.airbnb.deeplinkdispatch.DeepLink;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 
 import static org.rm3l.router_companion.RouterCompanionAppConstants.AUTO_REFRESH_INTERVAL_SECONDS_PREF;

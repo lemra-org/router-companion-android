@@ -2,7 +2,7 @@ package org.rm3l.router_companion.help;
 
 import android.support.annotation.NonNull;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.web.WebActivity;
 

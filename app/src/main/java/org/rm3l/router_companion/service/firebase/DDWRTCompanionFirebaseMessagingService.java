@@ -18,8 +18,8 @@ import com.google.common.base.Splitter;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import org.rm3l.router_companion.BuildConfig;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.api.urlshortener.goo_gl.GooGlService;
 import org.rm3l.router_companion.api.urlshortener.goo_gl.resources.GooGlData;
 import org.rm3l.router_companion.RouterCompanionAppConstants;

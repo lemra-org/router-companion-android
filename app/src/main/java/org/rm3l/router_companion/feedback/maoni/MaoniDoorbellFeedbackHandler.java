@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.google.gson.GsonBuilder;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.api.urlshortener.goo_gl.GooGlService;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;

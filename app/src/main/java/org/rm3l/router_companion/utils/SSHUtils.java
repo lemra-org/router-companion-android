@@ -40,7 +40,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
 import org.apache.commons.lang3.StringUtils;
-import org.rm3l.router_companion.BuildConfig;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.router_companion.actions.RouterAction;
 import org.rm3l.router_companion.actions.RouterStreamActionListener;
 import org.rm3l.router_companion.exceptions.UnknownRouterFirmwareException;

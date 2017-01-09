@@ -33,7 +33,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;

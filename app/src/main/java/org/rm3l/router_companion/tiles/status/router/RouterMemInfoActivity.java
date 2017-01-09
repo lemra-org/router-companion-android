@@ -47,7 +47,7 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Joiner;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.ColorUtils;

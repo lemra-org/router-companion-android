@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.google.common.base.Strings;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.Utils;
 

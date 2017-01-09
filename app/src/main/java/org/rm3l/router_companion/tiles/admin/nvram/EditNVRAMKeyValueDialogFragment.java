@@ -41,7 +41,7 @@ import android.widget.TextView;
 import com.cocosw.undobar.UndoBarController;
 
 import org.apache.commons.lang3.StringUtils;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.utils.ColorUtils;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;

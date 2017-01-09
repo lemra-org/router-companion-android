@@ -14,7 +14,7 @@ import android.widget.RemoteViewsService;
 
 import com.crashlytics.android.Crashlytics;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.Device;
 import org.rm3l.router_companion.resources.MACOUIVendor;

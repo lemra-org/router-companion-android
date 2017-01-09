@@ -33,7 +33,7 @@ import com.squareup.otto.Subscribe;
 import org.codepond.wizardroid.WizardFlow;
 import org.codepond.wizardroid.WizardFragment;
 import org.codepond.wizardroid.WizardStep;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.events.bus.BusSingleton;
 import org.rm3l.router_companion.events.wizard.WizardStepVisibleToUserEvent;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;

@@ -24,7 +24,7 @@ import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Strings;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.router_companion.resources.conn.Router;

@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.tiles.status.wireless.share.WifiSharingActivity;
 
 import java.util.Arrays;

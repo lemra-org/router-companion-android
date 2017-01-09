@@ -24,7 +24,7 @@ import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeBasedTable;
 import com.google.common.collect.TreeMultimap;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.tiles.status.wireless.ActiveIPConnectionsDetailActivity;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.RouterCompanionAppConstants;

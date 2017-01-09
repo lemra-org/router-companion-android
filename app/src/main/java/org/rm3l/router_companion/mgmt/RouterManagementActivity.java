@@ -80,8 +80,8 @@ import com.sloydev.preferator.Preferator;
 import com.stephentuso.welcome.WelcomeScreenHelper;
 import com.stephentuso.welcome.ui.WelcomeActivity;
 
-import org.rm3l.router_companion.BuildConfig;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.about.AboutDialog;
 import org.rm3l.router_companion.actions.ActionManager;
 import org.rm3l.router_companion.actions.RebootRouterAction;

@@ -4,7 +4,7 @@ import com.stephentuso.welcome.WelcomeScreenBuilder;
 import com.stephentuso.welcome.ui.WelcomeActivity;
 import com.stephentuso.welcome.util.WelcomeScreenConfiguration;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 
 /**
  * Created by rm3l on 21/08/16.

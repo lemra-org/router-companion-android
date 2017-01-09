@@ -57,8 +57,8 @@ import com.google.common.io.Files;
 import com.squareup.picasso.Callback;
 
 import org.apache.commons.io.FileUtils;
-import org.rm3l.router_companion.BuildConfig;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.actions.AbstractRouterAction;
 import org.rm3l.router_companion.actions.PingFromRouterAction;
 import org.rm3l.router_companion.exceptions.SpeedTestException;

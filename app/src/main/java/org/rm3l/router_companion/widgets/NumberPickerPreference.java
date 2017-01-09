@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 
 /**
  * Created by rm3l on 15/11/15.

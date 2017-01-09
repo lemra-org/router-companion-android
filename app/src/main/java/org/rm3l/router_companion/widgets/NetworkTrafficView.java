@@ -26,7 +26,7 @@ import android.content.Context;
 import android.util.TypedValue;
 import android.widget.TextView;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.resources.Device;
 
 import java.text.DecimalFormat;

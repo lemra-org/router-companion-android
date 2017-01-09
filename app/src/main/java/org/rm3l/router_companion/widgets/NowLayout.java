@@ -8,7 +8,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 
 @Deprecated
 public class NowLayout extends LinearLayout implements ViewTreeObserver.OnGlobalLayoutListener {

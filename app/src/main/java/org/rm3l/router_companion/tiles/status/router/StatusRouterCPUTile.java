@@ -43,7 +43,7 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 import org.apache.commons.lang3.StringUtils;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;

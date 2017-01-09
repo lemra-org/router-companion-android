@@ -26,8 +26,8 @@ import com.google.gson.GsonBuilder;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.rm3l.router_companion.BuildConfig;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.api.feedback.DoorbellService;
 import org.rm3l.router_companion.api.urlshortener.goo_gl.GooGlService;
 import org.rm3l.router_companion.api.urlshortener.goo_gl.resources.GooGlData;

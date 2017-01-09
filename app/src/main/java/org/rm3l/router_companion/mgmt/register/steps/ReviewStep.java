@@ -30,7 +30,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codepond.wizardroid.Wizard;
 import org.codepond.wizardroid.WizardStep;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.exceptions.UnknownRouterFirmwareException;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;

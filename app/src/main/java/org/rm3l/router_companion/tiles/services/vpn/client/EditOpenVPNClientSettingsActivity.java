@@ -48,7 +48,7 @@ import com.crashlytics.android.Crashlytics;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;

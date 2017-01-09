@@ -7,11 +7,11 @@ import android.view.View;
 //import com.madx.updatechecker.lib.UpdateRunnable;
 
 import org.apache.commons.lang3.StringUtils;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.web.WebActivity;
 
-import static org.rm3l.router_companion.BuildConfig.FLAVOR;
+import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
 
 /**
  * Created by rm3l on 04/07/15.

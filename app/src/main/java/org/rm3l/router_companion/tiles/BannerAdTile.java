@@ -10,7 +10,7 @@ import android.support.v4.content.Loader;
 
 import com.google.android.gms.ads.AdView;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.AdUtils;
 

@@ -9,7 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.Window;
 import android.view.WindowManager;
 
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.mgmt.register.ManageRouterWizard;
 import org.rm3l.router_companion.mgmt.register.resources.RouterWizardAction;
 import org.rm3l.router_companion.utils.AppShortcutUtils;

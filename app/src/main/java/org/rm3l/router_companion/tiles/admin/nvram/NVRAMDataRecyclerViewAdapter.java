@@ -49,8 +49,8 @@ import android.widget.TextView;
 import com.cocosw.undobar.UndoBarController;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.rm3l.router_companion.BuildConfig;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.multithreading.MultiThreadingManager;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;

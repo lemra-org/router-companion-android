@@ -30,7 +30,7 @@ import com.amazonaws.regions.Regions;
 import org.apache.commons.lang3.CharEncoding;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.rm3l.router_companion.BuildConfig;
+import org.rm3l.ddwrt.BuildConfig;
 
 import java.io.File;
 import java.nio.charset.Charset;

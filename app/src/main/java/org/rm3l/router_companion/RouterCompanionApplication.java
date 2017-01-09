@@ -46,6 +46,8 @@ import com.squareup.leakcanary.LeakCanary;
 import com.squareup.picasso.Picasso;
 
 import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
+import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.deeplinks.DeepLinkReceiver;
 import org.rm3l.router_companion.deeplinks.RouterActionsDeepLinkActivity;
 import org.rm3l.router_companion.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
@@ -65,7 +67,7 @@ import java.util.Map;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import io.fabric.sdk.android.Fabric;
 
-import static org.rm3l.router_companion.BuildConfig.FLAVOR;
+import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.router_companion.utils.Utils.isFirstLaunch;
 

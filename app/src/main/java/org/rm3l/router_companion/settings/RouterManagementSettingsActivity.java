@@ -32,8 +32,8 @@ import android.view.MenuItem;
 
 import com.airbnb.deeplinkdispatch.DeepLink;
 
-import org.rm3l.router_companion.BuildConfig;
-import org.rm3l.router_companion.R;
+import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.wordpress.passcodelock.PasscodePreferenceFragment;
 
