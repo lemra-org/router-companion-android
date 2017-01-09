@@ -62,12 +62,14 @@ public class AbstractBaseFragmentRecyclerViewAdapter
         final boolean isThemeLight = ColorUtils.isThemeLight(mContext);
 
         final TextView titleTextView = (TextView) viewGroupLayout.findViewById(ddwrtTile.getTileTitleViewId());
-        if (isThemeLight) {
-            if (titleTextView != null) {
-                titleTextView.setTextColor(ContextCompat.getColor(mContext,
-                        android.R.color.holo_blue_dark));
-            }
-        }
+        ColorUtils.setTextColor(titleTextView,
+                mRouter != null ? mRouter.getRouterFirmware() : null);
+//        if (isThemeLight) {
+//            if (titleTextView != null) {
+//                titleTextView.setTextColor(ContextCompat.getColor(mContext,
+//                        android.R.color.holo_blue_dark));
+//            }
+//        }
         viewGroupLayout.setBackgroundColor(ContextCompat
                 .getColor(mContext, android.R.color.transparent));
 

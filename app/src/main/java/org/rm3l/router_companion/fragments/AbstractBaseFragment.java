@@ -939,12 +939,14 @@ public abstract class AbstractBaseFragment<T> extends Fragment
 
 
                         final TextView titleTextView = (TextView) viewGroupLayout.findViewById(ddwrtTile.getTileTitleViewId());
-                        if (isThemeLight) {
-                            if (titleTextView != null) {
-                                titleTextView.setTextColor(ContextCompat.getColor(activity,
-                                        android.R.color.holo_blue_dark));
-                            }
-                        }
+                        ColorUtils.setTextColor(titleTextView,
+                                router != null ? router.getRouterFirmware() : null);
+//                        if (isThemeLight) {
+//                            if (titleTextView != null) {
+//                                titleTextView.setTextColor(ContextCompat.getColor(activity,
+//                                        android.R.color.holo_blue_dark));
+//                            }
+//                        }
                         viewGroupLayout.setBackgroundColor(ContextCompat
                                 .getColor(activity, android.R.color.transparent));
 

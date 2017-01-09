@@ -25,11 +25,14 @@ package org.rm3l.router_companion.utils;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Color;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.common.cache.CacheBuilder;
@@ -210,5 +213,40 @@ public final class ColorUtils {
             activity.setTheme(transparentStatusBar ?
                     R.style.AppThemeDark_StatusBarTransparent : R.style.AppThemeDark);
         }
+    }
+
+    public static <T extends TextView> void setTextColor(
+            @Nullable final T view, @Nullable final RouterFirmware routerFirmware) {
+
+        if (view == null) {
+            return;
+        }
+
+        boolean useDefaultStyle = (routerFirmware == null ||
+                RouterFirmware.AUTO == routerFirmware ||
+                RouterFirmware.UNKNOWN == routerFirmware);
+        if (useDefaultStyle) {
+            setDefaultTextColor(view);
+        } else {
+            final Context context = view.getContext();
+            try {
+                //Determine style by intropsection
+                @ColorRes final int textColorResId = Utils.getResId(
+                        String.format("%s_tile_title",
+                                routerFirmware.name().toLowerCase()),
+                        R.color.class);
+                view.setTextColor(ContextCompat.getColor(context, textColorResId));
+            } catch (final Exception e) {
+                Crashlytics.logException(e);
+                setDefaultTextColor(view);
+            }
+        }
+    }
+
+    public static <T extends TextView> void setDefaultTextColor(@Nullable final T view) {
+        if (view == null) {
+            return;
+        }
+        view.setTextColor(ContextCompat.getColor(view.getContext(), R.color.tile_title));
     }
 }
