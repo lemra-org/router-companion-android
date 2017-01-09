@@ -51,7 +51,7 @@ public final class NetworkTopologyMapTileWorker {
             }
             //Active clients
             final String[] activeClients = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
-                    "arp -a 2>/dev/null");
+                    "/sbin/arp -a 2>/dev/null");
             if (activeClients != null) {
                 nvramInfo.setProperty("NB_ACTIVE_CLIENTS", Integer.toString(activeClients.length));
             }
@@ -62,14 +62,18 @@ public final class NetworkTopologyMapTileWorker {
 
             //Active DHCP Leases
             final String[] activeDhcpLeases = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
-                    "cat /tmp/dnsmasq.leases 2>/dev/null || echo \"N_A\"\"");
+                    "( /usr/bin/wc -l /tmp/dnsmasq.leases 2>/dev/null || echo \"N_A\" ) | awk '{print $1}'");
             if (activeDhcpLeases != null) {
-                if (activeDhcpLeases.length == 0 ||
-                        !"N_A".equals(activeDhcpLeases[0])) {
-                    nvramInfo.setProperty("NB_DHCP_LEASES", Integer.toString(activeDhcpLeases.length));
-                } else {
-                    //File does not exist
+                if (activeDhcpLeases.length == 0) {
                     nvramInfo.setProperty("NB_DHCP_LEASES", "-1");
+                } else {
+                    final String activeDhcpLease = activeDhcpLeases[0];
+                    if ("N_A".equals(activeDhcpLease)) {
+                        //File does not exist
+                        nvramInfo.setProperty("NB_DHCP_LEASES", "-1");
+                    } else {
+                        nvramInfo.setProperty("NB_DHCP_LEASES", activeDhcpLease);
+                    }
                 }
             }
 
