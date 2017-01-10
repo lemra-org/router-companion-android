@@ -10,12 +10,15 @@ import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by rm3l on 08/01/2017.
  */
 
 public class DemoFirmwareConnector extends AbstractRouterFirmwareConnector {
+
+    private final AtomicLong mGetWanPublicIpAddressCalls = new AtomicLong(0);
 
     @Override
     public NVRAMInfo getDataForNetworkTopologyMapTile(
@@ -45,6 +48,45 @@ public class DemoFirmwareConnector extends AbstractRouterFirmwareConnector {
                 dataRetrievalListener.doRegardlessOfStatus();
             }
         }
+    }
+
+    @Nullable
+    @Override
+    public String getWanPublicIpAddress(@NonNull Context context,
+                                        @NonNull Router router,
+                                        @Nullable RemoteDataRetrievalListener dataRetrievalListener)
+            throws Exception {
+
+        final long nbRuns = mGetWanPublicIpAddressCalls.getAndIncrement();
+
+        if (dataRetrievalListener != null) {
+            dataRetrievalListener.onProgressUpdate(10);
+        }
+
+        final int a = 1 + new Random().nextInt(252);
+        final int b = 1 + new Random().nextInt(252);
+        final int c = 1 + new Random().nextInt(252);
+        final int d = 1 + new Random().nextInt(252);
+
+        final long modulo = nbRuns % 7;
+        final String mWanPublicIP;
+
+        if (modulo == 0) {
+            mWanPublicIP = ("52.64." + c + "." + d);
+        } else if (modulo == 1) {
+            mWanPublicIP = ("8.8." + c + "." + d);
+        } else if (modulo == 2) {
+            mWanPublicIP = ("78.87." + c + "." + d);
+        } else if (modulo == 3) {
+            mWanPublicIP = ("34.56." + c + "." + d);
+        } else if (modulo == 4) {
+            mWanPublicIP = ("67.78." + c + "." + d);
+        } else if (modulo == 5) {
+            mWanPublicIP = (a + "." + b + "." + c + "." + d);
+        } else {
+            mWanPublicIP = null;
+        }
+        return mWanPublicIP;
     }
 
     @Override

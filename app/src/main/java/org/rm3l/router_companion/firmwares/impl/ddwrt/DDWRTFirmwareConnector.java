@@ -1,12 +1,16 @@
 package org.rm3l.router_companion.firmwares.impl.ddwrt;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Patterns;
 
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector;
 import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
 import org.rm3l.router_companion.firmwares.impl.ddwrt.tile_data_workers.dashboard.network.NetworkTopologyMapTileWorker;
+import org.rm3l.router_companion.resources.PublicIPInfo;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.SSHUtils;
@@ -28,6 +32,15 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
                 .getDataForNetworkTopologyMapTile(context, router, dataRetrievalListener);
     }
 
+    @Nullable
+    @Override
+    public String getWanPublicIpAddress(@NonNull Context context,
+                                        @NonNull Router router,
+                                        @Nullable RemoteDataRetrievalListener dataRetrievalListener)
+            throws Exception {
+        return SSHUtils.loadWanPublicIPFrom(context, router, null, dataRetrievalListener);
+    }
+
     @Override
     @Nullable
     protected String goGetRouterModel(@NonNull Context context, @NonNull Router router)
@@ -42,4 +55,5 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
         }
         return null;
     }
+
 }

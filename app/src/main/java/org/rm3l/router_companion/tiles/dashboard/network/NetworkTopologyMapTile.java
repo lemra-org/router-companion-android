@@ -177,7 +177,8 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                     updateProgressBarViewSeparator(20);
 
                     final NVRAMInfo nvramInfo = RouterFirmwareConnectorManager.getConnector(mRouterCopy)
-                            .getDataForNetworkTopologyMapTile(mParentFragmentActivity, mRouterCopy,
+                            .getDataFor(mParentFragmentActivity, mRouterCopy,
+                                    NetworkTopologyMapTile.class,
                                     new RemoteDataRetrievalListener() {
                                         @Override
                                         public void onProgressUpdate(int progress) {

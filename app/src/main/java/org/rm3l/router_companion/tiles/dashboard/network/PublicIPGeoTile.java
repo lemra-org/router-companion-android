@@ -31,31 +31,28 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.TilesOverlay;
-import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
+import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.IPWhoisInfo;
 import org.rm3l.router_companion.resources.None;
-import org.rm3l.router_companion.resources.PublicIPInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.status.wireless.ActiveIPConnectionsDetailActivity;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
-import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.widgets.map.MyOwnItemizedOverlay;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.rm3l.router_companion.utils.Utils.isDemoRouter;
 
 /**
  * Created by rm3l on 29/12/15.
@@ -219,55 +216,20 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                     mLastSync = System.currentTimeMillis();
 
                     try {
-                        updateProgressBarViewSeparator(40);
 
-                        if (isDemoRouter(mRouter)) {
-                            final int c = 1 + new Random().nextInt(252);
-                            final int d = 1 + new Random().nextInt(252);
-                            final long modulo = nbRunsLoader % 5;
-                            if (modulo == 0) {
-                                mWanPublicIP = ("52.64." + c + "." + d);
-                            } else if (modulo == 1) {
-                                mWanPublicIP = ("8.8." + c + "." + d);
-                            } else if (modulo == 2) {
-                                mWanPublicIP = ("78.87." + c + "." + d);
-                            } else if (modulo == 3) {
-                                mWanPublicIP = ("34.56." + c + "." + d);
-                            } else if (modulo == 4) {
-                                mWanPublicIP = ("67.78." + c + "." + d);
-                            } else {
-                                mWanPublicIP = null;
-                            }
-                        } else {
-                            //Check actual connections to the outside from the router
-                            final CharSequence applicationName = Utils.getApplicationName(mParentFragmentActivity);
-                            final String[] wanPublicIpCmdStatus = SSHUtils.getManualProperty(mParentFragmentActivity,
-                                    mRouter, mGlobalPreferences,
-//                                        "echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazip.com 80"
-                                    String.format("echo -e \"" +
-                                                    "GET / HTTP/1.1\\r\\n" +
-                                                    "Host:%s\\r\\n" +
-                                                    "User-Agent:%s/%s\\r\\n\" " +
-                                                    "| /usr/bin/nc %s %d",
-                                            PublicIPInfo.ICANHAZIP_HOST,
-                                            applicationName != null ?
-                                                    applicationName :
-                                                    BuildConfig.APPLICATION_ID,
-                                            BuildConfig.VERSION_NAME,
-                                            PublicIPInfo.ICANHAZIP_HOST,
-                                            PublicIPInfo.ICANHAZIP_PORT));
-                            if (wanPublicIpCmdStatus != null && wanPublicIpCmdStatus.length > 0) {
-                                final String wanPublicIp = wanPublicIpCmdStatus[wanPublicIpCmdStatus.length - 1]
-                                        .trim();
-                                if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
-                                    mWanPublicIP = wanPublicIp;
-                                } else {
-                                    mWanPublicIP = null;
-                                }
-                            } else {
-                                mWanPublicIP = null;
-                            }
-                        }
+                        mWanPublicIP = RouterFirmwareConnectorManager.getConnector(mRouter)
+                                .getWanPublicIpAddress(mParentFragmentActivity,
+                                        mRouter, new RemoteDataRetrievalListener() {
+                                            @Override
+                                            public void onProgressUpdate(int progress) {
+                                                updateProgressBarViewSeparator(progress);
+                                            }
+
+                                            @Override
+                                            public void doRegardlessOfStatus() {
+                                                //Nothing to do here!
+                                            }
+                                        });
 
                         if (mWanPublicIP != null &&
                                 Patterns.IP_ADDRESS.matcher(mWanPublicIP).matches()) {

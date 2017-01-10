@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 
 import org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector;
 import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
+import org.rm3l.router_companion.firmwares.impl.ddwrt.DDWRTFirmwareConnector;
 import org.rm3l.router_companion.firmwares.impl.tomato.tile_data_workers.dashboard.network.NetworkTopologyMapTileWorker;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
@@ -26,6 +27,12 @@ public class TomatoFirmwareConnector extends AbstractRouterFirmwareConnector {
                                                          @NonNull Router router,
                                                          @Nullable RemoteDataRetrievalListener dataRetrievalListener) throws Exception {
         return NetworkTopologyMapTileWorker.getDataForNetworkTopologyMapTile(context, router, dataRetrievalListener);
+    }
+
+    @Nullable
+    @Override
+    public String getWanPublicIpAddress(@NonNull Context context, @NonNull Router router, @Nullable RemoteDataRetrievalListener dataRetrievalListener) throws Exception {
+        return SSHUtils.loadWanPublicIPFrom(context, router, null, dataRetrievalListener);
     }
 
     @Override

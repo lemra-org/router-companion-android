@@ -28,6 +28,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Joiner;
@@ -44,7 +45,9 @@ import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.router_companion.actions.RouterAction;
 import org.rm3l.router_companion.actions.RouterStreamActionListener;
 import org.rm3l.router_companion.exceptions.UnknownRouterFirmwareException;
+import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
 import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
+import org.rm3l.router_companion.resources.PublicIPInfo;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.resources.conn.openwrt.UCIInfo;
@@ -816,6 +819,50 @@ public final class SSHUtils {
         }
 
         return true;
+    }
+
+    @Nullable
+    public static String loadWanPublicIPFrom(
+            @NonNull Context context, @NonNull Router router,
+            @Nullable final String ncCmdPath,
+            @Nullable RemoteDataRetrievalListener dataRetrievalListener) throws Exception {
+
+        if (dataRetrievalListener != null) {
+            dataRetrievalListener.onProgressUpdate(40);
+        }
+
+        final SharedPreferences globalSharedPreferences = Utils.getGlobalSharedPreferences(context);
+
+        //Check actual connections to the outside from the router
+        final CharSequence applicationName = Utils.getApplicationName(context);
+        final String[] wanPublicIpCmdStatus = SSHUtils.getManualProperty(context,
+                router, globalSharedPreferences,
+//              "echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazip.com 80"
+                String.format("echo -e \"" +
+                                "GET / HTTP/1.1\\r\\n" +
+                                "Host:%s\\r\\n" +
+                                "User-Agent:%s/%s\\r\\n\" " +
+                                "| %s %s %d",
+                        PublicIPInfo.ICANHAZIP_HOST,
+                        applicationName != null ?
+                                applicationName :
+                                BuildConfig.APPLICATION_ID,
+                        BuildConfig.VERSION_NAME,
+                        TextUtils.isEmpty(ncCmdPath) ? "/usr/bin/nc" : ncCmdPath,
+                        PublicIPInfo.ICANHAZIP_HOST,
+                        PublicIPInfo.ICANHAZIP_PORT));
+
+        String mWanPublicIP = null;
+        if (wanPublicIpCmdStatus != null && wanPublicIpCmdStatus.length > 0) {
+            final String wanPublicIp = wanPublicIpCmdStatus[wanPublicIpCmdStatus.length - 1]
+                    .trim();
+            if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
+                mWanPublicIP = wanPublicIp;
+            } else {
+                mWanPublicIP = null;
+            }
+        }
+        return mWanPublicIP;
     }
 
     /**
