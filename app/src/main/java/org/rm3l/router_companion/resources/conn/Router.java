@@ -87,6 +87,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.router_companion.fragments.AbstractBaseFragment.getTabsForDDWRT;
 import static org.rm3l.router_companion.fragments.AbstractBaseFragment.getTabsForOpenWRT;
+import static org.rm3l.router_companion.fragments.AbstractBaseFragment.getTabsForTomato;
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.router_companion.resources.Encrypted.d;
 import static org.rm3l.router_companion.resources.Encrypted.e;
@@ -1116,8 +1117,7 @@ public class Router implements Serializable {
 
         TOMATO("Tomato (Beta)",
                 R.drawable.tomato_nav_drawer_header_bg,
-                //TODO Same tabs as DD-WRT (for now)
-                getTabsForDDWRT(),
+                getTabsForTomato(),
                 "/bin/nvram"),
 
         DEMO("Demo",

@@ -519,6 +519,260 @@ public abstract class AbstractBaseFragment<T> extends Fragment
     }
 
     @NonNull
+    public static ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> getTabsForTomato() {
+        final ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> tabsForDDWRT = ArrayListMultimap.create();
+        //1- Dashboard: {Network, Bandwidth, System}
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> dashboardTabs
+                = new ArrayList<>();
+        dashboardTabs.add(new FragmentTabDescription<DashboardNetworkFragment>
+                (DashboardNetworkFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.dashboard_network;
+            }
+        });
+        //FIXME Does not work yet!
+//        dashboardTabs.add(new FragmentTabDescription<DashboardBandwidthFragment>
+//                (DashboardBandwidthFragment.class) {
+//            @Override
+//            public int getTitleRes() {
+//                return R.string.dashboard_bandwidth;
+//            }
+//        });
+        dashboardTabs.add(new FragmentTabDescription<DashboardSystemFragment>
+                (DashboardSystemFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.dashboard_system;
+            }
+        });
+        tabsForDDWRT.putAll(1, dashboardTabs);
+
+        //2- Status: {Status, Wireless, Clients, Monitoring}
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> statusTabs = new ArrayList<>();
+        statusTabs.add(new FragmentTabDescription<StatusRouterFragment>
+                (StatusRouterFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_router;
+            }
+        });
+        statusTabs.add(new FragmentTabDescription<StatusTimeFragment>
+                (StatusTimeFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_time;
+            }
+        });
+        statusTabs.add(new FragmentTabDescription<StatusWANFragment>
+                (StatusWANFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_wan;
+            }
+        });
+        statusTabs.add(new FragmentTabDescription<StatusLANFragment>
+                (StatusLANFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_lan;
+            }
+        });
+        statusTabs.add(new FragmentTabDescription<StatusSyslogFragment>
+                (StatusSyslogFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_syslog;
+            }
+        });
+        tabsForDDWRT.putAll(2, statusTabs);
+
+        //3- Status > Wireless
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> wirelessTabs = new ArrayList<>();
+        wirelessTabs.add(new FragmentTabDescription<StatusWirelessFragment>
+                (StatusWirelessFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_wireless;
+            }
+        });
+        tabsForDDWRT.putAll(3, wirelessTabs);
+
+        //4- Status > Clients
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> clientsTabs = new ArrayList<>();
+        clientsTabs.add(new FragmentTabDescription<StatusClientsFragment>
+                (StatusClientsFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_clients;
+            }
+        });
+        tabsForDDWRT.putAll(4, clientsTabs);
+
+        //5- Status > Monitoring
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> monitoringTabs = new ArrayList<>();
+        monitoringTabs.add(new FragmentTabDescription<StatusMonitoringWANFragment>
+                (StatusMonitoringWANFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_wan;
+            }
+        });
+        monitoringTabs.add(new FragmentTabDescription<StatusBandwidthFragment>
+                (StatusBandwidthFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_bandwidth;
+            }
+        });
+        tabsForDDWRT.putAll(5, monitoringTabs);
+
+        //7- Services > OpenVPN
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> servicesOpenVpnTabs = new ArrayList<>();
+        servicesOpenVpnTabs.add(new FragmentTabDescription<ServicesOpenVPNServerFragment>
+                (ServicesOpenVPNServerFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.services_openvpn_server;
+            }
+        });
+        servicesOpenVpnTabs.add(new FragmentTabDescription<ServicesOpenVPNClientFragment>
+                (ServicesOpenVPNClientFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.services_openvpn_client;
+            }
+        });
+        servicesOpenVpnTabs.add(new FragmentTabDescription<ServicesOpenVPNLogsFragment>
+                (ServicesOpenVPNLogsFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.services_openvpn_logs;
+            }
+        });
+        tabsForDDWRT.putAll(7, servicesOpenVpnTabs);
+
+        //8- Services > PPTP
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> servicesPPTPTabs = new ArrayList<>();
+        servicesPPTPTabs.add(new FragmentTabDescription<ServicesPPTPServerFragment>
+                (ServicesPPTPServerFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.services_pptp_server;
+            }
+        });
+        servicesPPTPTabs.add(new FragmentTabDescription<ServicesPPTPClientFragment>
+                (ServicesPPTPClientFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.services_pptp_client;
+            }
+        });
+        tabsForDDWRT.putAll(8, servicesPPTPTabs);
+
+        //9- Services > WOL
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> servicesWolTabs = new ArrayList<>();
+        servicesWolTabs.add(new FragmentTabDescription<ServicesWakeOnLanFragment>
+                (ServicesWakeOnLanFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.services_wol;
+            }
+        });
+        servicesWolTabs.add(new FragmentTabDescription<ServicesWakeOnLanDaemonFragment>
+                (ServicesWakeOnLanDaemonFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.services_wol_daemon;
+            }
+        });
+        tabsForDDWRT.putAll(9, servicesWolTabs);
+
+        //11- Admin > Access Restrictions
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> adminAccessRestrictionsTabs = new ArrayList<>();
+        adminAccessRestrictionsTabs.add(new FragmentTabDescription<AccessRestrictionsWANAccessFragment>
+                (AccessRestrictionsWANAccessFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.access_restrictions;
+            }
+        });
+        tabsForDDWRT.putAll(11, adminAccessRestrictionsTabs);
+
+        //12- Admin > Commands
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> adminCmdTabs = new ArrayList<>();
+        adminCmdTabs.add(new FragmentTabDescription<AdminCommandsFragment>
+                (AdminCommandsFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.command_shell;
+            }
+        });
+        tabsForDDWRT.putAll(12, adminCmdTabs);
+
+        //13- Admin > NVRAM
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> adminNvramTabs = new ArrayList<>();
+        adminNvramTabs.add(new FragmentTabDescription<AdminNVRAMFragment>
+                (AdminNVRAMFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.admin_area_nvram;
+            }
+        });
+        tabsForDDWRT.putAll(13, adminNvramTabs);
+
+        //15- Toolbox > Network
+        //FIXME Add "netstat" also (auto-refreshable)
+//                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragment.class, parentSectionTitle,
+//                        resources.getString(R.string.toolbox_subnet_calculator), router);
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> toolboxNetworkTabs = new ArrayList<>();
+        toolboxNetworkTabs.add(new FragmentTabDescription<ToolboxPingFragment>
+                (ToolboxPingFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.toolbox_ping;
+            }
+        });
+        toolboxNetworkTabs.add(new FragmentTabDescription<ToolboxTracerouteFragment>
+                (ToolboxTracerouteFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.toolbox_traceroute;
+            }
+        });
+        toolboxNetworkTabs.add(new FragmentTabDescription<ToolboxNsLookupFragment>
+                (ToolboxNsLookupFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.toolbox_nslookup;
+            }
+        });
+        toolboxNetworkTabs.add(new FragmentTabDescription<ToolboxArpingFragment>
+                (ToolboxArpingFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.toolbox_arping;
+            }
+        });
+        toolboxNetworkTabs.add(new FragmentTabDescription<ToolboxWhoisFragment>
+                (ToolboxWhoisFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.toolbox_whois;
+            }
+        });
+        toolboxNetworkTabs.add(new FragmentTabDescription<ToolboxMACOUILookupFragment>
+                (ToolboxMACOUILookupFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.toolbox_oui_lookup;
+            }
+        });
+        tabsForDDWRT.putAll(15, toolboxNetworkTabs);
+        return tabsForDDWRT;
+    }
+
+    @NonNull
     public static ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> getTabsForOpenWRT() {
         final ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> tabsForOpenWRT = ArrayListMultimap.create();
         //1- Dashboard: {Network, Bandwidth, System}
