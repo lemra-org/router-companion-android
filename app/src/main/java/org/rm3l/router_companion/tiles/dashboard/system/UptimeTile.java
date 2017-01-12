@@ -21,6 +21,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
+import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
@@ -30,42 +32,20 @@ import org.rm3l.router_companion.utils.SSHUtils;
 import java.util.List;
 import java.util.Random;
 
+import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_DAYS;
+import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_HOURS;
+import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_MINUTES;
 import static org.rm3l.router_companion.utils.Utils.isDemoRouter;
 
 public class UptimeTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = UptimeTile.class.getSimpleName();
-    public static final String UPTIME_DAYS = "UPTIME_DAYS";
-    public static final String UPTIME_HOURS = "UPTIME_HOURS";
-    public static final String UPTIME_MINUTES = "UPTIME_MINUTES";
     public static final String N_A = "-";
-    public static final Splitter COMMA_SPLITTER = Splitter.on(",").omitEmptyStrings();
-    public static final String UPTIME = "UPTIME";
-    private boolean isThemeLight;
 
     private long mLastSync;
-//    private final View.OnClickListener routerStateClickListener;
 
     public UptimeTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_overview_uptime,null);
-        isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
-
-//        routerStateClickListener = new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //Open Router State tab
-//                if (mParentFragmentActivity instanceof DDWRTMainActivity) {
-//                    ((DDWRTMainActivity) mParentFragmentActivity)
-//                            .selectItemInDrawer(2);
-//                } else {
-//                    //TODO Set proper flags ???
-//                    final Intent intent = new Intent(mParentFragmentActivity, DDWRTMainActivity.class);
-//                    intent.putExtra(ROUTER_SELECTED, mRouter.getUuid());
-//                    intent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 2);
-//                    mParentFragmentActivity.startActivity(intent);
-//                }
-//            }
-//        };
     }
 
     @Override
@@ -86,11 +66,7 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
             @Nullable
             @Override
             public NVRAMInfo loadInBackground() {
-
                 try {
-
-                    isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
-
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + UptimeTile.class + ": routerInfo=" +
                             mRouter + " / nbRunsLoader=" + nbRunsLoader);
 
@@ -103,119 +79,20 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
 
                     mLastSync = System.currentTimeMillis();
 
-                    final NVRAMInfo nvramInfo = new NVRAMInfo();
-
-                    NVRAMInfo nvramInfoTmp = null;
-                    try {
-                        updateProgressBarViewSeparator(10);
-
-                        if (isDemoRouter(mRouter)) {
-                            final Random random = new Random();
-                            final String days = Integer.toString(random.nextInt(60));
-                            final String hours = Integer.toString(random.nextInt(23));
-                            final String minutes = Integer.toString(random.nextInt(59));
-                            nvramInfoTmp = new NVRAMInfo()
-                                    .setProperty(UPTIME, "22:31:45 up " + days + " days, " + hours +
-                                            ":" + minutes + ", load average: 0.11, 0.10, 0.09")
-                                    .setProperty(UPTIME_DAYS, days)
-                                    .setProperty(UPTIME_HOURS, hours)
-                                    .setProperty(UPTIME_MINUTES, minutes);
-                        } else {
-                            nvramInfoTmp = new NVRAMInfo();
-
-//                            final String[] manualProperty = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences, "uptime 2>/dev/null");
-//                            if (manualProperty != null && manualProperty.length > 0 && manualProperty[0] != null) {
-//                                nvramInfoTmp = new NVRAMInfo()
-//                                        .setProperty(UPTIME, manualProperty[0].trim());
-//                            }
-
-                            final String[] uptimeOutput = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
-                                    "uptime 2>/dev/null | awk -F'up ' '{print $2}' | awk -F'users' '{print $1}' | awk -F'load' '{print $1}'");
-                            updateProgressBarViewSeparator(60);
-                            if (uptimeOutput != null && uptimeOutput.length > 0) {
-                                final String uptime = uptimeOutput[uptimeOutput.length - 1];
-                                final List<String> uptimeList = COMMA_SPLITTER.splitToList(uptime);
-                                if (uptimeList != null) {
-                                    final int uptimeListSize = uptimeList.size();
-                                    if (uptimeListSize > 0) {
-                                        final String first = uptimeList.get(0).trim();
-                                        if (StringUtils.contains(first, "day")) {
-                                            //day
-                                            nvramInfoTmp.setProperty(UPTIME_DAYS,
-                                                    first
-                                                            .replaceAll("days", "")
-                                                            .replaceAll("day", "")
-                                                    .trim());
-
-                                            if (uptimeListSize >= 2) {
-                                                final String other = uptimeList.get(1);
-                                                if (other != null) {
-                                                    if (other.contains(":")) {
-                                                        final List<String> otherList =
-                                                                Splitter.on(":").omitEmptyStrings()
-                                                                .splitToList(other);
-                                                        if (otherList != null) {
-                                                            if (otherList.size() >= 1) {
-                                                                nvramInfoTmp.setProperty(UPTIME_HOURS,
-                                                                        otherList.get(0).trim());
-                                                            }
-                                                            if (otherList.size() >= 2) {
-                                                                nvramInfoTmp.setProperty(UPTIME_MINUTES,
-                                                                        otherList.get(1).trim());
-                                                            }
-                                                        }
-                                                    } else if (StringUtils.contains(other, "hour")) {
-                                                        nvramInfoTmp.setProperty(UPTIME_HOURS,
-                                                                other
-                                                                        .replaceAll("hours", "")
-                                                                        .replaceAll("hour", "").trim());
-                                                    } else if (StringUtils.contains(other, "min")) {
-                                                        nvramInfoTmp.setProperty(UPTIME_MINUTES,
-                                                                other
-                                                                        .replaceAll("mins", "")
-                                                                        .replaceAll("min", "").trim());
-                                                    }
-                                                }
-                                            }
-                                        } else if (StringUtils.contains(first, ":")) {
-                                            final List<String> otherList =
-                                                    Splitter.on(":").omitEmptyStrings()
-                                                            .splitToList(first);
-                                            if (otherList != null) {
-                                                if (otherList.size() >= 1) {
-                                                    nvramInfoTmp.setProperty(UPTIME_HOURS,
-                                                            otherList.get(0).trim());
-                                                }
-                                                if (otherList.size() >= 2) {
-                                                    nvramInfoTmp.setProperty(UPTIME_MINUTES,
-                                                            otherList.get(1).trim());
-                                                }
-                                            }
-                                        } else if (StringUtils.contains(first, "hour")) {
-                                            nvramInfoTmp.setProperty(UPTIME_HOURS,
-                                                    first
-                                                            .replaceAll("hours", "")
-                                                            .replaceAll("hour", "").trim());
-                                        } else if (StringUtils.contains(first, "min")) {
-                                            nvramInfoTmp.setProperty(UPTIME_MINUTES,
-                                                    first
-                                                            .trim()
-                                                            .replaceAll("mins", "")
-                                                            .replaceAll("min", "").trim());
+                    return RouterFirmwareConnectorManager.getConnector(mRouter)
+                            .getDataFor(mParentFragmentActivity, mRouter,
+                                    UptimeTile.class,
+                                    new RemoteDataRetrievalListener() {
+                                        @Override
+                                        public void onProgressUpdate(int progress) {
+                                            updateProgressBarViewSeparator(progress);
                                         }
-                                    }
-                                }
-                            }
 
-                        }
-                    } finally {
-                        if (nvramInfoTmp != null) {
-                            nvramInfo.putAll(nvramInfoTmp);
-                        }
+                                        @Override
+                                        public void doRegardlessOfStatus() {
 
-                    }
-
-                    return nvramInfo;
+                                        }
+                                    });
 
                 } catch (@NonNull final Exception e) {
                     e.printStackTrace();

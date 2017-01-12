@@ -44,6 +44,7 @@ import com.google.common.base.Throwables;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.router_companion.firmwares.impl.ddwrt.DDWRTFirmwareConnector;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
@@ -59,6 +60,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.router_companion.firmwares.impl.ddwrt.DDWRTFirmwareConnector.getGrepProcMemInfo;
 import static org.rm3l.router_companion.utils.Utils.isDemoRouter;
 
 /**
@@ -76,11 +78,6 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
         super(parentFragment, arguments, router, R.layout.tile_status_router_router_mem,
                 null);
         isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
-    }
-
-    @NonNull
-    public static String getGrepProcMemInfo(@NonNull final String item) {
-        return "grep \"^" + item + "\" /proc/meminfo ";
     }
 
     @Override

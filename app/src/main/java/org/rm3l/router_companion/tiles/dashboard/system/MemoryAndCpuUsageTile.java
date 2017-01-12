@@ -23,22 +23,19 @@ import com.google.common.base.Throwables;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
+import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
 import org.rm3l.router_companion.main.DDWRTMainActivity;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.status.router.StatusRouterMemoryTile;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.SSHUtils;
 
 import java.util.List;
-import java.util.Random;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
-import static org.rm3l.router_companion.tiles.status.router.StatusRouterCPUTile.GREP_MODEL_PROC_CPUINFO;
-import static org.rm3l.router_companion.tiles.status.router.StatusRouterMemoryTile.getGrepProcMemInfo;
-import static org.rm3l.router_companion.utils.Utils.isDemoRouter;
 
 /**
  * Created by rm3l on 03/01/16.
@@ -117,28 +114,32 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo>  {
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
 
                     updateProgressBarViewSeparator(10);
-                    final String[] otherCmds;
-                    if (isDemoRouter(mRouter)) {
-                        otherCmds = new String[3];
-                        final int memTotal = 4096;
-                        final int memFree =
-                                new Random().nextInt(memTotal + 1);
-                        otherCmds[0] = (memTotal + " kB"); //MemTotal
-                        otherCmds[1] = (memFree + " kB"); //MemFree
-                        otherCmds[2] = Integer.toString(new Random().nextInt(100)); //CPU Usage
-                    } else {
-                        otherCmds = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
-                                mGlobalPreferences,
-                                getGrepProcMemInfo("MemTotal"),
-                                getGrepProcMemInfo("MemFree"));
-                    }
-                    updateProgressBarViewSeparator(30);
 
-                    if (otherCmds != null && otherCmds.length >= 2) {
+                    final List<String[]> dataForMemoryAndCpuUsageTile = RouterFirmwareConnectorManager.getConnector(mRouter)
+                            .getDataForMemoryAndCpuUsageTile(mParentFragmentActivity, mRouter,
+                                    new RemoteDataRetrievalListener() {
+                                        @Override
+                                        public void onProgressUpdate(int progress) {
+                                            updateProgressBarViewSeparator(progress);
+                                        }
+
+                                        @Override
+                                        public void doRegardlessOfStatus() {
+
+                                        }
+                                    });
+
+                    if (dataForMemoryAndCpuUsageTile == null ||
+                            dataForMemoryAndCpuUsageTile.isEmpty()) {
+                        throw new DDWRTNoDataException();
+                    }
+
+                    final String[] memData = dataForMemoryAndCpuUsageTile.get(0);
+                    if (memData != null && memData.length >= 2) {
                         //Total
                         String memTotal = null;
                         List<String> strings = Splitter.on("MemTotal:").omitEmptyStrings()
-                                .trimResults().splitToList(otherCmds[0].trim());
+                                .trimResults().splitToList(memData[0].trim());
                         if (strings != null && strings.size() >= 1) {
                             memTotal = strings.get(0);
                             nvramInfo.setProperty(NVRAMInfo.MEMORY_TOTAL, memTotal);
@@ -150,7 +151,7 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo>  {
                         //Free
                         String memFree = null;
                         strings = Splitter.on("MemFree:").omitEmptyStrings().trimResults()
-                                .splitToList(otherCmds[1].trim());
+                                .splitToList(memData[1].trim());
                         if (strings != null && strings.size() >= 1) {
                             memFree = strings.get(0);
                             nvramInfo.setProperty(NVRAMInfo.MEMORY_FREE, strings.get(0));
@@ -178,39 +179,31 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo>  {
                     }
                     updateProgressBarViewSeparator(50);
 
-                    final String[] cpuUsageData;
-                    if (isDemoRouter(mRouter)) {
-                        cpuUsageData = new String[2];
-                        cpuUsageData[0] = " 0.14, 0.24, 0.28";
-                        cpuUsageData[1] = "1";
-                    } else {
-                        cpuUsageData = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
-                                mGlobalPreferences,
-                                "uptime | awk -F'average:' '{ print $2}'",
-                                GREP_MODEL_PROC_CPUINFO + "| wc -l");
-                    }
+                    if (dataForMemoryAndCpuUsageTile.size() >= 2) {
+                        final String[] cpuUsageData = dataForMemoryAndCpuUsageTile.get(1);
 
-                    if (cpuUsageData != null && cpuUsageData.length >= 2) {
-                        final String loadAvg = cpuUsageData[0];
-                        if (loadAvg != null) {
-                            final List<String> stringList = Splitter.on(",").omitEmptyStrings().trimResults()
-                                    .splitToList(loadAvg);
-                            if (stringList.size() >= 3) {
-                                try {
-                                    final float loadAvgTotal = Float.parseFloat(stringList.get(0)) +
-                                            Float.parseFloat(stringList.get(1)) +
-                                            Float.parseFloat(stringList.get(2));
-                                    final int coresCount = Integer.parseInt(cpuUsageData[1]);
+                        if (cpuUsageData != null && cpuUsageData.length >= 2) {
+                            final String loadAvg = cpuUsageData[0];
+                            if (loadAvg != null) {
+                                final List<String> stringList = Splitter.on(",").omitEmptyStrings().trimResults()
+                                        .splitToList(loadAvg);
+                                if (stringList.size() >= 3) {
+                                    try {
+                                        final float loadAvgTotal = Float.parseFloat(stringList.get(0)) +
+                                                Float.parseFloat(stringList.get(1)) +
+                                                Float.parseFloat(stringList.get(2));
+                                        final int coresCount = Integer.parseInt(cpuUsageData[1]);
 
-                                    if (coresCount > 0) {
-                                        nvramInfo.setProperty(NVRAMInfo.CPU_USED_PERCENT,
-                                                Integer.toString(
-                                                        Math.min(100, Double.valueOf(loadAvgTotal / coresCount * 33.3).intValue())));
+                                        if (coresCount > 0) {
+                                            nvramInfo.setProperty(NVRAMInfo.CPU_USED_PERCENT,
+                                                    Integer.toString(
+                                                            Math.min(100, Double.valueOf(loadAvgTotal / coresCount * 33.3).intValue())));
+                                        }
+
+                                    } catch (final NumberFormatException e) {
+                                        e.printStackTrace();
+                                        Crashlytics.logException(e);
                                     }
-
-                                } catch (final NumberFormatException e) {
-                                    e.printStackTrace();
-                                    Crashlytics.logException(e);
                                 }
                             }
                         }

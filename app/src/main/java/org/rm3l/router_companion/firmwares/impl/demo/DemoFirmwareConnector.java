@@ -13,6 +13,8 @@ import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.SSHUtils;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -21,6 +23,10 @@ import static org.rm3l.router_companion.resources.conn.NVRAMInfo.TOTAL_DL_CURREN
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.TOTAL_DL_CURRENT_DAY_MB;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.TOTAL_UL_CURRENT_DAY;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.TOTAL_UL_CURRENT_DAY_MB;
+import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME;
+import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_DAYS;
+import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_HOURS;
+import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_MINUTES;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.HIDDEN_;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.TOTAL_DL_CURRENT_MONTH;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.TOTAL_DL_CURRENT_MONTH_MB;
@@ -150,5 +156,43 @@ public class DemoFirmwareConnector extends AbstractRouterFirmwareConnector {
         nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY_MB, HIDDEN_);
 
         return nvramInfo;
+    }
+
+    @Override
+    protected NVRAMInfo getDataForUptimeTile(@NonNull Context context,
+                                             @NonNull Router router,
+                                             @Nullable RemoteDataRetrievalListener dataRetrievalListener) throws Exception {
+
+        if (dataRetrievalListener != null) {
+            dataRetrievalListener.onProgressUpdate(10);
+        }
+
+        final Random random = new Random();
+        final String days = Integer.toString(random.nextInt(60));
+        final String hours = Integer.toString(random.nextInt(23));
+        final String minutes = Integer.toString(random.nextInt(59));
+        return new NVRAMInfo()
+                .setProperty(UPTIME, "22:31:45 up " + days + " days, " + hours +
+                        ":" + minutes + ", load average: 0.11, 0.10, 0.09")
+                .setProperty(UPTIME_DAYS, days)
+                .setProperty(UPTIME_HOURS, hours)
+                .setProperty(UPTIME_MINUTES, minutes);
+    }
+
+    @Override
+    public List<String[]> getDataForMemoryAndCpuUsageTile(@NonNull Context context, @NonNull Router router, @Nullable RemoteDataRetrievalListener dataRetrievalListener) throws Exception {
+        final String[] memUsageData = new String[3];
+        final int memTotal = 4096;
+        final int memFree =
+                new Random().nextInt(memTotal + 1);
+        memUsageData[0] = (memTotal + " kB"); //MemTotal
+        memUsageData[1] = (memFree + " kB"); //MemFree
+        memUsageData[2] = Integer.toString(new Random().nextInt(100)); //CPU Usage
+
+        final String[] cpuUsageData = new String[2];
+        cpuUsageData[0] = " 0.14, 0.24, 0.28";
+        cpuUsageData[1] = "1";
+
+        return Arrays.asList(memUsageData, cpuUsageData);
     }
 }

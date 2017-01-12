@@ -14,6 +14,7 @@ import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.utils.Utils;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 /**
  * Created by rm3l on 08/01/2017.
@@ -78,5 +79,16 @@ public abstract class AbstractRouterFirmwareConnector {
                                                                   @NonNull Router router,
                                                                    MonthlyCycleItem cycleItem,
                                                                   @Nullable RemoteDataRetrievalListener dataRetrievalListener)
+            throws Exception;
+
+
+    protected abstract NVRAMInfo getDataForUptimeTile(@NonNull Context context,
+                                                      @NonNull Router router,
+                                                      @Nullable RemoteDataRetrievalListener dataRetrievalListener)
+            throws Exception;
+
+    public abstract List<String[]> getDataForMemoryAndCpuUsageTile(@NonNull Context context,
+                                                                   @NonNull Router router,
+                                                                   @Nullable RemoteDataRetrievalListener dataRetrievalListener)
             throws Exception;
 }

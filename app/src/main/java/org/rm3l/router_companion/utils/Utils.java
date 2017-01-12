@@ -71,6 +71,7 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Transformation;
@@ -141,6 +142,9 @@ public final class Utils {
 
     public static final Pattern MAC_ADDRESS =
             Pattern.compile("([\\da-fA-F]{2}(?:\\:|-|$)){6}");
+
+    public static final Splitter COMMA_SPLITTER = Splitter.on(",").omitEmptyStrings();
+
 
     private Utils() {
     }
