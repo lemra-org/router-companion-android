@@ -57,7 +57,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.rm3l.router_companion.tiles.dashboard.system.StorageUsageTile.SPACE_SPLITTER;
+import static org.rm3l.router_companion.utils.Utils.SPACE_SPLITTER;
 
 /**
  *

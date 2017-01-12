@@ -6,7 +6,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Patterns;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
@@ -36,6 +38,7 @@ import static org.rm3l.router_companion.tiles.dashboard.bandwidth.WANTotalTraffi
 import static org.rm3l.router_companion.tiles.dashboard.bandwidth.WANTotalTrafficOverviewTile.TRAFF_PREFIX;
 import static org.rm3l.router_companion.tiles.status.router.StatusRouterCPUTile.GREP_MODEL_PROC_CPUINFO;
 import static org.rm3l.router_companion.utils.Utils.COMMA_SPLITTER;
+import static org.rm3l.router_companion.utils.Utils.SPACE_SPLITTER;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.retrieveAndPersistMonthlyTrafficData;
 
 /**
@@ -274,6 +277,160 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
                 GREP_MODEL_PROC_CPUINFO + "| wc -l");
 
         return Arrays.asList(memData, cpuUsageData);
+    }
+
+    @Override
+    protected NVRAMInfo getDataForStorageUsageTile(@NonNull Context context, @NonNull Router router,
+                                                     @Nullable RemoteDataRetrievalListener dataRetrievalListener) throws Exception {
+        if (dataRetrievalListener != null) {
+            dataRetrievalListener.onProgressUpdate(10);
+        }
+
+        final SharedPreferences globalSharedPreferences =
+                Utils.getGlobalSharedPreferences(context);
+
+        final String[] nvramSize = SSHUtils.getManualProperty(context,
+                router,
+                globalSharedPreferences,
+                "/usr/sbin/nvram show 2>&1 1>/dev/null | grep \"size: \"");
+        if (dataRetrievalListener != null) {
+            dataRetrievalListener.onProgressUpdate(20);
+        }
+
+        final String[] jffs2Size = SSHUtils.getManualProperty(context,
+                router, globalSharedPreferences,
+                "/bin/df -T | grep \"jffs2\"");
+        if (dataRetrievalListener != null) {
+            dataRetrievalListener.onProgressUpdate(30);
+        }
+
+        final String[] cifsSize = SSHUtils.getManualProperty(context,
+                router,
+                globalSharedPreferences,
+                "/bin/df -T | grep \"cifs\"");
+
+        return parseDataForStorageUsageTile(
+                Arrays.asList(nvramSize, jffs2Size, cifsSize),
+                dataRetrievalListener);
+    }
+
+    public static NVRAMInfo parseDataForStorageUsageTile(@Nullable List<String[]> dataForStorageUsageTile,
+                                                         @Nullable RemoteDataRetrievalListener dataRetrievalListener) {
+        if (dataForStorageUsageTile == null || dataForStorageUsageTile.isEmpty()) {
+            throw new DDWRTNoDataException();
+        }
+
+        final NVRAMInfo nvramInfo = new NVRAMInfo();
+
+        final String[] nvramSize = dataForStorageUsageTile.get(0);
+
+        final String[] jffs2Size;
+        if (dataForStorageUsageTile.size() >= 2) {
+            jffs2Size = dataForStorageUsageTile.get(1);
+        } else {
+            jffs2Size = null;
+        }
+
+        final String[] cifsSize;
+        if (dataForStorageUsageTile.size() >= 3) {
+            cifsSize = dataForStorageUsageTile.get(2);
+        } else {
+            cifsSize = null;
+        }
+
+        if (dataRetrievalListener != null) {
+            dataRetrievalListener.onProgressUpdate(40);
+        }
+
+        if (nvramSize != null && nvramSize.length >= 1) {
+            final String nvramSizeStr = nvramSize[0];
+            if (nvramSizeStr != null && nvramSizeStr.startsWith("size:")) {
+                final List<String> stringList = SPACE_SPLITTER.splitToList(nvramSizeStr);
+                if (stringList.size() >= 5) {
+                    final String nvramTotalBytes = stringList.get(1).trim();
+                    final String nvramLeftBytes = stringList.get(3).replace("(","").trim();
+                    try {
+                        final long nvramTotalBytesLong = Long.parseLong(nvramTotalBytes);
+                        final long nvramLeftBytesLong = Long.parseLong(nvramLeftBytes);
+                        final long nvramUsedBytesLong = nvramTotalBytesLong - nvramLeftBytesLong;
+                        nvramInfo.setProperty(NVRAMInfo.NVRAM_USED_PERCENT,
+                                Long.toString(
+                                        Math.min(100, 100 * nvramUsedBytesLong / nvramTotalBytesLong)
+                                ));
+                    } catch (final NumberFormatException e) {
+                        e.printStackTrace();
+                        Crashlytics.logException(e);
+                    }
+                }
+            }
+        }
+        if (dataRetrievalListener != null) {
+            dataRetrievalListener.onProgressUpdate(50);
+        }
+
+        if (jffs2Size != null && jffs2Size.length >= 1) {
+            //We may have more than one mountpoint - so sum everything up
+            long totalUsed = 0;
+            long totalSize = 0;
+            for (int i = 0; i < jffs2Size.length; i++) {
+                final String jffs2SizeStr = jffs2Size[i];
+                if (!Strings.isNullOrEmpty(jffs2SizeStr)) {
+                    final List<String> stringList = SPACE_SPLITTER.splitToList(jffs2SizeStr);
+                    if (stringList.size() >= 7) {
+                        try {
+                            totalSize += Long.parseLong(stringList.get(2));
+                            totalUsed += Long.parseLong(stringList.get(3));
+                        } catch (final NumberFormatException e) {
+                            e.printStackTrace();
+                            Crashlytics.logException(e);
+                        }
+                    }
+                }
+                if (dataRetrievalListener != null) {
+                    dataRetrievalListener.onProgressUpdate(Math.min(70, 50 + 5 * i));
+                }
+            }
+            if (totalSize > 0) {
+                nvramInfo.setProperty(NVRAMInfo.STORAGE_JFFS2_USED_PERCENT,
+                        Long.toString(
+                                Math.min(100, 100 * totalUsed / totalSize)
+                        ));
+            }
+        }
+        if (dataRetrievalListener != null) {
+            dataRetrievalListener.onProgressUpdate(75);
+        }
+
+        if (cifsSize != null && cifsSize.length >= 1) {
+            //We may have more than one mountpoint - so sum everything up
+            long totalUsed = 0;
+            long totalSize = 0;
+            for (int i = 0; i < cifsSize.length; i++) {
+                final String cifsSizeStr = cifsSize[i];
+                if (!Strings.isNullOrEmpty(cifsSizeStr)) {
+                    final List<String> stringList = SPACE_SPLITTER.splitToList(cifsSizeStr);
+                    if (stringList.size() >= 7) {
+                        try {
+                            totalSize += Long.parseLong(stringList.get(2));
+                            totalUsed += Long.parseLong(stringList.get(3));
+                        } catch (final NumberFormatException e) {
+                            e.printStackTrace();
+                            Crashlytics.logException(e);
+                        }
+                    }
+                }
+                if (dataRetrievalListener != null) {
+                    dataRetrievalListener.onProgressUpdate(Math.min(87, 75 + 5 * i));
+                }
+            }
+            if (totalSize > 0) {
+                nvramInfo.setProperty(NVRAMInfo.STORAGE_CIFS_USED_PERCENT,
+                        Long.toString(
+                                Math.min(100, 100 * totalUsed / totalSize)
+                        ));
+            }
+        }
+        return nvramInfo;
     }
 
 }

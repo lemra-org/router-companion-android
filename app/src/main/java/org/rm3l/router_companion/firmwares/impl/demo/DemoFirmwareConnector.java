@@ -8,6 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector;
 import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
+import org.rm3l.router_companion.firmwares.impl.ddwrt.DDWRTFirmwareConnector;
 import org.rm3l.router_companion.resources.MonthlyCycleItem;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
@@ -194,5 +195,33 @@ public class DemoFirmwareConnector extends AbstractRouterFirmwareConnector {
         cpuUsageData[1] = "1";
 
         return Arrays.asList(memUsageData, cpuUsageData);
+    }
+
+    @Override
+    protected NVRAMInfo getDataForStorageUsageTile(@NonNull Context context, @NonNull Router router, @Nullable RemoteDataRetrievalListener dataRetrievalListener) throws Exception {
+        final String[] nvramSize = new String[1];
+        final Random random = new Random();
+
+        final int totalSize = 44379 + random.nextInt(44379);
+
+        nvramSize[0] = "size: " + totalSize +  " bytes (" +
+                random.nextInt(totalSize) + " left)";
+
+        final String[] jffs2Size = new String[1];
+        jffs2Size[0] = "/dev/mtdblock/5      jffs2          " +
+                totalSize + "      " +
+                random.nextInt(totalSize) +
+                "     120000   30% /jffs";
+
+        final String[] cifsSize = new String[1];
+        cifsSize[0] = "/dev/mtdblock/5      cifs          " +
+                totalSize +
+                "      " +
+                random.nextInt(totalSize) +
+                "     91300   50% /cifs";
+
+        return DDWRTFirmwareConnector.parseDataForStorageUsageTile(
+                Arrays.asList(nvramSize, jffs2Size, cifsSize),
+                dataRetrievalListener);
     }
 }

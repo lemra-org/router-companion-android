@@ -91,4 +91,9 @@ public abstract class AbstractRouterFirmwareConnector {
                                                                    @NonNull Router router,
                                                                    @Nullable RemoteDataRetrievalListener dataRetrievalListener)
             throws Exception;
+
+    protected abstract NVRAMInfo getDataForStorageUsageTile(@NonNull Context context,
+                                                                   @NonNull Router router,
+                                                                   @Nullable RemoteDataRetrievalListener dataRetrievalListener)
+            throws Exception;
 }

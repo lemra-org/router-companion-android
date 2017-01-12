@@ -17,13 +17,13 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.github.lzyzsd.circleprogress.ArcProgress;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
+import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
 import org.rm3l.router_companion.main.DDWRTMainActivity;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
@@ -31,10 +31,6 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.status.router.StatusRouterMemoryTile;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.utils.SSHUtils;
-import org.rm3l.router_companion.utils.Utils;
-
-import java.util.List;
 
 /**
  * Created by rm3l on 03/01/16.
@@ -42,8 +38,6 @@ import java.util.List;
 public class StorageUsageTile extends DDWRTTile<NVRAMInfo>  {
 
     private static final String LOG_TAG = StorageUsageTile.class.getSimpleName();
-    public static final Splitter SPACE_SPLITTER = Splitter.on(" ").omitEmptyStrings()
-            .trimResults();
 
     private boolean isThemeLight;
     final int red;
@@ -128,130 +122,23 @@ public class StorageUsageTile extends DDWRTTile<NVRAMInfo>  {
 
                     mLastSync = System.currentTimeMillis();
 
-                    final NVRAMInfo nvramInfo = new NVRAMInfo();
-
                     updateProgressBarViewSeparator(10);
-                    final String[] nvramSize;
-                    if (Utils.isDemoRouter(mRouter)) {
-                        nvramSize = new String[1];
-                        nvramSize[0] = "size: 21157 bytes (44379 left)";
-                    } else {
-                        nvramSize = SSHUtils.getManualProperty(mParentFragmentActivity,
-                                mRouter,
-                                mGlobalPreferences,
-                                "/usr/sbin/nvram show 2>&1 1>/dev/null | grep \"size: \"");
-                    }
 
-                    updateProgressBarViewSeparator(20);
-                    final String[] jffs2Size;
-                    if (Utils.isDemoRouter(mRouter)) {
-                        jffs2Size = new String[1];
-                        jffs2Size[0] = (nbRunsLoader % 3 == 0 ?
-                                "" :
-                                "/dev/mtdblock/5      jffs2          100123M      40000M     120000   30% /jffs");
-                    } else {
-                        jffs2Size = SSHUtils.getManualProperty(mParentFragmentActivity,
-                                mRouter,
-                                mGlobalPreferences,
-                                "/bin/df -T | grep \"jffs2\"");
-                    }
+                    final NVRAMInfo nvramInfo =  RouterFirmwareConnectorManager.getConnector(mRouter)
+                            .getDataFor(mParentFragmentActivity, mRouter,
+                                    StorageUsageTile.class,
+                                    new RemoteDataRetrievalListener() {
+                                        @Override
+                                        public void onProgressUpdate(int progress) {
+                                            updateProgressBarViewSeparator(progress);
+                                        }
 
-                    updateProgressBarViewSeparator(30);
-                    final String[] cifsSize;
-                    if (Utils.isDemoRouter(mRouter)) {
-                        cifsSize = new String[1];
-                        cifsSize[0] = (nbRunsLoader % 3 == 0 ?
-                                "" :
-                                "/dev/mtdblock/5      cifs          93800      2400     91300   50% /cifs");
-                    } else {
-                        cifsSize = SSHUtils.getManualProperty(mParentFragmentActivity,
-                                mRouter,
-                                mGlobalPreferences,
-                                "/bin/df -T | grep \"cifs\"");
-                    }
+                                        @Override
+                                        public void doRegardlessOfStatus() {
 
-                    updateProgressBarViewSeparator(40);
+                                        }
+                                    });
 
-                    if (nvramSize != null && nvramSize.length >= 1) {
-                        final String nvramSizeStr = nvramSize[0];
-                        if (nvramSizeStr != null && nvramSizeStr.startsWith("size:")) {
-                            final List<String> stringList = SPACE_SPLITTER.splitToList(nvramSizeStr);
-                            if (stringList.size() >= 5) {
-                                final String nvramTotalBytes = stringList.get(1);
-                                final String nvramLeftBytes = stringList.get(3).replace("(","");
-                                try {
-                                    final long nvramTotalBytesLong = Long.parseLong(nvramTotalBytes);
-                                    final long nvramLeftBytesLong = Long.parseLong(nvramLeftBytes);
-                                    final long nvramUsedBytesLong = nvramTotalBytesLong - nvramLeftBytesLong;
-                                    nvramInfo.setProperty(NVRAMInfo.NVRAM_USED_PERCENT,
-                                            Long.toString(
-                                                    Math.min(100, 100 * nvramUsedBytesLong / nvramTotalBytesLong)
-                                            ));
-                                } catch (final NumberFormatException e) {
-                                    e.printStackTrace();
-                                    Crashlytics.logException(e);
-                                }
-                            }
-                        }
-                    }
-                    updateProgressBarViewSeparator(50);
-
-                    if (jffs2Size != null && jffs2Size.length >= 1) {
-                        //We may have more than one mountpoint - so sum everything up
-                        long totalUsed = 0;
-                        long totalSize = 0;
-                        for (int i = 0; i < jffs2Size.length; i++) {
-                            final String jffs2SizeStr = jffs2Size[i];
-                            if (!Strings.isNullOrEmpty(jffs2SizeStr)) {
-                                final List<String> stringList = SPACE_SPLITTER.splitToList(jffs2SizeStr);
-                                if (stringList.size() >= 7) {
-                                    try {
-                                        totalSize += Long.parseLong(stringList.get(2));
-                                        totalUsed += Long.parseLong(stringList.get(3));
-                                    } catch (final NumberFormatException e) {
-                                        e.printStackTrace();
-                                        Crashlytics.logException(e);
-                                    }
-                                }
-                            }
-                            updateProgressBarViewSeparator(Math.min(70, 50 + 5 * i));
-                        }
-                        if (totalSize > 0) {
-                            nvramInfo.setProperty(NVRAMInfo.STORAGE_JFFS2_USED_PERCENT,
-                                    Long.toString(
-                                            Math.min(100, 100 * totalUsed / totalSize)
-                                    ));
-                        }
-                    }
-                    updateProgressBarViewSeparator(75);
-
-                    if (cifsSize != null && cifsSize.length >= 1) {
-                        //We may have more than one mountpoint - so sum everything up
-                        long totalUsed = 0;
-                        long totalSize = 0;
-                        for (int i = 0; i < cifsSize.length; i++) {
-                            final String cifsSizeStr = cifsSize[i];
-                            if (!Strings.isNullOrEmpty(cifsSizeStr)) {
-                                final List<String> stringList = SPACE_SPLITTER.splitToList(cifsSizeStr);
-                                if (stringList.size() >= 7) {
-                                    try {
-                                        totalSize += Long.parseLong(stringList.get(2));
-                                        totalUsed += Long.parseLong(stringList.get(3));
-                                    } catch (final NumberFormatException e) {
-                                        e.printStackTrace();
-                                        Crashlytics.logException(e);
-                                    }
-                                }
-                            }
-                            updateProgressBarViewSeparator(Math.min(87, 75 + 5 * i));
-                        }
-                        if (totalSize > 0) {
-                            nvramInfo.setProperty(NVRAMInfo.STORAGE_CIFS_USED_PERCENT,
-                                    Long.toString(
-                                            Math.min(100, 100 * totalUsed / totalSize)
-                                    ));
-                        }
-                    }
                     updateProgressBarViewSeparator(90);
 
                     if (nvramInfo.isEmpty()) {

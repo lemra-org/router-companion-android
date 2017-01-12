@@ -143,7 +143,10 @@ public final class Utils {
     public static final Pattern MAC_ADDRESS =
             Pattern.compile("([\\da-fA-F]{2}(?:\\:|-|$)){6}");
 
-    public static final Splitter COMMA_SPLITTER = Splitter.on(",").omitEmptyStrings();
+    public static final Splitter COMMA_SPLITTER = Splitter.on(",").omitEmptyStrings()
+            .trimResults();
+    public static final Splitter SPACE_SPLITTER = Splitter.on(" ").omitEmptyStrings()
+            .trimResults();
 
 
     private Utils() {
