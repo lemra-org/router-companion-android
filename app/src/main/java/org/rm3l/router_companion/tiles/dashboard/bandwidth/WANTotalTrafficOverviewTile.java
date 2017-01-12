@@ -33,6 +33,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
+import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
 import org.rm3l.router_companion.main.DDWRTMainActivity;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
@@ -125,6 +127,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                         getFormattedPrefKey(CYCLE), CYCLE_MONTH) : null);
 
         final boolean isDayCycle = CYCLE_DAY.equals(mCycle);
+
         final Date today = new Date();
         mCurrentMonth = DDWRT_TRAFF_DATA_SIMPLE_DATE_FORMAT.format(today);
         mCurrentMonthDisplayed = new SimpleDateFormat("MMM, yyyy", Locale.US).format(today);
@@ -255,123 +258,78 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                     final String traffForCurrentMonthKey = \"fake-key\";
                     final String traffForNextMonthKey = \"fake-key\";
 
-                    final NVRAMInfo nvramInfo = new NVRAMInfo();
+                    final MonthlyCycleItem cycleItem = mCycleItem.get();
 
-                    NVRAMInfo nvramInfoTmp = null;
-                    try {
-                        nvramInfo.setProperty(PREVIOUS, mPrevMonth);
-                        nvramInfo.setProperty(CURRENT, mCurrentMonth);
-                        nvramInfo.setProperty(NEXT, mNextMonth);
+                    final NVRAMInfo nvramInfo = RouterFirmwareConnectorManager.getConnector(mRouter)
+                            .getDataForWANTotalTrafficOverviewTile(mParentFragmentActivity,
+                                    mRouter,
+                                    cycleItem,
+                                    new RemoteDataRetrievalListener() {
+                                        @Override
+                                        public void onProgressUpdate(int progress) {
+                                            updateProgressBarViewSeparator(progress);
+                                        }
 
-                        updateProgressBarViewSeparator(50);
+                                        @Override
+                                        public void doRegardlessOfStatus() {
 
-                        if (isDemoRouter(mRouter)) {
-                            final boolean ttraffEnabled = new Random().nextBoolean();
-                            nvramInfo.setProperty(
-                                    NVRAMInfo.TTRAFF_ENABLE,
-                                    ttraffEnabled ? "1" : "0");
-                        } else {
-                            nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity,
-                                    mRouter, mGlobalPreferences,
-                                    NVRAMInfo.TTRAFF_ENABLE,
-                                    traffForPreviousMonthKey,
-                                    traffForCurrentMonthKey,
-                                    traffForNextMonthKey);
-                        }
+                                        }
+                                    });
 
-                    } finally {
-                        if (nvramInfoTmp != null) {
-                            nvramInfo.putAll(nvramInfoTmp);
-                        }
-                    }
-
-                    if (nvramInfo.isEmpty()) {
+                    if (nvramInfo == null || nvramInfo.isEmpty()) {
                         throw new DDWRTNoDataException("No Data!");
                     }
 
-                    if (isDemoRouter(mRouter)) {
-                        final Random random = new Random();
-                        final long totalDlMonth = (500 + MB * random.nextInt(500)) * MB;
-                        nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH,
-                                FileUtils
-                                        .byteCountToDisplaySize(totalDlMonth));
-                        nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
-                                HIDDEN_);
-                        final long totalUlMonth = (1 + random.nextInt(100)) * MB;
-                        nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH,
-                                FileUtils
-                                        .byteCountToDisplaySize(totalUlMonth));
-                        nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
-                                HIDDEN_);
+                    nvramInfo.setProperty(PREVIOUS, mPrevMonth);
+                    nvramInfo.setProperty(CURRENT, mCurrentMonth);
+                    nvramInfo.setProperty(NEXT, mNextMonth);
 
-                        nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY,
-                                FileUtils
-                                        .byteCountToDisplaySize(totalDlMonth / 30));
-                        nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY_MB,
-                                HIDDEN_);
-                        nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY,
-                                FileUtils
-                                        .byteCountToDisplaySize(totalUlMonth / 30));
-                        nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY_MB,
-                                HIDDEN_);
+                    //Compute date for current day
+                    final String trafficForCurrentMonth = nvramInfo.getProperty(traffForCurrentMonthKey);
+                    if (trafficForCurrentMonth != null) {
+                        final List<String> dailyTraffDataList = MONTHLY_TRAFF_DATA_SPLITTER
+                                .splitToList(trafficForCurrentMonth);
+                        if (!(dailyTraffDataList == null || dailyTraffDataList.isEmpty())) {
+                            if (mCurrentDay > 1 && dailyTraffDataList.size() >= mCurrentDay) {
+                                final String dailyInOutTraffData = dailyTraffDataList.get(mCurrentDay - 1);
+                                if (!(Strings.isNullOrEmpty(dailyInOutTraffData) || StringUtils.contains(dailyInOutTraffData, "["))) {
+                                    //Day
+                                    final List<String> currentDayTraffData = DAILY_TRAFF_DATA_SPLITTER.splitToList(dailyInOutTraffData);
+                                    if (currentDayTraffData.size() >= 2) {
+                                        final double totalDownloadMBytesForCurrentDay = Double.parseDouble(currentDayTraffData.get(0));
+                                        final double totalUploadMBytesForCurrentDay = Double.parseDouble(currentDayTraffData.get(1));
 
-                    } else {
-                        retrieveAndPersistMonthlyTrafficData(mRouter, dao, nvramInfo);
-
-                        final MonthlyCycleItem cycleItem = mCycleItem.get();
-
-                        updateProgressBarViewSeparator(75);
-
-                        nvramInfo.putAll(WANTrafficUtils.computeWANTrafficUsageBetweenDates(dao, mRouter.getUuid(),
-                                cycleItem.getStart(), cycleItem.getEnd()));
-
-                        //Compute date for current day
-                        final String trafficForCurrentMonth = nvramInfo.getProperty(traffForCurrentMonthKey);
-                        if (trafficForCurrentMonth != null) {
-                            final List<String> dailyTraffDataList = MONTHLY_TRAFF_DATA_SPLITTER
-                                    .splitToList(trafficForCurrentMonth);
-                            if (!(dailyTraffDataList == null || dailyTraffDataList.isEmpty())) {
-                                if (mCurrentDay > 1 && dailyTraffDataList.size() >= mCurrentDay) {
-                                    final String dailyInOutTraffData = dailyTraffDataList.get(mCurrentDay - 1);
-                                    if (!(Strings.isNullOrEmpty(dailyInOutTraffData) || StringUtils.contains(dailyInOutTraffData, "["))) {
-                                        //Day
-                                        final List<String> currentDayTraffData = DAILY_TRAFF_DATA_SPLITTER.splitToList(dailyInOutTraffData);
-                                        if (currentDayTraffData.size() >= 2) {
-                                            final double totalDownloadMBytesForCurrentDay = Double.parseDouble(currentDayTraffData.get(0));
-                                            final double totalUploadMBytesForCurrentDay = Double.parseDouble(currentDayTraffData.get(1));
-
-                                            final String inHumanReadableCurrentDay = FileUtils
-                                                    .byteCountToDisplaySize(
-                                                            Double.valueOf(totalDownloadMBytesForCurrentDay * MB)
-                                                                    .longValue());
-                                            nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY,
-                                                    inHumanReadableCurrentDay);
-                                            if (inHumanReadableCurrentDay.equals(totalDownloadMBytesForCurrentDay + " MB") ||
-                                                    inHumanReadableCurrentDay.equals(totalDownloadMBytesForCurrentDay + " bytes")) {
-                                                nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY_MB,
-                                                        HIDDEN_);
-                                            } else {
-                                                nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY_MB,
-                                                        String.valueOf(totalDownloadMBytesForCurrentDay));
-                                            }
-                                            final String outHumanReadableCurrentDay = FileUtils
-                                                    .byteCountToDisplaySize(
-                                                            Double.valueOf(totalUploadMBytesForCurrentDay * MB)
-                                                                    .longValue());
-                                            nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY,
-                                                    outHumanReadableCurrentDay);
-                                            if (outHumanReadableCurrentDay.equals(totalUploadMBytesForCurrentDay + " MB") ||
-                                                    outHumanReadableCurrentDay.equals(totalUploadMBytesForCurrentDay + " bytes")) {
-                                                nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY_MB,
-                                                        HIDDEN_);
-                                            } else {
-                                                nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY_MB,
-                                                        String.valueOf(totalUploadMBytesForCurrentDay));
-                                            }
+                                        final String inHumanReadableCurrentDay = FileUtils
+                                                .byteCountToDisplaySize(
+                                                        Double.valueOf(totalDownloadMBytesForCurrentDay * MB)
+                                                                .longValue());
+                                        nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY,
+                                                inHumanReadableCurrentDay);
+                                        if (inHumanReadableCurrentDay.equals(totalDownloadMBytesForCurrentDay + " MB") ||
+                                                inHumanReadableCurrentDay.equals(totalDownloadMBytesForCurrentDay + " bytes")) {
+                                            nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY_MB,
+                                                    HIDDEN_);
+                                        } else {
+                                            nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY_MB,
+                                                    String.valueOf(totalDownloadMBytesForCurrentDay));
+                                        }
+                                        final String outHumanReadableCurrentDay = FileUtils
+                                                .byteCountToDisplaySize(
+                                                        Double.valueOf(totalUploadMBytesForCurrentDay * MB)
+                                                                .longValue());
+                                        nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY,
+                                                outHumanReadableCurrentDay);
+                                        if (outHumanReadableCurrentDay.equals(totalUploadMBytesForCurrentDay + " MB") ||
+                                                outHumanReadableCurrentDay.equals(totalUploadMBytesForCurrentDay + " bytes")) {
+                                            nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY_MB,
+                                                    HIDDEN_);
+                                        } else {
+                                            nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY_MB,
+                                                    String.valueOf(totalUploadMBytesForCurrentDay));
                                         }
                                     }
-
                                 }
+
                             }
                         }
                     }

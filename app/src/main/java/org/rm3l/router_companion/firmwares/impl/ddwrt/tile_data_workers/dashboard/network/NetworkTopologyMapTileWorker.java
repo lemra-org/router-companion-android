@@ -53,7 +53,7 @@ public final class NetworkTopologyMapTileWorker {
             final String[] activeClients = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
                     "/sbin/arp -a 2>/dev/null");
             if (activeClients != null) {
-                nvramInfo.setProperty("NB_ACTIVE_CLIENTS", Integer.toString(activeClients.length));
+                nvramInfo.setProperty(NVRAMInfo.NB_ACTIVE_CLIENTS, Integer.toString(activeClients.length));
             }
 
             if (dataRetrievalListener != null) {
@@ -65,14 +65,14 @@ public final class NetworkTopologyMapTileWorker {
                     "( /usr/bin/wc -l /tmp/dnsmasq.leases 2>/dev/null || echo \"N_A\" ) | awk '{print $1}'");
             if (activeDhcpLeases != null) {
                 if (activeDhcpLeases.length == 0) {
-                    nvramInfo.setProperty("NB_DHCP_LEASES", "-1");
+                    nvramInfo.setProperty(NVRAMInfo.NB_DHCP_LEASES, "-1");
                 } else {
                     final String activeDhcpLease = activeDhcpLeases[0];
                     if ("N_A".equals(activeDhcpLease)) {
                         //File does not exist
-                        nvramInfo.setProperty("NB_DHCP_LEASES", "-1");
+                        nvramInfo.setProperty(NVRAMInfo.NB_DHCP_LEASES, "-1");
                     } else {
-                        nvramInfo.setProperty("NB_DHCP_LEASES", activeDhcpLease);
+                        nvramInfo.setProperty(NVRAMInfo.NB_DHCP_LEASES, activeDhcpLease);
                     }
                 }
             }
@@ -88,12 +88,12 @@ public final class NetworkTopologyMapTileWorker {
                         router, globalSharedPreferences,
                         Utils.getCommandForInternetIPResolution(context));
                 if (wanPublicIpCmdStatus == null || wanPublicIpCmdStatus.length == 0) {
-                    nvramInfo.setProperty("INTERNET_CONNECTIVITY_PUBLIC_IP", NOK);
+                    nvramInfo.setProperty(NVRAMInfo.INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
                 } else {
                     final String wanPublicIp = wanPublicIpCmdStatus[wanPublicIpCmdStatus.length - 1]
                             .trim();
                     if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
-                        nvramInfo.setProperty("INTERNET_CONNECTIVITY_PUBLIC_IP", wanPublicIp);
+                        nvramInfo.setProperty(NVRAMInfo.INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
 
                         PublicIPChangesServiceTask.buildNotificationIfNeeded(context,
                                 router, router.getPreferences(context),
@@ -101,12 +101,12 @@ public final class NetworkTopologyMapTileWorker {
                                 nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
 
                     } else {
-                        nvramInfo.setProperty("INTERNET_CONNECTIVITY_PUBLIC_IP", NOK);
+                        nvramInfo.setProperty(NVRAMInfo.INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
                     }
                 }
             } catch (final Exception e) {
                 e.printStackTrace();
-                nvramInfo.setProperty("INTERNET_CONNECTIVITY_PUBLIC_IP", UNKNOWN);
+                nvramInfo.setProperty(NVRAMInfo.INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
             } finally {
                 if (dataRetrievalListener != null) {
                     dataRetrievalListener.doRegardlessOfStatus();

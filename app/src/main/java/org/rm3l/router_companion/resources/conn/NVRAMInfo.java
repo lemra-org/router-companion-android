@@ -182,6 +182,16 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String REVISION = "rev";
     public static final String LOGIN_PROMPT = "login_prompt";
 
+
+    public static final String INTERNET_CONNECTIVITY_PUBLIC_IP = "INTERNET_CONNECTIVITY_PUBLIC_IP";
+    public static final String NB_DHCP_LEASES = "NB_DHCP_LEASES";
+    public static final String NB_ACTIVE_CLIENTS = "NB_ACTIVE_CLIENTS";
+    public static final String TOTAL_DL_CURRENT_DAY = "TOTAL_DL_CURRENT_DAY";
+    public static final String TOTAL_UL_CURRENT_DAY = "TOTAL_UL_CURRENT_DAY";
+    public static final String TOTAL_DL_CURRENT_DAY_MB = "TOTAL_DL_CURRENT_DAY_MB";
+    public static final String TOTAL_UL_CURRENT_DAY_MB = "TOTAL_UL_CURRENT_DAY_MB";
+
+
     /**
      * Default constructor: initialized an empty Properties set
      */

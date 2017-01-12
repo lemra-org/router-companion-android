@@ -9,6 +9,7 @@ import org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector;
 import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
 import org.rm3l.router_companion.firmwares.impl.ddwrt.DDWRTFirmwareConnector;
 import org.rm3l.router_companion.firmwares.impl.tomato.tile_data_workers.dashboard.network.NetworkTopologyMapTileWorker;
+import org.rm3l.router_companion.resources.MonthlyCycleItem;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.SSHUtils;
@@ -48,6 +49,15 @@ public class TomatoFirmwareConnector extends AbstractRouterFirmwareConnector {
         if (output != null && output.length > 0) {
             return output[0];
         }
+        return null;
+    }
+
+    @Override
+    public NVRAMInfo getDataForWANTotalTrafficOverviewTile(@NonNull Context context,
+                                                           @NonNull Router router,
+                                                           MonthlyCycleItem cycleItem,
+                                                           @Nullable RemoteDataRetrievalListener dataRetrievalListener)
+            throws Exception {
         return null;
     }
 }

@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 
 import com.crashlytics.android.Crashlytics;
 
+import org.rm3l.router_companion.resources.MonthlyCycleItem;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
@@ -71,5 +72,11 @@ public abstract class AbstractRouterFirmwareConnector {
 
     @Nullable
     protected abstract String goGetRouterModel(@NonNull Context context, @NonNull Router router)
+            throws Exception;
+
+    public abstract NVRAMInfo getDataForWANTotalTrafficOverviewTile(@NonNull Context context,
+                                                                  @NonNull Router router,
+                                                                   MonthlyCycleItem cycleItem,
+                                                                  @Nullable RemoteDataRetrievalListener dataRetrievalListener)
             throws Exception;
 }

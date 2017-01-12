@@ -197,18 +197,18 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                     final Properties nvramInfoData = nvramInfo.getData();
                     if (nvramInfoData != null) {
                         //Active clients
-                        if (nvramInfoData.containsKey("NB_ACTIVE_CLIENTS")) {
+                        if (nvramInfoData.containsKey(NVRAMInfo.NB_ACTIVE_CLIENTS)) {
                             final String activeClientsProperty =
-                                    (String) nvramInfoData.remove("NB_ACTIVE_CLIENTS");
+                                    (String) nvramInfoData.remove(NVRAMInfo.NB_ACTIVE_CLIENTS);
                             if (!TextUtils.isEmpty(activeClientsProperty)) {
                                 nbActiveClients.set(Integer.parseInt(activeClientsProperty));
                             }
                         }
 
                         //Active DHCP Leases
-                        if (nvramInfoData.containsKey("NB_DHCP_LEASES")) {
+                        if (nvramInfoData.containsKey(NVRAMInfo.NB_DHCP_LEASES)) {
                             final String dhcpLeasesProperty =
-                                    (String) nvramInfoData.remove("NB_DHCP_LEASES");
+                                    (String) nvramInfoData.remove(NVRAMInfo.NB_DHCP_LEASES);
                             if (!TextUtils.isEmpty(dhcpLeasesProperty)) {
                                 nbDhcpLeases.set(Integer.parseInt(dhcpLeasesProperty));
                             }
