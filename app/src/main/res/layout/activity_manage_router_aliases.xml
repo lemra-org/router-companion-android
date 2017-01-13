@@ -90,7 +90,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             app:pressedTranslationZ="12dp"
             app:layout_anchorGravity="end|bottom|right"
             app:layout_anchor="@id/routerAliasesListView"
-            app:layout_behavior="org.rm3l.ddwrt.widgets.ScrollAwareFABBehavior"/>
+            app:layout_behavior="org.rm3l.router_companion.widgets.ScrollAwareFABBehavior"/>
 
     <!--</FrameLayout>-->
     </android.support.design.widget.CoordinatorLayout>
