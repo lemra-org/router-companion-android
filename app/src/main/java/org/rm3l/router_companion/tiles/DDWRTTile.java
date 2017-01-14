@@ -51,6 +51,8 @@ import com.google.common.base.Strings;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector;
+import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
 import org.rm3l.router_companion.fragments.AbstractBaseFragment;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
@@ -120,6 +122,7 @@ public abstract class DDWRTTile<T>
 
     public final RouterModelUpdaterServiceTask routerModelUpdaterServiceTask;
     public final RouterInfoForFeedbackServiceTask routerInfoForFeedbackServiceTask;
+    protected AbstractRouterFirmwareConnector mRouterConnector;
 
     public DDWRTTile(@NonNull final Fragment parentFragment, @NonNull final Bundle arguments, @Nullable Router router) {
         this.mParentFragment = parentFragment;
@@ -145,6 +148,7 @@ public abstract class DDWRTTile<T>
                 new RouterModelUpdaterServiceTask(mParentFragmentActivity);
         this.routerInfoForFeedbackServiceTask =
                 new RouterInfoForFeedbackServiceTask(mParentFragmentActivity);
+        this.mRouterConnector = RouterFirmwareConnectorManager.getConnector(mRouter);
     }
 
     public DDWRTTile(@NonNull final Fragment parentFragment, @NonNull final Bundle arguments,

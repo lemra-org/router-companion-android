@@ -260,7 +260,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
 
                     final MonthlyCycleItem cycleItem = mCycleItem.get();
 
-                    final NVRAMInfo nvramInfo = RouterFirmwareConnectorManager.getConnector(mRouter)
+                    final NVRAMInfo nvramInfo = mRouterConnector
                             .getDataForWANTotalTrafficOverviewTile(mParentFragmentActivity,
                                     mRouter,
                                     cycleItem,

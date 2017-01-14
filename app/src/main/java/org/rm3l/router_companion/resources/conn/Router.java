@@ -50,6 +50,7 @@ import com.google.common.cache.RemovalCause;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Striped;
 import com.google.gson.Gson;
 import com.jcraft.jsch.JSch;
@@ -1104,6 +1105,7 @@ public class Router implements Serializable {
 //    public static final int RouterFirmware_TOMATO = 6;
 
     public enum RouterFirmware {
+
         DDWRT("DD-WRT",
                 null,
                 getTabsForDDWRT(),
@@ -1127,6 +1129,8 @@ public class Router implements Serializable {
 
         AUTO("Auto-detect", null, null, null),
         UNKNOWN("???", null, null, null);
+
+        private static ImmutableList<RouterFirmware> values;
 
         @NonNull
         public final String displayName;
@@ -1158,6 +1162,14 @@ public class Router implements Serializable {
         @NonNull
         public String getDisplayName() {
             return displayName;
+        }
+
+        //To prevent expensive call to values() (which creates a new array list each time)
+        public static ImmutableList<RouterFirmware> getValuesAsList() {
+            if (values == null) {
+                values = ImmutableList.copyOf(values());
+            }
+            return values;
         }
     }
 

@@ -4,10 +4,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.util.Patterns;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
+import org.apache.commons.lang3.StringUtils;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector;
 import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
@@ -17,6 +22,7 @@ import org.rm3l.router_companion.firmwares.impl.tomato.tile_data_workers.dashboa
 import org.rm3l.router_companion.resources.MonthlyCycleItem;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
+import org.rm3l.router_companion.service.tasks.PublicIPChangesServiceTask;
 import org.rm3l.router_companion.tiles.dashboard.system.UptimeTile;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
@@ -24,6 +30,9 @@ import org.rm3l.router_companion.utils.Utils;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.rm3l.router_companion.RouterCompanionAppConstants.NOK;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.UNKNOWN;
+import static org.rm3l.router_companion.tiles.dashboard.network.NetworkTopologyMapTile.INTERNET_CONNECTIVITY_PUBLIC_IP;
 import static org.rm3l.router_companion.utils.Utils.COMMA_SPLITTER;
 import static org.rm3l.router_companion.utils.Utils.SPACE_SPLITTER;
 
@@ -34,6 +43,12 @@ import static org.rm3l.router_companion.utils.Utils.SPACE_SPLITTER;
 public class TomatoFirmwareConnector extends AbstractRouterFirmwareConnector {
 
     public static final String MODEL = "t_model_name";
+
+    public static final String TOMATO_SCM_URL = "http://repo.or.cz/tomato.git";
+    public static final String TOMATO_SCM_CHANGESET_URL_BASE = TOMATO_SCM_URL + "/tag/refs/tags/tomato-";
+
+    public static final String TOMATO_WEBSITE = "http://polarcloud.com";
+    public static final String TOMATO_CHANGELOG_BASE_URL = TOMATO_WEBSITE + "/tomato_";
 
     @Override
     public NVRAMInfo getDataForNetworkTopologyMapTile(@NonNull Context context,
@@ -122,6 +137,141 @@ public class TomatoFirmwareConnector extends AbstractRouterFirmwareConnector {
         return parseDataForStorageUsageTile(
                 Arrays.asList(nvramSize, jffs2Size, cifsSize),
                 dataRetrievalListener);
+    }
+
+    @Override
+    protected NVRAMInfo getDataForStatusRouterStateTile(@NonNull Context context,
+                                                        @NonNull Router router,
+                                                        @Nullable RemoteDataRetrievalListener dataRetrievalListener)
+            throws Exception {
+
+        final SharedPreferences globalSharedPreferences =
+                Utils.getGlobalSharedPreferences(context);
+
+        updateProgressBarViewSeparator(dataRetrievalListener, 10);
+
+        NVRAMInfo nvramInfo =
+                SSHUtils.getNVRamInfoFromRouter(
+                        context, router,
+                        globalSharedPreferences,
+                        NVRAMInfo.ROUTER_NAME,
+                        NVRAMInfo.WAN_IPADDR,
+                        MODEL,
+                        NVRAMInfo.DIST_TYPE,
+                        NVRAMInfo.LAN_IPADDR,
+                        NVRAMInfo.OS_VERSION);
+
+        if (nvramInfo == null) {
+            nvramInfo = new NVRAMInfo();
+        }
+
+        final String modelPropertyValue = nvramInfo.getProperty(MODEL);
+        if (modelPropertyValue != null) {
+            nvramInfo.setProperty(NVRAMInfo.MODEL, modelPropertyValue);
+        }
+
+        updateProgressBarViewSeparator(dataRetrievalListener, 50);
+        //date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))
+        //date -d @$(sed -n '/^btime /s///p' /proc/stat)
+        //Add FW, Kernel and Uptime
+        final String[] otherCmds = SSHUtils
+                .getManualProperty(context, router, globalSharedPreferences,
+                        //date
+                        "date",
+                        //date since last reboot
+                        "date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) )) || " +
+                                " awk -vuptimediff=\"$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))\" " +
+                                " 'BEGIN { print strftime(\"%Y-%m-%d %H:%M:%S\", uptimediff); }' ",
+                        //elapsed from current date
+                        "uptime | awk -F'up' '{print $2}' | awk -F'users' '{print $1}' | awk -F'load' '{print $1}'",
+                        "uname -a",
+                        "cat /etc/motd 2>&1| tail -n 1");
+
+        if (otherCmds != null) {
+            if (otherCmds.length >= 1) {
+                //date
+                nvramInfo.setProperty(NVRAMInfo.CURRENT_DATE, otherCmds[0]);
+            }
+            if (otherCmds.length >= 3) {
+                String uptime = otherCmds[1];
+                final String uptimeCmd = otherCmds[2];
+                if (!Strings.isNullOrEmpty(uptimeCmd)) {
+                    final String elapsedFromUptime = Utils.removeLastChar(uptimeCmd.trim());
+                    if (!Strings.isNullOrEmpty(elapsedFromUptime)) {
+                        uptime += (" (up " + elapsedFromUptime + ")");
+                    }
+                }
+                nvramInfo.setProperty(NVRAMInfo.UPTIME, uptime);
+            }
+
+            if (otherCmds.length >= 4) {
+                //Kernel
+                nvramInfo.setProperty(NVRAMInfo.KERNEL,
+                        StringUtils.replace(
+                                StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
+                                nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME), ""));
+            }
+
+            if (otherCmds.length >= 5) {
+                //Firmware
+                final String fwString = otherCmds[4];
+                nvramInfo.setProperty(NVRAMInfo.FIRMWARE, fwString);
+            }
+        }
+
+        final SharedPreferences routerPreferences = router.getPreferences(context);
+        final boolean checkActualInternetConnectivity = (routerPreferences == null || routerPreferences
+                .getBoolean(RouterCompanionAppConstants.OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF, true));
+
+        if (checkActualInternetConnectivity) {
+            //Now get public IP Address
+            updateProgressBarViewSeparator(dataRetrievalListener, 80);
+            try {
+                final String wanPublicIp = this.getWanPublicIpAddress(context, router, null);
+                if (TextUtils.isEmpty(wanPublicIp)) {
+                    nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+                } else {
+                    if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
+                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
+
+                        PublicIPChangesServiceTask.buildNotificationIfNeeded(context,
+                                router, routerPreferences,
+                                new String[]{wanPublicIp},
+                                nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
+
+                    } else {
+                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+                    }
+                }
+            } catch (final Exception e) {
+                e.printStackTrace();
+                nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
+            } finally {
+                if (dataRetrievalListener != null) {
+                    dataRetrievalListener.doRegardlessOfStatus();
+                }
+            }
+        }
+
+        return nvramInfo;
+    }
+
+    @Override
+    public String getScmChangesetUrl(String changeset) {
+        if (TextUtils.isEmpty(changeset)) {
+            return null;
+        }
+        //Assume version format is always: x.y.z
+        final List<String> stringList = Splitter.on(".")
+                .omitEmptyStrings().trimResults()
+                .splitToList(changeset);
+        if (stringList.size() < 2) {
+            return null;
+        }
+        return String.format("%s%s%s",
+                TOMATO_CHANGELOG_BASE_URL,
+                stringList.get(0),
+                stringList.get(1));
     }
 
     private static NVRAMInfo parseDataForStorageUsageTile(@Nullable List<String[]> dataForStorageUsageTile,

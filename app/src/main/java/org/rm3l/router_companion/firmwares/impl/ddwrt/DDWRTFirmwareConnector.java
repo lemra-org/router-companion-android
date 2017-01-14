@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Patterns;
 
 import com.crashlytics.android.Crashlytics;
@@ -11,7 +12,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
 import org.apache.commons.lang3.StringUtils;
-import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector;
 import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
@@ -19,9 +20,9 @@ import org.rm3l.router_companion.firmwares.impl.ddwrt.tile_data_workers.dashboar
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.router_companion.resources.MonthlyCycleItem;
-import org.rm3l.router_companion.resources.PublicIPInfo;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
+import org.rm3l.router_companion.service.tasks.PublicIPChangesServiceTask;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.WANTrafficUtils;
@@ -31,11 +32,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static org.rm3l.router_companion.RouterCompanionAppConstants.NOK;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.UNKNOWN;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_DAYS;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_HOURS;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_MINUTES;
 import static org.rm3l.router_companion.tiles.dashboard.bandwidth.WANTotalTrafficOverviewTile.DDWRT_TRAFF_DATA_SIMPLE_DATE_FORMAT;
 import static org.rm3l.router_companion.tiles.dashboard.bandwidth.WANTotalTrafficOverviewTile.TRAFF_PREFIX;
+import static org.rm3l.router_companion.tiles.dashboard.network.NetworkTopologyMapTile.INTERNET_CONNECTIVITY_PUBLIC_IP;
 import static org.rm3l.router_companion.tiles.status.router.StatusRouterCPUTile.GREP_MODEL_PROC_CPUINFO;
 import static org.rm3l.router_companion.utils.Utils.COMMA_SPLITTER;
 import static org.rm3l.router_companion.utils.Utils.SPACE_SPLITTER;
@@ -49,6 +53,8 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
 
     public static final String MODEL = "DD_BOARD";
 
+    public static final String DDWRT_SCM_URL = "http://svn.dd-wrt.com";
+    public static final String DDWRT_SCM_CHANGESET_URL_BASE = DDWRT_SCM_URL + "/changeset/";
 
     @NonNull
     public static String getGrepProcMemInfo(@NonNull final String item) {
@@ -312,6 +318,140 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
         return parseDataForStorageUsageTile(
                 Arrays.asList(nvramSize, jffs2Size, cifsSize),
                 dataRetrievalListener);
+    }
+
+    @Override
+    protected NVRAMInfo getDataForStatusRouterStateTile(
+            @NonNull Context context, @NonNull Router router,
+            @Nullable RemoteDataRetrievalListener dataRetrievalListener) throws Exception {
+
+        final SharedPreferences globalSharedPreferences =
+                Utils.getGlobalSharedPreferences(context);
+
+        updateProgressBarViewSeparator(dataRetrievalListener, 10);
+
+        NVRAMInfo nvramInfo =
+                SSHUtils.getNVRamInfoFromRouter(context, router,
+                    globalSharedPreferences,
+                    NVRAMInfo.ROUTER_NAME,
+                    NVRAMInfo.WAN_IPADDR,
+                    NVRAMInfo.MODEL,
+                    NVRAMInfo.DIST_TYPE,
+                    NVRAMInfo.LAN_IPADDR);
+
+        if (nvramInfo == null) {
+            nvramInfo = new NVRAMInfo();
+        }
+
+        updateProgressBarViewSeparator(dataRetrievalListener, 50);
+        //date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))
+        //date -d @$(sed -n '/^btime /s///p' /proc/stat)
+        final String[] otherCmds = SSHUtils
+                .getManualProperty(context, router,
+                        globalSharedPreferences,
+                        //date
+                        "date",
+                        //date since last reboot
+                        "date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) )) || " +
+                                " awk -vuptimediff=\"$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))\" " +
+                                " 'BEGIN { print strftime(\"%Y-%m-%d %H:%M:%S\", uptimediff); }' ",
+                        //elapsed from current date
+                        "uptime | awk -F'up' '{print $2}' | awk -F'users' '{print $1}' | awk -F'load' '{print $1}'",
+                        "uname -a",
+                        "echo \"`cat /tmp/loginprompt|grep DD-WRT|" +
+                                "cut -d' ' -f1` `cat /tmp/loginprompt|grep DD-WRT|" +
+                                "cut -d' ' -f2` (`cat /tmp/loginprompt|grep Release|cut -d' ' -f2`) " +
+                                "`cat /tmp/loginprompt|grep DD-WRT|" +
+                                "cut -d' ' -f3` - SVN rev: `/sbin/softwarerevision`\"");
+
+        if (otherCmds != null) {
+            if (otherCmds.length >= 1) {
+                //date
+                nvramInfo.setProperty(NVRAMInfo.CURRENT_DATE, otherCmds[0]);
+            }
+            if (otherCmds.length >= 3) {
+                String uptime = otherCmds[1];
+                final String uptimeCmd = otherCmds[2];
+                if (!Strings.isNullOrEmpty(uptimeCmd)) {
+                    final String elapsedFromUptime = Utils.removeLastChar(uptimeCmd.trim());
+                    if (!Strings.isNullOrEmpty(elapsedFromUptime)) {
+                        uptime += (" (up " + elapsedFromUptime + ")");
+                    }
+                }
+                nvramInfo.setProperty(NVRAMInfo.UPTIME, uptime);
+            }
+
+            if (otherCmds.length >= 4) {
+                //Kernel
+                nvramInfo.setProperty(NVRAMInfo.KERNEL,
+                        StringUtils.replace(
+                                StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
+                                nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME), ""));
+            }
+
+            if (otherCmds.length >= 5) {
+                //Firmware
+                final String fwString = otherCmds[4];
+                nvramInfo.setProperty(NVRAMInfo.FIRMWARE, fwString);
+
+                final List<String> strings = Splitter.on("rev:")
+                        .omitEmptyStrings().trimResults().splitToList(fwString);
+                if (strings.size() >= 2) {
+                    try {
+                        nvramInfo.setProperty(NVRAMInfo.OS_VERSION,
+                                Long.toString(Long.parseLong(
+                                        strings.get(1).trim())));
+                    } catch (final NumberFormatException nfe) {
+                        //No worries
+                    }
+                }
+            }
+        }
+
+        final SharedPreferences routerPreferences = router.getPreferences(context);
+        final boolean checkActualInternetConnectivity = (routerPreferences == null || routerPreferences
+                .getBoolean(RouterCompanionAppConstants.OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF, true));
+
+        if (checkActualInternetConnectivity) {
+            //Now get public IP Address
+            updateProgressBarViewSeparator(dataRetrievalListener, 80);
+            try {
+                final String wanPublicIp = this.getWanPublicIpAddress(context, router, null);
+                if (TextUtils.isEmpty(wanPublicIp)) {
+                    nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+                } else {
+                    if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
+                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
+
+                        PublicIPChangesServiceTask.buildNotificationIfNeeded(context,
+                                router, routerPreferences,
+                                new String[]{wanPublicIp},
+                                nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
+
+                    } else {
+                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+                    }
+                }
+            } catch (final Exception e) {
+                e.printStackTrace();
+                nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
+            } finally {
+                if (dataRetrievalListener != null) {
+                    dataRetrievalListener.doRegardlessOfStatus();
+                }
+            }
+        }
+
+        return nvramInfo;
+    }
+
+    @Override
+    public String getScmChangesetUrl(String changeset) {
+        if (TextUtils.isEmpty(changeset)) {
+            return null;
+        }
+        return String.format("%s/%s",
+                DDWRT_SCM_CHANGESET_URL_BASE, changeset.trim());
     }
 
     public static NVRAMInfo parseDataForStorageUsageTile(@Nullable List<String[]> dataForStorageUsageTile,

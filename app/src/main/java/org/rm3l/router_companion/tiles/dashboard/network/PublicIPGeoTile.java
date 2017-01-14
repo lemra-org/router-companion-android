@@ -217,7 +217,7 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
 
                     try {
 
-                        mWanPublicIP = RouterFirmwareConnectorManager.getConnector(mRouter)
+                        mWanPublicIP = mRouterConnector
                                 .getWanPublicIpAddress(mParentFragmentActivity,
                                         mRouter, new RemoteDataRetrievalListener() {
                                             @Override

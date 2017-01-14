@@ -79,7 +79,7 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
 
                     mLastSync = System.currentTimeMillis();
 
-                    return RouterFirmwareConnectorManager.getConnector(mRouter)
+                    return mRouterConnector
                             .getDataFor(mParentFragmentActivity, mRouter,
                                     UptimeTile.class,
                                     new RemoteDataRetrievalListener() {

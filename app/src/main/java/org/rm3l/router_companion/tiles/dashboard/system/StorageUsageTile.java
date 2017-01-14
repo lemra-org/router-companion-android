@@ -124,7 +124,7 @@ public class StorageUsageTile extends DDWRTTile<NVRAMInfo>  {
 
                     updateProgressBarViewSeparator(10);
 
-                    final NVRAMInfo nvramInfo =  RouterFirmwareConnectorManager.getConnector(mRouter)
+                    final NVRAMInfo nvramInfo =  mRouterConnector
                             .getDataFor(mParentFragmentActivity, mRouter,
                                     StorageUsageTile.class,
                                     new RemoteDataRetrievalListener() {

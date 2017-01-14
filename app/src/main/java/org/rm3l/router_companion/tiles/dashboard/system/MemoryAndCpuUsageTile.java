@@ -115,7 +115,7 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo>  {
 
                     updateProgressBarViewSeparator(10);
 
-                    final List<String[]> dataForMemoryAndCpuUsageTile = RouterFirmwareConnectorManager.getConnector(mRouter)
+                    final List<String[]> dataForMemoryAndCpuUsageTile = mRouterConnector
                             .getDataForMemoryAndCpuUsageTile(mParentFragmentActivity, mRouter,
                                     new RemoteDataRetrievalListener() {
                                         @Override

@@ -22,6 +22,14 @@ import java.util.List;
 
 public abstract class AbstractRouterFirmwareConnector {
 
+    protected void updateProgressBarViewSeparator(@Nullable final RemoteDataRetrievalListener dataRetrievalListener,
+                                                  final int progress) {
+        if (dataRetrievalListener == null) {
+            return;
+        }
+        dataRetrievalListener.onProgressUpdate(Math.min(Math.max(0, progress), 100));
+    }
+
     @Nullable
     public final String getRouterModel(@NonNull Context context, @NonNull Router router)
             throws Exception {
@@ -96,4 +104,11 @@ public abstract class AbstractRouterFirmwareConnector {
                                                                    @NonNull Router router,
                                                                    @Nullable RemoteDataRetrievalListener dataRetrievalListener)
             throws Exception;
+
+    protected abstract NVRAMInfo getDataForStatusRouterStateTile(@NonNull Context context,
+                                                                                     @NonNull Router router,
+                                                                                     @Nullable RemoteDataRetrievalListener dataRetrievalListener)
+            throws Exception;
+
+    public abstract String getScmChangesetUrl(final String changeset);
 }

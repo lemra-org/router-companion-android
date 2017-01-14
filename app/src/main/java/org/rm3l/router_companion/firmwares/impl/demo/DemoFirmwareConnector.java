@@ -4,22 +4,34 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+
 import org.apache.commons.io.FileUtils;
-import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
+import org.apache.commons.lang3.StringUtils;
 import org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector;
 import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
+import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
 import org.rm3l.router_companion.firmwares.impl.ddwrt.DDWRTFirmwareConnector;
 import org.rm3l.router_companion.resources.MonthlyCycleItem;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
-import org.rm3l.router_companion.utils.SSHUtils;
+import org.rm3l.router_companion.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.rm3l.router_companion.RouterCompanionAppConstants.MB;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.NOK;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.UNKNOWN;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.TOTAL_DL_CURRENT_DAY;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.TOTAL_DL_CURRENT_DAY_MB;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.TOTAL_UL_CURRENT_DAY;
@@ -28,6 +40,7 @@ import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_DAYS;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_HOURS;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_MINUTES;
+import static org.rm3l.router_companion.tiles.dashboard.network.NetworkTopologyMapTile.INTERNET_CONNECTIVITY_PUBLIC_IP;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.HIDDEN_;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.TOTAL_DL_CURRENT_MONTH;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.TOTAL_DL_CURRENT_MONTH_MB;
@@ -223,5 +236,111 @@ public class DemoFirmwareConnector extends AbstractRouterFirmwareConnector {
         return DDWRTFirmwareConnector.parseDataForStorageUsageTile(
                 Arrays.asList(nvramSize, jffs2Size, cifsSize),
                 dataRetrievalListener);
+    }
+
+    final AtomicInteger nbRunsStatusRouterStateTile = new AtomicInteger(0);
+
+    @Override
+    public NVRAMInfo getDataForStatusRouterStateTile(@NonNull Context context,
+                                                     @NonNull Router router,
+                                                     @Nullable RemoteDataRetrievalListener dataRetrievalListener)
+            throws Exception {
+
+        final NVRAMInfo nvramInfo = new NVRAMInfo()
+                .setProperty(NVRAMInfo.ROUTER_NAME, "Demo Router (Test Data)")
+                .setProperty(NVRAMInfo.WAN_IPADDR, "1.2.3.4")
+                .setProperty(NVRAMInfo.MODEL, "Router Model Family")
+                .setProperty(NVRAMInfo.DIST_TYPE, "Linux 2.4.37 #7583 Sat Oct 10 mips")
+                .setProperty(NVRAMInfo.LAN_IPADDR, "255.255.255.255")
+                .setProperty(NVRAMInfo.OS_VERSION,
+                        Integer.toString(1 + new Random().nextInt(65535)));
+
+        updateProgressBarViewSeparator(dataRetrievalListener, 50);
+
+        final String[] otherCmds = new String[5];
+        final Date date = new Date();
+        otherCmds[0] = date.toString(); //current date
+        final Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, -77);
+        otherCmds[1] = cal.getTime().toString(); //date since last reboot
+        otherCmds[2] = " 77 days, 11:00,  2 users, ";
+        otherCmds[3] = "Linux 2.4.37 #7583 Sat Oct 10 mips";
+        otherCmds[4] = "DD-WRT v24-sp2 (10/10/09) - rev 7583";
+
+        //date
+        nvramInfo.setProperty(NVRAMInfo.CURRENT_DATE, otherCmds[0]);
+
+        //uptime
+        String uptime = otherCmds[1];
+        final String uptimeCmd = otherCmds[2];
+        if (!Strings.isNullOrEmpty(uptimeCmd)) {
+            final String elapsedFromUptime = Utils.removeLastChar(uptimeCmd.trim());
+            if (!Strings.isNullOrEmpty(elapsedFromUptime)) {
+                uptime += (" (up " + elapsedFromUptime + ")");
+            }
+        }
+        nvramInfo.setProperty(NVRAMInfo.UPTIME, uptime);
+
+        //Kernel
+        nvramInfo.setProperty(NVRAMInfo.KERNEL,
+                StringUtils.replace(
+                        StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
+                        nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME), ""));
+
+        //Firmware
+        final String fwString = otherCmds[4];
+        nvramInfo.setProperty(NVRAMInfo.FIRMWARE, fwString);
+
+        final List<String> strings = Splitter.on("rev:")
+                .omitEmptyStrings().trimResults().splitToList(fwString);
+        if (strings.size() >= 2) {
+            try {
+                nvramInfo.setProperty(NVRAMInfo.OS_VERSION,
+                        Long.toString(Long.parseLong(
+                                strings.get(1).trim())));
+            } catch (final NumberFormatException nfe) {
+                //No worries
+            }
+        }
+
+        updateProgressBarViewSeparator(dataRetrievalListener, 75);
+
+        final long nbRunsLoaderModulo = (nbRunsStatusRouterStateTile.getAndIncrement() % 5);
+        if (nbRunsLoaderModulo == 0) {
+            //nbRunsLoader = 5k
+            nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP,
+                    "52.64." +
+                            (1 + new Random().nextInt(252))
+                            + "." +
+                            (1 + new Random().nextInt(252)));
+        } else if (nbRunsLoaderModulo == 1) {
+            //nbRunsLoader = 5k + 1
+            nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+        } else if (nbRunsLoaderModulo == 2) {
+            //nbRunsLoader = 5k + 2
+            nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
+        }
+
+        return nvramInfo;
+
+    }
+
+    @Override
+    public String getScmChangesetUrl(String changeset) {
+        final List<Router.RouterFirmware> valuesAsList =
+                new ArrayList<>(Router.RouterFirmware.getValuesAsList());
+        //Take any connector manager on file
+        Collections.shuffle(valuesAsList);
+        for (final Router.RouterFirmware routerFirmware : valuesAsList) {
+            if (routerFirmware == null ||
+                    Router.RouterFirmware.DEMO.equals(routerFirmware)) {
+                //Avoid infinite recursion
+                continue;
+            }
+            return RouterFirmwareConnectorManager.getConnector(routerFirmware)
+                    .getScmChangesetUrl(changeset);
+        }
+        return null;
     }
 }
