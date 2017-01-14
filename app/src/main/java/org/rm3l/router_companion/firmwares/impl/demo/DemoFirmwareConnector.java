@@ -338,7 +338,15 @@ public class DemoFirmwareConnector extends AbstractRouterFirmwareConnector {
                 //Avoid infinite recursion
                 continue;
             }
-            return RouterFirmwareConnectorManager.getConnector(routerFirmware)
+            final AbstractRouterFirmwareConnector routerFirmwareConnector;
+            try {
+                routerFirmwareConnector =
+                        RouterFirmwareConnectorManager.getConnector(routerFirmware);
+            } catch (final Exception e) {
+                //ignored, e.g., if router firmware is not supported yet
+                continue;
+            }
+            return routerFirmwareConnector
                     .getScmChangesetUrl(changeset);
         }
         return null;
