@@ -48,9 +48,9 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
-import org.apache.commons.io.FileUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.actions.ActionManager;
 import org.rm3l.router_companion.actions.RouterAction;
 import org.rm3l.router_companion.actions.RouterActionListener;
@@ -63,7 +63,6 @@ import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.status.wireless.WirelessIfaceTile;
-import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
@@ -79,6 +78,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_ADV;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_AUTH;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_BRIDGE;
@@ -115,7 +115,6 @@ import static org.rm3l.router_companion.tiles.services.vpn.client.EditOpenVPNCli
 import static org.rm3l.router_companion.tiles.status.wireless.WirelessIfaceTile.CAT_SYS_CLASS_NET_S_STATISTICS;
 import static org.rm3l.router_companion.tiles.status.wireless.WirelessIfaceTile.IfaceStatsType.RX_BYTES;
 import static org.rm3l.router_companion.tiles.status.wireless.WirelessIfaceTile.IfaceStatsType.TX_BYTES;
-import static org.rm3l.router_companion.RouterCompanionAppConstants.VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE;
 
 public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
         implements DDWRTTile.ActivityResultListener, UndoBarController.AdvancedUndoListener, RouterActionListener {
@@ -348,12 +347,12 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                             final Long txBps = ifaceRxAndTxRates.get(TX_BYTES);
                             if (rxBps != null) {
                                 nvramInfo.setProperty(OPENVPNCL__DEV_RX_RATE,
-                                        rxBps + " B (" + FileUtils.byteCountToDisplaySize(rxBps)
+                                        rxBps + " B (" + org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(rxBps)
                                                 + ")");
                             }
                             if (txBps != null) {
                                 nvramInfo.setProperty(OPENVPNCL__DEV_TX_RATE,
-                                        txBps + " B (" + FileUtils.byteCountToDisplaySize(txBps)
+                                        txBps + " B (" + org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(txBps)
                                                 + ")");
                             }
 

@@ -15,12 +15,12 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Table;
 import com.google.common.io.Files;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.common.resources.audit.ActionLog;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
-import org.rm3l.router_companion.RouterCompanionAppConstants;
+import org.rm3l.router_companion.utils.FileUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 

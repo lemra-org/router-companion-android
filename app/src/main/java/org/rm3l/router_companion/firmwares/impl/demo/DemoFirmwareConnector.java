@@ -6,9 +6,7 @@ import android.support.annotation.Nullable;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector;
 import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
@@ -149,23 +147,23 @@ public class DemoFirmwareConnector extends AbstractRouterFirmwareConnector {
         final long totalDlMonth = (500 + MB * random.nextInt(500)) * MB;
 
         nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH,
-                FileUtils
+                org.rm3l.router_companion.utils.FileUtils
                         .byteCountToDisplaySize(totalDlMonth));
         nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB, HIDDEN_);
 
         final long totalUlMonth = (1 + random.nextInt(100)) * MB;
         nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH,
-                FileUtils
+                org.rm3l.router_companion.utils.FileUtils
                         .byteCountToDisplaySize(totalUlMonth));
         nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB, HIDDEN_);
 
         nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY,
-                FileUtils
+                org.rm3l.router_companion.utils.FileUtils
                         .byteCountToDisplaySize(totalDlMonth / 30));
         nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY_MB, HIDDEN_);
 
         nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY,
-                FileUtils
+                org.rm3l.router_companion.utils.FileUtils
                         .byteCountToDisplaySize(totalUlMonth / 30));
         nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY_MB, HIDDEN_);
 

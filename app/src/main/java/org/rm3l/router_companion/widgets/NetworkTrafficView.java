@@ -31,8 +31,6 @@ import org.rm3l.router_companion.resources.Device;
 
 import java.text.DecimalFormat;
 
-import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
-
 public class NetworkTrafficView extends TextView {
 
     public static final String NO_DATA = "-";
@@ -66,8 +64,8 @@ public class NetworkTrafficView extends TextView {
     public void setRxAndTxBytes(final long rxBytes, final long txBytes) {
         setTextSize(TypedValue.COMPLEX_UNIT_PX, (float) mContext.getResources()
                 .getDimensionPixelSize(R.dimen.net_traffic_single_text_size));
-        String dataToShow = (txBytes < 0l ? NO_DATA : byteCountToDisplaySize(txBytes) + PER_SEC);
-        dataToShow += ("\n" + (rxBytes < 0l ? NO_DATA : byteCountToDisplaySize(rxBytes) + PER_SEC));
+        String dataToShow = (txBytes < 0l ? NO_DATA : org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(txBytes) + PER_SEC);
+        dataToShow += ("\n" + (rxBytes < 0l ? NO_DATA : org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(rxBytes) + PER_SEC));
         super.setText(dataToShow);
         updateTrafficDrawable();
     }

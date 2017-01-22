@@ -10,7 +10,6 @@ import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
@@ -205,7 +204,7 @@ public final class WANTrafficUtils {
             totalUploadMBytes += wanTrafficData.getTraffOut().doubleValue();
         }
 
-        final String inHumanReadable = FileUtils
+        final String inHumanReadable = org.rm3l.router_companion.utils.FileUtils
                 .byteCountToDisplaySize(totalDownloadMBytes * MB);
         nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH,
                 inHumanReadable);
@@ -218,7 +217,7 @@ public final class WANTrafficUtils {
                     String.valueOf(totalDownloadMBytes));
         }
 
-        final String outHumanReadable = FileUtils
+        final String outHumanReadable = org.rm3l.router_companion.utils.FileUtils
                 .byteCountToDisplaySize(totalUploadMBytes * MB);
         nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH,
                 outHumanReadable);

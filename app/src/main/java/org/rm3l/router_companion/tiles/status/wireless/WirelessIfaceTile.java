@@ -56,7 +56,6 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.rm3l.ddwrt.BuildConfig;
@@ -102,13 +101,13 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.lang3.StringUtils.startsWith;
-import static org.rm3l.router_companion.tiles.status.wireless.WirelessIfaceTile.TemperatureUnit.CELSIUS;
-import static org.rm3l.router_companion.tiles.status.wireless.WirelessIfaceTile.TemperatureUnit.FAHRENHEIT;
-import static org.rm3l.router_companion.tiles.status.wireless.share.WifiSharingActivity.SSID;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.COLON;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_VALUE_TO_DISPLAY;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.SPACE;
+import static org.rm3l.router_companion.tiles.status.wireless.WirelessIfaceTile.TemperatureUnit.CELSIUS;
+import static org.rm3l.router_companion.tiles.status.wireless.WirelessIfaceTile.TemperatureUnit.FAHRENHEIT;
+import static org.rm3l.router_companion.tiles.status.wireless.share.WifiSharingActivity.SSID;
 
 /**
  *
@@ -424,12 +423,12 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                         final Long txBps = ifaceRxAndTxRates.get(IfaceStatsType.TX_BYTES);
                         if (rxBps != null) {
                             nvramInfo.setProperty(wlIface + "_rx_rate_human_readable",
-                                    rxBps + " B (" + FileUtils.byteCountToDisplaySize(rxBps)
+                                    rxBps + " B (" + org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(rxBps)
                                             + ")");
                         }
                         if (txBps != null) {
                             nvramInfo.setProperty(wlIface + "_tx_rate_human_readable",
-                                    txBps + " B (" + FileUtils.byteCountToDisplaySize(txBps) + ")");
+                                    txBps + " B (" + org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(txBps) + ")");
                         }
 
                         //Packet Info

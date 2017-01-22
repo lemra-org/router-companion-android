@@ -28,13 +28,11 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.gson.Gson;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
-import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
 import org.rm3l.router_companion.main.DDWRTMainActivity;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
@@ -46,7 +44,6 @@ import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.status.wan.WANMonthlyTrafficTile;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
-import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.WANTrafficUtils;
 
 import java.text.SimpleDateFormat;
@@ -54,13 +51,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.MB;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.WAN_CYCLE_DAY_PREF;
-import static org.rm3l.router_companion.utils.Utils.isDemoRouter;
+import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.DAILY_TRAFF_DATA_SPLITTER;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.HIDDEN_;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.MONTHLY_TRAFF_DATA_SPLITTER;
@@ -68,7 +63,6 @@ import static org.rm3l.router_companion.utils.WANTrafficUtils.TOTAL_DL_CURRENT_M
 import static org.rm3l.router_companion.utils.WANTrafficUtils.TOTAL_DL_CURRENT_MONTH_MB;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.TOTAL_UL_CURRENT_MONTH;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.TOTAL_UL_CURRENT_MONTH_MB;
-import static org.rm3l.router_companion.utils.WANTrafficUtils.retrieveAndPersistMonthlyTrafficData;
 
 
 public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnMenuItemClickListener {
@@ -299,7 +293,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                                         final double totalDownloadMBytesForCurrentDay = Double.parseDouble(currentDayTraffData.get(0));
                                         final double totalUploadMBytesForCurrentDay = Double.parseDouble(currentDayTraffData.get(1));
 
-                                        final String inHumanReadableCurrentDay = FileUtils
+                                        final String inHumanReadableCurrentDay = org.rm3l.router_companion.utils.FileUtils
                                                 .byteCountToDisplaySize(
                                                         Double.valueOf(totalDownloadMBytesForCurrentDay * MB)
                                                                 .longValue());
@@ -313,7 +307,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                                             nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY_MB,
                                                     String.valueOf(totalDownloadMBytesForCurrentDay));
                                         }
-                                        final String outHumanReadableCurrentDay = FileUtils
+                                        final String outHumanReadableCurrentDay = org.rm3l.router_companion.utils.FileUtils
                                                 .byteCountToDisplaySize(
                                                         Double.valueOf(totalUploadMBytesForCurrentDay * MB)
                                                                 .longValue());

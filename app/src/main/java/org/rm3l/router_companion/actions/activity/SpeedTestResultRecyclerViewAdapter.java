@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.apache.commons.io.FileUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
@@ -154,7 +153,7 @@ public class SpeedTestResultRecyclerViewAdapter extends RecyclerView.Adapter<Spe
                 0, isThemeLight ? R.drawable.ic_file_download_black_24dp : R.drawable.ic_file_download_white_24dp,
                 0, 0
         );
-        final String wanDlByteCountDisplaySize = (FileUtils.byteCountToDisplaySize(speedTestResult.getWanDl().longValue()) + PER_SEC);
+        final String wanDlByteCountDisplaySize = (org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(speedTestResult.getWanDl().longValue()) + PER_SEC);
         final String wanDl = wanDlByteCountDisplaySize.replaceAll(" ", "\n");
         wanDlView.setText(wanDl);
 
@@ -164,7 +163,7 @@ public class SpeedTestResultRecyclerViewAdapter extends RecyclerView.Adapter<Spe
                 0, isThemeLight ? R.drawable.ic_file_upload_black_24dp : R.drawable.ic_file_upload_white_24dp,
                 0, 0
         );
-        final String wanUlByteCountToDisplaySize = (FileUtils.byteCountToDisplaySize(speedTestResult.getWanUl().longValue()) + PER_SEC);
+        final String wanUlByteCountToDisplaySize = (org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(speedTestResult.getWanUl().longValue()) + PER_SEC);
         final String wanUl = wanUlByteCountToDisplaySize.replaceAll(" ", "\n");
         wanUlView.setText(wanUl);
 

@@ -45,9 +45,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-//import com.esotericsoftware.kryo.Kryo;
-//import com.esotericsoftware.kryo.io.Input;
-//import com.esotericsoftware.kryo.io.Output;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -88,7 +85,9 @@ import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
+//import com.esotericsoftware.kryo.Kryo;
+//import com.esotericsoftware.kryo.io.Input;
+//import com.esotericsoftware.kryo.io.Output;
 
 /**
  *
@@ -494,7 +493,7 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
                     return false;
                 }
                 nvramInfo.setProperty(iface + "_ingress_MB",
-                        byteCountToDisplaySize(Double.valueOf(wanRcvBytes).longValue()) + "ps");
+                        org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(Double.valueOf(wanRcvBytes).longValue()) + "ps");
 
                 //Egress
                 double wanXmitBytes;
@@ -511,7 +510,7 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
                 }
 
                 nvramInfo.setProperty(iface + "_egress_MB",
-                        byteCountToDisplaySize(Double.valueOf(wanXmitBytes).longValue()) + "ps");
+                        org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(Double.valueOf(wanXmitBytes).longValue()) + "ps");
 
                 return true;
             }
@@ -816,10 +815,10 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
 //            mRenderer.setInScroll(true);
 
         mRenderer.setYLabels(0);
-        mRenderer.addYTextLabel(maxY, byteCountToDisplaySize(Double.valueOf(maxY).longValue())
+        mRenderer.addYTextLabel(maxY, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(Double.valueOf(maxY).longValue())
                 .replace("bytes", "B") + "ps");
         if (maxY != 0 && maxY / 2 >= 9000) {
-            mRenderer.addYTextLabel(maxY / 2, byteCountToDisplaySize(Double.valueOf(maxY / 2).longValue())
+            mRenderer.addYTextLabel(maxY / 2, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(Double.valueOf(maxY / 2).longValue())
                     .replace("bytes", "B") + "ps");
         }
 

@@ -76,11 +76,11 @@ import com.google.common.collect.Lists;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Transformation;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.maoni.Maoni;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.donate.DonateActivity;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
@@ -91,7 +91,6 @@ import org.rm3l.router_companion.resources.PublicIPInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
-import org.rm3l.maoni.Maoni;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -309,7 +308,7 @@ public final class Utils {
     }
 
     public static String toHumanReadableByteCount(final long sizeInBytes) {
-        return FileUtils.byteCountToDisplaySize(sizeInBytes);
+        return org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(sizeInBytes);
     }
 
     public static void reportException(

@@ -56,9 +56,9 @@ import com.google.common.collect.Table;
 import com.google.common.io.Files;
 import com.squareup.picasso.Callback;
 
-import org.apache.commons.io.FileUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.actions.AbstractRouterAction;
 import org.rm3l.router_companion.actions.PingFromRouterAction;
 import org.rm3l.router_companion.exceptions.SpeedTestException;
@@ -69,7 +69,6 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.settings.RouterSpeedTestSettingsActivity;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
@@ -1165,7 +1164,7 @@ public class SpeedTestActivity extends AppCompatActivity
                                 wanPing.floatValue(),
                                 wanPing.floatValue(),
                                 wanDl.floatValue(),
-                                FileUtils.byteCountToDisplaySize(wanDl.longValue()),
+                                org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(wanDl.longValue()),
                                 PER_SEC);
 
                         csvTextOutput.add(speedTestLine);
@@ -1914,7 +1913,7 @@ public class SpeedTestActivity extends AppCompatActivity
                             && speedTestResult.getWanDl() != null) {
                         wanDlTextView
                                 .setText(String.format("%s%s",
-                                        FileUtils.byteCountToDisplaySize(
+                                        org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(
                                                 speedTestResult.getWanDl().longValue()),
                                         PER_SEC));
                     } else {
@@ -1946,7 +1945,7 @@ public class SpeedTestActivity extends AppCompatActivity
                             && speedTestResult.getWanUl() != null) {
                         wanUlTextView
                                 .setText(String.format("%s%s",
-                                        FileUtils.byteCountToDisplaySize(
+                                        org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(
                                                 speedTestResult.getWanUl().longValue()),
                                         PER_SEC));
                     } else {

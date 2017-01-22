@@ -111,6 +111,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.actions.ActionManager;
 import org.rm3l.router_companion.actions.DisableWANAccessRouterAction;
 import org.rm3l.router_companion.actions.EnableWANAccessRouterAction;
@@ -141,7 +142,6 @@ import org.rm3l.router_companion.tiles.status.wireless.sort.impl.LastSeenClients
 import org.rm3l.router_companion.tiles.status.wireless.sort.impl.TopTalkersClientsSortingVisitorImpl;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.NVRAMParser;
 import org.rm3l.router_companion.utils.NetworkUtils;
@@ -175,14 +175,13 @@ import needle.UiRelatedTask;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
-import static org.rm3l.router_companion.main.DDWRTMainActivity.ROUTER_ACTION;
-import static org.rm3l.router_companion.tiles.status.bandwidth.BandwidthMonitoringTile.BandwidthMonitoringIfaceData;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_VALUE_TO_DISPLAY;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.getClientsUsageDataFile;
+import static org.rm3l.router_companion.main.DDWRTMainActivity.ROUTER_ACTION;
+import static org.rm3l.router_companion.tiles.status.bandwidth.BandwidthMonitoringTile.BandwidthMonitoringIfaceData;
 
 public class WirelessClientsTile
         extends DDWRTTile<ClientDevices>
@@ -2160,7 +2159,7 @@ public class WirelessClientsTile
                                 minX = Math.min(minX, x);
                                 maxY = Math.max(maxY, y);
                                 minY = Math.min(minY, y);
-                                yLabels.put(y, byteCountToDisplaySize(Double.valueOf(y).longValue())
+                                yLabels.put(y, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(Double.valueOf(y).longValue())
                                         .replace("bytes", "B"));
                             }
 
@@ -2206,10 +2205,10 @@ public class WirelessClientsTile
                         }
 
                         mRenderer.setYLabels(0);
-                        mRenderer.addYTextLabel(maxY, byteCountToDisplaySize(Double.valueOf(maxY).longValue())
+                        mRenderer.addYTextLabel(maxY, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(Double.valueOf(maxY).longValue())
                                 .replace("bytes", "B"));
                         if (maxY != 0 && maxY / 2 >= 9000) {
-                            mRenderer.addYTextLabel(maxY / 2, byteCountToDisplaySize(Double.valueOf(maxY / 2).longValue())
+                            mRenderer.addYTextLabel(maxY / 2, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(Double.valueOf(maxY / 2).longValue())
                                     .replace("bytes", "B"));
                         }
 
@@ -2342,7 +2341,7 @@ public class WirelessClientsTile
                         totalDownloadRowView.setText(EMPTY_VALUE_TO_DISPLAY);
                     } else {
                         final long value = Double.valueOf(rxTotal).longValue();
-                        totalDownloadRowView.setText(value + " B (" + byteCountToDisplaySize(value) + ")");
+                        totalDownloadRowView.setText(value + " B (" + org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(value) + ")");
                     }
 
                     final TextView totalUploadRowView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_total_upload);
@@ -2351,7 +2350,7 @@ public class WirelessClientsTile
                         totalUploadRowView.setText(EMPTY_VALUE_TO_DISPLAY);
                     } else {
                         final long value = Double.valueOf(txTotal).longValue();
-                        totalUploadRowView.setText(value + " B (" + byteCountToDisplaySize(value) + ")");
+                        totalUploadRowView.setText(value + " B (" + org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(value) + ")");
                     }
 
                     final View ouiAndLastSeenView = cardView.findViewById(R.id.tile_status_wireless_client_device_details_oui_lastseen_table);

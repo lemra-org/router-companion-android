@@ -68,6 +68,7 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.router_companion.resources.MonthlyCycleItem;
@@ -75,7 +76,6 @@ import org.rm3l.router_companion.resources.WANTrafficData;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.WANTrafficUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
@@ -92,7 +92,6 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.MB;
 import static org.rm3l.router_companion.utils.Utils.fromHtml;
@@ -333,8 +332,8 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                 breakdownLines[i] = String.format("- Day %d (%s): Inbound = %d B (%s) / Outbound = %d B (%s)",
                         i + 1,
                         wanTrafficData.getDate(),
-                        inBytes, byteCountToDisplaySize(inBytes).replace("bytes", "B"),
-                        outBytes, byteCountToDisplaySize(outBytes).replace("bytes", "B"));
+                        inBytes, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(inBytes).replace("bytes", "B"),
+                        outBytes, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(outBytes).replace("bytes", "B"));
 
                 i++;
 
@@ -372,8 +371,8 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
 //
 //                breakdownLines[i] = String.format("- Day %d: Inbound = %d B (%s) / Outbound = %d B (%s)",
 //                        i + 1,
-//                        inBytes, byteCountToDisplaySize(inBytes).replace("bytes", "B"),
-//                        outBytes, byteCountToDisplaySize(outBytes).replace("bytes", "B"));
+//                        inBytes, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(inBytes).replace("bytes", "B"),
+//                        outBytes, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(outBytes).replace("bytes", "B"));
 //
 //                i++;
 //
@@ -411,9 +410,9 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             multiRenderer.setOrientation(XYMultipleSeriesRenderer.Orientation.HORIZONTAL);
             multiRenderer.setChartTitle(String.format("Monthly Cycle: %s / Total IN: %s / Total OUT: %s",
                     mCycleItem.getLabelWithYears(),
-                    byteCountToDisplaySize(totalIn * MB)
+                    org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(totalIn * MB)
                             .replace("bytes", "B"),
-                    byteCountToDisplaySize(totalOut * MB)
+                    org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(totalOut * MB)
                             .replace("bytes", "B")));
             multiRenderer.setXTitle("Days");
             multiRenderer.setYTitle("Traffic");
@@ -426,13 +425,13 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             //setting no of values to display in y axis
             multiRenderer.setYLabels(0);
             if (maxY != 0) {
-                multiRenderer.addYTextLabel(maxY, byteCountToDisplaySize(Double.valueOf(maxY * MB).longValue())
+                multiRenderer.addYTextLabel(maxY, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(Double.valueOf(maxY * MB).longValue())
                         .replace("bytes", "B"));
-                multiRenderer.addYTextLabel(3 * maxY / 4, byteCountToDisplaySize(Double.valueOf(3 * maxY * MB / 4).longValue())
+                multiRenderer.addYTextLabel(3 * maxY / 4, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(Double.valueOf(3 * maxY * MB / 4).longValue())
                         .replace("bytes", "B"));
-                multiRenderer.addYTextLabel(maxY / 2, byteCountToDisplaySize(Double.valueOf(maxY * MB / 2).longValue())
+                multiRenderer.addYTextLabel(maxY / 2, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(Double.valueOf(maxY * MB / 2).longValue())
                         .replace("bytes", "B"));
-                multiRenderer.addYTextLabel(maxY / 4, byteCountToDisplaySize(Double.valueOf(maxY * MB / 4).longValue())
+                multiRenderer.addYTextLabel(maxY / 4, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(Double.valueOf(maxY * MB / 4).longValue())
                         .replace("bytes", "B"));
             }
 
@@ -762,9 +761,9 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
         sendIntent.putExtra(Intent.EXTRA_TEXT,
                 fromHtml(String.format("Traffic Breakdown\n\n>>> Total Inbound: %d B (%s) / Total Outbound: %d B (%s) <<<\n\n%s" +
                                 "%s",
-                        totalInBytes, byteCountToDisplaySize(Double.valueOf(totalInBytes).longValue())
+                        totalInBytes, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(Double.valueOf(totalInBytes).longValue())
                                 .replace("bytes", "B"),
-                        totalOutBytes, byteCountToDisplaySize(Double.valueOf(totalOutBytes).longValue())
+                        totalOutBytes, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(Double.valueOf(totalOutBytes).longValue())
                                 .replace("bytes", "B"),
                         Joiner.on("\n").skipNulls().join(breakdownLines),
                         Utils.getShareIntentFooter())
