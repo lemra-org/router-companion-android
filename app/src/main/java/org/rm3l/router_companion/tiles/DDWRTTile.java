@@ -51,6 +51,7 @@ import com.google.common.base.Strings;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector;
 import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
 import org.rm3l.router_companion.fragments.AbstractBaseFragment;
@@ -60,7 +61,6 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.service.tasks.RouterInfoForFeedbackServiceTask;
 import org.rm3l.router_companion.service.tasks.RouterModelUpdaterServiceTask;
 import org.rm3l.router_companion.utils.AdUtils;
-import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
 
@@ -452,6 +452,14 @@ public abstract class DDWRTTile<T>
 
     public void setRefreshListener(@Nullable final DDWRTTileRefreshListener refreshListener) {
         this.mRefreshListener.set(refreshListener);
+    }
+
+    public boolean isRefreshing() {
+        return mRefreshing.get();
+    }
+
+    public void setRefreshing(boolean refreshing) {
+        mRefreshing.set(refreshing);
     }
 
     public boolean isAdTile() {

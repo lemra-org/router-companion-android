@@ -84,7 +84,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_gravity="center"
             android:ellipsize="end"
             android:gravity="center"
-            android:singleLine="true"
             android:text="@string/error_placeholder"
             android:textColor="@color/ddwrt_purple"
             android:textStyle="bold"
@@ -123,7 +122,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginBottom="4dp"
                 android:ellipsize="end"
                 android:gravity="start"
-                android:singleLine="false"
+                android:maxLines="1"
                 android:text="@string/loading" />
 
             <!-- Number of active DHCP Leases -->
@@ -152,7 +151,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginBottom="4dp"
                 android:ellipsize="end"
                 android:gravity="start"
-                android:singleLine="false"
+                android:maxLines="1"
                 android:text="@string/loading" />
 
             <!-- Number of wireless clients -->
@@ -181,7 +180,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginBottom="4dp"
                 android:ellipsize="end"
                 android:gravity="start"
-                android:singleLine="false"
+                android:maxLines="1"
                 android:text="@string/loading" />
 
             <!-- Number of active IP Connections -->
@@ -210,75 +209,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginBottom="4dp"
                 android:ellipsize="end"
                 android:gravity="start"
-                android:singleLine="false"
+                android:maxLines="1"
                 android:text="@string/loading" />
 
         </GridLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/net_traffic_multi_text_size"
-            android:visibility="invisible" />
-
-        <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
-            android:id="@+id/tile_status_wireless_clients_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:listSelector="@android:color/transparent"
-            android:overScrollMode="ifContentScrolls"
-            android:scrollbars="none" />
-
-        <TextView
-            android:textIsSelectable="true"
-            android:id="@+id/empty_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="No Host." />
-
-        <!--<LinearLayout-->
-            <!--android:id="@+id/tile_status_wireless_clients_layout_list_container"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="vertical"-->
-            <!--android:visibility="gone" />-->
-
-        <!--<Button-->
-            <!--android:id="@+id/tile_status_wireless_clients_show_more"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center"-->
-            <!--android:ellipsize="end"-->
-            <!--android:gravity="center"-->
-            <!--android:text="@string/show_more"-->
-            <!--android:visibility="gone" />-->
-
-        <TextView
-            android:textIsSelectable="true"
-            android:id="@+id/tile_status_wireless_clients_loading_view_desc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center_horizontal"
-            android:textStyle="italic" />
-
-        <ProgressBar
-            android:id="@+id/tile_status_wireless_clients_loading_view"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminate="false"
-            android:indeterminateOnly="false"
-            android:maxHeight="35dip"
-            android:minHeight="35dip" />
-
         <com.github.curioustechizen.ago.RelativeTimeTextView
             android:textIsSelectable="true"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="15dp"
             android:id="@+id/tile_last_sync"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -289,6 +227,58 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:gravity="end"
             android:maxLines="1"
             android:text="Last sync: "/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/net_traffic_multi_text_size"
+            android:visibility="invisible" />
+
+        <TextView
+            android:textIsSelectable="true"
+            android:id="@+id/tile_status_wireless_clients_loading_view_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:textStyle="italic" />
+
+        <TextView
+            android:textIsSelectable="true"
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_marginTop="@dimen/net_traffic_multi_text_size"
+            android:text="No Host." />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="60dp">
+
+            <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
+                android:id="@+id/tile_status_wireless_clients_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:listSelector="@android:color/transparent"
+                android:overScrollMode="ifContentScrolls"
+                android:scrollbars="none" />
+
+            <ProgressBar
+                android:id="@+id/tile_status_wireless_clients_loading_view"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:indeterminate="false"
+                android:indeterminateOnly="false"
+                android:maxHeight="35dip"
+                android:minHeight="35dip" />
+
+        </RelativeLayout>
 
     </LinearLayout>
 </LinearLayout>

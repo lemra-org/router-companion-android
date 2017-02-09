@@ -47,6 +47,7 @@ import com.google.gson.GsonBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.actions.ActionManager;
 import org.rm3l.router_companion.actions.RouterAction;
 import org.rm3l.router_companion.actions.RouterActionListener;
@@ -62,7 +63,6 @@ import org.rm3l.router_companion.service.tasks.ConnectedHostsServiceTask;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.status.wireless.WirelessClientsTile;
 import org.rm3l.router_companion.utils.ColorUtils;
-import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.widgets.home.wol.WOLWidgetProvider;
@@ -83,12 +83,12 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_VALUE_TO_DISPLAY;
 import static org.rm3l.router_companion.main.DDWRTMainActivity.ROUTER_ACTION;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.MANUAL_WOL_MAC;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.MANUAL_WOL_PORT;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WOL_HOSTS;
 import static org.rm3l.router_companion.tiles.status.wireless.WirelessClientsTile.MAP_KEYWORD;
-import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_VALUE_TO_DISPLAY;
 
 
 public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
@@ -185,7 +185,8 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
     public static Loader<RouterData<ArrayList<Device>>> getWOLHostsLoader(
             @Nullable final WakeOnLanTile wakeOnLanTile,
             final Context mParentFragmentActivity,
-            final SharedPreferences mParentFragmentPreferences, final SharedPreferences mGlobalPreferences,
+            final SharedPreferences mParentFragmentPreferences,
+            final SharedPreferences mGlobalPreferences,
             final Router mRouter,
             final List<String> broadcastAddresses
     ) {
