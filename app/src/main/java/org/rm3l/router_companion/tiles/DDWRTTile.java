@@ -221,7 +221,7 @@ public abstract class DDWRTTile<T>
         return getFormattedPrefKey(this.getClass(), scope);
     }
 
-    public static <T extends DDWRTTile> String getFormattedPrefKey(@NonNull final Class<T> clazz, @NonNull final String scope) {
+    public static <T> String getFormattedPrefKey(@NonNull final Class<T> clazz, @NonNull final String scope) {
         return clazz.getCanonicalName() + "::" + scope;
     }
 

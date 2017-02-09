@@ -31,6 +31,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -47,12 +48,14 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -150,11 +153,13 @@ import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.widgets.NetworkTrafficView;
+import org.rm3l.router_companion.widgets.RecyclerViewEmptySupport;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -203,6 +208,8 @@ public class WirelessClientsTile
     private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 999;
 
     private static final int MAC_OUI_VENDOR_LOOKUP_CACHE_SIZE = 20;
+
+    public static final String EXPANDED_CLIENTS_PREF_KEY = \"fake-key\";
 
     private static final MACOUILookupService mMACOUILookupService =
              NetworkUtils.createApiService(MACOUIVendor.TOOLS_RM3L_PREFIX, MACOUILookupService.class);
@@ -263,37 +270,37 @@ public class WirelessClientsTile
         sortIds.put(R.id.tile_status_wireless_clients_sort_not_seen_recently, 93);
     }
 
-    private final Object usageDataLock = new Object();
+    final Object usageDataLock = new Object();
     @NonNull
-    private final Map<String, BandwidthMonitoringIfaceData> bandwidthMonitoringIfaceDataPerDevice =
+    final Map<String, BandwidthMonitoringIfaceData> bandwidthMonitoringIfaceDataPerDevice =
             Maps.newHashMap();
     private final File mBandwidthMonitoringData;
-    private String mCurrentIpAddress;
-    private String mCurrentMacAddress;
+    String mCurrentIpAddress;
+    String mCurrentMacAddress;
     private String[] activeClients;
     private String[] activeDhcpLeases;
     private String[] activeIPConnections;
     @Nullable
     private List<String> broadcastAddresses;
     private File wrtbwmonScriptPath;
-    private Map<Device, View> currentDevicesViewsMap = Maps.newTreeMap(new Comparator<Device>() {
-        @Override
-        public int compare(Device dev0, Device dev1) {
-            if (dev0 == dev1) {
-                return 0;
-            }
-            if (dev0 == null) {
-                return 1;
-            }
-            if (dev1 == null) {
-                return -1;
-            }
-            final String dev0Name = dev0.getAliasOrSystemName();
-            final String dev1Name = dev1.getAliasOrSystemName();
-            return nullToEmpty(dev0Name)
-                    .compareToIgnoreCase(nullToEmpty(dev1Name));
-        }
-    });
+//    private Map<Device, View> currentDevicesViewsMap = Maps.newTreeMap(new Comparator<Device>() {
+//        @Override
+//        public int compare(Device dev0, Device dev1) {
+//            if (dev0 == dev1) {
+//                return 0;
+//            }
+//            if (dev0 == null) {
+//                return 1;
+//            }
+//            if (dev1 == null) {
+//                return -1;
+//            }
+//            final String dev0Name = dev0.getAliasOrSystemName();
+//            final String dev1Name = dev1.getAliasOrSystemName();
+//            return nullToEmpty(dev0Name)
+//                    .compareToIgnoreCase(nullToEmpty(dev1Name));
+//        }
+//    });
     private String mUsageDbBackupPath = null;
 
     private Loader<ClientDevices> mCurrentLoader;
@@ -306,6 +313,11 @@ public class WirelessClientsTile
     @Nullable
     private InterstitialAd mInterstitialAdForActiveIPConnections;
     private long mLastSync;
+
+    private RecyclerViewEmptySupport mRecyclerView;
+    private LinearLayoutManager mLayoutManager;
+    private WirelessClientsRecyclerViewAdapter mAdapter;
+    private final Set<Device> mDevices = new HashSet<>();
 
     public WirelessClientsTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments,
@@ -345,6 +357,42 @@ public class WirelessClientsTile
 
         mBandwidthMonitoringData = new File(
                 mParentFragmentActivity.getCacheDir(), this.getClass().getSimpleName() + ".tmp.dat");
+
+        mRecyclerView = (RecyclerViewEmptySupport)
+                layout.findViewById(R.id.tile_status_wireless_clients_recycler_view);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        // allows for optimizations if all items are of the same size:
+        mRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(mParentFragmentActivity,
+                LinearLayoutManager.VERTICAL, false);
+        mLayoutManager.scrollToPosition(0);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        final TextView emptyView = (TextView) layout.findViewById(R.id.empty_view);
+        if (ColorUtils.isThemeLight(mParentFragmentActivity)) {
+            emptyView.setTextColor(ContextCompat.getColor(mParentFragmentActivity, R.color.black));
+        } else {
+            emptyView.setTextColor(ContextCompat.getColor(mParentFragmentActivity, R.color.white));
+        }
+        mRecyclerView.setEmptyView(emptyView);
+
+        // specify an adapter (see also next example)
+        mAdapter = new WirelessClientsRecyclerViewAdapter(this, router);
+        mRecyclerView.setAdapter(mAdapter);
+
+//        final Display display = mParentFragmentActivity
+//                .getWindowManager()
+//                .getDefaultDisplay();
+//        final Point size = new Point();
+//        display.getSize(size);
+//        int width = size.x;
+//        int height = size.y;
+//        Log.d(LOG_TAG, "<width,height> = <" + width + "," + height + ">");
+//        mRecyclerView.setMinimumHeight(size.y);
 
         // Create Options Menu
         final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_status_wireless_clients_menu);
@@ -387,7 +435,7 @@ public class WirelessClientsTile
                 final MenuItem showOnlyHostsWithWANAccessDisabledMenuItem = menu
                         .findItem(R.id.tile_status_wireless_clients_show_only_hosts_with_wan_access_disabled);
                 //If no devices with WAN Access Disabled, disable the corresponding menu item
-                final boolean atLeastOneDeviceWithNoWANAccess = Sets.filter(currentDevicesViewsMap.keySet(), new Predicate<Device>() {
+                final boolean atLeastOneDeviceWithNoWANAccess = Sets.filter(mDevices, new Predicate<Device>() {
                     @Override
                     public boolean apply(Device input) {
                         return (input.getWanAccessState() == Device.WANAccessState.WAN_ACCESS_DISABLED);
@@ -441,13 +489,11 @@ public class WirelessClientsTile
                             intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, new Date().toString());
 
                             final HashMap<String, String> currentIpToHostNameResolverMap = new HashMap<String, String>();
-                            if (currentDevicesViewsMap != null) {
-                                for (Device device : currentDevicesViewsMap.keySet()) {
-                                    if (device == null) {
-                                        continue;
-                                    }
-                                    currentIpToHostNameResolverMap.put(device.getIpAddress(), device.getName());
+                            for (final Device device : mDevices) {
+                                if (device == null) {
+                                    continue;
                                 }
+                                currentIpToHostNameResolverMap.put(device.getIpAddress(), device.getName());
                             }
 
                             intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, currentIpToHostNameResolverMap);
@@ -1403,7 +1449,7 @@ public class WirelessClientsTile
                                     //no worries
                                 }
 
-                                long lastSeen = -1l;
+                                long lastSeen = -1L;
                                 try {
                                     lastSeen = Long.parseLong(splitToList.get(1));
                                     device.setLastSeen(lastSeen);
@@ -1421,7 +1467,7 @@ public class WirelessClientsTile
                                 try {
                                     final double rxRate = Double.parseDouble(splitToList.get(4));
                                     device.setRxRate(rxRate);
-                                    if (lastSeen > 0l) {
+                                    if (lastSeen > 0L) {
                                         bandwidthMonitoringIfaceData.addData(IN,
                                                 new BandwidthMonitoringTile.DataPoint(lastSeen, rxRate));
                                     }
@@ -1432,7 +1478,7 @@ public class WirelessClientsTile
                                 try {
                                     final double txRate = Double.parseDouble(splitToList.get(5));
                                     device.setTxRate(txRate);
-                                    if (lastSeen > 0l) {
+                                    if (lastSeen > 0L) {
                                         bandwidthMonitoringIfaceData.addData(OUT,
                                                 new BandwidthMonitoringTile.DataPoint(lastSeen, txRate));
                                     }
@@ -1666,12 +1712,12 @@ public class WirelessClientsTile
 
                 mProgressBarDesc.setText("RM >>> Remove all views <<< ");
 
-                final LinearLayout clientsContainer = (LinearLayout) this.layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container);
-                clientsContainer.removeAllViews();
+//                final LinearLayout clientsContainer = (LinearLayout) this.layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container);
+//                clientsContainer.removeAllViews();
 
-                final Resources resources = mParentFragmentActivity.getResources();
-                clientsContainer.setBackgroundColor(
-                        ContextCompat.getColor(mParentFragmentActivity, android.R.color.transparent));
+//                final Resources resources = mParentFragmentActivity.getResources();
+//                clientsContainer.setBackgroundColor(
+//                        ContextCompat.getColor(mParentFragmentActivity, android.R.color.transparent));
 
                 //Number of Active Clients
                 final int numActiveClients = data.getActiveClientsNum();
@@ -1703,13 +1749,11 @@ public class WirelessClientsTile
                             intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, new Date().toString());
 
                             final HashMap<String, String> currentIpToHostNameResolverMap = new HashMap<String, String>();
-                            if (currentDevicesViewsMap != null) {
-                                for (Device device : currentDevicesViewsMap.keySet()) {
-                                    if (device == null) {
-                                        continue;
-                                    }
-                                    currentIpToHostNameResolverMap.put(device.getIpAddress(), device.getName());
+                            for (final Device device : mDevices) {
+                                if (device == null) {
+                                    continue;
                                 }
+                                currentIpToHostNameResolverMap.put(device.getIpAddress(), device.getName());
                             }
                             intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, currentIpToHostNameResolverMap);
 
@@ -1774,7 +1818,7 @@ public class WirelessClientsTile
                     spans.setSpan(clickSpan, 0, spans.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
 
-                final Set<Device> devices = data.getDevices(MAX_CLIENTS_TO_SHOW_IN_TILE);
+                final Set<Device> devices = data.getDevices();
 
                 //Compute number of wireless clients
                 int nbWirelessClients = 0;
@@ -1785,771 +1829,778 @@ public class WirelessClientsTile
 
                 Set<String> expandedClients;
 
-                currentDevicesViewsMap.clear();
-
-                final CardView.LayoutParams cardViewLayoutParams = new FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.MATCH_PARENT,
-                        FrameLayout.LayoutParams.WRAP_CONTENT);
-                cardViewLayoutParams.rightMargin = R.dimen.marginRight;
-                cardViewLayoutParams.leftMargin = R.dimen.marginLeft;
-                cardViewLayoutParams.bottomMargin = R.dimen.activity_vertical_margin;
-
-                for (final Device device : devices) {
-
-                    mProgressBarDesc.setText("RM >>> Handling device: '" + device.getName() + "' (" +
-                            device.getMacAddress() + ") <<< ");
-
-                    expandedClients = mParentFragmentPreferences.getStringSet(expandedClientsPrefKey, null);
-                    if (expandedClients == null) {
-                        //Add first item right away
-                        mParentFragmentPreferences.edit()
-                                .putStringSet(expandedClientsPrefKey, Sets.newHashSet(device.getMacAddress()))
-                                .apply();
-                    }
-
-                    final CardView cardView = (CardView) mParentFragmentActivity.getLayoutInflater()
-                            .inflate(R.layout.tile_status_wireless_client, null);
-
-                    final View legendView = cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_legend);
-                    legendView.setVisibility(View.GONE);
-
-                    //Create Options Menu
-                    final ImageButton tileMenu = (ImageButton)
-                            cardView.findViewById(R.id.tile_status_wireless_client_device_menu);
-
-                    if (!isThemeLight) {
-                        //Set menu background to white
-                        tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
-                    }
-
-                    //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
-                    cardView.setPreventCornerOverlap(true);
-                    //Add padding in API v21+ as well to have the same measurements with previous versions.
-                    cardView.setUseCompatPadding(true);
-
-                    if (isThemeLight) {
-                        //Light
-                        cardView.setCardBackgroundColor(
-                                ContextCompat.getColor(mParentFragmentActivity, R.color.cardview_light_background));
-                    } else {
-                        //Default is Dark
-                        cardView.setCardBackgroundColor(
-                                ContextCompat.getColor(mParentFragmentActivity, R.color.cardview_dark_background));
-                    }
-
-                    //Highlight CardView
-//                    cardView.setCardElevation(10f);
-
-                    final ImageView avatarView = (ImageView) cardView.findViewById(R.id.avatar);
-
-                    final String macAddress = device.getMacAddress();
-
-                    final TextView deviceNameView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_name);
-                    final String name = device.getName();
-                    final String nameForAvatar;
-                    if (isNullOrEmpty(device.getAlias()) &&
-                            isNullOrEmpty(device.getSystemName()) &&
-                            StringUtils.equals(name, macAddress)) {
-                        deviceNameView.setText(EMPTY_VALUE_TO_DISPLAY);
-                        nameForAvatar = EMPTY_VALUE_TO_DISPLAY;
-                    } else {
-                        deviceNameView.setText(name);
-                        nameForAvatar = name;
-                    }
-                    final TextDrawable textDrawable = ImageUtils.getTextDrawable(nameForAvatar);
-                    avatarView.setImageDrawable(textDrawable);
-
-                    final TextView rssiTitleView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_rssi_title);
-                    final TextView rssiSepView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_rssi_sep);
-                    final TextView rssiView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_rssi);
-
-                    final TextView ssidTitleView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_ssid_title);
-                    final TextView ssidSepView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_ssid_sep);
-                    final TextView ssidView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_ssid);
-
-                    final TextView signalStrengthTitleView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_signal_strength_title);
-                    final TextView signalStrengthSepView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_signal_strength_sep);
-                    final ProgressBar signalStrengthView = (ProgressBar) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_signal_strength);
-
-                    final TextView snrMarginTitleView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_snr_margin_title);
-                    final TextView snrMarginSepView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_snr_margin_sep);
-                    final TextView snrMarginView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_snr_margin);
-
-                    final View[] wirelessRelatedViews = new View[]{
-                            rssiTitleView, rssiSepView, rssiView,
-                            ssidTitleView, ssidSepView, ssidView,
-                            signalStrengthTitleView, signalStrengthSepView, signalStrengthView,
-                            snrMarginTitleView, snrMarginSepView, snrMarginView
-                    };
-
-                    //Now if is wireless client or not
-                    final Device.WirelessConnectionInfo wirelessConnectionInfo = device.getWirelessConnectionInfo();
-                    if (wirelessConnectionInfo != null) {
-                        nbWirelessClients++;
-                        for (View wirelessRelatedView : wirelessRelatedViews) {
-                            wirelessRelatedView.setVisibility(View.VISIBLE);
-                        }
-
-                        //SSID
-                        final String ssid = wirelessConnectionInfo.getSsid();
-                        ssidView.setText(isNullOrEmpty(ssid) ? EMPTY_VALUE_TO_DISPLAY : ssid);
-
-                        //SNR Margin
-                        final String snrMargin = wirelessConnectionInfo.getSnrMargin();
-                        if (isNullOrEmpty(snrMargin)) {
-                            snrMarginView.setText(EMPTY_VALUE_TO_DISPLAY);
-                        } else {
-                            snrMarginView.setText(snrMargin + " dB");
-                        }
-
-                        //Signal Strength (based upon SNR Margin)
-                        try {
-                            final int snr = Integer.parseInt(snrMargin);
-
-                        /*
-                        cf. http://www.wireless-nets.com/resources/tutorials/define_SNR_values.html
-
-                        > 40dB SNR = Excellent signal (5 bars); always associated; lightening fast.
-
-                        25dB to 40dB SNR = Very good signal (3 - 4 bars); always associated; very fast.
-
-                        15dB to 25dB SNR = Low signal (2 bars); always associated; usually fast.
-
-                        10dB - 15dB SNR = Very low signal (1 bar); mostly associated; mostly slow.
-
-                        5dB to 10dB SNR = No signal; not associated; no go.
-
-                        Added +5dB to the values above to approximate Android bar indicators
-                         */
-                            if (snr <= 20) {
-                                //No signal; not associated; no go.
-                                deviceNameView
-                                        .setCompoundDrawablesWithIntrinsicBounds(
-                                                isThemeLight ?
-                                                        R.drawable.ic_action_device_signal_wifi_0_bar :
-                                                        R.drawable.ic_action_device_signal_wifi_0_bar_white, 0, 0, 0);
-                            } else if (snr <= 25) {
-                                //Very low signal (1 bar); mostly associated; mostly slow.
-                                deviceNameView
-                                        .setCompoundDrawablesWithIntrinsicBounds(
-                                                isThemeLight ?
-                                                        R.drawable.ic_action_device_signal_wifi_1_bar :
-                                                        R.drawable.ic_action_device_signal_wifi_1_bar_white, 0, 0, 0);
-                            } else if (snr <= 35) {
-                                //Low signal (2 bars); always associated; usually fast.
-                                deviceNameView
-                                        .setCompoundDrawablesWithIntrinsicBounds(
-                                                isThemeLight ?
-                                                        R.drawable.ic_action_device_signal_wifi_2_bar :
-                                                        R.drawable.ic_action_device_signal_wifi_2_bar_white, 0, 0, 0);
-                            } else if (snr <= 50) {
-                                //Very good signal (3 - 4 bars); always associated; very fast.
-                                deviceNameView
-                                        .setCompoundDrawablesWithIntrinsicBounds(
-                                                isThemeLight ? R.drawable.ic_action_device_signal_wifi_3_bar :
-                                                        R.drawable.ic_action_device_signal_wifi_3_bar_white, 0, 0, 0);
-                            } else {
-                                //Excellent signal (5 bars); always associated; lightening fast.
-                                deviceNameView
-                                        .setCompoundDrawablesWithIntrinsicBounds(
-                                                isThemeLight ? R.drawable.ic_action_device_signal_wifi_4_bar :
-                                                        R.drawable.ic_action_device_signal_wifi_4_bar_white, 0, 0, 0);
-                            }
-
-                            //Postulate: we consider that a value of 55dB SNR corresponds to 100% in our progress bar
-                            signalStrengthView.setProgress(Math.min(snr * 100 / 55, 100));
-
-                            signalStrengthTitleView.setVisibility(View.VISIBLE);
-                            signalStrengthSepView.setVisibility(View.VISIBLE);
-                            signalStrengthView.setVisibility(View.VISIBLE);
-                        } catch (final NumberFormatException nfe) {
-                            nfe.printStackTrace();
-                            signalStrengthTitleView.setVisibility(View.GONE);
-                            signalStrengthSepView.setVisibility(View.GONE);
-                            signalStrengthView.setVisibility(View.GONE);
-                            deviceNameView
-                                    .setCompoundDrawablesWithIntrinsicBounds(
-                                            isThemeLight ? R.drawable.ic_action_device_signal_wifi_0_bar :
-                                                    R.drawable.ic_action_device_signal_wifi_0_bar_white, 0, 0, 0);
-                        }
-
-                        //RSSI
-                        final String rssi = wirelessConnectionInfo.getRssi();
-                        if (isNullOrEmpty(rssi)) {
-                            rssiView.setText(EMPTY_VALUE_TO_DISPLAY);
-                        } else {
-                            rssiView.setText(rssi + " dBm");
-                        }
-
-                    } else {
-                        for (View wirelessRelatedView : wirelessRelatedViews) {
-                            wirelessRelatedView.setVisibility(View.GONE);
-                        }
-                    }
-
-                    final Set<String> deviceActiveIpConnections = device.getActiveIpConnections();
-                    final TextView deviceActiveIpConnectionsView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_active_ip_connections_num);
-
-                    if (deviceActiveIpConnections == null) {
-                        deviceActiveIpConnectionsView.setText(EMPTY_VALUE_TO_DISPLAY);
-                    } else {
-                        final int deviceActiveIpConnectionsCount = device.getActiveIpConnectionsCount();
-                        deviceActiveIpConnectionsView.setText(String.valueOf(deviceActiveIpConnectionsCount));
-                        if (deviceActiveIpConnectionsCount > 0) {
-                            deviceActiveIpConnectionsView.setMovementMethod(LinkMovementMethod.getInstance());
-                            final Spannable spans = (Spannable) deviceActiveIpConnectionsView.getText();
-                            final ClickableSpan clickSpan = new ClickableSpan() {
-
-                                @Override
-                                public void onClick(View widget) {
-                                    final Intent intent = new Intent(mParentFragmentActivity, ActiveIPConnectionsDetailActivity.class);
-                                    intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT, deviceActiveIpConnections
-                                            .toArray(new String[deviceActiveIpConnections.size()]));
-                                    intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
-                                    intent.putExtra(ActiveIPConnectionsDetailActivity.ROUTER_REMOTE_IP,
-                                            mRouter.getRemoteIpAddress());
-                                    intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST,
-                                            "'" + name + "' (" + macAddress + " - " + device.getIpAddress() + ")");
-                                    intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, new Date().toString());
-                                    intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, device.getName());
-                                    intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST_IP, device.getIpAddress());
-
-                                    if (BuildConfig.WITH_ADS &&
-                                            mInterstitialAdForActiveIPConnections != null &&
-                                            AdUtils.canDisplayInterstialAd(mParentFragmentActivity)) {
-
-                                        mInterstitialAdForActiveIPConnections.setAdListener(new AdListener() {
-                                            @Override
-                                            public void onAdClosed() {
-                                                final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
-                                                if (adRequest != null) {
-                                                    mInterstitialAdForActiveIPConnections.loadAd(adRequest);
-                                                }
-                                                mParentFragmentActivity.startActivity(intent);
-                                            }
-
-                                            @Override
-                                            public void onAdOpened() {
-                                                //Save preference
-                                                mGlobalPreferences.edit()
-                                                        .putLong(
-                                                                RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
-                                                                System.currentTimeMillis())
-                                                        .apply();
-                                            }
-                                        });
-
-                                        if (mInterstitialAdForActiveIPConnections.isLoaded()) {
-                                            mInterstitialAdForActiveIPConnections.show();
-                                        } else {
-                                            //noinspection ConstantConditions
-                                            final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                                                    "Loading...", false, false);
-                                            alertDialog.show();
-                                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                                            new Handler().postDelayed(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    mParentFragmentActivity.startActivity(intent);
-                                                    alertDialog.cancel();
-                                                }
-                                            }, 1000);
-                                        }
-
-                                    } else {
-                                        //noinspection ConstantConditions
-                                        final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                                                "Loading...", false, false);
-                                        alertDialog.show();
-                                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                                        new Handler().postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                mParentFragmentActivity.startActivity(intent);
-                                                alertDialog.cancel();
-                                            }
-                                        }, 1000);
-                                    }
-                                }
-                            };
-                            spans.setSpan(clickSpan, 0, spans.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        }
-                    }
-
-                    final Device.WANAccessState wanAccessState = device.getWanAccessState();
-                    final boolean isDeviceWanAccessEnabled = (wanAccessState == Device.WANAccessState.WAN_ACCESS_ENABLED);
-                    if (isDeviceWanAccessEnabled) {
-                        deviceNameView.setTextColor(
-                                ContextCompat.getColor(mParentFragmentActivity, R.color.ddwrt_green));
-                    }
-                    final TextView deviceWanAccessStateView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wan_access);
-                    if (wanAccessState == null || isNullOrEmpty(wanAccessState.toString())) {
-                        deviceWanAccessStateView.setText(EMPTY_VALUE_TO_DISPLAY);
-                    } else {
-                        deviceWanAccessStateView.setText(wanAccessState.toString());
-                    }
-
-                    final TextView deviceMac = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_mac);
-                    deviceMac.setText(macAddress);
-
-                    final TextView deviceIp = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_ip);
-                    final String ipAddress = device.getIpAddress();
-                    deviceIp.setText(ipAddress);
-
-                    final boolean isThisDevice = (nullToEmpty(macAddress).equalsIgnoreCase(mCurrentMacAddress) &&
-                            nullToEmpty(ipAddress).equals(mCurrentIpAddress));
-                    if (isThisDevice) {
-                        final View thisDevice = cardView.findViewById(R.id.tile_status_wireless_client_device_this);
-                        if (isThemeLight) {
-                            //Set text color to blue
-                            ((TextView) thisDevice)
-                                    .setTextColor(
-                                            ContextCompat.getColor(mParentFragmentActivity,
-                                                    R.color.blue));
-                        }
-                        thisDevice.setVisibility(View.VISIBLE);
-                    }
-
-                    final LinearLayout deviceDetailsPlaceHolder = (LinearLayout) cardView
-                            .findViewById(R.id.tile_status_wireless_client_device_details_graph_placeholder);
-                    final View noDataView = cardView.findViewById(R.id.tile_status_wireless_client_device_details_no_data);
-
-                    deviceDetailsPlaceHolder.removeAllViews();
-
-                    final BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData;
-                    synchronized (usageDataLock) {
-                        bandwidthMonitoringIfaceData = bandwidthMonitoringIfaceDataPerDevice.get(macAddress);
-                    }
-
-                    final boolean hideGraphPlaceHolder = bandwidthMonitoringIfaceData == null || bandwidthMonitoringIfaceData.getData().isEmpty();
-                    if (hideGraphPlaceHolder) {
-                        //Show no data
-                        deviceDetailsPlaceHolder.setVisibility(View.GONE);
-                        legendView.setVisibility(View.GONE);
-                        noDataView.setVisibility(View.VISIBLE);
-
-                    } else {
-
-                        legendView.setVisibility(View.VISIBLE);
-
-                        final Map<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> dataCircularBuffer =
-                                bandwidthMonitoringIfaceData.getData();
-
-                        long maxX = System.currentTimeMillis() + 5000;
-                        long minX = System.currentTimeMillis() - 5000;
-                        double maxY = 10;
-                        double minY = 1.;
-
-                        final XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-                        final XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
-
-                        final Map<Double, String> yLabels = new HashMap<>();
-
-                        int i = 0;
-                        //noinspection ConstantConditions
-                        for (final Map.Entry<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> entry : dataCircularBuffer.entrySet()) {
-                            final String inOrOut = entry.getKey();
-                            final EvictingQueue<BandwidthMonitoringTile.DataPoint> dataPoints = entry.getValue();
-                            final XYSeries series = new XYSeries(inOrOut);
-                            for (final BandwidthMonitoringTile.DataPoint point : dataPoints) {
-                                final long x = point.getTimestamp();
-                                final double y = point.getValue();
-                                series.add(x, y);
-                                maxX = Math.max(maxX, x);
-                                minX = Math.min(minX, x);
-                                maxY = Math.max(maxY, y);
-                                minY = Math.min(minY, y);
-                                yLabels.put(y, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(Double.valueOf(y).longValue())
-                                        .replace("bytes", "B"));
-                            }
-
-                            // Now we add our series
-                            dataset.addSeries(series);
-
-                            // Now we create the renderer
-                            final XYSeriesRenderer renderer = new XYSeriesRenderer();
-                            renderer.setLineWidth(5);
-
-                            final int color = ColorUtils.getColor(inOrOut);
-                            renderer.setColor(color);
-                            // Include low and max value
-                            renderer.setDisplayBoundingPoints(true);
-                            // we add point markers
-                            renderer.setPointStyle(PointStyle.POINT);
-                            renderer.setPointStrokeWidth(1);
-
-                            final FillOutsideLine fill = new FillOutsideLine(FillOutsideLine.Type.BOUNDS_ABOVE);
-                            //Fill with a slightly transparent version of the original color
-                            fill.setColor(android.support.v4.graphics.ColorUtils.setAlphaComponent(color, 30));
-                            renderer.addFillOutsideLine(fill);
-
-                            if (i == 0) {
-                                cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_legend_series1_bar)
-                                        .setBackgroundColor(color);
-                                final TextView series1TextView = (TextView)
-                                        cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_legend_series1_text);
-                                series1TextView.setText(inOrOut);
-                                series1TextView.setTextColor(color);
-
-                            } else if (i == 1) {
-                                cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_legend_series2_bar)
-                                        .setBackgroundColor(color);
-                                final TextView series2TextView = (TextView)
-                                        cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_legend_series2_text);
-                                series2TextView.setText(inOrOut);
-                                series2TextView.setTextColor(color);
-                            }
-                            i++;
-
-                            mRenderer.addSeriesRenderer(renderer);
-                        }
-
-                        mRenderer.setYLabels(0);
-                        mRenderer.addYTextLabel(maxY, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(Double.valueOf(maxY).longValue())
-                                .replace("bytes", "B"));
-                        if (maxY != 0 && maxY / 2 >= 9000) {
-                            mRenderer.addYTextLabel(maxY / 2, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(Double.valueOf(maxY / 2).longValue())
-                                    .replace("bytes", "B"));
-                        }
-
-                        // We want to avoid black border
-                        //setting text size of the title
-                        mRenderer.setChartTitleTextSize(25);
-                        //setting text size of the axis title
-                        mRenderer.setAxisTitleTextSize(22);
-                        //setting text size of the graph label
-                        mRenderer.setLabelsTextSize(22);
-                        mRenderer.setLegendTextSize(22);
-
-                        mRenderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00)); // transparent margins
-                        // Disable Pan on two axis
-                        mRenderer.setPanEnabled(false, false);
-                        mRenderer.setYAxisMax(maxY);
-                        mRenderer.setYAxisMin(minY);
-                        mRenderer.setXAxisMin(minX);
-                        mRenderer.setXAxisMax(maxX);
-                        mRenderer.setShowGrid(false);
-                        mRenderer.setClickEnabled(false);
-                        mRenderer.setZoomEnabled(false, false);
-                        mRenderer.setPanEnabled(false, false);
-                        mRenderer.setZoomRate(6.0f);
-                        mRenderer.setShowLabels(true);
-                        mRenderer.setFitLegend(true);
-                        mRenderer.setInScroll(true);
-                        mRenderer.setXLabelsAlign(Paint.Align.CENTER);
-                        mRenderer.setYLabelsAlign(Paint.Align.LEFT);
-                        mRenderer.setTextTypeface("sans_serif", Typeface.NORMAL);
-                        mRenderer.setAntialiasing(true);
-                        mRenderer.setExternalZoomEnabled(false);
-                        mRenderer.setInScroll(false);
-                        mRenderer.setFitLegend(true);
-                        mRenderer.setLabelsTextSize(30f);
-                        final int blackOrWhite = ContextCompat.getColor(mParentFragmentActivity,
-                                ColorUtils.isThemeLight(mParentFragmentActivity) ? R.color.black : R.color.white);
-                        mRenderer.setAxesColor(blackOrWhite);
-                        mRenderer.setShowLegend(false);
-                        mRenderer.setXLabelsColor(blackOrWhite);
-                        mRenderer.setYLabelsColor(0, blackOrWhite);
-
-                        final GraphicalView chartView = ChartFactory.getTimeChartView(mParentFragmentActivity, dataset, mRenderer, null);
-                        chartView.repaint();
-
-                        deviceDetailsPlaceHolder.addView(chartView, 0);
-
-                        deviceDetailsPlaceHolder.setVisibility(View.VISIBLE);
-                        noDataView.setVisibility(View.GONE);
-                    }
-
-                    final NetworkTrafficView networkTrafficView =
-                            new NetworkTrafficView(mParentFragmentActivity, isThemeLight, mRouter.getUuid(), device);
-                    networkTrafficView.setRxAndTxBytes(Double.valueOf(device.getRxRate()).longValue(),
-                            Double.valueOf(device.getTxRate()).longValue());
-
-                    final LinearLayout trafficViewPlaceHolder = (LinearLayout) cardView
-                            .findViewById(R.id.tile_status_wireless_client_network_traffic_placeholder);
-                    trafficViewPlaceHolder.removeAllViews();
-                    trafficViewPlaceHolder.addView(networkTrafficView);
-
-                    final TextView deviceSystemNameView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_system_name);
-                    final String systemName = device.getSystemName();
-                    if (isNullOrEmpty(systemName)) {
-                        deviceSystemNameView.setText(EMPTY_VALUE_TO_DISPLAY);
-                    } else {
-                        deviceSystemNameView.setText(systemName);
-                    }
-
-                    final TextView deviceAliasView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_alias);
-                    final String alias = device.getAlias();
-                    if (isNullOrEmpty(alias)) {
-                        deviceAliasView.setText(EMPTY_VALUE_TO_DISPLAY);
-                    } else {
-                        deviceAliasView.setText(alias);
-                    }
-
-                    //OUI Addr
-                    final TextView ouiVendorRowView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_oui_addr);
-                    final TextView nicManufacturerView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_nic_manufacturer);
-
-                    MultiThreadingManager.getResolutionTasksExecutor()
-                            .execute(new UiRelatedTask<Void>() {
-                                @Override
-                                protected Void doWork() {
-                                    try {
-                                        device.setMacouiVendorDetails(mMacOuiVendorLookupCache.get(macAddress));
-                                    } catch (final Exception e) {
-                                        Crashlytics.logException(e);
-                                        e.printStackTrace();
-                                    }
-                                    return null;
-                                }
-
-                                @Override
-                                protected void thenDoUiRelatedWork(Void aVoid) {
-                                    final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
-                                    final String company;
-                                    if (macouiVendorDetails == null || (company = macouiVendorDetails.getCompany()) == null || company.isEmpty()) {
-                                        if (ouiVendorRowView != null)
-                                            ouiVendorRowView.setText(EMPTY_VALUE_TO_DISPLAY);
-                                        if (nicManufacturerView != null)
-                                            nicManufacturerView.setVisibility(View.GONE);
-                                    } else {
-                                        if (ouiVendorRowView != null)
-                                            ouiVendorRowView.setText(company);
-                                        if (nicManufacturerView != null) {
-                                            nicManufacturerView.setText(company);
-                                            nicManufacturerView.setVisibility(View.VISIBLE);
-                                        }
-                                    }
-                                }
-                            });
-
-                    final RelativeTimeTextView lastSeenRowView = (RelativeTimeTextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_lastseen);
-                    final long lastSeen = device.getLastSeen();
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "XXX lastSeen for '" + macAddress + "' =[" + lastSeen + "]");
-                    if (lastSeen <= 0) {
-                        lastSeenRowView.setText(EMPTY_VALUE_TO_DISPLAY);
-                        lastSeenRowView.setReferenceTime(-1l);
-                    } else {
-                        lastSeenRowView.setReferenceTime(lastSeen);
-                        lastSeenRowView.setPrefix(DATE_FORMAT.format(new Date(lastSeen)) + "\n(");
-                        lastSeenRowView.setSuffix(")");
-                    }
-
-                    final TextView totalDownloadRowView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_total_download);
-                    final double rxTotal = device.getRxTotal();
-                    if (rxTotal < 0.) {
-                        totalDownloadRowView.setText(EMPTY_VALUE_TO_DISPLAY);
-                    } else {
-                        final long value = Double.valueOf(rxTotal).longValue();
-                        totalDownloadRowView.setText(value + " B (" + org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(value) + ")");
-                    }
-
-                    final TextView totalUploadRowView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_total_upload);
-                    final double txTotal = device.getTxTotal();
-                    if (txTotal < 0.) {
-                        totalUploadRowView.setText(EMPTY_VALUE_TO_DISPLAY);
-                    } else {
-                        final long value = Double.valueOf(txTotal).longValue();
-                        totalUploadRowView.setText(value + " B (" + org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(value) + ")");
-                    }
-
-                    final View ouiAndLastSeenView = cardView.findViewById(R.id.tile_status_wireless_client_device_details_oui_lastseen_table);
-                    final View trafficGraphPlaceHolderView = cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_placeholder);
-
-                    cardView.findViewById(R.id.tile_status_wireless_client_first_glance_view)
-                            .setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    final Set<String> clientsExpanded = new HashSet<>(mParentFragmentPreferences
-                                            .getStringSet(expandedClientsPrefKey, new HashSet<String>()));
-
-                                    if (ouiAndLastSeenView.getVisibility() == View.VISIBLE) {
-                                        ouiAndLastSeenView.setVisibility(View.GONE);
-                                        clientsExpanded.remove(macAddress);
-//                                        cardView.setCardElevation(40f);
-                                    } else {
-                                        ouiAndLastSeenView.setVisibility(View.VISIBLE);
-                                        clientsExpanded.add(macAddress);
-//                                        cardView.setCardElevation(2f);
-                                    }
-                                    if (hideGraphPlaceHolder) {
-                                        trafficGraphPlaceHolderView.setVisibility(View.GONE);
-                                        legendView.setVisibility(View.GONE);
-                                        if (noDataView.getVisibility() == View.VISIBLE) {
-                                            noDataView.setVisibility(View.GONE);
-                                        } else {
-                                            noDataView.setVisibility(View.VISIBLE);
-                                        }
-                                    } else {
-                                        noDataView.setVisibility(View.GONE);
-                                        if (trafficGraphPlaceHolderView.getVisibility() == View.VISIBLE) {
-                                            trafficGraphPlaceHolderView.setVisibility(View.GONE);
-                                        } else {
-                                            trafficGraphPlaceHolderView.setVisibility(View.VISIBLE);
-                                        }
-                                        if (legendView.getVisibility() == View.VISIBLE) {
-                                            legendView.setVisibility(View.GONE);
-                                        } else {
-                                            legendView.setVisibility(View.VISIBLE);
-                                        }
-
-                                    }
-                                    mParentFragmentPreferences.edit()
-                                            .putStringSet(expandedClientsPrefKey, clientsExpanded)
-                                            .apply();
-                                }
-                            });
-
-                    expandedClients = mParentFragmentPreferences.getStringSet(expandedClientsPrefKey,
-                            new HashSet<String>());
-                    if (expandedClients.contains(macAddress)) {
-//                        cardView.setCardElevation(40f);
-                        //Expand detailed view
-                        ouiAndLastSeenView.setVisibility(View.VISIBLE);
-                        if (hideGraphPlaceHolder) {
-                            noDataView.setVisibility(View.VISIBLE);
-                            trafficGraphPlaceHolderView.setVisibility(View.GONE);
-                            legendView.setVisibility(View.GONE);
-                        } else {
-                            trafficGraphPlaceHolderView.setVisibility(View.VISIBLE);
-                            legendView.setVisibility(View.VISIBLE);
-                            noDataView.setVisibility(View.GONE);
-                        }
-                    } else {
-                        //Collapse detailed view
-                        ouiAndLastSeenView.setVisibility(View.GONE);
-                        trafficGraphPlaceHolderView.setVisibility(View.GONE);
-                        legendView.setVisibility(View.GONE);
-                        noDataView.setVisibility(View.GONE);
-                    }
-
-                    final View wanBlockedDevice = cardView.findViewById(R.id.tile_status_wireless_client_blocked);
-                    if (wanAccessState == null || wanAccessState == Device.WANAccessState.WAN_ACCESS_UNKNOWN) {
-                        wanBlockedDevice.setVisibility(View.GONE);
-                    } else {
-                        wanBlockedDevice.setVisibility(isDeviceWanAccessEnabled ? View.GONE : View.VISIBLE);
-                    }
-
-                    tileMenu.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
-                            popup.setOnMenuItemClickListener(
-                                    new DeviceOnMenuItemClickListener(
-                                            deviceNameView,
-                                            deviceAliasView,
-                                            device));
-                            final MenuInflater inflater = popup.getMenuInflater();
-
-                            final Menu menu = popup.getMenu();
-
-                            inflater.inflate(R.menu.tile_status_wireless_client_options, menu);
-
-                            if (isThisDevice) {
-                                //WOL not needed as this is the current device
-                                menu.findItem(R.id.tile_status_wireless_client_wol).setEnabled(false);
-                            }
-
-                            final MenuItem wanAccessStateMenuItem = menu.findItem(R.id.tile_status_wireless_client_wan_access_state);
-                            if (wanAccessState == null || wanAccessState == Device.WANAccessState.WAN_ACCESS_UNKNOWN) {
-                                wanAccessStateMenuItem.setEnabled(false);
-                            } else {
-                                wanAccessStateMenuItem.setEnabled(true);
-                                wanAccessStateMenuItem.setChecked(isDeviceWanAccessEnabled);
-                            }
-
-                            final MenuItem activeIpConnectionsMenuItem = menu
-                                    .findItem(R.id.tile_status_wireless_client_view_active_ip_connections);
-//                        mClientsActiveConnectionsMenuMap.put(macAddress, activeIpConnectionsMenuItem);
-                            final boolean activeIpConnectionsMenuItemEnabled =
-                                    !(deviceActiveIpConnections == null || deviceActiveIpConnections.size() == 0);
-                            activeIpConnectionsMenuItem.setEnabled(activeIpConnectionsMenuItemEnabled);
-                            if (activeIpConnectionsMenuItemEnabled) {
-                                activeIpConnectionsMenuItem
-                                        .setTitle(mParentFragmentActivity.getResources().getString(R.string.view_active_ip_connections) +
-                                                " (" + deviceActiveIpConnections.size() + ")");
-                                activeIpConnectionsMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                                    @Override
-                                    public boolean onMenuItemClick(MenuItem item) {
-                                        final Intent intent = new Intent(mParentFragmentActivity, ActiveIPConnectionsDetailActivity.class);
-                                        intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT, deviceActiveIpConnections
-                                                .toArray(new String[deviceActiveIpConnections.size()]));
-                                        intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
-                                        intent.putExtra(ActiveIPConnectionsDetailActivity.ROUTER_REMOTE_IP, mRouter.getRemoteIpAddress());
-                                        intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST,
-                                                "'" + name + "' (" + macAddress + " - " + device.getIpAddress() + ")");
-                                        intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST_IP, device.getIpAddress());
-                                        intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, device.getName());
-                                        intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, new Date().toString());
-
-                                        if (BuildConfig.WITH_ADS &&
-                                                mInterstitialAdForActiveIPConnections != null &&
-                                                AdUtils.canDisplayInterstialAd(mParentFragmentActivity)) {
-
-                                            mInterstitialAdForActiveIPConnections.setAdListener(new AdListener() {
-                                                @Override
-                                                public void onAdClosed() {
-                                                    final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
-                                                    if (adRequest != null) {
-                                                        mInterstitialAdForActiveIPConnections.loadAd(adRequest);
-                                                    }
-                                                    mParentFragmentActivity.startActivity(intent);
-                                                }
-
-                                                @Override
-                                                public void onAdOpened() {
-                                                    //Save preference
-                                                    mGlobalPreferences.edit()
-                                                            .putLong(
-                                                                    RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
-                                                                    System.currentTimeMillis())
-                                                            .apply();
-                                                }
-                                            });
-
-                                            if (mInterstitialAdForActiveIPConnections.isLoaded()) {
-                                                mInterstitialAdForActiveIPConnections.show();
-                                            } else {
-                                                //noinspection ConstantConditions
-                                                final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                                                        "Loading...", false, false);
-                                                alertDialog.show();
-                                                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                                                new Handler().postDelayed(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        mParentFragmentActivity.startActivity(intent);
-                                                        alertDialog.cancel();
-                                                    }
-                                                }, 1000);
-                                            }
-
-                                        } else {
-                                            //noinspection ConstantConditions
-                                            final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                                                    "Loading...", false, false);
-                                            alertDialog.show();
-                                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                                            new Handler().postDelayed(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    mParentFragmentActivity.startActivity(intent);
-                                                    alertDialog.cancel();
-                                                }
-                                            }, 1000);
-                                        }
-
-                                        return true;
-                                    }
-                                });
-                            }
-
-                            popup.show();
-                        }
-                    });
-
-                    currentDevicesViewsMap.put(device, cardView);
+                mDevices.clear();
+                if (devices != null) {
+                    mDevices.addAll(devices);
                 }
+
+//                final CardView.LayoutParams cardViewLayoutParams = new FrameLayout.LayoutParams(
+//                        FrameLayout.LayoutParams.MATCH_PARENT,
+//                        FrameLayout.LayoutParams.WRAP_CONTENT);
+//                cardViewLayoutParams.rightMargin = R.dimen.marginRight;
+//                cardViewLayoutParams.leftMargin = R.dimen.marginLeft;
+//                cardViewLayoutParams.bottomMargin = R.dimen.activity_vertical_margin;
+
+//                for (final Device device : devices) {
+//
+//                    Crashlytics.log(Log.DEBUG, LOG_TAG, "RM >>> Handling device: '" + device.getName() + "' (" +
+//                            device.getMacAddress() + ") <<< ");
+//
+//                    expandedClients = mParentFragmentPreferences.getStringSet(expandedClientsPrefKey, null);
+//                    if (expandedClients == null) {
+//                        //Add first item right away
+//                        mParentFragmentPreferences.edit()
+//                                .putStringSet(expandedClientsPrefKey, Sets.newHashSet(device.getMacAddress()))
+//                                .apply();
+//                    }
+//
+//                    final CardView cardView = (CardView) mParentFragmentActivity.getLayoutInflater()
+//                            .inflate(R.layout.tile_status_wireless_client, null);
+//
+//                    final View legendView = cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_legend);
+//                    legendView.setVisibility(View.GONE);
+//
+//                    //Create Options Menu
+//                    final ImageButton tileMenu = (ImageButton)
+//                            cardView.findViewById(R.id.tile_status_wireless_client_device_menu);
+//
+//                    if (!isThemeLight) {
+//                        //Set menu background to white
+//                        tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+//                    }
+//
+//                    //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
+//                    cardView.setPreventCornerOverlap(true);
+//                    //Add padding in API v21+ as well to have the same measurements with previous versions.
+//                    cardView.setUseCompatPadding(true);
+//
+//                    if (isThemeLight) {
+//                        //Light
+//                        cardView.setCardBackgroundColor(
+//                                ContextCompat.getColor(mParentFragmentActivity, R.color.cardview_light_background));
+//                    } else {
+//                        //Default is Dark
+//                        cardView.setCardBackgroundColor(
+//                                ContextCompat.getColor(mParentFragmentActivity, R.color.cardview_dark_background));
+//                    }
+//
+//                    //Highlight CardView
+////                    cardView.setCardElevation(10f);
+//
+//                    final ImageView avatarView = (ImageView) cardView.findViewById(R.id.avatar);
+//
+//                    final String macAddress = device.getMacAddress();
+//
+//                    final TextView deviceNameView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_name);
+//                    final String name = device.getName();
+//                    final String nameForAvatar;
+//                    if (isNullOrEmpty(device.getAlias()) &&
+//                            isNullOrEmpty(device.getSystemName()) &&
+//                            StringUtils.equals(name, macAddress)) {
+//                        deviceNameView.setText(EMPTY_VALUE_TO_DISPLAY);
+//                        nameForAvatar = EMPTY_VALUE_TO_DISPLAY;
+//                    } else {
+//                        deviceNameView.setText(name);
+//                        nameForAvatar = name;
+//                    }
+//                    final TextDrawable textDrawable = ImageUtils.getTextDrawable(nameForAvatar);
+//                    avatarView.setImageDrawable(textDrawable);
+//
+//                    final TextView rssiTitleView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_rssi_title);
+//                    final TextView rssiSepView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_rssi_sep);
+//                    final TextView rssiView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_rssi);
+//
+//                    final TextView ssidTitleView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_ssid_title);
+//                    final TextView ssidSepView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_ssid_sep);
+//                    final TextView ssidView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_ssid);
+//
+//                    final TextView signalStrengthTitleView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_signal_strength_title);
+//                    final TextView signalStrengthSepView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_signal_strength_sep);
+//                    final ProgressBar signalStrengthView = (ProgressBar) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_signal_strength);
+//
+//                    final TextView snrMarginTitleView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_snr_margin_title);
+//                    final TextView snrMarginSepView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_snr_margin_sep);
+//                    final TextView snrMarginView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_snr_margin);
+//
+//                    final View[] wirelessRelatedViews = new View[]{
+//                            rssiTitleView, rssiSepView, rssiView,
+//                            ssidTitleView, ssidSepView, ssidView,
+//                            signalStrengthTitleView, signalStrengthSepView, signalStrengthView,
+//                            snrMarginTitleView, snrMarginSepView, snrMarginView
+//                    };
+//
+//                    //Now if is wireless client or not
+//                    final Device.WirelessConnectionInfo wirelessConnectionInfo = device.getWirelessConnectionInfo();
+//                    if (wirelessConnectionInfo != null) {
+//                        nbWirelessClients++;
+//                        for (View wirelessRelatedView : wirelessRelatedViews) {
+//                            wirelessRelatedView.setVisibility(View.VISIBLE);
+//                        }
+//
+//                        //SSID
+//                        final String ssid = wirelessConnectionInfo.getSsid();
+//                        ssidView.setText(isNullOrEmpty(ssid) ? EMPTY_VALUE_TO_DISPLAY : ssid);
+//
+//                        //SNR Margin
+//                        final String snrMargin = wirelessConnectionInfo.getSnrMargin();
+//                        if (isNullOrEmpty(snrMargin)) {
+//                            snrMarginView.setText(EMPTY_VALUE_TO_DISPLAY);
+//                        } else {
+//                            snrMarginView.setText(snrMargin + " dB");
+//                        }
+//
+//                        //Signal Strength (based upon SNR Margin)
+//                        try {
+//                            final int snr = Integer.parseInt(snrMargin);
+//
+//                        /*
+//                        cf. http://www.wireless-nets.com/resources/tutorials/define_SNR_values.html
+//
+//                        > 40dB SNR = Excellent signal (5 bars); always associated; lightening fast.
+//
+//                        25dB to 40dB SNR = Very good signal (3 - 4 bars); always associated; very fast.
+//
+//                        15dB to 25dB SNR = Low signal (2 bars); always associated; usually fast.
+//
+//                        10dB - 15dB SNR = Very low signal (1 bar); mostly associated; mostly slow.
+//
+//                        5dB to 10dB SNR = No signal; not associated; no go.
+//
+//                        Added +5dB to the values above to approximate Android bar indicators
+//                         */
+//                            if (snr <= 20) {
+//                                //No signal; not associated; no go.
+//                                deviceNameView
+//                                        .setCompoundDrawablesWithIntrinsicBounds(
+//                                                isThemeLight ?
+//                                                        R.drawable.ic_action_device_signal_wifi_0_bar :
+//                                                        R.drawable.ic_action_device_signal_wifi_0_bar_white, 0, 0, 0);
+//                            } else if (snr <= 25) {
+//                                //Very low signal (1 bar); mostly associated; mostly slow.
+//                                deviceNameView
+//                                        .setCompoundDrawablesWithIntrinsicBounds(
+//                                                isThemeLight ?
+//                                                        R.drawable.ic_action_device_signal_wifi_1_bar :
+//                                                        R.drawable.ic_action_device_signal_wifi_1_bar_white, 0, 0, 0);
+//                            } else if (snr <= 35) {
+//                                //Low signal (2 bars); always associated; usually fast.
+//                                deviceNameView
+//                                        .setCompoundDrawablesWithIntrinsicBounds(
+//                                                isThemeLight ?
+//                                                        R.drawable.ic_action_device_signal_wifi_2_bar :
+//                                                        R.drawable.ic_action_device_signal_wifi_2_bar_white, 0, 0, 0);
+//                            } else if (snr <= 50) {
+//                                //Very good signal (3 - 4 bars); always associated; very fast.
+//                                deviceNameView
+//                                        .setCompoundDrawablesWithIntrinsicBounds(
+//                                                isThemeLight ? R.drawable.ic_action_device_signal_wifi_3_bar :
+//                                                        R.drawable.ic_action_device_signal_wifi_3_bar_white, 0, 0, 0);
+//                            } else {
+//                                //Excellent signal (5 bars); always associated; lightening fast.
+//                                deviceNameView
+//                                        .setCompoundDrawablesWithIntrinsicBounds(
+//                                                isThemeLight ? R.drawable.ic_action_device_signal_wifi_4_bar :
+//                                                        R.drawable.ic_action_device_signal_wifi_4_bar_white, 0, 0, 0);
+//                            }
+//
+//                            //Postulate: we consider that a value of 55dB SNR corresponds to 100% in our progress bar
+//                            signalStrengthView.setProgress(Math.min(snr * 100 / 55, 100));
+//
+//                            signalStrengthTitleView.setVisibility(View.VISIBLE);
+//                            signalStrengthSepView.setVisibility(View.VISIBLE);
+//                            signalStrengthView.setVisibility(View.VISIBLE);
+//                        } catch (final NumberFormatException nfe) {
+//                            nfe.printStackTrace();
+//                            signalStrengthTitleView.setVisibility(View.GONE);
+//                            signalStrengthSepView.setVisibility(View.GONE);
+//                            signalStrengthView.setVisibility(View.GONE);
+//                            deviceNameView
+//                                    .setCompoundDrawablesWithIntrinsicBounds(
+//                                            isThemeLight ? R.drawable.ic_action_device_signal_wifi_0_bar :
+//                                                    R.drawable.ic_action_device_signal_wifi_0_bar_white, 0, 0, 0);
+//                        }
+//
+//                        //RSSI
+//                        final String rssi = wirelessConnectionInfo.getRssi();
+//                        if (isNullOrEmpty(rssi)) {
+//                            rssiView.setText(EMPTY_VALUE_TO_DISPLAY);
+//                        } else {
+//                            rssiView.setText(rssi + " dBm");
+//                        }
+//
+//                    } else {
+//                        for (View wirelessRelatedView : wirelessRelatedViews) {
+//                            wirelessRelatedView.setVisibility(View.GONE);
+//                        }
+//                    }
+//
+//                    final Set<String> deviceActiveIpConnections = device.getActiveIpConnections();
+//                    final TextView deviceActiveIpConnectionsView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_active_ip_connections_num);
+//
+//                    if (deviceActiveIpConnections == null) {
+//                        deviceActiveIpConnectionsView.setText(EMPTY_VALUE_TO_DISPLAY);
+//                    } else {
+//                        final int deviceActiveIpConnectionsCount = device.getActiveIpConnectionsCount();
+//                        deviceActiveIpConnectionsView.setText(String.valueOf(deviceActiveIpConnectionsCount));
+//                        if (deviceActiveIpConnectionsCount > 0) {
+//                            deviceActiveIpConnectionsView.setMovementMethod(LinkMovementMethod.getInstance());
+//                            final Spannable spans = (Spannable) deviceActiveIpConnectionsView.getText();
+//                            final ClickableSpan clickSpan = new ClickableSpan() {
+//
+//                                @Override
+//                                public void onClick(View widget) {
+//                                    final Intent intent = new Intent(mParentFragmentActivity, ActiveIPConnectionsDetailActivity.class);
+//                                    intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT, deviceActiveIpConnections
+//                                            .toArray(new String[deviceActiveIpConnections.size()]));
+//                                    intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
+//                                    intent.putExtra(ActiveIPConnectionsDetailActivity.ROUTER_REMOTE_IP,
+//                                            mRouter.getRemoteIpAddress());
+//                                    intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST,
+//                                            "'" + name + "' (" + macAddress + " - " + device.getIpAddress() + ")");
+//                                    intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, new Date().toString());
+//                                    intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, device.getName());
+//                                    intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST_IP, device.getIpAddress());
+//
+//                                    if (BuildConfig.WITH_ADS &&
+//                                            mInterstitialAdForActiveIPConnections != null &&
+//                                            AdUtils.canDisplayInterstialAd(mParentFragmentActivity)) {
+//
+//                                        mInterstitialAdForActiveIPConnections.setAdListener(new AdListener() {
+//                                            @Override
+//                                            public void onAdClosed() {
+//                                                final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
+//                                                if (adRequest != null) {
+//                                                    mInterstitialAdForActiveIPConnections.loadAd(adRequest);
+//                                                }
+//                                                mParentFragmentActivity.startActivity(intent);
+//                                            }
+//
+//                                            @Override
+//                                            public void onAdOpened() {
+//                                                //Save preference
+//                                                mGlobalPreferences.edit()
+//                                                        .putLong(
+//                                                                RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
+//                                                                System.currentTimeMillis())
+//                                                        .apply();
+//                                            }
+//                                        });
+//
+//                                        if (mInterstitialAdForActiveIPConnections.isLoaded()) {
+//                                            mInterstitialAdForActiveIPConnections.show();
+//                                        } else {
+//                                            //noinspection ConstantConditions
+//                                            final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+//                                                    "Loading...", false, false);
+//                                            alertDialog.show();
+//                                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                                            new Handler().postDelayed(new Runnable() {
+//                                                @Override
+//                                                public void run() {
+//                                                    mParentFragmentActivity.startActivity(intent);
+//                                                    alertDialog.cancel();
+//                                                }
+//                                            }, 1000);
+//                                        }
+//
+//                                    } else {
+//                                        //noinspection ConstantConditions
+//                                        final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+//                                                "Loading...", false, false);
+//                                        alertDialog.show();
+//                                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                                        new Handler().postDelayed(new Runnable() {
+//                                            @Override
+//                                            public void run() {
+//                                                mParentFragmentActivity.startActivity(intent);
+//                                                alertDialog.cancel();
+//                                            }
+//                                        }, 1000);
+//                                    }
+//                                }
+//                            };
+//                            spans.setSpan(clickSpan, 0, spans.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                        }
+//                    }
+//
+//                    final Device.WANAccessState wanAccessState = device.getWanAccessState();
+//                    final boolean isDeviceWanAccessEnabled = (wanAccessState == Device.WANAccessState.WAN_ACCESS_ENABLED);
+//                    if (isDeviceWanAccessEnabled) {
+//                        deviceNameView.setTextColor(
+//                                ContextCompat.getColor(mParentFragmentActivity, R.color.ddwrt_green));
+//                    }
+//                    final TextView deviceWanAccessStateView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wan_access);
+//                    if (wanAccessState == null || isNullOrEmpty(wanAccessState.toString())) {
+//                        deviceWanAccessStateView.setText(EMPTY_VALUE_TO_DISPLAY);
+//                    } else {
+//                        deviceWanAccessStateView.setText(wanAccessState.toString());
+//                    }
+//
+//                    final TextView deviceMac = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_mac);
+//                    deviceMac.setText(macAddress);
+//
+//                    final TextView deviceIp = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_ip);
+//                    final String ipAddress = device.getIpAddress();
+//                    deviceIp.setText(ipAddress);
+//
+//                    final boolean isThisDevice = (nullToEmpty(macAddress).equalsIgnoreCase(mCurrentMacAddress) &&
+//                            nullToEmpty(ipAddress).equals(mCurrentIpAddress));
+//                    if (isThisDevice) {
+//                        final View thisDevice = cardView.findViewById(R.id.tile_status_wireless_client_device_this);
+//                        if (isThemeLight) {
+//                            //Set text color to blue
+//                            ((TextView) thisDevice)
+//                                    .setTextColor(
+//                                            ContextCompat.getColor(mParentFragmentActivity,
+//                                                    R.color.blue));
+//                        }
+//                        thisDevice.setVisibility(View.VISIBLE);
+//                    }
+//
+//                    final LinearLayout deviceDetailsPlaceHolder = (LinearLayout) cardView
+//                            .findViewById(R.id.tile_status_wireless_client_device_details_graph_placeholder);
+//                    final View noDataView = cardView.findViewById(R.id.tile_status_wireless_client_device_details_no_data);
+//
+//                    deviceDetailsPlaceHolder.removeAllViews();
+//
+//                    final BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData;
+//                    synchronized (usageDataLock) {
+//                        bandwidthMonitoringIfaceData = bandwidthMonitoringIfaceDataPerDevice.get(macAddress);
+//                    }
+//
+//                    final boolean hideGraphPlaceHolder = bandwidthMonitoringIfaceData == null || bandwidthMonitoringIfaceData.getData().isEmpty();
+//                    if (hideGraphPlaceHolder) {
+//                        //Show no data
+//                        deviceDetailsPlaceHolder.setVisibility(View.GONE);
+//                        legendView.setVisibility(View.GONE);
+//                        noDataView.setVisibility(View.VISIBLE);
+//
+//                    } else {
+//
+//                        legendView.setVisibility(View.VISIBLE);
+//
+//                        final Map<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> dataCircularBuffer =
+//                                bandwidthMonitoringIfaceData.getData();
+//
+//                        long maxX = System.currentTimeMillis() + 5000;
+//                        long minX = System.currentTimeMillis() - 5000;
+//                        double maxY = 10;
+//                        double minY = 1.;
+//
+//                        final XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
+//                        final XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
+//
+//                        final Map<Double, String> yLabels = new HashMap<>();
+//
+//                        int i = 0;
+//                        //noinspection ConstantConditions
+//                        for (final Map.Entry<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> entry : dataCircularBuffer.entrySet()) {
+//                            final String inOrOut = entry.getKey();
+//                            final EvictingQueue<BandwidthMonitoringTile.DataPoint> dataPoints = entry.getValue();
+//                            final XYSeries series = new XYSeries(inOrOut);
+//                            for (final BandwidthMonitoringTile.DataPoint point : dataPoints) {
+//                                final long x = point.getTimestamp();
+//                                final double y = point.getValue();
+//                                series.add(x, y);
+//                                maxX = Math.max(maxX, x);
+//                                minX = Math.min(minX, x);
+//                                maxY = Math.max(maxY, y);
+//                                minY = Math.min(minY, y);
+//                                yLabels.put(y, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(Double.valueOf(y).longValue())
+//                                        .replace("bytes", "B"));
+//                            }
+//
+//                            // Now we add our series
+//                            dataset.addSeries(series);
+//
+//                            // Now we create the renderer
+//                            final XYSeriesRenderer renderer = new XYSeriesRenderer();
+//                            renderer.setLineWidth(5);
+//
+//                            final int color = ColorUtils.getColor(inOrOut);
+//                            renderer.setColor(color);
+//                            // Include low and max value
+//                            renderer.setDisplayBoundingPoints(true);
+//                            // we add point markers
+//                            renderer.setPointStyle(PointStyle.POINT);
+//                            renderer.setPointStrokeWidth(1);
+//
+//                            final FillOutsideLine fill = new FillOutsideLine(FillOutsideLine.Type.BOUNDS_ABOVE);
+//                            //Fill with a slightly transparent version of the original color
+//                            fill.setColor(android.support.v4.graphics.ColorUtils.setAlphaComponent(color, 30));
+//                            renderer.addFillOutsideLine(fill);
+//
+//                            if (i == 0) {
+//                                cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_legend_series1_bar)
+//                                        .setBackgroundColor(color);
+//                                final TextView series1TextView = (TextView)
+//                                        cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_legend_series1_text);
+//                                series1TextView.setText(inOrOut);
+//                                series1TextView.setTextColor(color);
+//
+//                            } else if (i == 1) {
+//                                cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_legend_series2_bar)
+//                                        .setBackgroundColor(color);
+//                                final TextView series2TextView = (TextView)
+//                                        cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_legend_series2_text);
+//                                series2TextView.setText(inOrOut);
+//                                series2TextView.setTextColor(color);
+//                            }
+//                            i++;
+//
+//                            mRenderer.addSeriesRenderer(renderer);
+//                        }
+//
+//                        mRenderer.setYLabels(0);
+//                        mRenderer.addYTextLabel(maxY, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(Double.valueOf(maxY).longValue())
+//                                .replace("bytes", "B"));
+//                        if (maxY != 0 && maxY / 2 >= 9000) {
+//                            mRenderer.addYTextLabel(maxY / 2, org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(Double.valueOf(maxY / 2).longValue())
+//                                    .replace("bytes", "B"));
+//                        }
+//
+//                        // We want to avoid black border
+//                        //setting text size of the title
+//                        mRenderer.setChartTitleTextSize(25);
+//                        //setting text size of the axis title
+//                        mRenderer.setAxisTitleTextSize(22);
+//                        //setting text size of the graph label
+//                        mRenderer.setLabelsTextSize(22);
+//                        mRenderer.setLegendTextSize(22);
+//
+//                        mRenderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00)); // transparent margins
+//                        // Disable Pan on two axis
+//                        mRenderer.setPanEnabled(false, false);
+//                        mRenderer.setYAxisMax(maxY);
+//                        mRenderer.setYAxisMin(minY);
+//                        mRenderer.setXAxisMin(minX);
+//                        mRenderer.setXAxisMax(maxX);
+//                        mRenderer.setShowGrid(false);
+//                        mRenderer.setClickEnabled(false);
+//                        mRenderer.setZoomEnabled(false, false);
+//                        mRenderer.setPanEnabled(false, false);
+//                        mRenderer.setZoomRate(6.0f);
+//                        mRenderer.setShowLabels(true);
+//                        mRenderer.setFitLegend(true);
+//                        mRenderer.setInScroll(true);
+//                        mRenderer.setXLabelsAlign(Paint.Align.CENTER);
+//                        mRenderer.setYLabelsAlign(Paint.Align.LEFT);
+//                        mRenderer.setTextTypeface("sans_serif", Typeface.NORMAL);
+//                        mRenderer.setAntialiasing(true);
+//                        mRenderer.setExternalZoomEnabled(false);
+//                        mRenderer.setInScroll(false);
+//                        mRenderer.setFitLegend(true);
+//                        mRenderer.setLabelsTextSize(30f);
+//                        final int blackOrWhite = ContextCompat.getColor(mParentFragmentActivity,
+//                                ColorUtils.isThemeLight(mParentFragmentActivity) ? R.color.black : R.color.white);
+//                        mRenderer.setAxesColor(blackOrWhite);
+//                        mRenderer.setShowLegend(false);
+//                        mRenderer.setXLabelsColor(blackOrWhite);
+//                        mRenderer.setYLabelsColor(0, blackOrWhite);
+//
+//                        final GraphicalView chartView = ChartFactory.getTimeChartView(mParentFragmentActivity, dataset, mRenderer, null);
+//                        chartView.repaint();
+//
+//                        deviceDetailsPlaceHolder.addView(chartView, 0);
+//
+//                        deviceDetailsPlaceHolder.setVisibility(View.VISIBLE);
+//                        noDataView.setVisibility(View.GONE);
+//                    }
+//
+//                    final NetworkTrafficView networkTrafficView =
+//                            new NetworkTrafficView(mParentFragmentActivity, isThemeLight, mRouter.getUuid(), device);
+//                    networkTrafficView.setRxAndTxBytes(Double.valueOf(device.getRxRate()).longValue(),
+//                            Double.valueOf(device.getTxRate()).longValue());
+//
+//                    final LinearLayout trafficViewPlaceHolder = (LinearLayout) cardView
+//                            .findViewById(R.id.tile_status_wireless_client_network_traffic_placeholder);
+//                    trafficViewPlaceHolder.removeAllViews();
+//                    trafficViewPlaceHolder.addView(networkTrafficView);
+//
+//                    final TextView deviceSystemNameView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_system_name);
+//                    final String systemName = device.getSystemName();
+//                    if (isNullOrEmpty(systemName)) {
+//                        deviceSystemNameView.setText(EMPTY_VALUE_TO_DISPLAY);
+//                    } else {
+//                        deviceSystemNameView.setText(systemName);
+//                    }
+//
+//                    final TextView deviceAliasView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_alias);
+//                    final String alias = device.getAlias();
+//                    if (isNullOrEmpty(alias)) {
+//                        deviceAliasView.setText(EMPTY_VALUE_TO_DISPLAY);
+//                    } else {
+//                        deviceAliasView.setText(alias);
+//                    }
+//
+//                    //OUI Addr
+//                    final TextView ouiVendorRowView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_oui_addr);
+//                    final TextView nicManufacturerView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_nic_manufacturer);
+//
+//                    MultiThreadingManager.getResolutionTasksExecutor()
+//                            .execute(new UiRelatedTask<Void>() {
+//                                @Override
+//                                protected Void doWork() {
+//                                    try {
+//                                        device.setMacouiVendorDetails(mMacOuiVendorLookupCache.get(macAddress));
+//                                    } catch (final Exception e) {
+//                                        Crashlytics.logException(e);
+//                                        e.printStackTrace();
+//                                    }
+//                                    return null;
+//                                }
+//
+//                                @Override
+//                                protected void thenDoUiRelatedWork(Void aVoid) {
+//                                    final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
+//                                    final String company;
+//                                    if (macouiVendorDetails == null || (company = macouiVendorDetails.getCompany()) == null || company.isEmpty()) {
+//                                        if (ouiVendorRowView != null)
+//                                            ouiVendorRowView.setText(EMPTY_VALUE_TO_DISPLAY);
+//                                        if (nicManufacturerView != null)
+//                                            nicManufacturerView.setVisibility(View.GONE);
+//                                    } else {
+//                                        if (ouiVendorRowView != null)
+//                                            ouiVendorRowView.setText(company);
+//                                        if (nicManufacturerView != null) {
+//                                            nicManufacturerView.setText(company);
+//                                            nicManufacturerView.setVisibility(View.VISIBLE);
+//                                        }
+//                                    }
+//                                }
+//                            });
+//
+//                    final RelativeTimeTextView lastSeenRowView = (RelativeTimeTextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_lastseen);
+//                    final long lastSeen = device.getLastSeen();
+//                    Crashlytics.log(Log.DEBUG, LOG_TAG, "XXX lastSeen for '" + macAddress + "' =[" + lastSeen + "]");
+//                    if (lastSeen <= 0) {
+//                        lastSeenRowView.setText(EMPTY_VALUE_TO_DISPLAY);
+//                        lastSeenRowView.setReferenceTime(-1l);
+//                    } else {
+//                        lastSeenRowView.setReferenceTime(lastSeen);
+//                        lastSeenRowView.setPrefix(DATE_FORMAT.format(new Date(lastSeen)) + "\n(");
+//                        lastSeenRowView.setSuffix(")");
+//                    }
+//
+//                    final TextView totalDownloadRowView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_total_download);
+//                    final double rxTotal = device.getRxTotal();
+//                    if (rxTotal < 0.) {
+//                        totalDownloadRowView.setText(EMPTY_VALUE_TO_DISPLAY);
+//                    } else {
+//                        final long value = Double.valueOf(rxTotal).longValue();
+//                        totalDownloadRowView.setText(value + " B (" + org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(value) + ")");
+//                    }
+//
+//                    final TextView totalUploadRowView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_total_upload);
+//                    final double txTotal = device.getTxTotal();
+//                    if (txTotal < 0.) {
+//                        totalUploadRowView.setText(EMPTY_VALUE_TO_DISPLAY);
+//                    } else {
+//                        final long value = Double.valueOf(txTotal).longValue();
+//                        totalUploadRowView.setText(value + " B (" + org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(value) + ")");
+//                    }
+//
+//                    final View ouiAndLastSeenView = cardView.findViewById(R.id.tile_status_wireless_client_device_details_oui_lastseen_table);
+//                    final View trafficGraphPlaceHolderView = cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_placeholder);
+//
+//                    cardView.findViewById(R.id.tile_status_wireless_client_first_glance_view)
+//                            .setOnClickListener(new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//                                    final Set<String> clientsExpanded = new HashSet<>(mParentFragmentPreferences
+//                                            .getStringSet(expandedClientsPrefKey, new HashSet<String>()));
+//
+//                                    if (ouiAndLastSeenView.getVisibility() == View.VISIBLE) {
+//                                        ouiAndLastSeenView.setVisibility(View.GONE);
+//                                        clientsExpanded.remove(macAddress);
+////                                        cardView.setCardElevation(40f);
+//                                    } else {
+//                                        ouiAndLastSeenView.setVisibility(View.VISIBLE);
+//                                        clientsExpanded.add(macAddress);
+////                                        cardView.setCardElevation(2f);
+//                                    }
+//                                    if (hideGraphPlaceHolder) {
+//                                        trafficGraphPlaceHolderView.setVisibility(View.GONE);
+//                                        legendView.setVisibility(View.GONE);
+//                                        if (noDataView.getVisibility() == View.VISIBLE) {
+//                                            noDataView.setVisibility(View.GONE);
+//                                        } else {
+//                                            noDataView.setVisibility(View.VISIBLE);
+//                                        }
+//                                    } else {
+//                                        noDataView.setVisibility(View.GONE);
+//                                        if (trafficGraphPlaceHolderView.getVisibility() == View.VISIBLE) {
+//                                            trafficGraphPlaceHolderView.setVisibility(View.GONE);
+//                                        } else {
+//                                            trafficGraphPlaceHolderView.setVisibility(View.VISIBLE);
+//                                        }
+//                                        if (legendView.getVisibility() == View.VISIBLE) {
+//                                            legendView.setVisibility(View.GONE);
+//                                        } else {
+//                                            legendView.setVisibility(View.VISIBLE);
+//                                        }
+//
+//                                    }
+//                                    mParentFragmentPreferences.edit()
+//                                            .putStringSet(expandedClientsPrefKey, clientsExpanded)
+//                                            .apply();
+//                                }
+//                            });
+//
+//                    expandedClients = mParentFragmentPreferences.getStringSet(expandedClientsPrefKey,
+//                            new HashSet<String>());
+//                    if (expandedClients.contains(macAddress)) {
+////                        cardView.setCardElevation(40f);
+//                        //Expand detailed view
+//                        ouiAndLastSeenView.setVisibility(View.VISIBLE);
+//                        if (hideGraphPlaceHolder) {
+//                            noDataView.setVisibility(View.VISIBLE);
+//                            trafficGraphPlaceHolderView.setVisibility(View.GONE);
+//                            legendView.setVisibility(View.GONE);
+//                        } else {
+//                            trafficGraphPlaceHolderView.setVisibility(View.VISIBLE);
+//                            legendView.setVisibility(View.VISIBLE);
+//                            noDataView.setVisibility(View.GONE);
+//                        }
+//                    } else {
+//                        //Collapse detailed view
+//                        ouiAndLastSeenView.setVisibility(View.GONE);
+//                        trafficGraphPlaceHolderView.setVisibility(View.GONE);
+//                        legendView.setVisibility(View.GONE);
+//                        noDataView.setVisibility(View.GONE);
+//                    }
+//
+//                    final View wanBlockedDevice = cardView.findViewById(R.id.tile_status_wireless_client_blocked);
+//                    if (wanAccessState == null || wanAccessState == Device.WANAccessState.WAN_ACCESS_UNKNOWN) {
+//                        wanBlockedDevice.setVisibility(View.GONE);
+//                    } else {
+//                        wanBlockedDevice.setVisibility(isDeviceWanAccessEnabled ? View.GONE : View.VISIBLE);
+//                    }
+//
+//                    tileMenu.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
+//                            popup.setOnMenuItemClickListener(
+//                                    new DeviceOnMenuItemClickListener(
+//                                            deviceNameView,
+//                                            deviceAliasView,
+//                                            device));
+//                            final MenuInflater inflater = popup.getMenuInflater();
+//
+//                            final Menu menu = popup.getMenu();
+//
+//                            inflater.inflate(R.menu.tile_status_wireless_client_options, menu);
+//
+//                            if (isThisDevice) {
+//                                //WOL not needed as this is the current device
+//                                menu.findItem(R.id.tile_status_wireless_client_wol).setEnabled(false);
+//                            }
+//
+//                            final MenuItem wanAccessStateMenuItem = menu.findItem(R.id.tile_status_wireless_client_wan_access_state);
+//                            if (wanAccessState == null || wanAccessState == Device.WANAccessState.WAN_ACCESS_UNKNOWN) {
+//                                wanAccessStateMenuItem.setEnabled(false);
+//                            } else {
+//                                wanAccessStateMenuItem.setEnabled(true);
+//                                wanAccessStateMenuItem.setChecked(isDeviceWanAccessEnabled);
+//                            }
+//
+//                            final MenuItem activeIpConnectionsMenuItem = menu
+//                                    .findItem(R.id.tile_status_wireless_client_view_active_ip_connections);
+////                        mClientsActiveConnectionsMenuMap.put(macAddress, activeIpConnectionsMenuItem);
+//                            final boolean activeIpConnectionsMenuItemEnabled =
+//                                    !(deviceActiveIpConnections == null || deviceActiveIpConnections.size() == 0);
+//                            activeIpConnectionsMenuItem.setEnabled(activeIpConnectionsMenuItemEnabled);
+//                            if (activeIpConnectionsMenuItemEnabled) {
+//                                activeIpConnectionsMenuItem
+//                                        .setTitle(mParentFragmentActivity.getResources().getString(R.string.view_active_ip_connections) +
+//                                                " (" + deviceActiveIpConnections.size() + ")");
+//                                activeIpConnectionsMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//                                    @Override
+//                                    public boolean onMenuItemClick(MenuItem item) {
+//                                        final Intent intent = new Intent(mParentFragmentActivity, ActiveIPConnectionsDetailActivity.class);
+//                                        intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT, deviceActiveIpConnections
+//                                                .toArray(new String[deviceActiveIpConnections.size()]));
+//                                        intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
+//                                        intent.putExtra(ActiveIPConnectionsDetailActivity.ROUTER_REMOTE_IP, mRouter.getRemoteIpAddress());
+//                                        intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST,
+//                                                "'" + name + "' (" + macAddress + " - " + device.getIpAddress() + ")");
+//                                        intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST_IP, device.getIpAddress());
+//                                        intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, device.getName());
+//                                        intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, new Date().toString());
+//
+//                                        if (BuildConfig.WITH_ADS &&
+//                                                mInterstitialAdForActiveIPConnections != null &&
+//                                                AdUtils.canDisplayInterstialAd(mParentFragmentActivity)) {
+//
+//                                            mInterstitialAdForActiveIPConnections.setAdListener(new AdListener() {
+//                                                @Override
+//                                                public void onAdClosed() {
+//                                                    final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
+//                                                    if (adRequest != null) {
+//                                                        mInterstitialAdForActiveIPConnections.loadAd(adRequest);
+//                                                    }
+//                                                    mParentFragmentActivity.startActivity(intent);
+//                                                }
+//
+//                                                @Override
+//                                                public void onAdOpened() {
+//                                                    //Save preference
+//                                                    mGlobalPreferences.edit()
+//                                                            .putLong(
+//                                                                    RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
+//                                                                    System.currentTimeMillis())
+//                                                            .apply();
+//                                                }
+//                                            });
+//
+//                                            if (mInterstitialAdForActiveIPConnections.isLoaded()) {
+//                                                mInterstitialAdForActiveIPConnections.show();
+//                                            } else {
+//                                                //noinspection ConstantConditions
+//                                                final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+//                                                        "Loading...", false, false);
+//                                                alertDialog.show();
+//                                                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                                                new Handler().postDelayed(new Runnable() {
+//                                                    @Override
+//                                                    public void run() {
+//                                                        mParentFragmentActivity.startActivity(intent);
+//                                                        alertDialog.cancel();
+//                                                    }
+//                                                }, 1000);
+//                                            }
+//
+//                                        } else {
+//                                            //noinspection ConstantConditions
+//                                            final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+//                                                    "Loading...", false, false);
+//                                            alertDialog.show();
+//                                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                                            new Handler().postDelayed(new Runnable() {
+//                                                @Override
+//                                                public void run() {
+//                                                    mParentFragmentActivity.startActivity(intent);
+//                                                    alertDialog.cancel();
+//                                                }
+//                                            }, 1000);
+//                                        }
+//
+//                                        return true;
+//                                    }
+//                                });
+//                            }
+//
+//                            popup.show();
+//                        }
+//                    });
+//
+//                    currentDevicesViewsMap.put(device, cardView);
+//                }
+
+                //TODO Apply visitors first
+                mAdapter.setDevices(new ArrayList<Device>(mDevices));
+                mAdapter.notifyDataSetChanged();
 
                 ((TextView) layout.findViewById(R.id.tile_status_wireless_clients_wireless_clients_num))
                         .setText(nbWirelessClients >= 0 ? String.valueOf(nbWirelessClients) : EMPTY_VALUE_TO_DISPLAY);
@@ -2558,7 +2609,7 @@ public class WirelessClientsTile
                 Set<Device> newDevices =
                         new HideInactiveClientsFilterVisitorImpl(mParentFragmentPreferences != null &&
                                 mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false))
-                                .visit(currentDevicesViewsMap.keySet());
+                                .visit(mDevices);
 
                 newDevices =
                         new ShowWirelessDevicesOnlyClientsFilterVisitorImpl(mParentFragmentPreferences != null &&
@@ -2572,13 +2623,13 @@ public class WirelessClientsTile
 
                 newDevices = applyCurrentSortingStrategy(newDevices);
 
-                int i = 0;
-                for (final Device dev : newDevices) {
-                    final View view = currentDevicesViewsMap.get(dev);
-                    if (view != null) {
-                        clientsContainer.addView(view, i++);
-                    }
-                }
+//                int i = 0;
+//                for (final Device dev : newDevices) {
+//                    final View view = currentDevicesViewsMap.get(dev);
+//                    if (view != null) {
+//                        clientsContainer.addView(view, i++);
+//                    }
+//                }
 
 //                final Button showMore = (Button) this.layout.findViewById(R.id.tile_status_wireless_clients_show_more);
 //                //Whether to display 'Show more' button
@@ -2595,8 +2646,8 @@ public class WirelessClientsTile
                 lastSyncView.setPrefix("Last sync: ");
             }
 
-            layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container)
-                    .setVisibility(View.VISIBLE);
+//            layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container)
+//                    .setVisibility(View.VISIBLE);
             layout.findViewById(R.id.tile_status_wireless_clients_togglebutton_container)
                     .setVisibility(View.VISIBLE);
 
@@ -2623,7 +2674,7 @@ public class WirelessClientsTile
             }
 
             final View tileMenu = layout.findViewById(R.id.tile_status_wireless_clients_menu);
-            if (currentDevicesViewsMap.isEmpty()) {
+            if (mDevices.isEmpty()) {
                 tileMenu.setVisibility(View.GONE);
             } else {
                 tileMenu.setVisibility(View.VISIBLE);
@@ -2701,7 +2752,6 @@ public class WirelessClientsTile
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        final LinearLayout clientsContainer = (LinearLayout) this.layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container);
         final int itemId = item.getItemId();
         switch (itemId) {
             case R.id.tile_status_wireless_clients_realtime_graphs: {
@@ -2738,7 +2788,7 @@ public class WirelessClientsTile
                 final boolean showOnlyWanAccessDisabledHosts = !item.isChecked();
                 Set<Device> newDevices =
                         new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(showOnlyWanAccessDisabledHosts)
-                                .visit(currentDevicesViewsMap.keySet());
+                                .visit(mDevices);
 
                 //Apply all other visitors
                 newDevices =
@@ -2753,13 +2803,8 @@ public class WirelessClientsTile
 
                 newDevices = applyCurrentSortingStrategy(newDevices);
 
-                clientsContainer.removeAllViews();
-                for (final Device device : newDevices) {
-                    final View view;
-                    if ((view = currentDevicesViewsMap.get(device)) != null) {
-                        clientsContainer.addView(view);
-                    }
-                }
+                mAdapter.setDevices(new ArrayList<>(newDevices));
+                mAdapter.notifyDataSetChanged();
 
                 //Save preference
                 if (mParentFragmentPreferences != null) {
@@ -2775,7 +2820,7 @@ public class WirelessClientsTile
 
                 //Filter
                 Set<Device> newDevices =
-                        new HideInactiveClientsFilterVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
+                        new HideInactiveClientsFilterVisitorImpl(hideInactive).visit(mDevices);
 
                 newDevices =
                         new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(mParentFragmentPreferences != null &&
@@ -2789,13 +2834,8 @@ public class WirelessClientsTile
 
                 newDevices = applyCurrentSortingStrategy(newDevices);
 
-                clientsContainer.removeAllViews();
-                for (final Device device : newDevices) {
-                    final View view;
-                    if ((view = currentDevicesViewsMap.get(device)) != null) {
-                        clientsContainer.addView(view);
-                    }
-                }
+                mAdapter.setDevices(new ArrayList<>(newDevices));
+                mAdapter.notifyDataSetChanged();
 
                 //Save preference
                 if (mParentFragmentPreferences != null) {
@@ -2811,7 +2851,7 @@ public class WirelessClientsTile
                 //Filter
                 Set<Device> newDevices =
                         new ShowWirelessDevicesOnlyClientsFilterVisitorImpl(showWirelessOnly)
-                                .visit(currentDevicesViewsMap.keySet());
+                                .visit(mDevices);
 
                 newDevices =
                         new HideInactiveClientsFilterVisitorImpl(mParentFragmentPreferences != null &&
@@ -2825,13 +2865,8 @@ public class WirelessClientsTile
 
                 newDevices = applyCurrentSortingStrategy(newDevices);
 
-                clientsContainer.removeAllViews();
-                for (final Device device : newDevices) {
-                    final View view;
-                    if ((view = currentDevicesViewsMap.get(device)) != null) {
-                        clientsContainer.addView(view);
-                    }
-                }
+                mAdapter.setDevices(new ArrayList<>(newDevices));
+                mAdapter.notifyDataSetChanged();
 
                 //Save preference
                 if (mParentFragmentPreferences != null) {
@@ -2854,7 +2889,7 @@ public class WirelessClientsTile
 
                 //Filters
                 Set<Device> newDevices =
-                        new HideInactiveClientsFilterVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
+                        new HideInactiveClientsFilterVisitorImpl(hideInactive).visit(mDevices);
                 newDevices =
                         new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(mParentFragmentPreferences != null &&
                                 mParentFragmentPreferences.getBoolean(getFormattedPrefKey(WIRELESS_DEVICES_ONLY), false))
@@ -2886,13 +2921,8 @@ public class WirelessClientsTile
 
                 newDevices = clientsSortingVisitor.visit(newDevices);
 
-                clientsContainer.removeAllViews();
-                for (final Device device : newDevices) {
-                    final View view;
-                    if ((view = currentDevicesViewsMap.get(device)) != null) {
-                        clientsContainer.addView(view);
-                    }
-                }
+                mAdapter.setDevices(new ArrayList<>(newDevices));
+                mAdapter.notifyDataSetChanged();
 
                 //Save preference
                 if (mParentFragmentPreferences != null) {
@@ -3033,7 +3063,7 @@ public class WirelessClientsTile
         }
     }
 
-    private class DeviceOnMenuItemClickListener implements
+    class DeviceOnMenuItemClickListener implements
             PopupMenu.OnMenuItemClickListener, UndoBarController.AdvancedUndoListener, RouterActionListener {
 
         @NonNull
@@ -3043,9 +3073,9 @@ public class WirelessClientsTile
         @NonNull
         private final Device device;
 
-        private DeviceOnMenuItemClickListener(@NonNull TextView deviceNameView,
-                                              @NonNull final TextView deviceAliasView,
-                                              @NonNull final Device device) {
+        DeviceOnMenuItemClickListener(@NonNull TextView deviceNameView,
+                                      @NonNull final TextView deviceAliasView,
+                                      @NonNull final Device device) {
             this.deviceNameView = deviceNameView;
             this.deviceAliasView = deviceAliasView;
             this.device = device;
