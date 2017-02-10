@@ -14,6 +14,7 @@ import com.google.common.cache.RemovalNotification;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
+import org.rm3l.router_companion.utils.retrofit.RetryCallAdapterFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -51,6 +52,7 @@ public final class NetworkUtils {
                     }
                     try {
                         return new Retrofit.Builder()
+                                .addCallAdapterFactory(RetryCallAdapterFactory.create())
                                 .baseUrl(baseUrl)
                                 .addConverterFactory(GsonConverterFactory.create())
                                 .client(getHttpClientInstance())

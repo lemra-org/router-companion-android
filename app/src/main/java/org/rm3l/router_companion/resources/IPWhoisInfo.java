@@ -25,10 +25,11 @@ import android.support.annotation.Nullable;
 
 public class IPWhoisInfo {
 
-    public static final String IP_WHOIS_INFO_API_PREFIX = "https://dazzlepod.com/ip/";
     public static final String TOOLS_RM3L_GEOIP_API_PREFIX = "http://tools.rm3l.org:5080/json";
+    public static final String IP_WHOIS_INFO_API_PREFIX = "https://dazzlepod.com/ip/";
+//    public static final String IP_WHOIS_INFO_API_PREFIX = TOOLS_RM3L_GEOIP_API_PREFIX;
 
-    /**
+    /* === dazzlepod.com ===
      * {
      * "ip": "216.58.208.234",
      * "prefix": "216.58.208.0/24",
@@ -42,6 +43,26 @@ public class IPWhoisInfo {
      * "latitude": 37.4192,
      * "organization": "GOOGLE - Google Inc.,US"
      * }
+     */
+
+    /* === tools.rm3l.org ===
+    {
+    "city": "Mountain View",
+    "country_code": "US",
+    "country_name": "United States",
+    "ip": "216.58.208.234",
+    "latitude": 37.4192,
+    "longitude": -122.0574,
+
+    "metro_code": 807,
+    "region_code": "CA",
+
+    "region_name": "California",
+
+    "time_zone": "America/Los_Angeles",
+
+    "zip_code": "94043"
+}
      */
 
     @Nullable
