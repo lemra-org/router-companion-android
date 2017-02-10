@@ -327,4 +327,9 @@ dependencies {
     debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
 
     compile 'com.facebook.device.yearclass:yearclass:2.0.0'
+
+    //Chuck: in-app HTTP inspector for OkHttp
+    debugCompile 'com.readystatesoftware.chuck:library:1.0.2'
+    releaseCompile 'com.readystatesoftware.chuck:library-no-op:1.0.2'
+    testCompile 'com.readystatesoftware.chuck:library-no-op:1.0.2'
 }

@@ -24,6 +24,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:tools="http://schemas.android.com/tools"
     package="org.rm3l.ddwrt" >
 
+    <uses-sdk android:minSdkVersion="15"
+        tools:overrideLibrary="com.readystatesoftware.chuck"/>
+
     <!-- "Normal Permission" -->
     <!-- To connect to the router, and donation providers such as Flattr, as well as Feedback Server -->
     <uses-permission android:name="android.permission.INTERNET" />

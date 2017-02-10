@@ -1,5 +1,6 @@
 package org.rm3l.router_companion.tasker.utils;
 
+import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -12,8 +13,10 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
+import com.readystatesoftware.chuck.ChuckInterceptor;
 
 import org.rm3l.router_companion.tasker.BuildConfig;
+import org.rm3l.router_companion.tasker.RouterCompanionTaskerPluginApplication;
 
 import java.util.concurrent.TimeUnit;
 
@@ -63,7 +66,12 @@ public final class NetworkUtils {
 
     public static OkHttpClient getHttpClientInstance() {
         if (HTTP_CLIENT_INSTANCE == null) {
-            final OkHttpClient.Builder builder = new OkHttpClient().newBuilder();
+            final OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            final Activity currentActivity = RouterCompanionTaskerPluginApplication
+                    .getCurrentActivity();
+            if (currentActivity != null) {
+                builder.addInterceptor(new ChuckInterceptor(currentActivity));
+            }
             builder.readTimeout(10, TimeUnit.SECONDS);
             builder.connectTimeout(10, TimeUnit.SECONDS);
             if (BuildConfig.DEBUG) {
