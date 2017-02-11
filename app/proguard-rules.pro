@@ -49,8 +49,9 @@
 -dontwarn sun.misc.**
 
 # Because the following classes make use of reflection (clazz.newInstance(...))
--keep class org.rm3l.ddwrt.fragments.**
--keep class org.rm3l.ddwrt.prefs.sort.**
+-keep class org.rm3l.router_companion.fragments.**
+-keep class org.rm3l.router_companion.prefs.sort.**
+-keep class org.rm3l.router_companion.firmwares.**
 
 #ACRA specifics
 # Restore some Source file names and restore approximate line numbers in the stack traces,
@@ -163,10 +164,10 @@
 -keepattributes Signature
 -keep class sun.misc.Unsafe { *; }
 
--keep class org.rm3l.ddwrt.resources.** {
+-keep class org.rm3l.router_companion.resources.** {
     *;
 }
--keep class org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter {
+-keep class org.rm3l.router_companion.mgmt.adapters.RouterListRecycleViewAdapter {
     *;
 }
 
@@ -174,38 +175,38 @@
 -keep public class android.widget.Filter$* {
     *;
 }
--keep public class org.rm3l.ddwrt.DDWRTApplication$* {
+-keep public class org.rm3l.router_companion.DDWRTApplication$* {
     *;
 }
--keep public class org.rm3l.ddwrt.main.DDWRTMainActivity$* {
+-keep public class org.rm3l.router_companion.main.DDWRTMainActivity$* {
     *;
 }
--keep public class org.rm3l.ddwrt.mgmt.RouterManagementActivity$* {
+-keep public class org.rm3l.router_companion.mgmt.RouterManagementActivity$* {
     *;
 }
--keep public class org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter$* {
+-keep public class org.rm3l.router_companion.mgmt.adapters.RouterListRecycleViewAdapter$* {
     *;
 }
 -keep public class com.android.common.view.SlidingTabLayout$* {
     *;
 }
--keep public class org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment$* {
+-keep public class org.rm3l.router_companion.fragments.PageSlidingTabStripFragment$* {
     *;
 }
--keep public class org.rm3l.ddwrt.service.BackgroundService$* {
+-keep public class org.rm3l.router_companion.service.BackgroundService$* {
     *;
 }
--keep public class org.rm3l.ddwrt.tiles.admin.nvram.NVRAMDataRecyclerViewAdapter$* {
+-keep public class org.rm3l.router_companion.tiles.admin.nvram.NVRAMDataRecyclerViewAdapter$* {
     *;
 }
--keep public class org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile$* {
+-keep public class org.rm3l.router_companion.tiles.status.wan.WANMonthlyTrafficTile$* {
     *;
 }
--keep public class org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile$* {
+-keep public class org.rm3l.router_companion.tiles.status.wireless.WirelessClientsTile$* {
     *;
 }
 
--keep public class org.rm3l.ddwrt.tiles.status.wireless.ActiveIPConnectionsDetailActivity$* {
+-keep public class org.rm3l.router_companion.tiles.status.wireless.ActiveIPConnectionsDetailActivity$* {
     *;
 }
 
