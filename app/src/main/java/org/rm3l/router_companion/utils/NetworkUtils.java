@@ -1,6 +1,7 @@
 package org.rm3l.router_companion.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -37,74 +38,55 @@ public final class NetworkUtils {
 
     private NetworkUtils() {}
 
-    private static final LoadingCache<String, Retrofit> RETROFIT_CACHE = CacheBuilder
-            .newBuilder()
-            .maximumSize(5)
-            .removalListener(new RemovalListener<String, Retrofit>() {
-                @Override
-                public void onRemoval(@NonNull RemovalNotification<String, Retrofit> notification) {
-                    Crashlytics.log(Log.DEBUG, TAG, "onRemoval(" + notification.getKey() + ") - cause: " +
-                            notification.getCause());
-                }
-            })
-            .build(new CacheLoader<String, Retrofit>() {
-                @Override
-                public Retrofit load(@Nullable String baseUrl) throws Exception {
-                    if (isNullOrEmpty(baseUrl)) {
-                        throw new IllegalArgumentException();
-                    }
-                    try {
-                        return new Retrofit.Builder()
-                                .addCallAdapterFactory(RetryCallAdapterFactory.create())
-                                .baseUrl(baseUrl)
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .client(getHttpClientInstance())
-                                .build();
-                    } catch (final Exception e) {
-                        throw new DDWRTCompanionException(e);
-                    }
-                }
-            });
-
-    private static OkHttpClient HTTP_CLIENT_INSTANCE = null;
-
-    public static OkHttpClient getHttpClientInstance() {
-        if (HTTP_CLIENT_INSTANCE == null) {
-            final OkHttpClient.Builder builder = new OkHttpClient.Builder();
-            final Activity currentActivity = RouterCompanionApplication.getCurrentActivity();
-            if (currentActivity != null) {
-                builder.addInterceptor(new ChuckInterceptor(currentActivity));
-            }
-            builder.readTimeout(10, TimeUnit.SECONDS);
-            builder.connectTimeout(10, TimeUnit.SECONDS);
-            if (BuildConfig.DEBUG) {
-                final HttpLoggingInterceptor interceptor =
-                        new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-                            @Override
-                            public void log(String message) {
-                                Crashlytics.log(Log.DEBUG, TAG, message);
-                            }
-                        });
-                interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
-                builder.addInterceptor(interceptor);
-
-                //Stetho
-                builder.addNetworkInterceptor(new StethoInterceptor());
-            }
-            HTTP_CLIENT_INSTANCE = builder.build();
+    public static OkHttpClient getHttpClientInstance(@Nullable final Context context) {
+        final OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        final Context currentContext = (context != null ? context :
+                RouterCompanionApplication.getCurrentActivity());
+        if (currentContext != null) {
+            builder.addInterceptor(new ChuckInterceptor(currentContext));
         }
-        return HTTP_CLIENT_INSTANCE;
+        builder.readTimeout(10, TimeUnit.SECONDS);
+        builder.connectTimeout(10, TimeUnit.SECONDS);
+        if (BuildConfig.DEBUG) {
+            final HttpLoggingInterceptor interceptor =
+                    new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+                        @Override
+                        public void log(String message) {
+                            Crashlytics.log(Log.DEBUG, TAG, message);
+                        }
+                    });
+            interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+            builder.addInterceptor(interceptor);
+
+            //Stetho
+            builder.addNetworkInterceptor(new StethoInterceptor());
+        }
+        return builder.build();
     }
 
     @NonNull
-    public static Retrofit getRetrofitInstance(@NonNull final String endpointBaseUrl) {
-        return RETROFIT_CACHE.getUnchecked(endpointBaseUrl);
+    public static Retrofit getRetrofitInstance(@Nullable final Context context,
+                                               @NonNull final String baseUrl) {
+        if (isNullOrEmpty(baseUrl)) {
+            throw new IllegalArgumentException();
+        }
+        try {
+            return new Retrofit.Builder()
+                    .addCallAdapterFactory(RetryCallAdapterFactory.create())
+                    .baseUrl(baseUrl)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(getHttpClientInstance(context))
+                    .build();
+        } catch (final Exception e) {
+            throw new DDWRTCompanionException(e);
+        }
     }
 
     @NonNull
-    public static <T> T createApiService(@NonNull final String endpointBaseUrl,
+    public static <T> T createApiService(@Nullable final Context context,
+                                         @NonNull final String endpointBaseUrl,
                                          @NonNull final Class<T> serviceType) {
-        return getRetrofitInstance(endpointBaseUrl).create(serviceType);
+        return getRetrofitInstance(context, endpointBaseUrl).create(serviceType);
     }
 
 }

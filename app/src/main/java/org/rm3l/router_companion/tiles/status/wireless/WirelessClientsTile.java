@@ -187,8 +187,9 @@ public class WirelessClientsTile
 
     public static final String EXPANDED_CLIENTS_PREF_KEY = \"fake-key\";
 
-    private static final MACOUILookupService mMACOUILookupService =
-             NetworkUtils.createApiService(MACOUIVendor.TOOLS_RM3L_PREFIX, MACOUILookupService.class);
+    private static final MACOUILookupService mMACOUILookupService  =
+            NetworkUtils.createApiService(null,
+                    MACOUIVendor.TOOLS_RM3L_PREFIX, MACOUILookupService.class);
 
     public static final LoadingCache<String, MACOUIVendor> mMacOuiVendorLookupCache = CacheBuilder
             .newBuilder()

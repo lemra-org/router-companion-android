@@ -153,6 +153,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:visible="false">
             <menu>
                 <item
+                    android:id="@+id/debug_open_chuck"
+                    android:title="Open Chuck (HTTP Inspector)"
+                    app:showAsAction="never"/>
+                <item
                     android:id="@+id/debug_open_sharedprefs"
                     android:title="Shared Preferences"
                     app:showAsAction="never"/>

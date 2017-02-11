@@ -65,7 +65,7 @@ public class DDWRTCompanionFirebaseMessagingService extends FirebaseMessagingSer
                 RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                 Context.MODE_PRIVATE);
         mGooGlService = NetworkUtils
-                .createApiService(RouterCompanionAppConstants.URL_SHORTENER_API_BASE_URL,
+                .createApiService(getBaseContext(), RouterCompanionAppConstants.URL_SHORTENER_API_BASE_URL,
                         GooGlService.class);
     }
 

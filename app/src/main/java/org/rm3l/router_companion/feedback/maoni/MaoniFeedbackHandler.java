@@ -100,9 +100,9 @@ public class MaoniFeedbackHandler implements Handler {
                 RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                 Context.MODE_PRIVATE);
         mDoorbellService = NetworkUtils
-                .createApiService(FEEDBACK_API_BASE_URL, DoorbellService.class);
+                .createApiService(context, FEEDBACK_API_BASE_URL, DoorbellService.class);
         mGooGlService = NetworkUtils
-                .createApiService(RouterCompanionAppConstants.URL_SHORTENER_API_BASE_URL,
+                .createApiService(context, RouterCompanionAppConstants.URL_SHORTENER_API_BASE_URL,
                         GooGlService.class);
     }
 

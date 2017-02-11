@@ -139,8 +139,8 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
     public static final Table<Integer, Integer, String> ICMP_TYPE_CODE_DESCRIPTION_TABLE = HashBasedTable.create();
     private static final String LOG_TAG = ActiveIPConnectionsDetailActivity.class.getSimpleName();
 
-    private static final IPGeoLookupService mIPGeoLookupService =
-            NetworkUtils.createApiService(IPWhoisInfo.IP_WHOIS_INFO_API_PREFIX, IPGeoLookupService.class);
+    private static final IPGeoLookupService mIPGeoLookupService  =
+            NetworkUtils.createApiService(null, IPWhoisInfo.IP_WHOIS_INFO_API_PREFIX, IPGeoLookupService.class);
 
     public static final LoadingCache<String, IPWhoisInfo> mIPWhoisInfoCache = CacheBuilder
             .newBuilder()

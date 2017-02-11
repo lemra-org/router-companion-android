@@ -76,6 +76,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 //import com.madx.updatechecker.lib.UpdateRunnable;
 //import com.pusher.client.Pusher;
 //import com.pusher.client.channel.SubscriptionEventListener;
+import com.readystatesoftware.chuck.Chuck;
 import com.sloydev.preferator.Preferator;
 import com.stephentuso.welcome.WelcomeScreenHelper;
 import com.stephentuso.welcome.ui.WelcomeActivity;
@@ -690,6 +691,15 @@ public class RouterManagementActivity
                 } else {
                     Crashlytics.log(Log.WARN, LOG_TAG,
                             "[DEBUG] SharedPreferences menu option should not be visible...");
+                }
+                return true;
+
+            case R.id.debug_open_chuck:
+                if (BuildConfig.DEBUG) {
+                    startActivity(Chuck.getLaunchIntent(this));
+                } else {
+                    Crashlytics.log(Log.WARN, LOG_TAG,
+                            "[DEBUG] 'Chuck' menu option should not be visible...");
                 }
                 return true;
 
