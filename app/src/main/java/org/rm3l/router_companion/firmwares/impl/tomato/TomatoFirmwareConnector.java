@@ -65,7 +65,7 @@ public class TomatoFirmwareConnector extends AbstractRouterFirmwareConnector {
 
     @Override
     @Nullable
-    protected String goGetRouterModel(@NonNull Context context, @NonNull Router router)
+    public String goGetRouterModel(@NonNull Context context, @NonNull Router router)
             throws Exception {
 
         final String[] output = SSHUtils.getManualProperty(context, router,
@@ -89,7 +89,7 @@ public class TomatoFirmwareConnector extends AbstractRouterFirmwareConnector {
     }
 
     @Override
-    protected NVRAMInfo getDataForUptimeTile(@NonNull Context context,
+    public NVRAMInfo getDataForUptimeTile(@NonNull Context context,
                                              @NonNull Router router,
                                              @Nullable RemoteDataRetrievalListener dataRetrievalListener) throws Exception {
         //Same implementation as in DD-WRT
@@ -105,7 +105,7 @@ public class TomatoFirmwareConnector extends AbstractRouterFirmwareConnector {
     }
 
     @Override
-    protected NVRAMInfo getDataForStorageUsageTile(@NonNull Context context, @NonNull Router router,
+    public NVRAMInfo getDataForStorageUsageTile(@NonNull Context context, @NonNull Router router,
                                                    @Nullable RemoteDataRetrievalListener dataRetrievalListener) throws Exception {
         if (dataRetrievalListener != null) {
             dataRetrievalListener.onProgressUpdate(10);
@@ -140,7 +140,7 @@ public class TomatoFirmwareConnector extends AbstractRouterFirmwareConnector {
     }
 
     @Override
-    protected NVRAMInfo getDataForStatusRouterStateTile(@NonNull Context context,
+    public NVRAMInfo getDataForStatusRouterStateTile(@NonNull Context context,
                                                         @NonNull Router router,
                                                         @Nullable RemoteDataRetrievalListener dataRetrievalListener)
             throws Exception {

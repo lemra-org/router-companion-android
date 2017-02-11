@@ -67,7 +67,7 @@ public abstract class AbstractRouterFirmwareConnector {
         }
     }
 
-    protected abstract NVRAMInfo getDataForNetworkTopologyMapTile(@NonNull Context context,
+    public abstract NVRAMInfo getDataForNetworkTopologyMapTile(@NonNull Context context,
                                                                   @NonNull Router router,
                                                                   @Nullable RemoteDataRetrievalListener dataRetrievalListener)
             throws Exception;
@@ -80,7 +80,7 @@ public abstract class AbstractRouterFirmwareConnector {
 
 
     @Nullable
-    protected abstract String goGetRouterModel(@NonNull Context context, @NonNull Router router)
+    public abstract String goGetRouterModel(@NonNull Context context, @NonNull Router router)
             throws Exception;
 
     public abstract NVRAMInfo getDataForWANTotalTrafficOverviewTile(@NonNull Context context,
@@ -90,7 +90,7 @@ public abstract class AbstractRouterFirmwareConnector {
             throws Exception;
 
 
-    protected abstract NVRAMInfo getDataForUptimeTile(@NonNull Context context,
+    public abstract NVRAMInfo getDataForUptimeTile(@NonNull Context context,
                                                       @NonNull Router router,
                                                       @Nullable RemoteDataRetrievalListener dataRetrievalListener)
             throws Exception;
@@ -100,12 +100,12 @@ public abstract class AbstractRouterFirmwareConnector {
                                                                    @Nullable RemoteDataRetrievalListener dataRetrievalListener)
             throws Exception;
 
-    protected abstract NVRAMInfo getDataForStorageUsageTile(@NonNull Context context,
+    public abstract NVRAMInfo getDataForStorageUsageTile(@NonNull Context context,
                                                                    @NonNull Router router,
                                                                    @Nullable RemoteDataRetrievalListener dataRetrievalListener)
             throws Exception;
 
-    protected abstract NVRAMInfo getDataForStatusRouterStateTile(@NonNull Context context,
+    public abstract NVRAMInfo getDataForStatusRouterStateTile(@NonNull Context context,
                                                                                      @NonNull Router router,
                                                                                      @Nullable RemoteDataRetrievalListener dataRetrievalListener)
             throws Exception;

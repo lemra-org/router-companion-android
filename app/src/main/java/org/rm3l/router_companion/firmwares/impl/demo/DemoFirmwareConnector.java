@@ -171,7 +171,7 @@ public class DemoFirmwareConnector extends AbstractRouterFirmwareConnector {
     }
 
     @Override
-    protected NVRAMInfo getDataForUptimeTile(@NonNull Context context,
+    public NVRAMInfo getDataForUptimeTile(@NonNull Context context,
                                              @NonNull Router router,
                                              @Nullable RemoteDataRetrievalListener dataRetrievalListener) throws Exception {
 
@@ -209,7 +209,7 @@ public class DemoFirmwareConnector extends AbstractRouterFirmwareConnector {
     }
 
     @Override
-    protected NVRAMInfo getDataForStorageUsageTile(@NonNull Context context, @NonNull Router router, @Nullable RemoteDataRetrievalListener dataRetrievalListener) throws Exception {
+    public NVRAMInfo getDataForStorageUsageTile(@NonNull Context context, @NonNull Router router, @Nullable RemoteDataRetrievalListener dataRetrievalListener) throws Exception {
         final String[] nvramSize = new String[1];
         final Random random = new Random();
 

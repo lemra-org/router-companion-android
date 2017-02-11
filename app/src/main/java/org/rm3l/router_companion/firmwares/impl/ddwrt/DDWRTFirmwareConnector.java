@@ -80,7 +80,7 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
 
     @Override
     @Nullable
-    protected String goGetRouterModel(@NonNull Context context, @NonNull Router router)
+    public String goGetRouterModel(@NonNull Context context, @NonNull Router router)
             throws Exception {
         final String[] output = SSHUtils.getManualProperty(context, router,
                 Utils.getGlobalSharedPreferences(context),
@@ -161,7 +161,7 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
     }
 
     @Override
-    protected NVRAMInfo getDataForUptimeTile(@NonNull Context context, @NonNull Router router, @Nullable RemoteDataRetrievalListener dataRetrievalListener) throws Exception {
+    public NVRAMInfo getDataForUptimeTile(@NonNull Context context, @NonNull Router router, @Nullable RemoteDataRetrievalListener dataRetrievalListener) throws Exception {
         final SharedPreferences globalSharedPreferences = Utils.getGlobalSharedPreferences(context);
 
         if (dataRetrievalListener != null) {
@@ -286,7 +286,7 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
     }
 
     @Override
-    protected NVRAMInfo getDataForStorageUsageTile(@NonNull Context context, @NonNull Router router,
+    public NVRAMInfo getDataForStorageUsageTile(@NonNull Context context, @NonNull Router router,
                                                      @Nullable RemoteDataRetrievalListener dataRetrievalListener) throws Exception {
         if (dataRetrievalListener != null) {
             dataRetrievalListener.onProgressUpdate(10);
@@ -321,7 +321,7 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
     }
 
     @Override
-    protected NVRAMInfo getDataForStatusRouterStateTile(
+    public NVRAMInfo getDataForStatusRouterStateTile(
             @NonNull Context context, @NonNull Router router,
             @Nullable RemoteDataRetrievalListener dataRetrievalListener) throws Exception {
 

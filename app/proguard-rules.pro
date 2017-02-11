@@ -164,6 +164,18 @@
 -keepattributes Signature
 -keep class sun.misc.Unsafe { *; }
 
+-keep class org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector {
+    *;
+}
+
+-keep class org.rm3l.router_companion.firmwares.impl.** {
+    *;
+}
+
+-keep class org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener {
+    *;
+}
+
 -keep class org.rm3l.router_companion.resources.** {
     *;
 }
