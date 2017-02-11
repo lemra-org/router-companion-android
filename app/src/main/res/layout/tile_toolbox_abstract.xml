@@ -45,7 +45,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:ellipsize="end"
-                android:singleLine="true"
+                android:maxLines="1"
                 android:text="@string/ping"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textStyle="bold" />
@@ -69,7 +69,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="3"
-            android:singleLine="false"
+
             android:textSize="12sp"
             android:textStyle="italic"
             android:visibility="gone" />
@@ -78,7 +78,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="bottom"
-            android:singleLine="false"
+
             android:visibility="invisible" />
 
         <!-- Error message placeholder -->
@@ -90,7 +90,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_gravity="center"
             android:ellipsize="end"
             android:gravity="center"
-            android:singleLine="true"
+            android:maxLines="1"
             android:text="@string/error_placeholder"
             android:textColor="@color/ddwrt_purple"
             android:textStyle="bold"
@@ -101,7 +101,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="bottom"
-            android:singleLine="false"
+
             android:visibility="invisible" />
 
         <!-- Filter -->
@@ -178,7 +178,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="bottom"
-            android:singleLine="false"
+
             android:visibility="invisible" />
 
         <ScrollView
@@ -201,7 +201,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:gravity="bottom"
                     android:maxLength="9000"
                     android:maxLines="200"
-                    android:singleLine="false"
+
                     android:textColor="@color/white" />
 
                 <ProgressBar

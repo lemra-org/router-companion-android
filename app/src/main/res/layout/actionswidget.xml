@@ -45,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:text="Router Actions"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:textColor="#4B4B4D"
                     android:ellipsize="end"
                     android:textStyle="bold"
@@ -58,7 +58,7 @@
                     android:layout_height="wrap_content"
                     android:text="Name: -"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:textColor="#4B4B4D"
                     android:ellipsize="end"
                     android:scrollHorizontally="true"/>
@@ -70,7 +70,7 @@
                     android:layout_height="wrap_content"
                     android:text="IP: -"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:ellipsize="end"
                     android:textColor="#4B4B4D"
                     android:scrollHorizontally="true"/>

@@ -156,7 +156,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Server: Hidden for now -->
@@ -185,7 +185,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading"
                     android:visibility="gone" />
 
@@ -213,7 +213,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- WAN PING -->
@@ -240,7 +240,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- WAN PING min -->
@@ -267,7 +267,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- WAN PING max -->
@@ -294,7 +294,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- WAN PING Packet Loss -->
@@ -321,7 +321,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- WAN DL -->
@@ -348,7 +348,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- WAN DL Size -->
@@ -375,7 +375,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- WAN DL Duration -->
@@ -402,7 +402,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- WAN UL -->
@@ -432,7 +432,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
 
@@ -461,7 +461,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <!--android:layout_marginBottom="4dp"-->
                 <!--android:ellipsize="end"-->
                 <!--android:gravity="start"-->
-                <!--android:singleLine="false"-->
+                <!---->
                 <!--android:text="@string/loading" />-->
 
                 <!--&lt;!&ndash; Connection DL &ndash;&gt;-->
@@ -489,7 +489,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <!--android:layout_marginBottom="4dp"-->
                 <!--android:ellipsize="end"-->
                 <!--android:gravity="start"-->
-                <!--android:singleLine="false"-->
+                <!---->
                 <!--android:text="@string/loading" />-->
 
 

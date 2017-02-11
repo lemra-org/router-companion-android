@@ -20,7 +20,7 @@
             android:layout_gravity="start"
             android:ellipsize="end"
             android:gravity="start"
-            android:singleLine="false"
+
             android:visibility="gone"/>
 
         <!-- Router Name -->
@@ -39,7 +39,7 @@
             android:layout_gravity="start"
             android:ellipsize="end"
             android:gravity="start"
-            android:singleLine="false" />
+             />
 
         <!-- Router IP / DNS -->
         <TextView
@@ -57,7 +57,7 @@
             android:layout_gravity="start"
             android:ellipsize="end"
             android:gravity="start"
-            android:singleLine="false" />
+             />
 
         <!-- Router Firmware -->
         <TextView
@@ -75,7 +75,7 @@
             android:layout_gravity="start"
             android:ellipsize="end"
             android:gravity="start"
-            android:singleLine="false" />
+             />
 
         <!-- Router Connection Proto -->
         <TextView
@@ -93,7 +93,7 @@
             android:layout_gravity="start"
             android:ellipsize="end"
             android:gravity="start"
-            android:singleLine="false" />
+             />
 
         <!-- SSH Port -->
         <TextView
@@ -111,7 +111,7 @@
             android:layout_gravity="start"
             android:ellipsize="end"
             android:gravity="start"
-            android:singleLine="false" />
+             />
 
         <!-- SSH Username -->
         <TextView
@@ -129,7 +129,7 @@
             android:layout_gravity="start"
             android:ellipsize="end"
             android:gravity="start"
-            android:singleLine="false"/>
+            />
 
         <!-- SSH Authentication Method -->
         <TextView
@@ -147,7 +147,7 @@
             android:layout_gravity="start"
             android:ellipsize="end"
             android:gravity="start"
-            android:singleLine="false" />
+             />
         <TextView
             android:textIsSelectable="true"
             android:id="@+id/wizard_add_router_review_ssh_auth_method_hidden"
@@ -156,7 +156,7 @@
             android:layout_gravity="start"
             android:ellipsize="end"
             android:gravity="start"
-            android:singleLine="false"
+
             android:visibility="gone" />
 
         <!-- Private key -->
@@ -176,7 +176,7 @@
             android:layout_gravity="start"
             android:ellipsize="end"
             android:gravity="start"
-            android:singleLine="false" />
+             />
 
 
         <!-- Password / Passphrase -->
@@ -227,7 +227,7 @@
             android:layout_gravity="start"
             android:ellipsize="end"
             android:gravity="start"
-            android:singleLine="false" />
+             />
 
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

@@ -50,7 +50,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:ellipsize="end"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:text="OpenVPN Client"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textStyle="bold" />
@@ -96,7 +96,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_gravity="center"
             android:ellipsize="end"
             android:gravity="center"
-            android:singleLine="true"
+            android:maxLines="1"
             android:text="@string/error_placeholder"
             android:textColor="@color/ddwrt_purple"
             android:textStyle="bold"
@@ -111,7 +111,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_gravity="center"
             android:ellipsize="end"
             android:gravity="center"
-            android:singleLine="true"
+            android:maxLines="1"
             android:text="Tap anywhere in this tile to edit Settings"
             android:textAppearance="?android:textAppearanceSmall"
             android:textStyle="italic"
@@ -123,7 +123,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_gravity="center"
             android:ellipsize="end"
             android:gravity="center"
-            android:singleLine="true"
+            android:maxLines="1"
             android:text="@string/one_space" />
 
         <RelativeLayout
@@ -160,7 +160,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Server IP/Name -->
@@ -186,7 +186,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Port -->
@@ -212,7 +212,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- BW In -->
@@ -238,7 +238,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- BW Out -->
@@ -264,7 +264,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Packets In -->
@@ -290,7 +290,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Packets Out -->
@@ -316,7 +316,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
 
@@ -343,7 +343,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Tunnel Protocol -->
@@ -369,7 +369,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Encryption Cipher -->
@@ -395,7 +395,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Hash Algorithm -->
@@ -421,7 +421,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
             </GridLayout>
@@ -445,7 +445,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:textAppearance="?android:textAppearanceSmall"
             android:ellipsize="end"
             android:gravity="end"
-            android:singleLine="false"
+
             android:text="Last sync: "/>
 
     </LinearLayout>

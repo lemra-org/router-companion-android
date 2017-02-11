@@ -258,7 +258,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
                     android:text="@string/loading" />
 
                 <!-- TTL -->
@@ -287,7 +286,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- TCP Connection State -->
@@ -318,7 +317,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- ICMP ID -->
@@ -349,7 +348,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- ICMP Type -->
@@ -380,7 +379,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- ICMP Code -->
@@ -411,7 +410,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- ICMP Control Message Description -->
@@ -442,7 +441,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Source IP -->
@@ -471,7 +470,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Source Hostname -->
@@ -500,7 +499,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Source Port -->
@@ -529,7 +528,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Destination IP -->
@@ -558,7 +557,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Destination WHOIS -->
@@ -587,7 +586,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Destination IP Country -->
@@ -616,7 +615,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Destination IP Region -->
@@ -645,7 +644,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Destination IP City -->
@@ -673,7 +672,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Destination Port -->
@@ -702,7 +701,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Packets -->
@@ -731,7 +730,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Bytes -->
@@ -760,7 +759,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="false"
+
                     android:text="@string/loading" />
 
                 <!-- Traffic in other dir. (Unreplied???) -->
@@ -786,7 +785,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <!--android:layout_marginBottom="4dp"-->
                 <!--android:ellipsize="end"-->
                 <!--android:gravity="start"-->
-                <!--android:singleLine="false"-->
+                <!---->
                 <!--android:text="@string/loading"/>-->
 
             </GridLayout>

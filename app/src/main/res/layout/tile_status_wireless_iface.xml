@@ -53,7 +53,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:ellipsize="end"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textStyle="bold" />
 
@@ -78,7 +78,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_gravity="start"
                         android:ellipsize="end"
                         android:gravity="start"
-                        android:singleLine="true"
+                        android:maxLines="1"
                         android:text="@string/fetching_ssid"
                         android:textAppearance="?android:textAppearanceSmall"
                         android:textColor="@color/ddwrt_green" />
@@ -112,7 +112,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_gravity="center"
                 android:ellipsize="end"
                 android:gravity="center"
-                android:singleLine="true"
+                android:maxLines="1"
                 android:text="@string/error_placeholder"
                 android:textColor="@color/ddwrt_purple"
                 android:textStyle="bold"
@@ -152,7 +152,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:checked="false"
                         android:ellipsize="end"
                         android:gravity="start"
-                        android:singleLine="false"
+
                         android:text="@string/loading" />
 
                     <!-- Iface State -->
@@ -179,7 +179,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:checked="false"
                         android:ellipsize="end"
                         android:gravity="start"
-                        android:singleLine="false"
+
                         android:text="@string/loading" />
 
                     <!-- Radio : disabled for now-->
@@ -208,7 +208,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:ellipsize="end"
                         android:enabled="false"
                         android:gravity="start"
-                        android:singleLine="false"
+
                         android:visibility="gone"/>
 
                     <!-- SSID -->
@@ -235,7 +235,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:checked="false"
                         android:ellipsize="end"
                         android:gravity="start"
-                        android:singleLine="false"
+
                         android:text="@string/loading" />
 
                     <TextView
@@ -260,7 +260,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_gravity="start"
                         android:ellipsize="end"
                         android:gravity="start"
-                        android:singleLine="false"
+
                         android:text="@string/loading" />
 
                     <!-- Mode -->
@@ -286,7 +286,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_gravity="start"
                         android:ellipsize="end"
                         android:gravity="start"
-                        android:singleLine="false"
+
                         android:text="@string/loading" />
 
                     <!-- Network -->
@@ -312,7 +312,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_gravity="start"
                         android:ellipsize="end"
                         android:gravity="start"
-                        android:singleLine="false"
+
                         android:text="@string/loading" />
 
                     <!-- Channel -->
@@ -338,7 +338,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_gravity="start"
                         android:ellipsize="end"
                         android:gravity="start"
-                        android:singleLine="false"
+
                         android:text="@string/loading" />
 
                     <!-- Temperature -->
@@ -364,7 +364,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_gravity="start"
                         android:ellipsize="end"
                         android:gravity="start"
-                        android:singleLine="false"
+
                         android:text="@string/loading" />
 
 
@@ -390,7 +390,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <!--android:layout_gravity="start"-->
                     <!--android:ellipsize="end"-->
                     <!--android:gravity="start"-->
-                    <!--android:singleLine="false"-->
+                    <!---->
                     <!--android:text="@string/loading"/>-->
 
                     <!-- BW In -->
@@ -416,7 +416,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_gravity="start"
                         android:ellipsize="end"
                         android:gravity="start"
-                        android:singleLine="false"
+
                         android:text="@string/loading" />
 
                     <!-- BW Out -->
@@ -442,7 +442,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_gravity="start"
                         android:ellipsize="end"
                         android:gravity="start"
-                        android:singleLine="false"
+
                         android:text="@string/loading" />
 
                     <!-- Packets In -->
@@ -468,7 +468,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_gravity="start"
                         android:ellipsize="end"
                         android:gravity="start"
-                        android:singleLine="false"
+
                         android:text="@string/loading" />
 
                     <!-- Packets Out -->
@@ -494,7 +494,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_gravity="start"
                         android:ellipsize="end"
                         android:gravity="start"
-                        android:singleLine="false"
+
                         android:text="@string/loading" />
 
                     <!-- TX Power -->
@@ -520,7 +520,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_gravity="start"
                         android:ellipsize="end"
                         android:gravity="start"
-                        android:singleLine="false"
+
                         android:text="@string/loading" />
 
                     <!-- Noise -->
@@ -546,7 +546,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_gravity="start"
                         android:ellipsize="end"
                         android:gravity="start"
-                        android:singleLine="false"
+
                         android:text="@string/loading" />
 
 
@@ -576,7 +576,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginBottom="15dp"
                         android:ellipsize="end"
                         android:gravity="start"
-                        android:singleLine="false"
+
                         android:text="-" />
 
                 </GridLayout>
@@ -598,7 +598,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <!--android:textAppearance="?android:textAppearanceSmall"-->
                     <!--android:ellipsize="end"-->
                     <!--android:gravity="end"-->
-                    <!--android:singleLine="false"-->
+                    <!---->
                     <!--android:text="Last sync: "/>-->
 
             </RelativeLayout>

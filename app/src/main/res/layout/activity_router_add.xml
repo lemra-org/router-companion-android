@@ -353,7 +353,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginLeft="4dp"
                     android:layout_marginStart="4dp"
                     android:ellipsize="end"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:text="Password" />
 
                 <EditText

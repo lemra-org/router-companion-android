@@ -157,7 +157,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:gravity="center_horizontal"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:text="@string/loading" />
 
             </LinearLayout>
@@ -198,7 +198,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginBottom="4dp"
                 android:ellipsize="end"
                 android:gravity="start"
-                android:singleLine="false"
+
                 android:text="@string/loading" />
 
             <!-- Alias -->
@@ -225,7 +225,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginBottom="4dp"
                 android:ellipsize="end"
                 android:gravity="start"
-                android:singleLine="false"
+
                 android:text="@string/loading" />
 
             <!-- Network Card Manufacturer -->
@@ -254,7 +254,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginBottom="4dp"
                 android:ellipsize="end"
                 android:gravity="start"
-                android:singleLine="false"
+
                 android:text="@string/loading"
                 android:visibility="gone"/>
 
@@ -284,7 +284,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginBottom="4dp"
                 android:ellipsize="end"
                 android:gravity="start"
-                android:singleLine="false"
+
                 android:text="@string/loading" />
 
             <!-- SSID (If any) -->
@@ -312,7 +312,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_gravity="start"
                 android:ellipsize="end"
                 android:gravity="start"
-                android:singleLine="false"
+
                 android:text="@string/loading" />
 
             <!-- Signal Strength (If any) -->
@@ -381,7 +381,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_gravity="start"
                 android:ellipsize="end"
                 android:gravity="start"
-                android:singleLine="false"
+
                 android:text="@string/loading" />
 
             <!-- SNR Margin -->
@@ -409,7 +409,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_gravity="start"
                 android:ellipsize="end"
                 android:gravity="start"
-                android:singleLine="false"
+
                 android:text="@string/loading" />
 
             <!-- Total Upload -->
@@ -435,7 +435,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_gravity="start"
                 android:ellipsize="end"
                 android:gravity="start"
-                android:singleLine="false"
+
                 android:text="@string/loading" />
 
             <!-- Total Download -->
@@ -461,7 +461,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_gravity="start"
                 android:ellipsize="end"
                 android:gravity="start"
-                android:singleLine="false"
+
                 android:text="@string/loading" />
 
             <!-- Active IP Connections -->
@@ -487,7 +487,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_gravity="start"
                 android:ellipsize="end"
                 android:gravity="start"
-                android:singleLine="false"
+
                 android:text="@string/loading" />
 
             <!-- WAN Access State -->
@@ -513,7 +513,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_gravity="start"
                 android:ellipsize="end"
                 android:gravity="start"
-                android:singleLine="false"
+
                 android:text="@string/loading" />
 
         </GridLayout>

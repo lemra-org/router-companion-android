@@ -36,7 +36,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:singleLine="true"
+            android:maxLines="1"
             android:text="Public IP Geolocation"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -117,7 +117,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_alignParentBottom="true"
             android:ellipsize="end"
             android:gravity="end"
-            android:singleLine="false"
+
             android:text="Last sync: "/>
 
     </RelativeLayout>

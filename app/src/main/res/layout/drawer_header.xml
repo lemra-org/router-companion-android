@@ -37,7 +37,7 @@
         <!--android:gravity="right|center_vertical"-->
         <!--android:paddingLeft="10dp"-->
         <!--android:paddingRight="10dp"-->
-        <!--android:singleLine="true"-->
+        <!--android:maxLines="1"-->
         <!--android:text="ip:port"-->
         <!--android:textAllCaps="false"-->
         <!--android:textColor="@color/abc_primary_text_material_light"-->
@@ -52,7 +52,7 @@
         <!--android:gravity="right|center_vertical"-->
         <!--android:paddingLeft="10dp"-->
         <!--android:paddingRight="10dp"-->
-        <!--android:singleLine="true"-->
+        <!--android:maxLines="1"-->
         <!--android:text="My Awesome Router"-->
         <!--android:textAllCaps="false"-->
         <!--android:textColor="@color/abc_primary_text_material_light"-->

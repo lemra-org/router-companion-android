@@ -76,7 +76,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:checked="false"
             android:ellipsize="end"
             android:gravity="start"
-            android:singleLine="false"
+
             android:text="@string/loading" />
 
         <!-- SSID -->
@@ -105,7 +105,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:checked="false"
             android:ellipsize="end"
             android:gravity="start"
-            android:singleLine="false"
+
             android:text="@string/loading" />
 
         <!-- HW Addr -->
@@ -133,7 +133,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_gravity="start"
             android:ellipsize="end"
             android:gravity="start"
-            android:singleLine="false"
+
             android:text="@string/loading" />
 
     </GridLayout>

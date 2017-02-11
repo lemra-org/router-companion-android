@@ -46,7 +46,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:ellipsize="end"
-                android:singleLine="true"
+                android:maxLines="1"
                 android:text="@string/nvram"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textStyle="bold" />
@@ -83,7 +83,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_gravity="center"
             android:ellipsize="end"
             android:gravity="center"
-            android:singleLine="true"
+            android:maxLines="1"
             android:text="@string/error_placeholder"
             android:textColor="@color/ddwrt_purple"
             android:textStyle="bold"
@@ -141,7 +141,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_gravity="start"
                 android:ellipsize="end"
                 android:gravity="start"
-                android:singleLine="false"
+
                 android:text="@string/loading" />
 
         </GridLayout>
@@ -188,7 +188,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:ellipsize="end"
                 android:gravity="end"
                 android:layout_below="@+id/tile_admin_nvram_ListView"
-                android:singleLine="false"
+
                 android:text="Last sync: "/>
 
             <android.support.design.widget.FloatingActionButton

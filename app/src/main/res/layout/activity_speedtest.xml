@@ -72,7 +72,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_gravity="center_horizontal|top"
             android:ellipsize="end"
             android:gravity="center_horizontal"
-            android:singleLine="true"
+            android:maxLines="1"
             android:layout_marginTop="1dp"
             android:layout_marginBottom="5dp"
             android:text="@string/error_placeholder"
@@ -99,7 +99,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:gravity="start"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:text="Test Server"
                     android:textStyle="bold"
                     android:textAppearance="?android:textAppearanceMedium"/>
@@ -138,7 +138,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:singleLine="false"
+
                 android:textStyle="italic"
                 android:visibility="gone"
                 android:textAppearance="?android:attr/textAppearanceMedium"

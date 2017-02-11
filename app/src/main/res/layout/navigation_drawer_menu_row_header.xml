@@ -19,7 +19,7 @@
         android:layout_marginStart="3dp"
         android:gravity="start"
         android:paddingTop="10dp"
-        android:singleLine="true"
+        android:maxLines="1"
         android:text=""
         android:textAllCaps="true"
         android:textAppearance="@android:style/TextAppearance.Medium"

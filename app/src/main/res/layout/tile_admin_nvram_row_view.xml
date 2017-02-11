@@ -105,7 +105,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginRight="30dp"
                 android:ellipsize="end"
                 android:maxLines="10"
-                android:singleLine="false" />
+                 />
 
             <ImageButton
                 android:layout_alignParentRight="true"

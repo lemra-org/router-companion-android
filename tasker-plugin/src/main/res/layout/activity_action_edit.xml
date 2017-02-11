@@ -44,7 +44,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:layout_gravity="center"
         android:ellipsize="end"
         android:gravity="center"
-        android:singleLine="true"
         android:text="Error"
         android:textColor="@color/ddwrt_purple"
         android:textStyle="bold"

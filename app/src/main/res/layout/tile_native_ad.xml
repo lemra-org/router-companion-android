@@ -32,7 +32,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:ellipsize="end"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:text="@string/title"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textStyle="normal" />
@@ -47,7 +47,7 @@
                     android:ellipsize="end"
                     android:gravity="start"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:text="@string/sponsored"
                     android:textColor="@color/Orange"
                     android:textSize="12dp"
