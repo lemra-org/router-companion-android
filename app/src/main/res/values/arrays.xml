@@ -59,17 +59,17 @@
     <!-- TODO Other items disabled for now, until we get the right implementation for OpenWrt
     (and provide an external no-launcher app plugin for it) -->
     <string-array name="router_firmwares_array">
-        <!--<item>-Auto-detect-</item>-->
+        <item>-Auto-detect-</item>
         <item>DD-WRT</item>
         <!--KEEP COMMENTED <item>OpenWrt (Beta)</item>-->
-        <!--<item>Tomato (Beta)</item>-->
+        <item>Tomato (Experimental)</item>
     </string-array>
 
     <string-array name="router_firmwares_array_values">
-        <!--<item>auto</item>-->
+        <item>auto</item>
         <item>DDWRT</item>
         <!--KEEP COMMENTED  <item>OPENWRT</item>-->
-        <!--<item>TOMATO</item>-->
+        <item>TOMATO</item>
     </string-array>
 
     <string-array name="openvpn_client_settings_tunnel_device_array">

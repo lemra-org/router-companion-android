@@ -59,12 +59,12 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import org.rm3l.ddwrt.R;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.common.resources.RouterInfo;
 import org.rm3l.router_companion.fragments.AbstractBaseFragment;
 import org.rm3l.router_companion.fragments.FragmentTabDescription;
 import org.rm3l.router_companion.main.DDWRTMainActivity;
 import org.rm3l.router_companion.tiles.services.wol.WakeOnLanTile;
-import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
@@ -87,7 +87,6 @@ import java.util.concurrent.locks.Lock;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.router_companion.fragments.AbstractBaseFragment.getTabsForDDWRT;
-import static org.rm3l.router_companion.fragments.AbstractBaseFragment.getTabsForOpenWRT;
 import static org.rm3l.router_companion.fragments.AbstractBaseFragment.getTabsForTomato;
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.router_companion.resources.Encrypted.d;
@@ -1117,7 +1116,7 @@ public class Router implements Serializable {
                 null /*getTabsForOpenWRT()*/,
                 null),
 
-        TOMATO("Tomato (Beta)",
+        TOMATO("Tomato (Experimental)",
                 R.drawable.tomato_nav_drawer_header_bg,
                 getTabsForTomato(),
                 "/bin/nvram"),
