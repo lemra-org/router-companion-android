@@ -131,6 +131,19 @@ public class MonthlyCycleItem implements Comparable<MonthlyCycleItem> {
         endCal.setTimeInMillis(end);
         endCal.add(field, interval);
 
+        if (field == Calendar.MONTH) {
+            //Determine if current end is actual last of current month.
+            // If yes, then end of next month should also be the actual end
+            final Calendar currentEndCal = Calendar.getInstance();
+            currentEndCal.setTimeInMillis(end);
+            currentEndCal.set(Calendar.DAY_OF_MONTH,
+                    currentEndCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+            if (end == currentEndCal.getTimeInMillis()) {
+                endCal.set(Calendar.DAY_OF_MONTH,
+                        endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+            }
+        }
+
         return Pair.create(startCal.getTimeInMillis(), endCal.getTimeInMillis());
     }
 
