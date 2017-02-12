@@ -91,6 +91,7 @@ public class RouterCompanionApplication extends Application implements Applicati
 
     public static final String DEBUG_LEAKCANARY_PREF_KEY = \"fake-key\";
 
+    @Nullable
     private static WeakReference<Activity> mCurrentActivity;
 
     @Override
@@ -260,28 +261,36 @@ public class RouterCompanionApplication extends Application implements Applicati
     public void onActivityPaused(Activity activity) {
         Crashlytics.log(Log.DEBUG, TAG,
                 "onActivityPaused: " + activity.getClass().getCanonicalName());
-        mCurrentActivity.clear();
+        if (mCurrentActivity != null) {
+            mCurrentActivity.clear();
+        }
     }
 
     @Override
     public void onActivityStopped(Activity activity) {
         Crashlytics.log(Log.DEBUG, TAG,
                 "onActivityStopped: " + activity.getClass().getCanonicalName());
-        mCurrentActivity.clear();
+        if (mCurrentActivity != null) {
+            mCurrentActivity.clear();
+        }
     }
 
     @Override
     public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
         Crashlytics.log(Log.DEBUG, TAG,
                 "onActivitySaveInstanceState: " + activity.getClass().getCanonicalName());
-        mCurrentActivity.clear();
+        if (mCurrentActivity != null) {
+            mCurrentActivity.clear();
+        }
     }
 
     @Override
     public void onActivityDestroyed(Activity activity) {
         Crashlytics.log(Log.DEBUG, TAG,
                 "onActivityDestroyed: " + activity.getClass().getCanonicalName());
-        mCurrentActivity.clear();
+        if (mCurrentActivity != null) {
+            mCurrentActivity.clear();
+        }
         // cancel all scheduled Croutons: Workaround until there's a way to detach the Activity from Crouton while
         // there are still some in the Queue.
         Crouton.cancelAllCroutons();
@@ -289,6 +298,6 @@ public class RouterCompanionApplication extends Application implements Applicati
 
     @Nullable
     public static Activity getCurrentActivity() {
-        return mCurrentActivity.get();
+        return mCurrentActivity != null ? mCurrentActivity.get() : null;
     }
 }
