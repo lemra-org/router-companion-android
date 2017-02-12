@@ -761,10 +761,18 @@ public class AccessRestrictionsWANAccessTile extends
 
                                 case R.id.tile_wan_access_policy_enable:
                                 case R.id.tile_wan_access_policy_disable:
+                                    final boolean enablePolicy =
+                                            (item.getItemId() == R.id.tile_wan_access_policy_enable);
+                                    if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                                        Utils.displayUpgradeMessage(tile.mParentFragmentActivity,
+                                                String.format("%sable WAN Access Policy Restriction",
+                                                        enablePolicy ? "En" : "Dis"));
+                                        holder.statusSwitchButton.toggle();
+                                        return true;
+                                    }
                                     holder.statusSwitchButton.toggle();
                                     toggleWANAccessRestriction(holder, wanAccessPolicy,
-                                            item.getItemId() == R.id.tile_wan_access_policy_enable,
-                                            switchButtonVisible);
+                                            enablePolicy, switchButtonVisible);
                                     return true;
 
                                 case R.id.tile_wan_access_policy_remove:
