@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.rm3l.router_companion.utils.Utils;
+
 import java.util.Calendar;
 
 import static org.rm3l.router_companion.RouterCompanionAppConstants.WAN_CYCLE_DAY_PREF;
@@ -74,31 +76,71 @@ public class WANTrafficData {
 
     public static MonthlyCycleItem getCurrentWANCycle(@Nullable final Context ctx,
                                                @Nullable final SharedPreferences routerPreferences) {
-        final int today = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-        final int wanCycleDay;
-        if (routerPreferences != null) {
-            final int cycleDay = routerPreferences.getInt(WAN_CYCLE_DAY_PREF, 1);
-            wanCycleDay = (cycleDay < 1 ? 1 : (cycleDay > 31 ? 31 : cycleDay));
-        } else {
-            wanCycleDay = 1;
-        }
+
+        final int wanCycleDay = Utils.getWanCycleDay(routerPreferences);
+
         final Calendar calendar = Calendar.getInstance();
+        final int today = calendar.get(Calendar.DAY_OF_MONTH);
+
         final long start;
         final long end;
 
-        calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
-        start = calendar.getTimeInMillis();
+        if (today < wanCycleDay) {
+            //Example 1: wanCycleDay=30, and today is Feb 18 (and Feb has 28 days) => [Jan 30 - Feb 28]
+            //Example 2: wanCycleDay=30, and today is May 15 => [Apr 30 - May 29]
+            //Example 3: wanCycleDay=30, and today is Mar 18 (and Feb has 28 days) => [Feb 28 - Mar 29]
 
-        calendar.add(Calendar.MONTH, 1);
-        calendar.add(Calendar.DATE, -1);
-        end = calendar.getTimeInMillis();
+            //Start
+            final Calendar calendarForStartComputation = Calendar.getInstance();
+            calendarForStartComputation.add(Calendar.MONTH, -1);
+            final int prevMonthActualMaximum = calendarForStartComputation
+                    .getActualMaximum(Calendar.DAY_OF_MONTH);
+            if (wanCycleDay > prevMonthActualMaximum) {
+                calendarForStartComputation.set(Calendar.DAY_OF_MONTH, prevMonthActualMaximum);
+            } else {
+                calendarForStartComputation.set(Calendar.DAY_OF_MONTH, wanCycleDay);
+            }
+            start = calendarForStartComputation.getTimeInMillis();
 
-        final MonthlyCycleItem cycleItem =
-                new MonthlyCycleItem(ctx, start, end);
+            //End
+            final Calendar calendarForEndComputation = Calendar.getInstance();
+            final int currentMonthActualMaximum =
+                    calendarForEndComputation.getActualMaximum(Calendar.DAY_OF_MONTH);
+            if (wanCycleDay - 1 > currentMonthActualMaximum) {
+                calendarForEndComputation.set(Calendar.DAY_OF_MONTH, currentMonthActualMaximum);
+            } else {
+                calendarForEndComputation.set(Calendar.DAY_OF_MONTH, wanCycleDay - 1);
+            }
+            end = calendarForEndComputation.getTimeInMillis();
 
-        return (today < wanCycleDay ?
-                cycleItem.prev() :
-                cycleItem);
+        } else {
+            //Example 1: wanCycleDay=27, and today is Feb 29 (and Feb has 29 days) => [Feb 27 - Mar 26]
+            //Example 2: wanCycleDay=27, and today is May 31 => [May 27 - Jun 26]
+
+            //Start
+            final Calendar calendarForStartComputation = Calendar.getInstance();
+            final int currentMonthActualMaximum =
+                    calendarForStartComputation.getActualMaximum(Calendar.DAY_OF_MONTH);
+            if (wanCycleDay > currentMonthActualMaximum) {
+                calendarForStartComputation.set(Calendar.DAY_OF_MONTH, currentMonthActualMaximum);
+            } else {
+                calendarForStartComputation.set(Calendar.DAY_OF_MONTH, wanCycleDay);
+            }
+            start = calendarForStartComputation.getTimeInMillis();
+
+            //End
+            final Calendar calendarForEndComputation = Calendar.getInstance();
+            calendarForEndComputation.add(Calendar.MONTH, 1);
+            final int nextMonthActualMaximum = calendarForEndComputation.getActualMaximum(Calendar.DAY_OF_MONTH);
+            if (wanCycleDay - 1 > nextMonthActualMaximum) {
+                calendarForEndComputation.set(Calendar.DAY_OF_MONTH, nextMonthActualMaximum);
+            } else {
+                calendarForEndComputation.set(Calendar.DAY_OF_MONTH, wanCycleDay - 1);
+            }
+            end = calendarForEndComputation.getTimeInMillis();
+        }
+
+        return new MonthlyCycleItem(ctx, start, end).setRouterPreferences(routerPreferences);
     }
 
 }

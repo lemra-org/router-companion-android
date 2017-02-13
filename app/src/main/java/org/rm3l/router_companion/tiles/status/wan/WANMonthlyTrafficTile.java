@@ -735,7 +735,10 @@ public class WANMonthlyTrafficTile
                 previousButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final MonthlyCycleItem prevCycleItem = mCurrentCycle.get().prev();
+                        final MonthlyCycleItem prevCycleItem = mCurrentCycle.get()
+                                .setContext(mParentFragmentActivity)
+                                .setRouterPreferences(mRouter.getPreferences(mParentFragmentActivity))
+                                .prev();
                         mCurrentCycle.set(prevCycleItem);
                         monthYearDisplayed.setText(prevCycleItem.getLabelWithYears());
                         if (mParentFragmentPreferences != null) {
@@ -755,7 +758,10 @@ public class WANMonthlyTrafficTile
                 nextButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final MonthlyCycleItem nextCycleItem = mCurrentCycle.get().next();
+                        final MonthlyCycleItem nextCycleItem = mCurrentCycle.get()
+                                .setContext(mParentFragmentActivity)
+                                .setRouterPreferences(mRouter.getPreferences(mParentFragmentActivity))
+                                .next();
                         mCurrentCycle.set(nextCycleItem);
                         monthYearDisplayed.setText(nextCycleItem.getLabelWithYears());
                         if (mParentFragmentPreferences != null) {

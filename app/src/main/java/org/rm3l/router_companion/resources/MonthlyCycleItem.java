@@ -1,11 +1,17 @@
 package org.rm3l.router_companion.resources;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.text.format.DateUtils;
+import android.util.Log;
+import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.primitives.Longs;
+
+import org.rm3l.router_companion.utils.Utils;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -24,6 +30,8 @@ public class MonthlyCycleItem implements Comparable<MonthlyCycleItem> {
             sBuilder, Locale.US);
 
     private transient Context context;
+    private transient SharedPreferences routerPreferences;
+    private transient Integer wanCycleDay;
 
     private String label;
 
@@ -48,6 +56,20 @@ public class MonthlyCycleItem implements Comparable<MonthlyCycleItem> {
                 start, end);
         this.start = start;
         this.end = end;
+    }
+
+    public SharedPreferences getRouterPreferences() {
+        return routerPreferences;
+    }
+
+    public MonthlyCycleItem setRouterPreferences(SharedPreferences routerPreferences) {
+        this.routerPreferences = routerPreferences;
+        if (routerPreferences != null) {
+            wanCycleDay = Utils.getWanCycleDay(routerPreferences);
+        } else {
+            wanCycleDay = null;
+        }
+        return this;
     }
 
     public Context getContext() {
@@ -94,7 +116,7 @@ public class MonthlyCycleItem implements Comparable<MonthlyCycleItem> {
 
     @Override
     public String toString() {
-        return label.toString();
+        return label;
     }
 
     @Override
@@ -112,39 +134,71 @@ public class MonthlyCycleItem implements Comparable<MonthlyCycleItem> {
     }
 
     public MonthlyCycleItem prev() {
-        final Pair<Long, Long> pair = slideCycleBy(Calendar.MONTH, -1);
-        return new MonthlyCycleItem(context, pair.first, pair.second);
+
+        //[Feb 28 - Mar 30], with wanCycleDay=30 => [Jan 30 - Feb 28]
+
+//        if (wanCycleDay == null) {
+//            Toast.makeText(context, "Internal Error - issue will be reported", Toast.LENGTH_SHORT).show();
+//            Crashlytics.logException(new IllegalStateException("wanCycleDay == NULL"));
+//            return this;
+//        }
+
+        final long startMillis;
+        final long endMillis;
+
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(start);
+        //This will be the end of our prev period of time
+        calendar.add(Calendar.DATE, -1);
+        endMillis = calendar.getTimeInMillis();
+
+        //From end, start is at wanCycleDay, one month before
+        calendar.add(Calendar.MONTH, -1);
+        calendar.add(Calendar.DATE, 1);
+        final int prevMonthActualMaximum = calendar
+                .getActualMaximum(Calendar.DAY_OF_MONTH);
+        if (wanCycleDay > prevMonthActualMaximum) {
+            calendar.set(Calendar.DAY_OF_MONTH, prevMonthActualMaximum);
+        } else {
+            calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
+        }
+        startMillis = calendar.getTimeInMillis();
+
+        return new MonthlyCycleItem(context, startMillis, endMillis)
+                .setRouterPreferences(routerPreferences);
     }
 
     public MonthlyCycleItem next() {
-        final Pair<Long, Long> pair = slideCycleBy(Calendar.MONTH, 1);
-        return new MonthlyCycleItem(context, pair.first, pair.second);
-    }
+//        if (wanCycleDay == null) {
+//            Toast.makeText(context, "Internal Error - issue will be reported", Toast.LENGTH_SHORT).show();
+//            Crashlytics.logException(new IllegalStateException("wanCycleDay == NULL"));
+//            return this;
+//        }
 
-    @NonNull
-    public Pair<Long, Long> slideCycleBy(final int field, final int interval) {
-        final Calendar startCal = Calendar.getInstance();
-        startCal.setTimeInMillis(start);
-        startCal.add(field, interval);
+        final long startMillis;
+        final long endMillis;
 
-        final Calendar endCal = Calendar.getInstance();
-        endCal.setTimeInMillis(end);
-        endCal.add(field, interval);
-
-        if (field == Calendar.MONTH) {
-            //Determine if current end is actual last of current month.
-            // If yes, then end of next month should also be the actual end
-            final Calendar currentEndCal = Calendar.getInstance();
-            currentEndCal.setTimeInMillis(end);
-            currentEndCal.set(Calendar.DAY_OF_MONTH,
-                    currentEndCal.getActualMaximum(Calendar.DAY_OF_MONTH));
-            if (end == currentEndCal.getTimeInMillis()) {
-                endCal.set(Calendar.DAY_OF_MONTH,
-                        endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
-            }
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(end);
+        //This will be the end of our prev period of time
+        calendar.add(Calendar.DATE, 1);
+        final int nextMonthActualMaximum = calendar
+                .getActualMaximum(Calendar.DAY_OF_MONTH);
+        if (wanCycleDay > nextMonthActualMaximum) {
+            calendar.set(Calendar.DAY_OF_MONTH, nextMonthActualMaximum);
+        } else {
+            calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
         }
+        startMillis = calendar.getTimeInMillis();
 
-        return Pair.create(startCal.getTimeInMillis(), endCal.getTimeInMillis());
+
+        //From end, start is at wanCycleDay, one month before
+        calendar.add(Calendar.MONTH, 1);
+        calendar.add(Calendar.DATE, -1);
+        endMillis = calendar.getTimeInMillis();
+
+        return new MonthlyCycleItem(context, startMillis, endMillis)
+                .setRouterPreferences(routerPreferences);
     }
 
     public static String formatDateRange(Context context, int flags, long start, long end) {

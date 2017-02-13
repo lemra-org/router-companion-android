@@ -120,6 +120,7 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING
 import static org.rm3l.router_companion.RouterCompanionAppConstants.FIRST_APP_LAUNCH_PREF_KEY;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.IS_FIRST_LAUNCH_PREF_KEY;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.OLD_IS_FIRST_LAUNCH_PREF_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.WAN_CYCLE_DAY_PREF;
 
 /**
  * General utilities
@@ -1026,6 +1027,17 @@ public final class Utils {
         } catch (IllegalAccessException e) {
             throw new IllegalStateException("Access exception: " + clazz + "#" + resourceName);
         }
+    }
+
+    public static int getWanCycleDay(final SharedPreferences routerPreferences) {
+        final int wanCycleDay;
+        if (routerPreferences != null) {
+            final int cycleDay = routerPreferences.getInt(WAN_CYCLE_DAY_PREF, 1);
+            wanCycleDay = (cycleDay < 1 ? 1 : (cycleDay > 31 ? 31 : cycleDay));
+        } else {
+            wanCycleDay = 1;
+        }
+        return wanCycleDay;
     }
 
 
