@@ -146,7 +146,7 @@ public class MonthlyCycleItem implements Comparable<MonthlyCycleItem> {
         final Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(start);
 
-        calendar.add(Calendar.MONTH, -1);
+        calendar.add(Calendar.DATE, -31);
         final int prevMonthActualMaximum = calendar
                 .getActualMaximum(Calendar.DAY_OF_MONTH);
         if (wanCycleDay > prevMonthActualMaximum) {
@@ -180,29 +180,28 @@ public class MonthlyCycleItem implements Comparable<MonthlyCycleItem> {
 //        }
 
         final Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(start);
-
-        calendar.add(Calendar.MONTH, 1);
-        final int nextMonthActualMaximum = calendar
-                .getActualMaximum(Calendar.DAY_OF_MONTH);
-        if (wanCycleDay > nextMonthActualMaximum) {
-            //Start the day after
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
-        } else {
-            calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
-        }
+        calendar.setTimeInMillis(end);
+        calendar.add(Calendar.DATE, 1);
         final long startMillis = calendar.getTimeInMillis();
 
-        final Calendar calendarForEnd = Calendar.getInstance();
-        calendarForEnd.setTimeInMillis(startMillis);
-        final int monthActualMaximum = calendarForEnd
-                .getActualMaximum(Calendar.DAY_OF_MONTH);
-        if (wanCycleDay - 1 > monthActualMaximum) {
-            calendarForEnd.set(Calendar.DAY_OF_MONTH, monthActualMaximum);
+        final Calendar cal1 = Calendar.getInstance();
+        cal1.setTimeInMillis(startMillis);
+        cal1.add(Calendar.MONTH, 1);
+        cal1.add(Calendar.DAY_OF_MONTH, -1);
+        final int month1 = cal1.get(Calendar.MONTH);
+
+        calendar.add(Calendar.DATE, 30);
+        final int month = calendar.get(Calendar.MONTH);
+        if (month1 != month) {
+            calendar.set(Calendar.MONTH, month1);
+            calendar.set(Calendar.DAY_OF_MONTH, cal1.getActualMaximum(Calendar.DAY_OF_MONTH));
         } else {
-            calendarForEnd.set(Calendar.DAY_OF_MONTH, wanCycleDay - 1);
+            final int dayAfter30d = calendar.get(Calendar.DAY_OF_MONTH);
+            if (dayAfter30d >= wanCycleDay - 1) {
+                calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay - 1);
+            }
         }
-        final long endMillis = calendarForEnd.getTimeInMillis();
+        final long endMillis = calendar.getTimeInMillis();
 
         return new MonthlyCycleItem(context, startMillis, endMillis)
                 .setRouterPreferences(routerPreferences);
