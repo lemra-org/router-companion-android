@@ -16,7 +16,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -72,10 +71,10 @@ import java.util.Set;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
 import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterAction.DISABLE;
 import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterAction.ENABLE_1;
 import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterAction.ENABLE_2;
-import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
 
 /**
  * WAN Access Policies tile
@@ -600,56 +599,39 @@ public class AccessRestrictionsWANAccessTile extends
 
             holder.policyHours.setText(wanAccessPolicy.getTimeOfDay());
 
-            final boolean switchButtonVisible;
-
             //Disable switch button listener
-            holder.statusSwitchButton.setEnabled(true);
+            holder.wanPolicyStateText.setEnabled(true);
             final String status = Strings.nullToEmpty(wanAccessPolicy.getStatus()).trim();
+            Integer stateBgColor;
             switch (status) {
                 case "0":
                 case "$STAT:0":
                     //Disabled
-                    holder.statusSwitchButton.setChecked(false);
-                    switchButtonVisible = true;
+                    stateBgColor = R.color.win8_red;
+                    holder.wanPolicyStateText.setText("disabled");
                     break;
                 case "1":
                 case "$STAT:1":
                 case "2":
                 case "$STAT:2":
-                    holder.statusSwitchButton.setChecked(true);
-                    switchButtonVisible = true;
+                    stateBgColor = R.color.win8_lime;
+                    holder.wanPolicyStateText.setText("enabled");
                     break;
                 default:
+                    stateBgColor = R.color.gray;
                     Utils.reportException(tile.mParentFragmentActivity,
                             new WANAccessPolicyException("status=[" + status + "]"));
-                    holder.statusSwitchButton.setChecked(false);
-                    holder.statusSwitchButton.setEnabled(false);
-                    switchButtonVisible = false;
+                    holder.wanPolicyStateText.setText("unknown");
                     break;
             }
+            holder.wanPolicyStateText.setBackgroundColor(ContextCompat.getColor(
+                    tile.mParentFragmentActivity, stateBgColor));
 
-            holder.statusSwitchButton.setVisibility(
-                    switchButtonVisible ?
-                            View.VISIBLE : View.INVISIBLE);
-            holder.statusSwitchButton.setEnabled(switchButtonVisible);
-
-            holder.statusSwitchButton.setOnClickListener(new View.OnClickListener() {
+            holder.wanPolicyStateText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                        Utils.displayUpgradeMessage(tile.mParentFragmentActivity,
-                                "Toggle WAN Access Policy Restriction");
-                        holder.statusSwitchButton.toggle();
-                        return;
-                    }
-
-                    holder.statusSwitchButton.setEnabled(false);
-                    toggleWANAccessRestriction(holder, wanAccessPolicy,
-                            holder.statusSwitchButton.isChecked(),
-                            switchButtonVisible);
+                    holder.menuImageButton.performClick();
                 }
-
             });
 
             final AlertDialog removeWanPolicyDialog = new AlertDialog.Builder(tile.mParentFragmentActivity)
@@ -661,7 +643,7 @@ public class AccessRestrictionsWANAccessTile extends
                     .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            holder.statusSwitchButton.setEnabled(false);
+                            holder.wanPolicyStateText.setEnabled(false);
 
                             Utils.displayMessage(tile.mParentFragmentActivity,
                                     String.format("Deleting WAN Access Policy: '%s'...",
@@ -701,7 +683,7 @@ public class AccessRestrictionsWANAccessTile extends
                                                                             tile.mRouter.getCanonicalHumanReadableName()),
                                                                     Style.CONFIRM);
                                                         } finally {
-                                                            holder.statusSwitchButton.setEnabled(true);
+                                                            holder.wanPolicyStateText.setEnabled(true);
                                                             wanAccessPolicies.remove(wanAccessPolicy);
                                                             //Success- update recycler view
                                                             notifyItemRemoved(holder.getAdapterPosition());
@@ -723,7 +705,7 @@ public class AccessRestrictionsWANAccessTile extends
                                                                             Utils.handleException(exception).first),
                                                                     Style.ALERT);
                                                         } finally {
-                                                            holder.statusSwitchButton.setEnabled(true);
+                                                            holder.wanPolicyStateText.setEnabled(true);
                                                         }
                                                     }
                                                 });
@@ -756,7 +738,7 @@ public class AccessRestrictionsWANAccessTile extends
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
                                 case R.id.tile_wan_access_policy_toggle:
-                                    holder.statusSwitchButton.performClick();
+                                    holder.wanPolicyStateText.performClick();
                                     return true;
 
                                 case R.id.tile_wan_access_policy_enable:
@@ -767,12 +749,10 @@ public class AccessRestrictionsWANAccessTile extends
                                         Utils.displayUpgradeMessage(tile.mParentFragmentActivity,
                                                 String.format("%sable WAN Access Policy Restriction",
                                                         enablePolicy ? "En" : "Dis"));
-                                        holder.statusSwitchButton.toggle();
                                         return true;
                                     }
-                                    holder.statusSwitchButton.toggle();
                                     toggleWANAccessRestriction(holder, wanAccessPolicy,
-                                            enablePolicy, switchButtonVisible);
+                                            enablePolicy);
                                     return true;
 
                                 case R.id.tile_wan_access_policy_remove:
@@ -812,8 +792,8 @@ public class AccessRestrictionsWANAccessTile extends
         }
 
         private void toggleWANAccessRestriction(final ViewHolder holder, final WANAccessPolicy wanAccessPolicy,
-                                                final boolean newStatus, final boolean switchButtonVisible) {
-            holder.statusSwitchButton.setEnabled(false);
+                                                final boolean newStatus) {
+            holder.wanPolicyStateText.setEnabled(false);
             SnackbarUtils.buildSnackbar(tile.mParentFragmentActivity,
                     tile.mParentFragmentActivity.findViewById(android.R.id.content),
                     String.format("Going to %sable WAN Access Policy: '%s'",
@@ -828,26 +808,11 @@ public class AccessRestrictionsWANAccessTile extends
                         @Override
                         public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
                             //revert
-                            tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-
-                                    holder.statusSwitchButton.toggle();
-                                    holder.statusSwitchButton.setEnabled(switchButtonVisible);
-                                }
-                            });
                         }
 
                         @Override
                         public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
                             //revert
-                            tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    holder.statusSwitchButton.toggle();
-                                    holder.statusSwitchButton.setEnabled(switchButtonVisible);
-                                }
-                            });
                         }
 
                         @Override
@@ -879,7 +844,6 @@ public class AccessRestrictionsWANAccessTile extends
                                                                                 tile.mRouter.getCanonicalHumanReadableName()),
                                                                         Style.CONFIRM);
                                                             } finally {
-                                                                holder.statusSwitchButton.setEnabled(switchButtonVisible);
                                                                 wanAccessPolicy.setStatus(Integer.toString(enableStatus));
                                                                 WANAccessRulesRecyclerViewAdapter.this.
                                                                         notifyItemChanged(holder.getAdapterPosition());
@@ -904,8 +868,6 @@ public class AccessRestrictionsWANAccessTile extends
                                                                         Style.ALERT);
                                                             } finally {
                                                                 //Revert
-                                                                holder.statusSwitchButton.toggle();
-                                                                holder.statusSwitchButton.setEnabled(switchButtonVisible);
                                                             }
                                                         }
                                                     });
@@ -919,25 +881,11 @@ public class AccessRestrictionsWANAccessTile extends
                         @Override
                         public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
                             //Revert
-                            tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    holder.statusSwitchButton.toggle();
-                                    holder.statusSwitchButton.setEnabled(switchButtonVisible);
-                                }
-                            });
                         }
 
                         @Override
                         public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
                             //revert
-                            tile.mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    holder.statusSwitchButton.toggle();
-                                    holder.statusSwitchButton.setEnabled(switchButtonVisible);
-                                }
-                            });
                         }
                     },
                     null,
@@ -954,7 +902,7 @@ public class AccessRestrictionsWANAccessTile extends
 
             final TextView[] daysTextViews = new TextView[7];
 
-            final SwitchCompat statusSwitchButton;
+            final TextView wanPolicyStateText;
             final ImageButton menuImageButton;
             final ImageButton removeImageButton;
 
@@ -993,7 +941,7 @@ public class AccessRestrictionsWANAccessTile extends
                 this.daysTextViews[6] = (TextView)
                         itemView.findViewById(R.id.access_restriction_policy_cardview_days_saturday);
 
-                this.statusSwitchButton = (SwitchCompat)
+                this.wanPolicyStateText = (TextView)
                         itemView.findViewById(R.id.access_restriction_policy_cardview_status);
                 this.menuImageButton = (ImageButton)
                         itemView.findViewById(R.id.access_restriction_policy_cardview_menu);

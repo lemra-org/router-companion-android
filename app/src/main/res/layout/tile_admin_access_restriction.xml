@@ -209,16 +209,27 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:orientation="horizontal"
                 android:layout_marginBottom="35dp">
 
-                <android.support.v7.widget.SwitchCompat
+                <TextView
                     android:id="@+id/access_restriction_policy_cardview_status"
+                    android:textAppearance="?android:textAppearanceSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="false"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:textOff="OFF"
-                    android:textOn="ON"/>
+                    android:textColor="@color/white"
+                    android:paddingLeft="7dp"
+                    android:paddingStart="7dp"
+                    android:paddingRight="7dp"
+                    android:paddingEnd="7dp"/>
+
+                <!--<android.support.v7.widget.SwitchCompat-->
+                    <!--android:id="@+id/access_restriction_policy_cardview_status"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:checked="false"-->
+                    <!--android:textAppearance="?android:textAppearanceSmall"-->
+                    <!--android:layout_marginRight="5dp"-->
+                    <!--android:layout_marginEnd="5dp"-->
+                    <!--android:textOff="OFF"-->
+                    <!--android:textOn="ON"/>-->
 
                 <ImageButton
                     android:id="@+id/access_restriction_policy_cardview_menu"
