@@ -44,6 +44,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:maxLines="1"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/tile_status_bandwidth_monitoring_menu"
+            android:layout_toLeftOf="@+id/tile_status_bandwidth_monitoring_menu"
             android:text="@string/bandwidth_usage_mb"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold" />

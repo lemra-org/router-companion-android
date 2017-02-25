@@ -50,6 +50,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:maxLines="1"
                 android:text="@string/connected_hosts"
                 android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_toStartOf="@+id/tile_status_wireless_clients_menu"
+                android:layout_toLeftOf="@+id/tile_status_wireless_clients_menu"
                 android:textStyle="bold" />
 
             <ImageButton

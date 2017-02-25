@@ -69,6 +69,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/nvram_var_menu"
+                    android:layout_toLeftOf="@+id/nvram_var_menu"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <ImageButton

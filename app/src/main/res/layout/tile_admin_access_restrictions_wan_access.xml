@@ -48,6 +48,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:maxLines="1"
                 android:text="WAN Access Policies"
                 android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_toStartOf="@+id/tile_admin_access_restrictions_wan_access_menu"
+                android:layout_toLeftOf="@+id/tile_admin_access_restrictions_wan_access_menu"
                 android:textStyle="bold" />
 
             <ImageButton

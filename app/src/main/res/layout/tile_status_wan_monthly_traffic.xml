@@ -53,6 +53,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:maxLines="1"
                     android:text="@string/wan_monthly_traffic"
                     android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_toStartOf="@+id/tile_status_wan_monthly_traffic_status_and_menu"
+                    android:layout_toLeftOf="@+id/tile_status_wan_monthly_traffic_status_and_menu"
                     android:textStyle="bold" />
 
                 <LinearLayout
