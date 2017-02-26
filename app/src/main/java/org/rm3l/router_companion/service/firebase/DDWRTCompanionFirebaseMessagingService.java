@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import retrofit2.Response;
+
 import static org.rm3l.router_companion.RouterCompanionAppConstants.CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.GOOGLE_API_KEY;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_CHOICE_PREF;
@@ -160,11 +162,13 @@ public class DDWRTCompanionFirebaseMessagingService extends FirebaseMessagingSer
         }
 
         //Shorten FTP link so it can be opened with the browser
-        final String releaseLinkShortened = mGooGlService.shortenLongUrl(
+        final Response<GooGlData> response = mGooGlService.shortenLongUrl(
                 GOOGLE_API_KEY,
                 new GooGlData()
                         .setLongUrl(releaseLink))
-                .execute().body().getId();
+                .execute();
+        NetworkUtils.checkResponseSuccessful(response);
+        final String releaseLinkShortened = response.body().getId();
 
         Crashlytics.log(Log.DEBUG, TAG, "[Firebase] releaseLinkShortened: [" + releaseLinkShortened + "]");
 

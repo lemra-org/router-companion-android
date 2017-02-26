@@ -153,6 +153,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
+import retrofit2.Response;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -210,11 +211,11 @@ public class WirelessClientsTile
                     }
                     //Get to MAC OUI Vendor Lookup API
                     try {
-                        return mMACOUILookupService
+                        final Response<MACOUIVendor> response = mMACOUILookupService
                                 .lookupMACAddress(macAddr.replaceAll(":", "-"))
-                                .execute()
-                                .body();
-
+                                .execute();
+                        NetworkUtils.checkResponseSuccessful(response);
+                        return response.body();
                     } catch (final Exception e) {
                         e.printStackTrace();
                         throw new DDWRTCompanionException(e);

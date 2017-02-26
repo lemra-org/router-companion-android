@@ -1,5 +1,6 @@
 package org.rm3l.router_companion.tasker.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -114,6 +116,22 @@ public final class NetworkUtils {
     public static <T> T createApiService(@NonNull final String endpointBaseUrl,
                                          @NonNull final Class<T> serviceType) {
         return getRetrofitInstance(endpointBaseUrl).create(serviceType);
+    }
+
+    @SuppressLint("DefaultLocale")
+    public static void checkResponseSuccessful(@NonNull final Response<?> response) {
+        if (!response.isSuccessful()) {
+            final int code = response.code();
+            final Object body = response.body();
+            final String errorMsg = String.format("[%d] : %s", code, body);
+            if (code >= 400 && code < 500) {
+                throw new IllegalArgumentException(errorMsg);
+            }
+            if (code >= 500) {
+                throw new IllegalStateException(errorMsg);
+            }
+            throw new RuntimeException(errorMsg);
+        }
     }
 
 }

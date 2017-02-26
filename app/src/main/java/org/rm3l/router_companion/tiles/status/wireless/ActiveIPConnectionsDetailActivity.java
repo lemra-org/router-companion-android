@@ -112,6 +112,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
+import retrofit2.Response;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -161,7 +162,9 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     }
                     //Get to MAC OUI Vendor Lookup API
                     try {
-                        return mIPGeoLookupService.lookupIP(ipAddr).execute().body();
+                        final Response<IPWhoisInfo> response = mIPGeoLookupService.lookupIP(ipAddr).execute();
+                        NetworkUtils.checkResponseSuccessful(response);
+                        return response.body();
                     } catch (final Exception e) {
                         e.printStackTrace();
                         throw new DDWRTCompanionException(e);

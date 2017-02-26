@@ -284,7 +284,7 @@ public class FeedbackHandler implements Handler {
                                                 "Failed to upload screenshot capture"));
                             } else {
                                 //Set URL TO S3
-                                screenshotCaptureUploadUrl = mGooGlService.shortenLongUrl(
+                                final Response<GooGlData> response = mGooGlService.shortenLongUrl(
                                         Constants.GOOGLE_API_KEY,
                                         new GooGlData()
                                                 .setLongUrl(
@@ -293,7 +293,9 @@ public class FeedbackHandler implements Handler {
                                                                 Constants.AWS_S3_BUCKET_NAME,
                                                                 Constants.AWS_S3_FEEDBACKS_FOLDER_NAME,
                                                                 feedback.id)))
-                                        .execute().body().getId();
+                                        .execute();
+                                NetworkUtils.checkResponseSuccessful(response);
+                                screenshotCaptureUploadUrl = response.body().getId();
                             }
                             break;
                         }
@@ -374,7 +376,7 @@ public class FeedbackHandler implements Handler {
                                                 "Failed to upload logs"));
                             } else {
                                 //Set URL TO S3
-                                logsUrl = mGooGlService.shortenLongUrl(
+                                final Response<GooGlData> response = mGooGlService.shortenLongUrl(
                                         Constants.GOOGLE_API_KEY,
                                         new GooGlData()
                                                 .setLongUrl(
@@ -384,7 +386,9 @@ public class FeedbackHandler implements Handler {
                                                                 Constants.AWS_S3_FEEDBACKS_FOLDER_NAME,
                                                                 Constants.AWS_S3_LOGS_FOLDER_NAME,
                                                                 feedback.id)))
-                                        .execute().body().getId();
+                                        .execute();
+                                NetworkUtils.checkResponseSuccessful(response);
+                                logsUrl = response.body().getId();
                             }
                             break;
                         }
@@ -397,6 +401,7 @@ public class FeedbackHandler implements Handler {
                 final Response<ResponseBody> openResponse = mDoorbellService
                         .openApplication(Constants.DOORBELL_APPID, Constants.DOORBELL_APIKEY)
                         .execute();
+                NetworkUtils.checkResponseSuccessful(openResponse);
 
                 if (openResponse.code() != 201) {
                     return ImmutablePair.of(openResponse, new IllegalStateException());
@@ -449,6 +454,7 @@ public class FeedbackHandler implements Handler {
                                 GSON_BUILDER.create().toJson(properties),
                                 new String[0])
                         .execute();
+                NetworkUtils.checkResponseSuccessful(response);
 
                 return ImmutablePair.of(response, null);
 
