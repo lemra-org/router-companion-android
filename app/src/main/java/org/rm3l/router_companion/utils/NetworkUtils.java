@@ -13,6 +13,8 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
+import com.ihsanbal.logging.Level;
+import com.ihsanbal.logging.LoggingInterceptor;
 import com.readystatesoftware.chuck.ChuckInterceptor;
 
 import org.rm3l.ddwrt.BuildConfig;
@@ -47,6 +49,16 @@ public final class NetworkUtils {
         }
         builder.readTimeout(10, TimeUnit.SECONDS);
         builder.connectTimeout(10, TimeUnit.SECONDS);
+
+        builder.addInterceptor(new LoggingInterceptor.Builder()
+                .loggable(BuildConfig.DEBUG)
+                .setLevel(Level.BASIC)
+                .log(Log.INFO)
+                .request("Request")
+                .response("Response")
+                .addHeader("X-APP-VERSION", BuildConfig.VERSION_NAME)
+                .build());
+
         if (BuildConfig.DEBUG) {
             final HttpLoggingInterceptor interceptor =
                     new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
