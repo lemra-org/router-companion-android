@@ -64,7 +64,7 @@ import static org.rm3l.router_companion.tasker.bundle.PluginBundleValues.*;
 @NotThreadSafe
 public class ActionEditActivity extends AbstractAppCompatPluginActivity {
 
-    public static final String DDWRT_COMPANION_SERVICE_NAME = "org.rm3l.ddwrt.IRouterCompanionService";
+    public static final String DDWRT_COMPANION_SERVICE_NAME = "org.rm3l.router_companion.IDDWRTCompanionService";
 
     private static final int REGISTER_ROUTER_REQUEST = 1;
 
