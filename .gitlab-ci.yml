@@ -5,7 +5,7 @@ before_script:
 
 build:
   script:
-    - ./gradlew :app:assembleDebug :tasker-plugin:assembleDebug
+    - ./gradlew :app:assembleAmazonDebug :tasker-plugin:assembleAmazonDebug
   artifacts:
     paths:
     - app/build/outputs/
