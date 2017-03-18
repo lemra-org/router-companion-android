@@ -1,0 +1,13 @@
+image: registry.gitlab.com/lemra/router-companion-android:latest
+
+before_script:
+  - chmod +x ./gradlew
+
+build:
+  script:
+    - ./gradlew assembleDebug
+  artifacts:
+    paths:
+    - app/build/outputs/
+    - tasker-plugin/build/outputs
+
