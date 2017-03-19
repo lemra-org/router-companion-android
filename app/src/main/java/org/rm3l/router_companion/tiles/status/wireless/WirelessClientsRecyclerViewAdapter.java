@@ -50,6 +50,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
+import org.rm3l.router_companion.common.utils.ViewIDUtils;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.multithreading.MultiThreadingManager;
 import org.rm3l.router_companion.resources.Device;
@@ -100,6 +101,16 @@ public class WirelessClientsRecyclerViewAdapter extends
     public WirelessClientsRecyclerViewAdapter setDevices(List<Device> devices) {
         this.devices = devices;
         return this;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        final Device itemAt;
+        if (devices == null || (itemAt = devices.get(position)) == null) {
+            return super.getItemId(position);
+        }
+        return ViewIDUtils.getStableId(Device.class,
+                itemAt.getMacAddress());
     }
 
     @Override

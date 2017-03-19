@@ -44,6 +44,7 @@ import org.rm3l.router_companion.actions.RouterAction;
 import org.rm3l.router_companion.actions.RouterActionListener;
 import org.rm3l.router_companion.actions.SetNVRAMVariablesAction;
 import org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterAction;
+import org.rm3l.router_companion.common.utils.ViewIDUtils;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -144,6 +145,7 @@ public class AccessRestrictionsWANAccessTile extends
 
         // specify an adapter (see also next example)
         mAdapter = new WANAccessRulesRecyclerViewAdapter(this);
+        mAdapter.setHasStableIds(true);
         mRecyclerView.setAdapter(mAdapter);
 
         final Display display = mParentFragmentActivity
@@ -499,6 +501,16 @@ public class AccessRestrictionsWANAccessTile extends
 
         public WANAccessRulesRecyclerViewAdapter(@NonNull final AccessRestrictionsWANAccessTile tile) {
             this.tile = tile;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            final WANAccessPolicy itemAt;
+            if ((itemAt = wanAccessPolicies.get(position)) == null) {
+                return super.getItemId(position);
+            }
+            return ViewIDUtils.getStableId(WANAccessPolicy.class,
+                    Integer.toString(itemAt.getNumber()));
         }
 
         @NonNull

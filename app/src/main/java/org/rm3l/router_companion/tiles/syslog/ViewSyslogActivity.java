@@ -68,6 +68,7 @@ import com.google.common.collect.Lists;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.R;
+import org.rm3l.router_companion.common.utils.ViewIDUtils;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.multithreading.MultiThreadingManager;
 import org.rm3l.router_companion.resources.conn.Router;
@@ -209,6 +210,7 @@ public class ViewSyslogActivity extends AppCompatActivity
 
         // specify an adapter (see also next example)
         mAdapter = new RouterSyslogRecyclerViewAdapter(this);
+        mAdapter.setHasStableIds(true);
         mRecyclerView.setAdapter(mAdapter);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
@@ -653,6 +655,17 @@ public class ViewSyslogActivity extends AppCompatActivity
         public RouterSyslogRecyclerViewAdapter setLogs(List<? extends CharSequence> logs) {
             this.mLogs = logs;
             return this;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            final CharSequence itemAt;
+            if (mLogs == null || (itemAt = mLogs.get(position)) == null ||
+                    itemAt.toString().isEmpty()) {
+                return super.getItemId(position);
+            }
+            return ViewIDUtils.getStableId(ViewSyslogActivity.class,
+                    itemAt.toString());
         }
 
         @Override

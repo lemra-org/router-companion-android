@@ -60,6 +60,7 @@ import org.rm3l.router_companion.common.IRouterCompanionService;
 import org.rm3l.router_companion.common.resources.RouterInfo;
 import org.rm3l.router_companion.common.resources.audit.ActionLog;
 import org.rm3l.router_companion.common.utils.ActivityUtils;
+import org.rm3l.router_companion.common.utils.ViewIDUtils;
 import org.rm3l.router_companion.tasker.BuildConfig;
 import org.rm3l.router_companion.tasker.Constants;
 import org.rm3l.router_companion.tasker.R;
@@ -171,6 +172,7 @@ public class RouterCompanionTaskerPluginLaunchActivity extends AppCompatActivity
 //        // specify an adapter (see also next example)
         mHistoryAdapter = new TaskerActionHistoryAdapter();
         mHistoryAdapter.setActionLogs(Collections.<ActionLog> emptyList());
+        mHistoryAdapter.setHasStableIds(true);
         mActionHistoryRecyclerView.setAdapter(mHistoryAdapter);
 
         mSlidingUpPanel = findViewById(R.id.tasker_main_history);
@@ -390,6 +392,15 @@ public class RouterCompanionTaskerPluginLaunchActivity extends AppCompatActivity
             }
             notifyDataSetChanged();
             return this;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            final ActionLog itemAt;
+            if (actionLogs == null || (itemAt = actionLogs.get(position)) == null) {
+                return super.getItemId(position);
+            }
+            return ViewIDUtils.getStableId(ActionLog.class, itemAt.getUuid());
         }
 
         @Override

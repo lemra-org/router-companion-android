@@ -51,6 +51,7 @@ import com.cocosw.undobar.UndoBarController;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.router_companion.common.utils.ViewIDUtils;
 import org.rm3l.router_companion.multithreading.MultiThreadingManager;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
@@ -94,6 +95,16 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
         this.fragmentManager = context.getSupportFragmentManager();
         //noinspection ConstantConditions
         this.setEntryList(nvramInfo.getData());
+    }
+
+    @Override
+    public long getItemId(int position) {
+        final Entry<Object, Object> itemAt;
+        if ((itemAt = entryList.get(position)) == null) {
+            return super.getItemId(position);
+        }
+        return ViewIDUtils.getStableId(NVRAMDataRecyclerViewAdapter.class,
+                itemAt.getKey().toString());
     }
 
     @Nullable

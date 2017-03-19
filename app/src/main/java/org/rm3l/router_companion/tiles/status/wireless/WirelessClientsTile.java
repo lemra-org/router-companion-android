@@ -367,6 +367,7 @@ public class WirelessClientsTile
 
         // specify an adapter (see also next example)
         mAdapter = new WirelessClientsRecyclerViewAdapter(this, router);
+        mAdapter.setHasStableIds(true);
         mRecyclerView.setAdapter(mAdapter);
 
 //        final Display display = mParentFragmentActivity
