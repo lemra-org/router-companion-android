@@ -25,138 +25,152 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:id="@+id/tile_services_wol_clients"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    >
 
-    <LinearLayout
-        android:id="@+id/tile_services_wol_clients_layout_container"
+  <LinearLayout
+      android:id="@+id/tile_services_wol_clients_layout_container"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_weight="0.74"
+      android:orientation="vertical"
+      >
+
+    <RelativeLayout
+        android:id="@+id/tile_services_wol_clients_hdr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingTop="4.0dip"
+        >
+
+      <TextView
+          android:id="@+id/tile_services_wol_clients_title"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_alignParentLeft="true"
+          android:layout_alignParentStart="true"
+          android:ellipsize="end"
+          android:maxLines="1"
+          android:text="Available Hosts"
+          android:textAppearance="?android:attr/textAppearanceMedium"
+          android:textStyle="bold"
+          />
+
+      <LinearLayout
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentEnd="true"
+          android:layout_alignParentRight="true"
+          android:gravity="end"
+          >
+
+        <ImageButton
+            android:id="@+id/tile_services_wol_add_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/menu"
+            android:src="@android:drawable/ic_menu_add"
+            />
+
+        <ImageButton
+            android:id="@+id/tile_services_wol_clients_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/menu"
+            android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
+            android:visibility="gone"
+            />
+
+      </LinearLayout>
+
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/tile_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8.0dip"
+        android:layout_marginTop="8.0dip"
+        android:indeterminate="false"
+        android:indeterminateOnly="false"
+        style="?android:attr/progressBarStyleHorizontal"
+        />
+
+    <!-- Error message placeholder -->
+    <TextView
+        android:id="@+id/tile_services_wol_clients_error"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="@string/error_placeholder"
+        android:textColor="@color/ddwrt_purple"
+        android:textIsSelectable="true"
+        android:textStyle="bold"
+        android:visibility="gone"
+        />
+
+    <GridLayout
+        android:id="@+id/tile_services_wol_clients_togglebutton_container"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="3"
+        android:visibility="gone"
+        >
+
+    </GridLayout>
+
+    <!--<TextView-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginBottom="@dimen/net_traffic_multi_text_size"-->
+    <!--android:visibility="invisible" />-->
+
+    <GridLayout
+        android:id="@+id/tile_services_wol_clients_layout_list_container"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight="0.74"
-        android:orientation="vertical">
+        android:columnCount="2"
+        android:orientation="vertical"
+        android:visibility="gone"
+        />
 
-        <RelativeLayout
-            android:id="@+id/tile_services_wol_clients_hdr"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="4.0dip">
+    <TextView
+        android:id="@+id/tile_services_wol_clients_loading_view_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:textIsSelectable="true"
+        android:textStyle="italic"
+        />
 
-            <TextView
-                android:id="@+id/tile_services_wol_clients_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="Available Hosts"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold" />
+    <ProgressBar
+        android:id="@+id/tile_services_wol_clients_loading_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:gravity="end">
+    <com.github.curioustechizen.ago.RelativeTimeTextView
+        android:id="@+id/tile_last_sync"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginTop="5dp"
+        android:ellipsize="end"
+        android:gravity="end"
+        android:text="Last sync: "
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textIsSelectable="true"
 
-                <ImageButton
-                    android:id="@+id/tile_services_wol_add_menu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/menu"
-                    android:src="@android:drawable/ic_menu_add"/>
+        android:textStyle="italic"
+        />
 
-                <ImageButton
-                    android:id="@+id/tile_services_wol_clients_menu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/menu"
-                    android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
-                    android:visibility="gone"/>
-
-            </LinearLayout>
-
-        </RelativeLayout>
-
-        <ProgressBar
-            android:id="@+id/tile_progress_bar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8.0dip"
-            android:layout_marginTop="8.0dip"
-            android:indeterminate="false"
-            android:indeterminateOnly="false" />
-
-        <!-- Error message placeholder -->
-        <TextView
-            android:textIsSelectable="true"
-            android:id="@+id/tile_services_wol_clients_error"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="1"
-            android:text="@string/error_placeholder"
-            android:textColor="@color/ddwrt_purple"
-            android:textStyle="bold"
-            android:visibility="gone" />
-
-        <GridLayout
-            android:id="@+id/tile_services_wol_clients_togglebutton_container"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="3"
-            android:visibility="gone">
-
-        </GridLayout>
-
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginBottom="@dimen/net_traffic_multi_text_size"-->
-            <!--android:visibility="invisible" />-->
-
-        <GridLayout
-            android:id="@+id/tile_services_wol_clients_layout_list_container"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="0.74"
-            android:columnCount="2"
-            android:orientation="vertical"
-            android:visibility="gone" />
-
-        <TextView
-            android:textIsSelectable="true"
-            android:id="@+id/tile_services_wol_clients_loading_view_desc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center_horizontal"
-            android:textStyle="italic" />
-
-        <ProgressBar
-            android:id="@+id/tile_services_wol_clients_loading_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <com.github.curioustechizen.ago.RelativeTimeTextView
-            android:textIsSelectable="true"
-            android:layout_marginTop="5dp"
-            android:id="@+id/tile_last_sync"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:textStyle="italic"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:ellipsize="end"
-            android:gravity="end"
-
-            android:text="Last sync: "/>
-
-    </LinearLayout>
+  </LinearLayout>
 </LinearLayout>

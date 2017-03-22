@@ -24,45 +24,40 @@ package org.rm3l.router_companion.fragments.status;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-
+import java.util.Arrays;
+import java.util.List;
 import org.rm3l.router_companion.fragments.AbstractBaseFragment;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.syslog.StatusSyslogTile;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  *
  */
 public class StatusSyslogFragment extends AbstractBaseFragment {
 
-    private List<DDWRTTile> tiles = null;
+  private List<DDWRTTile> tiles = null;
 
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        if (tiles == null) {
-            tiles = Arrays.<DDWRTTile>asList(
-                    new StatusSyslogTile(this, mLayout,
-                            savedInstanceState, null, true, this.router, null));
-        }
-        return tiles;
+  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    if (tiles == null) {
+      tiles = Arrays.<DDWRTTile>asList(
+          new StatusSyslogTile(this, mLayout, savedInstanceState, null, true, this.router, null));
     }
+    return tiles;
+  }
 
-//    @NonNull
-//    protected int getRootViewType() {
-//        return RootViewType_LINEAR_LAYOUT;
-//    }
+  //    @NonNull
+  //    protected int getRootViewType() {
+  //        return RootViewType_LINEAR_LAYOUT;
+  //    }
 
-//    @Override
-//    protected boolean canChildScrollUp() {
-//        final List<DDWRTTile> tiles = this.getTiles(null);
-//        if (tiles == null || tiles.isEmpty()) {
-//            return false;
-//        }
-//        final DDWRTTile tile = tiles.get(0);
-//        return (tile instanceof StatusSyslogTile &&
-//                ((StatusSyslogTile) tile).canChildScrollUp());
-//    }
+  //    @Override
+  //    protected boolean canChildScrollUp() {
+  //        final List<DDWRTTile> tiles = this.getTiles(null);
+  //        if (tiles == null || tiles.isEmpty()) {
+  //            return false;
+  //        }
+  //        final DDWRTTile tile = tiles.get(0);
+  //        return (tile instanceof StatusSyslogTile &&
+  //                ((StatusSyslogTile) tile).canChildScrollUp());
+  //    }
 }

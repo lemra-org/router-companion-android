@@ -24,7 +24,6 @@ package org.rm3l.router_companion.resources;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,112 +42,104 @@ public class ProcMountPoint {
     The 5th and 6th columns are dummy values designed to match the format used in /etc/mtab.
      */
 
-    @NonNull
-    private final List<String> permissions = new ArrayList<String>();
+  @NonNull private final List<String> permissions = new ArrayList<String>();
 
-    @NonNull
-    private final List<String> otherAttributes = new ArrayList<String>();
+  @NonNull private final List<String> otherAttributes = new ArrayList<String>();
 
-    @Nullable
-    private String deviceType;
+  @Nullable private String deviceType;
 
-    @Nullable
-    private String mountPoint;
+  @Nullable private String mountPoint;
 
-    @Nullable
-    private String fsType;
+  @Nullable private String fsType;
 
-    public String getDeviceType() {
-        return deviceType;
+  public String getDeviceType() {
+    return deviceType;
+  }
+
+  @NonNull public ProcMountPoint setDeviceType(final String deviceType) {
+    this.deviceType = deviceType;
+    return this;
+  }
+
+  public String getMountPoint() {
+    return mountPoint;
+  }
+
+  @NonNull public ProcMountPoint setMountPoint(final String mountPoint) {
+    this.mountPoint = mountPoint;
+    return this;
+  }
+
+  public String getFsType() {
+    return fsType;
+  }
+
+  @NonNull public ProcMountPoint setFsType(final String fsType) {
+    this.fsType = fsType;
+    return this;
+  }
+
+  @NonNull public ProcMountPoint addPermission(final String perm) {
+    this.permissions.add(perm);
+    return this;
+  }
+
+  @NonNull public List<String> getPermissions() {
+    return permissions;
+  }
+
+  @NonNull public List<String> getOtherAttributes() {
+    return otherAttributes;
+  }
+
+  @NonNull public ProcMountPoint addOtherAttr(@NonNull final String attr) {
+    this.otherAttributes.add(attr);
+    return this;
+  }
+
+  @NonNull @Override public String toString() {
+    return "ProcMountPoint{"
+        + "deviceType='"
+        + deviceType
+        + '\''
+        + ", mountPoint='"
+        + mountPoint
+        + '\''
+        + ", fsType='"
+        + fsType
+        + '\''
+        + ", permissions="
+        + permissions
+        + ", otherAttributes="
+        + otherAttributes
+        + '}';
+  }
+
+  @Override public boolean equals(@Nullable final Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    final ProcMountPoint that = (ProcMountPoint) o;
+
+    if (deviceType != null ? !deviceType.equals(that.deviceType) : that.deviceType != null) {
+      return false;
     }
-
-    @NonNull
-    public ProcMountPoint setDeviceType(final String deviceType) {
-        this.deviceType = deviceType;
-        return this;
+    if (fsType != null ? !fsType.equals(that.fsType) : that.fsType != null) return false;
+    if (mountPoint != null ? !mountPoint.equals(that.mountPoint) : that.mountPoint != null) {
+      return false;
     }
+    if (!otherAttributes.equals(that.otherAttributes)) return false;
+    if (!permissions.equals(that.permissions)) return false;
 
-    public String getMountPoint() {
-        return mountPoint;
-    }
+    return true;
+  }
 
-    @NonNull
-    public ProcMountPoint setMountPoint(final String mountPoint) {
-        this.mountPoint = mountPoint;
-        return this;
-    }
-
-    public String getFsType() {
-        return fsType;
-    }
-
-    @NonNull
-    public ProcMountPoint setFsType(final String fsType) {
-        this.fsType = fsType;
-        return this;
-    }
-
-    @NonNull
-    public ProcMountPoint addPermission(final String perm) {
-        this.permissions.add(perm);
-        return this;
-    }
-
-    @NonNull
-    public List<String> getPermissions() {
-        return permissions;
-    }
-
-    @NonNull
-    public List<String> getOtherAttributes() {
-        return otherAttributes;
-    }
-
-    @NonNull
-    public ProcMountPoint addOtherAttr(@NonNull final String attr) {
-        this.otherAttributes.add(attr);
-        return this;
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return "ProcMountPoint{" +
-                "deviceType='" + deviceType + '\'' +
-                ", mountPoint='" + mountPoint + '\'' +
-                ", fsType='" + fsType + '\'' +
-                ", permissions=" + permissions +
-                ", otherAttributes=" + otherAttributes +
-                '}';
-    }
-
-    @Override
-    public boolean equals(@Nullable final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        final ProcMountPoint that = (ProcMountPoint) o;
-
-        if (deviceType != null ? !deviceType.equals(that.deviceType) : that.deviceType != null)
-            return false;
-        if (fsType != null ? !fsType.equals(that.fsType) : that.fsType != null) return false;
-        if (mountPoint != null ? !mountPoint.equals(that.mountPoint) : that.mountPoint != null)
-            return false;
-        if (!otherAttributes.equals(that.otherAttributes))
-            return false;
-        if (!permissions.equals(that.permissions))
-            return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = deviceType != null ? deviceType.hashCode() : 0;
-        result = 31 * result + (mountPoint != null ? mountPoint.hashCode() : 0);
-        result = 31 * result + (fsType != null ? fsType.hashCode() : 0);
-        result = 31 * result + permissions.hashCode();
-        result = 31 * result + otherAttributes.hashCode();
-        return result;
-    }
+  @Override public int hashCode() {
+    int result = deviceType != null ? deviceType.hashCode() : 0;
+    result = 31 * result + (mountPoint != null ? mountPoint.hashCode() : 0);
+    result = 31 * result + (fsType != null ? fsType.hashCode() : 0);
+    result = 31 * result + permissions.hashCode();
+    result = 31 * result + otherAttributes.hashCode();
+    return result;
+  }
 }

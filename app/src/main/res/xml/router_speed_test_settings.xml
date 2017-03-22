@@ -21,40 +21,40 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ListPreference
-        android:icon="@drawable/ic_action_hardware_computer"
-        android:defaultValue="_random_"
-        android:entries="@array/speedtest_servers_titles"
-        android:entryValues="@array/speedtest_servers_values"
-        android:key="routerSpeedTestServer"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="Server" />
+  <ListPreference
+      android:defaultValue="_random_"
+      android:entries="@array/speedtest_servers_titles"
+      android:entryValues="@array/speedtest_servers_values"
+      android:icon="@drawable/ic_action_hardware_computer"
+      android:key="routerSpeedTestServer"
+      android:negativeButtonText="@null"
+      android:positiveButtonText="@null"
+      android:title="Server"/>
 
-    <org.rm3l.router_companion.widgets.LongListPreference
-        android:icon="@drawable/ic_action_device_data_usage"
-        android:defaultValue="100"
-        android:entries="@array/routerSpeedTestMaxFileSize_titles"
-        android:entryValues="@array/routerSpeedTestMaxFileSize_values"
-        android:key="routerSpeedTestMaxFileSizeMB"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="Max. size of sample data" />
+  <org.rm3l.router_companion.widgets.LongListPreference
+      android:defaultValue="100"
+      android:entries="@array/routerSpeedTestMaxFileSize_titles"
+      android:entryValues="@array/routerSpeedTestMaxFileSize_values"
+      android:icon="@drawable/ic_action_device_data_usage"
+      android:key="routerSpeedTestMaxFileSizeMB"
+      android:negativeButtonText="@null"
+      android:positiveButtonText="@null"
+      android:title="Max. size of sample data"/>
 
-    <EditTextPreference
-        android:icon="@drawable/ic_action_action_schedule"
-        android:defaultValue="8"
-        android:inputType="number"
-        android:key="routerSpeedTestDurationThresholdSeconds"
-        android:title="Data transfer duration threshold (in seconds)"
-        android:summary="Test continues with next sample data size until transfer duration exceeds this"/>
+  <EditTextPreference
+      android:defaultValue="8"
+      android:icon="@drawable/ic_action_action_schedule"
+      android:inputType="number"
+      android:key="routerSpeedTestDurationThresholdSeconds"
+      android:summary="Test continues with next sample data size until transfer duration exceeds this"
+      android:title="Data transfer duration threshold (in seconds)"/>
 
-    <!-- Disabled for now -->
-    <!--<org.rm3l.ddwrt.widgets.MySwitchPreference-->
-        <!--android:defaultValue="true"-->
-        <!--android:key="routerSpeedTest.withCurrentConnection"-->
-        <!--android:summaryOff="Disabled. Link from this device to the router will not be tested. WAN Link (from Router to Internet) is always tested."-->
-        <!--android:summaryOn="Link from this device to the router will be tested, besides WAN Link (from Router to Internet)."-->
-        <!--android:title="Test device to router connection" />-->
+  <!-- Disabled for now -->
+  <!--<org.rm3l.ddwrt.widgets.MySwitchPreference-->
+  <!--android:defaultValue="true"-->
+  <!--android:key="routerSpeedTest.withCurrentConnection"-->
+  <!--android:summaryOff="Disabled. Link from this device to the router will not be tested. WAN Link (from Router to Internet) is always tested."-->
+  <!--android:summaryOn="Link from this device to the router will be tested, besides WAN Link (from Router to Internet)."-->
+  <!--android:title="Test device to router connection" />-->
 
 </PreferenceScreen>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="tile_admin_nvram_grid_view_num_columns">1</integer>
-    <integer name="config_slide_time">800</integer>
+  <integer name="tile_admin_nvram_grid_view_num_columns">1</integer>
+  <integer name="config_slide_time">800</integer>
 </resources>

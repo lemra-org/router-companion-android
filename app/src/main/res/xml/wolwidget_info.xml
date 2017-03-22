@@ -3,9 +3,9 @@
     android:configure="org.rm3l.router_companion.widgets.home.wol.WOLWidgetConfigureActivity"
     android:initialKeyguardLayout="@layout/wolwidget"
     android:initialLayout="@layout/wolwidget"
-    android:previewImage="@drawable/wol_widget_preview"
-    android:resizeMode="horizontal|vertical"
     android:minHeight="294.0dip"
     android:minWidth="294.0dip"
+    android:previewImage="@drawable/wol_widget_preview"
+    android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800"
     android:widgetCategory="keyguard|home_screen"/>

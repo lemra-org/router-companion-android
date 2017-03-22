@@ -3,7 +3,6 @@ package org.rm3l.router_companion.service.tasks;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.SSHUtils;
@@ -14,44 +13,35 @@ import org.rm3l.router_companion.utils.Utils;
  */
 public class RouterModelUpdaterServiceTask extends AbstractBackgroundServiceTask {
 
-    public static final String DEFAULT_VALUE = "-";
+  public static final String DEFAULT_VALUE = "-";
 
-    public RouterModelUpdaterServiceTask(@NonNull Context ctx) {
-        super(ctx);
+  public RouterModelUpdaterServiceTask(@NonNull Context ctx) {
+    super(ctx);
+  }
+
+  @Override public void runBackgroundServiceTask(@NonNull Router router) throws Exception {
+
+    final SharedPreferences routerPreferences =
+        mCtx.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE);
+
+    if (routerPreferences == null) {
+      return;
     }
 
-    @Override
-    public void runBackgroundServiceTask(@NonNull Router router) throws Exception {
+    final NVRAMInfo nvramInfo =
+        SSHUtils.getNVRamInfoFromRouter(mCtx, router, globalPreferences, NVRAMInfo.MODEL);
 
-        final SharedPreferences routerPreferences = mCtx.getSharedPreferences(
-                router.getUuid(), Context.MODE_PRIVATE);
-
-        if (routerPreferences == null) {
-            return;
-        }
-
-        final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(
-                mCtx,
-                router,
-                globalPreferences,
-                NVRAMInfo.MODEL);
-
-        if (nvramInfo == null) {
-            return;
-        }
-
-        final String routerModel = nvramInfo.getProperty(NVRAMInfo.MODEL, DEFAULT_VALUE);
-
-        final String routerModelFromPrefs =
-                routerPreferences.getString(NVRAMInfo.MODEL, DEFAULT_VALUE);
-        //noinspection ConstantConditions
-        if (!(DEFAULT_VALUE.equals(routerModel) ||
-                routerModelFromPrefs.equals(routerModel))) {
-            routerPreferences
-                    .edit()
-                    .putString(NVRAMInfo.MODEL, routerModel)
-                    .apply();
-            Utils.requestBackup(mCtx);
-        }
+    if (nvramInfo == null) {
+      return;
     }
+
+    final String routerModel = nvramInfo.getProperty(NVRAMInfo.MODEL, DEFAULT_VALUE);
+
+    final String routerModelFromPrefs = routerPreferences.getString(NVRAMInfo.MODEL, DEFAULT_VALUE);
+    //noinspection ConstantConditions
+    if (!(DEFAULT_VALUE.equals(routerModel) || routerModelFromPrefs.equals(routerModel))) {
+      routerPreferences.edit().putString(NVRAMInfo.MODEL, routerModel).apply();
+      Utils.requestBackup(mCtx);
+    }
+  }
 }

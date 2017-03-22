@@ -24,197 +24,216 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    >
 
-    <LinearLayout
-        android:layout_width="0dp"
+  <LinearLayout
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="0.74"
+      android:orientation="vertical"
+      android:weightSum="1"
+      >
+
+    <RelativeLayout
+        android:id="@+id/tile_admin_nvram_hdr"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.74"
-        android:orientation="vertical"
-        android:weightSum="1">
+        android:paddingTop="4.0dip"
+        >
 
-        <RelativeLayout
-            android:id="@+id/tile_admin_nvram_hdr"
+      <TextView
+          android:id="@+id/tile_admin_nvram_title"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_alignParentLeft="true"
+          android:layout_alignParentStart="true"
+          android:layout_toLeftOf="@+id/tile_admin_nvram_menu"
+          android:layout_toStartOf="@+id/tile_admin_nvram_menu"
+          android:ellipsize="end"
+          android:maxLines="1"
+          android:text="@string/nvram"
+          android:textAppearance="?android:attr/textAppearanceMedium"
+          android:textStyle="bold"
+          />
+
+      <ImageButton
+          android:id="@+id/tile_admin_nvram_menu"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentEnd="true"
+          android:layout_alignParentRight="true"
+          android:background="@android:color/transparent"
+          android:contentDescription="@string/menu"
+          android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
+          android:visibility="gone"
+          />
+
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/tile_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8.0dip"
+        android:layout_marginTop="8.0dip"
+        android:indeterminate="false"
+        android:indeterminateOnly="false"
+        style="?android:attr/progressBarStyleHorizontal"
+        />
+
+    <!-- Error message placeholder -->
+    <TextView
+        android:id="@+id/tile_admin_nvram_error"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="@string/error_placeholder"
+        android:textColor="@color/ddwrt_purple"
+        android:textIsSelectable="true"
+        android:textStyle="bold"
+        android:visibility="gone"
+        />
+
+    <GridLayout
+        android:id="@+id/tile_admin_nvram_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="3"
+        android:visibility="gone"
+        >
+
+      <!-- Filter -->
+      <android.support.design.widget.TextInputLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          >
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/tile_admin_nvram_filter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="4.0dip">
+            android:layout_columnSpan="3"
+            android:layout_gravity="start"
+            android:drawableBottom="@color/accent_material_light"
+            android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
+            android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
+            android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
+            android:drawableStart="@drawable/abs__ic_search_api_holo_light"
+            android:hint="@string/syslog_filter_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
+            android:selectAllOnFocus="true"
+            android:textColor="@color/accent_material_light"
+            />
+      </android.support.design.widget.TextInputLayout>
 
-            <TextView
-                android:id="@+id/tile_admin_nvram_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="@string/nvram"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:layout_toStartOf="@+id/tile_admin_nvram_menu"
-                android:layout_toLeftOf="@+id/tile_admin_nvram_menu"
-                android:textStyle="bold" />
+      <!-- Size -->
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/size"
+          android:textStyle="bold"
+          />
 
-            <ImageButton
-                android:id="@+id/tile_admin_nvram_menu"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/menu"
-                android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
-                android:visibility="gone" />
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:layout_marginLeft="8.0dip"
+          android:layout_marginRight="8.0dip"
+          android:text="@string/one_space"
+          />
 
-        </RelativeLayout>
+      <TextView
+          android:id="@+id/tile_admin_nvram_size"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="start"
+          android:ellipsize="end"
+          android:gravity="start"
+          android:text="@string/loading"
 
-        <ProgressBar
-            android:id="@+id/tile_progress_bar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8.0dip"
-            android:layout_marginTop="8.0dip"
-            android:indeterminate="false"
-            android:indeterminateOnly="false" />
+          android:textIsSelectable="true"
+          />
 
-        <!-- Error message placeholder -->
-        <TextView
-            android:textIsSelectable="true"
-            android:id="@+id/tile_admin_nvram_error"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="1"
-            android:text="@string/error_placeholder"
-            android:textColor="@color/ddwrt_purple"
-            android:textStyle="bold"
-            android:visibility="gone" />
+    </GridLayout>
 
-        <GridLayout
-            android:id="@+id/tile_admin_nvram_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="3"
-            android:visibility="gone">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
 
-            <!-- Filter -->
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <android.support.design.widget.TextInputEditText
-                    android:selectAllOnFocus="true"
-                    android:id="@+id/tile_admin_nvram_filter"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_columnSpan="3"
-                    android:layout_gravity="start"
-                    android:drawableBottom="@color/accent_material_light"
-                    android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
-                    android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
-                    android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
-                    android:drawableStart="@drawable/abs__ic_search_api_holo_light"
-                    android:hint="@string/syslog_filter_hint"
-                    android:imeOptions="actionSearch"
-                    android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
-                    android:textColor="@color/accent_material_light" />
-            </android.support.design.widget.TextInputLayout>
+      <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
+          android:id="@+id/tile_admin_nvram_ListView"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:listSelector="@android:color/transparent"
+          android:overScrollMode="ifContentScrolls"
+          android:scrollbars="none"
+          />
 
-            <!-- Size -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/size"
-                android:textStyle="bold" />
+      <TextView
+          android:id="@+id/empty_view"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_gravity="center"
+          android:gravity="center"
+          android:text="No NVRAM Data."
+          android:textAppearance="?android:attr/textAppearanceMedium"
+          android:textIsSelectable="true"
+          />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space" />
+      <ProgressBar
+          android:id="@+id/tile_admin_nvram_loading_view"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerInParent="true"
+          />
 
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/tile_admin_nvram_size"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
+      <com.github.curioustechizen.ago.RelativeTimeTextView
+          android:id="@+id/tile_last_sync"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentBottom="true"
+          android:layout_alignParentEnd="true"
+          android:layout_alignParentRight="true"
+          android:layout_below="@+id/tile_admin_nvram_ListView"
+          android:layout_marginTop="5dp"
+          android:ellipsize="end"
+          android:gravity="end"
+          android:text="Last sync: "
+          android:textAppearance="?android:textAppearanceSmall"
+          android:textIsSelectable="true"
 
-                android:text="@string/loading" />
+          android:textStyle="italic"
+          />
 
-        </GridLayout>
+      <android.support.design.widget.FloatingActionButton
+          android:id="@+id/nvram_var_add"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentBottom="true"
+          android:layout_alignParentEnd="true"
+          android:layout_alignParentRight="true"
+          android:layout_gravity="bottom|end"
+          android:layout_margin="@dimen/fab_margin"
+          android:layout_marginBottom="20dp"
+          android:clickable="true"
+          android:contentDescription="@string/add_new_nvram_variable"
+          android:src="@drawable/ic_plus_white_24dp"
+          android:tint="@android:color/white"
+          app:elevation="6dp"
+          app:fabSize="normal"
+          app:layout_anchor="@id/tile_admin_nvram_ListView"
+          app:layout_anchorGravity="end|bottom|right"
+          app:layout_behavior="org.rm3l.ddwrt.widgets.ScrollAwareFABBehavior"
+          app:pressedTranslationZ="12dp"
+          />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    </RelativeLayout>
 
-            <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
-                android:id="@+id/tile_admin_nvram_ListView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:listSelector="@android:color/transparent"
-                android:overScrollMode="ifContentScrolls"
-                android:scrollbars="none" />
-
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/empty_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="No NVRAM Data." />
-
-            <ProgressBar
-                android:id="@+id/tile_admin_nvram_loading_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
-
-            <com.github.curioustechizen.ago.RelativeTimeTextView
-                android:textIsSelectable="true"
-                android:layout_marginTop="5dp"
-                android:id="@+id/tile_last_sync"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:textStyle="italic"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:layout_alignParentBottom="true"
-                android:ellipsize="end"
-                android:gravity="end"
-                android:layout_below="@+id/tile_admin_nvram_ListView"
-
-                android:text="Last sync: "/>
-
-            <android.support.design.widget.FloatingActionButton
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
-                android:id="@+id/nvram_var_add"
-                android:contentDescription="@string/add_new_nvram_variable"
-                android:src="@drawable/ic_plus_white_24dp"
-                android:tint="@android:color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:layout_margin="@dimen/fab_margin"
-                android:layout_marginBottom="20dp"
-                app:fabSize="normal"
-                android:layout_gravity="bottom|end"
-                app:elevation="6dp"
-                app:pressedTranslationZ="12dp"
-                app:layout_anchorGravity="end|bottom|right"
-                app:layout_anchor="@id/tile_admin_nvram_ListView"
-                app:layout_behavior="org.rm3l.ddwrt.widgets.ScrollAwareFABBehavior"/>
-
-        </RelativeLayout>
-
-    </LinearLayout>
+  </LinearLayout>
 </LinearLayout>

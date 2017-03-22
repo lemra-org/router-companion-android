@@ -1,23 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/container"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/activity_feedback_email_input_layout"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
+  <android.support.design.widget.TextInputLayout
+      android:id="@+id/activity_feedback_email_input_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="@dimen/activity_vertical_margin"
+      >
+    <android.support.design.widget.TextInputEditText
+        android:id="@+id/activity_feedback_email"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <android.support.design.widget.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:id="@+id/activity_feedback_email"
-            android:hint="Your email address"
-            android:imeOptions="flagNoExtractUi"
-            android:maxLines="1"/>
-    </android.support.design.widget.TextInputLayout>
+        android:layout_height="wrap_content"
+        android:hint="Your email address"
+        android:imeOptions="flagNoExtractUi"
+        android:inputType="textEmailAddress"
+        android:maxLines="1"
+        />
+  </android.support.design.widget.TextInputLayout>
 
 </LinearLayout>

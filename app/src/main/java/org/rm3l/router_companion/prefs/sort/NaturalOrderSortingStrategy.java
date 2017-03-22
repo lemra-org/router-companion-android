@@ -24,34 +24,25 @@ package org.rm3l.router_companion.prefs.sort;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import java.util.Comparator;
 
 /**
  * Natural order sort
  */
-@SuppressWarnings("unused")
-public class NaturalOrderSortingStrategy extends SortingStrategy {
-    @NonNull
-    @Override
-    public String getDisplayName() {
-        return "Natural Ordering";
-    }
+@SuppressWarnings("unused") public class NaturalOrderSortingStrategy extends SortingStrategy {
+  @NonNull @Override public String getDisplayName() {
+    return "Natural Ordering";
+  }
 
-    @NonNull
-    @Override
-    public String getShortDescription() {
-        return "Alphabetical";
-    }
+  @NonNull @Override public String getShortDescription() {
+    return "Alphabetical";
+  }
 
-    @Nullable
-    @Override
-    protected Comparator<String> getComparator() {
-        return null;
-    }
+  @Nullable @Override protected Comparator<String> getComparator() {
+    return null;
+  }
 
-    @Override
-    protected boolean doCompare() {
-        return true;
-    }
+  @Override protected boolean doCompare() {
+    return true;
+  }
 }

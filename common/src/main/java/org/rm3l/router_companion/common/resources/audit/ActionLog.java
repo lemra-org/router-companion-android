@@ -9,158 +9,157 @@ import android.support.annotation.NonNull;
  */
 public class ActionLog implements Parcelable {
 
-    /**
-     * the internal id (in DB)
-     */
-    private long id = -1l;
-
-    private String uuid;
-
-    //Package name
-    //UNKNOWN, if unknown
-    private String originPackageName;
-
-    @NonNull
-    private String router;
-
-    @NonNull
-    //YYYY-MM-dd
-    private String date;
-
-    private String actionName;
-
-    private String actionData;
-
-    //0 => success
-    private int status;
-
-    public ActionLog() {}
-
-    protected ActionLog(Parcel in) {
-        id = in.readLong();
-        uuid = in.readString();
-        originPackageName = in.readString();
-        router = in.readString();
-        date = in.readString();
-        actionName = in.readString();
-        actionData = in.readString();
-        status = in.readInt();
+  public static final Creator<ActionLog> CREATOR = new Creator<ActionLog>() {
+    @Override public ActionLog createFromParcel(Parcel in) {
+      return new ActionLog(in);
     }
 
-    public static final Creator<ActionLog> CREATOR = new Creator<ActionLog>() {
-        @Override
-        public ActionLog createFromParcel(Parcel in) {
-            return new ActionLog(in);
-        }
-
-        @Override
-        public ActionLog[] newArray(int size) {
-            return new ActionLog[size];
-        }
-    };
-
-    public long getId() {
-        return id;
+    @Override public ActionLog[] newArray(int size) {
+      return new ActionLog[size];
     }
+  };
+  /**
+   * the internal id (in DB)
+   */
+  private long id = -1l;
+  private String uuid;
+  //Package name
+  //UNKNOWN, if unknown
+  private String originPackageName;
+  @NonNull private String router;
+  @NonNull
+  //YYYY-MM-dd
+  private String date;
+  private String actionName;
+  private String actionData;
+  //0 => success
+  private int status;
 
-    public ActionLog setId(long id) {
-        this.id = id;
-        return this;
-    }
+  public ActionLog() {
+  }
 
-    public String getOriginPackageName() {
-        return originPackageName;
-    }
+  protected ActionLog(Parcel in) {
+    id = in.readLong();
+    uuid = in.readString();
+    originPackageName = in.readString();
+    router = in.readString();
+    date = in.readString();
+    actionName = in.readString();
+    actionData = in.readString();
+    status = in.readInt();
+  }
 
-    public ActionLog setOriginPackageName(String originPackageName) {
-        this.originPackageName = originPackageName;
-        return this;
-    }
+  public long getId() {
+    return id;
+  }
 
-    @NonNull
-    public String getRouter() {
-        return router;
-    }
+  public ActionLog setId(long id) {
+    this.id = id;
+    return this;
+  }
 
-    public ActionLog setRouter(@NonNull String router) {
-        this.router = router;
-        return this;
-    }
+  public String getOriginPackageName() {
+    return originPackageName;
+  }
 
-    @NonNull
-    public String getDate() {
-        return date;
-    }
+  public ActionLog setOriginPackageName(String originPackageName) {
+    this.originPackageName = originPackageName;
+    return this;
+  }
 
-    public ActionLog setDate(@NonNull String date) {
-        this.date = date;
-        return this;
-    }
+  @NonNull public String getRouter() {
+    return router;
+  }
 
-    public String getActionName() {
-        return actionName;
-    }
+  public ActionLog setRouter(@NonNull String router) {
+    this.router = router;
+    return this;
+  }
 
-    public ActionLog setActionName(String actionName) {
-        this.actionName = actionName;
-        return this;
-    }
+  @NonNull public String getDate() {
+    return date;
+  }
 
-    public String getActionData() {
-        return actionData;
-    }
+  public ActionLog setDate(@NonNull String date) {
+    this.date = date;
+    return this;
+  }
 
-    public ActionLog setActionData(String actionData) {
-        this.actionData = actionData;
-        return this;
-    }
+  public String getActionName() {
+    return actionName;
+  }
 
-    public int getStatus() {
-        return status;
-    }
+  public ActionLog setActionName(String actionName) {
+    this.actionName = actionName;
+    return this;
+  }
 
-    public ActionLog setStatus(int status) {
-        this.status = status;
-        return this;
-    }
+  public String getActionData() {
+    return actionData;
+  }
 
-    public String getUuid() {
-        return uuid;
-    }
+  public ActionLog setActionData(String actionData) {
+    this.actionData = actionData;
+    return this;
+  }
 
-    public ActionLog setUuid(String uuid) {
-        this.uuid = uuid;
-        return this;
-    }
+  public int getStatus() {
+    return status;
+  }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
+  public ActionLog setStatus(int status) {
+    this.status = status;
+    return this;
+  }
 
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeLong(id);
-        parcel.writeString(uuid);
-        parcel.writeString(originPackageName);
-        parcel.writeString(router);
-        parcel.writeString(date);
-        parcel.writeString(actionName);
-        parcel.writeString(actionData);
-        parcel.writeInt(status);
-    }
+  public String getUuid() {
+    return uuid;
+  }
 
-    @Override
-    public String toString() {
-        return "ActionLog{" +
-                "id=" + id +
-                ", uuid='" + uuid + '\'' +
-                ", originPackageName='" + originPackageName + '\'' +
-                ", router='" + router + '\'' +
-                ", date='" + date + '\'' +
-                ", actionName='" + actionName + '\'' +
-                ", actionData='" + actionData + '\'' +
-                ", status=" + status +
-                '}';
-    }
+  public ActionLog setUuid(String uuid) {
+    this.uuid = uuid;
+    return this;
+  }
+
+  @Override public int describeContents() {
+    return 0;
+  }
+
+  @Override public void writeToParcel(Parcel parcel, int i) {
+    parcel.writeLong(id);
+    parcel.writeString(uuid);
+    parcel.writeString(originPackageName);
+    parcel.writeString(router);
+    parcel.writeString(date);
+    parcel.writeString(actionName);
+    parcel.writeString(actionData);
+    parcel.writeInt(status);
+  }
+
+  @Override public String toString() {
+    return "ActionLog{"
+        + "id="
+        + id
+        + ", uuid='"
+        + uuid
+        + '\''
+        + ", originPackageName='"
+        + originPackageName
+        + '\''
+        + ", router='"
+        + router
+        + '\''
+        + ", date='"
+        + date
+        + '\''
+        + ", actionName='"
+        + actionName
+        + '\''
+        + ", actionData='"
+        + actionData
+        + '\''
+        + ", status="
+        + status
+        + '}';
+  }
 }

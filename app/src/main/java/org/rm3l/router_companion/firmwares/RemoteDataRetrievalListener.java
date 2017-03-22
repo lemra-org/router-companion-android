@@ -6,11 +6,10 @@ package org.rm3l.router_companion.firmwares;
 
 public interface RemoteDataRetrievalListener {
 
-    /**
-     *
-     * @param progress between 0 and 100
-     */
-    void onProgressUpdate(int progress);
+  /**
+   * @param progress between 0 and 100
+   */
+  void onProgressUpdate(int progress);
 
-    void doRegardlessOfStatus();
+  void doRegardlessOfStatus();
 }

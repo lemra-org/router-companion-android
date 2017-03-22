@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
-    <shortcut
-        android:shortcutId="register-router"
-        android:enabled="true"
-        android:icon="@drawable/ic_action_content_add_box"
-        android:shortcutShortLabel="@string/new_router"
-        android:shortcutLongLabel="@string/register_new_router"
-        android:shortcutDisabledMessage="@string/new_router_disabled">
-        <!-- FIXME Change fo other flavors (Lite, ...) -->
-        <intent
-            android:action="org.rm3l.ddwrt.OPEN_ADD_ROUTER_WIZARD"
-            android:targetPackage="org.rm3l.ddwrt"
-            android:targetClass="org.rm3l.router_companion.mgmt.RouterManagementActivity">
-            <extra android:name="CLOSE_ON_ACTION_DONE" android:value="true" />
-        </intent>
-        <!-- If your shortcut is associated with multiple intents, include them
-             here. The last intent in the list is what the user sees when they
-             launch this shortcut. -->
-        <!--<categories android:name="android.shortcut.conversation" />-->
-    </shortcut>
-    <!-- Specify more shortcuts here. -->
+  <shortcut
+      android:enabled="true"
+      android:icon="@drawable/ic_action_content_add_box"
+      android:shortcutDisabledMessage="@string/new_router_disabled"
+      android:shortcutId="register-router"
+      android:shortcutLongLabel="@string/register_new_router"
+      android:shortcutShortLabel="@string/new_router">
+    <!-- FIXME Change fo other flavors (Lite, ...) -->
+    <intent
+        android:action="org.rm3l.ddwrt.OPEN_ADD_ROUTER_WIZARD"
+        android:targetClass="org.rm3l.router_companion.mgmt.RouterManagementActivity"
+        android:targetPackage="org.rm3l.ddwrt">
+      <extra
+          android:name="CLOSE_ON_ACTION_DONE"
+          android:value="true"/>
+    </intent>
+    <!-- If your shortcut is associated with multiple intents, include them
+         here. The last intent in the list is what the user sees when they
+         launch this shortcut. -->
+    <!--<categories android:name="android.shortcut.conversation" />-->
+  </shortcut>
+  <!-- Specify more shortcuts here. -->
 </shortcuts>
 

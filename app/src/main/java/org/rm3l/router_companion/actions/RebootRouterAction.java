@@ -25,43 +25,38 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.SSHUtils;
 
 public class RebootRouterAction extends AbstractRouterAction<Void> {
 
-    @NonNull
-    private final Context mContext;
+  @NonNull private final Context mContext;
 
-    public RebootRouterAction(Router router, @NonNull Context context, @Nullable RouterActionListener listener, @NonNull final SharedPreferences globalSharedPreferences) {
-        super(router, listener, RouterAction.REBOOT, globalSharedPreferences);
-        this.mContext = context;
+  public RebootRouterAction(Router router, @NonNull Context context,
+      @Nullable RouterActionListener listener,
+      @NonNull final SharedPreferences globalSharedPreferences) {
+    super(router, listener, RouterAction.REBOOT, globalSharedPreferences);
+    this.mContext = context;
+  }
+
+  @Nullable @Override protected Context getContext() {
+    return mContext;
+  }
+
+  @NonNull @Override protected RouterActionResult<Void> doActionInBackground() {
+
+    Exception exception = null;
+    try {
+      final int exitStatus =
+          SSHUtils.runCommands(mContext, globalSharedPreferences, router, "/sbin/reboot");
+      if (exitStatus != 0) {
+        throw new IllegalStateException();
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      exception = e;
     }
 
-    @Nullable
-    @Override
-    protected Context getContext() {
-        return mContext;
-    }
-
-    @NonNull
-    @Override
-    protected RouterActionResult<Void> doActionInBackground() {
-
-        Exception exception = null;
-        try {
-            final int exitStatus = SSHUtils
-                    .runCommands(mContext, globalSharedPreferences, router,
-                            "/sbin/reboot");
-            if (exitStatus != 0) {
-                throw new IllegalStateException();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            exception = e;
-        }
-
-        return new RouterActionResult<>(null, exception);
-    }
+    return new RouterActionResult<>(null, exception);
+  }
 }

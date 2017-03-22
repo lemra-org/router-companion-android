@@ -1,7 +1,6 @@
 package org.rm3l.router_companion.exceptions.acra;
 
 import android.support.annotation.Nullable;
-
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 
 /**
@@ -9,8 +8,7 @@ import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
  */
 public class RouterActionTriggered extends DDWRTCompanionException {
 
-    public RouterActionTriggered(@Nullable String detailMessage) {
-        super(detailMessage);
-    }
-
+  public RouterActionTriggered(@Nullable String detailMessage) {
+    super(detailMessage);
+  }
 }

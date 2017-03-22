@@ -25,13 +25,11 @@ package org.rm3l.router_companion.fragments.access;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
+import java.util.Collections;
+import java.util.List;
 import org.rm3l.router_companion.fragments.AbstractBaseFragment;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.admin.accessrestrictions.AccessRestrictionsWANAccessTile;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * WAN Access Fragment
@@ -39,31 +37,28 @@ import java.util.List;
  */
 public class AccessRestrictionsWANAccessFragment extends AbstractBaseFragment {
 
-    private List<DDWRTTile> tiles = null;
+  private List<DDWRTTile> tiles = null;
 
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        if (tiles == null) {
-            tiles = Collections.<DDWRTTile>
-                    singletonList(new AccessRestrictionsWANAccessTile(this, savedInstanceState, this.router));
-        }
-        return tiles;
+  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    if (tiles == null) {
+      tiles = Collections.<DDWRTTile>singletonList(
+          new AccessRestrictionsWANAccessTile(this, savedInstanceState, this.router));
     }
+    return tiles;
+  }
 
-    @NonNull
-    protected int getRootViewType() {
-        return RootViewType_LINEAR_LAYOUT;
-    }
-//
-//    @Override
-//    protected boolean canChildScrollUp() {
-//        final List<DDWRTTile> tiles = this.getTiles(null);
-//        if (tiles == null || tiles.isEmpty()) {
-//            return false;
-//        }
-//        final DDWRTTile tile = tiles.get(0);
-//        return (tile instanceof AccessRestrictionsWANAccessTile &&
-//                ((AccessRestrictionsWANAccessTile) tile).canChildScrollUp());
-//    }
+  @NonNull protected int getRootViewType() {
+    return RootViewType_LINEAR_LAYOUT;
+  }
+  //
+  //    @Override
+  //    protected boolean canChildScrollUp() {
+  //        final List<DDWRTTile> tiles = this.getTiles(null);
+  //        if (tiles == null || tiles.isEmpty()) {
+  //            return false;
+  //        }
+  //        final DDWRTTile tile = tiles.get(0);
+  //        return (tile instanceof AccessRestrictionsWANAccessTile &&
+  //                ((AccessRestrictionsWANAccessTile) tile).canChildScrollUp());
+  //    }
 }

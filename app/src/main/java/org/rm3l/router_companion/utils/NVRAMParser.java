@@ -23,12 +23,9 @@
 package org.rm3l.router_companion.utils;
 
 import android.support.annotation.Nullable;
-
 import com.google.common.base.Splitter;
-
-import org.rm3l.router_companion.resources.conn.NVRAMInfo;
-
 import java.util.List;
+import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
@@ -38,34 +35,32 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING
  */
 public final class NVRAMParser {
 
-    public static final Splitter SPLITTER = Splitter.on("=")
-            .limit(2).trimResults();
+  public static final Splitter SPLITTER = Splitter.on("=").limit(2).trimResults();
 
-    private NVRAMParser() {
+  private NVRAMParser() {
+  }
+
+  @Nullable public static NVRAMInfo parseNVRAMOutput(@Nullable final String[] nvramLines) {
+    if (nvramLines == null || nvramLines.length == 0) {
+      return null;
     }
 
-    @Nullable
-    public static NVRAMInfo parseNVRAMOutput(@Nullable final String[] nvramLines) {
-        if (nvramLines == null || nvramLines.length == 0) {
-            return null;
-        }
+    final NVRAMInfo nvramInfo = new NVRAMInfo();
 
-        final NVRAMInfo nvramInfo = new NVRAMInfo();
-
-        int size;
-        for (final String nvramLine : nvramLines) {
-            if (nvramLine == null) {
-                continue;
-            }
-            final List<String> strings = SPLITTER.splitToList(nvramLine);
-            size = strings.size();
-            if (size == 1) {
-                nvramInfo.setProperty(strings.get(0), EMPTY_STRING);
-            } else if (size >= 2) {
-                nvramInfo.setProperty(strings.get(0), nullToEmpty(strings.get(1)));
-            }
-        }
-
-        return nvramInfo;
+    int size;
+    for (final String nvramLine : nvramLines) {
+      if (nvramLine == null) {
+        continue;
+      }
+      final List<String> strings = SPLITTER.splitToList(nvramLine);
+      size = strings.size();
+      if (size == 1) {
+        nvramInfo.setProperty(strings.get(0), EMPTY_STRING);
+      } else if (size >= 2) {
+        nvramInfo.setProperty(strings.get(0), nullToEmpty(strings.get(1)));
+      }
     }
+
+    return nvramInfo;
+  }
 }

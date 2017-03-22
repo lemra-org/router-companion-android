@@ -23,10 +23,8 @@ package org.rm3l.router_companion.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-
-import org.rm3l.router_companion.tiles.DDWRTTile;
-
 import java.util.List;
+import org.rm3l.router_companion.tiles.DDWRTTile;
 
 /**
  * No-Data Fragment
@@ -34,9 +32,7 @@ import java.util.List;
  * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
 public class NoDataFragment extends AbstractBaseFragment {
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return null;
-    }
+  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    return null;
+  }
 }

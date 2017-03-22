@@ -31,111 +31,123 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     card_view:contentPaddingBottom="@dimen/activity_vertical_margin"
     card_view:contentPaddingLeft="10dp"
     card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin"
-    card_view:contentPaddingTop="@dimen/activity_vertical_margin">
+    card_view:contentPaddingTop="@dimen/activity_vertical_margin"
+    >
 
-    <RelativeLayout
+  <RelativeLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      >
+
+    <LinearLayout
+        android:id="@+id/tile_services_wol_client_first_glance_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
 
-        <LinearLayout
-            android:id="@+id/tile_services_wol_client_first_glance_view"
+      <RelativeLayout
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          >
+
+        <TextView
+            android:id="@+id/tile_services_wol_client_device_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/tile_services_wol_client_device_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:maxLength="17"
-                    android:scrollHorizontally="true"
-                    android:layout_toStartOf="@+id/tile_services_wol_client_you_and_menu"
-                    android:layout_toLeftOf="@+id/tile_services_wol_client_you_and_menu"
-                    android:textAppearance="?android:textAppearanceMedium" />
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="start"
+            android:layout_toLeftOf="@+id/tile_services_wol_client_you_and_menu"
+            android:layout_toStartOf="@+id/tile_services_wol_client_you_and_menu"
+            android:ellipsize="end"
+            android:maxLength="17"
+            android:scrollHorizontally="true"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textIsSelectable="true"
+            />
 
 
-                <LinearLayout
-                    android:id="@+id/tile_services_wol_client_you_and_menu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:gravity="end">
+        <LinearLayout
+            android:id="@+id/tile_services_wol_client_you_and_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:gravity="end"
+            >
 
-                    <TextView
-                        android:id="@+id/tile_services_wol_client_device_this"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:scrollHorizontally="true"
-                        android:text="@string/you"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        android:textColor="@color/yellow"
-                        android:textStyle="bold"
-                        android:visibility="gone" />
+          <TextView
+              android:id="@+id/tile_services_wol_client_device_this"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_gravity="start"
+              android:layout_weight="1"
+              android:ellipsize="end"
+              android:maxLines="1"
+              android:scrollHorizontally="true"
+              android:text="@string/you"
+              android:textAppearance="?android:textAppearanceSmall"
+              android:textColor="@color/yellow"
+              android:textStyle="bold"
+              android:visibility="gone"
+              />
 
-                    <ImageButton
-                        android:id="@+id/tile_services_wol_client_device_menu"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:background="@android:color/transparent"
-                        android:contentDescription="@string/menu"
-                        android:src="@drawable/abs__ic_menu_moreoverflow_holo_light" />
-
-                </LinearLayout>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/tile_services_wol_client_device_mac"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
-
-                <TextView
-                    android:textIsSelectable="true"
-                    android:id="@+id/tile_services_wol_client_device_ip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true" />
-
-            </RelativeLayout>
-
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/tile_services_wol_client_device_details_nic_manufacturer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="4dp"
-                android:ellipsize="end"
-                android:gravity="center_horizontal"
-                android:maxLines="1"
-                android:text="@string/loading" />
+          <ImageButton
+              android:id="@+id/tile_services_wol_client_device_menu"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="end"
+              android:background="@android:color/transparent"
+              android:contentDescription="@string/menu"
+              android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
+              />
 
         </LinearLayout>
 
-    </RelativeLayout>
+      </RelativeLayout>
+
+      <RelativeLayout
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          >
+
+        <TextView
+            android:id="@+id/tile_services_wol_client_device_mac"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textIsSelectable="true"
+            />
+
+        <TextView
+            android:id="@+id/tile_services_wol_client_device_ip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:textIsSelectable="true"
+            />
+
+      </RelativeLayout>
+
+      <TextView
+          android:id="@+id/tile_services_wol_client_device_details_nic_manufacturer"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_horizontal"
+          android:layout_marginBottom="4dp"
+          android:ellipsize="end"
+          android:gravity="center_horizontal"
+          android:maxLines="1"
+          android:text="@string/loading"
+          android:textIsSelectable="true"
+          />
+
+    </LinearLayout>
+
+  </RelativeLayout>
 
 </android.support.v7.widget.CardView>

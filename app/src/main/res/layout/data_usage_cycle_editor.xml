@@ -12,26 +12,29 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:gravity="center"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="horizontal"
+    >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/data_usage_cycle_editor_subtitle" />
+  <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:text="@string/data_usage_cycle_editor_subtitle"
+      android:textAppearance="?android:attr/textAppearanceMedium"
+      />
 
-    <NumberPicker
-        android:id="@+id/wan_cycle_day"
-        android:layout_width="48dip"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="16dip"
-        android:layout_marginEnd="16dip"
-        android:focusable="true"
-        android:focusableInTouchMode="true" />
+  <NumberPicker
+      android:id="@+id/wan_cycle_day"
+      android:layout_width="48dip"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:layout_marginEnd="16dip"
+      android:layout_marginStart="16dip"
+      android:focusable="true"
+      android:focusableInTouchMode="true"
+      />
 
 </LinearLayout>

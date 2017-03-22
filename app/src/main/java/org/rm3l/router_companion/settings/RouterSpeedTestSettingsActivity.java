@@ -26,9 +26,7 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
-
 import com.airbnb.deeplinkdispatch.DeepLink;
-
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 
@@ -48,54 +46,47 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED
  * API Guide</a> for more information on developing a Settings UI.
  */
 
-@DeepLink({"dd-wrt://routers/{routerUuid}/speedtest/settings",
-        "ddwrt://routers/{routerUuid}/speedtest/settings"})
-public class RouterSpeedTestSettingsActivity extends AbstractRouterSettingsActivity {
+@DeepLink({
+    "dd-wrt://routers/{routerUuid}/speedtest/settings",
+    "ddwrt://routers/{routerUuid}/speedtest/settings"
+}) public class RouterSpeedTestSettingsActivity extends AbstractRouterSettingsActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        final Intent intent = getIntent();
-        if (intent.getBooleanExtra(DeepLink.IS_DEEP_LINK, false)) {
-            //Deep link
-            final Bundle parameters = intent.getExtras();
+  @Override protected void onCreate(Bundle savedInstanceState) {
+    final Intent intent = getIntent();
+    if (intent.getBooleanExtra(DeepLink.IS_DEEP_LINK, false)) {
+      //Deep link
+      final Bundle parameters = intent.getExtras();
 
-            final String routerUuid = parameters.getString("routerUuid");
-            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
-                    routerUuid);
-        }
-        super.onCreate(savedInstanceState);
+      final String routerUuid = parameters.getString("routerUuid");
+      intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
     }
+    super.onCreate(savedInstanceState);
+  }
 
-    @NonNull
-    @Override
-    protected String getToolbarTitle() {
-        return "Speed Test Settings";
+  @NonNull @Override protected String getToolbarTitle() {
+    return "Speed Test Settings";
+  }
+
+  @NonNull @Override protected PreferenceFragment getPreferenceFragment() {
+    return new RouterSpeedTestSettingsFragment();
+  }
+
+  public static class RouterSpeedTestSettingsFragment extends PreferenceFragment {
+
+    @Override public void onCreate(Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
+
+      // Load the preferences from an XML resource
+      addPreferencesFromResource(R.xml.router_speed_test_settings);
+
+      // Bind the summaries of EditText/List/Dialog/Ringtone preferences
+      // to their values. When their values change, their summaries are
+      // updated to reflect the new value, per the Android Design
+      // guidelines.
+      bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_SERVER));
+      bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB));
+      bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS));
+      //            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION));
     }
-
-    @NonNull
-    @Override
-    protected PreferenceFragment getPreferenceFragment() {
-        return new RouterSpeedTestSettingsFragment();
-    }
-
-    public static class RouterSpeedTestSettingsFragment extends PreferenceFragment {
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-
-            // Load the preferences from an XML resource
-            addPreferencesFromResource(R.xml.router_speed_test_settings);
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_SERVER));
-            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB));
-            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS));
-//            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION));
-        }
-
-    }
+  }
 }

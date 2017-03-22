@@ -30,18 +30,18 @@ import android.support.annotation.Nullable;
  * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
 public class DDWRTNoDataException extends DDWRTCompanionException {
-    public DDWRTNoDataException() {
-    }
+  public DDWRTNoDataException() {
+  }
 
-    public DDWRTNoDataException(@Nullable String detailMessage) {
-        super(detailMessage);
-    }
+  public DDWRTNoDataException(@Nullable String detailMessage) {
+    super(detailMessage);
+  }
 
-    public DDWRTNoDataException(@Nullable String detailMessage, @Nullable Throwable throwable) {
-        super(detailMessage, throwable);
-    }
+  public DDWRTNoDataException(@Nullable String detailMessage, @Nullable Throwable throwable) {
+    super(detailMessage, throwable);
+  }
 
-    public DDWRTNoDataException(@Nullable Throwable throwable) {
-        super(throwable);
-    }
+  public DDWRTNoDataException(@Nullable Throwable throwable) {
+    super(throwable);
+  }
 }

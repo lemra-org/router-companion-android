@@ -23,20 +23,16 @@ package org.rm3l.router_companion.fragments.admin.openwrt;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-
+import java.util.Arrays;
+import java.util.List;
 import org.rm3l.router_companion.fragments.admin.AdminNVRAMFragment;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.admin.nvram.AdminNVRAMTile;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class AdminNVRAMFragmentOpenWrt extends AdminNVRAMFragment {
 
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        //TODO
-        return Arrays.<DDWRTTile>asList(new AdminNVRAMTile(this, savedInstanceState, this.router));
-    }
+  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    //TODO
+    return Arrays.<DDWRTTile>asList(new AdminNVRAMTile(this, savedInstanceState, this.router));
+  }
 }

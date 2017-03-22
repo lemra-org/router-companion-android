@@ -8,9 +8,7 @@ import org.rm3l.router_companion.widgets.wizard.MaterialWizardFragmentActivity;
  */
 public class ManageRouterFragmentActivity extends MaterialWizardFragmentActivity {
 
-    @Override
-    protected int getContentView() {
-        return R.layout.wizard_manage_router;
-    }
-
+  @Override protected int getContentView() {
+    return R.layout.wizard_manage_router;
+  }
 }

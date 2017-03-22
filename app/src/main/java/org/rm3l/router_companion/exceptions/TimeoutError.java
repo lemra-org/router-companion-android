@@ -8,11 +8,11 @@ import java.io.IOException;
 
 public class TimeoutError extends IOException {
 
-    public TimeoutError() {
-        super();
-    }
+  public TimeoutError() {
+    super();
+  }
 
-    public TimeoutError(Throwable cause) {
-        super(cause);
-    }
+  public TimeoutError(Throwable cause) {
+    super(cause);
+  }
 }

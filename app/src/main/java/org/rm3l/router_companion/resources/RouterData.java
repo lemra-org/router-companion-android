@@ -24,10 +24,8 @@ package org.rm3l.router_companion.resources;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
-import org.rm3l.router_companion.resources.conn.Router;
-
 import java.io.Serializable;
+import org.rm3l.router_companion.resources.conn.Router;
 
 /**
  * Abstract Router Data type, encapsulating the actual data and an exception, if any
@@ -37,79 +35,73 @@ import java.io.Serializable;
  */
 public abstract class RouterData<T> implements Serializable {
 
-    @Nullable
-    private Router router;
+  @Nullable private Router router;
 
-    /**
-     * The data wrapped
-     */
-    @Nullable
-    private T data;
+  /**
+   * The data wrapped
+   */
+  @Nullable private T data;
 
-    /**
-     * The exception wrapped
-     */
-    @Nullable
-    private Exception exception;
+  /**
+   * The exception wrapped
+   */
+  @Nullable private Exception exception;
 
-    /**
-     * @return the data wrapped
-     */
-    @Nullable
-    public T getData() {
-        return data;
-    }
+  /**
+   * @return the data wrapped
+   */
+  @Nullable public T getData() {
+    return data;
+  }
 
-    /**
-     * Set the data
-     *
-     * @param data the data to set
-     * @return this object
-     */
-    @NonNull
-    public RouterData<T> setData(final T data) {
-        this.data = data;
-        return this;
-    }
+  /**
+   * Set the data
+   *
+   * @param data the data to set
+   * @return this object
+   */
+  @NonNull public RouterData<T> setData(final T data) {
+    this.data = data;
+    return this;
+  }
 
-    /**
-     * @return the exception
-     */
-    @Nullable
-    public Exception getException() {
-        return exception;
-    }
+  /**
+   * @return the exception
+   */
+  @Nullable public Exception getException() {
+    return exception;
+  }
 
-    /**
-     * Set the exception
-     *
-     * @param exception the exception to set
-     * @return this object
-     */
-    @NonNull
-    public RouterData<T> setException(Exception exception) {
-        this.exception = exception;
-        return this;
-    }
+  /**
+   * Set the exception
+   *
+   * @param exception the exception to set
+   * @return this object
+   */
+  @NonNull public RouterData<T> setException(Exception exception) {
+    this.exception = exception;
+    return this;
+  }
 
-    @Nullable
-    public Router getRouter() {
-        return router;
-    }
+  @Nullable public Router getRouter() {
+    return router;
+  }
 
-    public RouterData<T> setRouter(@Nullable Router router) {
-        this.router = router;
-        return this;
-    }
+  public RouterData<T> setRouter(@Nullable Router router) {
+    this.router = router;
+    return this;
+  }
 
-    /**
-     * @return the string representation
-     */
-    @Override
-    public String toString() {
-        return this.getClass().getSimpleName() + "{" +
-                "data=" + data +
-                ", exception=" + exception +
-                '}';
-    }
+  /**
+   * @return the string representation
+   */
+  @Override public String toString() {
+    return this.getClass().getSimpleName()
+        + "{"
+        + "data="
+        + data
+        + ", exception="
+        + exception
+        + '}';
+  }
 }

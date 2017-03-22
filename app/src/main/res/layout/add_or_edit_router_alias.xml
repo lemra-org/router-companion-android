@@ -24,90 +24,98 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
+
+  <LinearLayout
+      android:id="@+id/add_or_edit_router_alias_notification_viewgroup"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      />
+
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:scrollbars="none"
+      >
 
     <LinearLayout
-        android:id="@+id/add_or_edit_router_alias_notification_viewgroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" />
+        android:layout_marginTop="10dp"
+        android:orientation="vertical"
+        >
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none">
+      <!--<TextView-->
+      <!--android:layout_width="wrap_content"-->
+      <!--android:layout_height="wrap_content"-->
+      <!--android:layout_marginLeft="4dp"-->
+      <!--android:layout_marginRight="4dp"-->
+      <!--android:textAppearance="?android:textAppearanceMedium"-->
+      <!--android:text="MAC Address"/>-->
 
-        <LinearLayout
-            android:layout_width="match_parent"
+      <android.support.design.widget.TextInputLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="4dp"
+          android:layout_marginStart="4dp"
+          >
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/add_or_edit_router_alias_mac"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="10dp">
-            
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginLeft="4dp"-->
-                <!--android:layout_marginRight="4dp"-->
-                <!--android:textAppearance="?android:textAppearanceMedium"-->
-                <!--android:text="MAC Address"/>-->
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="1"
+            android:drawableBottom="@android:color/holo_blue_dark"
+            android:hint="MAC Address, e.g., aa:bb:cc:dd:ee:ff"
+            android:imeOptions="flagNoExtractUi"
+            android:inputType="textNoSuggestions"
+            android:isScrollContainer="true"
+            android:selectAllOnFocus="true"
+            >
+          <requestFocus/>
+        </android.support.design.widget.TextInputEditText>
+      </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_marginLeft="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <android.support.design.widget.TextInputEditText
-                    android:selectAllOnFocus="true"
-                    android:id="@+id/add_or_edit_router_alias_mac"
-                    android:layout_weight="1"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginTop="4dp"
-                    android:hint="MAC Address, e.g., aa:bb:cc:dd:ee:ff"
-                    android:isScrollContainer="true"
-                    android:drawableBottom="@android:color/holo_blue_dark"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="textNoSuggestions" >
-                    <requestFocus/>
-                </android.support.design.widget.TextInputEditText>
-            </android.support.design.widget.TextInputLayout>
+      <!--<TextView-->
+      <!--android:id="@+id/add_or_edit_router_alias_value_textview"-->
+      <!--android:layout_marginLeft="4dp"-->
+      <!--android:layout_marginRight="4dp"-->
+      <!--android:layout_width="wrap_content"-->
+      <!--android:layout_height="wrap_content"-->
+      <!--android:textAppearance="?android:textAppearanceMedium"-->
+      <!--android:text="Alias"/>-->
 
-            <!--<TextView-->
-                <!--android:id="@+id/add_or_edit_router_alias_value_textview"-->
-                <!--android:layout_marginLeft="4dp"-->
-                <!--android:layout_marginRight="4dp"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:textAppearance="?android:textAppearanceMedium"-->
-                <!--android:text="Alias"/>-->
+      <android.support.design.widget.TextInputLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="4dp"
+          android:layout_marginStart="4dp"
+          >
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/add_or_edit_router_alias_value"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="1"
+            android:drawableBottom="@android:color/holo_blue_dark"
+            android:hint="Local Alias, e.g., Julie's Phone"
+            android:imeOptions="flagNoExtractUi"
+            android:inputType="textNoSuggestions"
+            android:isScrollContainer="true"
+            android:selectAllOnFocus="true"
+            />
+      </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_marginLeft="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <android.support.design.widget.TextInputEditText
-                    android:selectAllOnFocus="true"
-                    android:id="@+id/add_or_edit_router_alias_value"
-                    android:layout_weight="1"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginTop="4dp"
-                    android:hint="Local Alias, e.g., Julie's Phone"
-                    android:isScrollContainer="true"
-                    android:drawableBottom="@android:color/holo_blue_dark"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="textNoSuggestions"/>
-            </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
 
-        </LinearLayout>
-
-    </ScrollView>
+  </ScrollView>
 
 </LinearLayout>

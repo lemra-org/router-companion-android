@@ -7,4 +7,5 @@
     android:layout_gravity="center_horizontal"
     android:visibility="gone"
     ads:adSize="BANNER"
-    ads:adUnitId="@string/banner_ad_unit_id_main_activity" />
+    ads:adUnitId="@string/banner_ad_unit_id_main_activity"
+    />

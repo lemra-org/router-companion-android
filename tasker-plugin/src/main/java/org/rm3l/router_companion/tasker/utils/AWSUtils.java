@@ -23,7 +23,6 @@ package org.rm3l.router_companion.tasker.utils;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
@@ -39,40 +38,33 @@ import static org.rm3l.router_companion.tasker.Constants.AWS_COGNITO_IDENTITY_PO
  */
 public final class AWSUtils {
 
-    private AWSUtils() {}
+  private static AWSCredentialsProvider credsProvider;
+  private static AmazonS3 s3Client;
+  private static TransferUtility s3TransferUtility;
 
-    private static AWSCredentialsProvider credsProvider;
+  private AWSUtils() {
+  }
 
-    private static AmazonS3 s3Client;
-
-    private static TransferUtility s3TransferUtility;
-
-    @NonNull
-    public static AWSCredentialsProvider getAWSCredentialsProvider(final Context context) {
-        if (credsProvider  == null) {
-            credsProvider = new CognitoCachingCredentialsProvider(
-                    context,
-                    AWS_COGNITO_IDENTITY_POOL_ID,
-                    AWS_COGNITO_IDENTITY_POOL_REGION
-            );
-        }
-        return credsProvider;
+  @NonNull public static AWSCredentialsProvider getAWSCredentialsProvider(final Context context) {
+    if (credsProvider == null) {
+      credsProvider = new CognitoCachingCredentialsProvider(context, AWS_COGNITO_IDENTITY_POOL_ID,
+          AWS_COGNITO_IDENTITY_POOL_REGION);
     }
+    return credsProvider;
+  }
 
-    @NonNull
-    public static AmazonS3 getAmazonS3Client(final Context context) {
-        if (s3Client == null) {
-            s3Client = new AmazonS3Client(getAWSCredentialsProvider(context));
-            s3Client.setRegion(Region.getRegion(AWS_COGNITO_IDENTITY_POOL_REGION));
-        }
-        return s3Client;
+  @NonNull public static AmazonS3 getAmazonS3Client(final Context context) {
+    if (s3Client == null) {
+      s3Client = new AmazonS3Client(getAWSCredentialsProvider(context));
+      s3Client.setRegion(Region.getRegion(AWS_COGNITO_IDENTITY_POOL_REGION));
     }
+    return s3Client;
+  }
 
-    @NonNull
-    public static TransferUtility getTransferUtility(final Context context) {
-        if (s3TransferUtility == null) {
-            s3TransferUtility = new TransferUtility(getAmazonS3Client(context), context);
-        }
-        return s3TransferUtility;
+  @NonNull public static TransferUtility getTransferUtility(final Context context) {
+    if (s3TransferUtility == null) {
+      s3TransferUtility = new TransferUtility(getAmazonS3Client(context), context);
     }
+    return s3TransferUtility;
+  }
 }

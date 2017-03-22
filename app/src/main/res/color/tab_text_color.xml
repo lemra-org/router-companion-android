@@ -20,6 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="#ffffff" android:state_selected="true" />
-    <item android:color="#9fff" />
+  <item android:color="#ffffff" android:state_selected="true"/>
+  <item android:color="#9fff"/>
 </selector>

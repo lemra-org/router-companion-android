@@ -29,13 +29,11 @@ import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
-
+import java.util.Locale;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
-
-import java.util.Locale;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -52,72 +50,59 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  */
 public abstract class AbstractRouterSettingsActivity extends AbstractDDWRTSettingsActivity {
 
-    @NonNull
-    protected String mRouterUuid;
+  @NonNull protected String mRouterUuid;
 
-    @Nullable
-    protected Router mRouter;
+  @Nullable protected Router mRouter;
 
-    @Nullable
-    @Override
-    protected String getRouterUuid() {
-        return mRouterUuid;
+  @Nullable @Override protected String getRouterUuid() {
+    return mRouterUuid;
+  }
+
+  @Override public SharedPreferences getSharedPreferences(String name, int mode) {
+    if (isNullOrEmpty(this.mRouterUuid)) {
+      Toast.makeText(this, "Whoops - internal error. Issue will be reported!", Toast.LENGTH_LONG)
+          .show();
+      ReportingUtils.reportException(null, new IllegalStateException(
+          "RouterSettingsActivity: Router UUID is null: " + this.mRouterUuid));
+      finish();
+    }
+    return super.getSharedPreferences(this.mRouterUuid, mode);
+  }
+
+  @Override protected void onCreate(Bundle savedInstanceState) {
+    this.mRouterUuid = getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+
+    boolean doFinish = false;
+    //noinspection ConstantConditions
+    if ((mRouter = RouterManagementActivity.getDao(this).getRouter(this.mRouterUuid)) == null) {
+      Toast.makeText(this, "No router set or router no longer exists", Toast.LENGTH_LONG).show();
+      doFinish = true;
     }
 
-    @Override
-    public SharedPreferences getSharedPreferences(String name, int mode) {
-        if (isNullOrEmpty(this.mRouterUuid)) {
-            Toast.makeText(this, "Whoops - internal error. Issue will be reported!", Toast.LENGTH_LONG).show();
-            ReportingUtils.reportException(null, new IllegalStateException("RouterSettingsActivity: Router UUID is null: " + this.mRouterUuid));
-            finish();
-        }
-        return super.getSharedPreferences(this.mRouterUuid, mode);
+    //Need to call super.onCreate prior to calling finish()
+    super.onCreate(savedInstanceState);
+
+    ColorUtils.setAppTheme(this, mRouter.getRouterFirmware(), false);
+
+    if (doFinish) {
+      finish();
     }
+  }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        this.mRouterUuid = getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
-
-        boolean doFinish = false;
-        //noinspection ConstantConditions
-        if ((mRouter = RouterManagementActivity.getDao(this).getRouter(this.mRouterUuid)) == null) {
-            Toast.makeText(this, "No router set or router no longer exists", Toast.LENGTH_LONG).show();
-            doFinish = true;
-        }
-
-        //Need to call super.onCreate prior to calling finish()
-        super.onCreate(savedInstanceState);
-
-        ColorUtils.setAppTheme(this, mRouter.getRouterFirmware(), false);
-
-        if (doFinish) {
-            finish();
-        }
-
+  @Nullable @Override protected String getToolbarSubtitle() {
+    if (mRouter == null) {
+      return null;
     }
+    return String.format(Locale.US, "%s (%s:%d)", mRouter.getDisplayName(),
+        mRouter.getRemoteIpAddress(), mRouter.getRemotePort());
+  }
 
-    @Nullable
-    @Override
-    protected String getToolbarSubtitle() {
-        if (mRouter == null) {
-            return null;
-        }
-        return String.format(Locale.US,
-                "%s (%s:%d)",
-                mRouter.getDisplayName(),
-                mRouter.getRemoteIpAddress(),
-                mRouter.getRemotePort());
-    }
+  @Override public void finish() {
+    final Intent data = new Intent();
+    setResult(RESULT_OK, data);
 
-    @Override
-    public void finish() {
-        final Intent data = new Intent();
-        setResult(RESULT_OK, data);
+    super.finish();
+  }
 
-        super.finish();
-    }
-
-    @NonNull
-    @Override
-    protected abstract PreferenceFragment getPreferenceFragment();
+  @NonNull @Override protected abstract PreferenceFragment getPreferenceFragment();
 }

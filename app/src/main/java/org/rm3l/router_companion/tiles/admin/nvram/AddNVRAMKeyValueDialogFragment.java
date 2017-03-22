@@ -37,142 +37,129 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import com.cocosw.undobar.UndoBarController;
-
+import de.keyboardsurfer.android.widget.crouton.Crouton;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.utils.ColorUtils;
-
-import de.keyboardsurfer.android.widget.crouton.Crouton;
 
 import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
 import static org.rm3l.router_companion.tiles.admin.nvram.EditNVRAMKeyValueDialogFragment.ACTION;
 
 public class AddNVRAMKeyValueDialogFragment extends DialogFragment {
 
-    public static final String KEY = \"fake-key\";
-    public static final String VALUE = "value";
-    private UndoBarController.UndoListener undoListener;
+  public static final String KEY = \"fake-key\";
+  public static final String VALUE = "value";
+  private UndoBarController.UndoListener undoListener;
 
-    @NonNull
-    public static AddNVRAMKeyValueDialogFragment newInstance(UndoBarController.UndoListener undoListener) {
-        final AddNVRAMKeyValueDialogFragment fragment = new AddNVRAMKeyValueDialogFragment();
+  @NonNull public static AddNVRAMKeyValueDialogFragment newInstance(
+      UndoBarController.UndoListener undoListener) {
+    final AddNVRAMKeyValueDialogFragment fragment = new AddNVRAMKeyValueDialogFragment();
 
-        fragment.undoListener = undoListener;
+    fragment.undoListener = undoListener;
 
-        final Bundle args = new Bundle();
-        fragment.setArguments(args);
+    final Bundle args = new Bundle();
+    fragment.setArguments(args);
 
-        return fragment;
-    }
+    return fragment;
+  }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+  @Override public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
 
-        final FragmentActivity fragmentActivity = getActivity();
+    final FragmentActivity fragmentActivity = getActivity();
 
-        ColorUtils.setAppTheme(fragmentActivity, null, false);
-//
-//        if (ColorUtils.isThemeLight(fragmentActivity)) {
-//            //Light
-//            fragmentActivity.setTheme(R.style.AppThemeLight);
-//        } else {
-//            //Default is Dark
-//            fragmentActivity.setTheme(R.style.AppThemeDark);
-//        }
+    ColorUtils.setAppTheme(fragmentActivity, null, false);
+    //
+    //        if (ColorUtils.isThemeLight(fragmentActivity)) {
+    //            //Light
+    //            fragmentActivity.setTheme(R.style.AppThemeLight);
+    //        } else {
+    //            //Default is Dark
+    //            fragmentActivity.setTheme(R.style.AppThemeDark);
+    //        }
 
-        final Bundle arguments = getArguments();
-    }
+    final Bundle arguments = getArguments();
+  }
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final FragmentActivity activity = getActivity();
+  @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
+    final FragmentActivity activity = getActivity();
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+    final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
-        // Get the layout inflater
-        final LayoutInflater inflater = activity.getLayoutInflater();
+    // Get the layout inflater
+    final LayoutInflater inflater = activity.getLayoutInflater();
 
-        final View view = inflater.inflate(R.layout.tile_admin_nvram_add, null);
-        builder
-                .setTitle(R.string.add_nvram)
-                .setMessage("NVRAM is the permanent settings storage. This includes: " +
-                        "i) settings that you normally change using Web Interface, and " +
-                        "ii) settings for user Startup Scripts. \n" +
-                        "Variables edited here will be persisted in NVRAM right away. \n\n" +
-                        "* SO DO NOT EDIT UNLESS YOU REALLY KNOW WHAT YOU ARE DOING! *")
-                .setIcon(android.R.drawable.stat_sys_warning)
-                .setView(view)
-                        // Add action buttons
-                .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        //Do nothing here because we override this button later to change the close behaviour.
-                        //However, we still need this because on older versions of Android unless we
-                        //pass a handler the button doesn't get instantiated
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        getDialog().cancel();
-                    }
-                });
+    final View view = inflater.inflate(R.layout.tile_admin_nvram_add, null);
+    builder.setTitle(R.string.add_nvram)
+        .setMessage("NVRAM is the permanent settings storage. This includes: "
+            + "i) settings that you normally change using Web Interface, and "
+            + "ii) settings for user Startup Scripts. \n"
+            + "Variables edited here will be persisted in NVRAM right away. \n\n"
+            + "* SO DO NOT EDIT UNLESS YOU REALLY KNOW WHAT YOU ARE DOING! *")
+        .setIcon(android.R.drawable.stat_sys_warning)
+        .setView(view)
+        // Add action buttons
+        .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, int id) {
+            //Do nothing here because we override this button later to change the close behaviour.
+            //However, we still need this because on older versions of Android unless we
+            //pass a handler the button doesn't get instantiated
+          }
+        })
+        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int id) {
+            getDialog().cancel();
+          }
+        });
 
-        return builder.create();
-    }
+    return builder.create();
+  }
 
-    @Override
-    public void onStart() {
-        super.onStart();    //super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
+  @Override public void onStart() {
+    super.onStart();    //super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
 
-        final AlertDialog d = (AlertDialog) getDialog();
-        if (d != null) {
+    final AlertDialog d = (AlertDialog) getDialog();
+    if (d != null) {
 
+      d.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View view) {
+          //Validate data
+          final TextView varKeyTV = (TextView) d.findViewById(R.id.tile_admin_nvram_add_key);
+          final CharSequence variableKey = \"fake-key\";
+          if (TextUtils.isEmpty(variableKey)) {
+            //Error
+            //Crouton
+            Crouton.makeText(getActivity(), "Missing key for NVRAM variable", ALERT,
+                (ViewGroup) (d.findViewById(R.id.tile_admin_nvram_add_notification_viewgroup)))
+                .show();
+            varKeyTV.requestFocus();
+            //Open Keyboard
+            final InputMethodManager imm =
+                (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+              // only will trigger it if no physical keyboard is open
+              imm.showSoftInput(varKeyTV, 0);
+            }
+            return;
+          }
 
-            d.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //Validate data
-                    final TextView varKeyTV = (TextView) d.findViewById(R.id.tile_admin_nvram_add_key);
-                    final CharSequence variableKey = \"fake-key\";
-                    if (TextUtils.isEmpty(variableKey)) {
-                        //Error
-                        //Crouton
-                        Crouton.makeText(getActivity(), "Missing key for NVRAM variable",
-                                ALERT,
-                                (ViewGroup) (d.findViewById(R.id.tile_admin_nvram_add_notification_viewgroup)))
-                                .show();
-                        varKeyTV.requestFocus();
-                        //Open Keyboard
-                        final InputMethodManager imm = (InputMethodManager) getActivity()
-                                .getSystemService(Context.INPUT_METHOD_SERVICE);
-                        if (imm != null) {
-                            // only will trigger it if no physical keyboard is open
-                            imm.showSoftInput(varKeyTV, 0);
-                        }
-                        return;
-                    }
+          final CharSequence variableValue =
+              ((EditText) d.findViewById(R.id.tile_admin_nvram_add_value)).getText();
 
-                    final CharSequence variableValue = ((EditText) d.findViewById(R.id.tile_admin_nvram_add_value))
-                            .getText();
+          final Bundle token = new Bundle();
+          token.putCharSequence(VALUE, variableValue);
+          token.putCharSequence(KEY, variableKey);
+          token.putInt(ACTION, EditNVRAMKeyValueDialogFragment.ADD);
 
-                    final Bundle token = new Bundle();
-                    token.putCharSequence(VALUE, variableValue);
-                    token.putCharSequence(KEY, variableKey);
-                    token.putInt(ACTION, EditNVRAMKeyValueDialogFragment.ADD);
+          new UndoBarController.UndoBar(getActivity()).message(
+              String.format("Variable '%s' will be added", variableKey))
+              .listener(undoListener)
+              .token(token)
+              .show();
 
-                    new UndoBarController.UndoBar(getActivity())
-                            .message(String.format("Variable '%s' will be added", variableKey))
-                            .listener(undoListener)
-                            .token(token)
-                            .show();
-
-                    d.cancel();
-                }
-            });
+          d.cancel();
         }
+      });
     }
-
+  }
 }

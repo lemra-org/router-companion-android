@@ -23,88 +23,72 @@ package org.rm3l.router_companion.resources;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Sets;
-
 import java.util.Set;
 
 public class ClientDevices {
-    @NonNull
-    private final Set<Device> devices = Sets.newHashSet();
+  @NonNull private final Set<Device> devices = Sets.newHashSet();
 
-    @Nullable
-    private Exception exception;
+  @Nullable private Exception exception;
 
-    private int activeClientsNum;
-    private int activeDhcpLeasesNum;
-    private int activeIPConnections;
+  private int activeClientsNum;
+  private int activeDhcpLeasesNum;
+  private int activeIPConnections;
 
-    public int getActiveClientsNum() {
-        return activeClientsNum;
-    }
+  public int getActiveClientsNum() {
+    return activeClientsNum;
+  }
 
-    public ClientDevices setActiveClientsNum(int activeClientsNum) {
-        this.activeClientsNum = activeClientsNum;
-        return this;
-    }
+  public ClientDevices setActiveClientsNum(int activeClientsNum) {
+    this.activeClientsNum = activeClientsNum;
+    return this;
+  }
 
-    public int getActiveDhcpLeasesNum() {
-        return activeDhcpLeasesNum;
-    }
+  public int getActiveDhcpLeasesNum() {
+    return activeDhcpLeasesNum;
+  }
 
-    public ClientDevices setActiveDhcpLeasesNum(int activeDhcpLeasesNum) {
-        this.activeDhcpLeasesNum = activeDhcpLeasesNum;
-        return this;
-    }
+  public ClientDevices setActiveDhcpLeasesNum(int activeDhcpLeasesNum) {
+    this.activeDhcpLeasesNum = activeDhcpLeasesNum;
+    return this;
+  }
 
-    @NonNull
-    public Set<Device> getDevices() {
-        return devices;
-    }
+  @NonNull public Set<Device> getDevices() {
+    return devices;
+  }
 
-    @NonNull
-    public int getDevicesCount() {
-        return devices.size();
-    }
+  @NonNull public int getDevicesCount() {
+    return devices.size();
+  }
 
-    @NonNull
-    public Set<Device> getDevices(int max) {
-        return FluentIterable
-                .from(devices)
-                .limit(max).toSet();
-    }
+  @NonNull public Set<Device> getDevices(int max) {
+    return FluentIterable.from(devices).limit(max).toSet();
+  }
 
-    @NonNull
-    public ClientDevices addDevice(Device device) {
-        this.devices.add(device);
-        return this;
-    }
+  @NonNull public ClientDevices addDevice(Device device) {
+    this.devices.add(device);
+    return this;
+  }
 
-    @Nullable
-    public Exception getException() {
-        return exception;
-    }
+  @Nullable public Exception getException() {
+    return exception;
+  }
 
-    @NonNull
-    public ClientDevices setException(Exception exception) {
-        this.exception = exception;
-        return this;
-    }
+  @NonNull public ClientDevices setException(Exception exception) {
+    this.exception = exception;
+    return this;
+  }
 
-    @Override
-    public String toString() {
-        return "Devices{" +
-                "devices=" + devices +
-                ", exception=" + exception +
-                '}';
-    }
+  @Override public String toString() {
+    return "Devices{" + "devices=" + devices + ", exception=" + exception + '}';
+  }
 
-    public int getActiveIPConnections() {
-        return activeIPConnections;
-    }
+  public int getActiveIPConnections() {
+    return activeIPConnections;
+  }
 
-    public void setActiveIPConnections(int activeIPConnections) {
-        this.activeIPConnections = activeIPConnections;
-    }
+  public void setActiveIPConnections(int activeIPConnections) {
+    this.activeIPConnections = activeIPConnections;
+  }
 }

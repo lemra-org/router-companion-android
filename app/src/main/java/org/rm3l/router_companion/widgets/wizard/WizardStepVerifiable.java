@@ -1,7 +1,6 @@
 package org.rm3l.router_companion.widgets.wizard;
 
 import android.support.annotation.Nullable;
-
 import org.codepond.wizardroid.Wizard;
 
 /**
@@ -9,7 +8,5 @@ import org.codepond.wizardroid.Wizard;
  */
 public interface WizardStepVerifiable {
 
-    @Nullable
-    Boolean validateStep(@Nullable final Wizard wizard);
-
+  @Nullable Boolean validateStep(@Nullable final Wizard wizard);
 }

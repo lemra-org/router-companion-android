@@ -19,24 +19,18 @@
 package be.brunoparmentier.wifikeyshare.model;
 
 public enum WifiAuthType {
-    OPEN("Open"),
-    WEP("WEP"),
-    WPA_PSK("WPA PSK"),
-    WPA_EAP("WPA EAP"),
-    WPA2_EAP("WPA2 EAP"),
-    WPA2_PSK("WPA2 PSK"),
+  OPEN("Open"), WEP("WEP"), WPA_PSK("WPA PSK"), WPA_EAP("WPA EAP"), WPA2_EAP("WPA2 EAP"), WPA2_PSK(
+      "WPA2 PSK"),
 
-    NONE("Open"),
-    WPA("WPA");
+  NONE("Open"), WPA("WPA");
 
-    private final String printableName;
+  private final String printableName;
 
-    WifiAuthType(String printableName) {
-        this.printableName = printableName;
-    }
+  WifiAuthType(String printableName) {
+    this.printableName = printableName;
+  }
 
-    @Override
-    public String toString() {
-        return printableName;
-    }
+  @Override public String toString() {
+    return printableName;
+  }
 }

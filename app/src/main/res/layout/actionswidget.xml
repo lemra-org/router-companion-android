@@ -3,103 +3,113 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/widget_margin" >
+    android:layout_margin="@dimen/widget_margin"
+    >
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="#bbDEDFDE"
+      android:orientation="vertical"
+      >
 
     <LinearLayout
+        android:id="@+id/widgetLayoutMain"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#bbDEDFDE"
-        android:orientation="vertical" >
+        android:layout_height="wrap_content"
+        android:background="#aaDEDFDE"
+        android:orientation="horizontal"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        >
 
-        <LinearLayout
-            android:id="@+id/widgetLayoutMain"
+      <ImageView
+          android:id="@+id/actions_widget_Logo"
+          android:layout_width="64dp"
+          android:layout_height="64dp"
+          android:layout_gravity="center_vertical"
+          android:contentDescription="Logo"
+          android:src="@mipmap/ic_launcher_ddwrt_companion"
+          />
+
+
+      <LinearLayout
+          android:id="@+id/widgetTopBar"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:orientation="vertical"
+          android:paddingBottom="4dp"
+          android:paddingLeft="8dp"
+          android:paddingTop="4dp"
+          >
+
+        <!-- Widget Title -->
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#aaDEDFDE"
-            android:orientation="horizontal"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp" >
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
+            android:text="Router Actions"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#4B4B4D"
+            android:textStyle="bold"
+            />
 
-            <ImageView
-                android:id="@+id/actions_widget_Logo"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_gravity="center_vertical"
-                android:src="@mipmap/ic_launcher_ddwrt_companion"
-                android:contentDescription="Logo"/>
+        <!-- Router Name -->
+        <TextView
+            android:id="@+id/actions_widget_router_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
+            android:text="Name: -"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#4B4B4D"
+            />
 
+        <!-- Router IP or Hostname -->
+        <TextView
+            android:id="@+id/actions_widget_router_ip_or_dns"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
+            android:text="IP: -"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#4B4B4D"
+            />
 
-            <LinearLayout
-                android:id="@+id/widgetTopBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:paddingBottom="4dp"
-                android:paddingLeft="8dp"
-                android:paddingTop="4dp" >
+      </LinearLayout>
 
-                <!-- Widget Title -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Router Actions"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:maxLines="1"
-                    android:textColor="#4B4B4D"
-                    android:ellipsize="end"
-                    android:textStyle="bold"
-                    android:scrollHorizontally="true"/>
-                
-                <!-- Router Name -->
-                <TextView
-                    android:id="@+id/actions_widget_router_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Name: -"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:maxLines="1"
-                    android:textColor="#4B4B4D"
-                    android:ellipsize="end"
-                    android:scrollHorizontally="true"/>
+      <!-- Buttons -->
+      <ImageButton
+          android:id="@+id/actions_widget_launch_action"
+          android:layout_width="50dp"
+          android:layout_height="50dp"
+          android:layout_marginTop="8dp"
+          android:background="?android:attr/selectableItemBackground"
+          android:contentDescription="Open"
+          android:src="@drawable/ic_open_in_new_black_24dp"
+          />
 
-                <!-- Router IP or Hostname -->
-                <TextView
-                    android:id="@+id/actions_widget_router_ip_or_dns"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="IP: -"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:textColor="#4B4B4D"
-                    android:scrollHorizontally="true"/>
-
-            </LinearLayout>
-
-            <!-- Buttons -->
-            <ImageButton
-                android:id="@+id/actions_widget_launch_action"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/ic_open_in_new_black_24dp"
-                android:contentDescription="Open"
-                android:layout_marginTop="8dp"
-                android:background="?android:attr/selectableItemBackground"/>
-
-            <ImageButton
-                android:id="@+id/actions_widget_reboot_action"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="8dp"
-                android:src="@drawable/ic_settings_power_black_24dp"
-                android:contentDescription="Reboot"
-                android:background="?android:attr/selectableItemBackground"/>
-
-        </LinearLayout>
+      <ImageButton
+          android:id="@+id/actions_widget_reboot_action"
+          android:layout_width="50dp"
+          android:layout_height="50dp"
+          android:layout_marginLeft="5dp"
+          android:layout_marginStart="5dp"
+          android:layout_marginTop="8dp"
+          android:background="?android:attr/selectableItemBackground"
+          android:contentDescription="Reboot"
+          android:src="@drawable/ic_settings_power_black_24dp"
+          />
 
     </LinearLayout>
+
+  </LinearLayout>
 
 </FrameLayout>

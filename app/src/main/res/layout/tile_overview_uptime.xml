@@ -20,194 +20,212 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
+    android:layout_height="match_parent"
     android:baselineAligned="false"
-    android:layout_height="match_parent">
+    android:orientation="vertical"
+    >
 
-    <TextView
-        android:id="@+id/tile_overview_uptime_title"
+  <TextView
+      android:id="@+id/tile_overview_uptime_title"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:ellipsize="end"
+      android:maxLines="1"
+      android:text="@string/uptime"
+      android:textAppearance="?android:attr/textAppearanceMedium"
+      android:textStyle="bold"
+      />
+
+  <ProgressBar
+      android:id="@+id/tile_progress_bar"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="8.0dip"
+      android:layout_marginTop="8.0dip"
+      android:indeterminate="false"
+      android:indeterminateOnly="false"
+      style="?android:attr/progressBarStyleHorizontal"
+      />
+
+  <!--<View-->
+  <!--android:layout_width="fill_parent"-->
+  <!--android:layout_height="1.0dip"-->
+  <!--android:layout_marginBottom="8.0dip"-->
+  <!--android:layout_marginTop="8.0dip"-->
+  <!--android:background="#ffcccccc" />-->
+
+  <!-- Error message placeholder -->
+  <TextView
+      android:id="@+id/tile_overview_uptime_error"
+      android:layout_width="300dp"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:ellipsize="end"
+      android:gravity="center"
+      android:maxLines="1"
+      android:text="@string/error_placeholder"
+      android:textColor="@color/ddwrt_purple"
+      android:textIsSelectable="true"
+      android:textStyle="bold"
+      android:visibility="gone"
+      />
+
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      >
+
+    <GridLayout
+        android:id="@+id/tile_overview_uptime_gridLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:text="@string/uptime"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textStyle="bold" />
+        android:layout_marginBottom="20dp"
+        android:columnCount="3"
+        android:fillViewport="true"
+        >
 
-    <ProgressBar
-        android:id="@+id/tile_progress_bar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8.0dip"
-        android:layout_marginTop="8.0dip"
-        android:indeterminate="false"
-        android:indeterminateOnly="false" />
+      <RelativeLayout
+          android:id="@+id/tile_overview_uptime_container"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_columnSpan="3"
+          android:layout_gravity="center"
+          android:gravity="center"
+          android:orientation="horizontal"
+          >
 
-    <!--<View-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="1.0dip"-->
-        <!--android:layout_marginBottom="8.0dip"-->
-        <!--android:layout_marginTop="8.0dip"-->
-        <!--android:background="#ffcccccc" />-->
-
-    <!-- Error message placeholder -->
-    <TextView
-        android:textIsSelectable="true"
-        android:id="@+id/tile_overview_uptime_error"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:maxLines="1"
-        android:text="@string/error_placeholder"
-        android:textColor="@color/ddwrt_purple"
-        android:textStyle="bold"
-        android:visibility="gone"/>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <GridLayout
-            android:id="@+id/tile_overview_uptime_gridLayout"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/tile_overview_uptime_days_container"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fillViewport="true"
-            android:columnCount="3"
-            android:layout_marginBottom="20dp">
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            >
 
-            <RelativeLayout
-                android:id="@+id/tile_overview_uptime_container"
-                android:layout_columnSpan="3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center"
-                android:gravity="center">
+          <TextView
+              android:id="@+id/tile_overview_uptime_days"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              android:gravity="center"
+              android:text="-"
+              android:textAppearance="?android:textAppearanceLarge"
+              android:textIsSelectable="true"
+              android:textSize="35dp"
+              />
 
-                <LinearLayout
-                    android:id="@+id/tile_overview_uptime_days_container"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_gravity="center">
+          <TextView
+              android:id="@+id/tile_overview_uptime_days_title"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              android:gravity="center"
+              android:text="day(s)"
+              android:textAppearance="?android:textAppearanceSmall"
+              />
 
-                    <TextView
-                        android:textIsSelectable="true"
-                        android:id="@+id/tile_overview_uptime_days"
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceLarge"
-                        android:text="-"
-                        android:textSize="35dp"/>
+        </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/tile_overview_uptime_days_title"
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        android:text="day(s)"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/tile_overview_uptime_hours_container"
-                    android:layout_centerInParent="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:textIsSelectable="true"
-                        android:id="@+id/tile_overview_uptime_hours"
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceLarge"
-                        android:textSize="35dp"
-                        android:text="-"/>
-
-                    <TextView
-                        android:id="@+id/tile_overview_uptime_hours_title"
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        android:text="hour(s)"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/tile_overview_uptime_minutes_container"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_gravity="center"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:textIsSelectable="true"
-                        android:id="@+id/tile_overview_uptime_minutes"
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceLarge"
-                        android:textSize="35dp"
-                        android:text="-"/>
-
-                    <TextView
-                        android:id="@+id/tile_overview_uptime_minutes_title"
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        android:text="minute(s)"/>
-
-                </LinearLayout>
-
-            </RelativeLayout>
-
-        </GridLayout>
-
-        <ProgressBar
-            android:id="@+id/tile_overview_uptime_loading_view"
+        <LinearLayout
+            android:id="@+id/tile_overview_uptime_hours_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:indeterminate="false" />
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            >
 
-        <com.github.curioustechizen.ago.RelativeTimeTextView
-            android:textIsSelectable="true"
-            android:layout_marginTop="5dp"
-            android:id="@+id/tile_last_sync"
+          <TextView
+              android:id="@+id/tile_overview_uptime_hours"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              android:gravity="center"
+              android:text="-"
+              android:textAppearance="?android:textAppearanceLarge"
+              android:textIsSelectable="true"
+              android:textSize="35dp"
+              />
+
+          <TextView
+              android:id="@+id/tile_overview_uptime_hours_title"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              android:gravity="center"
+              android:text="hour(s)"
+              android:textAppearance="?android:textAppearanceSmall"
+              />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tile_overview_uptime_minutes_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:textStyle="italic"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:layout_alignParentBottom="true"
-            android:ellipsize="end"
-            android:gravity="end"
-            android:layout_below="@+id/tile_overview_uptime_gridLayout"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            >
 
-            android:text="Last sync: "/>
+          <TextView
+              android:id="@+id/tile_overview_uptime_minutes"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              android:gravity="center"
+              android:text="-"
+              android:textAppearance="?android:textAppearanceLarge"
+              android:textIsSelectable="true"
+              android:textSize="35dp"
+              />
 
-    </RelativeLayout>
+          <TextView
+              android:id="@+id/tile_overview_uptime_minutes_title"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              android:gravity="center"
+              android:text="minute(s)"
+              android:textAppearance="?android:textAppearanceSmall"
+              />
+
+        </LinearLayout>
+
+      </RelativeLayout>
+
+    </GridLayout>
+
+    <ProgressBar
+        android:id="@+id/tile_overview_uptime_loading_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminate="false"
+        />
+
+    <com.github.curioustechizen.ago.RelativeTimeTextView
+        android:id="@+id/tile_last_sync"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tile_overview_uptime_gridLayout"
+        android:layout_marginTop="5dp"
+        android:ellipsize="end"
+        android:gravity="end"
+        android:text="Last sync: "
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textIsSelectable="true"
+
+        android:textStyle="italic"
+        />
+
+  </RelativeLayout>
 
 </LinearLayout>

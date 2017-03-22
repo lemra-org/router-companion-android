@@ -15,15 +15,19 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
-
+import de.keyboardsurfer.android.widget.crouton.Style;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.actions.ActionManager;
 import org.rm3l.router_companion.actions.RouterAction;
 import org.rm3l.router_companion.actions.RouterActionListener;
@@ -33,16 +37,8 @@ import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedExcept
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
-import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_ACCTPORT;
 import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_AUTH;
@@ -61,628 +57,580 @@ import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_RIP;
  */
 public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
 
-    private static final String LOG_TAG = PPTPServerTile.class.getSimpleName();
+  public static final String N_A = "-";
+  private static final String LOG_TAG = PPTPServerTile.class.getSimpleName();
+  private NVRAMInfo mNvramInfo;
+  private AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
+  private AsyncTaskLoader<NVRAMInfo> mLoader;
+  private long mLastSync;
 
-    public static final String N_A = "-";
+  public PPTPServerTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
+      @Nullable Router router) {
+    super(parentFragment, arguments, router, R.layout.tile_services_pptp_server, null);
+  }
 
-    private NVRAMInfo mNvramInfo;
-    private AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
-    private AsyncTaskLoader<NVRAMInfo> mLoader;
-    private long mLastSync;
+  @Override public int getTileHeaderViewId() {
+    return R.id.tile_services_pptp_server_hdr;
+  }
 
-    public PPTPServerTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
-        super(parentFragment, arguments, router, R.layout.tile_services_pptp_server,null);
-    }
+  @Override public int getTileTitleViewId() {
+    return R.id.tile_services_pptp_server_title;
+  }
 
-    @Override
-    public int getTileHeaderViewId() {
-        return R.id.tile_services_pptp_server_hdr;
-    }
+  @Nullable @Override protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
+    mLoader = new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 
-    @Override
-    public int getTileTitleViewId() {
-        return R.id.tile_services_pptp_server_title;
-    }
+      @Nullable @Override public NVRAMInfo loadInBackground() {
 
-
-    @Nullable
-    @Override
-    protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
-        mLoader = new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
-
-            @Nullable
-            @Override
-            public NVRAMInfo loadInBackground() {
-
-                try {
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + PPTPServerTile.class + ": routerInfo=" +
-                            mRouter + " / nbRunsLoader=" + nbRunsLoader);
-
-                    if (mRefreshing.getAndSet(true)) {
-                        return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
-                    }
-                    nbRunsLoader++;
-
-                    updateProgressBarViewSeparator(0);
-
-                    mLastSync = System.currentTimeMillis();
-
-                    mNvramInfo = null;
-
-                    final NVRAMInfo nvramInfo = new NVRAMInfo();
-
-                    NVRAMInfo nvramInfoTmp = null;
-
-                    try {
-                        updateProgressBarViewSeparator(10);
-                        nvramInfoTmp =
-                                SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                                        mGlobalPreferences,
-                                        //Status: {1,0}
-                                        PPTPD_ENABLE,
-                                        //Broadcast Support {1,0}
-                                        PPTPD_BCRELAY,
-                                        //Force MPPE Enc {1,0}
-                                        PPTPD_FORCEMPPE,
-                                        //Server IP
-                                        PPTPD_LIP,
-                                        //Client IP(s)
-                                        PPTPD_RIP,
-                                        //CHAP-Secrets
-                                        PPTPD_AUTH,
-                                        //Radius {1,0}
-                                        PPTPD_RADIUS,
-                                        //Radius Server IP
-                                        PPTPD_RADSERVER,
-                                        //Radius Auth Port - default: 1812
-                                        PPTPD_RADPORT,
-                                        //Radius Accounting Port - default: 1813
-                                        PPTPD_ACCTPORT,
-                                        //Radius Shared Key
-                                        PPTPD_RADPASS);
-
-                        updateProgressBarViewSeparator(55);
-                    } finally {
-                        if (nvramInfoTmp != null) {
-                            nvramInfo.putAll(nvramInfoTmp);
-                        }
-
-                        boolean applyNewPrefs = false;
-                        String property = nvramInfo.getProperty(PPTPD_LIP);
-                        final SharedPreferences.Editor editor = mGlobalPreferences.edit();
-                        if (!Strings.isNullOrEmpty(property)) {
-                            final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
-                                    mGlobalPreferences.getStringSet("EditPPTPServerSettingsServerIp",
-                                    new HashSet<String>()));
-                            if (!mGlobalPreferencesStringSet.contains(property)) {
-                                mGlobalPreferencesStringSet.add(property);
-                                editor
-                                        .putStringSet("EditPPTPServerSettingsServerIp", mGlobalPreferencesStringSet);
-                                applyNewPrefs = true;
-                            }
-                        }
-
-                        property = nvramInfo.getProperty(PPTPD_RIP);
-                        if (!Strings.isNullOrEmpty(property)) {
-                            final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
-                                    mGlobalPreferences.getStringSet("EditPPTPServerSettingsClientIps",
-                                    new HashSet<String>()));
-                            if (!mGlobalPreferencesStringSet.contains(property)) {
-                                mGlobalPreferencesStringSet.add(property);
-                                editor
-                                        .putStringSet("EditPPTPServerSettingsClientIps", mGlobalPreferencesStringSet);
-                                applyNewPrefs = true;
-                            }
-                        }
-
-                        property = nvramInfo.getProperty(PPTPD_RADSERVER);
-                        if (!Strings.isNullOrEmpty(property)) {
-                            final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
-                                    mGlobalPreferences.getStringSet("EditPPTPServerSettingsRadiusServerIp",
-                                    new HashSet<String>()));
-                            if (!mGlobalPreferencesStringSet.contains(property)) {
-                                mGlobalPreferencesStringSet.add(property);
-                                editor
-                                        .putStringSet("EditPPTPServerSettingsRadiusServerIp", mGlobalPreferencesStringSet);
-                                applyNewPrefs = true;
-                            }
-                        }
-
-                        property = nvramInfo.getProperty(PPTPD_RADPORT);
-                        if (!Strings.isNullOrEmpty(property)) {
-                            final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
-                                    mGlobalPreferences.getStringSet("EditPPTPServerSettingsRadiusServerAuthPort",
-                                    new HashSet<String>()));
-                            if (!mGlobalPreferencesStringSet.contains(property)) {
-                                mGlobalPreferencesStringSet.add(property);
-                                editor
-                                        .putStringSet("EditPPTPServerSettingsRadiusServerAuthPort", mGlobalPreferencesStringSet);
-                                applyNewPrefs = true;
-                            }
-                        }
-
-                        property = nvramInfo.getProperty(PPTPD_ACCTPORT);
-                        if (!Strings.isNullOrEmpty(property)) {
-                            final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
-                                    mGlobalPreferences.getStringSet("EditPPTPServerSettingsRadiusServerAcctPort",
-                                    new HashSet<String>()));
-                            if (!mGlobalPreferencesStringSet.contains(property)) {
-                                mGlobalPreferencesStringSet.add(property);
-                                editor
-                                        .putStringSet("EditPPTPServerSettingsRadiusServerAcctPort", mGlobalPreferencesStringSet);
-                                applyNewPrefs = true;
-                            }
-                        }
-
-                        if (applyNewPrefs) {
-                            editor.apply();
-                        }
-
-                    }
-
-                    updateProgressBarViewSeparator(70);
-                    if (nvramInfo.isEmpty()) {
-                        throw new DDWRTNoDataException("No Data!");
-                    }
-
-                    updateProgressBarViewSeparator(90);
-                    return nvramInfo;
-
-                } catch (@NonNull final Exception e) {
-                    e.printStackTrace();
-                    return new NVRAMInfo().setException(e);
-                }
-
-            }
-        };
-
-        return mLoader;
-    }
-
-    @Nullable
-    @Override
-    protected String getLogTag() {
-        return LOG_TAG;
-    }
-
-    @Nullable
-    @Override
-    protected OnClickIntent getOnclickIntent() {
-        return null;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<NVRAMInfo> loader, NVRAMInfo data) {
         try {
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+          Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+              + PPTPServerTile.class
+              + ": routerInfo="
+              + mRouter
+              + " / nbRunsLoader="
+              + nbRunsLoader);
 
-            layout.findViewById(R.id.tile_services_pptp_server_header_loading_view)
-                    .setVisibility(View.GONE);
-            layout.findViewById(R.id.tile_services_pptp_server_loading_view)
-                    .setVisibility(View.GONE);
-            layout.findViewById(R.id.tile_services_pptp_server_grid_layout)
-                    .setVisibility(View.VISIBLE);
-            //FIXME Disabled for now
-//        layout.findViewById(R.id.tile_services_pptp_server_note)
-//                .setVisibility(View.VISIBLE);
+          if (mRefreshing.getAndSet(true)) {
+            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+          }
+          nbRunsLoader++;
 
-            Exception preliminaryCheckException = null;
-            if (data == null) {
-                //noinspection ThrowableInstanceNeverThrown
-                preliminaryCheckException = new DDWRTNoDataException("No Data!");
-            } else //noinspection ThrowableResultOfMethodCallIgnored
-                if (data.getException() == null) {
-                    final String pptpdServerEnabled = data.getProperty(PPTPD_ENABLE);
-                    if (pptpdServerEnabled == null || !Arrays.asList("0", "1").contains(pptpdServerEnabled)) {
-                        //noinspection ThrowableInstanceNeverThrown
-                        preliminaryCheckException = new DDWRTPPTPdClienStateUnknown("Unknown state");
-                    }
-                }
+          updateProgressBarViewSeparator(0);
 
-            final SwitchCompat enableTraffDataButton =
-                    (SwitchCompat) this.layout.findViewById(R.id.tile_services_pptp_server_status);
-            enableTraffDataButton.setVisibility(View.VISIBLE);
+          mLastSync = System.currentTimeMillis();
 
-            final boolean makeToogleEnabled = (data != null &&
-                    data.getData() != null &&
-                    data.getData().containsKey(PPTPD_ENABLE));
+          mNvramInfo = null;
 
-            if (!isToggleStateActionRunning.get()) {
-                if (makeToogleEnabled) {
-                    if ("1".equals(data.getProperty(PPTPD_ENABLE))) {
-                        //Enabled
-                        enableTraffDataButton.setChecked(true);
-                    } else {
-                        //Disabled
-                        enableTraffDataButton.setChecked(false);
-                    }
-                    enableTraffDataButton.setEnabled(true);
-                } else {
-                    enableTraffDataButton.setChecked(false);
-                    enableTraffDataButton.setEnabled(false);
-                }
+          final NVRAMInfo nvramInfo = new NVRAMInfo();
 
-                enableTraffDataButton.setOnClickListener(new ManagePPTPServerToggle());
+          NVRAMInfo nvramInfoTmp = null;
+
+          try {
+            updateProgressBarViewSeparator(10);
+            nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
+                mGlobalPreferences,
+                //Status: {1,0}
+                PPTPD_ENABLE,
+                //Broadcast Support {1,0}
+                PPTPD_BCRELAY,
+                //Force MPPE Enc {1,0}
+                PPTPD_FORCEMPPE,
+                //Server IP
+                PPTPD_LIP,
+                //Client IP(s)
+                PPTPD_RIP,
+                //CHAP-Secrets
+                PPTPD_AUTH,
+                //Radius {1,0}
+                PPTPD_RADIUS,
+                //Radius Server IP
+                PPTPD_RADSERVER,
+                //Radius Auth Port - default: 1812
+                PPTPD_RADPORT,
+                //Radius Accounting Port - default: 1813
+                PPTPD_ACCTPORT,
+                //Radius Shared Key
+                PPTPD_RADPASS);
+
+            updateProgressBarViewSeparator(55);
+          } finally {
+            if (nvramInfoTmp != null) {
+              nvramInfo.putAll(nvramInfoTmp);
             }
 
-            if (preliminaryCheckException != null) {
-                data = new NVRAMInfo().setException(preliminaryCheckException);
+            boolean applyNewPrefs = false;
+            String property = nvramInfo.getProperty(PPTPD_LIP);
+            final SharedPreferences.Editor editor = mGlobalPreferences.edit();
+            if (!Strings.isNullOrEmpty(property)) {
+              final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
+                  mGlobalPreferences.getStringSet("EditPPTPServerSettingsServerIp",
+                      new HashSet<String>()));
+              if (!mGlobalPreferencesStringSet.contains(property)) {
+                mGlobalPreferencesStringSet.add(property);
+                editor.putStringSet("EditPPTPServerSettingsServerIp", mGlobalPreferencesStringSet);
+                applyNewPrefs = true;
+              }
             }
 
-            final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_services_pptp_server_error);
-
-            final Exception exception = data.getException();
-
-            if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-
-                mNvramInfo = new NVRAMInfo();
-                mNvramInfo.putAll(data);
-
-                if (exception == null) {
-                    errorPlaceHolderView.setVisibility(View.GONE);
-                }
-
-                updateTileDisplayData(data, true);
-
-                //Update last sync
-                final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
-                lastSyncView.setReferenceTime(mLastSync);
-                lastSyncView.setPrefix("Last sync: ");
+            property = nvramInfo.getProperty(PPTPD_RIP);
+            if (!Strings.isNullOrEmpty(property)) {
+              final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
+                  mGlobalPreferences.getStringSet("EditPPTPServerSettingsClientIps",
+                      new HashSet<String>()));
+              if (!mGlobalPreferencesStringSet.contains(property)) {
+                mGlobalPreferencesStringSet.add(property);
+                editor.putStringSet("EditPPTPServerSettingsClientIps", mGlobalPreferencesStringSet);
+                applyNewPrefs = true;
+              }
             }
 
-            if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-                //noinspection ThrowableResultOfMethodCallIgnored
-                final Throwable rootCause = Throwables.getRootCause(exception);
-                errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
-                final Context parentContext = this.mParentFragmentActivity;
-                errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View v) {
-                        //noinspection ThrowableResultOfMethodCallIgnored
-                        if (rootCause != null) {
-                            Toast.makeText(parentContext,
-                                    rootCause.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-                errorPlaceHolderView.setVisibility(View.VISIBLE);
-                updateProgressBarWithError();
-            } else if (exception == null){
-                updateProgressBarWithSuccess();
+            property = nvramInfo.getProperty(PPTPD_RADSERVER);
+            if (!Strings.isNullOrEmpty(property)) {
+              final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
+                  mGlobalPreferences.getStringSet("EditPPTPServerSettingsRadiusServerIp",
+                      new HashSet<String>()));
+              if (!mGlobalPreferencesStringSet.contains(property)) {
+                mGlobalPreferencesStringSet.add(property);
+                editor.putStringSet("EditPPTPServerSettingsRadiusServerIp",
+                    mGlobalPreferencesStringSet);
+                applyNewPrefs = true;
+              }
             }
 
+            property = nvramInfo.getProperty(PPTPD_RADPORT);
+            if (!Strings.isNullOrEmpty(property)) {
+              final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
+                  mGlobalPreferences.getStringSet("EditPPTPServerSettingsRadiusServerAuthPort",
+                      new HashSet<String>()));
+              if (!mGlobalPreferencesStringSet.contains(property)) {
+                mGlobalPreferencesStringSet.add(property);
+                editor.putStringSet("EditPPTPServerSettingsRadiusServerAuthPort",
+                    mGlobalPreferencesStringSet);
+                applyNewPrefs = true;
+              }
+            }
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
-        } finally {
-            mRefreshing.set(false);
-            doneWithLoaderInstance(this, loader);
+            property = nvramInfo.getProperty(PPTPD_ACCTPORT);
+            if (!Strings.isNullOrEmpty(property)) {
+              final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
+                  mGlobalPreferences.getStringSet("EditPPTPServerSettingsRadiusServerAcctPort",
+                      new HashSet<String>()));
+              if (!mGlobalPreferencesStringSet.contains(property)) {
+                mGlobalPreferencesStringSet.add(property);
+                editor.putStringSet("EditPPTPServerSettingsRadiusServerAcctPort",
+                    mGlobalPreferencesStringSet);
+                applyNewPrefs = true;
+              }
+            }
+
+            if (applyNewPrefs) {
+              editor.apply();
+            }
+          }
+
+          updateProgressBarViewSeparator(70);
+          if (nvramInfo.isEmpty()) {
+            throw new DDWRTNoDataException("No Data!");
+          }
+
+          updateProgressBarViewSeparator(90);
+          return nvramInfo;
+        } catch (@NonNull final Exception e) {
+          e.printStackTrace();
+          return new NVRAMInfo().setException(e);
         }
-    }
+      }
+    };
 
-    private void updateTileDisplayData(@NonNull final NVRAMInfo data, final boolean defaultValuesIfNotFound) {
+    return mLoader;
+  }
 
-        //State
-        String statusKey = \"fake-key\";
-                defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
-        if (statusKey != null) {
-            final String statusValue;
-            switch (statusKey) {
-                case "1":
-                    statusValue = "Enabled";
-                    break;
-                case "0":
-                    statusValue = "Disabled";
-                    break;
-                default:
-                    statusValue = N_A;
-                    break;
-            }
+  @Nullable @Override protected String getLogTag() {
+    return LOG_TAG;
+  }
 
-            ((TextView) layout.findViewById(R.id.tile_services_pptp_server_state)).setText(statusValue);
-        }
+  @Nullable @Override protected OnClickIntent getOnclickIntent() {
+    return null;
+  }
 
-        //Broadcast Support
-        statusKey = \"fake-key\";
-                defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
-        if (statusKey != null) {
-            final String statusValue;
-            switch (statusKey) {
-                case "1":
-                    statusValue = "Enabled";
-                    break;
-                case "0":
-                    statusValue = "Disabled";
-                    break;
-                default:
-                    statusValue = N_A;
-                    break;
-            }
+  @Override public void onLoadFinished(Loader<NVRAMInfo> loader, NVRAMInfo data) {
+    try {
+      Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-            ((TextView) layout.findViewById(R.id.tile_services_pptp_server_broadcast_support)).setText(statusValue);
-        }
+      layout.findViewById(R.id.tile_services_pptp_server_header_loading_view)
+          .setVisibility(View.GONE);
+      layout.findViewById(R.id.tile_services_pptp_server_loading_view).setVisibility(View.GONE);
+      layout.findViewById(R.id.tile_services_pptp_server_grid_layout).setVisibility(View.VISIBLE);
+      //FIXME Disabled for now
+      //        layout.findViewById(R.id.tile_services_pptp_server_note)
+      //                .setVisibility(View.VISIBLE);
 
-        //Force MPPE Encryption
-        statusKey = \"fake-key\";
-                defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
-        if (statusKey != null) {
-            final String statusValue;
-            switch (statusKey) {
-                case "1":
-                    statusValue = "Enabled";
-                    break;
-                case "0":
-                    statusValue = "Disabled";
-                    break;
-                default:
-                    statusValue = N_A;
-                    break;
-            }
-
-            ((TextView) layout.findViewById(R.id.tile_services_pptp_server_force_mppe_encryption)).setText(statusValue);
-        }
-
-        //Server IP
-        String property = data.getProperty(PPTPD_LIP, defaultValuesIfNotFound ? N_A : null);
-        if (property != null) {
-            ((TextView) layout.findViewById(R.id.tile_services_pptp_server_server_ip))
-                    .setText(property);
-        }
-
-        //Client IP(s)
-        property = data.getProperty(PPTPD_RIP, defaultValuesIfNotFound ? N_A : null);
-        if (property != null) {
-            ((TextView) layout.findViewById(R.id.tile_services_pptp_server_client_ips))
-                    .setText(property);
+      Exception preliminaryCheckException = null;
+      if (data == null) {
+        //noinspection ThrowableInstanceNeverThrown
+        preliminaryCheckException = new DDWRTNoDataException("No Data!");
+      } else //noinspection ThrowableResultOfMethodCallIgnored
+        if (data.getException() == null) {
+          final String pptpdServerEnabled = data.getProperty(PPTPD_ENABLE);
+          if (pptpdServerEnabled == null || !Arrays.asList("0", "1").contains(pptpdServerEnabled)) {
+            //noinspection ThrowableInstanceNeverThrown
+            preliminaryCheckException = new DDWRTPPTPdClienStateUnknown("Unknown state");
+          }
         }
 
-        //Radius
-        statusKey = \"fake-key\";
-                defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
-        if (statusKey != null) {
-            final String statusValue;
-            switch (statusKey) {
-                case "1":
-                    statusValue = "Enabled";
-                    break;
-                case "0":
-                    statusValue = "Disabled";
-                    break;
-                default:
-                    statusValue = N_A;
-                    break;
-            }
+      final SwitchCompat enableTraffDataButton =
+          (SwitchCompat) this.layout.findViewById(R.id.tile_services_pptp_server_status);
+      enableTraffDataButton.setVisibility(View.VISIBLE);
 
-            ((TextView) layout.findViewById(R.id.tile_services_pptp_server_radius)).setText(statusValue);
-        }
+      final boolean makeToogleEnabled =
+          (data != null && data.getData() != null && data.getData().containsKey(PPTPD_ENABLE));
 
-        final int[] radiusInformation = new int[] {
-                R.id.tile_services_pptp_server_radius_server_ip_title,
-                R.id.tile_services_pptp_server_radius_server_ip_sep,
-                R.id.tile_services_pptp_server_radius_server_ip,
-                R.id.tile_services_pptp_server_radius_auth_port_title,
-                R.id.tile_services_pptp_server_radius_auth_port_sep,
-                R.id.tile_services_pptp_server_radius_auth_port,
-                R.id.tile_services_pptp_server_radius_accounting_port_title,
-                R.id.tile_services_pptp_server_radius_accounting_port_sep,
-                R.id.tile_services_pptp_server_radius_accounting_port
-        };
-
-        if ("1".equals(statusKey)) {
-            //Radius Server IP
-            property = data.getProperty(PPTPD_RADSERVER, defaultValuesIfNotFound ? N_A : null);
-            if (property != null) {
-                ((TextView) layout.findViewById(R.id.tile_services_pptp_server_radius_server_ip))
-                        .setText(property);
-            }
-
-            //Radius Auth Port
-            property = data.getProperty(PPTPD_RADPORT, defaultValuesIfNotFound ? N_A : null);
-            if (property != null) {
-                ((TextView) layout.findViewById(R.id.tile_services_pptp_server_radius_auth_port))
-                        .setText(property);
-            }
-
-            //Radius Accounting Port
-            property = data.getProperty(PPTPD_ACCTPORT, defaultValuesIfNotFound ? N_A : null);
-            if (property != null) {
-                ((TextView) layout.findViewById(R.id.tile_services_pptp_server_radius_accounting_port))
-                        .setText(property);
-            }
-
-            //Display Radius Info
-            for (final int radiusInfo : radiusInformation) {
-                final View viewById = layout.findViewById(radiusInfo);
-                if (viewById == null) {
-                    continue;
-                }
-                viewById.setVisibility(View.VISIBLE);
-            }
+      if (!isToggleStateActionRunning.get()) {
+        if (makeToogleEnabled) {
+          if ("1".equals(data.getProperty(PPTPD_ENABLE))) {
+            //Enabled
+            enableTraffDataButton.setChecked(true);
+          } else {
+            //Disabled
+            enableTraffDataButton.setChecked(false);
+          }
+          enableTraffDataButton.setEnabled(true);
         } else {
-            //Hide any other Radius information
-            for (final int radiusInfo : radiusInformation) {
-                final View viewById = layout.findViewById(radiusInfo);
-                if (viewById == null) {
-                    continue;
-                }
-                viewById.setVisibility(View.GONE);
-            }
+          enableTraffDataButton.setChecked(false);
+          enableTraffDataButton.setEnabled(false);
         }
+
+        enableTraffDataButton.setOnClickListener(new ManagePPTPServerToggle());
+      }
+
+      if (preliminaryCheckException != null) {
+        data = new NVRAMInfo().setException(preliminaryCheckException);
+      }
+
+      final TextView errorPlaceHolderView =
+          (TextView) this.layout.findViewById(R.id.tile_services_pptp_server_error);
+
+      final Exception exception = data.getException();
+
+      if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+
+        mNvramInfo = new NVRAMInfo();
+        mNvramInfo.putAll(data);
+
+        if (exception == null) {
+          errorPlaceHolderView.setVisibility(View.GONE);
+        }
+
+        updateTileDisplayData(data, true);
+
+        //Update last sync
+        final RelativeTimeTextView lastSyncView =
+            (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+        lastSyncView.setReferenceTime(mLastSync);
+        lastSyncView.setPrefix("Last sync: ");
+      }
+
+      if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+        //noinspection ThrowableResultOfMethodCallIgnored
+        final Throwable rootCause = Throwables.getRootCause(exception);
+        errorPlaceHolderView.setText(
+            "Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
+        final Context parentContext = this.mParentFragmentActivity;
+        errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
+          @Override public void onClick(final View v) {
+            //noinspection ThrowableResultOfMethodCallIgnored
+            if (rootCause != null) {
+              Toast.makeText(parentContext, rootCause.getMessage(), Toast.LENGTH_LONG).show();
+            }
+          }
+        });
+        errorPlaceHolderView.setVisibility(View.VISIBLE);
+        updateProgressBarWithError();
+      } else if (exception == null) {
+        updateProgressBarWithSuccess();
+      }
+
+      Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
+    } finally {
+      mRefreshing.set(false);
+      doneWithLoaderInstance(this, loader);
+    }
+  }
+
+  private void updateTileDisplayData(@NonNull final NVRAMInfo data,
+      final boolean defaultValuesIfNotFound) {
+
+    //State
+    String statusKey = \"fake-key\";
+        defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
+    if (statusKey != null) {
+      final String statusValue;
+      switch (statusKey) {
+        case "1":
+          statusValue = "Enabled";
+          break;
+        case "0":
+          statusValue = "Disabled";
+          break;
+        default:
+          statusValue = N_A;
+          break;
+      }
+
+      ((TextView) layout.findViewById(R.id.tile_services_pptp_server_state)).setText(statusValue);
     }
 
-    private class DDWRTPPTPdClienStateUnknown extends DDWRTNoDataException {
+    //Broadcast Support
+    statusKey = \"fake-key\";
+        defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
+    if (statusKey != null) {
+      final String statusValue;
+      switch (statusKey) {
+        case "1":
+          statusValue = "Enabled";
+          break;
+        case "0":
+          statusValue = "Disabled";
+          break;
+        default:
+          statusValue = N_A;
+          break;
+      }
 
-        public DDWRTPPTPdClienStateUnknown(@Nullable String detailMessage) {
-            super(detailMessage);
-        }
+      ((TextView) layout.findViewById(R.id.tile_services_pptp_server_broadcast_support)).setText(
+          statusValue);
     }
 
-    private class ManagePPTPServerToggle implements  View.OnClickListener {
+    //Force MPPE Encryption
+    statusKey = \"fake-key\";
+        defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
+    if (statusKey != null) {
+      final String statusValue;
+      switch (statusKey) {
+        case "1":
+          statusValue = "Enabled";
+          break;
+        case "0":
+          statusValue = "Disabled";
+          break;
+        default:
+          statusValue = N_A;
+          break;
+      }
 
-        private boolean enable;
+      ((TextView) layout.findViewById(
+          R.id.tile_services_pptp_server_force_mppe_encryption)).setText(statusValue);
+    }
 
-        @Override
-        public void onClick(View view) {
+    //Server IP
+    String property = data.getProperty(PPTPD_LIP, defaultValuesIfNotFound ? N_A : null);
+    if (property != null) {
+      ((TextView) layout.findViewById(R.id.tile_services_pptp_server_server_ip)).setText(property);
+    }
 
-            isToggleStateActionRunning.set(true);
+    //Client IP(s)
+    property = data.getProperty(PPTPD_RIP, defaultValuesIfNotFound ? N_A : null);
+    if (property != null) {
+      ((TextView) layout.findViewById(R.id.tile_services_pptp_server_client_ips)).setText(property);
+    }
 
-            if (!(view instanceof CompoundButton)) {
-                Utils.reportException(null, new IllegalStateException("ManagePPTPServerToggle#onClick: " +
-                        "view is NOT an instance of CompoundButton!"));
-                isToggleStateActionRunning.set(false);
-                return;
-            }
+    //Radius
+    statusKey = \"fake-key\";
+        defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
+    if (statusKey != null) {
+      final String statusValue;
+      switch (statusKey) {
+        case "1":
+          statusValue = "Enabled";
+          break;
+        case "0":
+          statusValue = "Disabled";
+          break;
+        default:
+          statusValue = N_A;
+          break;
+      }
 
-            final CompoundButton compoundButton = (CompoundButton) view;
+      ((TextView) layout.findViewById(R.id.tile_services_pptp_server_radius)).setText(statusValue);
+    }
 
-            mParentFragmentActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    compoundButton.setEnabled(false);
-                }
-            });
+    final int[] radiusInformation = new int[] {
+        R.id.tile_services_pptp_server_radius_server_ip_title,
+        R.id.tile_services_pptp_server_radius_server_ip_sep,
+        R.id.tile_services_pptp_server_radius_server_ip,
+        R.id.tile_services_pptp_server_radius_auth_port_title,
+        R.id.tile_services_pptp_server_radius_auth_port_sep,
+        R.id.tile_services_pptp_server_radius_auth_port,
+        R.id.tile_services_pptp_server_radius_accounting_port_title,
+        R.id.tile_services_pptp_server_radius_accounting_port_sep,
+        R.id.tile_services_pptp_server_radius_accounting_port
+    };
 
-            this.enable = compoundButton.isChecked();
+    if ("1".equals(statusKey)) {
+      //Radius Server IP
+      property = data.getProperty(PPTPD_RADSERVER, defaultValuesIfNotFound ? N_A : null);
+      if (property != null) {
+        ((TextView) layout.findViewById(R.id.tile_services_pptp_server_radius_server_ip)).setText(
+            property);
+      }
 
-            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                Utils.displayUpgradeMessage(mParentFragmentActivity, "Toggle PPTP Server");
-                isToggleStateActionRunning.set(false);
-                mParentFragmentActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        compoundButton.setChecked(!enable);
-                        compoundButton.setEnabled(true);
-                    }
-                });
-                return;
-            }
+      //Radius Auth Port
+      property = data.getProperty(PPTPD_RADPORT, defaultValuesIfNotFound ? N_A : null);
+      if (property != null) {
+        ((TextView) layout.findViewById(R.id.tile_services_pptp_server_radius_auth_port)).setText(
+            property);
+      }
 
-            final NVRAMInfo nvramInfoToSet = new NVRAMInfo();
+      //Radius Accounting Port
+      property = data.getProperty(PPTPD_ACCTPORT, defaultValuesIfNotFound ? N_A : null);
+      if (property != null) {
+        ((TextView) layout.findViewById(
+            R.id.tile_services_pptp_server_radius_accounting_port)).setText(property);
+      }
 
-            nvramInfoToSet.setProperty(PPTPD_ENABLE, enable ? "1" : "0");
+      //Display Radius Info
+      for (final int radiusInfo : radiusInformation) {
+        final View viewById = layout.findViewById(radiusInfo);
+        if (viewById == null) {
+          continue;
+        }
+        viewById.setVisibility(View.VISIBLE);
+      }
+    } else {
+      //Hide any other Radius information
+      for (final int radiusInfo : radiusInformation) {
+        final View viewById = layout.findViewById(radiusInfo);
+        if (viewById == null) {
+          continue;
+        }
+        viewById.setVisibility(View.GONE);
+      }
+    }
+  }
 
-            new UndoBarController.UndoBar(mParentFragmentActivity)
-                    .message(String.format("PPTP Server will be %s on '%s' (%s). ",
-                            enable ? "enabled" : "disabled",
-                            mRouter.getDisplayName(),
-                            mRouter.getRemoteIpAddress()))
-                    .listener(new UndoBarController.AdvancedUndoListener() {
-                                  @Override
-                                  public void onHide(@Nullable Parcelable parcelable) {
+  private class DDWRTPPTPdClienStateUnknown extends DDWRTNoDataException {
 
+    public DDWRTPPTPdClienStateUnknown(@Nullable String detailMessage) {
+      super(detailMessage);
+    }
+  }
+
+  private class ManagePPTPServerToggle implements View.OnClickListener {
+
+    private boolean enable;
+
+    @Override public void onClick(View view) {
+
+      isToggleStateActionRunning.set(true);
+
+      if (!(view instanceof CompoundButton)) {
+        Utils.reportException(null, new IllegalStateException(
+            "ManagePPTPServerToggle#onClick: " + "view is NOT an instance of CompoundButton!"));
+        isToggleStateActionRunning.set(false);
+        return;
+      }
+
+      final CompoundButton compoundButton = (CompoundButton) view;
+
+      mParentFragmentActivity.runOnUiThread(new Runnable() {
+        @Override public void run() {
+          compoundButton.setEnabled(false);
+        }
+      });
+
+      this.enable = compoundButton.isChecked();
+
+      if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+        Utils.displayUpgradeMessage(mParentFragmentActivity, "Toggle PPTP Server");
+        isToggleStateActionRunning.set(false);
+        mParentFragmentActivity.runOnUiThread(new Runnable() {
+          @Override public void run() {
+            compoundButton.setChecked(!enable);
+            compoundButton.setEnabled(true);
+          }
+        });
+        return;
+      }
+
+      final NVRAMInfo nvramInfoToSet = new NVRAMInfo();
+
+      nvramInfoToSet.setProperty(PPTPD_ENABLE, enable ? "1" : "0");
+
+      new UndoBarController.UndoBar(mParentFragmentActivity).message(
+          String.format("PPTP Server will be %s on '%s' (%s). ", enable ? "enabled" : "disabled",
+              mRouter.getDisplayName(), mRouter.getRemoteIpAddress()))
+          .listener(new UndoBarController.AdvancedUndoListener() {
+                      @Override public void onHide(@Nullable Parcelable parcelable) {
+
+                        Utils.displayMessage(mParentFragmentActivity,
+                            String.format("%s PPTP Server...", enable ? "Enabling" : "Disabling"),
+                            Style.INFO);
+
+                        ActionManager.runTasks(
+                            new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfoToSet,
+                                true, new RouterActionListener() {
+                              @Override public void onRouterActionSuccess(@NonNull RouterAction routerAction,
+                                  @NonNull final Router router, Object returnData) {
+                                mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                  @Override public void run() {
+
+                                    try {
+                                      compoundButton.setChecked(enable);
                                       Utils.displayMessage(mParentFragmentActivity,
-                                              String.format("%s PPTP Server...",
-                                                      enable ? "Enabling" : "Disabling"),
-                                              Style.INFO);
-
-                                      ActionManager.runTasks(
-                                      new SetNVRAMVariablesAction(
-                                              mRouter,
-                                              mParentFragmentActivity,
-                                              nvramInfoToSet,
-                                              true,
-                                              new RouterActionListener() {
-                                                  @Override
-                                                  public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull final Router router, Object returnData) {
-                                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                          @Override
-                                                          public void run() {
-
-                                                              try {
-                                                                  compoundButton.setChecked(enable);
-                                                                  Utils.displayMessage(mParentFragmentActivity,
-                                                                          String.format("PPTP Server %s successfully on host '%s' (%s). ",
-                                                                                  enable ? "enabled" : "disabled",
-                                                                                  router.getDisplayName(),
-                                                                                  router.getRemoteIpAddress()),
-                                                                          Style.CONFIRM);
-                                                              } finally {
-                                                                  compoundButton.setEnabled(true);
-                                                                  isToggleStateActionRunning.set(false);
-                                                                  if (mLoader != null) {
-                                                                      //Reload everything right away
-                                                                      doneWithLoaderInstance(PPTPServerTile.this,
-                                                                              mLoader,
-                                                                              1l);
-                                                                  }
-                                                              }
-                                                          }
-
-                                                      });
-                                                  }
-
-                                                  @Override
-                                                  public void onRouterActionFailure(@NonNull RouterAction
-                                                                                            routerAction, @NonNull final Router
-                                                                                            router, @Nullable final Exception exception) {
-                                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                          @Override
-                                                          public void run() {
-                                                              try {
-                                                                  compoundButton.setChecked(!enable);
-                                                                  Utils.displayMessage(mParentFragmentActivity,
-                                                                          String.format("Error while trying to %s PPTP Server on '%s' (%s): %s",
-                                                                                  enable ? "enable" : "disable",
-                                                                                  router.getDisplayName(),
-                                                                                  router.getRemoteIpAddress(),
-                                                                                  Utils.handleException(exception).first),
-                                                                          Style.ALERT);
-                                                              } finally {
-                                                                  compoundButton.setEnabled(true);
-                                                                  isToggleStateActionRunning.set(false);
-                                                              }
-                                                          }
-                                                      });
-
-
-                                                  }
-                                              }
-
-                                              ,
-                                              mGlobalPreferences)
-                                      );
-
+                                          String.format("PPTP Server %s successfully on host '%s' (%s). ",
+                                              enable ? "enabled" : "disabled", router.getDisplayName(),
+                                              router.getRemoteIpAddress()), Style.CONFIRM);
+                                    } finally {
+                                      compoundButton.setEnabled(true);
+                                      isToggleStateActionRunning.set(false);
+                                      if (mLoader != null) {
+                                        //Reload everything right away
+                                        doneWithLoaderInstance(PPTPServerTile.this, mLoader, 1l);
+                                      }
+                                    }
                                   }
-
-                                  @Override
-                                  public void onClear(@NonNull Parcelable[] parcelables) {
-                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                          @Override
-                                          public void run() {
-                                              try {
-                                                  compoundButton.setChecked(!enable);
-                                                  compoundButton.setEnabled(true);
-                                              } finally {
-                                                  isToggleStateActionRunning.set(false);
-                                              }
-                                          }
-                                      });
-                                  }
-
-                                  @Override
-                                  public void onUndo(@Nullable Parcelable parcelable) {
-                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                          @Override
-                                          public void run() {
-                                              try {
-                                                  compoundButton.setChecked(!enable);
-                                                  compoundButton.setEnabled(true);
-                                              } finally {
-                                                  isToggleStateActionRunning.set(false);
-                                              }
-                                          }
-                                      });
-                                  }
+                                });
                               }
 
-                    )
-                    .
+                              @Override public void onRouterActionFailure(@NonNull RouterAction routerAction,
+                                  @NonNull final Router router, @Nullable final Exception exception) {
+                                mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                  @Override public void run() {
+                                    try {
+                                      compoundButton.setChecked(!enable);
+                                      Utils.displayMessage(mParentFragmentActivity, String.format(
+                                          "Error while trying to %s PPTP Server on '%s' (%s): %s",
+                                          enable ? "enable" : "disable", router.getDisplayName(),
+                                          router.getRemoteIpAddress(),
+                                          Utils.handleException(exception).first), Style.ALERT);
+                                    } finally {
+                                      compoundButton.setEnabled(true);
+                                      isToggleStateActionRunning.set(false);
+                                    }
+                                  }
+                                });
+                              }
+                            }
 
-                            token(new Bundle()
+                                , mGlobalPreferences));
+                      }
 
-                            )
-                    .
+                      @Override public void onClear(@NonNull Parcelable[] parcelables) {
+                        mParentFragmentActivity.runOnUiThread(new Runnable() {
+                          @Override public void run() {
+                            try {
+                              compoundButton.setChecked(!enable);
+                              compoundButton.setEnabled(true);
+                            } finally {
+                              isToggleStateActionRunning.set(false);
+                            }
+                          }
+                        });
+                      }
 
-                            show();
-        }
+                      @Override public void onUndo(@Nullable Parcelable parcelable) {
+                        mParentFragmentActivity.runOnUiThread(new Runnable() {
+                          @Override public void run() {
+                            try {
+                              compoundButton.setChecked(!enable);
+                              compoundButton.setEnabled(true);
+                            } finally {
+                              isToggleStateActionRunning.set(false);
+                            }
+                          }
+                        });
+                      }
+                    }
+
+          )
+          .
+
+              token(new Bundle()
+
+              )
+          .
+
+              show();
     }
+  }
 }

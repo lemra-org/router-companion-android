@@ -24,26 +24,20 @@ package org.rm3l.router_companion.fragments.status;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-
+import java.util.Arrays;
+import java.util.List;
 import org.rm3l.router_companion.fragments.AbstractBaseFragment;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.status.wan.WANConfigTile;
 import org.rm3l.router_companion.tiles.status.wan.WANTrafficTile;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  *
  */
 public class StatusWANFragment extends AbstractBaseFragment {
 
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Arrays.<DDWRTTile>asList(
-                new WANConfigTile(this, savedInstanceState, this.router),
-                new WANTrafficTile(this, savedInstanceState, this.router)
-        );
-    }
+  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    return Arrays.<DDWRTTile>asList(new WANConfigTile(this, savedInstanceState, this.router),
+        new WANTrafficTile(this, savedInstanceState, this.router));
+  }
 }

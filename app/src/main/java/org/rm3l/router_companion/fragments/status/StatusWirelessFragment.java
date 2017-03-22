@@ -31,26 +31,23 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.util.Log;
-
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.fragments.AbstractBaseFragment;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.status.wireless.WirelessIfaceTile;
 import org.rm3l.router_companion.tiles.status.wireless.WirelessIfacesTile;
-import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.utils.NVRAMParser;
 import org.rm3l.router_companion.utils.SSHUtils;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 
@@ -59,167 +56,156 @@ import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
  */
 public class StatusWirelessFragment extends AbstractBaseFragment<Collection<WirelessIfaceTile>> {
 
-    public static final Splitter SPLITTER = Splitter.on(" ").omitEmptyStrings().trimResults();
-    private static final String LOG_TAG = StatusWirelessFragment.class.getSimpleName();
-    @Nullable
-    private Collection<WirelessIfaceTile> mIfaceTiles = null;
+  public static final Splitter SPLITTER = Splitter.on(" ").omitEmptyStrings().trimResults();
+  private static final String LOG_TAG = StatusWirelessFragment.class.getSimpleName();
+  @Nullable private Collection<WirelessIfaceTile> mIfaceTiles = null;
 
-    private Loader<Collection<WirelessIfaceTile>> mLoader;
+  private Loader<Collection<WirelessIfaceTile>> mLoader;
 
-    //Save views for the very first time
-    private List<String> ifacesViews = Lists.newArrayList();
+  //Save views for the very first time
+  private List<String> ifacesViews = Lists.newArrayList();
 
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Collections.<DDWRTTile>
-                singletonList(new WirelessIfacesTile(this, savedInstanceState, router));
-    }
+  @Nullable
+  public static Collection<WirelessIfaceTile> getWirelessIfaceTiles(@NonNull final Bundle args,
+      FragmentActivity activity, Fragment parentFragment, Router router) {
+    try {
+      Crashlytics.log(Log.DEBUG, LOG_TAG,
+          "Init background loader for " + StatusWirelessFragment.class + ": routerInfo=" + router);
 
-    @Nullable
-    public static Collection<WirelessIfaceTile> getWirelessIfaceTiles(@NonNull final Bundle args,
-                                                                      FragmentActivity activity,
-                                                                      Fragment parentFragment,
-                                                                      Router router) {
-        try {
-            Crashlytics.log(Log.DEBUG,  LOG_TAG, "Init background loader for " + StatusWirelessFragment.class + ": routerInfo=" +
-                    router);
+      SharedPreferences sharedPreferences =
+          activity.getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+              Context.MODE_PRIVATE);
+      final NVRAMInfo nvramInfo =
+          SSHUtils.getNVRamInfoFromRouter(activity, router, sharedPreferences, NVRAMInfo.LANDEVS,
+              NVRAMInfo.LAN_IFNAMES);
 
-            SharedPreferences sharedPreferences = activity
-                    .getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                            Context.MODE_PRIVATE);
-            final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(activity, router,
-                    sharedPreferences,
-                    NVRAMInfo.LANDEVS,
-                    NVRAMInfo.LAN_IFNAMES);
+      if (nvramInfo == null) {
+        return null;
+      }
 
-            if (nvramInfo == null) {
-                return null;
-            }
-
-            String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS);
-            if (Strings.isNullOrEmpty(landevs)) {
-                //Atheros
-                landevs = nvramInfo.getProperty(NVRAMInfo.LAN_IFNAMES, null);
-                if (!Strings.isNullOrEmpty(landevs)) {
-                    //noinspection ConstantConditions
-                    nvramInfo.setProperty(NVRAMInfo.LANDEVS, landevs);
-                }
-            }
-
-            final String[] wirelessSsids = SSHUtils.getManualProperty(activity, router,
-                    sharedPreferences, "nvram show | grep 'ssid='");
-            if (wirelessSsids == null || wirelessSsids.length == 0) {
-                return null;
-            }
-
-            final List<String> splitToList = new ArrayList<>();
-
-            for (final String wirelessSsid : wirelessSsids) {
-                if (wirelessSsid == null ||
-                        wirelessSsid.startsWith("af_")) {
-                    //skip AnchorFree SSID
-                    continue;
-                }
-                final List<String> strings = NVRAMParser.SPLITTER.splitToList(wirelessSsid);
-                final int size = strings.size();
-                if (size == 1) {
-                    continue;
-                }
-
-                if (size >= 2) {
-//                    if (Strings.isNullOrEmpty(strings.get(1))) {
-//                        //skip iterms with no name
-//                        continue;
-//                    }
-                    final String wlIface = strings.get(0).replace("_ssid", "");
-                    if (wlIface.contains(".")) {
-                        //Skip vifs as well, as they will be considered later on
-                        continue;
-                    }
-
-                    splitToList.add(wlIface);
-                }
-            }
-
-
-//            final List<String> splitToList = SPLITTER.splitToList(landevs != null ? landevs : "");
-            if (splitToList.isEmpty()) {
-                return null;
-            }
-
-            final List<WirelessIfaceTile> tiles = Lists.newArrayList();
-
-            for (final String landevRaw : splitToList) {
-                if (landevRaw == null || landevRaw.isEmpty()) {
-                    continue;
-                }
-                final String landev = landevRaw.trim();
-                if (startsWithIgnoreCase(landev, "vlan")) {
-                    continue;
-                }
-
-                final String hwAddrNVRAMProperty = landev + "_hwaddr";
-                final NVRAMInfo hwAddrNVRAMInfo = SSHUtils.getNVRamInfoFromRouter(activity, router,
-                        sharedPreferences,
-                        hwAddrNVRAMProperty);
-
-                if (hwAddrNVRAMInfo == null ||
-                        Strings.isNullOrEmpty(hwAddrNVRAMInfo.getProperty(hwAddrNVRAMProperty))) {
-                    //ignore
-                    continue;
-                }
-
-                //Check that iface has a "Security Mode" explicitly set (at least "disabled")
-                final String securityModeKeyword = (landev + "_security_mode");
-                final NVRAMInfo securityModeFromNvram = SSHUtils.getNVRamInfoFromRouter(
-                        activity,
-                        router,
-                        sharedPreferences,
-                        securityModeKeyword);
-                if (securityModeFromNvram == null ||
-                        Strings.isNullOrEmpty(securityModeFromNvram.getProperty(securityModeKeyword))) {
-                    //Ignore iface
-                    continue;
-                }
-
-                tiles.add(new WirelessIfaceTile(landev, parentFragment, args, router));
-                //Also get Virtual Interfaces
-                try {
-                    final String landevVifsKeyword = landev + "_vifs";
-                    final NVRAMInfo landevVifsNVRAMInfo = SSHUtils.getNVRamInfoFromRouter(activity, router,
-                            sharedPreferences,
-                            landevVifsKeyword);
-                    if (landevVifsNVRAMInfo == null) {
-                        continue;
-                    }
-                    final String landevVifsNVRAMInfoProp = landevVifsNVRAMInfo.getProperty(landevVifsKeyword, RouterCompanionAppConstants.EMPTY_STRING);
-                    if (landevVifsNVRAMInfoProp == null) {
-                        continue;
-                    }
-                    final List<String> list = SPLITTER.splitToList(landevVifsNVRAMInfoProp);
-                    for (final String landevVif : list) {
-                        if (landevVif == null || landevVif.isEmpty()) {
-                            continue;
-                        }
-                        tiles.add(new WirelessIfaceTile(landevVif, landev, parentFragment, args, router));
-                    }
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                    //No worries
-                }
-            }
-
-            if (tiles.isEmpty()) {
-                return null;
-            }
-
-            return tiles;
-
-        } catch (@NonNull final Exception e) {
-            e.printStackTrace();
-            return null;
+      String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS);
+      if (Strings.isNullOrEmpty(landevs)) {
+        //Atheros
+        landevs = nvramInfo.getProperty(NVRAMInfo.LAN_IFNAMES, null);
+        if (!Strings.isNullOrEmpty(landevs)) {
+          //noinspection ConstantConditions
+          nvramInfo.setProperty(NVRAMInfo.LANDEVS, landevs);
         }
-    }
+      }
 
+      final String[] wirelessSsids = SSHUtils.getManualProperty(activity, router, sharedPreferences,
+          "nvram show | grep 'ssid='");
+      if (wirelessSsids == null || wirelessSsids.length == 0) {
+        return null;
+      }
+
+      final List<String> splitToList = new ArrayList<>();
+
+      for (final String wirelessSsid : wirelessSsids) {
+        if (wirelessSsid == null || wirelessSsid.startsWith("af_")) {
+          //skip AnchorFree SSID
+          continue;
+        }
+        final List<String> strings = NVRAMParser.SPLITTER.splitToList(wirelessSsid);
+        final int size = strings.size();
+        if (size == 1) {
+          continue;
+        }
+
+        if (size >= 2) {
+          //                    if (Strings.isNullOrEmpty(strings.get(1))) {
+          //                        //skip iterms with no name
+          //                        continue;
+          //                    }
+          final String wlIface = strings.get(0).replace("_ssid", "");
+          if (wlIface.contains(".")) {
+            //Skip vifs as well, as they will be considered later on
+            continue;
+          }
+
+          splitToList.add(wlIface);
+        }
+      }
+
+      //            final List<String> splitToList = SPLITTER.splitToList(landevs != null ? landevs : "");
+      if (splitToList.isEmpty()) {
+        return null;
+      }
+
+      final List<WirelessIfaceTile> tiles = Lists.newArrayList();
+
+      for (final String landevRaw : splitToList) {
+        if (landevRaw == null || landevRaw.isEmpty()) {
+          continue;
+        }
+        final String landev = landevRaw.trim();
+        if (startsWithIgnoreCase(landev, "vlan")) {
+          continue;
+        }
+
+        final String hwAddrNVRAMProperty = landev + "_hwaddr";
+        final NVRAMInfo hwAddrNVRAMInfo =
+            SSHUtils.getNVRamInfoFromRouter(activity, router, sharedPreferences,
+                hwAddrNVRAMProperty);
+
+        if (hwAddrNVRAMInfo == null || Strings.isNullOrEmpty(
+            hwAddrNVRAMInfo.getProperty(hwAddrNVRAMProperty))) {
+          //ignore
+          continue;
+        }
+
+        //Check that iface has a "Security Mode" explicitly set (at least "disabled")
+        final String securityModeKeyword = (landev + "_security_mode");
+        final NVRAMInfo securityModeFromNvram =
+            SSHUtils.getNVRamInfoFromRouter(activity, router, sharedPreferences,
+                securityModeKeyword);
+        if (securityModeFromNvram == null || Strings.isNullOrEmpty(
+            securityModeFromNvram.getProperty(securityModeKeyword))) {
+          //Ignore iface
+          continue;
+        }
+
+        tiles.add(new WirelessIfaceTile(landev, parentFragment, args, router));
+        //Also get Virtual Interfaces
+        try {
+          final String landevVifsKeyword = landev + "_vifs";
+          final NVRAMInfo landevVifsNVRAMInfo =
+              SSHUtils.getNVRamInfoFromRouter(activity, router, sharedPreferences,
+                  landevVifsKeyword);
+          if (landevVifsNVRAMInfo == null) {
+            continue;
+          }
+          final String landevVifsNVRAMInfoProp = landevVifsNVRAMInfo.getProperty(landevVifsKeyword,
+              RouterCompanionAppConstants.EMPTY_STRING);
+          if (landevVifsNVRAMInfoProp == null) {
+            continue;
+          }
+          final List<String> list = SPLITTER.splitToList(landevVifsNVRAMInfoProp);
+          for (final String landevVif : list) {
+            if (landevVif == null || landevVif.isEmpty()) {
+              continue;
+            }
+            tiles.add(new WirelessIfaceTile(landevVif, landev, parentFragment, args, router));
+          }
+        } catch (final Exception e) {
+          e.printStackTrace();
+          //No worries
+        }
+      }
+
+      if (tiles.isEmpty()) {
+        return null;
+      }
+
+      return tiles;
+    } catch (@NonNull final Exception e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+
+  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    return Collections.<DDWRTTile>singletonList(
+        new WirelessIfacesTile(this, savedInstanceState, router));
+  }
 }

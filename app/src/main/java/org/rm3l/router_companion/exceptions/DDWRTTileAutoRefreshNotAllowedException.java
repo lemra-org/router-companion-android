@@ -36,18 +36,19 @@ import android.support.v4.content.AsyncTaskLoader;
  */
 public class DDWRTTileAutoRefreshNotAllowedException extends DDWRTCompanionException {
 
-    public DDWRTTileAutoRefreshNotAllowedException() {
-    }
+  public DDWRTTileAutoRefreshNotAllowedException() {
+  }
 
-    public DDWRTTileAutoRefreshNotAllowedException(@Nullable String detailMessage) {
-        super(detailMessage);
-    }
+  public DDWRTTileAutoRefreshNotAllowedException(@Nullable String detailMessage) {
+    super(detailMessage);
+  }
 
-    public DDWRTTileAutoRefreshNotAllowedException(@Nullable String detailMessage, @Nullable Throwable throwable) {
-        super(detailMessage, throwable);
-    }
+  public DDWRTTileAutoRefreshNotAllowedException(@Nullable String detailMessage,
+      @Nullable Throwable throwable) {
+    super(detailMessage, throwable);
+  }
 
-    public DDWRTTileAutoRefreshNotAllowedException(@Nullable Throwable throwable) {
-        super(throwable);
-    }
+  public DDWRTTileAutoRefreshNotAllowedException(@Nullable Throwable throwable) {
+    super(throwable);
+  }
 }

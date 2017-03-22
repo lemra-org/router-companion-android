@@ -24,87 +24,71 @@ package org.rm3l.router_companion.mgmt.dao;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
+import java.util.Collection;
+import java.util.List;
 import org.rm3l.router_companion.common.resources.audit.ActionLog;
 import org.rm3l.router_companion.resources.SpeedTestResult;
 import org.rm3l.router_companion.resources.WANTrafficData;
 import org.rm3l.router_companion.resources.conn.Router;
 
-import java.util.Collection;
-import java.util.List;
-
 public interface DDWRTCompanionDAO {
 
-    void destroy();
+  void destroy();
 
-    @Nullable
-    Router insertRouter(Router router);
+  @Nullable Router insertRouter(Router router);
 
-    @Nullable
-    Router updateRouter(Router router);
+  @Nullable Router updateRouter(Router router);
 
-    void deleteRouter(String uuid);
+  void deleteRouter(String uuid);
 
-    List<Router> getAllRouters();
+  List<Router> getAllRouters();
 
-    List<Router> getAllRoutersIncludingArchived();
+  List<Router> getAllRoutersIncludingArchived();
 
-    @Nullable
-    Router getRouter(String uuid);
+  @Nullable Router getRouter(String uuid);
 
-    @Nullable
-    Router getRouter(int id);
+  @Nullable Router getRouter(int id);
 
-    @NonNull
-    Collection<Router> getRoutersByName(String name);
+  @NonNull Collection<Router> getRoutersByName(String name);
 
-    @Nullable
-    Long insertWANTrafficData(@NonNull final WANTrafficData... trafficData);
+  @Nullable Long insertWANTrafficData(@NonNull final WANTrafficData... trafficData);
 
-    boolean isWANTrafficDataPresent(@NonNull final String router,
-                                    @NonNull final String date);
+  boolean isWANTrafficDataPresent(@NonNull final String router, @NonNull final String date);
 
-    @NonNull
-    List<WANTrafficData> getWANTrafficDataByRouterByDate(@NonNull final String router,
-                                                         @NonNull final String date);
+  @NonNull List<WANTrafficData> getWANTrafficDataByRouterByDate(@NonNull final String router,
+      @NonNull final String date);
 
-    @NonNull
-    List<WANTrafficData> getWANTrafficDataByRouterBetweenDates(@NonNull final String router,
-                                                                @NonNull final String dateLower,
-                                                               @NonNull final String dateHigher);
+  @NonNull List<WANTrafficData> getWANTrafficDataByRouterBetweenDates(@NonNull final String router,
+      @NonNull final String dateLower, @NonNull final String dateHigher);
 
-    void deleteWANTrafficDataByRouter(@NonNull final String router);
+  void deleteWANTrafficDataByRouter(@NonNull final String router);
 
-    @Nullable
-    Long insertSpeedTestResult(@NonNull final SpeedTestResult speedTestResult);
+  @Nullable Long insertSpeedTestResult(@NonNull final SpeedTestResult speedTestResult);
 
-    @NonNull
-    List<SpeedTestResult> getSpeedTestResultsByRouter(@NonNull final String router);
+  @NonNull List<SpeedTestResult> getSpeedTestResultsByRouter(@NonNull final String router);
 
-    void deleteSpeedTestResultByRouterById(@NonNull final String router, final long id);
+  void deleteSpeedTestResultByRouterById(@NonNull final String router, final long id);
 
-    void deleteAllSpeedTestResultsByRouter(@NonNull final String router);
+  void deleteAllSpeedTestResultsByRouter(@NonNull final String router);
 
-    /**
-     * Audit log of all actions performed via the Plugin
-     */
-    Long recordAction(ActionLog actionLog);
+  /**
+   * Audit log of all actions performed via the Plugin
+   */
+  Long recordAction(ActionLog actionLog);
 
-    Collection<ActionLog> getActionsByOrigin(String origin);
+  Collection<ActionLog> getActionsByOrigin(String origin);
 
-    Collection<ActionLog> getActionsByRouterByOrigin(String routerUuid, String origin);
+  Collection<ActionLog> getActionsByRouterByOrigin(String routerUuid, String origin);
 
-    Collection<ActionLog> getActionsByOrigin(String origin, String predicate, String groupBy,
-                                             String having, String orderBy);
+  Collection<ActionLog> getActionsByOrigin(String origin, String predicate, String groupBy,
+      String having, String orderBy);
 
-    Collection<ActionLog> getActionsByRouterByOrigin(String routerUuid, String origin,
-                                                     String predicate, String groupBy,
-                                                     String having, String orderBy);
+  Collection<ActionLog> getActionsByRouterByOrigin(String routerUuid, String origin,
+      String predicate, String groupBy, String having, String orderBy);
 
-    void clearActionsLogByOrigin(String origin);
+  void clearActionsLogByOrigin(String origin);
 
-    void clearActionsLogByRouterByOrigin(String routerUuid, String origin);
+  void clearActionsLogByRouterByOrigin(String routerUuid, String origin);
 
-    void clearActionsLogs();
-
+  void clearActionsLogs();
 }

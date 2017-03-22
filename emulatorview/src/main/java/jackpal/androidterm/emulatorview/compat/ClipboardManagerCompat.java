@@ -1,9 +1,9 @@
 package jackpal.androidterm.emulatorview.compat;
 
 public interface ClipboardManagerCompat {
-	CharSequence getText();
+  CharSequence getText();
 
-	boolean hasText();
+  void setText(CharSequence text);
 
-    void setText(CharSequence text);
+  boolean hasText();
 }

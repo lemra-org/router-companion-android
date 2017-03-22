@@ -21,91 +21,100 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="org.rm3l.router_companion.help.HelpActivity">
+    tools:context="org.rm3l.router_companion.help.HelpActivity"
+    >
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/web_toolbar"
+  <android.support.v7.widget.Toolbar
+      android:id="@+id/web_toolbar"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="?attr/colorPrimary"
+      android:minHeight="?attr/actionBarSize"
+      />
+
+  <com.google.android.gms.ads.AdView
+      android:id="@+id/web_adView"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:layout_marginBottom="5dp"
+      android:layout_marginTop="5dp"
+      android:visibility="gone"
+      ads:adSize="BANNER"
+      ads:adUnitId="@string/banner_ad_unit_id_help"
+      />
+
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      >
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/web_webview_swiperefresh"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize" />
+        android:layout_height="match_parent"
+        >
 
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/web_adView"
+      <WebView
+          android:id="@+id/web_webview"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/button_check_updates"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="@dimen/fab_compat_margin"
+        android:layout_marginBottom="@dimen/add_button_margin"
+        android:layout_marginEnd="@dimen/add_button_margin"
+        android:layout_marginRight="@dimen/add_button_margin"
+        android:clickable="true"
+        android:contentDescription="@string/check_updates"
+        android:src="@drawable/ic_action_action_system_update_tv"
+        android:tint="@android:color/white"
         android:visibility="gone"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_unit_id_help" />
+        app:elevation="6dp"
+        app:layout_anchorGravity="bottom|right|end"
+        app:pressedTranslationZ="12dp"
+        />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <!-- Error message placeholder -->
+    <TextView
+        android:id="@+id/error_placeholder"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="@string/error_placeholder"
+        android:textColor="@color/ddwrt_purple"
+        android:textIsSelectable="true"
+        android:textStyle="bold"
+        android:visibility="gone"
+        />
 
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/web_webview_swiperefresh"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    <ProgressBar
+        android:id="@+id/loading_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminate="false"
+        android:visibility="gone"
+        />
 
-            <WebView
-                android:layout_width="match_parent"
-                android:id="@+id/web_webview"
-                android:layout_height="match_parent"/>
-
-        </android.support.v4.widget.SwipeRefreshLayout>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/button_check_updates"
-            android:contentDescription="@string/check_updates"
-            android:src="@drawable/ic_action_action_system_update_tv"
-            android:tint="@android:color/white"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_gravity="end|bottom"
-            android:layout_marginBottom="@dimen/add_button_margin"
-            android:layout_marginEnd="@dimen/add_button_margin"
-            android:layout_marginRight="@dimen/add_button_margin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/fab_compat_margin"
-            android:clickable="true"
-            app:elevation="6dp"
-            app:pressedTranslationZ="12dp"
-            app:layout_anchorGravity="bottom|right|end"
-            android:visibility="gone"/>
-
-        <!-- Error message placeholder -->
-        <TextView
-            android:textIsSelectable="true"
-            android:id="@+id/error_placeholder"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="1"
-            android:text="@string/error_placeholder"
-            android:textColor="@color/ddwrt_purple"
-            android:textStyle="bold"
-            android:visibility="gone"/>
-
-        <ProgressBar
-            android:id="@+id/loading_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:indeterminate="false"
-            android:visibility="gone"/>
-
-    </RelativeLayout>
+  </RelativeLayout>
 
 </LinearLayout>

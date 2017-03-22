@@ -25,69 +25,61 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.google.common.base.Joiner;
-
+import java.util.Date;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 
-import java.util.Date;
-
 public class RestoreRouterDefaultsAction extends AbstractRouterAction<Void> {
 
-    @NonNull
-    private final Context mContext;
+  @NonNull private final Context mContext;
 
-    public RestoreRouterDefaultsAction(Router router, @NonNull Context context, @Nullable RouterActionListener listener, @NonNull final SharedPreferences globalSharedPreferences) {
-        super(router, listener, RouterAction.RESTORE_FACTORY_DEFAULTS, globalSharedPreferences);
-        this.mContext = context;
+  public RestoreRouterDefaultsAction(Router router, @NonNull Context context,
+      @Nullable RouterActionListener listener,
+      @NonNull final SharedPreferences globalSharedPreferences) {
+    super(router, listener, RouterAction.RESTORE_FACTORY_DEFAULTS, globalSharedPreferences);
+    this.mContext = context;
+  }
+
+  @Nullable @Override protected Context getContext() {
+    return mContext;
+  }
+
+  @NonNull @Override protected RouterActionResult<Void> doActionInBackground() {
+    Exception exception = null;
+    try {
+      final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router,
+          Joiner.on(" ; ").skipNulls(), "erase nvram", "/sbin/reboot");
+      if (exitStatus != 0) {
+        throw new IllegalStateException();
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      exception = e;
     }
 
-    @Nullable
-    @Override
-    protected Context getContext() {
-        return mContext;
+    return new RouterActionResult<>(null, exception);
+  }
+
+  public static class AgreementToResetRouter extends DDWRTCompanionException {
+
+    private final Date mClickDate;
+
+    private final String mDeviceId;
+
+    public AgreementToResetRouter(@NonNull Context context) {
+      mClickDate = new Date();
+      mDeviceId = AdUtils.getDeviceIdForAdMob(context);
     }
 
-    @NonNull
-    @Override
-    protected RouterActionResult<Void> doActionInBackground() {
-        Exception exception = null;
-        try {
-            final int exitStatus = SSHUtils
-                    .runCommands(mContext, globalSharedPreferences, router,
-                            Joiner.on(" ; ").skipNulls(),
-                            "erase nvram", "/sbin/reboot");
-            if (exitStatus != 0) {
-                throw new IllegalStateException();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            exception = e;
-        }
-
-        return new RouterActionResult<>(null, exception);
+    public Date getClickDate() {
+      return mClickDate;
     }
 
-    public static class AgreementToResetRouter extends DDWRTCompanionException {
-
-        private final Date mClickDate;
-
-        private final String mDeviceId;
-
-        public AgreementToResetRouter(@NonNull Context context) {
-            mClickDate = new Date();
-            mDeviceId = AdUtils.getDeviceIdForAdMob(context);
-        }
-
-        public Date getClickDate() {
-            return mClickDate;
-        }
-
-        public String getDeviceId() {
-            return mDeviceId;
-        }
+    public String getDeviceId() {
+      return mDeviceId;
     }
+  }
 }

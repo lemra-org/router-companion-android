@@ -2,53 +2,59 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:weightSum="1"
     tools:context="org.rm3l.router_companion.widgets.ConfirmDialogAsActivity"
-    android:orientation="vertical"
-    android:weightSum="1">
+    >
 
-    <TextView
-        android:textIsSelectable="true"
-        android:text="Title"
-        android:layout_width="match_parent"
+  <TextView
+      android:id="@+id/confirm_dialog_as_activity_title"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="15dp"
+      android:text="Title"
+      android:textAppearance="?android:textAppearanceLarge"
+      android:textIsSelectable="true"
+      android:textStyle="bold"
+      />
+
+  <TextView
+      android:id="@+id/confirm_dialog_as_activity_message"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_weight="0.14"
+      android:text="Message"
+      android:textIsSelectable="true"
+      />
+
+  <!-- Buttons -->
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:weightSum="1"
+      >
+
+    <Button
+        android:id="@+id/confirm_dialog_as_activity_no_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:textAppearanceLarge"
-        android:textStyle="bold"
-        android:id="@+id/confirm_dialog_as_activity_title"
-        android:layout_marginBottom="15dp"/>
+        android:layout_weight="0.50"
+        android:text="Cancel"
+        />
 
-    <TextView
-        android:textIsSelectable="true"
-        android:text="Message"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/confirm_dialog_as_activity_yes_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/confirm_dialog_as_activity_message"
-        android:layout_weight="0.14" />
+        android:layout_weight="0.50"
+        android:text="Proceed!"
+        />
 
-    <!-- Buttons -->
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="1">
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/confirm_dialog_as_activity_no_button"
-            android:text="Cancel"
-            android:layout_weight="0.50" />
-
-        <Button
-            android:id="@+id/confirm_dialog_as_activity_yes_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Proceed!"
-            android:layout_weight="0.50" />
-
-    </LinearLayout>
+  </LinearLayout>
 
 </LinearLayout>

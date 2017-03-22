@@ -28,28 +28,24 @@ import android.util.AttributeSet;
 
 public class LongListPreference extends ListPreference {
 
-    public LongListPreference(Context context, AttributeSet attrs) {
-        super(context, attrs);
+  public LongListPreference(Context context, AttributeSet attrs) {
+    super(context, attrs);
+  }
+
+  public LongListPreference(Context context) {
+    super(context);
+  }
+
+  @Override protected boolean persistString(String value) {
+    return value != null && persistLong(Long.valueOf(value));
+  }
+
+  @Override protected String getPersistedString(String defaultReturnValue) {
+    if (getSharedPreferences().contains(getKey())) {
+      long longValue = getPersistedLong(0);
+      return String.valueOf(longValue);
+    } else {
+      return defaultReturnValue;
     }
-
-    public LongListPreference(Context context) {
-        super(context);
-    }
-
-    @Override
-    protected boolean persistString(String value) {
-        return value != null && persistLong(Long.valueOf(value));
-    }
-
-    @Override
-    protected String getPersistedString(String defaultReturnValue) {
-        if(getSharedPreferences().contains(getKey())) {
-            long longValue = getPersistedLong(0);
-            return String.valueOf(longValue);
-        } else {
-            return defaultReturnValue;
-        }
-    }
-
-
+  }
 }

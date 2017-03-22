@@ -23,9 +23,7 @@
 package org.rm3l.router_companion.resources;
 
 import android.support.annotation.Nullable;
-
 import com.google.common.base.Joiner;
-
 import java.util.List;
 
 /**
@@ -34,7 +32,7 @@ import java.util.List;
  */
 public class MACOUIVendor {
 
-    public static final String TOOLS_RM3L_PREFIX = "http://tools.rm3l.org:5000/";
+  public static final String TOOLS_RM3L_PREFIX = "http://tools.rm3l.org:5000/";
     /*
     {
       "data": {
@@ -49,151 +47,145 @@ public class MACOUIVendor {
     }
      */
 
-    @Nullable
-    private DataDetails data;
+  @Nullable private DataDetails data;
 
-    @Nullable
-    public DataDetails getData() {
-        return data;
+  @Nullable public DataDetails getData() {
+    return data;
+  }
+
+  public MACOUIVendor setData(@Nullable DataDetails data) {
+    this.data = data;
+    return this;
+  }
+
+  public String getCompany() {
+    return data != null ? data.getManufacturer() : null;
+  }
+
+  public boolean isNone() {
+    return (data == null || ((data.getAddress() == null || data.getAddress().isEmpty())
+        && data.getCountry() == null
+        && data.getManufacturer() == null
+        && data.getPrefix() == null));
+  }
+
+  @Override public String toString() {
+    return "MACOUIVendor{" + "data='" + data + '\'' + '}';
+  }
+
+  public String toCommandOutputString() {
+    return data == null ? ""
+        : "\n"
+            + "- manufacturer: "
+            + data.getManufacturer()
+            + "\n"
+            + "- address: "
+            + (data.getAddress() != null ? Joiner.on(" , ").skipNulls().join(data.getAddress())
+            : "N/A")
+            + "\n"
+            + "- country: "
+            + data.getCountry()
+            + "\n"
+            + "- prefix: "
+            + data.getPrefix();
+  }
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    MACOUIVendor that = (MACOUIVendor) o;
+
+    return data != null ? data.equals(that.data) : that.data == null;
+  }
+
+  @Override public int hashCode() {
+    return data != null ? data.hashCode() : 0;
+  }
+
+  public static class DataDetails {
+
+    @Nullable private String manufacturer;
+
+    @Nullable private List<String> address;
+
+    @Nullable private String prefix;
+
+    @Nullable private String country;
+
+    @Nullable public String getManufacturer() {
+      return manufacturer;
     }
 
-    public MACOUIVendor setData(@Nullable DataDetails data) {
-        this.data = data;
-        return this;
+    public DataDetails setManufacturer(@Nullable String manufacturer) {
+      this.manufacturer = manufacturer;
+      return this;
     }
 
-    public String getCompany() {
-        return data != null ? data.getManufacturer() : null;
+    @Nullable public List<String> getAddress() {
+      return address;
     }
 
-    public static class DataDetails {
-
-        @Nullable
-        private String manufacturer;
-
-        @Nullable
-        private List<String> address;
-
-        @Nullable
-        private String prefix;
-
-        @Nullable
-        private String country;
-
-        @Nullable
-        public String getManufacturer() {
-            return manufacturer;
-        }
-
-        public DataDetails setManufacturer(@Nullable String manufacturer) {
-            this.manufacturer = manufacturer;
-            return this;
-        }
-
-        @Nullable
-        public List<String> getAddress() {
-            return address;
-        }
-
-        public DataDetails setAddress(@Nullable List<String> address) {
-            this.address = address;
-            return this;
-        }
-
-        @Nullable
-        public String getPrefix() {
-            return prefix;
-        }
-
-        public DataDetails setPrefix(@Nullable String prefix) {
-            this.prefix = prefix;
-            return this;
-        }
-
-        @Nullable
-        public String getCountry() {
-            return country;
-        }
-
-        public DataDetails setCountry(@Nullable String country) {
-            this.country = country;
-            return this;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            DataDetails that = (DataDetails) o;
-
-            if (manufacturer != null ? !manufacturer.equals(that.manufacturer) : that.manufacturer != null)
-                return false;
-            if (address != null ? !address.equals(that.address) : that.address != null)
-                return false;
-            if (prefix != null ? !prefix.equals(that.prefix) : that.prefix != null) return false;
-            return country != null ? country.equals(that.country) : that.country == null;
-
-        }
-
-        @Override
-        public int hashCode() {
-            int result = manufacturer != null ? manufacturer.hashCode() : 0;
-            result = 31 * result + (address != null ? address.hashCode() : 0);
-            result = 31 * result + (prefix != null ? prefix.hashCode() : 0);
-            result = 31 * result + (country != null ? country.hashCode() : 0);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "DataDetails{" +
-                    "manufacturer='" + manufacturer + '\'' +
-                    ", address=" + address +
-                    ", prefix='" + prefix + '\'' +
-                    ", country='" + country + '\'' +
-                    '}';
-        }
+    public DataDetails setAddress(@Nullable List<String> address) {
+      this.address = address;
+      return this;
     }
 
-    public boolean isNone() {
-        return (data == null ||
-                ((data.getAddress() == null || data.getAddress().isEmpty()) &&
-                data.getCountry() == null &&
-                data.getManufacturer() == null &&
-                data.getPrefix() == null));
+    @Nullable public String getPrefix() {
+      return prefix;
     }
 
-    @Override
-    public String toString() {
-        return "MACOUIVendor{" +
-                "data='" + data + '\'' +
-                '}';
+    public DataDetails setPrefix(@Nullable String prefix) {
+      this.prefix = prefix;
+      return this;
     }
 
-    public String toCommandOutputString() {
-        return data == null ? "" :
-                "\n" +
-                "- manufacturer: " + data.getManufacturer() + "\n" +
-                "- address: " + (data.getAddress() != null ?
-                        Joiner.on(" , ").skipNulls().join(data.getAddress()) : "N/A") + "\n" +
-                "- country: " + data.getCountry() + "\n" +
-                "- prefix: " + data.getPrefix() ;
+    @Nullable public String getCountry() {
+      return country;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        MACOUIVendor that = (MACOUIVendor) o;
-
-        return data != null ? data.equals(that.data) : that.data == null;
-
+    public DataDetails setCountry(@Nullable String country) {
+      this.country = country;
+      return this;
     }
 
-    @Override
-    public int hashCode() {
-        return data != null ? data.hashCode() : 0;
+    @Override public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      DataDetails that = (DataDetails) o;
+
+      if (manufacturer != null ? !manufacturer.equals(that.manufacturer)
+          : that.manufacturer != null) {
+        return false;
+      }
+      if (address != null ? !address.equals(that.address) : that.address != null) return false;
+      if (prefix != null ? !prefix.equals(that.prefix) : that.prefix != null) return false;
+      return country != null ? country.equals(that.country) : that.country == null;
     }
+
+    @Override public int hashCode() {
+      int result = manufacturer != null ? manufacturer.hashCode() : 0;
+      result = 31 * result + (address != null ? address.hashCode() : 0);
+      result = 31 * result + (prefix != null ? prefix.hashCode() : 0);
+      result = 31 * result + (country != null ? country.hashCode() : 0);
+      return result;
+    }
+
+    @Override public String toString() {
+      return "DataDetails{"
+          + "manufacturer='"
+          + manufacturer
+          + '\''
+          + ", address="
+          + address
+          + ", prefix='"
+          + prefix
+          + '\''
+          + ", country='"
+          + country
+          + '\''
+          + '}';
+    }
+  }
 }

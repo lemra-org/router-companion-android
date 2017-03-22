@@ -25,61 +25,61 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".actions.ManageRouterAliasesActivity">
 
-    <!-- Search, should appear as action button -->
-    <item
-        android:id="@+id/router_aliases_list_refresh_search"
-        android:alphabeticShortcut="l"
-        android:icon="@drawable/ic_search_white_24dp"
-        android:orderInCategory="1"
-        android:title="@string/action_search"
-        app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="collapseActionView|ifRoom" />
+  <!-- Search, should appear as action button -->
+  <item
+      android:id="@+id/router_aliases_list_refresh_search"
+      android:alphabeticShortcut="l"
+      android:icon="@drawable/ic_search_white_24dp"
+      android:orderInCategory="1"
+      android:title="@string/action_search"
+      app:actionViewClass="android.support.v7.widget.SearchView"
+      app:showAsAction="collapseActionView|ifRoom"/>
 
-    <item
-        android:id="@+id/router_aliases_list_refresh"
-        android:alphabeticShortcut="r"
-        android:icon="@drawable/ic_refresh_white_24dp"
-        android:orderInCategory="2"
-        android:title="@string/menuitem_refresh"
-        app:showAsAction="ifRoom"/>
+  <item
+      android:id="@+id/router_aliases_list_refresh"
+      android:alphabeticShortcut="r"
+      android:icon="@drawable/ic_refresh_white_24dp"
+      android:orderInCategory="2"
+      android:title="@string/menuitem_refresh"
+      app:showAsAction="ifRoom"/>
 
-    <item
-        android:id="@+id/router_aliases_add"
-        android:alphabeticShortcut="a"
-        android:icon="@drawable/ic_router_add"
-        android:orderInCategory="3"
-        android:title="Add Alias"
-        app:showAsAction="ifRoom"/>
+  <item
+      android:id="@+id/router_aliases_add"
+      android:alphabeticShortcut="a"
+      android:icon="@drawable/ic_router_add"
+      android:orderInCategory="3"
+      android:title="Add Alias"
+      app:showAsAction="ifRoom"/>
 
-    <item
-        android:id="@+id/router_aliases_import"
-        android:alphabeticShortcut="I"
-        android:icon="@drawable/ic_action_action_settings_power"
-        android:orderInCategory="4"
-        android:title="Import"
-        app:showAsAction="never" />
+  <item
+      android:id="@+id/router_aliases_import"
+      android:alphabeticShortcut="I"
+      android:icon="@drawable/ic_action_action_settings_power"
+      android:orderInCategory="4"
+      android:title="Import"
+      app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/router_aliases_export_all"
-        android:alphabeticShortcut="E"
-        android:icon="@drawable/ic_action_action_restore"
-        android:orderInCategory="5"
-        android:title="Export all"
-        app:showAsAction="never"/>
+  <item
+      android:id="@+id/router_aliases_export_all"
+      android:alphabeticShortcut="E"
+      android:icon="@drawable/ic_action_action_restore"
+      android:orderInCategory="5"
+      android:title="Export all"
+      app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/router_aliases_clear_all"
-        android:alphabeticShortcut="C"
-        android:icon="@drawable/ic_action_action_system_update_tv"
-        android:orderInCategory="6"
-        android:title="Erase all"
-        app:showAsAction="never" />
+  <item
+      android:id="@+id/router_aliases_clear_all"
+      android:alphabeticShortcut="C"
+      android:icon="@drawable/ic_action_action_system_update_tv"
+      android:orderInCategory="6"
+      android:title="Erase all"
+      app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/action_feedback"
-        android:alphabeticShortcut="f"
-        android:orderInCategory="7"
-        android:title="@string/send_feedback"
-        app:showAsAction="never" />
+  <item
+      android:id="@+id/action_feedback"
+      android:alphabeticShortcut="f"
+      android:orderInCategory="7"
+      android:title="@string/send_feedback"
+      app:showAsAction="never"/>
 
 </menu>

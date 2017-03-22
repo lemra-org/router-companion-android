@@ -23,35 +23,35 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    //Workaround to have the 'com.android.application' plugin with any version of Gradle (other than the expected one)
-    //see https://github.com/gradle/gradle-script-kotlin/issues/2#issuecomment-222120296
-    System.properties['com.android.build.gradle.overrideVersionCheck'] = 'true'
-    repositories {
-        jcenter()
-//        maven { url 'http://www.tracepot.com/maven' }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-//        classpath 'com.tracepot.plugins.gradle:tracepot:1.+'
-        classpath 'com.github.triplet.gradle:play-publisher:1.1.4'
-        classpath 'me.tatarka:gradle-retrolambda:3.2.5'
+  //Workaround to have the 'com.android.application' plugin with any version of Gradle (other than the expected one)
+  //see https://github.com/gradle/gradle-script-kotlin/issues/2#issuecomment-222120296
+  System.properties['com.android.build.gradle.overrideVersionCheck'] = 'true'
+  repositories {
+    jcenter()
+    //        maven { url 'http://www.tracepot.com/maven' }
+  }
+  dependencies {
+    classpath 'com.android.tools.build:gradle:2.3.0'
+    classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+    //        classpath 'com.tracepot.plugins.gradle:tracepot:1.+'
+    classpath 'com.github.triplet.gradle:play-publisher:1.1.4'
+    classpath 'me.tatarka:gradle-retrolambda:3.2.5'
 
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files// Add this line
-        classpath 'com.google.gms:google-services:3.0.0'
-    }
+    // NOTE: Do not place your application dependencies here; they belong
+    // in the individual module build.gradle files// Add this line
+    classpath 'com.google.gms:google-services:3.0.0'
+  }
 }
 
 allprojects {
-    repositories {
-        jcenter()
-        maven { url "https://jitpack.io" }
-    }
+  repositories {
+    jcenter()
+    maven { url "https://jitpack.io" }
+  }
 }
 
 subprojects {
-    repositories {
-        maven { url 'http://clojars.org/repo' }
-    }
+  repositories {
+    maven { url 'http://clojars.org/repo' }
+  }
 }

@@ -29,166 +29,168 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="org.rm3l.router_companion.tasker"
-    android:installLocation="internalOnly">
+    android:installLocation="internalOnly"
+    package="org.rm3l.router_companion.tasker">
 
-    <uses-sdk android:minSdkVersion="15"
-        tools:overrideLibrary="com.readystatesoftware.chuck"/>
+  <uses-sdk
+      android:minSdkVersion="15"
+      tools:overrideLibrary="com.readystatesoftware.chuck"/>
 
-    <!-- "Normal Permission" -->
-    <!-- To connect to the router, and donation providers such as Flattr, as well as Feedback Server -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- To get DhcpInfo, so as to default forms with the current gateway -->
-    <!-- "Normal Permission" -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- "Normal Permission" -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+  <!-- "Normal Permission" -->
+  <!-- To connect to the router, and donation providers such as Flattr, as well as Feedback Server -->
+  <uses-permission android:name="android.permission.INTERNET"/>
+  <!-- To get DhcpInfo, so as to default forms with the current gateway -->
+  <!-- "Normal Permission" -->
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+  <!-- "Normal Permission" -->
+  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
-    <!-- Although many of these default to true, some users with modified ROMs have trouble seeing apps unless these attributes are explicitly set. -->
-    <supports-screens
-        android:anyDensity="true"
-        android:largeScreens="true"
-        android:normalScreens="true"
-        android:smallScreens="true"
-        android:xlargeScreens="true" />
+  <!-- Although many of these default to true, some users with modified ROMs have trouble seeing apps unless these attributes are explicitly set. -->
+  <supports-screens
+      android:anyDensity="true"
+      android:largeScreens="true"
+      android:normalScreens="true"
+      android:smallScreens="true"
+      android:xlargeScreens="true"/>
 
-    <!-- When hardware acceleration is enabled, the RAM memory usage of the app is
-         significantly increased as soon as any UI is displayed. To reduce the memory
-         usage of a plug-in which is primarily a background app, either (1) hardware
-         acceleration should be disabled or (2) the plug-in's BroadcastReceiver (and any
-         applicable Service) should be put into a different process. This example plug-in
-         creates two processes. -->
-    <application
-        android:name="org.rm3l.router_companion.tasker.RouterCompanionTaskerPluginApplication"
-        android:allowBackup="true"
-        android:fullBackupContent="true"
-        android:fullBackupOnly="true"
-        android:hardwareAccelerated="true"
+  <!-- When hardware acceleration is enabled, the RAM memory usage of the app is
+       significantly increased as soon as any UI is displayed. To reduce the memory
+       usage of a plug-in which is primarily a background app, either (1) hardware
+       acceleration should be disabled or (2) the plug-in's BroadcastReceiver (and any
+       applicable Service) should be put into a different process. This example plug-in
+       creates two processes. -->
+  <application
+      android:name="org.rm3l.router_companion.tasker.RouterCompanionTaskerPluginApplication"
+      android:allowBackup="true"
+      android:fullBackupContent="true"
+      android:fullBackupOnly="true"
+      android:hardwareAccelerated="true"
+      android:icon="@mipmap/ic_launcher"
+      android:label="@string/app_name"
+      android:supportsRtl="true"
+      android:theme="@style/AppThemeLight"
+      tools:replace="android:theme,android:icon">
+
+    <meta-data
+        android:name="com.google.android.backup.api_key"
+        android:value="AEdPqrEAAAAIGmevcMnL1lX5G78jYtrFp51kI5hW34uIxSxCgQ"/>
+
+    <provider
+        android:name="android.support.v4.content.FileProvider"
+        android:authorities="org.rm3l.ddwrt.tasker.fileprovider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+      <meta-data
+          android:name="android.support.FILE_PROVIDER_PATHS"
+          android:resource="@xml/file_paths"/>
+    </provider>
+
+    <activity
+        android:name="org.rm3l.router_companion.tasker.ui.activity.main.RouterCompanionTaskerPluginLaunchActivity"
+        android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+        android:launchMode="singleTop"
+        android:windowSoftInputMode="adjustResize">
+
+      <intent-filter>
+        <action android:name="android.intent.action.APP_ERROR"/>
+        <action android:name="android.intent.action.MAIN"/>
+
+        <category android:name="android.intent.category.LAUNCHER"/>
+        <!--<action android:name="android.intent.action.SEARCH" />-->
+      </intent-filter>
+
+      <!--<meta-data-->
+      <!--android:name="android.app.searchable"-->
+      <!--android:resource="@xml/searchable" />-->
+
+    </activity>
+
+    <!--
+         If this plug-in does not stand alone (e.g. it is only a plug-in for Locale and does not
+         have a Launcher Activity), including this in the manifest will help when users try to
+         open the app directly from the app store.
+    -->
+    <!--<activity-->
+    <!--android:name="com.twofortyfouram.locale.sdk.client.ui.activity.InfoActivity"-->
+    <!--android:exported="true"-->
+    <!--tools:ignore="ExportedActivity">-->
+    <!--<intent-filter>-->
+    <!--<action android:name="android.intent.action.MAIN"/>-->
+
+    <!--<category android:name="android.intent.category.INFO"/>-->
+    <!--</intent-filter>-->
+    <!--</activity>-->
+
+    <activity
+        android:name="org.rm3l.router_companion.tasker.ui.activity.action.ActionEditActivity"
+        android:exported="false"
+        android:label="@string/plugin_name"
+        android:uiOptions="splitActionBarWhenNarrow"
+        android:windowSoftInputMode="adjustResize"
+        tools:ignore="UnusedAttribute">
+    </activity>
+    <!--
+         This is the "edit" Activity. Note that the host will reject plug-in
+         Activities for the following reasons:
+             - Missing "android:label=[...]"
+             - Missing "android:icon=[...]"
+             - The Activity isn't exported (e.g. android:exported="false")
+             - The Activity isn't enabled (e.g. android:enabled="false")
+             - The Activity requires permissions not available to the host
+    -->
+    <activity-alias
+        android:name=".ui.activity.PluginActivity"
+        android:exported="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/AppThemeLight"
-        tools:replace="android:theme,android:icon" >
+        android:label="@string/plugin_name"
+        android:targetActivity="org.rm3l.router_companion.tasker.ui.activity.action.ActionEditActivity"
+        tools:ignore="ExportedActivity">
+      <!-- this Intent filter allows the plug-in to be discovered by the host. -->
+      <intent-filter>
+        <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING"/>
+      </intent-filter>
+    </activity-alias>
+    <!--<activity-alias-->
+    <!--android:name=".ui.activity.PluginActivity2"-->
+    <!--android:exported="true"-->
+    <!--android:icon="@mipmap/ic_launcher"-->
+    <!--android:label="Toast 2 Action"-->
+    <!--android:targetActivity="org.rm3l.ddwrt.tasker.ui.activity.action.ActionEditActivity"-->
+    <!--tools:ignore="ExportedActivity">-->
+    <!--&lt;!&ndash; this Intent filter allows the plug-in to be discovered by the host. &ndash;&gt;-->
+    <!--<intent-filter>-->
+    <!--<action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING"/>-->
+    <!--</intent-filter>-->
+    <!--</activity-alias>-->
 
-        <meta-data
-            android:name="com.google.android.backup.api_key"
-            android:value="AEdPqrEAAAAIGmevcMnL1lX5G78jYtrFp51kI5hW34uIxSxCgQ" />
+    <!--
+         This is the "fire" BroadcastReceiver. Note that the host will reject plug-in
+         BroadcastReceivers for the following reasons:
+            - The BroadcastReceiver isn't exported (e.g. android:exported="false")
+            - The BroadcastReceiver isn't enabled (e.g. android:enabled="false")
+            - The BroadcastReceiver requires permissions not available to the host
+            - There are multiple BroadcastReceivers for com.twofortyfouram.locale.intent.action.FIRE_SETTING
+    -->
+    <receiver
+        android:name="org.rm3l.router_companion.tasker.receiver.action.ActionFireReceiver"
+        android:exported="true"
+        android:process=":background"
+        tools:ignore="ExportedReceiver">
 
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="org.rm3l.ddwrt.tasker.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true" >
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
+      <!-- this Intent filter allows the plug-in to discovered by the host. -->
+      <intent-filter>
+        <action android:name="com.twofortyfouram.locale.intent.action.FIRE_SETTING"/>
+      </intent-filter>
+    </receiver>
 
-        <activity
-            android:name="org.rm3l.router_companion.tasker.ui.activity.main.RouterCompanionTaskerPluginLaunchActivity"
-            android:launchMode="singleTop"
-            android:windowSoftInputMode="adjustResize"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" >
+    <service
+        android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
+        android:enabled="true"/>
 
-            <intent-filter>
-                <action android:name="android.intent.action.APP_ERROR" />
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-                <!--<action android:name="android.intent.action.SEARCH" />-->
-            </intent-filter>
+    <meta-data
+        android:name="io.fabric.ApiKey"
+        android:value="bf40a9722838d1959a1a770881926ee96e4b94f1"/>
+  </application>
 
-            <!--<meta-data-->
-                <!--android:name="android.app.searchable"-->
-                <!--android:resource="@xml/searchable" />-->
-
-        </activity>
-
-        <!--
-             If this plug-in does not stand alone (e.g. it is only a plug-in for Locale and does not
-             have a Launcher Activity), including this in the manifest will help when users try to
-             open the app directly from the app store.
-        -->
-        <!--<activity-->
-            <!--android:name="com.twofortyfouram.locale.sdk.client.ui.activity.InfoActivity"-->
-            <!--android:exported="true"-->
-            <!--tools:ignore="ExportedActivity">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN"/>-->
-
-                <!--<category android:name="android.intent.category.INFO"/>-->
-            <!--</intent-filter>-->
-        <!--</activity>-->
-
-        <activity
-            android:name="org.rm3l.router_companion.tasker.ui.activity.action.ActionEditActivity"
-            android:exported="false"
-            android:label="@string/plugin_name"
-            android:uiOptions="splitActionBarWhenNarrow"
-            android:windowSoftInputMode="adjustResize"
-            tools:ignore="UnusedAttribute">
-        </activity>
-        <!--
-             This is the "edit" Activity. Note that the host will reject plug-in
-             Activities for the following reasons:
-                 - Missing "android:label=[...]"
-                 - Missing "android:icon=[...]"
-                 - The Activity isn't exported (e.g. android:exported="false")
-                 - The Activity isn't enabled (e.g. android:enabled="false")
-                 - The Activity requires permissions not available to the host
-        -->
-        <activity-alias
-            android:name=".ui.activity.PluginActivity"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher"
-            android:label="@string/plugin_name"
-            android:targetActivity="org.rm3l.router_companion.tasker.ui.activity.action.ActionEditActivity"
-            tools:ignore="ExportedActivity">
-            <!-- this Intent filter allows the plug-in to be discovered by the host. -->
-            <intent-filter>
-                <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING"/>
-            </intent-filter>
-        </activity-alias>
-        <!--<activity-alias-->
-            <!--android:name=".ui.activity.PluginActivity2"-->
-            <!--android:exported="true"-->
-            <!--android:icon="@mipmap/ic_launcher"-->
-            <!--android:label="Toast 2 Action"-->
-            <!--android:targetActivity="org.rm3l.ddwrt.tasker.ui.activity.action.ActionEditActivity"-->
-            <!--tools:ignore="ExportedActivity">-->
-            <!--&lt;!&ndash; this Intent filter allows the plug-in to be discovered by the host. &ndash;&gt;-->
-            <!--<intent-filter>-->
-                <!--<action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING"/>-->
-            <!--</intent-filter>-->
-        <!--</activity-alias>-->
-
-        <!--
-             This is the "fire" BroadcastReceiver. Note that the host will reject plug-in
-             BroadcastReceivers for the following reasons:
-                - The BroadcastReceiver isn't exported (e.g. android:exported="false")
-                - The BroadcastReceiver isn't enabled (e.g. android:enabled="false")
-                - The BroadcastReceiver requires permissions not available to the host
-                - There are multiple BroadcastReceivers for com.twofortyfouram.locale.intent.action.FIRE_SETTING
-        -->
-        <receiver
-            android:name="org.rm3l.router_companion.tasker.receiver.action.ActionFireReceiver"
-            android:exported="true"
-            android:process=":background"
-            tools:ignore="ExportedReceiver">
-
-            <!-- this Intent filter allows the plug-in to discovered by the host. -->
-            <intent-filter>
-                <action android:name="com.twofortyfouram.locale.intent.action.FIRE_SETTING"/>
-            </intent-filter>
-        </receiver>
-
-        <service
-            android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
-            android:enabled="true" />
-
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="bf40a9722838d1959a1a770881926ee96e4b94f1" />
-    </application>
-
-    <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

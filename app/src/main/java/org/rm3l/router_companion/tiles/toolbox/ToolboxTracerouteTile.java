@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.actions.AbstractRouterAction;
 import org.rm3l.router_companion.actions.TracerouteFromRouterAction;
@@ -33,35 +32,29 @@ import org.rm3l.router_companion.resources.conn.Router;
 
 public class ToolboxTracerouteTile extends AbstractToolboxTile {
 
-    public ToolboxTracerouteTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
-        super(parentFragment, arguments, router);
+  public ToolboxTracerouteTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
+      @Nullable Router router) {
+    super(parentFragment, arguments, router);
+  }
 
-    }
+  @Nullable @Override protected Integer getInfoText() {
+    return R.string.traceroute_info;
+  }
 
-    @Nullable
-    @Override
-    protected Integer getInfoText() {
-        return R.string.traceroute_info;
-    }
+  @Override protected int getEditTextHint() {
+    return R.string.traceroute_edit_text_hint;
+  }
 
-    @Override
-    protected int getEditTextHint() {
-        return R.string.traceroute_edit_text_hint;
-    }
+  @Override protected int getSubmitButtonText() {
+    return R.string.toolbox_traceroute;
+  }
 
-    @Override
-    protected int getSubmitButtonText() {
-        return R.string.toolbox_traceroute;
-    }
+  @Override protected int getTileTitle() {
+    return R.string.traceroute;
+  }
 
-    @Override
-    protected int getTileTitle() {
-        return R.string.traceroute;
-    }
-
-    @NonNull
-    @Override
-    protected AbstractRouterAction<?> getRouterAction(String textToFind) {
-        return new TracerouteFromRouterAction(mRouter, mParentFragmentActivity, mRouterActionListener, mGlobalPreferences, textToFind);
-    }
+  @NonNull @Override protected AbstractRouterAction<?> getRouterAction(String textToFind) {
+    return new TracerouteFromRouterAction(mRouter, mParentFragmentActivity, mRouterActionListener,
+        mGlobalPreferences, textToFind);
+  }
 }

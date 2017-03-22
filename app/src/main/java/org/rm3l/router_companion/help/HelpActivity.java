@@ -1,7 +1,6 @@
 package org.rm3l.router_companion.help;
 
 import android.support.annotation.NonNull;
-
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.web.WebActivity;
@@ -11,21 +10,15 @@ import org.rm3l.router_companion.web.WebActivity;
  */
 public class HelpActivity extends WebActivity {
 
-    @Override
-    protected CharSequence getTitleStr() {
-        return null;
-    }
+  @Override protected CharSequence getTitleStr() {
+    return null;
+  }
 
-    @Override
-    protected int getTitleResId() {
-        return R.string.help;
-    }
+  @Override protected int getTitleResId() {
+    return R.string.help;
+  }
 
-    @NonNull
-    @Override
-    public String getUrl() {
-        return RouterCompanionAppConstants.REMOTE_HELP_WEBSITE;
-    }
-
-
+  @NonNull @Override public String getUrl() {
+    return RouterCompanionAppConstants.REMOTE_HELP_WEBSITE;
+  }
 }

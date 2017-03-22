@@ -22,18 +22,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- Real-time graphs -->
-    <item
-        android:id="@+id/tile_status_bandwidth_realtime_graphs"
-        android:checkable="true"
-        android:checked="true"
-        android:orderInCategory="1"
-        android:title="@string/rt_graphs"
-        app:showAsAction="never" />
+  <!-- Real-time graphs -->
+  <item
+      android:id="@+id/tile_status_bandwidth_realtime_graphs"
+      android:checkable="true"
+      android:checked="true"
+      android:orderInCategory="1"
+      android:title="@string/rt_graphs"
+      app:showAsAction="never"/>
 
-    <group
-        android:id="@+id/tile_status_bandwidth_iface_selection"
-        android:checkableBehavior="single"
-        android:orderInCategory="2" />
+  <group
+      android:id="@+id/tile_status_bandwidth_iface_selection"
+      android:checkableBehavior="single"
+      android:orderInCategory="2"/>
 
 </menu>

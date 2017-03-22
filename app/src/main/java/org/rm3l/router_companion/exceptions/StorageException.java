@@ -7,18 +7,18 @@ import android.support.annotation.Nullable;
  */
 public class StorageException extends DDWRTCompanionException {
 
-    public StorageException() {
-    }
+  public StorageException() {
+  }
 
-    public StorageException(@Nullable String detailMessage) {
-        super(detailMessage);
-    }
+  public StorageException(@Nullable String detailMessage) {
+    super(detailMessage);
+  }
 
-    public StorageException(@Nullable String detailMessage, @Nullable Throwable throwable) {
-        super(detailMessage, throwable);
-    }
+  public StorageException(@Nullable String detailMessage, @Nullable Throwable throwable) {
+    super(detailMessage, throwable);
+  }
 
-    public StorageException(@Nullable Throwable throwable) {
-        super(throwable);
-    }
+  public StorageException(@Nullable Throwable throwable) {
+    super(throwable);
+  }
 }

@@ -23,34 +23,34 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/tile_wan_access_policy_enable"
-        android:title="Enable"
-        app:showAsAction="ifRoom"/>
+  <item
+      android:id="@+id/tile_wan_access_policy_enable"
+      android:title="Enable"
+      app:showAsAction="ifRoom"/>
 
 
-    <item
-        android:id="@+id/tile_wan_access_policy_disable"
-        android:title="Disable"
-        app:showAsAction="ifRoom"/>
+  <item
+      android:id="@+id/tile_wan_access_policy_disable"
+      android:title="Disable"
+      app:showAsAction="ifRoom"/>
 
-    <item
-        android:id="@+id/tile_wan_access_policy_toggle"
-        android:title="Toggle"
-        android:visible="false"
-        app:showAsAction="ifRoom"/>
+  <item
+      android:id="@+id/tile_wan_access_policy_toggle"
+      android:title="Toggle"
+      android:visible="false"
+      app:showAsAction="ifRoom"/>
 
-    <!-- TODO Hidden for now -->
-    <item
-        android:id="@+id/tile_wan_access_policy_edit"
-        android:visible="false"
-        android:title="Edit"
-        app:showAsAction="ifRoom"/>
+  <!-- TODO Hidden for now -->
+  <item
+      android:id="@+id/tile_wan_access_policy_edit"
+      android:title="Edit"
+      android:visible="false"
+      app:showAsAction="ifRoom"/>
 
-    <item
-        android:id="@+id/tile_wan_access_policy_remove"
-        android:title="Delete"
-        app:showAsAction="ifRoom" />
+  <item
+      android:id="@+id/tile_wan_access_policy_remove"
+      android:title="Delete"
+      app:showAsAction="ifRoom"/>
 
 
 </menu>

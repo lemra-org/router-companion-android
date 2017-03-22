@@ -5,9 +5,9 @@ package org.rm3l.router_companion.common;
  */
 public final class Constants {
 
-    private Constants() {
-        throw new UnsupportedOperationException();
-    }
+  public static final String PUSHER_APP_KEY = \"fake-key\";
 
-    public static final String PUSHER_APP_KEY = \"fake-key\";
+  private Constants() {
+    throw new UnsupportedOperationException();
+  }
 }

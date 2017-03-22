@@ -22,13 +22,10 @@
 package org.rm3l.router_companion.tiles.status.wireless.sort;
 
 import android.support.annotation.NonNull;
-
-import org.rm3l.router_companion.resources.Device;
-
 import java.util.Set;
+import org.rm3l.router_companion.resources.Device;
 
 public interface ClientsSortingVisitor {
 
-    @NonNull
-    Set<Device> visit(@NonNull final Set<Device> devices);
+  @NonNull Set<Device> visit(@NonNull final Set<Device> devices);
 }

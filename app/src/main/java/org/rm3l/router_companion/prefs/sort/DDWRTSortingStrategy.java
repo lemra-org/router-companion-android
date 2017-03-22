@@ -24,37 +24,28 @@ package org.rm3l.router_companion.prefs.sort;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import java.util.Comparator;
 
 /**
  * DDWRT-style order
  */
 public class DDWRTSortingStrategy extends SortingStrategy {
-    @NonNull
-    @Override
-    public String getDisplayName() {
-        return "DD-WRT style";
-    }
+  @NonNull @Override public String getDisplayName() {
+    return "DD-WRT style";
+  }
 
-    @NonNull
-    @Override
-    public String getShortDescription() {
-        return "Same order as in DD-WRT Web Gui";
-    }
+  @NonNull @Override public String getShortDescription() {
+    return "Same order as in DD-WRT Web Gui";
+  }
 
-    @Nullable
-    @Override
-    protected Comparator<String> getComparator() {
-        return null;
-    }
+  @Nullable @Override protected Comparator<String> getComparator() {
+    return null;
+  }
 
-    @Override
-    protected boolean doCompare() {
-        /**
-         * Already in the order we want
-         */
-        return false;
-    }
-
+  @Override protected boolean doCompare() {
+    /**
+     * Already in the order we want
+     */
+    return false;
+  }
 }

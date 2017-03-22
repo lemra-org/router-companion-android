@@ -24,27 +24,21 @@ package org.rm3l.router_companion.fragments.status;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import org.rm3l.router_companion.fragments.AbstractBaseFragment;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.status.bandwidth.IfacesBandwidthMonitoringTile;
 import org.rm3l.router_companion.tiles.status.bandwidth.IfacesTile;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 /**
  *
  */
 public class StatusBandwidthFragment extends AbstractBaseFragment<Collection<DDWRTTile>> {
 
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Arrays.<DDWRTTile>asList(
-                new IfacesTile(this, savedInstanceState, router),
-                new IfacesBandwidthMonitoringTile(this, savedInstanceState, router));
-    }
-
+  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    return Arrays.<DDWRTTile>asList(new IfacesTile(this, savedInstanceState, router),
+        new IfacesBandwidthMonitoringTile(this, savedInstanceState, router));
+  }
 }

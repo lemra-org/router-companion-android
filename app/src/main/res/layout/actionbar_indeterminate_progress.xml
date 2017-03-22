@@ -24,11 +24,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="56dp"
     android:layout_height="wrap_content"
-    android:minWidth="56dp">
+    android:minWidth="56dp"
+    >
 
-    <ProgressBar
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_gravity="center" />
+  <ProgressBar
+      android:layout_width="32dp"
+      android:layout_height="32dp"
+      android:layout_gravity="center"
+      />
 
 </FrameLayout>

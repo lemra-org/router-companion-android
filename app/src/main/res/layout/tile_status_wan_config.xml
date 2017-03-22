@@ -25,258 +25,288 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
 
-    <RelativeLayout
-        android:id="@+id/tile_status_wan_config_hdr"
-        android:layout_width="match_parent"
+  <RelativeLayout
+      android:id="@+id/tile_status_wan_config_hdr"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingTop="4.0dip"
+      >
+
+    <TextView
+        android:id="@+id/tile_status_wan_config_title"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="4.0dip">
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/tile_status_wan_config_menu"
+        android:layout_toStartOf="@+id/tile_status_wan_config_menu"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/wan_config_configuration"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold"
+        />
 
-        <TextView
-            android:id="@+id/tile_status_wan_config_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="@string/wan_config_configuration"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_toStartOf="@+id/tile_status_wan_config_menu"
-            android:layout_toLeftOf="@+id/tile_status_wan_config_menu"
-            android:textStyle="bold" />
+    <ImageButton
+        android:id="@+id/tile_status_wan_config_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/menu"
+        android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
+        android:visibility="gone"
+        />
 
-        <ImageButton
-            android:id="@+id/tile_status_wan_config_menu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/menu"
-            android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
-            android:visibility="gone"/>
+  </RelativeLayout>
 
-    </RelativeLayout>
+  <ProgressBar
+      android:id="@+id/tile_progress_bar"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="8.0dip"
+      android:layout_marginTop="8.0dip"
+      android:indeterminate="false"
+      android:indeterminateOnly="false"
+      style="?android:attr/progressBarStyleHorizontal"
+      />
+
+  <!-- Error message placeholder -->
+  <TextView
+      android:id="@+id/tile_status_wan_config_error"
+      android:layout_width="300dp"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:ellipsize="end"
+      android:gravity="center"
+      android:maxLines="1"
+      android:text="@string/error_placeholder"
+      android:textColor="@color/ddwrt_purple"
+      android:textIsSelectable="true"
+      android:textStyle="bold"
+      android:visibility="gone"
+      />
+
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      >
+
+    <GridLayout
+        android:id="@+id/tile_status_wan_config_gridLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="2"
+        android:visibility="gone"
+        >
+
+      <!-- Connection Type (DHCP, Static, ...) -->
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginEnd="8.0dip"
+          android:layout_marginRight="8.0dip"
+          android:text="@string/wan_config_connection_type"
+          android:textStyle="bold"
+          />
+      <TextView
+          android:id="@+id/tile_status_wan_config_connection_type"
+          android:layout_width="0dip"
+          android:layout_gravity="fill_horizontal"
+          android:text="@string/loading"
+          android:textIsSelectable="true"
+          />
+
+      <!-- 3G Signal (displayed only if connection type is 3g) -->
+      <TextView
+          android:id="@+id/tile_status_wan_config_3g_signal_field"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginEnd="8.0dip"
+          android:layout_marginRight="8.0dip"
+          android:text="@string/wan_config_connection_type"
+          android:textStyle="bold"
+          android:visibility="gone"
+          />
+      <TextView
+          android:id="@+id/tile_status_wan_config_3g_signal"
+          android:layout_width="0dip"
+          android:layout_gravity="fill_horizontal"
+          android:text="@string/loading"
+          android:textIsSelectable="true"
+          android:visibility="gone"
+          />
+
+      <!-- Connection Uptime -->
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginEnd="8.0dip"
+          android:layout_marginRight="8.0dip"
+          android:text="@string/wan_config_connection_uptime"
+          android:textStyle="bold"
+          />
+      <TextView
+          android:id="@+id/tile_status_wan_config_connection_uptime"
+          android:layout_width="0dip"
+          android:layout_gravity="fill_horizontal"
+          android:text="@string/loading"
+          android:textIsSelectable="true"
+          />
+
+      <!-- WAN MAC -->
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginEnd="8.0dip"
+          android:layout_marginRight="8.0dip"
+          android:text="@string/wan_config_wan_mac"
+          android:textStyle="bold"
+          />
+      <TextView
+          android:id="@+id/tile_status_wan_config_wan_mac"
+          android:layout_width="0dip"
+          android:layout_gravity="fill_horizontal"
+          android:text="@string/loading"
+          android:textIsSelectable="true"
+          />
+
+      <!-- WAN IP -->
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginEnd="8.0dip"
+          android:layout_marginRight="8.0dip"
+          android:text="@string/wan_config_wan_ip"
+          android:textStyle="bold"
+          />
+      <TextView
+          android:id="@+id/tile_status_wan_config_wan_ip"
+          android:layout_width="0dip"
+          android:layout_gravity="fill_horizontal"
+          android:text="@string/loading"
+          android:textIsSelectable="true"
+          />
+
+
+      <!-- WAN Subnet Mask -->
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginEnd="8.0dip"
+          android:layout_marginRight="8.0dip"
+          android:text="@string/wan_config_subnet_mask"
+          android:textStyle="bold"
+          />
+      <TextView
+          android:id="@+id/tile_status_wan_config_subnet_mask"
+          android:layout_width="0dip"
+          android:layout_gravity="fill_horizontal"
+          android:text="@string/loading"
+          android:textIsSelectable="true"
+          />
+
+      <!-- GW -->
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginEnd="8.0dip"
+          android:layout_marginRight="8.0dip"
+          android:text="@string/wan_config_gateway"
+          android:textStyle="bold"
+          />
+      <TextView
+          android:id="@+id/tile_status_wan_config_subnet_gateway"
+          android:layout_width="0dip"
+          android:layout_gravity="fill_horizontal"
+          android:text="@string/loading"
+          android:textIsSelectable="true"
+          />
+
+      <!-- Public IP -->
+      <TextView
+          android:id="@+id/tile_status_wan_config_internet_ip_title"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginEnd="8.0dip"
+          android:layout_marginRight="8.0dip"
+          android:text="Public IP"
+          android:textStyle="bold"
+          />
+      <TextView
+          android:id="@+id/tile_status_wan_config_internet_ip"
+          android:layout_width="0dip"
+          android:layout_gravity="fill_horizontal"
+          android:text="@string/loading"
+          android:textIsSelectable="true"
+          />
+
+      <!-- Reverse DNS Record (PTR) -->
+      <TextView
+          android:id="@+id/tile_status_wan_config_rdns_title"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginEnd="8.0dip"
+          android:layout_marginRight="8.0dip"
+          android:text="Reverse DNS (PTR)"
+          android:textStyle="bold"
+          />
+      <TextView
+          android:id="@+id/tile_status_wan_config_rdns"
+          android:layout_width="0dip"
+          android:layout_gravity="fill_horizontal"
+          android:text="@string/loading"
+          android:textIsSelectable="true"
+          />
+
+      <!-- Comma-separated list of DNSs -->
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginEnd="8.0dip"
+          android:layout_marginRight="8.0dip"
+          android:text="@string/wan_config_dns"
+          android:textStyle="bold"
+          />
+      <TextView
+          android:id="@+id/tile_status_wan_config_dns"
+          android:layout_width="0dip"
+          android:layout_gravity="fill_horizontal"
+          android:text="@string/loading"
+          android:textIsSelectable="true"
+          />
+
+    </GridLayout>
 
     <ProgressBar
-        android:id="@+id/tile_progress_bar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
+        android:id="@+id/tile_status_wan_config_loading_view"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8.0dip"
-        android:layout_marginTop="8.0dip"
-        android:indeterminate="false"
-        android:indeterminateOnly="false" />
+        android:layout_centerInParent="true"
+        />
 
-    <!-- Error message placeholder -->
-    <TextView
-        android:textIsSelectable="true"
-        android:id="@+id/tile_status_wan_config_error"
-        android:layout_width="300dp"
+    <com.github.curioustechizen.ago.RelativeTimeTextView
+        android:id="@+id/tile_last_sync"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tile_status_wan_config_gridLayout"
+        android:layout_marginTop="5dp"
         android:ellipsize="end"
-        android:gravity="center"
+        android:gravity="end"
         android:maxLines="1"
-        android:text="@string/error_placeholder"
-        android:textColor="@color/ddwrt_purple"
-        android:textStyle="bold"
-        android:visibility="gone" />
+        android:text="@string/last_sync"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textIsSelectable="true"
+        android:textStyle="italic"
+        />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <GridLayout
-            android:id="@+id/tile_status_wan_config_gridLayout"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:visibility="gone">
-
-            <!-- Connection Type (DHCP, Static, ...) -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/wan_config_connection_type"
-                android:textStyle="bold"
-                android:layout_marginRight="8.0dip"
-                android:layout_marginEnd="8.0dip" />
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/tile_status_wan_config_connection_type"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading" />
-
-            <!-- 3G Signal (displayed only if connection type is 3g) -->
-            <TextView
-                android:id="@+id/tile_status_wan_config_3g_signal_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/wan_config_connection_type"
-                android:textStyle="bold"
-                android:visibility="gone"
-                android:layout_marginRight="8.0dip"
-                android:layout_marginEnd="8.0dip" />
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/tile_status_wan_config_3g_signal"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading"
-                android:visibility="gone" />
-
-            <!-- Connection Uptime -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/wan_config_connection_uptime"
-                android:textStyle="bold"
-                android:layout_marginRight="8.0dip"
-                android:layout_marginEnd="8.0dip" />
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/tile_status_wan_config_connection_uptime"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading" />
-
-            <!-- WAN MAC -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/wan_config_wan_mac"
-                android:textStyle="bold"
-                android:layout_marginRight="8.0dip"
-                android:layout_marginEnd="8.0dip" />
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/tile_status_wan_config_wan_mac"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading" />
-
-            <!-- WAN IP -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/wan_config_wan_ip"
-                android:textStyle="bold"
-                android:layout_marginRight="8.0dip"
-                android:layout_marginEnd="8.0dip" />
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/tile_status_wan_config_wan_ip"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading" />
-
-
-            <!-- WAN Subnet Mask -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/wan_config_subnet_mask"
-                android:textStyle="bold"
-                android:layout_marginRight="8.0dip"
-                android:layout_marginEnd="8.0dip"/>
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/tile_status_wan_config_subnet_mask"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading" />
-
-            <!-- GW -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/wan_config_gateway"
-                android:textStyle="bold"
-                android:layout_marginRight="8.0dip"
-                android:layout_marginEnd="8.0dip" />
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/tile_status_wan_config_subnet_gateway"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading" />
-
-            <!-- Public IP -->
-            <TextView
-                android:id="@+id/tile_status_wan_config_internet_ip_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Public IP"
-                android:textStyle="bold"
-                android:layout_marginRight="8.0dip"
-                android:layout_marginEnd="8.0dip" />
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/tile_status_wan_config_internet_ip"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading" />
-
-            <!-- Reverse DNS Record (PTR) -->
-            <TextView
-                android:id="@+id/tile_status_wan_config_rdns_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Reverse DNS (PTR)"
-                android:textStyle="bold"
-                android:layout_marginRight="8.0dip"
-                android:layout_marginEnd="8.0dip" />
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/tile_status_wan_config_rdns"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading" />
-
-            <!-- Comma-separated list of DNSs -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/wan_config_dns"
-                android:textStyle="bold"
-                android:layout_marginRight="8.0dip"
-                android:layout_marginEnd="8.0dip"  />
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/tile_status_wan_config_dns"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading" />
-
-        </GridLayout>
-
-        <ProgressBar
-            android:id="@+id/tile_status_wan_config_loading_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
-
-        <com.github.curioustechizen.ago.RelativeTimeTextView
-            android:textIsSelectable="true"
-            android:layout_marginTop="5dp"
-            android:id="@+id/tile_last_sync"
-            android:layout_width="wrap_content"
-            android:layout_below="@+id/tile_status_wan_config_gridLayout"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:textStyle="italic"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:layout_alignParentBottom="true"
-            android:ellipsize="end"
-            android:gravity="end"
-            android:maxLines="1"
-            android:text="@string/last_sync"/>
-
-    </RelativeLayout>
+  </RelativeLayout>
 
 </LinearLayout>

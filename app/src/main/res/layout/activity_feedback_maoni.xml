@@ -1,44 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/container"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/activity_feedback_email_input_layout"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <android.support.design.widget.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:id="@+id/activity_feedback_email"
-            android:hint="Your email address"
-            android:imeOptions="flagNoExtractUi"
-            android:maxLines="1"/>
-    </android.support.design.widget.TextInputLayout>
-
-    <LinearLayout
+  <android.support.design.widget.TextInputLayout
+      android:id="@+id/activity_feedback_email_input_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="@dimen/activity_vertical_margin"
+      >
+    <android.support.design.widget.TextInputEditText
+        android:id="@+id/activity_feedback_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/activity_feedback_router_information"
-        android:orientation="vertical"
-        android:layout_marginBottom="@dimen/activity_vertical_margin">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Router Information"/>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/activity_feedback_router_information_content"
-            android:inputType="textCapSentences|textMultiLine"
-            android:minLines="10"
-            android:isScrollContainer="true"
-            android:hint="If you are reporting a bug, please specify (unless auto-detected) your Router model and DD-WRT Build Number."/>
-    </LinearLayout>
+        android:hint="Your email address"
+        android:imeOptions="flagNoExtractUi"
+        android:inputType="textEmailAddress"
+        android:maxLines="1"
+        />
+  </android.support.design.widget.TextInputLayout>
+
+  <LinearLayout
+      android:id="@+id/activity_feedback_router_information"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="@dimen/activity_vertical_margin"
+      android:orientation="vertical"
+      >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Router Information"
+        />
+    <EditText
+        android:id="@+id/activity_feedback_router_information_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="If you are reporting a bug, please specify (unless auto-detected) your Router model and DD-WRT Build Number."
+        android:inputType="textCapSentences|textMultiLine"
+        android:isScrollContainer="true"
+        android:minLines="10"
+        />
+  </LinearLayout>
 
 
 </LinearLayout>

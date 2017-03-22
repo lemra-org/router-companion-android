@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Window;
 import android.view.WindowManager;
-
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.register.ManageRouterWizard;
@@ -25,82 +24,78 @@ import static org.rm3l.router_companion.mgmt.register.resources.RouterWizardActi
  */
 public abstract class MaterialWizardFragmentActivity extends FragmentActivity {
 
-    @Override
-    public final void onCreate(Bundle savedInstanceState) {
+  @Override public final void onCreate(Bundle savedInstanceState) {
 
-        if (isFullScreen()) {
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }
-
-        super.onCreate(savedInstanceState);
-
-        final Intent intent = getIntent();
-        if (intent != null) {
-            final String routerSelected = intent.getStringExtra(ROUTER_SELECTED);
-            if (routerSelected != null) {
-                final Router router = RouterManagementActivity.getDao(this).getRouter(routerSelected);
-                ColorUtils.setAppTheme(this, router != null ? router.getRouterFirmware() : null, false);
-            } else {
-                ColorUtils.setAppTheme(this, null, false);
-            }
-
-        } else {
-            ColorUtils.setAppTheme(this, null, false);
-        }
-
-//        if (ColorUtils.isThemeLight(this)) {
-//            //Light
-//            setTheme(R.style.AppThemeLight);
-////            getWindow().getDecorView()
-////                    .setBackgroundColor(ContextCompat.getColor(this, R.color.GhostWhite));
-//        } else {
-//            //Default is Dark
-//            setTheme(R.style.AppThemeDark);
-//        }
-
-        setContentView(getContentView());
-
-        final FragmentManager fragmentManager = getSupportFragmentManager();
-        final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        final ManageRouterWizard fragment = new ManageRouterWizard();
-        final Bundle args = new Bundle();
-        if (intent != null) {
-            final String routerSelected = intent.getStringExtra(ROUTER_SELECTED);
-            if (routerSelected != null) {
-                args.putString(ROUTER_SELECTED, routerSelected);
-            }
-            final int routerWizardAction = intent.getIntExtra(ROUTER_WIZARD_ACTION,
-                    RouterWizardAction.ADD);
-            if (routerWizardAction == RouterWizardAction.ADD) {
-                //#199: report app shortcut
-                AppShortcutUtils.reportShortcutUsed(this, "register-router");
-            }
-            fragment.setAction(routerWizardAction);
-            args.putInt(ROUTER_WIZARD_ACTION, routerWizardAction);
-        } else {
-            //By default, this is an "Add Router" operation
-            //#199: report app shortcut
-            AppShortcutUtils.reportShortcutUsed(this, "register-router");
-        }
-        fragment.setArguments(args);
-        fragmentTransaction.add(R.id.wizard_add_router_fragment_container,
-                fragment,
-                ManageRouterWizard.class.getSimpleName());
-        fragmentTransaction.commit();
+    if (isFullScreen()) {
+      requestWindowFeature(Window.FEATURE_NO_TITLE);
+      getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+          WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
-    @LayoutRes
-    protected abstract int getContentView();
+    super.onCreate(savedInstanceState);
 
-    /**
-     * Override to make activity full screen.
-     * @return whether to make activity full screen
-     */
-    protected boolean isFullScreen() {
-        return false;
+    final Intent intent = getIntent();
+    if (intent != null) {
+      final String routerSelected = intent.getStringExtra(ROUTER_SELECTED);
+      if (routerSelected != null) {
+        final Router router = RouterManagementActivity.getDao(this).getRouter(routerSelected);
+        ColorUtils.setAppTheme(this, router != null ? router.getRouterFirmware() : null, false);
+      } else {
+        ColorUtils.setAppTheme(this, null, false);
+      }
+    } else {
+      ColorUtils.setAppTheme(this, null, false);
     }
 
+    //        if (ColorUtils.isThemeLight(this)) {
+    //            //Light
+    //            setTheme(R.style.AppThemeLight);
+    ////            getWindow().getDecorView()
+    ////                    .setBackgroundColor(ContextCompat.getColor(this, R.color.GhostWhite));
+    //        } else {
+    //            //Default is Dark
+    //            setTheme(R.style.AppThemeDark);
+    //        }
+
+    setContentView(getContentView());
+
+    final FragmentManager fragmentManager = getSupportFragmentManager();
+    final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+    final ManageRouterWizard fragment = new ManageRouterWizard();
+    final Bundle args = new Bundle();
+    if (intent != null) {
+      final String routerSelected = intent.getStringExtra(ROUTER_SELECTED);
+      if (routerSelected != null) {
+        args.putString(ROUTER_SELECTED, routerSelected);
+      }
+      final int routerWizardAction =
+          intent.getIntExtra(ROUTER_WIZARD_ACTION, RouterWizardAction.ADD);
+      if (routerWizardAction == RouterWizardAction.ADD) {
+        //#199: report app shortcut
+        AppShortcutUtils.reportShortcutUsed(this, "register-router");
+      }
+      fragment.setAction(routerWizardAction);
+      args.putInt(ROUTER_WIZARD_ACTION, routerWizardAction);
+    } else {
+      //By default, this is an "Add Router" operation
+      //#199: report app shortcut
+      AppShortcutUtils.reportShortcutUsed(this, "register-router");
+    }
+    fragment.setArguments(args);
+    fragmentTransaction.add(R.id.wizard_add_router_fragment_container, fragment,
+        ManageRouterWizard.class.getSimpleName());
+    fragmentTransaction.commit();
+  }
+
+  @LayoutRes protected abstract int getContentView();
+
+  /**
+   * Override to make activity full screen.
+   *
+   * @return whether to make activity full screen
+   */
+  protected boolean isFullScreen() {
+    return false;
+  }
 }

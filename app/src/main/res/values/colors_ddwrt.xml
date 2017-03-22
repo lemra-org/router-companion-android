@@ -21,25 +21,25 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <resources>
 
-    <color name="ddwrt_50">#B4D4F0</color>
-    <color name="ddwrt_100">#74B0E3</color>
-    <color name="ddwrt_200">#4595D9</color>
-    <color name="ddwrt_300">#2471B3</color>
-    <color name="ddwrt_400">#1F6199</color>
-    <color name="ddwrt_500">#1A5180</color>
-    <color name="ddwrt_600">#154167</color>
-    <color name="ddwrt_700">#10314D</color>
-    <color name="ddwrt_800">#0A2134</color>
-    <color name="ddwrt_900">#05111A</color>
-    <color name="ddwrt_A100">#B4D4F0</color>
-    <color name="ddwrt_A200">#74B0E3</color>
-    <color name="ddwrt_A400">#1F6199</color>
-    <color name="ddwrt_A700">#10314D</color>
+  <color name="ddwrt_50">#B4D4F0</color>
+  <color name="ddwrt_100">#74B0E3</color>
+  <color name="ddwrt_200">#4595D9</color>
+  <color name="ddwrt_300">#2471B3</color>
+  <color name="ddwrt_400">#1F6199</color>
+  <color name="ddwrt_500">#1A5180</color>
+  <color name="ddwrt_600">#154167</color>
+  <color name="ddwrt_700">#10314D</color>
+  <color name="ddwrt_800">#0A2134</color>
+  <color name="ddwrt_900">#05111A</color>
+  <color name="ddwrt_A100">#B4D4F0</color>
+  <color name="ddwrt_A200">#74B0E3</color>
+  <color name="ddwrt_A400">#1F6199</color>
+  <color name="ddwrt_A700">#10314D</color>
 
-    <color name="ddwrt_primary">@color/ddwrt_500</color>
-    <color name="ddwrt_tile_title">@color/ddwrt_200</color>
-    <color name="ddwrt_statusbar">@color/ddwrt_700</color>
+  <color name="ddwrt_primary">@color/ddwrt_500</color>
+  <color name="ddwrt_tile_title">@color/ddwrt_200</color>
+  <color name="ddwrt_statusbar">@color/ddwrt_700</color>
 
-    <color name="ddwrt_color_accent">@color/ddwrt_200</color>
+  <color name="ddwrt_color_accent">@color/ddwrt_200</color>
 
 </resources>

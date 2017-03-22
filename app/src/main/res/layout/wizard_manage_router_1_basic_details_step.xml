@@ -1,109 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_margin="20dp">
+    android:layout_height="match_parent"
+    android:layout_margin="20dp"
+    >
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      >
 
     <LinearLayout
-        android:orientation="vertical"
+        android:layout_width="0px"
+        android:layout_height="0px"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        />
+
+    <!-- UUID -->
+    <TextView
+        android:id="@+id/router_add_uuid"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        />
 
-        <LinearLayout android:focusable="true"
-            android:focusableInTouchMode="true" android:layout_width="0px"
-            android:layout_height="0px" />
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/router_add_name_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        >
+      <android.support.design.widget.TextInputEditText
+          android:id="@+id/router_add_name"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:hint="Router Name, e.g., 'Living Room Router'"
+          android:imeOptions="flagNoExtractUi"
+          android:inputType="text"
+          android:maxLines="1"
+          android:selectAllOnFocus="true"
+          />
+    </android.support.design.widget.TextInputLayout>
 
-        <!-- UUID -->
-        <TextView
-            android:id="@+id/router_add_uuid"
+    <!-- IP / DNS -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="Router IP Address or DNS name"
+        />
+
+    <TextView
+        android:id="@+id/router_add_ip_demo_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enter '%PACKAGE_NAME%' or press the 'DEMO' button for a demo"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textStyle="italic"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:orientation="horizontal"
+        android:weightSum="100"
+        >
+
+      <android.support.design.widget.TextInputLayout
+          android:id="@+id/router_add_ip_input_layout"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="80"
+          >
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/router_add_ip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone" />
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/router_add_name_input_layout"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginBottom="4dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <android.support.design.widget.TextInputEditText
-                android:selectAllOnFocus="true"
-                android:id="@+id/router_add_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Router Name, e.g., 'Living Room Router'"
-                android:imeOptions="flagNoExtractUi"
-                android:inputType="text"
-                android:maxLines="1"/>
-        </android.support.design.widget.TextInputLayout>
-
-        <!-- IP / DNS -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="Router IP Address or DNS name" />
-
-        <TextView
-            android:id="@+id/router_add_ip_demo_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textStyle="italic"
-            android:text="Enter '%PACKAGE_NAME%' or press the 'DEMO' button for a demo" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="4dp"
-            android:weightSum="100">
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/router_add_ip_input_layout"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="80">
-                <android.support.design.widget.TextInputEditText
-                    android:selectAllOnFocus="true"
-                    android:id="@+id/router_add_ip"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="e.g., 192.168.1.254 or myrouter.dns.com"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="text"
-                    android:maxLines="1"/>
-            </android.support.design.widget.TextInputLayout>
-
-            <Button
-                android:id="@+id/router_add_ip_demo"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/demo_uppercase"
-                android:layout_weight="20"/>
-
-        </LinearLayout>
-
-        <!-- Firmware -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="Router Firmware" />
-
-        <Spinner
-            android:id="@+id/router_add_firmware"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:entries="@array/router_firmwares_array"
-            android:entryValues="@array/router_firmwares_array_values"
+            android:hint="e.g., 192.168.1.254 or myrouter.dns.com"
             android:imeOptions="flagNoExtractUi"
-            android:prompt="@string/router_firmware_select"/>
+            android:inputType="text"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            />
+      </android.support.design.widget.TextInputLayout>
+
+      <Button
+          android:id="@+id/router_add_ip_demo"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="5dp"
+          android:layout_marginStart="5dp"
+          android:layout_weight="20"
+          android:text="@string/demo_uppercase"
+          />
 
     </LinearLayout>
+
+    <!-- Firmware -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="Router Firmware"
+        />
+
+    <Spinner
+        android:id="@+id/router_add_firmware"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:entries="@array/router_firmwares_array"
+        android:entryValues="@array/router_firmwares_array_values"
+        android:imeOptions="flagNoExtractUi"
+        android:prompt="@string/router_firmware_select"
+        />
+
+  </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>

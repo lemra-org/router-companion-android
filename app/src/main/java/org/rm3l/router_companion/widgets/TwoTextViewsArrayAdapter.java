@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import org.rm3l.ddwrt.R;
 
 /**
@@ -14,60 +13,58 @@ import org.rm3l.ddwrt.R;
  */
 public class TwoTextViewsArrayAdapter extends ArrayAdapter {
 
-    private LayoutInflater inflater;
+  private LayoutInflater inflater;
 
-    public TwoTextViewsArrayAdapter(Context context, int textViewResourceId) {
-        super(context, textViewResourceId);
-        inflater = LayoutInflater.from(context);
+  public TwoTextViewsArrayAdapter(Context context, int textViewResourceId) {
+    super(context, textViewResourceId);
+    inflater = LayoutInflater.from(context);
+  }
+
+  @Override public View getView(int position, View convertView, ViewGroup parent) {
+    ViewHolder holder;
+
+    if (convertView == null) {
+      holder = new ViewHolder();
+      convertView = inflater.inflate(R.layout.spinner_text_layout, null);
+      holder.text1 = (TextView) convertView.findViewById(R.id.title);
+      holder.text2 = (TextView) convertView.findViewById(R.id.subtitle);
+      convertView.setTag(R.layout.spinner_text_layout, holder);
+    } else {
+      holder = (ViewHolder) convertView.getTag(R.layout.spinner_text_layout);
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+    holder.text1.setText("Position: ");
+    holder.text2.setText(position);
 
-        if(convertView == null){
-            holder = new ViewHolder();
-            convertView = inflater.inflate(R.layout.spinner_text_layout, null);
-            holder.text1 = (TextView)convertView.findViewById(R.id.title);
-            holder.text2 = (TextView)convertView.findViewById(R.id.subtitle);
-            convertView.setTag(R.layout.spinner_text_layout, holder);
-        } else{
-            holder = (ViewHolder)convertView.getTag(R.layout.spinner_text_layout);
-        }
+    return convertView;
+  }
 
-        holder.text1.setText("Position: " );
-        holder.text2.setText(position);
+  public View getDropDownView(int position, View convertView, ViewGroup parent) {
+    ViewHolder2 holder;
 
-        return convertView;
+    if (convertView == null) {
+      holder = new ViewHolder2();
+      convertView = inflater.inflate(R.layout.spinner_text_layout, null);
+      holder.text1 = (TextView) convertView.findViewById(R.id.title);
+      holder.text2 = (TextView) convertView.findViewById(R.id.subtitle);
+      convertView.setTag(R.layout.spinner_text_layout, holder);
+    } else {
+      holder = (ViewHolder2) convertView.getTag(R.layout.spinner_text_layout);
     }
 
-    public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        ViewHolder2 holder;
+    holder.text1.setText("Position: ");
+    holder.text2.setText(position);
 
-        if(convertView == null){
-            holder = new ViewHolder2();
-            convertView = inflater.inflate(R.layout.spinner_text_layout, null);
-            holder.text1 = (TextView)convertView.findViewById(R.id.title);
-            holder.text2 = (TextView)convertView.findViewById(R.id.subtitle);
-            convertView.setTag(R.layout.spinner_text_layout, holder);
-        } else{
-            holder = (ViewHolder2) convertView.getTag(R.layout.spinner_text_layout);
-        }
+    return convertView;
+  }
 
-        holder.text1.setText("Position: " );
-        holder.text2.setText(position);
+  static class ViewHolder {
+    TextView text1;
+    TextView text2;
+  }
 
-        return convertView;
-    }
-
-    static class ViewHolder{
-        TextView text1;
-        TextView text2;
-    }
-
-    static class ViewHolder2{
-        TextView text1;
-        TextView text2;
-    }
-
+  static class ViewHolder2 {
+    TextView text1;
+    TextView text2;
+  }
 }

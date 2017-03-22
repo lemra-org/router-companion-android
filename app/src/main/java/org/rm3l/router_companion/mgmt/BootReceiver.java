@@ -8,65 +8,63 @@ import android.content.SharedPreferences;
 import android.os.SystemClock;
 import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
-
 import com.crashlytics.android.Crashlytics;
-
-import org.rm3l.router_companion.service.BackgroundService;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
+import org.rm3l.router_companion.service.BackgroundService;
 
 public class BootReceiver extends WakefulBroadcastReceiver {
 
-    public static final String LOG_TAG = BootReceiver.class.getSimpleName();
+  public static final String LOG_TAG = BootReceiver.class.getSimpleName();
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
+  public static void doStartBackgroundServiceIfNeeded(Context context) {
 
-        // in our case intent will always be BOOT_COMPLETED, so we can just set
-        // the alarm
-        // Note that a BroadcastReceiver is *NOT* a Context. Thus, we can't use
-        // "this" whenever we need to pass a reference to the current context.
-        // Thankfully, Android will supply a valid Context as the first parameter
+    final AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        doStartBackgroundServiceIfNeeded(context);
+    final PendingIntent pi = cancelExistingBackgroundService(context, am);
 
+    final SharedPreferences preferences =
+        context.getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+            Context.MODE_PRIVATE);
+
+    final boolean bgServiceEnabled =
+        preferences.getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_BG_SERVICE_ENABLE, true);
+    final long minutes =
+        preferences.getLong(RouterCompanionAppConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF,
+            -1l);
+    final long bgServiceLastHandleMillis =
+        preferences.getLong(RouterCompanionAppConstants.BG_SERVICE_LAST_HANDLE, -1l);
+
+    Crashlytics.log(Log.DEBUG, LOG_TAG,
+        "<bgServiceEnabled,minutes> = <" + bgServiceEnabled + "," + minutes + ">");
+
+    if ((!bgServiceEnabled) || minutes <= 0l) {
+      //Skip
+      Crashlytics.log(Log.DEBUG, LOG_TAG, "(!bgServiceEnabled) || minutes <= 0l");
+      return;
     }
 
-    public static void doStartBackgroundServiceIfNeeded(Context context) {
+    Crashlytics.log(Log.DEBUG, LOG_TAG,
+        "(bgServiceEnabled && minutes > 0l) => scheduling repeating alarm");
 
-        final AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+    am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),
+        minutes * 60 * 1000, pi);
+  }
 
-        final PendingIntent pi = cancelExistingBackgroundService(context, am);
+  public static PendingIntent cancelExistingBackgroundService(Context context, AlarmManager am) {
+    final Intent backgroundServiceIntent = new Intent(context, BackgroundService.class);
+    final PendingIntent pi = PendingIntent.getService(context, 0, backgroundServiceIntent, 0);
+    am.cancel(pi);
+    return pi;
+  }
 
-        final SharedPreferences preferences = context
-                .getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                        Context.MODE_PRIVATE);
+  @Override public void onReceive(Context context, Intent intent) {
 
-        final boolean bgServiceEnabled = preferences
-                .getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_BG_SERVICE_ENABLE, true);
-        final long minutes = preferences.getLong(
-                RouterCompanionAppConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1l);
-        final long bgServiceLastHandleMillis =
-                preferences.getLong(RouterCompanionAppConstants.BG_SERVICE_LAST_HANDLE, -1l);
+    // in our case intent will always be BOOT_COMPLETED, so we can just set
+    // the alarm
+    // Note that a BroadcastReceiver is *NOT* a Context. Thus, we can't use
+    // "this" whenever we need to pass a reference to the current context.
+    // Thankfully, Android will supply a valid Context as the first parameter
 
-        Crashlytics.log(Log.DEBUG,  LOG_TAG, "<bgServiceEnabled,minutes> = <" + bgServiceEnabled + "," + minutes + ">");
-
-        if ((!bgServiceEnabled) || minutes <= 0l) {
-            //Skip
-            Crashlytics.log(Log.DEBUG,  LOG_TAG, "(!bgServiceEnabled) || minutes <= 0l");
-            return;
-        }
-
-        Crashlytics.log(Log.DEBUG,  LOG_TAG, "(bgServiceEnabled && minutes > 0l) => scheduling repeating alarm");
-
-        am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime(),
-                minutes * 60 * 1000, pi);
-    }
-
-    public static PendingIntent cancelExistingBackgroundService(Context context, AlarmManager am) {
-        final Intent backgroundServiceIntent = new Intent(context, BackgroundService.class);
-        final PendingIntent pi = PendingIntent.getService(context, 0, backgroundServiceIntent, 0);
-        am.cancel(pi);
-        return pi;
-    }
+    doStartBackgroundServiceIfNeeded(context);
+  }
 }

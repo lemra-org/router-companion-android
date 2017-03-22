@@ -24,7 +24,6 @@ package org.rm3l.router_companion.prefs.sort;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -33,26 +32,19 @@ import java.util.Comparator;
  */
 public class ReverseNaturalOrderSortingStrategy extends SortingStrategy {
 
-    @NonNull
-    @Override
-    public String getDisplayName() {
-        return "Reverse Natural Ordering";
-    }
+  @NonNull @Override public String getDisplayName() {
+    return "Reverse Natural Ordering";
+  }
 
-    @NonNull
-    @Override
-    public String getShortDescription() {
-        return "Reverse Alphabetical";
-    }
+  @NonNull @Override public String getShortDescription() {
+    return "Reverse Alphabetical";
+  }
 
-    @Nullable
-    @Override
-    protected Comparator<String> getComparator() {
-        return Collections.reverseOrder();
-    }
+  @Nullable @Override protected Comparator<String> getComparator() {
+    return Collections.reverseOrder();
+  }
 
-    @Override
-    protected boolean doCompare() {
-        return true;
-    }
+  @Override protected boolean doCompare() {
+    return true;
+  }
 }

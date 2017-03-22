@@ -24,11 +24,9 @@ package org.rm3l.router_companion.fragments.nat_qos;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-
+import java.util.List;
 import org.rm3l.router_companion.fragments.AbstractBaseFragment;
 import org.rm3l.router_companion.tiles.DDWRTTile;
-
-import java.util.List;
 
 /**
  * 'NAT/QoS > Port Triggering' Fragment
@@ -37,9 +35,7 @@ import java.util.List;
  */
 public class NATQoSPortTriggeringFragment extends AbstractBaseFragment {
 
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return null;
-    }
+  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    return null;
+  }
 }

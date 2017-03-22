@@ -20,206 +20,225 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
+    android:layout_height="match_parent"
     android:baselineAligned="false"
-    android:layout_height="match_parent">
+    android:orientation="vertical"
+    >
 
-    <RelativeLayout
-        android:id="@+id/tile_status_wan_config_hdr"
-        android:layout_width="fill_parent"
+  <RelativeLayout
+      android:id="@+id/tile_status_wan_config_hdr"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:paddingTop="4.0dip"
+      >
+
+    <TextView
+        android:id="@+id/tile_overview_wan_total_traffic_title"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="4.0dip">
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/tile_overview_wan_total_traffic_menu"
+        android:layout_toStartOf="@+id/tile_overview_wan_total_traffic_menu"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="WAN Total Traffic"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold"
+        />
 
-        <TextView
-            android:id="@+id/tile_overview_wan_total_traffic_title"
-            android:layout_width="match_parent"
+    <ImageButton
+        android:id="@+id/tile_overview_wan_total_traffic_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/menu"
+        android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
+        android:visibility="gone"
+        />
+
+  </RelativeLayout>
+
+  <ProgressBar
+      android:id="@+id/tile_progress_bar"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="8.0dip"
+      android:layout_marginTop="8.0dip"
+      android:indeterminate="false"
+      android:indeterminateOnly="false"
+      style="?android:attr/progressBarStyleHorizontal"
+      />
+
+  <!-- Error message placeholder -->
+  <TextView
+      android:id="@+id/tile_overview_wan_total_traffic_error"
+      android:layout_width="300dp"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:ellipsize="end"
+      android:gravity="center"
+      android:maxLines="1"
+      android:text="@string/error_placeholder"
+      android:textColor="@color/ddwrt_purple"
+      android:textIsSelectable="true"
+      android:textStyle="bold"
+      android:visibility="gone"
+      />
+
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      >
+
+    <GridLayout
+        android:id="@+id/tile_overview_wan_total_traffic_gridLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:columnCount="3"
+        android:fillViewport="true"
+        >
+
+      <RelativeLayout
+          android:id="@+id/tile_overview_wan_total_traffic_container"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_columnSpan="3"
+          android:layout_gravity="center"
+          android:gravity="center"
+          android:orientation="horizontal"
+          >
+
+        <LinearLayout
+            android:id="@+id/tile_overview_wan_total_traffic_dl_container"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="WAN Total Traffic"
-            android:layout_toStartOf="@+id/tile_overview_wan_total_traffic_menu"
-            android:layout_toLeftOf="@+id/tile_overview_wan_total_traffic_menu"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="bold" />
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:weightSum="1"
+            >
 
-        <ImageButton
-            android:id="@+id/tile_overview_wan_total_traffic_menu"
+          <TextView
+              android:id="@+id/tile_overview_wan_total_traffic_dl"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              android:drawableLeft="@drawable/ic_dl_white"
+              android:drawableStart="@drawable/ic_dl_white"
+              android:gravity="center"
+              android:text="-"
+              android:textAppearance="?android:textAppearanceLarge"
+              android:textIsSelectable="true"
+              android:textSize="25dp"
+              />
+
+          <TextView
+              android:id="@+id/tile_overview_wan_total_traffic_dl_mb"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              android:gravity="center"
+              android:text="-"
+              android:textAppearance="?android:textAppearanceMedium"
+              android:textIsSelectable="true"
+              />
+
+          <TextView
+              android:id="@+id/tile_overview_wan_total_traffic_dl_title"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              android:gravity="center"
+              android:text="Download"
+              android:textAppearance="?android:textAppearanceSmall"
+              />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tile_overview_wan_total_traffic_ul_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/menu"
-            android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
-            android:visibility="gone"/>
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:weightSum="1"
+            >
 
-    </RelativeLayout>
+          <TextView
+              android:id="@+id/tile_overview_wan_total_traffic_ul"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              android:drawableLeft="@drawable/ic_ul_light"
+              android:drawableStart="@drawable/ic_ul_light"
+              android:gravity="center"
+              android:text="-"
+              android:textAppearance="?android:textAppearanceLarge"
+              android:textIsSelectable="true"
+              android:textSize="25dp"
+              />
+
+          <TextView
+              android:id="@+id/tile_overview_wan_total_traffic_ul_mb"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              android:gravity="center"
+              android:text="-"
+              android:textAppearance="?android:textAppearanceMedium"
+              android:textIsSelectable="true"
+              />
+
+          <TextView
+              android:id="@+id/tile_overview_wan_total_traffic_ul_title"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              android:gravity="center"
+              android:text="Upload"
+              android:textAppearance="?android:textAppearanceSmall"
+              />
+
+        </LinearLayout>
+
+      </RelativeLayout>
+
+    </GridLayout>
 
     <ProgressBar
-        android:id="@+id/tile_progress_bar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
+        android:id="@+id/tile_overview_wan_total_traffic_loading_view"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8.0dip"
-        android:layout_marginTop="8.0dip"
+        android:layout_centerInParent="true"
         android:indeterminate="false"
-        android:indeterminateOnly="false" />
+        />
 
-    <!-- Error message placeholder -->
-    <TextView
-        android:textIsSelectable="true"
-        android:id="@+id/tile_overview_wan_total_traffic_error"
-        android:layout_width="300dp"
+    <com.github.curioustechizen.ago.RelativeTimeTextView
+        android:id="@+id/tile_last_sync"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tile_overview_wan_total_traffic_gridLayout"
+        android:layout_marginTop="5dp"
         android:ellipsize="end"
-        android:gravity="center"
-        android:maxLines="1"
-        android:text="@string/error_placeholder"
-        android:textColor="@color/ddwrt_purple"
-        android:textStyle="bold"
-        android:visibility="gone"/>
+        android:gravity="end"
+        android:text="Last sync: "
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textIsSelectable="true"
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:textStyle="italic"
+        />
 
-        <GridLayout
-            android:id="@+id/tile_overview_wan_total_traffic_gridLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fillViewport="true"
-            android:columnCount="3"
-            android:layout_marginBottom="20dp">
-
-            <RelativeLayout
-                android:id="@+id/tile_overview_wan_total_traffic_container"
-                android:layout_columnSpan="3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center"
-                android:gravity="center">
-
-                <LinearLayout
-                    android:id="@+id/tile_overview_wan_total_traffic_dl_container"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_gravity="center"
-                    android:weightSum="1">
-
-                    <TextView
-                        android:textIsSelectable="true"
-                        android:id="@+id/tile_overview_wan_total_traffic_dl"
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceLarge"
-                        android:text="-"
-                        android:textSize="25dp"
-                        android:drawableStart="@drawable/ic_dl_white"
-                        android:drawableLeft="@drawable/ic_dl_white"/>
-
-                    <TextView
-                        android:textIsSelectable="true"
-                        android:id="@+id/tile_overview_wan_total_traffic_dl_mb"
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:text="-"/>
-
-                    <TextView
-                        android:id="@+id/tile_overview_wan_total_traffic_dl_title"
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        android:text="Download"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/tile_overview_wan_total_traffic_ul_container"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_gravity="center"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:weightSum="1">
-
-                    <TextView
-                        android:textIsSelectable="true"
-                        android:id="@+id/tile_overview_wan_total_traffic_ul"
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceLarge"
-                        android:text="-"
-                        android:textSize="25dp"
-                        android:drawableStart="@drawable/ic_ul_light"
-                        android:drawableLeft="@drawable/ic_ul_light"/>
-
-                    <TextView
-                        android:textIsSelectable="true"
-                        android:id="@+id/tile_overview_wan_total_traffic_ul_mb"
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:text="-"/>
-
-                    <TextView
-                        android:id="@+id/tile_overview_wan_total_traffic_ul_title"
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        android:text="Upload"/>
-
-                </LinearLayout>
-
-            </RelativeLayout>
-
-        </GridLayout>
-
-        <ProgressBar
-            android:id="@+id/tile_overview_wan_total_traffic_loading_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:indeterminate="false" />
-
-        <com.github.curioustechizen.ago.RelativeTimeTextView
-            android:textIsSelectable="true"
-            android:layout_marginTop="5dp"
-            android:id="@+id/tile_last_sync"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:textStyle="italic"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@+id/tile_overview_wan_total_traffic_gridLayout"
-            android:ellipsize="end"
-            android:gravity="end"
-
-            android:text="Last sync: "/>
-
-    </RelativeLayout>
+  </RelativeLayout>
 
 </LinearLayout>

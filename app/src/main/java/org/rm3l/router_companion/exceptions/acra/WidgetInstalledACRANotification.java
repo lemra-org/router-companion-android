@@ -1,7 +1,6 @@
 package org.rm3l.router_companion.exceptions.acra;
 
 import android.support.annotation.Nullable;
-
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 
 /**
@@ -9,19 +8,20 @@ import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
  */
 public class WidgetInstalledACRANotification extends DDWRTCompanionException {
 
-    public WidgetInstalledACRANotification() {
-        super();
-    }
+  public WidgetInstalledACRANotification() {
+    super();
+  }
 
-    public WidgetInstalledACRANotification(@Nullable String detailMessage) {
-        super(detailMessage);
-    }
+  public WidgetInstalledACRANotification(@Nullable String detailMessage) {
+    super(detailMessage);
+  }
 
-    public WidgetInstalledACRANotification(@Nullable String detailMessage, @Nullable Throwable throwable) {
-        super(detailMessage, throwable);
-    }
+  public WidgetInstalledACRANotification(@Nullable String detailMessage,
+      @Nullable Throwable throwable) {
+    super(detailMessage, throwable);
+  }
 
-    public WidgetInstalledACRANotification(@Nullable Throwable throwable) {
-        super(throwable);
-    }
+  public WidgetInstalledACRANotification(@Nullable Throwable throwable) {
+    super(throwable);
+  }
 }

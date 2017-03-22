@@ -23,18 +23,14 @@ package org.rm3l.router_companion.fragments.toolbox;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-
-import org.rm3l.router_companion.tiles.DDWRTTile;
-
 import java.util.List;
+import org.rm3l.router_companion.tiles.DDWRTTile;
 
 /**
  * TODO To include this utility n a future release
  */
 public class ToolboxSubnetCalculatorFragment extends AbstractToolboxFragment {
-    @Nullable
-    @Override
-    protected List<DDWRTTile> doGetTiles(@Nullable Bundle savedInstanceState) {
-        return null;
-    }
+  @Nullable @Override protected List<DDWRTTile> doGetTiles(@Nullable Bundle savedInstanceState) {
+    return null;
+  }
 }

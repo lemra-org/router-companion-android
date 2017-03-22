@@ -8,19 +8,20 @@ import android.support.annotation.Nullable;
 
 public class UnknownRouterFirmwareException extends DDWRTCompanionException {
 
-    public UnknownRouterFirmwareException() {
-        super();
-    }
+  public UnknownRouterFirmwareException() {
+    super();
+  }
 
-    public UnknownRouterFirmwareException(@Nullable String detailMessage) {
-        super(detailMessage);
-    }
+  public UnknownRouterFirmwareException(@Nullable String detailMessage) {
+    super(detailMessage);
+  }
 
-    public UnknownRouterFirmwareException(@Nullable String detailMessage, @Nullable Throwable throwable) {
-        super(detailMessage, throwable);
-    }
+  public UnknownRouterFirmwareException(@Nullable String detailMessage,
+      @Nullable Throwable throwable) {
+    super(detailMessage, throwable);
+  }
 
-    public UnknownRouterFirmwareException(@Nullable Throwable throwable) {
-        super(throwable);
-    }
+  public UnknownRouterFirmwareException(@Nullable Throwable throwable) {
+    super(throwable);
+  }
 }

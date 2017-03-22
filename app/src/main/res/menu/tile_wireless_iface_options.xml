@@ -22,47 +22,47 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/tile_status_wireless_iface_state"
-        android:orderInCategory="1"
-        android:title="Interface State"
-        app:showAsAction="never" >
+  <item
+      android:id="@+id/tile_status_wireless_iface_state"
+      android:orderInCategory="1"
+      android:title="Interface State"
+      app:showAsAction="never">
 
-        <menu>
-            <item
-                android:id="@+id/tile_status_wireless_iface_set_up"
-                android:orderInCategory="1"
-                android:title="Bring Up"
-                app:showAsAction="ifRoom" />
+    <menu>
+      <item
+          android:id="@+id/tile_status_wireless_iface_set_up"
+          android:orderInCategory="1"
+          android:title="Bring Up"
+          app:showAsAction="ifRoom"/>
 
-            <item
-                android:id="@+id/tile_status_wireless_iface_set_down"
-                android:orderInCategory="2"
-                android:title="Bring Down"
-                app:showAsAction="ifRoom" />
-        </menu>
+      <item
+          android:id="@+id/tile_status_wireless_iface_set_down"
+          android:orderInCategory="2"
+          android:title="Bring Down"
+          app:showAsAction="ifRoom"/>
+    </menu>
 
-    </item>
+  </item>
 
-    <item
-        android:id="@+id/tile_status_wireless_iface_security"
-        android:orderInCategory="1"
-        android:title="Security"
-        app:showAsAction="never" />
+  <item
+      android:id="@+id/tile_status_wireless_iface_security"
+      android:orderInCategory="1"
+      android:title="Security"
+      app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/tile_status_wireless_iface_share"
-        android:orderInCategory="2"
-        android:title="@string/share_via_nfc_or_qr_code"
-        app:showAsAction="never" />
+  <item
+      android:id="@+id/tile_status_wireless_iface_share"
+      android:orderInCategory="2"
+      android:title="@string/share_via_nfc_or_qr_code"
+      app:showAsAction="never"/>
 
-    <!-- tc filter add dev $IF_LAN parent 1: protocol ip prio 7 u32 match ip dst 0.0.0.0/0 flowid 1:190 -->
-    <!-- FIXME Disabled for now! -->
-    <item
-        android:id="@+id/tile_status_wireless_iface_traffic_shaping"
-        android:orderInCategory="3"
-        android:title="Traffic Shaping"
-        android:visible="false"
-        app:showAsAction="never" />
+  <!-- tc filter add dev $IF_LAN parent 1: protocol ip prio 7 u32 match ip dst 0.0.0.0/0 flowid 1:190 -->
+  <!-- FIXME Disabled for now! -->
+  <item
+      android:id="@+id/tile_status_wireless_iface_traffic_shaping"
+      android:orderInCategory="3"
+      android:title="Traffic Shaping"
+      android:visible="false"
+      app:showAsAction="never"/>
 
 </menu>

@@ -7,17 +7,15 @@ import android.support.annotation.NonNull;
  */
 public abstract class FragmentTabDescription<T extends AbstractBaseFragment> {
 
-    @NonNull
-    private final Class<T> clazz;
+  @NonNull private final Class<T> clazz;
 
-    protected FragmentTabDescription(@NonNull Class<T> clazz) {
-        this.clazz = clazz;
-    }
+  protected FragmentTabDescription(@NonNull Class<T> clazz) {
+    this.clazz = clazz;
+  }
 
-    @NonNull
-    public Class<T> getClazz() {
-        return clazz;
-    }
+  @NonNull public Class<T> getClazz() {
+    return clazz;
+  }
 
-    public abstract int getTitleRes();
+  public abstract int getTitleRes();
 }

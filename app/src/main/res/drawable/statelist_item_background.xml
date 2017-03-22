@@ -23,7 +23,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:drawable="@color/LightSteelBlue" android:state_activated="true" />
-    <item android:drawable="@android:color/transparent" />
+  <item android:drawable="@color/LightSteelBlue" android:state_activated="true"/>
+  <item android:drawable="@android:color/transparent"/>
 
 </selector>

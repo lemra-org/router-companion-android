@@ -25,36 +25,36 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".actions.ManageRouterAliasesActivity">
 
-    <item
-        android:id="@+id/router_speedtest_refresh"
-        android:alphabeticShortcut="r"
-        android:icon="@drawable/ic_refresh_white_24dp"
-        android:orderInCategory="1"
-        android:title="@string/menuitem_refresh"
-        app:showAsAction="ifRoom"/>
+  <item
+      android:id="@+id/router_speedtest_refresh"
+      android:alphabeticShortcut="r"
+      android:icon="@drawable/ic_refresh_white_24dp"
+      android:orderInCategory="1"
+      android:title="@string/menuitem_refresh"
+      app:showAsAction="ifRoom"/>
 
-    <item
-        android:id="@+id/router_speedtest_settings"
-        android:alphabeticShortcut="S"
-        android:icon="@drawable/ic_settings_white_24dp"
-        android:orderInCategory="2"
-        android:title="@string/menuitem_settings"
-        app:showAsAction="ifRoom" />
+  <item
+      android:id="@+id/router_speedtest_settings"
+      android:alphabeticShortcut="S"
+      android:icon="@drawable/ic_settings_white_24dp"
+      android:orderInCategory="2"
+      android:title="@string/menuitem_settings"
+      app:showAsAction="ifRoom"/>
 
-    <item
-        android:id="@+id/router_speedtest_share"
-        android:icon="@drawable/ic_share_white_24dp"
-        android:alphabeticShortcut="s"
-        android:orderInCategory="3"
-        android:title="@string/share"
-        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
-        app:showAsAction="ifRoom"/>
+  <item
+      android:id="@+id/router_speedtest_share"
+      android:alphabeticShortcut="s"
+      android:icon="@drawable/ic_share_white_24dp"
+      android:orderInCategory="3"
+      android:title="@string/share"
+      app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
+      app:showAsAction="ifRoom"/>
 
-    <item
-        android:id="@+id/action_feedback"
-        android:alphabeticShortcut="f"
-        android:orderInCategory="4"
-        android:title="@string/send_feedback"
-        app:showAsAction="never" />
+  <item
+      android:id="@+id/action_feedback"
+      android:alphabeticShortcut="f"
+      android:orderInCategory="4"
+      android:title="@string/send_feedback"
+      app:showAsAction="never"/>
 
 </menu>

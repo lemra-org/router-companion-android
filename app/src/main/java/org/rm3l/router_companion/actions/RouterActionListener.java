@@ -23,12 +23,13 @@ package org.rm3l.router_companion.actions;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import org.rm3l.router_companion.resources.conn.Router;
 
 public interface RouterActionListener {
 
-    void onRouterActionSuccess(@NonNull final RouterAction routerAction, @NonNull final Router router, Object returnData);
+  void onRouterActionSuccess(@NonNull final RouterAction routerAction, @NonNull final Router router,
+      Object returnData);
 
-    void onRouterActionFailure(@NonNull final RouterAction routerAction, @NonNull final Router router, @Nullable final Exception exception);
+  void onRouterActionFailure(@NonNull final RouterAction routerAction, @NonNull final Router router,
+      @Nullable final Exception exception);
 }

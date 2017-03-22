@@ -24,91 +24,101 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
+
+  <LinearLayout
+      android:id="@+id/wol_host_add_notification_viewgroup"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      />
+
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:scrollbars="none"
+      >
 
     <LinearLayout
-        android:id="@+id/wol_host_add_notification_viewgroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" />
+        android:orientation="vertical"
+        >
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none">
+      <!-- Host Name -->
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="4dp"
+          android:layout_marginStart="4dp"
+          android:layout_marginTop="@dimen/activity_vertical_margin"
+          android:text="Host Name"
+          />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+      <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
+          android:id="@+id/wol_host_add_name"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="4dp"
+          android:layout_marginLeft="4dp"
+          android:layout_marginRight="4dp"
+          android:hint="e.g., My PC"
+          android:imeOptions="flagNoExtractUi"
+          android:inputType="text"
+          android:maxLines="1"
+          />
 
-            <!-- Host Name -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="Host Name" />
+      <!-- MAC Address -->
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="4dp"
+          android:layout_marginStart="4dp"
+          android:layout_marginTop="@dimen/activity_vertical_margin"
+          android:text="MAC Address (separator is ':')"
+          />
 
-            <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
-                android:id="@+id/wol_host_add_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:hint="e.g., My PC"
-                android:imeOptions="flagNoExtractUi"
-                android:inputType="text"
-                android:maxLines="1"/>
+      <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
+          android:id="@+id/wol_host_add_mac_addr"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="4dp"
+          android:layout_marginLeft="4dp"
+          android:layout_marginRight="4dp"
+          android:hint="e.g., CF:5B:BB:F6:00:D7"
+          android:imeOptions="flagNoExtractUi"
+          android:inputType="text"
+          android:maxLines="1"
+          />
 
-            <!-- MAC Address -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="MAC Address (separator is ':')" />
+      <!-- Port -->
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="4dp"
+          android:layout_marginStart="4dp"
+          android:layout_marginTop="@dimen/activity_vertical_margin"
+          android:text="Port (leave blank if unknown)"
+          />
 
-            <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
-                android:id="@+id/wol_host_add_mac_addr"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:hint="e.g., CF:5B:BB:F6:00:D7"
-                android:imeOptions="flagNoExtractUi"
-                android:inputType="text"
-                android:maxLines="1"/>
+      <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
+          android:id="@+id/wol_host_add_port"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="4dp"
+          android:layout_marginLeft="4dp"
+          android:layout_marginRight="4dp"
+          android:ems="10"
+          android:hint="Port of Magic Packet Destination"
+          android:imeOptions="flagNoExtractUi"
+          android:inputType="numberSigned"
+          android:maxLines="1"
+          android:text=""
+          />
 
-            <!-- Port -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="Port (leave blank if unknown)" />
+    </LinearLayout>
 
-            <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
-                android:id="@+id/wol_host_add_port"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:ems="10"
-                android:hint="Port of Magic Packet Destination"
-                android:imeOptions="flagNoExtractUi"
-                android:inputType="numberSigned"
-                android:maxLines="1"
-                android:text="" />
-
-        </LinearLayout>
-
-    </ScrollView>
+  </ScrollView>
 
 </LinearLayout>

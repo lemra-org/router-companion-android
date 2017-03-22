@@ -26,7 +26,12 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import needle.UiRelatedTask;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.router_companion.common.resources.audit.ActionLog;
 import org.rm3l.router_companion.exceptions.RouterActionException;
@@ -34,165 +39,142 @@ import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.ReportingUtils;
 
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import needle.UiRelatedTask;
-
 /**
  * Abstract Router Action async task
  *
  * @param <T> Type of async task result
  */
-public abstract class AbstractRouterAction<T> extends
-        UiRelatedTask<AbstractRouterAction.RouterActionResult<T>> {
+public abstract class AbstractRouterAction<T>
+    extends UiRelatedTask<AbstractRouterAction.RouterActionResult<T>> {
 
-    @NonNull
-    protected final SharedPreferences globalSharedPreferences;
-    @Nullable
-    protected final RouterActionListener listener;
-    @NonNull
-    protected final RouterAction routerAction;
-    protected final Router router;
-    private final UUID actionUuid;
+  @NonNull protected final SharedPreferences globalSharedPreferences;
+  @Nullable protected final RouterActionListener listener;
+  @NonNull protected final RouterAction routerAction;
+  protected final Router router;
+  private final UUID actionUuid;
 
-    private String origin;
+  private String origin;
 
-    private boolean recordActionForAudit;
+  private boolean recordActionForAudit;
 
-    protected AbstractRouterAction(@NonNull final Router router,
-                                   @Nullable final RouterActionListener listener,
-                                   @NonNull final RouterAction routerAction,
-                                   @NonNull final SharedPreferences globalSharedPreferences) {
-        this.actionUuid = UUID.randomUUID();
-        this.router = router;
-        this.listener = listener;
-        this.routerAction = routerAction;
-        this.globalSharedPreferences = globalSharedPreferences;
-        this.recordActionForAudit = true;
+  protected AbstractRouterAction(@NonNull final Router router,
+      @Nullable final RouterActionListener listener, @NonNull final RouterAction routerAction,
+      @NonNull final SharedPreferences globalSharedPreferences) {
+    this.actionUuid = UUID.randomUUID();
+    this.router = router;
+    this.listener = listener;
+    this.routerAction = routerAction;
+    this.globalSharedPreferences = globalSharedPreferences;
+    this.recordActionForAudit = true;
+  }
+
+  public final AbstractRouterAction setOrigin(String origin) {
+    this.origin = origin;
+    return this;
+  }
+
+  public AbstractRouterAction setRecordActionForAudit(boolean recordActionForAudit) {
+    this.recordActionForAudit = recordActionForAudit;
+    return this;
+  }
+
+  @Override protected final RouterActionResult<T> doWork() {
+
+    final Date actionDate = new Date();
+
+    try {
+      //To get stats over the number of actions executed
+      final Map<String, Object> eventMap = new HashMap<>();
+      eventMap.put("Action", routerAction);
+      eventMap.put("Executor class", this.getClass().getSimpleName());
+      ReportingUtils.reportEvent(ReportingUtils.EVENT_ACTION_TRIGGERED, eventMap);
+    } catch (final Exception e) {
+      //No worries
     }
 
-    public final AbstractRouterAction setOrigin(String origin) {
-        this.origin = origin;
-        return this;
-    }
+    RouterActionResult<T> actionResult = null;
+    try {
+      actionResult = this.doActionInBackground();
+    } catch (final Exception e) {
+      actionResult = new RouterActionResult<>(null, e);
+      //Report exception
+      ReportingUtils.reportException(null,
+          new RouterActionException("Exception on Action '" + routerAction + "': " + actionUuid,
+              e));
+    } finally {
+      if (recordActionForAudit) {
+        final Context context = getContext();
+        if (context != null) {
+          final ActionLog actionLog = getActionLog();
+          if (actionLog != null) {
+            actionLog.setOriginPackageName(
+                TextUtils.isEmpty(this.origin) ? BuildConfig.APPLICATION_ID : this.origin);
+            actionLog.setDate(DateFormat.getDateTimeInstance().format(actionDate));
+            actionLog.setUuid(this.actionUuid.toString());
+            actionLog.setRouter(router.getUuid());
+            actionLog.setStatus(
+                actionResult == null || actionResult.getException() == null ? 0 : -1);
 
-    public AbstractRouterAction setRecordActionForAudit(boolean recordActionForAudit) {
-        this.recordActionForAudit = recordActionForAudit;
-        return this;
-    }
-
-    @Override
-    protected final RouterActionResult<T> doWork() {
-
-        final Date actionDate = new Date();
-
-        try {
-            //To get stats over the number of actions executed
-            final Map<String, Object> eventMap = new HashMap<>();
-            eventMap.put("Action", routerAction);
-            eventMap.put("Executor class", this.getClass().getSimpleName());
-            ReportingUtils.reportEvent(ReportingUtils.EVENT_ACTION_TRIGGERED, eventMap);
-        } catch (final Exception e) {
-            //No worries
+            //Record action
+            RouterManagementActivity.getDao(context).recordAction(actionLog);
+          }
         }
+      }
+    }
+    return actionResult;
+  }
 
-        RouterActionResult<T> actionResult = null;
-        try {
-            actionResult = this.doActionInBackground();
-        } catch (final Exception e) {
-            actionResult = new RouterActionResult<>(null, e);
-            //Report exception
-            ReportingUtils.reportException(null,
-                    new RouterActionException("Exception on Action '" + routerAction + "': " +
-                            actionUuid,
-                            e));
-        } finally {
-            if (recordActionForAudit) {
-                final Context context = getContext();
-                if (context != null) {
-                    final ActionLog actionLog = getActionLog();
-                    if (actionLog != null) {
-                        actionLog.setOriginPackageName(
-                                TextUtils.isEmpty(this.origin) ?
-                                        BuildConfig.APPLICATION_ID : this.origin);
-                        actionLog.setDate(DateFormat.getDateTimeInstance().format(actionDate));
-                        actionLog.setUuid(this.actionUuid.toString());
-                        actionLog.setRouter(router.getUuid());
-                        actionLog.setStatus(
-                                actionResult == null || actionResult.getException() == null ? 0 : -1);
+  protected ActionLog getActionLog() {
+    return new ActionLog().setActionName(routerAction.toString());
+  }
 
-                        //Record action
-                        RouterManagementActivity.getDao(context).recordAction(actionLog);
-                    }
-                }
-            }
+  @Nullable protected Context getContext() {
+    return null;
+  }
+
+  @Override protected final void thenDoUiRelatedWork(RouterActionResult<T> actionResult) {
+    if (actionResult != null && listener != null) {
+      final Exception exception = actionResult.getException();
+      try {
+        if (exception == null) {
+          listener.onRouterActionSuccess(routerAction, router, this.getDataToReturnOnSuccess());
+        } else {
+          listener.onRouterActionFailure(routerAction, router, exception);
         }
-        return actionResult;
+      } catch (final Exception listenerException) {
+        listenerException.printStackTrace();
+        //No Worries, but report exception
+        ReportingUtils.reportException(null, new RouterActionException(
+            "Listener Exception on Action '" + routerAction + "': " + actionUuid,
+            listenerException));
+      }
+    }
+  }
+
+  @Nullable protected Object getDataToReturnOnSuccess() {
+    return null;
+  }
+
+  @NonNull protected abstract RouterActionResult<T> doActionInBackground();
+
+  /**
+   * @param <T> the result type
+   */
+  public static class RouterActionResult<T> {
+    private final T result;
+    private final Exception exception;
+
+    public RouterActionResult(T result, Exception exception) {
+      this.result = result;
+      this.exception = exception;
     }
 
-    protected ActionLog getActionLog() {
-        return new ActionLog()
-                .setActionName(routerAction.toString());
+    public T getResult() {
+      return result;
     }
 
-    @Nullable
-    protected Context getContext() {
-        return null;
+    public Exception getException() {
+      return exception;
     }
-
-    @Override
-    protected final void thenDoUiRelatedWork(RouterActionResult<T> actionResult) {
-        if (actionResult != null && listener != null) {
-            final Exception exception = actionResult.getException();
-            try {
-                if (exception == null) {
-                    listener.onRouterActionSuccess(routerAction, router, this.getDataToReturnOnSuccess());
-                } else {
-                    listener.onRouterActionFailure(routerAction, router, exception);
-                }
-            } catch (final Exception listenerException) {
-                listenerException.printStackTrace();
-                //No Worries, but report exception
-                ReportingUtils.reportException(null,
-                        new RouterActionException("Listener Exception on Action '"
-                                + routerAction + "': " +
-                                actionUuid, listenerException));
-            }
-        }
-    }
-
-    @Nullable
-    protected Object getDataToReturnOnSuccess() {
-        return null;
-    }
-
-    @NonNull
-    protected abstract RouterActionResult<T> doActionInBackground();
-
-
-    /**
-     * @param <T> the result type
-     */
-    public static class RouterActionResult<T> {
-        private final T result;
-        private final Exception exception;
-
-        public RouterActionResult(T result, Exception exception) {
-            this.result = result;
-            this.exception = exception;
-        }
-
-        public T getResult() {
-            return result;
-        }
-
-        public Exception getException() {
-            return exception;
-        }
-    }
-
+  }
 }

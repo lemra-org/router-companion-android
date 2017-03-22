@@ -21,23 +21,23 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <resources>
 
-    <color name="tomato_200">#DD9FA0</color>
-    <color name="tomato_300">#CA6A6D</color>
-    <color name="tomato_400">#C25457</color>
-    <color name="tomato_500">#B64144</color>
-    <color name="tomato_600">#9F393C</color>
-    <color name="tomato_700">#893133</color>
-    <color name="tomato_800">#72292B</color>
-    <color name="tomato_900">#5C2122</color>
-    <color name="tomato_A100">#FFFFFF</color>
-    <color name="tomato_A200">#EBC8C9</color>
-    <color name="tomato_A400">#C25457</color>
-    <color name="tomato_A700">#893133</color>
+  <color name="tomato_200">#DD9FA0</color>
+  <color name="tomato_300">#CA6A6D</color>
+  <color name="tomato_400">#C25457</color>
+  <color name="tomato_500">#B64144</color>
+  <color name="tomato_600">#9F393C</color>
+  <color name="tomato_700">#893133</color>
+  <color name="tomato_800">#72292B</color>
+  <color name="tomato_900">#5C2122</color>
+  <color name="tomato_A100">#FFFFFF</color>
+  <color name="tomato_A200">#EBC8C9</color>
+  <color name="tomato_A400">#C25457</color>
+  <color name="tomato_A700">#893133</color>
 
-    <color name="tomato_primary">@color/tomato_500</color>
-    <color name="tomato_tile_title">@color/tomato_200</color>
-    <color name="tomato_statusbar">@color/tomato_700</color>
+  <color name="tomato_primary">@color/tomato_500</color>
+  <color name="tomato_tile_title">@color/tomato_200</color>
+  <color name="tomato_statusbar">@color/tomato_700</color>
 
-    <color name="tomato_color_accent">@color/tomato_200</color>
+  <color name="tomato_color_accent">@color/tomato_200</color>
 
 </resources>

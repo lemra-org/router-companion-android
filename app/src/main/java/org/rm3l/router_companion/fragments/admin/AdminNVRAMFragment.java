@@ -25,14 +25,11 @@ package org.rm3l.router_companion.fragments.admin;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
+import java.util.Collections;
+import java.util.List;
 import org.rm3l.router_companion.fragments.AbstractBaseFragment;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.admin.nvram.AdminNVRAMTile;
-
-import java.util.Collections;
-import java.util.List;
-
 
 /**
  * 'Admin > NVRAM' fragment
@@ -40,32 +37,26 @@ import java.util.List;
  */
 public class AdminNVRAMFragment extends AbstractBaseFragment {
 
-    private List<DDWRTTile> tiles = null;
+  private List<DDWRTTile> tiles = null;
 
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        if (tiles == null) {
-            tiles = Collections.<DDWRTTile>
-                    singletonList(new AdminNVRAMTile(this, savedInstanceState, this.router));
-        }
-        return tiles;
+  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    if (tiles == null) {
+      tiles = Collections.<DDWRTTile>singletonList(
+          new AdminNVRAMTile(this, savedInstanceState, this.router));
     }
+    return tiles;
+  }
 
-    @NonNull
-    protected int getRootViewType() {
-        return RootViewType_LINEAR_LAYOUT;
+  @NonNull protected int getRootViewType() {
+    return RootViewType_LINEAR_LAYOUT;
+  }
+
+  @Override protected boolean canChildScrollUp() {
+    final List<DDWRTTile> tiles = this.getTiles(null);
+    if (tiles == null || tiles.isEmpty()) {
+      return false;
     }
-
-    @Override
-    protected boolean canChildScrollUp() {
-        final List<DDWRTTile> tiles = this.getTiles(null);
-        if (tiles == null || tiles.isEmpty()) {
-            return false;
-        }
-        final DDWRTTile tile = tiles.get(0);
-        return (tile instanceof AdminNVRAMTile &&
-                ((AdminNVRAMTile) tile).canChildScrollUp());
-    }
-
+    final DDWRTTile tile = tiles.get(0);
+    return (tile instanceof AdminNVRAMTile && ((AdminNVRAMTile) tile).canChildScrollUp());
+  }
 }

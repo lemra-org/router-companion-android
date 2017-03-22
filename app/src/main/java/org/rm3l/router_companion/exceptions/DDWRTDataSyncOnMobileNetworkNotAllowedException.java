@@ -26,18 +26,19 @@ import android.support.annotation.Nullable;
 
 public class DDWRTDataSyncOnMobileNetworkNotAllowedException extends DDWRTCompanionException {
 
-    public DDWRTDataSyncOnMobileNetworkNotAllowedException() {
-    }
+  public DDWRTDataSyncOnMobileNetworkNotAllowedException() {
+  }
 
-    public DDWRTDataSyncOnMobileNetworkNotAllowedException(@Nullable String detailMessage) {
-        super(detailMessage);
-    }
+  public DDWRTDataSyncOnMobileNetworkNotAllowedException(@Nullable String detailMessage) {
+    super(detailMessage);
+  }
 
-    public DDWRTDataSyncOnMobileNetworkNotAllowedException(@Nullable String detailMessage, @Nullable Throwable throwable) {
-        super(detailMessage, throwable);
-    }
+  public DDWRTDataSyncOnMobileNetworkNotAllowedException(@Nullable String detailMessage,
+      @Nullable Throwable throwable) {
+    super(detailMessage, throwable);
+  }
 
-    public DDWRTDataSyncOnMobileNetworkNotAllowedException(@Nullable Throwable throwable) {
-        super(throwable);
-    }
+  public DDWRTDataSyncOnMobileNetworkNotAllowedException(@Nullable Throwable throwable) {
+    super(throwable);
+  }
 }

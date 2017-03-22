@@ -21,16 +21,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/TabIndicator"
     android:id="@android:id/text1"
-    android:background="?android:selectableItemBackground"
     android:layout_width="wrap_content"
+    android:layout_height="48dp"
+    android:background="?android:selectableItemBackground"
+    android:fontFamily="@string/font_fontFamily_medium"
+    android:gravity="center"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:layout_height="48dp"
-    android:gravity="center"
+    android:textAllCaps="true"
     android:textColor="@color/tab_text_color"
     android:textSize="@dimen/text_size_small"
     android:textStyle="@integer/font_textStyle_medium"
-    android:fontFamily="@string/font_fontFamily_medium"
-    android:textAllCaps="true" />
+    style="@style/TabIndicator"
+    />

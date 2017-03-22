@@ -22,4 +22,4 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <bitmap xmlns:android="http://schemas.android.com/apk/res/android"
     android:src="@drawable/tabs_pattern_diagonal"
-    android:tileMode="repeat" />
+    android:tileMode="repeat"/>

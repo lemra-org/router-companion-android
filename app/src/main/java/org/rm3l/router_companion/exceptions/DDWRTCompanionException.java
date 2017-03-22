@@ -31,19 +31,20 @@ import android.support.annotation.Nullable;
  */
 public class DDWRTCompanionException extends RuntimeException {
 
-    public DDWRTCompanionException() {
-        super();
-    }
+  public DDWRTCompanionException() {
+    super();
+  }
 
-    public DDWRTCompanionException(@Nullable final String detailMessage) {
-        super(detailMessage);
-    }
+  public DDWRTCompanionException(@Nullable final String detailMessage) {
+    super(detailMessage);
+  }
 
-    public DDWRTCompanionException(@Nullable final String detailMessage, @Nullable final Throwable throwable) {
-        super(detailMessage, throwable);
-    }
+  public DDWRTCompanionException(@Nullable final String detailMessage,
+      @Nullable final Throwable throwable) {
+    super(detailMessage, throwable);
+  }
 
-    public DDWRTCompanionException(@Nullable final Throwable throwable) {
-        super(throwable);
-    }
+  public DDWRTCompanionException(@Nullable final Throwable throwable) {
+    super(throwable);
+  }
 }

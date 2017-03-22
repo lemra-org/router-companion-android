@@ -22,208 +22,209 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
 <resources>
 
-    <!-- Base application theme. -->
-    <!--<style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">-->
-    <!-- Customize your theme here. -->
-    <!--</style>-->
+  <!-- Base application theme. -->
+  <!--<style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">-->
+  <!-- Customize your theme here. -->
+  <!--</style>-->
 
-    <style name="AppTheme" parent="AppTheme.Base" />
+  <style name="AppTheme" parent="AppTheme.Base"/>
 
-    <style name="AppTheme.Base" parent="Theme.AppCompat.NoActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorPrimaryDark">@color/primaryColorDark</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
-        <item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>
-        <item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
-        <!--<item name="android:fitsSystemWindows">true</item>-->
-    </style>
+  <style name="AppTheme.Base" parent="Theme.AppCompat.NoActionBar">
+    <item name="windowNoTitle">true</item>
+    <item name="windowActionBar">false</item>
+    <item name="colorPrimary">@color/primaryColor</item>
+    <item name="colorPrimaryDark">@color/primaryColorDark</item>
+    <item name="android:windowNoTitle">true</item>
+    <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+    <item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>
+    <item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
+    <!--<item name="android:fitsSystemWindows">true</item>-->
+  </style>
 
-    <!--<style name="Maoni_AppTheme_Base" parent="Theme.AppCompat.Light.DarkActionBar">-->
-    <!--<item name="colorPrimary">@color/maoni_colorPrimary</item>-->
-    <!--<item name="colorPrimaryDark">@color/maoni_colorPrimaryDark</item>-->
-    <!--<item name="colorAccent">@color/maoni_colorAccent</item>-->
-    <!--<item name="windowActionBar">false</item>-->
+  <!--<style name="Maoni_AppTheme_Base" parent="Theme.AppCompat.Light.DarkActionBar">-->
+  <!--<item name="colorPrimary">@color/maoni_colorPrimary</item>-->
+  <!--<item name="colorPrimaryDark">@color/maoni_colorPrimaryDark</item>-->
+  <!--<item name="colorAccent">@color/maoni_colorAccent</item>-->
+  <!--<item name="windowActionBar">false</item>-->
+  <!--<item name="windowNoTitle">true</item>-->
+  <!--<item name="android:windowDrawsSystemBarBackgrounds">true</item>-->
+  <!--<item name="android:statusBarColor">@android:color/transparent</item>-->
+  <!--</style>-->
+
+  <style name="AppThemeLight" parent="Theme.AppCompat.Light.NoActionBar">
     <!--<item name="windowNoTitle">true</item>-->
-    <!--<item name="android:windowDrawsSystemBarBackgrounds">true</item>-->
-    <!--<item name="android:statusBarColor">@android:color/transparent</item>-->
-    <!--</style>-->
+    <!--<item name="windowActionBar">false</item>-->
+    <item name="colorPrimary">@color/lightTheme_primary</item>
+    <item name="colorPrimaryDark">@color/lightTheme_primary_dark</item>
 
-    <style name="AppThemeLight" parent="Theme.AppCompat.Light.NoActionBar">
-        <!--<item name="windowNoTitle">true</item>-->
-        <!--<item name="windowActionBar">false</item>-->
-        <item name="colorPrimary">@color/lightTheme_primary</item>
-        <item name="colorPrimaryDark">@color/lightTheme_primary_dark</item>
+    <!--<item name="android:textColorPrimary">@color/lightTheme_text_icons</item>-->
 
-        <!--<item name="android:textColorPrimary">@color/lightTheme_text_icons</item>-->
+    <item name="windowActionBar">false</item>
+    <item name="colorAccent">@color/color_accent</item>
 
-        <item name="windowActionBar">false</item>
-        <item name="colorAccent">@color/color_accent</item>
+    <!--<item name="drawerArrowStyle">@style/DrawerArrowStyle</item>-->
+    <!--<item name="textColor">@color/lightTheme_primary_text</item>-->
+    <item name="android:windowBackground">@color/lightTheme_windowBgColor</item>
 
-        <!--<item name="drawerArrowStyle">@style/DrawerArrowStyle</item>-->
-        <!--<item name="textColor">@color/lightTheme_primary_text</item>-->
-        <item name="android:windowBackground">@color/lightTheme_windowBgColor</item>
+    <!--<item name="android:colorBackground">@color/lightTheme_windowBgColor</item>-->
 
-        <!--<item name="android:colorBackground">@color/lightTheme_windowBgColor</item>-->
+    <!--<item name="actionModeBackground">@color/holo_green_dark</item>-->
+    <!--<item name="dropDownListViewStyle">@style/MyDropDownListView</item>-->
+    <!--<item name="spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
+    <item name="android:windowNoTitle">true</item>
+    <item name="windowNoTitle">true</item>
 
-        <!--<item name="actionModeBackground">@color/holo_green_dark</item>-->
-        <!--<item name="dropDownListViewStyle">@style/MyDropDownListView</item>-->
-        <!--<item name="spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
-        <item name="android:windowNoTitle">true</item>
-        <item name="windowNoTitle">true</item>
+    <item name="android:textColor">@color/lightTheme_primary_text</item>
 
-        <item name="android:textColor">@color/lightTheme_primary_text</item>
+    <!--<item name="android:actionModeBackground">@color/holo_green_dark</item>-->
+    <!--<item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>-->
+    <!--<item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
+    <!--<item name="android:fitsSystemWindows">true</item>-->
 
-        <!--<item name="android:actionModeBackground">@color/holo_green_dark</item>-->
-        <!--<item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>-->
-        <!--<item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
-        <!--<item name="android:fitsSystemWindows">true</item>-->
+    <!--<item name="android:windowActionBarOverlay">true</item>-->
 
-        <!--<item name="android:windowActionBarOverlay">true</item>-->
+    <!--<item name="android:windowBackground">@android:color/background_light</item>-->
+    <!--<item name="android:colorBackground">@android:color/background_light</item>-->
 
-        <!--<item name="android:windowBackground">@android:color/background_light</item>-->
-        <!--<item name="android:colorBackground">@android:color/background_light</item>-->
+    <!-- MaterialDrawer specific values -->
+    <!--<item name="material_drawer_background">@color/material_drawer_background</item>-->
+    <!--<item name="material_drawer_primary_text">@color/material_drawer_primary_text</item>-->
+    <!--<item name="material_drawer_primary_icon">@color/material_drawer_primary_icon</item>-->
+    <!--<item name="material_drawer_secondary_text">@color/material_drawer_secondary_text</item>-->
+    <!--<item name="material_drawer_hint_text">@color/material_drawer_hint_text</item>-->
+    <!--<item name="material_drawer_hint_icon">@color/material_drawer_hint_icon</item>-->
+    <!--<item name="material_drawer_divider">@color/material_drawer_divider</item>-->
+    <!--<item name="material_drawer_selected">@color/material_drawer_selected</item>-->
+    <!--<item name="material_drawer_selected_text">@color/lightTheme_primary</item>-->
+    <!--<item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text</item>-->
+  </style>
 
-        <!-- MaterialDrawer specific values -->
-        <!--<item name="material_drawer_background">@color/material_drawer_background</item>-->
-        <!--<item name="material_drawer_primary_text">@color/material_drawer_primary_text</item>-->
-        <!--<item name="material_drawer_primary_icon">@color/material_drawer_primary_icon</item>-->
-        <!--<item name="material_drawer_secondary_text">@color/material_drawer_secondary_text</item>-->
-        <!--<item name="material_drawer_hint_text">@color/material_drawer_hint_text</item>-->
-        <!--<item name="material_drawer_hint_icon">@color/material_drawer_hint_icon</item>-->
-        <!--<item name="material_drawer_divider">@color/material_drawer_divider</item>-->
-        <!--<item name="material_drawer_selected">@color/material_drawer_selected</item>-->
-        <!--<item name="material_drawer_selected_text">@color/lightTheme_primary</item>-->
-        <!--<item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text</item>-->
-    </style>
+  <style name="AppThemeDark" parent="Theme.AppCompat.NoActionBar">
+    <!--<item name="windowNoTitle">true</item>-->
+    <!--<item name="windowActionBar">false</item>-->
+    <item name="colorPrimary">@color/darkTheme_primary</item>
+    <item name="colorPrimaryDark">@color/darkTheme_primary_dark</item>
+    <!--<item name="drawerArrowStyle">@style/DrawerArrowStyle</item>-->
+    <item name="android:windowNoTitle">true</item>
+    <item name="windowNoTitle">true</item>
+    <item name="windowActionBar">false</item>
 
-    <style name="AppThemeDark" parent="Theme.AppCompat.NoActionBar">
-        <!--<item name="windowNoTitle">true</item>-->
-        <!--<item name="windowActionBar">false</item>-->
-        <item name="colorPrimary">@color/darkTheme_primary</item>
-        <item name="colorPrimaryDark">@color/darkTheme_primary_dark</item>
-        <!--<item name="drawerArrowStyle">@style/DrawerArrowStyle</item>-->
-        <item name="android:windowNoTitle">true</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
+    <item name="colorAccent">@color/color_accent</item>
 
-        <item name="colorAccent">@color/color_accent</item>
+    <item name="android:textColor">@color/darkTheme_primary_text</item>
 
-        <item name="android:textColor">@color/darkTheme_primary_text</item>
+    <item name="android:windowBackground">@color/darkTheme_windowBgColor</item>
 
-        <item name="android:windowBackground">@color/darkTheme_windowBgColor</item>
+    <!--<item name="android:colorBackground">@color/darkTheme_windowBgColor</item>-->
 
-        <!--<item name="android:colorBackground">@color/darkTheme_windowBgColor</item>-->
+    <!--<item name="android:actionModeBackground">@color/holo_green_dark</item>-->
+    <!--<item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>-->
+    <!--<item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
+    <!--<item name="textColor">@color/darkTheme_primary_text</item>-->
+    <!--<item name="actionModeBackground">@color/holo_green_dark</item>-->
+    <!--<item name="dropDownListViewStyle">@style/MyDropDownListView</item>-->
+    <!--<item name="spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
+    <!--<item name="android:fitsSystemWindows">true</item>-->
 
-        <!--<item name="android:actionModeBackground">@color/holo_green_dark</item>-->
-        <!--<item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>-->
-        <!--<item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
-        <!--<item name="textColor">@color/darkTheme_primary_text</item>-->
-        <!--<item name="actionModeBackground">@color/holo_green_dark</item>-->
-        <!--<item name="dropDownListViewStyle">@style/MyDropDownListView</item>-->
-        <!--<item name="spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>-->
-        <!--<item name="android:fitsSystemWindows">true</item>-->
+    <!--<item name="android:windowActionBarOverlay">true</item>-->
 
-        <!--<item name="android:windowActionBarOverlay">true</item>-->
+    <!-- MaterialDrawer specific values -->
+    <!--<item name="material_drawer_background">@color/material_drawer_dark_background</item>-->
+    <!--<item name="material_drawer_primary_text">@color/material_drawer_dark_primary_text</item>-->
+    <!--<item name="material_drawer_primary_icon">@color/material_drawer_dark_primary_icon</item>-->
+    <!--<item name="material_drawer_secondary_text">@color/material_drawer_dark_secondary_text</item>-->
+    <!--<item name="material_drawer_hint_text">@color/material_drawer_dark_hint_text</item>-->
+    <!--<item name="material_drawer_hint_icon">@color/material_drawer_dark_hint_icon</item>-->
+    <!--<item name="material_drawer_divider">@color/material_drawer_dark_divider</item>-->
+    <!--<item name="material_drawer_selected">@color/material_drawer_dark_selected</item>-->
+    <!--<item name="material_drawer_selected_text">@color/material_drawer_dark_selected_text</item>-->
+    <!--<item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text</item>-->
 
-        <!-- MaterialDrawer specific values -->
-        <!--<item name="material_drawer_background">@color/material_drawer_dark_background</item>-->
-        <!--<item name="material_drawer_primary_text">@color/material_drawer_dark_primary_text</item>-->
-        <!--<item name="material_drawer_primary_icon">@color/material_drawer_dark_primary_icon</item>-->
-        <!--<item name="material_drawer_secondary_text">@color/material_drawer_dark_secondary_text</item>-->
-        <!--<item name="material_drawer_hint_text">@color/material_drawer_dark_hint_text</item>-->
-        <!--<item name="material_drawer_hint_icon">@color/material_drawer_dark_hint_icon</item>-->
-        <!--<item name="material_drawer_divider">@color/material_drawer_dark_divider</item>-->
-        <!--<item name="material_drawer_selected">@color/material_drawer_dark_selected</item>-->
-        <!--<item name="material_drawer_selected_text">@color/material_drawer_dark_selected_text</item>-->
-        <!--<item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text</item>-->
+  </style>
 
-    </style>
+  <style name="AppThemeLight.StatusBarTransparent" parent="AppThemeLight"/>
 
-    <style name="AppThemeLight.StatusBarTransparent" parent="AppThemeLight"/>
-
-    <style name="AppThemeDark.StatusBarTransparent" parent="AppThemeDark"/>
+  <style name="AppThemeDark.StatusBarTransparent" parent="AppThemeDark"/>
 
 
-    <style name="MyDropDownListView" parent="android:style/Widget.Holo.ListView.DropDown">
-        <item name="android:listSelector">@drawable/ad_selectable_background</item>
-    </style>
+  <style name="MyDropDownListView" parent="android:style/Widget.Holo.ListView.DropDown">
+    <item name="android:listSelector">@drawable/ad_selectable_background</item>
+  </style>
 
-    <style name="MySpinnerDropDownItem" parent="android:style/Widget.DropDownItem.Spinner">
-        <item name="android:background">@drawable/ad_selectable_background</item>
-        <item name="android:checkMark">@null</item>
-    </style>
+  <style name="MySpinnerDropDownItem" parent="android:style/Widget.DropDownItem.Spinner">
+    <item name="android:background">@drawable/ad_selectable_background</item>
+    <item name="android:checkMark">@null</item>
+  </style>
 
-    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
-        <item name="spinBars">true</item>
-        <!--<item name="color">@android:color/black</item>-->
-    </style>
+  <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+    <item name="spinBars">true</item>
+    <!--<item name="color">@android:color/black</item>-->
+  </style>
 
-    <!--<style name="AppBaseTheme" parent="android:Theme.Light"></style>-->
+  <!--<style name="AppBaseTheme" parent="android:Theme.Light"></style>-->
 
-    <!--<style name="AppBaseTheme" parent="android:Theme.Holo" />-->
+  <!--<style name="AppBaseTheme" parent="android:Theme.Holo" />-->
 
-    <!--<style name="AppTheme" parent="AppBaseTheme">-->
-    <!--<item name="android:windowBackground">@color/background_window</item>-->
-    <!--<item name="android:actionBarStyle">@style/ActionBarStyle</item>-->
-    <!--</style>-->
+  <!--<style name="AppTheme" parent="AppBaseTheme">-->
+  <!--<item name="android:windowBackground">@color/background_window</item>-->
+  <!--<item name="android:actionBarStyle">@style/ActionBarStyle</item>-->
+  <!--</style>-->
 
-    <!--<style name="ActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">-->
-    <!--<item name="android:icon">@drawable/ic_launcher_actionbar</item>-->
-    <!--<item name="android:background">#FF666666</item>-->
-    <!--</style>-->
+  <!--<style name="ActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">-->
+  <!--<item name="android:icon">@drawable/ic_launcher_actionbar</item>-->
+  <!--<item name="android:background">#FF666666</item>-->
+  <!--</style>-->
 
-    <!-- Misc -->
-    <style name="TabIndicator" />
+  <!-- Misc -->
+  <style name="TabIndicator"/>
 
-    <!-- Transparent Action Bar -->
-    <style name="TransparentActionBar" parent="">
-        <item name="android:background">@null</item>
-    </style>
+  <!-- Transparent Action Bar -->
+  <style name="TransparentActionBar" parent="">
+    <item name="android:background">@null</item>
+  </style>
 
-    <style name="TranslucentActionBar" parent="">
-        <item name="android:background">@color/translucent_actionbar_background</item>
-    </style>
+  <style name="TranslucentActionBar" parent="">
+    <item name="android:background">@color/translucent_actionbar_background</item>
+  </style>
 
-    <!--<style name="BackGroundImageView">-->
-    <!--<item name="android:alpha">0.5</item>-->
-    <!--<item name="android:scaleType">fitXY</item>-->
-    <!--<item name="android:src">@drawable/img_background</item>-->
-    <!--</style>-->
+  <!--<style name="BackGroundImageView">-->
+  <!--<item name="android:alpha">0.5</item>-->
+  <!--<item name="android:scaleType">fitXY</item>-->
+  <!--<item name="android:src">@drawable/img_background</item>-->
+  <!--</style>-->
 
-    <style name="MaterialTheme" parent="android:Theme.Light">
-        <!--<item name="undoBarStyle">@style/UndoBarMaterialStyle</item>-->
-    </style>
+  <style name="MaterialTheme" parent="android:Theme.Light">
+    <!--<item name="undoBarStyle">@style/UndoBarMaterialStyle</item>-->
+  </style>
 
-    <style name="PopupTheme" parent="@android:style/Theme.Holo.Dialog">
-        <item name="android:windowIsFloating">false</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowSoftInputMode">stateAlwaysHidden</item>
-        <item name="android:windowActionModeOverlay">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-    </style>
+  <style name="PopupTheme" parent="@android:style/Theme.Holo.Dialog">
+    <item name="android:windowIsFloating">false</item>
+    <item name="android:windowContentOverlay">@null</item>
+    <item name="android:windowSoftInputMode">stateAlwaysHidden</item>
+    <item name="android:windowActionModeOverlay">true</item>
+    <item name="android:windowIsTranslucent">true</item>
+  </style>
 
-    <style name="PopupThemeLight" parent="@android:style/Theme.Holo.Light.Dialog">
-        <item name="android:windowIsFloating">false</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowSoftInputMode">stateAlwaysHidden</item>
-        <item name="android:windowActionModeOverlay">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-    </style>
+  <style name="PopupThemeLight" parent="@android:style/Theme.Holo.Light.Dialog">
+    <item name="android:windowIsFloating">false</item>
+    <item name="android:windowContentOverlay">@null</item>
+    <item name="android:windowSoftInputMode">stateAlwaysHidden</item>
+    <item name="android:windowActionModeOverlay">true</item>
+    <item name="android:windowIsTranslucent">true</item>
+  </style>
 
-    <style name="ToolbarTitle" parent="Base.TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textStyle">bold</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-    </style>
-    <style name="ToolbarSubtitle" parent="Base.TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
-        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-    </style>
+  <style name="ToolbarTitle" parent="Base.TextAppearance.Widget.AppCompat.Toolbar.Title">
+    <item name="android:textStyle">bold</item>
+    <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+  </style>
 
-    <style name="MyButton" parent="Theme.AppCompat.Light">
-        <item name="colorControlHighlight">@color/win8_teal</item>
-        <item name="colorButtonNormal">@color/primaryColor</item>
-    </style>
+  <style name="ToolbarSubtitle" parent="Base.TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+    <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+  </style>
+
+  <style name="MyButton" parent="Theme.AppCompat.Light">
+    <item name="colorControlHighlight">@color/win8_teal</item>
+    <item name="colorButtonNormal">@color/primaryColor</item>
+  </style>
 
 </resources>

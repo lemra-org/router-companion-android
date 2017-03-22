@@ -29,18 +29,19 @@ import android.support.annotation.Nullable;
  */
 public class UserGeneratedReportException extends DDWRTCompanionException {
 
-    public UserGeneratedReportException() {
-    }
+  public UserGeneratedReportException() {
+  }
 
-    public UserGeneratedReportException(@Nullable String detailMessage) {
-        super(detailMessage);
-    }
+  public UserGeneratedReportException(@Nullable String detailMessage) {
+    super(detailMessage);
+  }
 
-    public UserGeneratedReportException(@Nullable String detailMessage, @Nullable Throwable throwable) {
-        super(detailMessage, throwable);
-    }
+  public UserGeneratedReportException(@Nullable String detailMessage,
+      @Nullable Throwable throwable) {
+    super(detailMessage, throwable);
+  }
 
-    public UserGeneratedReportException(@Nullable Throwable throwable) {
-        super(throwable);
-    }
+  public UserGeneratedReportException(@Nullable Throwable throwable) {
+    super(throwable);
+  }
 }

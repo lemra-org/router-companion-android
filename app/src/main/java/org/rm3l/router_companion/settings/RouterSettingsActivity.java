@@ -26,9 +26,7 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
-
 import com.airbnb.deeplinkdispatch.DeepLink;
-
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 
@@ -54,64 +52,58 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.WAN_CYCLE_DA
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-@DeepLink({"dd-wrt://routers/{routerUuid}/settings",
-        "ddwrt://routers/{routerUuid}/settings"})
-public class RouterSettingsActivity extends AbstractRouterSettingsActivity {
+@DeepLink({
+    "dd-wrt://routers/{routerUuid}/settings", "ddwrt://routers/{routerUuid}/settings"
+}) public class RouterSettingsActivity extends AbstractRouterSettingsActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        final Intent intent = getIntent();
-        if (intent.getBooleanExtra(DeepLink.IS_DEEP_LINK, false)) {
-            //Deep link
-            final Bundle parameters = intent.getExtras();
+  @Override protected void onCreate(Bundle savedInstanceState) {
+    final Intent intent = getIntent();
+    if (intent.getBooleanExtra(DeepLink.IS_DEEP_LINK, false)) {
+      //Deep link
+      final Bundle parameters = intent.getExtras();
 
-            final String routerUuid = parameters.getString("routerUuid");
-            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
-                    routerUuid);
-        }
-        super.onCreate(savedInstanceState);
+      final String routerUuid = parameters.getString("routerUuid");
+      intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
     }
+    super.onCreate(savedInstanceState);
+  }
 
-    @NonNull
-    @Override
-    protected PreferenceFragment getPreferenceFragment() {
-        return new RouterSettingsFragment();
+  @NonNull @Override protected PreferenceFragment getPreferenceFragment() {
+    return new RouterSettingsFragment();
+  }
+
+  public static class RouterSettingsFragment extends PreferenceFragment {
+
+    @Override public void onCreate(Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
+
+      // Load the preferences from an XML resource
+      addPreferencesFromResource(R.xml.router_settings);
+
+      // Bind the summaries of EditText/List/Dialog/Ringtone preferences
+      // to their values. When their values change, their summaries are
+      // updated to reflect the new value, per the Android Design
+      // guidelines.
+      bindPreferenceSummaryToValue(findPreference(SORTING_STRATEGY_PREF));
+      bindPreferenceSummaryToValue(findPreference(AUTO_REFRESH_PREF));
+      bindPreferenceSummaryToValue(findPreference(AUTO_REFRESH_INTERVAL_SECONDS_PREF));
+      bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_ENABLE));
+      //            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SOUND));
+      //            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF));
+      //            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_DISPLAY_ITEMS));
+      //            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_CONNECTED_HOSTS_SYNC_INTERVAL_MINUTES_PREF));
+      bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_CONNECTED_HOSTS_ACTIVE_ONLY));
+      //            bindPreferenceSummaryToValue(findPreference(OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF));
+      //            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_WAN_CONNECTIVITY_SYNC_INTERVAL_MINUTES_PREF));
+      //            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_OPENVPNCLIENT_SYNC_INTERVAL_MINUTES_PREF));
+
+      bindPreferenceSummaryToValue(findPreference(WAN_CYCLE_DAY_PREF));
+
+      bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_SERVER));
+      bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB));
+      bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS));
+      bindPreferenceSummaryToValue(findPreference(VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE));
+      //            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION));
     }
-
-    public static class RouterSettingsFragment extends PreferenceFragment {
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-
-            // Load the preferences from an XML resource
-            addPreferencesFromResource(R.xml.router_settings);
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            bindPreferenceSummaryToValue(findPreference(SORTING_STRATEGY_PREF));
-            bindPreferenceSummaryToValue(findPreference(AUTO_REFRESH_PREF));
-            bindPreferenceSummaryToValue(findPreference(AUTO_REFRESH_INTERVAL_SECONDS_PREF));
-            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_ENABLE));
-//            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SOUND));
-//            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF));
-//            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_DISPLAY_ITEMS));
-//            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_CONNECTED_HOSTS_SYNC_INTERVAL_MINUTES_PREF));
-            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_CONNECTED_HOSTS_ACTIVE_ONLY));
-//            bindPreferenceSummaryToValue(findPreference(OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF));
-//            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_WAN_CONNECTIVITY_SYNC_INTERVAL_MINUTES_PREF));
-//            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_OPENVPNCLIENT_SYNC_INTERVAL_MINUTES_PREF));
-
-            bindPreferenceSummaryToValue(findPreference(WAN_CYCLE_DAY_PREF));
-
-            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_SERVER));
-            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB));
-            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS));
-            bindPreferenceSummaryToValue(findPreference(VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE));
-//            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION));
-        }
-
-    }
+  }
 }

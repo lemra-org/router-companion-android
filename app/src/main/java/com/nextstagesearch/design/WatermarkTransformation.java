@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.v7.graphics.Palette;
-
 import com.squareup.picasso.Transformation;
 
 /**
@@ -16,41 +15,38 @@ import com.squareup.picasso.Transformation;
  */
 public class WatermarkTransformation implements Transformation {
 
-    private String waterMark;
-    private static final int PADDING = 8;
+  private static final int PADDING = 8;
+  private String waterMark;
 
-    public WatermarkTransformation(String waterMark) {
-        this.waterMark = waterMark;
-    }
+  public WatermarkTransformation(String waterMark) {
+    this.waterMark = waterMark;
+  }
 
-    @Override
-    public Bitmap transform(Bitmap source) {
-        //choose the color of the text based on the color contents of the image
-        Palette palette = Palette.generate(source);
+  @Override public Bitmap transform(Bitmap source) {
+    //choose the color of the text based on the color contents of the image
+    Palette palette = Palette.generate(source);
 
-        Bitmap workingBitmap = Bitmap.createBitmap(source);
-        Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
-        Canvas canvas = new Canvas(mutableBitmap);
+    Bitmap workingBitmap = Bitmap.createBitmap(source);
+    Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
+    Canvas canvas = new Canvas(mutableBitmap);
 
-        Paint paint2 = new Paint();
-        paint2.setColor(palette.getVibrantColor(0xdd03a9f4));
-        paint2.setTextSize(24);
-        paint2.setTextAlign(Paint.Align.RIGHT);
-        paint2.setAntiAlias(true);
-        Rect textBounds = new Rect();
-        paint2.getTextBounds(waterMark, 0, waterMark.length(), textBounds);
-        int x = source.getWidth() - PADDING;
-        int y = source.getHeight() - PADDING;
+    Paint paint2 = new Paint();
+    paint2.setColor(palette.getVibrantColor(0xdd03a9f4));
+    paint2.setTextSize(24);
+    paint2.setTextAlign(Paint.Align.RIGHT);
+    paint2.setAntiAlias(true);
+    Rect textBounds = new Rect();
+    paint2.getTextBounds(waterMark, 0, waterMark.length(), textBounds);
+    int x = source.getWidth() - PADDING;
+    int y = source.getHeight() - PADDING;
 
+    canvas.drawText(waterMark, x, y, paint2);
+    source.recycle();
 
-        canvas.drawText(waterMark, x, y, paint2);
-        source.recycle();
+    return mutableBitmap;
+  }
 
-        return mutableBitmap;
-    }
-
-    @Override
-    public String key() {
-        return "WaterMarkTransformation-" + waterMark;
-    }
+  @Override public String key() {
+    return "WaterMarkTransformation-" + waterMark;
+  }
 }

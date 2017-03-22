@@ -14,9 +14,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * Makes the Call retry on failure
  */
-@Documented
-@Target(METHOD)
-@Retention(RUNTIME)
-public @interface Retry {
-    int value() default 3;
+@Documented @Target(METHOD) @Retention(RUNTIME) public @interface Retry {
+  int value() default 3;
 }

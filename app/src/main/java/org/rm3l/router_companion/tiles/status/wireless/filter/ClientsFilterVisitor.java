@@ -22,13 +22,10 @@
 package org.rm3l.router_companion.tiles.status.wireless.filter;
 
 import android.support.annotation.NonNull;
-
-import org.rm3l.router_companion.resources.Device;
-
 import java.util.Set;
+import org.rm3l.router_companion.resources.Device;
 
 public interface ClientsFilterVisitor {
 
-    @NonNull
-    Set<Device> visit(@NonNull final Set<Device> devices);
+  @NonNull Set<Device> visit(@NonNull final Set<Device> devices);
 }

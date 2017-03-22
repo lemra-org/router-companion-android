@@ -26,75 +26,84 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
 
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/router_import_aliases_adView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:visibility="gone"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_unit_id_router_restore_dialog" />
+  <com.google.android.gms.ads.AdView
+      android:id="@+id/router_import_aliases_adView"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:layout_marginBottom="5dp"
+      android:layout_marginTop="5dp"
+      android:visibility="gone"
+      ads:adSize="BANNER"
+      ads:adUnitId="@string/banner_ad_unit_id_router_restore_dialog"
+      />
+
+  <LinearLayout
+      android:id="@+id/router_import_aliases_notification_viewgroup"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      />
+
+  <ScrollView
+      android:id="@+id/router_import_aliases_scrollview"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:scrollbars="vertical"
+      >
 
     <LinearLayout
-        android:id="@+id/router_import_aliases_notification_viewgroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" />
+        android:orientation="vertical"
+        >
 
-    <ScrollView
-        android:id="@+id/router_import_aliases_scrollview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical">
+      <!-- Backup File -->
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="4dp"
+          android:layout_marginStart="4dp"
+          android:layout_marginTop="@dimen/activity_vertical_margin"
+          android:text="Aliases File (JSON format)"
+          />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+      <Button
+          android:id="@+id/router_import_aliases_select_button"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="4dp"
+          android:layout_marginLeft="4dp"
+          android:layout_marginRight="4dp"
+          android:hint="Select Aliases File to import"
+          />
 
-            <!-- Backup File -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="Aliases File (JSON format)"/>
+      <TextView
+          android:id="@+id/router_import_aliases_path"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:visibility="gone"
+          />
 
-            <Button
-                android:id="@+id/router_import_aliases_select_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:hint="Select Aliases File to import"/>
+      <android.support.v7.widget.SwitchCompat
+          android:id="@+id/router_import_aliases_clear_aliases"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="4dp"
+          android:layout_marginLeft="4dp"
+          android:layout_marginRight="4dp"
+          android:checked="false"
+          android:text="Clear existing aliases"
+          android:textOff="OFF"
+          android:textOn="ON"
+          app:showText="false"
+          />
 
-            <TextView
-                android:id="@+id/router_import_aliases_path"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
+    </LinearLayout>
 
-            <android.support.v7.widget.SwitchCompat
-                android:id="@+id/router_import_aliases_clear_aliases"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:checked="false"
-                android:textOff="OFF"
-                android:textOn="ON"
-                android:text="Clear existing aliases"
-                app:showText="false"/>
-
-        </LinearLayout>
-
-    </ScrollView>
+  </ScrollView>
 
 </LinearLayout>
