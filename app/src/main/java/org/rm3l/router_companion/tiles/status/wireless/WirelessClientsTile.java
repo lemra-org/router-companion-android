@@ -179,7 +179,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
   public static final String RT_GRAPHS = "rt_graphs";
   public static final String EXPANDED_CLIENTS_PREF_KEY = \"fake-key\";
       getFormattedPrefKey(WirelessClientsTile.class, "expanded_clients");
-  public static final String USAGE_DB_OUT = USAGE_DB + ".out";
   //Generate a random string, to use as discriminator for determining dhcp clients
   public static final String MAP_KEYWORD =
       WirelessClientsTile.class.getSimpleName() + UUID.randomUUID().toString();
@@ -225,6 +224,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
           });
   private static final String PER_IP_MONITORING_IP_TABLES_CHAIN = "DDWRTCompanion";
   public static final String USAGE_DB = "/tmp/." + PER_IP_MONITORING_IP_TABLES_CHAIN + "_usage.db";
+  public static final String USAGE_DB_OUT = USAGE_DB + ".out";
   private static final BiMap<Integer, Integer> sortIds = HashBiMap.create(6);
 
   static {
