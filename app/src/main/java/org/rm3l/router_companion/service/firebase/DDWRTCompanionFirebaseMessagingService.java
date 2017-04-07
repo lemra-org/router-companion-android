@@ -148,11 +148,19 @@ public class DDWRTCompanionFirebaseMessagingService extends FirebaseMessagingSer
     }
 
     //Shorten FTP link so it can be opened with the browser
-    final Response<GooGlData> response =
-        mGooGlService.shortenLongUrl(GOOGLE_API_KEY, new GooGlData().setLongUrl(releaseLink))
-            .execute();
-    NetworkUtils.checkResponseSuccessful(response);
-    final String releaseLinkShortened = response.body().getId();
+    final String releaseLinkShortened;
+    try {
+        final Response<GooGlData> response =
+            mGooGlService.shortenLongUrl(GOOGLE_API_KEY, new GooGlData().setLongUrl(releaseLink))
+                .execute();
+        NetworkUtils.checkResponseSuccessful(response);
+        releaseLinkShortened = response.body().getId();
+    } catch (final Exception ignored) {
+      //No worries
+      releaseLinkShortened = releaseLink;
+      ignored.printStackTrace();
+      Crashlytics.logException(ignored);
+    }
 
     Crashlytics.log(Log.DEBUG, TAG,
         "[Firebase] releaseLinkShortened: [" + releaseLinkShortened + "]");
