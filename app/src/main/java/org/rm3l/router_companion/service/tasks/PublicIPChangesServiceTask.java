@@ -24,6 +24,7 @@ import java.util.HashSet;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
+import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
 import org.rm3l.router_companion.main.DDWRTMainActivity;
 import org.rm3l.router_companion.resources.PublicIPInfo;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
@@ -230,22 +231,31 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
       return;
     }
 
-    final CharSequence applicationName = Utils.getApplicationName(mCtx);
-
     final NVRAMInfo nvramInfo =
         SSHUtils.getNVRamInfoFromRouter(mCtx, router, globalPreferences, WAN_IPADDR);
 
-    final String[] wanPublicIpCmdStatus =
-        SSHUtils.getManualProperty(mCtx, router, globalPreferences,
-            //"echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazip.com 80"
-            String.format("echo -e \""
-                    + "GET / HTTP/1.1\\r\\n"
-                    + "Host:%s\\r\\n"
-                    + "User-Agent:%s/%s\\r\\n\" "
-                    + "| /usr/bin/nc %s %d", PublicIPInfo.ICANHAZIP_HOST,
-                applicationName != null ? applicationName : BuildConfig.APPLICATION_ID,
-                BuildConfig.VERSION_NAME, PublicIPInfo.ICANHAZIP_HOST,
-                PublicIPInfo.ICANHAZIP_PORT));
+    final String wanPublicIpAddress = RouterFirmwareConnectorManager.getConnector(router)
+        .getWanPublicIpAddress(mCtx, router, null);
+    final String[] wanPublicIpCmdStatus;
+    if (wanPublicIpAddress != null) {
+      wanPublicIpCmdStatus = new String[1];
+      wanPublicIpCmdStatus[0] = wanPublicIpAddress;
+    } else {
+      wanPublicIpCmdStatus = new String[0];
+    }
+
+    //final String[] wanPublicIpCmdStatus =
+    //    SSHUtils.getManualProperty(mCtx, router, globalPreferences,
+    //        Utils.getCommandForInternetIPResolution(mCtx)
+    //        //"echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazip.com 80"
+    //        String.format("echo -e \""
+    //                + "GET / HTTP/1.1\\r\\n"
+    //                + "Host:%s\\r\\n"
+    //                + "User-Agent:%s/%s\\r\\n\" "
+    //                + "| /usr/bin/nc %s %d", PublicIPInfo.ICANHAZIP_HOST,
+    //            applicationName != null ? applicationName : BuildConfig.APPLICATION_ID,
+    //            BuildConfig.VERSION_NAME, PublicIPInfo.ICANHAZIP_HOST,
+    //            PublicIPInfo.ICANHAZIP_PORT));
 
     String wanIp = (nvramInfo != null ? nvramInfo.getProperty(WAN_IPADDR) : null);
 

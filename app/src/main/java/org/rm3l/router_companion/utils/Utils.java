@@ -925,15 +925,6 @@ public final class Utils {
 
   public static String getCommandForInternetIPResolution(Context context) {
     return getCommandForInternetIPResolution(context, "/usr/bin/nc");
-    // final CharSequence applicationName = Utils.getApplicationName(context);
-    // //"echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazip.com 80"
-    // return String.format("(echo -e \""
-    //         + "GET / HTTP/1.1\\r\\n"
-    //         + "Host:%s\\r\\n"
-    //         + "User-Agent:%s/%s\\r\\n\"; sleep 1) "
-    //         + "| /usr/bin/nc %s %d", PublicIPInfo.ICANHAZIP_HOST,
-    //     applicationName != null ? applicationName : BuildConfig.APPLICATION_ID,
-    //     BuildConfig.VERSION_NAME, PublicIPInfo.ICANHAZIP_HOST, PublicIPInfo.ICANHAZIP_PORT);
   }
   
   public static String getCommandForInternetIPResolution(Context context, @Nullable final String ncCmdPath) {
@@ -949,6 +940,25 @@ public final class Utils {
         (ncCmdPath == null || ncCmdPath.trim().isEmpty()) ? "/usr/bin/nc" : ncCmdPath,
         PublicIPInfo.ICANHAZIP_HOST, 
         PublicIPInfo.ICANHAZIP_PORT);
+  }
+
+  public static String getCommandForRevDnsPtrResolution(Context context) {
+    return getCommandForRevDnsPtrResolution(context, "/usr/bin/nc");
+  }
+
+  public static String getCommandForRevDnsPtrResolution(Context context, @Nullable final String ncCmdPath) {
+    final CharSequence applicationName = Utils.getApplicationName(context);
+    //"echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazip.com 80"
+    return String.format("(echo -e \""
+            + "GET / HTTP/1.1\\r\\n"
+            + "Host:%s\\r\\n"
+            + "User-Agent:%s/%s\\r\\n\"; sleep 1) "
+            + "| %s %s %d", PublicIPInfo.ICANHAZPTR_HOST,
+        applicationName != null ? applicationName : BuildConfig.APPLICATION_ID,
+        BuildConfig.VERSION_NAME,
+        (ncCmdPath == null || ncCmdPath.trim().isEmpty()) ? "/usr/bin/nc" : ncCmdPath,
+        PublicIPInfo.ICANHAZPTR_HOST,
+        PublicIPInfo.ICANHAZPTR_PORT);
   }
 
   public static int getResId(String resourceName, Class<?> clazz) {

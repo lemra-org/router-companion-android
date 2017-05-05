@@ -61,6 +61,7 @@ import org.rm3l.router_companion.actions.RouterAction;
 import org.rm3l.router_companion.actions.RouterActionListener;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
 import org.rm3l.router_companion.resources.PublicIPInfo;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
@@ -262,21 +263,31 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
                   }
                 } else {
                   //Check actual connections to the outside from the router
-                  final String[] wanPublicIpCmdStatus =
-                      SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
-                          mGlobalPreferences,
-                          //                                        "echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazip.com 80"
-                          String.format("echo -e \""
-                                  + "GET / HTTP/1.1\\r\\n"
-                                  + "Host:%s\\r\\n"
-                                  + "User-Agent:%s/%s\\r\\n\" "
-                                  + "| /usr/bin/nc %s %d", PublicIPInfo.ICANHAZIP_HOST,
-                              applicationName != null ? applicationName
-                                  : BuildConfig.APPLICATION_ID, BuildConfig.VERSION_NAME,
-                              PublicIPInfo.ICANHAZIP_HOST, PublicIPInfo.ICANHAZIP_PORT));
+                  final String wanPublicIpAddress = RouterFirmwareConnectorManager.getConnector(mRouter)
+                      .getWanPublicIpAddress(mParentFragmentActivity, mRouter, null);
+                  final String[] wanPublicIpCmdStatus;
+                  if (wanPublicIpAddress != null) {
+                    wanPublicIpCmdStatus = new String[1];
+                    wanPublicIpCmdStatus[0] = wanPublicIpAddress;
+                  } else {
+                    wanPublicIpCmdStatus = new String[0];
+                  }
+                  //
+                  //final String[] wanPublicIpCmdStatus =
+                  //    SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
+                  //        mGlobalPreferences,
+                  //        //                                        "echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazip.com 80"
+                  //        String.format("echo -e \""
+                  //                + "GET / HTTP/1.1\\r\\n"
+                  //                + "Host:%s\\r\\n"
+                  //                + "User-Agent:%s/%s\\r\\n\" "
+                  //                + "| /usr/bin/nc %s %d", PublicIPInfo.ICANHAZIP_HOST,
+                  //            applicationName != null ? applicationName
+                  //                : BuildConfig.APPLICATION_ID, BuildConfig.VERSION_NAME,
+                  //            PublicIPInfo.ICANHAZIP_HOST, PublicIPInfo.ICANHAZIP_PORT));
                   Crashlytics.log(Log.DEBUG, LOG_TAG,
                       "wanPublicIpCmdStatus: " + Arrays.toString(wanPublicIpCmdStatus));
-                  if (wanPublicIpCmdStatus == null || wanPublicIpCmdStatus.length == 0) {
+                  if (wanPublicIpCmdStatus.length == 0) {
                     nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
                   } else {
                     final String wanPublicIp =
@@ -305,15 +316,17 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
                   final String[] revDnsCmdStatus =
                       SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                           mGlobalPreferences,
-                          //                                        "echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazptr.com 80"
-                          String.format("echo -e \""
-                                  + "GET / HTTP/1.1\\r\\n"
-                                  + "Host:%s\\r\\n"
-                                  + "User-Agent:%s/%s\\r\\n\" "
-                                  + "| /usr/bin/nc %s %d", PublicIPInfo.ICANHAZPTR_HOST,
-                              applicationName != null ? applicationName
-                                  : BuildConfig.APPLICATION_ID, BuildConfig.VERSION_NAME,
-                              PublicIPInfo.ICANHAZPTR_HOST, PublicIPInfo.ICANHAZPTR_PORT));
+                          Utils.getCommandForRevDnsPtrResolution(mParentFragmentActivity)
+                          ////                                        "echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazptr.com 80"
+                          //String.format("echo -e \""
+                          //        + "GET / HTTP/1.1\\r\\n"
+                          //        + "Host:%s\\r\\n"
+                          //        + "User-Agent:%s/%s\\r\\n\" "
+                          //        + "| /usr/bin/nc %s %d", PublicIPInfo.ICANHAZPTR_HOST,
+                          //    applicationName != null ? applicationName
+                          //        : BuildConfig.APPLICATION_ID, BuildConfig.VERSION_NAME,
+                          //    PublicIPInfo.ICANHAZPTR_HOST, PublicIPInfo.ICANHAZPTR_PORT)
+                      );
 
                   Crashlytics.log(Log.DEBUG, LOG_TAG,
                       "revDnsCmdStatus: " + Arrays.toString(revDnsCmdStatus));
