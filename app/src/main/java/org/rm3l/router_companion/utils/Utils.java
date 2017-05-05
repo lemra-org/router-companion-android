@@ -925,11 +925,11 @@ public final class Utils {
 
   public static String getCommandForInternetIPResolution(Context context) {
     final CharSequence applicationName = Utils.getApplicationName(context);
-    //                                        "echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazip.com 80"
-    return String.format("echo -e \""
+    //"echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazip.com 80"
+    return String.format("(echo -e \""
             + "GET / HTTP/1.1\\r\\n"
             + "Host:%s\\r\\n"
-            + "User-Agent:%s/%s\\r\\n\" "
+            + "User-Agent:%s/%s\\r\\n\"; sleep 1) "
             + "| /usr/bin/nc %s %d", PublicIPInfo.ICANHAZIP_HOST,
         applicationName != null ? applicationName : BuildConfig.APPLICATION_ID,
         BuildConfig.VERSION_NAME, PublicIPInfo.ICANHAZIP_HOST, PublicIPInfo.ICANHAZIP_PORT);
