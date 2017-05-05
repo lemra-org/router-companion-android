@@ -839,15 +839,17 @@ public final class SSHUtils {
     final CharSequence applicationName = Utils.getApplicationName(context);
     final String[] wanPublicIpCmdStatus =
         SSHUtils.getManualProperty(context, router, globalSharedPreferences,
-            //              "echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazip.com 80"
-            String.format("echo -e \""
-                    + "GET / HTTP/1.1\\r\\n"
-                    + "Host:%s\\r\\n"
-                    + "User-Agent:%s/%s\\r\\n\" "
-                    + "| %s %s %d", PublicIPInfo.ICANHAZIP_HOST,
-                applicationName != null ? applicationName : BuildConfig.APPLICATION_ID,
-                BuildConfig.VERSION_NAME, TextUtils.isEmpty(ncCmdPath) ? "/usr/bin/nc" : ncCmdPath,
-                PublicIPInfo.ICANHAZIP_HOST, PublicIPInfo.ICANHAZIP_PORT));
+            Utils.getCommandForInternetIPResolution(context, ncCmdPath)
+            
+            // String.format("(echo -e \""
+            //         + "GET / HTTP/1.1\\r\\n"
+            //         + "Host:%s\\r\\n"
+            //         + "User-Agent:%s/%s\\r\\n\" "
+            //         + "| %s %s %d", PublicIPInfo.ICANHAZIP_HOST,
+            //     applicationName != null ? applicationName : BuildConfig.APPLICATION_ID,
+            //     BuildConfig.VERSION_NAME, TextUtils.isEmpty(ncCmdPath) ? "/usr/bin/nc" : ncCmdPath,
+            //     PublicIPInfo.ICANHAZIP_HOST, PublicIPInfo.ICANHAZIP_PORT)
+                );
 
     String mWanPublicIP = null;
     if (wanPublicIpCmdStatus != null && wanPublicIpCmdStatus.length > 0) {
