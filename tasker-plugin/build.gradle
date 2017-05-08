@@ -34,6 +34,7 @@ buildscript {
   }
 }
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
 
 repositories {
@@ -112,6 +113,12 @@ android {
   compileSdkVersion 25
   buildToolsVersion "25.0.2"
 
+  playAccountConfigs {
+    defaultAccountConfig {
+      jsonFile = rootProject.getPlayStoreConfig()
+    }
+  }
+
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_7
     targetCompatibility JavaVersion.VERSION_1_7
@@ -189,6 +196,8 @@ android {
         "- NAME: " +
         versionName +
         "\n----------------------------\n")
+
+    playAccountConfig = playAccountConfigs.defaultAccountConfig
   }
 
   //Those files, from Apache Commons lib cause build errors
@@ -260,6 +269,9 @@ android.productFlavors.each { flavor -> flavor.versionName = getVersionName(flav
 
 dependencies {
 
+  compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+  compile 'org.jetbrains.anko:anko-sdk15:0.9.1'
+
   compile project(':common')
 
   compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -277,8 +289,12 @@ dependencies {
 
   compile 'com.android.support:appcompat-v7:25.1.0'
 
-  compile('org.rm3l:maoni:2.3.1@aar') {
+  compile('org.rm3l:maoni:2.4.0@aar') {
     transitive = true;
+  }
+
+  compile('org.rm3l:maoni-doorbell:2.4.0') {
+    transitive = false;
   }
 
   compile('com.mikepenz:aboutlibraries:5.9.1@aar') {
@@ -343,4 +359,14 @@ dependencies {
   releaseCompile 'com.readystatesoftware.chuck:library-no-op:1.0.2'
 
   compile 'com.github.ihsanbal:LoggingInterceptor:1.0.4'
+}
+
+
+play {
+  // ...
+  track = 'beta'
+  untrackOld = true // will untrack 'alpha' while upload to 'beta'
+
+  uploadImages = false
+  errorOnSizeLimit = true
 }

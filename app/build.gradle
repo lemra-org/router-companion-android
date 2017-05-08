@@ -35,6 +35,7 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 //apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'android-apt'
 apply plugin: 'io.fabric'
@@ -150,6 +151,13 @@ android {
 
   compileSdkVersion 25
   buildToolsVersion '25.0.0'
+
+  playAccountConfigs {
+    defaultAccountConfig {
+      jsonFile = rootProject.getPlayStoreConfig()
+    }
+  }
+
   sourceSets {
     main {
       manifest.srcFile 'src/main/AndroidManifest.xml'
@@ -162,6 +170,8 @@ android {
       res.srcDirs = ['src/main/res']
       assets.srcDirs = ['src/main/assets']
     }
+
+    main.java.srcDirs += 'src/main/kotlin'
 
     // Move the tests to tests/java, tests/res, etc...
     instrumentTest.setRoot('src/androidTests')
@@ -216,6 +226,8 @@ android {
         "\n----------------------------\n")
 
     //        testInstrumentationRunner "android.support.multidex.MultiDexTestRunner"
+
+    playAccountConfig = playAccountConfigs.defaultAccountConfig
   }
   //Those files, from Apache Commons lib cause build errors
   packagingOptions {
@@ -415,6 +427,9 @@ play {
 //Dependencies
 dependencies {
 
+  compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+  compile 'org.jetbrains.anko:anko-sdk15:0.9.1'
+
   // Unit testing dependencies
   testCompile 'junit:junit:4.12'
   // Set this dependency if you want to use the Hamcrest matcher library
@@ -511,14 +526,14 @@ dependencies {
   compile 'com.squareup.retrofit2:converter-gson:2.1.0'
   compile 'com.squareup.okhttp3:logging-interceptor:3.4.2'
 
-  compile('org.rm3l:maoni:2.3.1@aar') {
+  compile('org.rm3l:maoni:2.4.0@aar') {
     transitive = true;
     exclude group: 'com.android.support', module: 'appcompat-v7'
     exclude group: 'com.android.support', module: 'design'
     exclude group: 'com.android.support', module: 'support-v4'
   }
 
-  compile('org.rm3l:maoni-doorbell:0.1.1') {
+  compile('org.rm3l:maoni-doorbell:2.4.0') {
     transitive = false;
     exclude group: 'com.android.support', module: 'appcompat-v7'
     exclude group: 'com.android.support', module: 'design'
@@ -582,6 +597,16 @@ dependencies {
   releaseCompile 'com.readystatesoftware.chuck:library-no-op:1.0.2'
 
   compile 'com.github.ihsanbal:LoggingInterceptor:1.0.4'
+}
+
+
+play {
+  // ...
+  track = 'beta'
+  untrackOld = true // will untrack 'alpha' while upload to 'beta'
+
+  uploadImages = false
+  errorOnSizeLimit = true
 }
 
 // Add to the bottom of the file
