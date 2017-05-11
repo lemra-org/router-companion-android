@@ -425,7 +425,7 @@ public class MaoniFeedbackHandler implements Handler {
                         + "- Device: %s (%s)\n"
                         + "%s"
                         + "-------\n\n"
-                        + ">>> NOTE: Ask questions and discuss/vote for features on %s <<<",
+                        + ">>> NOTE: Visit the Public Roadmap and vote for your favorite features: %s <<<",
                     contentText, TextUtils.isEmpty(screenshotCaptureUploadUrl) ? ""
                         : String.format("Screenshot: %s\n\n", screenshotCaptureUploadUrl),
                     deviceInfo != null ? deviceInfo.androidReleaseVersion : UNKNOWN,
@@ -433,7 +433,7 @@ public class MaoniFeedbackHandler implements Handler {
                     deviceInfo != null ? deviceInfo.model : UNKNOWN,
                     deviceInfo != null ? deviceInfo.manufacturer : UNKNOWN,
                     TextUtils.isEmpty(routerInfoText) ? "" : routerInfoText,
-                    RouterCompanionAppConstants.Q_A_WEBSITE), null,
+                    RouterCompanionAppConstants.PUBLIC_ROADMAP_WEBSITE), null,
                 GSON_BUILDER.create().toJson(properties), new String[0]).execute();
 
         NetworkUtils.checkResponseSuccessful(response);
