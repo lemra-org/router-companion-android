@@ -45,7 +45,9 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.maoni.Maoni;
 import org.rm3l.router_companion.common.IRouterCompanionService;
 import org.rm3l.router_companion.common.resources.RouterInfo;
+import org.rm3l.router_companion.common.resources.audit.ActionLog;
 import org.rm3l.router_companion.common.utils.ActivityUtils;
+import org.rm3l.router_companion.tasker.BuildConfig;
 import org.rm3l.router_companion.tasker.Constants;
 import org.rm3l.router_companion.tasker.R;
 import org.rm3l.router_companion.tasker.bundle.PluginBundleValues;
@@ -55,6 +57,7 @@ import org.rm3l.router_companion.tasker.utils.Utils;
 
 import static android.widget.TextView.BufferType.EDITABLE;
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.router_companion.tasker.Constants.MAX_ACTION_RUNS_FREE_VERSION;
 import static org.rm3l.router_companion.tasker.bundle.PluginBundleValues.BUNDLE_APP_PIN_CODE;
 import static org.rm3l.router_companion.tasker.bundle.PluginBundleValues.BUNDLE_COMMAND_CUSTOM_CMD;
 import static org.rm3l.router_companion.tasker.bundle.PluginBundleValues.BUNDLE_COMMAND_CUSTOM_IS_VARIABLE;
@@ -560,6 +563,41 @@ import static org.rm3l.router_companion.tasker.bundle.PluginBundleValues.BUNDLE_
       mMainContentView.setVisibility(View.VISIBLE);
       mMainContentView.setEnabled(true);
 
+      if ("org.rm3l.ddwrt.free".equalsIgnoreCase(ddwrtCompanionAppPackage)) {
+        //Limit the number of actions that can be sent to the Lite Package
+        final List<ActionLog> actionsByOrigin;
+        try {
+          actionsByOrigin = routerCompanionService.getActionsByOrigin(BuildConfig.APPLICATION_ID);
+        } catch (RemoteException e) {
+          Crashlytics.logException(e);
+          e.printStackTrace();
+          Toast.makeText(ActionEditActivity.this, "Internal Error - please try again later",
+              Toast.LENGTH_LONG).show();
+          mErrorPlaceholder.setText("Error: " + ExceptionUtils.getRootCauseMessage(e));
+          mErrorPlaceholder.setVisibility(View.VISIBLE);
+          mIsCancelled = true;
+          finish();
+          return;
+        }
+        final int nbActionsForThisPackage = (actionsByOrigin != null ? actionsByOrigin.size() : 0);
+        Crashlytics.log(Log.DEBUG, Constants.TAG, "Found " + nbActionsForThisPackage +
+            " action runs against DD-WRT Companion Lite app.");
+        if (nbActionsForThisPackage > MAX_ACTION_RUNS_FREE_VERSION) {
+          final String text =
+              ("When using this plugin with DD-WRT Companion Lite app, you can have at most "
+                  + MAX_ACTION_RUNS_FREE_VERSION
+                  + " action runs. "
+                  + "Please consider upgrading to DD-WRT Companion premium app to support this initiative!");
+          Crashlytics.log(Log.DEBUG, Constants.TAG, text);
+          mErrorPlaceholder.setText(text);
+          mErrorPlaceholder.setVisibility(View.VISIBLE);
+          Toast.makeText(ActionEditActivity.this, text, Toast.LENGTH_LONG).show();
+          mIsCancelled = true;
+          finish();
+          return;
+        }
+      }
+
       final List<RouterInfo> allRouters;
       try {
         allRouters = routerCompanionService.getAllRouters();
@@ -570,6 +608,7 @@ import static org.rm3l.router_companion.tasker.bundle.PluginBundleValues.BUNDLE_
             Toast.LENGTH_SHORT).show();
         mErrorPlaceholder.setText("Error: " + ExceptionUtils.getRootCauseMessage(e));
         mErrorPlaceholder.setVisibility(View.VISIBLE);
+        mIsCancelled = true;
         finish();
         return;
       }
@@ -581,6 +620,8 @@ import static org.rm3l.router_companion.tasker.bundle.PluginBundleValues.BUNDLE_
       //                return;
       //            }
       //            mErrorPlaceholder.setVisibility(View.GONE);
+
+      mIsCancelled = false;
 
       final String[] routersNamesArray = new String[allRouters.size() + 2];
       int i = 0;
