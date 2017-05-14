@@ -176,7 +176,7 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
             inflater.inflate(R.layout.activity_router_add_local_ssid_lookup, null);
 
         final WifiManager wifiManager =
-            (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+            (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         final TextInputLayout ssidTil = (TextInputLayout) addLocalSsidLookupDialogView.findViewById(
             R.id.router_add_local_ssid_lookup_ssid_til);
         final AutoCompleteTextView ssidAutoCompleteView =

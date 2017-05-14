@@ -675,7 +675,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
         //Determine broadcast address at each run (because that might change if connected to another network)
         try {
           final WifiManager wifiManager =
-              (WifiManager) mParentFragmentActivity.getSystemService(Context.WIFI_SERVICE);
+              (WifiManager) mParentFragmentActivity.getApplicationContext()
+                  .getSystemService(Context.WIFI_SERVICE);
           final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
 
           mCurrentIpAddress = Utils.decimalToIp4(connectionInfo.getIpAddress());

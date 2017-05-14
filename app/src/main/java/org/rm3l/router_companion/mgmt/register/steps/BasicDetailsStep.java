@@ -122,7 +122,7 @@ public class BasicDetailsStep extends MaterialWizardStep {
       if (TextUtils.isEmpty(routerIpOrDnsEt.getText())) {
         //Do this only if nothing has been filled in the EditText by the user
         final WifiManager wifiManager =
-            (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+            (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if (wifiManager != null) {
           final DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
           if (dhcpInfo != null) {
