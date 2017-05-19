@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.core.CrashlyticsCore;
 import com.facebook.stetho.Stetho;
 import com.twofortyfouram.log.Lumberjack;
 import io.fabric.sdk.android.Fabric;
@@ -38,7 +39,11 @@ public class RouterCompanionTaskerPluginApplication extends Application
       Stetho.initializeWithDefaults(this);
     }
 
-    Fabric.with(this, new Crashlytics());
+    // Set up Crashlytics, disabled for debug builds
+    final Crashlytics crashlyticsKit = new Crashlytics.Builder()
+        .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+        .build();
+    Fabric.with(this, crashlyticsKit);
     Crashlytics.setBool("DEBUG", BuildConfig.DEBUG);
 
     Lumberjack.init(getApplicationContext());

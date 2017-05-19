@@ -252,6 +252,8 @@ android {
       zipAlignEnabled true
     }
     debug {
+      // Disable fabric build ID generation for debug builds
+      ext.enableCrashlytics = false
       minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
       zipAlignEnabled true

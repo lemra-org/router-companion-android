@@ -38,6 +38,7 @@ import android.widget.ImageView;
 import com.airbnb.deeplinkdispatch.DeepLinkActivity;
 import com.airbnb.deeplinkdispatch.DeepLinkHandler;
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.core.CrashlyticsCore;
 import com.facebook.stetho.Stetho;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
@@ -167,13 +168,11 @@ public class RouterCompanionApplication extends Application
       }
     });
 
-    // The following line triggers the initialization of ACRA
-    //        ACRA.init(this);
-
-    //        ACRA.getErrorReporter()
-    //                .putCustomData(TRACEPOT_DEVELOP_MODE, DEBUG ? "1" : "0");
-
-    Fabric.with(this, new Crashlytics());
+    // Set up Crashlytics, disabled for debug builds
+    final Crashlytics crashlyticsKit = new Crashlytics.Builder()
+        .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+        .build();
+    Fabric.with(this, crashlyticsKit);
     Crashlytics.setBool("DEBUG", BuildConfig.DEBUG);
     Crashlytics.setBool("WITH_ADS", BuildConfig.WITH_ADS);
 
