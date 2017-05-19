@@ -30,6 +30,7 @@ buildscript {
   }
 
   dependencies {
+    //noinspection GradleDynamicVersion
     classpath 'io.fabric.tools:gradle:1.+'
   }
 }
