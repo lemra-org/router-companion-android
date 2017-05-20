@@ -292,12 +292,13 @@ dependencies {
 
   compile 'com.android.support:appcompat-v7:25.3.1'
 
-  compile('org.rm3l:maoni:2.4.0@aar') {
-    transitive = true;
+  compile('org.rm3l:maoni:3.1.0@aar') {
+    transitive = true
+    exclude group: 'org.rm3l', module: 'maoni-email'
   }
 
   compile('org.rm3l:maoni-doorbell:2.4.0') {
-    transitive = false;
+    transitive = false
   }
 
   compile('com.mikepenz:aboutlibraries:5.9.1@aar') {
