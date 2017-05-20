@@ -295,8 +295,8 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
                     if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
                       nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
 
-                      PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
-                          mRouter, mParentFragmentPreferences, wanPublicIpCmdStatus,
+                      PublicIPChangesServiceTask.Companion.buildNotificationIfNeeded(mParentFragmentActivity,
+                          mRouter, wanPublicIpCmdStatus,
                           nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
                     } else {
                       nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);

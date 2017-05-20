@@ -322,8 +322,7 @@ public class TomatoFirmwareConnector extends AbstractRouterFirmwareConnector {
           if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
 
-            PublicIPChangesServiceTask.buildNotificationIfNeeded(context, router, routerPreferences,
-                new String[] { wanPublicIp }, nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
+            PublicIPChangesServiceTask.Companion.buildNotificationIfNeeded(context, router, new String[] { wanPublicIp }, nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
           } else {
             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
           }

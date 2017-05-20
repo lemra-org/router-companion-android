@@ -139,6 +139,11 @@ public class Router implements Serializable {
    * the router UUID
    */
   @NonNull private String uuid;
+
+  /**
+   * in case this is a clone of another router
+   */
+  @Nullable private final String templateUuid;
   /**
    * the internal id (in DB)
    */
@@ -199,6 +204,7 @@ public class Router implements Serializable {
       this.id = router.id;
       this.name = router.name;
       this.uuid = router.uuid;
+      this.templateUuid = router.uuid;
       this.routerConnectionProtocol = router.routerConnectionProtocol;
       this.remoteIpAddress = router.remoteIpAddress;
       this.remotePort = router.remotePort;
@@ -207,6 +213,8 @@ public class Router implements Serializable {
       this.privKey = \"fake-key\";
       this.strictHostKeyChecking = router.strictHostKeyChecking;
       this.routerFirmware = router.routerFirmware;
+    } else {
+      this.templateUuid = null;
     }
 
     this.sessionsStripes = Striped.lock(MAX_NUMBER_OF_CONCURRENT_SSH_SESSIONS_PER_ROUTER);
@@ -1026,6 +1034,14 @@ public class Router implements Serializable {
         .setRouterFirmware(this.routerFirmware != null ? this.routerFirmware.name() : null)
         .setRouterModel(this.routerModel)
         .setDemoRouter(Utils.isDemoRouter(this));
+  }
+
+  @NonNull public String getTemplateUuidOrUuid() {
+    return templateUuid != null ? templateUuid : uuid;
+  }
+
+  @Nullable public String getTemplateUuid() {
+    return templateUuid;
   }
 
   /**

@@ -1711,8 +1711,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
             }
           });
 
-          ConnectedHostsServiceTask.generateConnectedHostsNotification(mParentFragmentActivity,
-              mParentFragmentPreferences, mRouter, deviceCollection);
+          ConnectedHostsServiceTask.Companion.generateConnectedHostsNotification(mParentFragmentActivity,
+              mRouter, deviceCollection);
 
           Crashlytics.log(Log.DEBUG, LOG_TAG,
               "Discovered a total of " + devices.getDevicesCount() + " device(s)!");

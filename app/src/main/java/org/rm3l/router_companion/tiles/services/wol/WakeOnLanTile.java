@@ -348,9 +348,8 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
 
       if (wakeOnLanTile != null) {
         wakeOnLanTile.runBgServiceTaskAsync();
-        ConnectedHostsServiceTask.generateConnectedHostsNotification(
-            wakeOnLanTile.mParentFragmentActivity, wakeOnLanTile.mParentFragmentPreferences,
-            mRouter, macToDevice.values());
+        ConnectedHostsServiceTask.Companion.generateConnectedHostsNotification(
+            wakeOnLanTile.mParentFragmentActivity, mRouter, macToDevice.values());
         //                new Handler(Looper.getMainLooper()).post(new Runnable() {
         //                    @Override
         //                    public void run() {

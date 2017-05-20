@@ -88,8 +88,8 @@ public final class NetworkTopologyMapTileWorker {
           if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
             nvramInfo.setProperty(NVRAMInfo.INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
 
-            PublicIPChangesServiceTask.buildNotificationIfNeeded(context, router,
-                router.getPreferences(context), wanPublicIpCmdStatus,
+            PublicIPChangesServiceTask.Companion.buildNotificationIfNeeded(context, router,
+                wanPublicIpCmdStatus,
                 nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
           } else {
             nvramInfo.setProperty(NVRAMInfo.INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);

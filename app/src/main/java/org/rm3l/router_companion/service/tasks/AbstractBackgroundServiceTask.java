@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import org.rm3l.router_companion.resources.conn.Router;
+import org.rm3l.router_companion.utils.Utils;
 
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
@@ -17,8 +18,7 @@ public abstract class AbstractBackgroundServiceTask {
 
   public AbstractBackgroundServiceTask(@NonNull final Context ctx) {
     mCtx = ctx;
-    globalPreferences =
-        mCtx.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+    globalPreferences = Utils.getGlobalSharedPreferences(ctx);
   }
 
   public abstract void runBackgroundServiceTask(@NonNull final Router router) throws Exception;
