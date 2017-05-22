@@ -212,7 +212,9 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
       Crashlytics.log(Log.DEBUG, TAG, "deviceCollection=" + deviceCollection)
 
       val devicesCollFiltered = FluentIterable.from(
-          deviceCollection).filter { input -> !onlyActiveHosts || input != null && input.isActive }.toSortedSet(
+          deviceCollection)
+          .filter { input -> !onlyActiveHosts || input != null && input.isActive }
+          .toSortedSet(
           Comparator<Device> { lhs, rhs ->
             if (lhs === rhs) {
               return@Comparator 0
