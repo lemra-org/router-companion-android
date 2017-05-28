@@ -165,3 +165,28 @@
 
 
 -dontwarn org.apache.log4j.**
+
+
+### Kotlin ###
+-dontwarn kotlin.**
+-keepclassmembers class **$WhenMappings {
+    <fields>;
+}
+-assumenosideeffects class kotlin.jvm.internal.Intrinsics {
+    static void checkParameterIsNotNull(java.lang.Object, java.lang.String);
+}
+#-keep class kotlin.reflect.jvm.internal.**
+#-keep class kotlin.internal.**
+
+-keep class org.rm3l.maoni.common.model.** { *; }
+
+#-keepattributes Signature
+#-keep class sun.misc.Unsafe { *; }
+#-keep class * implements java.io.Serializable { *; }
+
+-keep class khttp.**
+-dontwarn java.nio.**
+
+-dontwarn org.json.**
+-dontwarn java.util.Base64
+-dontwarn java.util.Base64$Encoder
