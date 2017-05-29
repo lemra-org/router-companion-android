@@ -84,26 +84,17 @@ public class WifiSharingActivity extends AppCompatActivity {
       return;
     }
 
-    ColorUtils.setAppTheme(this, router.getRouterFirmware(), false);
+    final Router.RouterFirmware routerFirmware = router.getRouterFirmware();
+    ColorUtils.setAppTheme(this, routerFirmware, false);
 
     final boolean themeLight = ColorUtils.isThemeLight(this);
-    //        if (themeLight) {
-    //            //Light
-    //            setTheme(R.style.AppThemeLight);
-    ////            getWindow().getDecorView()
-    ////                    .setBackgroundColor(ContextCompat.getColor(this,
-    ////                            android.R.color.white));
-    //        } else {
-    //            //Default is Dark
-    //            setTheme(R.style.AppThemeDark);
-    //        }
 
     setContentView(R.layout.activity_wifi_sharing);
 
-        /*
-        Assigning view variables to thier respective view in xml
-        by findViewByID method
-         */
+    /*
+    Assigning view variables to thier respective view in xml
+    by findViewByID method
+     */
 
     mToolbar = (Toolbar) findViewById(R.id.tile_status_wireless_sharing_toolbar);
     tabLayout = (TabLayout) findViewById(R.id.tile_status_wireless_sharing_tabs);
@@ -151,8 +142,14 @@ public class WifiSharingActivity extends AppCompatActivity {
       actionBar.setHomeButtonEnabled(true);
     }
 
-    tabLayout.setBackgroundColor(ContextCompat.getColor(this,
-        themeLight ? R.color.lightTheme_primary : R.color.darkTheme_primary));
+    final Integer primaryColor = ColorUtils.getPrimaryColor(routerFirmware);
+    if (primaryColor != null) {
+      tabLayout.setBackgroundColor(ContextCompat.getColor(this, primaryColor));
+    } else {
+      //Default
+      tabLayout.setBackgroundColor(ContextCompat.getColor(this,
+          themeLight ? R.color.lightTheme_primary : R.color.darkTheme_primary));
+    }
 
         /*
         TabLayout.newTab() method creates a tab view, Now a Tab view is not the view

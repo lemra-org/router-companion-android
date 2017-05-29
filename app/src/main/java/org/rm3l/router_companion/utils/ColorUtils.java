@@ -33,6 +33,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.TextView;
 import com.crashlytics.android.Crashlytics;
+import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -167,10 +168,53 @@ public final class ColorUtils {
         Context.MODE_PRIVATE).getLong(THEMING_PREF, DEFAULT_THEME) == LIGHT_THEME);
   }
 
+  @Nullable
+  @ColorRes
+  public static Integer getActualColorRes(@Nullable final RouterFirmware routerFirmware,
+      @Nullable final String themeSuffix) {
+
+    final boolean useDefaultStyle = (routerFirmware == null
+        || RouterFirmware.AUTO == routerFirmware
+        || RouterFirmware.UNKNOWN == routerFirmware);
+    if (useDefaultStyle) {
+      //What to return here? => default behavior
+      return null;
+    } else {
+      try {
+        return Utils.getResId(
+            String.format("%s_%s",
+                routerFirmware.name().toLowerCase(),
+                Strings.nullToEmpty(themeSuffix)),
+            R.color.class);
+      } catch (final Exception e) {
+        Crashlytics.logException(e);
+        return null;
+      }
+    }
+  }
+
+  @ColorRes
+  @Nullable
+  public static Integer getStatusBarColor(@Nullable final RouterFirmware routerFirmware) {
+    return getActualColorRes(routerFirmware, "statusbar");
+  }
+
+  @ColorRes
+  @Nullable
+  public static Integer getPrimaryColor(@Nullable final RouterFirmware routerFirmware) {
+    return getActualColorRes(routerFirmware, "primary");
+  }
+
+  @ColorRes
+  @Nullable
+  public static Integer getAccentColor(@Nullable final RouterFirmware routerFirmware) {
+    return getActualColorRes(routerFirmware, "color_accent");
+  }
+
   public static <T extends ContextWrapper> void setAppTheme(@NonNull final T activity,
       @Nullable final RouterFirmware routerFirmware, final boolean transparentStatusBar) {
 
-    boolean useDefaultStyle = (routerFirmware == null
+    final boolean useDefaultStyle = (routerFirmware == null
         || RouterFirmware.AUTO == routerFirmware
         || RouterFirmware.UNKNOWN == routerFirmware);
     if (useDefaultStyle) {
