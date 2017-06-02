@@ -305,10 +305,13 @@ public class MaoniFeedbackHandler implements Handler {
                     new IllegalStateException("Failed to upload screenshot capture"));
               } else {
                 //Set URL TO S3
-                final Response<GooGlData> response = mGooGlService.shortenLongUrl(GOOGLE_API_KEY,
-                    new GooGlData().setLongUrl(
-                        String.format("https://%s.s3.amazonaws.com/%s/%s.png", AWS_S3_BUCKET_NAME,
-                            AWS_S3_FEEDBACKS_FOLDER_NAME, feedback.id))).execute();
+                final GooGlData gooGlData = new GooGlData();
+                gooGlData.setLongUrl(
+                    String.format("https://%s.s3.amazonaws.com/%s/%s.png", AWS_S3_BUCKET_NAME,
+                        AWS_S3_FEEDBACKS_FOLDER_NAME, feedback.id));
+                final Response<GooGlData> response = mGooGlService.shortenLongUrl(
+                    GOOGLE_API_KEY,
+                    gooGlData).execute();
                 NetworkUtils.checkResponseSuccessful(response);
                 screenshotCaptureUploadUrl = response.body().getId();
               }
@@ -375,11 +378,13 @@ public class MaoniFeedbackHandler implements Handler {
                 return ImmutablePair.of(null, new IllegalStateException("Failed to upload logs"));
               } else {
                 //Set URL TO S3
+                final GooGlData gooGlData = new GooGlData();
+                gooGlData.setLongUrl(
+                    String.format("https://%s.s3.amazonaws.com/%s/%s/%s.txt",
+                        AWS_S3_BUCKET_NAME, AWS_S3_FEEDBACKS_FOLDER_NAME,
+                        AWS_S3_LOGS_FOLDER_NAME, feedback.id));
                 final Response<GooGlData> response = mGooGlService.shortenLongUrl(GOOGLE_API_KEY,
-                    new GooGlData().setLongUrl(
-                        String.format("https://%s.s3.amazonaws.com/%s/%s/%s.txt",
-                            AWS_S3_BUCKET_NAME, AWS_S3_FEEDBACKS_FOLDER_NAME,
-                            AWS_S3_LOGS_FOLDER_NAME, feedback.id))).execute();
+                    gooGlData).execute();
                 NetworkUtils.checkResponseSuccessful(response);
                 logsUrl = response.body().getId();
               }
