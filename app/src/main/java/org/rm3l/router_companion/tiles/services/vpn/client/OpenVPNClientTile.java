@@ -46,7 +46,7 @@ import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
-import de.keyboardsurfer.android.widget.crouton.Style;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;

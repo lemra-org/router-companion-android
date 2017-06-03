@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import de.keyboardsurfer.android.widget.crouton.Style;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;

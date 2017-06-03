@@ -18,7 +18,7 @@ import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Throwables;
-import de.keyboardsurfer.android.widget.crouton.Style;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.rm3l.ddwrt.BuildConfig;

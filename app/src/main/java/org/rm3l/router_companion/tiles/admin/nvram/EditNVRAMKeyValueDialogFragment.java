@@ -38,12 +38,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.cocosw.undobar.UndoBarController;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.utils.ColorUtils;
+import org.rm3l.router_companion.utils.Utils;
 
-import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
+import static org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style.ALERT;
 
 public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
 
@@ -159,9 +159,8 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
 
           if (mValue != null && StringUtils.equals(newValue.toString(), mValue.toString())) {
             //Crouton
-            Crouton.makeText(getActivity(), "No change", ALERT,
-                (ViewGroup) (d.findViewById(R.id.tile_admin_nvram_edit_notification_viewgroup)))
-                .show();
+            Utils.displayMessage(getActivity(), "No change", ALERT,
+                (ViewGroup) (d.findViewById(R.id.tile_admin_nvram_edit_notification_viewgroup)));
             editText.requestFocus();
             //Open Keyboard
             final InputMethodManager imm =

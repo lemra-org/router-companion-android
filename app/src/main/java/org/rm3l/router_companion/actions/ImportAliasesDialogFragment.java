@@ -32,8 +32,6 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Strings;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,14 +50,15 @@ import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
 import static org.rm3l.router_companion.main.DDWRTMainActivity.MAIN_ACTIVITY_ACTION;
 import static org.rm3l.router_companion.main.DDWRTMainActivity.MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_MAX_RETRIES;
 import static org.rm3l.router_companion.main.DDWRTMainActivity.MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_NB_RETRIES;
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
+import static org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style.ALERT;
 
 /**
  * Created by rm3l on 10/05/15.
@@ -173,8 +172,8 @@ public class ImportAliasesDialogFragment extends DialogFragment {
       return;
     }
     final AlertDialog d = (AlertDialog) getDialog();
-    Crouton.makeText(getActivity(), msg, style, (ViewGroup) (d == null ? getView()
-        : d.findViewById(R.id.router_import_aliases_notification_viewgroup))).show();
+    Utils.displayMessage(getActivity(), msg, style, (ViewGroup) (d == null ? getView()
+        : d.findViewById(R.id.router_import_aliases_notification_viewgroup)));
   }
 
   /**
@@ -387,7 +386,7 @@ public class ImportAliasesDialogFragment extends DialogFragment {
                       dismiss();
                     } catch (final Exception e) {
                       Utils.reportException(context, e);
-                      displayMessage("Error - please try again later", Style.ALERT);
+                      displayMessage("Error - please try again later", ALERT);
                     } finally {
                       mUriCursor = null;
                     }
@@ -412,7 +411,7 @@ public class ImportAliasesDialogFragment extends DialogFragment {
                       if (tempFile == null) {
                         Utils.reportException(context,
                             new IllegalStateException("tempFile is null"));
-                        displayMessage("Internal Error - please try again later", Style.ALERT);
+                        displayMessage("Internal Error - please try again later", ALERT);
                         return;
                       }
 
@@ -441,7 +440,7 @@ public class ImportAliasesDialogFragment extends DialogFragment {
                         Utils.reportException(context, e);
                         displayMessage(
                             "Error - please check the file you provided; it must be a valid JSON file",
-                            Style.ALERT);
+                            ALERT);
                         return;
                       }
 
@@ -486,7 +485,7 @@ public class ImportAliasesDialogFragment extends DialogFragment {
                         mListener.onRefresh();
                       }
                     } catch (final Exception e) {
-                      displayMessage("Error - please try again later", Style.ALERT);
+                      displayMessage("Error - please try again later", ALERT);
                       e.printStackTrace();
                       Utils.reportException(context, e);
                     } finally {

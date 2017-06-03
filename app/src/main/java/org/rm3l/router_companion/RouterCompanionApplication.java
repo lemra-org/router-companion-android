@@ -44,7 +44,6 @@ import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.picasso.Picasso;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
 import io.fabric.sdk.android.Fabric;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -259,8 +258,5 @@ public class RouterCompanionApplication extends Application
     if (mCurrentActivity != null) {
       mCurrentActivity.clear();
     }
-    // cancel all scheduled Croutons: Workaround until there's a way to detach the Activity from Crouton while
-    // there are still some in the Queue.
-    Crouton.cancelAllCroutons();
   }
 }

@@ -92,7 +92,7 @@ import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.squareup.picasso.Picasso;
-import de.keyboardsurfer.android.widget.crouton.Style;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;

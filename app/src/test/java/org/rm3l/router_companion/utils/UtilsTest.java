@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import de.keyboardsurfer.android.widget.crouton.Style;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;

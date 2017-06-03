@@ -31,8 +31,7 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Strings;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.io.IOException;
 import java.io.InputStream;
 import org.rm3l.ddwrt.BuildConfig;
@@ -46,7 +45,7 @@ import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
+import static org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style.ALERT;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 
@@ -150,8 +149,8 @@ public class RestoreRouterDialogFragment extends DialogFragment {
       return;
     }
     final AlertDialog d = (AlertDialog) getDialog();
-    Crouton.makeText(getActivity(), msg, style, (ViewGroup) (d == null ? getView()
-        : d.findViewById(R.id.router_restore_notification_viewgroup))).show();
+    Utils.displayMessage(getActivity(), msg, style, (ViewGroup) (d == null ? getView()
+        : d.findViewById(R.id.router_restore_notification_viewgroup)));
   }
 
   /**

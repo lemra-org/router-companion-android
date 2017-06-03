@@ -54,7 +54,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import com.google.common.io.Files;
 import com.squareup.picasso.Callback;
-import de.keyboardsurfer.android.widget.crouton.Style;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;

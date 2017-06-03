@@ -45,6 +45,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsClient;
@@ -74,7 +75,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Transformation;
-import de.keyboardsurfer.android.widget.crouton.Style;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import fr.nicolaspomepuy.discreetapprate.AppRate;
 import fr.nicolaspomepuy.discreetapprate.AppRateTheme;
 import fr.nicolaspomepuy.discreetapprate.RetryPolicy;
@@ -189,24 +190,34 @@ public final class Utils {
 
   public static void displayMessage(@NonNull final Activity activity, final String msg,
       final Style style) {
+    displayMessage(activity, msg, style, null);
+  }
+
+  public static void displayMessage(@NonNull final Activity activity, final String msg,
+      final Style style, final ViewGroup viewGroup) {
     final int bgColor;
     if (style == null) {
       bgColor = R.color.win8_blue;
     } else {
-      if (style == Style.ALERT) {
-        bgColor = R.color.win8_red;
-      } else if (style == Style.CONFIRM) {
-        bgColor = R.color.win8_green;
-      } else if (style == Style.INFO) {
-        bgColor = R.color.win8_blue;
-      } else {
-        bgColor = R.color.gray;
-      }
+      bgColor = style.bgColor;
     }
+
+    displayMessage(activity, msg, bgColor, viewGroup);
+  }
+
+  public static void displayMessage(@NonNull final Activity activity, final String msg,
+      final int bgColor) {
+    displayMessage(activity, msg, bgColor, null);
+  }
+
+  public static void displayMessage(@NonNull final Activity activity, final String msg,
+      final int bgColor, final ViewGroup viewGroup) {
 
     activity.runOnUiThread(new Runnable() {
       public void run() {
-        SnackbarUtils.buildSnackbar(activity, activity.findViewById(android.R.id.content), bgColor,
+        SnackbarUtils.buildSnackbar(activity,
+            viewGroup != null ? viewGroup : activity.findViewById(android.R.id.content),
+            bgColor,
             msg, Color.WHITE, null, Color.YELLOW, Snackbar.LENGTH_LONG, null, null, true);
 
         //                makeText(activity, msg, style, android.R.id.content).show();

@@ -38,11 +38,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.cocosw.undobar.UndoBarController;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.utils.ColorUtils;
+import org.rm3l.router_companion.utils.Utils;
 
-import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
+import static org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style.ALERT;
 import static org.rm3l.router_companion.tiles.admin.nvram.EditNVRAMKeyValueDialogFragment.ACTION;
 
 public class AddNVRAMKeyValueDialogFragment extends DialogFragment {
@@ -128,10 +128,8 @@ public class AddNVRAMKeyValueDialogFragment extends DialogFragment {
           final CharSequence variableKey = \"fake-key\";
           if (TextUtils.isEmpty(variableKey)) {
             //Error
-            //Crouton
-            Crouton.makeText(getActivity(), "Missing key for NVRAM variable", ALERT,
-                (ViewGroup) (d.findViewById(R.id.tile_admin_nvram_add_notification_viewgroup)))
-                .show();
+            Utils.displayMessage(getActivity(), "Missing key for NVRAM variable", ALERT,
+                (ViewGroup) (d.findViewById(R.id.tile_admin_nvram_add_notification_viewgroup)));
             varKeyTV.requestFocus();
             //Open Keyboard
             final InputMethodManager imm =

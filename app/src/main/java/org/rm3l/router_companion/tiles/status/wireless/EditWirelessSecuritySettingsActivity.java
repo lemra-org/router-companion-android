@@ -33,7 +33,7 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import de.keyboardsurfer.android.widget.crouton.Style;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Properties;

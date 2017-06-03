@@ -22,6 +22,19 @@ import org.rm3l.router_companion.utils.Utils;
  */
 public final class SnackbarUtils {
 
+  public enum Style {
+    ALERT(R.color.win8_red),
+    CONFIRM(R.color.win8_green),
+    INFO(R.color.win8_blue),
+    UNDEFINED(R.color.gray);
+
+    public final int bgColor;
+
+    Style(int bgColor) {
+      this.bgColor = bgColor;
+    }
+  }
+
   private SnackbarUtils() {
   }
 
@@ -45,7 +58,7 @@ public final class SnackbarUtils {
         })
         .setActionTextColor(actionTextColor);
 
-    snackbar.setCallback(new Snackbar.Callback() {
+    snackbar.addCallback(new Snackbar.Callback() {
       @Override public void onDismissed(Snackbar snackbar, int event) {
         super.onDismissed(snackbar, event);
         try {

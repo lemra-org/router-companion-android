@@ -28,7 +28,7 @@ import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
-import de.keyboardsurfer.android.widget.crouton.Style;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -373,8 +373,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
         final View.OnClickListener statusViewOnClickListener = new View.OnClickListener() {
           @Override public void onClick(View v) {
-            Utils.displayMessage(mParentFragmentActivity, statusToastMsg,
-                new Style.Builder().setBackgroundColorValue(wanPathColor).build());
+            Utils.displayMessage(mParentFragmentActivity, statusToastMsg, wanPathColor);
           }
         };
         publicIpView.setOnClickListener(statusViewOnClickListener);

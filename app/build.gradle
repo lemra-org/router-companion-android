@@ -450,11 +450,11 @@ dependencies {
   compile project(':common')
 
   compile fileTree(include: '*.jar', dir: 'libs')
-  //Crouton notification lib (cf. #125 - replace with Android SnackBar)
-  compile('de.keyboardsurfer.android.widget:crouton:1.8.5@aar') {
-    // exclusion is not necessary, but generally a good idea.
-    exclude group: 'com.google.android', module: 'support-v4'
-  }
+  //Crouton notification lib (cf. #179 - replace with Android SnackBar)
+//  compile('de.keyboardsurfer.android.widget:crouton:1.8.5@aar') {
+//    // exclusion is not necessary, but generally a good idea.
+//    exclude group: 'com.google.android', module: 'support-v4'
+//  }
   compile('com.mikepenz:materialdrawer:5.9.2@aar') {
     transitive = true
   }

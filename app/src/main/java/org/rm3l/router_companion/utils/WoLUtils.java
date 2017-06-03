@@ -24,7 +24,7 @@ package org.rm3l.router_companion.utils;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import de.keyboardsurfer.android.widget.crouton.Style;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;

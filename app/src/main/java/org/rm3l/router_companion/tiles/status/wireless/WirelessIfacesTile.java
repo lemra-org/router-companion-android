@@ -41,7 +41,7 @@ import android.widget.GridLayout;
 import android.widget.ImageButton;
 import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
-import de.keyboardsurfer.android.widget.crouton.Style;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;

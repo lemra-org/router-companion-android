@@ -33,8 +33,7 @@ import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Strings;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,7 +54,7 @@ import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.Utils;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
+import static org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style.ALERT;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.router_companion.tiles.status.wan.WANMonthlyTrafficTile.WAN_MONTHLY_TRAFFIC_ACTION;
@@ -176,8 +175,8 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
       return;
     }
     final AlertDialog d = (AlertDialog) getDialog();
-    Crouton.makeText(getActivity(), msg, style, (ViewGroup) (d == null ? getView()
-        : d.findViewById(R.id.router_restore_notification_viewgroup))).show();
+    Utils.displayMessage(getActivity(), msg, style, (ViewGroup) (d == null ? getView()
+        : d.findViewById(R.id.router_restore_notification_viewgroup)));
   }
 
   /**

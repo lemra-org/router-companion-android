@@ -59,8 +59,6 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Date;
@@ -86,16 +84,17 @@ import org.rm3l.router_companion.utils.StorageUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import org.rm3l.router_companion.widgets.RecyclerViewEmptySupport;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.rm3l.router_companion.main.DDWRTMainActivity.IMPORT_ALIASES_FRAGMENT_TAG;
 import static org.rm3l.router_companion.main.DDWRTMainActivity.MAIN_ACTIVITY_ACTION;
 import static org.rm3l.router_companion.utils.Utils.fromHtml;
+import static org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style.ALERT;
 
 /**
  * Created by rm3l on 13/12/15.
@@ -305,8 +304,10 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
               break;
             case REMOVED:
               ManageRouterAliasesActivity.this.mAdapter.notifyItemRemoved(position);
+              break;
             case UPDATED:
               ManageRouterAliasesActivity.this.mAdapter.notifyItemChanged(position);
+              break;
           }
         } finally {
           setRefreshActionButtonState(false);
@@ -492,7 +493,7 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
         if (PermissionChecker.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
             != PackageManager.PERMISSION_GRANTED) {
           //Permission denied
-          Utils.displayMessage(this, "Storage access required!", Style.ALERT);
+          Utils.displayMessage(this, "Storage access required!", ALERT);
           return true;
         }
         final Fragment importAliasesFragment =
@@ -509,7 +510,7 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
         if (PermissionChecker.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
             != PackageManager.PERMISSION_GRANTED) {
           //Permission denied
-          Utils.displayMessage(this, "Storage access required!", Style.ALERT);
+          Utils.displayMessage(this, "Storage access required!", ALERT);
           return true;
         }
         final Bundle token = new Bundle();
@@ -667,7 +668,7 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
                   if (!outputFile.exists()) {
                     Utils.displayMessage(ManageRouterAliasesActivity.this,
                         String.format("File '%s' no longer exists", outputFile.getAbsolutePath()),
-                        Style.ALERT);
+                        ALERT);
                     return;
                   }
                   //Now allow user to share file if needed
@@ -698,7 +699,7 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
                   //No worries, but notify user
                   Utils.displayMessage(ManageRouterAliasesActivity.this,
                       "Internal Error - please try again later or share file manually!",
-                      Style.ALERT);
+                      ALERT);
                 }
               }
 
@@ -1135,9 +1136,9 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
 
             if (isEmpty(macValueToPersist)) {
               //Crouton
-              Crouton.makeText(getActivity(), "MAC Address is required", ALERT,
+              Utils.displayMessage(getActivity(), "MAC Address is required", ALERT,
                   (ViewGroup) (d.findViewById(
-                      R.id.add_or_edit_router_alias_notification_viewgroup))).show();
+                      R.id.add_or_edit_router_alias_notification_viewgroup)));
               macEditText.requestFocus();
               //Open Keyboard
               final InputMethodManager imm =
@@ -1149,9 +1150,9 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
               return;
             }
             if (!Utils.MAC_ADDRESS.matcher(macValueToPersist).matches()) {
-              Crouton.makeText(getActivity(), "MAC Address format required", ALERT,
+              Utils.displayMessage(getActivity(), "MAC Address format required", ALERT,
                   (ViewGroup) (d.findViewById(
-                      R.id.add_or_edit_router_alias_notification_viewgroup))).show();
+                      R.id.add_or_edit_router_alias_notification_viewgroup)));
               macEditText.requestFocus();
               //Open Keyboard
               final InputMethodManager imm =
@@ -1167,9 +1168,9 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
 
             if (TextUtils.isEmpty(aliasEditText.getText())) {
               //Crouton
-              Crouton.makeText(getActivity(), "Alias cannot be blank", ALERT,
+              Utils.displayMessage(getActivity(), "Alias cannot be blank", ALERT,
                   (ViewGroup) (d.findViewById(
-                      R.id.add_or_edit_router_alias_notification_viewgroup))).show();
+                      R.id.add_or_edit_router_alias_notification_viewgroup)));
               aliasEditText.requestFocus();
               //Open Keyboard
               final InputMethodManager imm =

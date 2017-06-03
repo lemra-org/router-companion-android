@@ -25,8 +25,7 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -42,7 +41,7 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.Utils;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
+import static org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style.ALERT;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
 public class AddWOLHostDialogFragment extends DialogFragment {
@@ -372,7 +371,7 @@ public class AddWOLHostDialogFragment extends DialogFragment {
       return;
     }
     final AlertDialog d = (AlertDialog) getDialog();
-    Crouton.makeText(getActivity(), msg, style, (ViewGroup) (d == null ? getView()
-        : d.findViewById(R.id.wol_host_add_notification_viewgroup))).show();
+    Utils.displayMessage(getActivity(), msg, style, (ViewGroup) (d == null ? getView()
+        : d.findViewById(R.id.wol_host_add_notification_viewgroup)));
   }
 }

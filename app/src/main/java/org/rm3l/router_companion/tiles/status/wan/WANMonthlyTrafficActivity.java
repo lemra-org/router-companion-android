@@ -57,7 +57,7 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import de.keyboardsurfer.android.widget.crouton.Style;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
