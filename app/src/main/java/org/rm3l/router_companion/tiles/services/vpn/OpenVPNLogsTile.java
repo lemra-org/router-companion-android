@@ -38,9 +38,6 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.syslog.StatusSyslogTile;
 import org.rm3l.router_companion.utils.SSHUtils;
 
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.SYSLOG;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.SYSLOGD_ENABLE;
-
 public class OpenVPNLogsTile extends StatusSyslogTile {
 
   public static final String OPENVPN = "openvpn";
@@ -117,7 +114,7 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
               try {
                 updateProgressBarViewSeparator(70);
                 nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                    mGlobalPreferences, SYSLOGD_ENABLE);
+                    mGlobalPreferences, NVRAMInfo.Companion.getSYSLOGD_ENABLE());
               } finally {
 
                 if (nvramInfoTmp != null) {
@@ -135,7 +132,7 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
                   if (logs != null) {
                     final String logsToSet = logsStr + "\n" + LOGS_JOINER.join(logs);
                     if (!"\n".equals(logsToSet)) {
-                      nvramInfo.setProperty(SYSLOG, logsToSet);
+                      nvramInfo.setProperty(NVRAMInfo.Companion.getSYSLOG(), logsToSet);
                     }
                   }
                 }

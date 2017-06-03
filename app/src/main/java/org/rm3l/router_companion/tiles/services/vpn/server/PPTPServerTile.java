@@ -40,18 +40,6 @@ import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_ACCTPORT;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_AUTH;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_BCRELAY;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_ENABLE;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_FORCEMPPE;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_LIP;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_RADIUS;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_RADPASS;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_RADPORT;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_RADSERVER;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_RIP;
-
 /**
  * Created by rm3l on 06/09/15.
  */
@@ -110,27 +98,27 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
             nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                 mGlobalPreferences,
                 //Status: {1,0}
-                PPTPD_ENABLE,
+                NVRAMInfo.Companion.getPPTPD_ENABLE(),
                 //Broadcast Support {1,0}
-                PPTPD_BCRELAY,
+                NVRAMInfo.Companion.getPPTPD_BCRELAY(),
                 //Force MPPE Enc {1,0}
-                PPTPD_FORCEMPPE,
+                NVRAMInfo.Companion.getPPTPD_FORCEMPPE(),
                 //Server IP
-                PPTPD_LIP,
+                NVRAMInfo.Companion.getPPTPD_LIP(),
                 //Client IP(s)
-                PPTPD_RIP,
+                NVRAMInfo.Companion.getPPTPD_RIP(),
                 //CHAP-Secrets
-                PPTPD_AUTH,
+                NVRAMInfo.Companion.getPPTPD_AUTH(),
                 //Radius {1,0}
-                PPTPD_RADIUS,
+                NVRAMInfo.Companion.getPPTPD_RADIUS(),
                 //Radius Server IP
-                PPTPD_RADSERVER,
+                NVRAMInfo.Companion.getPPTPD_RADSERVER(),
                 //Radius Auth Port - default: 1812
-                PPTPD_RADPORT,
+                NVRAMInfo.Companion.getPPTPD_RADPORT(),
                 //Radius Accounting Port - default: 1813
-                PPTPD_ACCTPORT,
+                NVRAMInfo.Companion.getPPTPD_ACCTPORT(),
                 //Radius Shared Key
-                PPTPD_RADPASS);
+                NVRAMInfo.Companion.getPPTPD_RADPASS());
 
             updateProgressBarViewSeparator(55);
           } finally {
@@ -139,7 +127,7 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
             }
 
             boolean applyNewPrefs = false;
-            String property = nvramInfo.getProperty(PPTPD_LIP);
+            String property = nvramInfo.getProperty(NVRAMInfo.Companion.getPPTPD_LIP());
             final SharedPreferences.Editor editor = mGlobalPreferences.edit();
             if (!Strings.isNullOrEmpty(property)) {
               final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
@@ -152,7 +140,7 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
               }
             }
 
-            property = nvramInfo.getProperty(PPTPD_RIP);
+            property = nvramInfo.getProperty(NVRAMInfo.Companion.getPPTPD_RIP());
             if (!Strings.isNullOrEmpty(property)) {
               final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
                   mGlobalPreferences.getStringSet("EditPPTPServerSettingsClientIps",
@@ -164,7 +152,7 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
               }
             }
 
-            property = nvramInfo.getProperty(PPTPD_RADSERVER);
+            property = nvramInfo.getProperty(NVRAMInfo.Companion.getPPTPD_RADSERVER());
             if (!Strings.isNullOrEmpty(property)) {
               final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
                   mGlobalPreferences.getStringSet("EditPPTPServerSettingsRadiusServerIp",
@@ -177,7 +165,7 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
               }
             }
 
-            property = nvramInfo.getProperty(PPTPD_RADPORT);
+            property = nvramInfo.getProperty(NVRAMInfo.Companion.getPPTPD_RADPORT());
             if (!Strings.isNullOrEmpty(property)) {
               final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
                   mGlobalPreferences.getStringSet("EditPPTPServerSettingsRadiusServerAuthPort",
@@ -190,7 +178,7 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
               }
             }
 
-            property = nvramInfo.getProperty(PPTPD_ACCTPORT);
+            property = nvramInfo.getProperty(NVRAMInfo.Companion.getPPTPD_ACCTPORT());
             if (!Strings.isNullOrEmpty(property)) {
               final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
                   mGlobalPreferences.getStringSet("EditPPTPServerSettingsRadiusServerAcctPort",
@@ -251,7 +239,7 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
         preliminaryCheckException = new DDWRTNoDataException("No Data!");
       } else //noinspection ThrowableResultOfMethodCallIgnored
         if (data.getException() == null) {
-          final String pptpdServerEnabled = data.getProperty(PPTPD_ENABLE);
+          final String pptpdServerEnabled = data.getProperty(NVRAMInfo.Companion.getPPTPD_ENABLE());
           if (pptpdServerEnabled == null || !Arrays.asList("0", "1").contains(pptpdServerEnabled)) {
             //noinspection ThrowableInstanceNeverThrown
             preliminaryCheckException = new DDWRTPPTPdClienStateUnknown("Unknown state");
@@ -263,11 +251,12 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
       enableTraffDataButton.setVisibility(View.VISIBLE);
 
       final boolean makeToogleEnabled =
-          (data != null && data.getData() != null && data.getData().containsKey(PPTPD_ENABLE));
+          (data != null && data.getData() != null && data.getData().containsKey(
+              NVRAMInfo.Companion.getPPTPD_ENABLE()));
 
       if (!isToggleStateActionRunning.get()) {
         if (makeToogleEnabled) {
-          if ("1".equals(data.getProperty(PPTPD_ENABLE))) {
+          if ("1".equals(data.getProperty(NVRAMInfo.Companion.getPPTPD_ENABLE()))) {
             //Enabled
             enableTraffDataButton.setChecked(true);
           } else {
@@ -403,13 +392,13 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
     }
 
     //Server IP
-    String property = data.getProperty(PPTPD_LIP, defaultValuesIfNotFound ? N_A : null);
+    String property = data.getProperty(NVRAMInfo.Companion.getPPTPD_LIP(), defaultValuesIfNotFound ? N_A : null);
     if (property != null) {
       ((TextView) layout.findViewById(R.id.tile_services_pptp_server_server_ip)).setText(property);
     }
 
     //Client IP(s)
-    property = data.getProperty(PPTPD_RIP, defaultValuesIfNotFound ? N_A : null);
+    property = data.getProperty(NVRAMInfo.Companion.getPPTPD_RIP(), defaultValuesIfNotFound ? N_A : null);
     if (property != null) {
       ((TextView) layout.findViewById(R.id.tile_services_pptp_server_client_ips)).setText(property);
     }
@@ -448,21 +437,21 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
 
     if ("1".equals(statusKey)) {
       //Radius Server IP
-      property = data.getProperty(PPTPD_RADSERVER, defaultValuesIfNotFound ? N_A : null);
+      property = data.getProperty(NVRAMInfo.Companion.getPPTPD_RADSERVER(), defaultValuesIfNotFound ? N_A : null);
       if (property != null) {
         ((TextView) layout.findViewById(R.id.tile_services_pptp_server_radius_server_ip)).setText(
             property);
       }
 
       //Radius Auth Port
-      property = data.getProperty(PPTPD_RADPORT, defaultValuesIfNotFound ? N_A : null);
+      property = data.getProperty(NVRAMInfo.Companion.getPPTPD_RADPORT(), defaultValuesIfNotFound ? N_A : null);
       if (property != null) {
         ((TextView) layout.findViewById(R.id.tile_services_pptp_server_radius_auth_port)).setText(
             property);
       }
 
       //Radius Accounting Port
-      property = data.getProperty(PPTPD_ACCTPORT, defaultValuesIfNotFound ? N_A : null);
+      property = data.getProperty(NVRAMInfo.Companion.getPPTPD_ACCTPORT(), defaultValuesIfNotFound ? N_A : null);
       if (property != null) {
         ((TextView) layout.findViewById(
             R.id.tile_services_pptp_server_radius_accounting_port)).setText(property);
@@ -534,7 +523,7 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
 
       final NVRAMInfo nvramInfoToSet = new NVRAMInfo();
 
-      nvramInfoToSet.setProperty(PPTPD_ENABLE, enable ? "1" : "0");
+      nvramInfoToSet.setProperty(NVRAMInfo.Companion.getPPTPD_ENABLE(), enable ? "1" : "0");
 
       new UndoBarController.UndoBar(mParentFragmentActivity).message(
           String.format("PPTP Server will be %s on '%s' (%s). ", enable ? "enabled" : "disabled",

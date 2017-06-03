@@ -45,16 +45,6 @@ import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 
 import static org.rm3l.router_companion.RouterCompanionAppConstants.VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_CLIENT_ENABLE;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_CLIENT_NAT;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_CLIENT_SRVIP;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_CLIENT_SRVMRU;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_CLIENT_SRVMTU;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_CLIENT_SRVPASS;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_CLIENT_SRVSEC;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_CLIENT_SRVSUB;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_CLIENT_SRVSUBMSK;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.PPTPD_CLIENT_SRVUSER;
 
 /**
  * Created by rm3l on 06/09/15.
@@ -114,25 +104,25 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
             nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                 mGlobalPreferences,
                 //Status: {1,0}
-                PPTPD_CLIENT_ENABLE,
+                NVRAMInfo.Companion.getPPTPD_CLIENT_ENABLE(),
                 //Server IP or DNS Name
-                PPTPD_CLIENT_SRVIP,
+                NVRAMInfo.Companion.getPPTPD_CLIENT_SRVIP(),
                 //Server Subnet
-                PPTPD_CLIENT_SRVSUB,
+                NVRAMInfo.Companion.getPPTPD_CLIENT_SRVSUB(),
                 //Server Subnet Mask
-                PPTPD_CLIENT_SRVSUBMSK,
+                NVRAMInfo.Companion.getPPTPD_CLIENT_SRVSUBMSK(),
                 //MPPE Encruption - default: mppe required
-                PPTPD_CLIENT_SRVSEC,
+                NVRAMInfo.Companion.getPPTPD_CLIENT_SRVSEC(),
                 //MTU - default: 1450 (0 <= mtu <= 1500)
-                PPTPD_CLIENT_SRVMTU,
+                NVRAMInfo.Companion.getPPTPD_CLIENT_SRVMTU(),
                 //MRU - default: 1450 (0 <= mru <= 1500)
-                PPTPD_CLIENT_SRVMRU,
+                NVRAMInfo.Companion.getPPTPD_CLIENT_SRVMRU(),
                 //NAT: {1,0}
-                PPTPD_CLIENT_NAT,
+                NVRAMInfo.Companion.getPPTPD_CLIENT_NAT(),
                 //Username-  default: DOMAIN\\Username
-                PPTPD_CLIENT_SRVUSER,
+                NVRAMInfo.Companion.getPPTPD_CLIENT_SRVUSER(),
                 //Password
-                PPTPD_CLIENT_SRVPASS);
+                NVRAMInfo.Companion.getPPTPD_CLIENT_SRVPASS());
             updateProgressBarViewSeparator(45);
           } finally {
             if (nvramInfoTmp != null) {
@@ -140,7 +130,7 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
             }
 
             boolean applyNewPrefs = false;
-            String property = nvramInfo.getProperty(PPTPD_CLIENT_SRVIP);
+            String property = nvramInfo.getProperty(NVRAMInfo.Companion.getPPTPD_CLIENT_SRVIP());
             final SharedPreferences.Editor editor = mGlobalPreferences.edit();
             if (!Strings.isNullOrEmpty(property)) {
               final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
@@ -154,7 +144,7 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
               }
             }
 
-            property = nvramInfo.getProperty(PPTPD_CLIENT_SRVSUB);
+            property = nvramInfo.getProperty(NVRAMInfo.Companion.getPPTPD_CLIENT_SRVSUB());
             if (!Strings.isNullOrEmpty(property)) {
               final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
                   mGlobalPreferences.getStringSet("EditPPTPClientSettingsRemoteServerSubnet",
@@ -167,7 +157,7 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
               }
             }
 
-            property = nvramInfo.getProperty(PPTPD_CLIENT_SRVSUBMSK);
+            property = nvramInfo.getProperty(NVRAMInfo.Companion.getPPTPD_CLIENT_SRVSUBMSK());
             if (!Strings.isNullOrEmpty(property)) {
               final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
                   mGlobalPreferences.getStringSet("EditPPTPClientSettingsRemoteServerSubnetMask",
@@ -180,7 +170,7 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
               }
             }
 
-            property = nvramInfo.getProperty(PPTPD_CLIENT_SRVMTU);
+            property = nvramInfo.getProperty(NVRAMInfo.Companion.getPPTPD_CLIENT_SRVMTU());
             if (!Strings.isNullOrEmpty(property)) {
               final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
                   mGlobalPreferences.getStringSet("EditPPTPClientSettingsRemoteServerMTU",
@@ -193,7 +183,7 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
               }
             }
 
-            property = nvramInfo.getProperty(PPTPD_CLIENT_SRVMRU);
+            property = nvramInfo.getProperty(NVRAMInfo.Companion.getPPTPD_CLIENT_SRVMRU());
             if (!Strings.isNullOrEmpty(property)) {
               final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
                   mGlobalPreferences.getStringSet("EditPPTPClientSettingsRemoteServerMRU",
@@ -206,7 +196,7 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
               }
             }
 
-            property = nvramInfo.getProperty(PPTPD_CLIENT_SRVUSER);
+            property = nvramInfo.getProperty(NVRAMInfo.Companion.getPPTPD_CLIENT_SRVUSER());
             if (!Strings.isNullOrEmpty(property)) {
               final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
                   mGlobalPreferences.getStringSet("EditPPTPClientSettingsRemoteServerUsername",
@@ -267,7 +257,8 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
         preliminaryCheckException = new DDWRTNoDataException("No Data!");
       } else //noinspection ThrowableResultOfMethodCallIgnored
         if (data.getException() == null) {
-          final String pptpdClientEnabled = data.getProperty(NVRAMInfo.PPTPD_CLIENT_ENABLE);
+          final String pptpdClientEnabled = data.getProperty(
+              NVRAMInfo.Companion.getPPTPD_CLIENT_ENABLE());
           if (pptpdClientEnabled == null || !Arrays.asList("0", "1").contains(pptpdClientEnabled)) {
             //noinspection ThrowableInstanceNeverThrown
             preliminaryCheckException = new DDWRTPPTPdClienStateUnknown("Unknown state");
@@ -279,11 +270,11 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
       enableTraffDataButton.setVisibility(View.VISIBLE);
 
       final boolean makeToogleEnabled = (data != null && data.getData() != null && data.getData()
-          .containsKey(NVRAMInfo.PPTPD_CLIENT_ENABLE));
+          .containsKey(NVRAMInfo.Companion.getPPTPD_CLIENT_ENABLE()));
 
       if (!isToggleStateActionRunning.get()) {
         if (makeToogleEnabled) {
-          if ("1".equals(data.getProperty(NVRAMInfo.PPTPD_CLIENT_ENABLE))) {
+          if ("1".equals(data.getProperty(NVRAMInfo.Companion.getPPTPD_CLIENT_ENABLE()))) {
             //Enabled
             enableTraffDataButton.setChecked(true);
           } else {
@@ -377,47 +368,49 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
     }
 
     //Server IP / DNS Name
-    String property = data.getProperty(PPTPD_CLIENT_SRVIP, defaultValuesIfNotFound ? N_A : null);
+    String property = data.getProperty(
+        NVRAMInfo.Companion.getPPTPD_CLIENT_SRVIP(), defaultValuesIfNotFound ? N_A : null);
     if (property != null) {
       ((TextView) layout.findViewById(R.id.tile_services_pptp_client_server_ip_name)).setText(
           property);
     }
 
     //Subnet
-    property = data.getProperty(PPTPD_CLIENT_SRVSUB, defaultValuesIfNotFound ? N_A : null);
+    property = data.getProperty(NVRAMInfo.Companion.getPPTPD_CLIENT_SRVSUB(), defaultValuesIfNotFound ? N_A : null);
     if (property != null) {
       ((TextView) layout.findViewById(R.id.tile_services_pptp_client_remote_subnet)).setText(
           property);
     }
 
     //Subnet Mask
-    property = data.getProperty(PPTPD_CLIENT_SRVSUBMSK, defaultValuesIfNotFound ? N_A : null);
+    property = data.getProperty(
+        NVRAMInfo.Companion.getPPTPD_CLIENT_SRVSUBMSK(), defaultValuesIfNotFound ? N_A : null);
     if (property != null) {
       ((TextView) layout.findViewById(R.id.tile_services_pptp_client_remote_subnet_mask)).setText(
           property);
     }
 
     //MPPE Encyption
-    property = data.getProperty(PPTPD_CLIENT_SRVSEC, defaultValuesIfNotFound ? N_A : null);
+    property = data.getProperty(NVRAMInfo.Companion.getPPTPD_CLIENT_SRVSEC(), defaultValuesIfNotFound ? N_A : null);
     if (property != null) {
       ((TextView) layout.findViewById(R.id.tile_services_pptp_client_mppe_encryption)).setText(
           property);
     }
 
     //MTU
-    property = data.getProperty(PPTPD_CLIENT_SRVMTU, defaultValuesIfNotFound ? N_A : null);
+    property = data.getProperty(NVRAMInfo.Companion.getPPTPD_CLIENT_SRVMTU(), defaultValuesIfNotFound ? N_A : null);
     if (property != null) {
       ((TextView) layout.findViewById(R.id.tile_services_pptp_client_mtu)).setText(property);
     }
 
     //MRU
-    property = data.getProperty(PPTPD_CLIENT_SRVMRU, defaultValuesIfNotFound ? N_A : null);
+    property = data.getProperty(NVRAMInfo.Companion.getPPTPD_CLIENT_SRVMRU(), defaultValuesIfNotFound ? N_A : null);
     if (property != null) {
       ((TextView) layout.findViewById(R.id.tile_services_pptp_client_mru)).setText(property);
     }
 
     //Username
-    property = data.getProperty(PPTPD_CLIENT_SRVUSER, defaultValuesIfNotFound ? N_A : null);
+    property = data.getProperty(NVRAMInfo.Companion.getPPTPD_CLIENT_SRVUSER(), defaultValuesIfNotFound ? N_A : null);
     if (property != null) {
       ((TextView) layout.findViewById(R.id.tile_services_pptp_client_username)).setText(
           property.toUpperCase());
@@ -490,7 +483,7 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
 
       final NVRAMInfo nvramInfoToSet = new NVRAMInfo();
 
-      nvramInfoToSet.setProperty(NVRAMInfo.PPTPD_CLIENT_ENABLE, enable ? "1" : "0");
+      nvramInfoToSet.setProperty(NVRAMInfo.Companion.getPPTPD_CLIENT_ENABLE(), enable ? "1" : "0");
 
       new UndoBarController.UndoBar(mParentFragmentActivity).message(
           String.format("PPTP Client will be %s on '%s' (%s). ", enable ? "enabled" : "disabled",
@@ -556,7 +549,8 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
                               .setCancelable(true)
                               .setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
                                 @Override public void onClick(DialogInterface dialog, int which) {
-                                  nvramInfoToSet.setProperty(NVRAMInfo.OPENVPNCL_ENABLE,
+                                  nvramInfoToSet.setProperty(
+                                      NVRAMInfo.Companion.getOPENVPNCL_ENABLE(),
                                       openvpnClStatusToSet ? "1" : "0");
                                   Utils.displayMessage(mParentFragmentActivity,
                                       String.format("%s PPTP Client (and %s OpenVPN Client) ...",

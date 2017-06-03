@@ -150,23 +150,24 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
 
     final NVRAMInfo nvramInfo =
         SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences,
-            NVRAMInfo.LAN_IFNAME, NVRAMInfo.WAN_IFNAME, NVRAMInfo.LANDEVS);
+            NVRAMInfo.Companion.getLAN_IFNAME(), NVRAMInfo.Companion.getWAN_IFNAME(),
+            NVRAMInfo.Companion.getLANDEVS());
 
     if (nvramInfo == null) {
       return ifacesConsidered;
     }
 
-    final String lanIfname = nvramInfo.getProperty(NVRAMInfo.LAN_IFNAME);
+    final String lanIfname = nvramInfo.getProperty(NVRAMInfo.Companion.getLAN_IFNAME());
     if (lanIfname != null) {
       ifacesConsidered.add(lanIfname);
     }
 
-    final String wanIfname = nvramInfo.getProperty(NVRAMInfo.WAN_IFNAME);
+    final String wanIfname = nvramInfo.getProperty(NVRAMInfo.Companion.getWAN_IFNAME());
     if (wanIfname != null) {
       ifacesConsidered.add(wanIfname);
     }
 
-    final String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS);
+    final String landevs = nvramInfo.getProperty(NVRAMInfo.Companion.getLANDEVS());
     if (landevs != null) {
       final List<String> splitToList =
           Splitter.on(" ").omitEmptyStrings().trimResults().splitToList(landevs);

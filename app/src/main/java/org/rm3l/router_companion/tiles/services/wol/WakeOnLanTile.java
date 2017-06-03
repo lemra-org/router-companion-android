@@ -81,9 +81,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_VALUE_TO_DISPLAY;
 import static org.rm3l.router_companion.main.DDWRTMainActivity.ROUTER_ACTION;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.MANUAL_WOL_MAC;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.MANUAL_WOL_PORT;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WOL_HOSTS;
 import static org.rm3l.router_companion.tiles.status.wireless.WirelessClientsTile.MAP_KEYWORD;
 
 public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
@@ -436,17 +433,19 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
       //Hosts defined from Admin > WOL
       final NVRAMInfo nvRamInfoFromRouter =
           SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences,
-              WOL_HOSTS, MANUAL_WOL_MAC, MANUAL_WOL_PORT);
+              NVRAMInfo.Companion.getWOL_HOSTS(), NVRAMInfo.Companion.getMANUAL_WOL_MAC(),
+              NVRAMInfo.Companion.getMANUAL_WOL_PORT());
       if (nvRamInfoFromRouter != null) {
         //Manual Hosts
-        String property = nvRamInfoFromRouter.getProperty(MANUAL_WOL_MAC,
+        String property = nvRamInfoFromRouter.getProperty(NVRAMInfo.Companion.getMANUAL_WOL_MAC(),
             RouterCompanionAppConstants.EMPTY_STRING);
         final List<String> macAddresses = SPLITTER.splitToList(property);
 
         if (!macAddresses.isEmpty()) {
           int wolPort = -1;
           try {
-            wolPort = Integer.parseInt(nvRamInfoFromRouter.getProperty(MANUAL_WOL_PORT, "-1"));
+            wolPort = Integer.parseInt(nvRamInfoFromRouter.getProperty(
+                NVRAMInfo.Companion.getMANUAL_WOL_PORT(), "-1"));
           } catch (final Exception e) {
             e.printStackTrace();
           }
@@ -468,7 +467,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
 
         //Now Wol_Hosts
         property =
-            nvRamInfoFromRouter.getProperty(WOL_HOSTS, RouterCompanionAppConstants.EMPTY_STRING);
+            nvRamInfoFromRouter.getProperty(NVRAMInfo.Companion.getWOL_HOSTS(), RouterCompanionAppConstants.EMPTY_STRING);
         final List<String> wolHosts = SPLITTER.splitToList(property);
         for (final String wolHost : wolHosts) {
           final List<String> strings = Splitter.on("=").omitEmptyStrings().splitToList(wolHost);

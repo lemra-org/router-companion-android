@@ -59,11 +59,6 @@ import static android.widget.TextView.BufferType.EDITABLE;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WOL_ENABLE;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WOL_HOSTNAME;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WOL_INTERVAL;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WOL_MACS;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WOL_PASSWD;
 import static org.rm3l.router_companion.tiles.services.wol.WakeOnLanDaemonTile.WOL_DAEMON_NVRAMINFO;
 
 public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
@@ -165,10 +160,10 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
   private void fillForm() {
     //Fill form with data loaded
     ((CheckBox) findViewById(R.id.wol_daemon_settings_status_flag)).setChecked(
-        "1".equals(mNvramInfo.getProperty(WOL_ENABLE)));
+        "1".equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_ENABLE())));
 
     ((EditText) findViewById(R.id.wol_daemon_settings_interval)).setText(
-        mNvramInfo.getProperty(WOL_INTERVAL), EDITABLE);
+        mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_INTERVAL()), EDITABLE);
 
     final AutoCompleteTextView hostnameAutoComplete =
         (AutoCompleteTextView) findViewById(R.id.wol_daemon_settings_hostname);
@@ -177,17 +172,17 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
     //noinspection ConstantConditions
     hostnameAutoComplete.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
         hostnames.toArray(new String[hostnames.size()])));
-    hostnameAutoComplete.setText(mNvramInfo.getProperty(WOL_HOSTNAME), EDITABLE);
+    hostnameAutoComplete.setText(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_HOSTNAME()), EDITABLE);
 
     ((EditText) findViewById(R.id.wol_daemon_settings_secure_on_password)).setText(
-        mNvramInfo.getProperty(WOL_PASSWD), EDITABLE);
+        mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_PASSWD()), EDITABLE);
 
     //noinspection ConstantConditions
     ((EditText) findViewById(R.id.wol_daemon_settings_mac_addresses)).setText(Joiner.on("\n")
             .skipNulls()
             .join(Splitter.on(" ")
                 .omitEmptyStrings()
-                .split(mNvramInfo.getProperty(WOL_MACS, RouterCompanionAppConstants.EMPTY_STRING))),
+                .split(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_MACS(), RouterCompanionAppConstants.EMPTY_STRING))),
         EDITABLE);
   }
 
@@ -212,14 +207,14 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
 
     final String isWolDaemonOn =
         ((CheckBox) findViewById(R.id.wol_daemon_settings_status_flag)).isChecked() ? "1" : "0";
-    if (!isWolDaemonOn.equals(mNvramInfo.getProperty(WOL_ENABLE))) {
-      nvramVarsToUpdate.setProperty(WOL_ENABLE, isWolDaemonOn);
+    if (!isWolDaemonOn.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_ENABLE()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getWOL_ENABLE(), isWolDaemonOn);
     }
 
     final String hostname =
         ((EditText) findViewById(R.id.wol_daemon_settings_hostname)).getText().toString();
-    if (!hostname.equals(mNvramInfo.getProperty(WOL_HOSTNAME))) {
-      nvramVarsToUpdate.setProperty(WOL_HOSTNAME, hostname);
+    if (!hostname.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_HOSTNAME()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getWOL_HOSTNAME(), hostname);
       if (!isNullOrEmpty(hostname)) {
         final Set<String> mSharedPreferencesStringSet = new HashSet<>(
             sharedPreferences.getStringSet(WOL_DAEMON_HOSTNAMES_PREF_KEY, new HashSet<String>()));
@@ -233,22 +228,22 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
 
     final String interval =
         ((EditText) findViewById(R.id.wol_daemon_settings_interval)).getText().toString();
-    if (!interval.equals(mNvramInfo.getProperty(WOL_INTERVAL))) {
-      nvramVarsToUpdate.setProperty(WOL_INTERVAL, interval);
+    if (!interval.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_INTERVAL()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getWOL_INTERVAL(), interval);
     }
 
     final String secureOnPassword =
         ((EditText) findViewById(R.id.wol_daemon_settings_secure_on_password)).getText().toString();
-    if (!secureOnPassword.equals(mNvramInfo.getProperty(WOL_PASSWD))) {
-      nvramVarsToUpdate.setProperty(WOL_PASSWD, secureOnPassword);
+    if (!secureOnPassword.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_PASSWD()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getWOL_PASSWD(), secureOnPassword);
     }
 
     final String macAddresses =
         ((EditText) findViewById(R.id.wol_daemon_settings_mac_addresses)).getText()
             .toString()
             .replaceAll("\n", " ");
-    if (!macAddresses.equals(mNvramInfo.getProperty(WOL_MACS))) {
-      nvramVarsToUpdate.setProperty(WOL_MACS, macAddresses);
+    if (!macAddresses.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_MACS()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getWOL_MACS(), macAddresses);
     }
 
     if (applyNewPrefs) {

@@ -108,7 +108,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo>
     }
 
     mCycleItem = new AtomicReference<>(
-        WANTrafficData.getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences));
+        WANTrafficData.Companion.getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences));
 
     mCycle = (mParentFragmentPreferences != null ? mParentFragmentPreferences.getString(
         getFormattedPrefKey(CYCLE), CYCLE_MONTH) : null);
@@ -161,7 +161,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo>
         dayMenuItem.setTitle(String.format("Today (%s)", mCurrentDayDisplayed));
 
         try {
-          mCycleItem.set(WANTrafficData.getCurrentWANCycle(mParentFragmentActivity,
+          mCycleItem.set(WANTrafficData.Companion.getCurrentWANCycle(mParentFragmentActivity,
               mParentFragmentPreferences));
           //Overwrite with effective period (for monthly)
           monthMenuItem.setTitle(String.format("Month (%s)", mCycleItem.get().getLabel()));
@@ -212,7 +212,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo>
 
           mLastSync = System.currentTimeMillis();
 
-          mCycleItem.set(WANTrafficData.getCurrentWANCycle(mParentFragmentActivity,
+          mCycleItem.set(WANTrafficData.Companion.getCurrentWANCycle(mParentFragmentActivity,
               mParentFragmentPreferences));
 
           final Date today = new Date();
@@ -372,7 +372,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo>
         preliminaryCheckException = new DDWRTNoDataException("No Data!");
       } else //noinspection ThrowableResultOfMethodCallIgnored
         if (data.getException() == null) {
-          if (!"1".equals(data.getProperty(NVRAMInfo.TTRAFF_ENABLE))) {
+          if (!"1".equals(data.getProperty(NVRAMInfo.Companion.getTTRAFF_ENABLE()))) {
             preliminaryCheckException =
                 new WANMonthlyTrafficTile.DDWRTTraffDataDisabled("Traffic monitoring disabled!");
             menu.setVisibility(View.GONE);
@@ -542,7 +542,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo>
                 final Calendar calendar = Calendar.getInstance();
                 mCurrentDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-                mCycleItem.set(WANTrafficData.getCurrentWANCycle(mParentFragmentActivity,
+                mCycleItem.set(WANTrafficData.Companion.getCurrentWANCycle(mParentFragmentActivity,
                     mParentFragmentPreferences));
 
                 //Update title

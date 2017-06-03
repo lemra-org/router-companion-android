@@ -307,15 +307,15 @@ public class AccessRestrictionsWANAccessTile
                       //1$$
                       final String s = nameAndFollowingSplitter.get(1).replaceAll("\\$\\$", "");
                       if ("0".equals(s)) {
-                        wanAccessPolicy.setDenyOrFilter(WANAccessPolicy.FILTER);
+                        wanAccessPolicy.setDenyOrFilter(WANAccessPolicy.Companion.getFILTER());
                       } else {
-                        wanAccessPolicy.setDenyOrFilter(WANAccessPolicy.DENY);
+                        wanAccessPolicy.setDenyOrFilter(WANAccessPolicy.Companion.getDENY());
                       }
                     }
                   }
                 }
               } else {
-                wanAccessPolicy.setStatus(WANAccessPolicy.STATUS_UNKNOWN);
+                wanAccessPolicy.setStatus(WANAccessPolicy.Companion.getSTATUS_UNKNOWN());
               }
 
               //2- For each, retrieve Time of Day (TOD)
@@ -769,7 +769,7 @@ public class AccessRestrictionsWANAccessTile
                   String.format("%sabling WAN Access Policy: '%s'...", newStatus ? "En" : "Dis",
                       wanAccessPolicy.getName()), Style.INFO);
               final int enableStatus = !newStatus ? DISABLE
-                  : WANAccessPolicy.DENY.equals(wanAccessPolicy.getDenyOrFilter()) ? ENABLE_1
+                  : WANAccessPolicy.Companion.getDENY().equals(wanAccessPolicy.getDenyOrFilter()) ? ENABLE_1
                       : ENABLE_2;
               ActionManager.runTasks(
                   new ToggleWANAccessPolicyRouterAction(tile.mRouter, tile.mParentFragmentActivity,

@@ -285,7 +285,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                   final long nvramTotalBytesLong = Long.parseLong(nvramTotalBytes);
                   final long nvramLeftBytesLong = Long.parseLong(nvramLeftBytes);
                   final long nvramUsedBytesLong = nvramTotalBytesLong - nvramLeftBytesLong;
-                  nvramInfo.setProperty(NVRAMInfo.NVRAM_USED_PERCENT,
+                  nvramInfo.setProperty(NVRAMInfo.Companion.getNVRAM_USED_PERCENT(),
                       Long.toString(Math.min(100, 100 * nvramUsedBytesLong / nvramTotalBytesLong)));
                 } catch (final NumberFormatException e) {
                   e.printStackTrace();
@@ -317,7 +317,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
               updateProgressBarViewSeparator(Math.min(80, 70 + 5 + i));
             }
             if (totalSize > 0) {
-              nvramInfo.setProperty(NVRAMInfo.STORAGE_JFFS2_USED_PERCENT,
+              nvramInfo.setProperty(NVRAMInfo.Companion.getSTORAGE_JFFS2_USED_PERCENT(),
                   Long.toString(Math.min(100, 100 * totalUsed / totalSize)));
             }
           }
@@ -344,7 +344,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
               updateProgressBarViewSeparator(Math.min(87, 80 + i));
             }
             if (totalSize > 0) {
-              nvramInfo.setProperty(NVRAMInfo.STORAGE_CIFS_USED_PERCENT,
+              nvramInfo.setProperty(NVRAMInfo.Companion.getSTORAGE_CIFS_USED_PERCENT(),
                   Long.toString(Math.min(100, 100 * totalUsed / totalSize)));
             }
           }
@@ -444,7 +444,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
             R.id.tile_status_router_router_space_usage_nvram_usage_text);
         try {
           final int propertyUtilization =
-              Integer.parseInt(data.getProperty(NVRAMInfo.NVRAM_USED_PERCENT));
+              Integer.parseInt(data.getProperty(NVRAMInfo.Companion.getNVRAM_USED_PERCENT()));
           if (propertyUtilization >= 0) {
             pb.setProgress(propertyUtilization);
             pbText.setText(propertyUtilization + "%");
@@ -466,7 +466,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
             R.id.tile_status_router_router_space_usage_cifs_usage_text);
         try {
           final int propertyUtilization =
-              Integer.parseInt(data.getProperty(NVRAMInfo.STORAGE_CIFS_USED_PERCENT));
+              Integer.parseInt(data.getProperty(NVRAMInfo.Companion.getSTORAGE_CIFS_USED_PERCENT()));
           if (propertyUtilization >= 0) {
             pb.setProgress(propertyUtilization);
             pbText.setText(propertyUtilization + "%");
@@ -488,7 +488,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
             R.id.tile_status_router_router_space_usage_jffs2_usage_text);
         try {
           final int propertyUtilization =
-              Integer.parseInt(data.getProperty(NVRAMInfo.STORAGE_JFFS2_USED_PERCENT));
+              Integer.parseInt(data.getProperty(NVRAMInfo.Companion.getSTORAGE_JFFS2_USED_PERCENT()));
           if (propertyUtilization >= 0) {
             pb.setProgress(propertyUtilization);
             pbText.setText(propertyUtilization + "%");

@@ -110,10 +110,10 @@ public class MaoniDoorbellFeedbackHandler extends MaoniDoorbellListener implemen
               + "- Kernel: %s\n"
               + "- CPU Model: %s\n"
               + "- CPU Cores: %s\n", Router.getRouterModel(mContext, mRouter),
-          routerPrefs.getString(NVRAMInfo.LOGIN_PROMPT, "-"),
-          routerPrefs.getString(NVRAMInfo.KERNEL, "-"),
-          routerPrefs.getString(NVRAMInfo.CPU_MODEL, "-"),
-          routerPrefs.getString(NVRAMInfo.CPU_CORES_COUNT, "-")), TextView.BufferType.EDITABLE);
+          routerPrefs.getString(NVRAMInfo.Companion.getLOGIN_PROMPT(), "-"),
+          routerPrefs.getString(NVRAMInfo.Companion.getKERNEL(), "-"),
+          routerPrefs.getString(NVRAMInfo.Companion.getCPU_MODEL(), "-"),
+          routerPrefs.getString(NVRAMInfo.Companion.getCPU_CORES_COUNT(), "-")), TextView.BufferType.EDITABLE);
     }
   }
 

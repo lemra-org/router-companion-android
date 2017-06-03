@@ -32,8 +32,10 @@ public final class NetworkTopologyMapTileWorker {
     NVRAMInfo nvramInfoTmp = null;
     try {
       nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(context, router, globalSharedPreferences,
-          NVRAMInfo.ROUTER_NAME, NVRAMInfo.WAN_IPADDR, NVRAMInfo.LAN_IPADDR,
-          NVRAMInfo.OPENVPNCL_ENABLE, NVRAMInfo.OPENVPNCL_REMOTEIP, NVRAMInfo.OPENVPNCL_REMOTEPORT);
+          NVRAMInfo.Companion.getROUTER_NAME(), NVRAMInfo.Companion.getWAN_IPADDR(),
+          NVRAMInfo.Companion.getLAN_IPADDR(), NVRAMInfo.Companion.getOPENVPNCL_ENABLE(),
+          NVRAMInfo.Companion.getOPENVPNCL_REMOTEIP(),
+          NVRAMInfo.Companion.getOPENVPNCL_REMOTEPORT());
     } finally {
       if (nvramInfoTmp != null) {
         nvramInfo.putAll(nvramInfoTmp);
@@ -46,7 +48,7 @@ public final class NetworkTopologyMapTileWorker {
           SSHUtils.getManualProperty(context, router, globalSharedPreferences,
               "/sbin/arp -a 2>/dev/null");
       if (activeClients != null) {
-        nvramInfo.setProperty(NVRAMInfo.NB_ACTIVE_CLIENTS, Integer.toString(activeClients.length));
+        nvramInfo.setProperty(NVRAMInfo.Companion.getNB_ACTIVE_CLIENTS(), Integer.toString(activeClients.length));
       }
 
       if (dataRetrievalListener != null) {
@@ -59,14 +61,14 @@ public final class NetworkTopologyMapTileWorker {
               "( /usr/bin/wc -l /tmp/dnsmasq.leases 2>/dev/null || echo \"N_A\" ) | awk '{print $1}'");
       if (activeDhcpLeases != null) {
         if (activeDhcpLeases.length == 0) {
-          nvramInfo.setProperty(NVRAMInfo.NB_DHCP_LEASES, "-1");
+          nvramInfo.setProperty(NVRAMInfo.Companion.getNB_DHCP_LEASES(), "-1");
         } else {
           final String activeDhcpLease = activeDhcpLeases[0];
           if ("N_A".equals(activeDhcpLease)) {
             //File does not exist
-            nvramInfo.setProperty(NVRAMInfo.NB_DHCP_LEASES, "-1");
+            nvramInfo.setProperty(NVRAMInfo.Companion.getNB_DHCP_LEASES(), "-1");
           } else {
-            nvramInfo.setProperty(NVRAMInfo.NB_DHCP_LEASES, activeDhcpLease);
+            nvramInfo.setProperty(NVRAMInfo.Companion.getNB_DHCP_LEASES(), activeDhcpLease);
           }
         }
       }
@@ -82,22 +84,22 @@ public final class NetworkTopologyMapTileWorker {
             SSHUtils.getManualProperty(context, router, globalSharedPreferences,
                 Utils.getCommandForInternetIPResolution(context));
         if (wanPublicIpCmdStatus == null || wanPublicIpCmdStatus.length == 0) {
-          nvramInfo.setProperty(NVRAMInfo.INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+          nvramInfo.setProperty(NVRAMInfo.Companion.getINTERNET_CONNECTIVITY_PUBLIC_IP(), NOK);
         } else {
           final String wanPublicIp = wanPublicIpCmdStatus[wanPublicIpCmdStatus.length - 1].trim();
           if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
-            nvramInfo.setProperty(NVRAMInfo.INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
+            nvramInfo.setProperty(NVRAMInfo.Companion.getINTERNET_CONNECTIVITY_PUBLIC_IP(), wanPublicIp);
 
             PublicIPChangesServiceTask.Companion.buildNotificationIfNeeded(context, router,
                 wanPublicIpCmdStatus,
-                nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
+                nvramInfo.getProperty(NVRAMInfo.Companion.getWAN_IPADDR()), null);
           } else {
-            nvramInfo.setProperty(NVRAMInfo.INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+            nvramInfo.setProperty(NVRAMInfo.Companion.getINTERNET_CONNECTIVITY_PUBLIC_IP(), NOK);
           }
         }
       } catch (final Exception e) {
         e.printStackTrace();
-        nvramInfo.setProperty(NVRAMInfo.INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
+        nvramInfo.setProperty(NVRAMInfo.Companion.getINTERNET_CONNECTIVITY_PUBLIC_IP(), UNKNOWN);
       } finally {
         if (dataRetrievalListener != null) {
           dataRetrievalListener.doRegardlessOfStatus();

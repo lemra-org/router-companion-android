@@ -138,7 +138,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
   private static final String LOG_TAG = ActiveIPConnectionsDetailActivity.class.getSimpleName();
 
   private static final IPGeoLookupService mIPGeoLookupService =
-      NetworkUtils.createApiService(null, IPWhoisInfo.IP_WHOIS_INFO_API_PREFIX,
+      NetworkUtils.createApiService(null, IPWhoisInfo.Companion.getIP_WHOIS_INFO_API_PREFIX(),
           IPGeoLookupService.class);
 
   public static final LoadingCache<String, IPWhoisInfo> mIPWhoisInfoCache =
@@ -311,7 +311,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
     for (final String activeIpConn : activeIpConnArray) {
       try {
-        final IPConntrack ipConntrackRow = IPConntrack.parseIpConntrackRow(activeIpConn);
+        final IPConntrack ipConntrackRow = IPConntrack.Companion.parseIpConntrackRow(activeIpConn);
         if (ipConntrackRow == null) {
           continue;
         }

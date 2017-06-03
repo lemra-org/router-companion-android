@@ -32,7 +32,7 @@ public abstract class AbstractRouterFirmwareConnector {
     final String routerModel = this.goGetRouterModel(context, router);
     final SharedPreferences routerPreferences = router.getPreferences(context);
     if (routerPreferences != null) {
-      routerPreferences.edit().putString(NVRAMInfo.MODEL, routerModel).apply();
+      routerPreferences.edit().putString(NVRAMInfo.Companion.getMODEL(), routerModel).apply();
       Utils.requestBackup(context);
     }
     return routerModel;

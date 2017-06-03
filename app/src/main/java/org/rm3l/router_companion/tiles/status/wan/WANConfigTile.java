@@ -167,22 +167,23 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
               final String[] possibleWanProtos = new String[] {
                   "ppoe", "3g", "heartbeat", "disabled", "dhcp"
               };
-              nvramInfoTmp = new NVRAMInfo().setProperty(NVRAMInfo.WAN_PROTO,
+              nvramInfoTmp = new NVRAMInfo().setProperty(NVRAMInfo.Companion.getWAN_PROTO(),
                   possibleWanProtos[new Random().nextInt(possibleWanProtos.length)])
-                  .setProperty(NVRAMInfo.WAN_3_G_SIGNAL, "-10dBm")
-                  .setProperty(NVRAMInfo.WAN_HWADDR, "wa:nm:ac:hw:ad:dr")
-                  .setProperty(NVRAMInfo.WAN_LEASE, "14400")
-                  .setProperty(NVRAMInfo.WAN_IPADDR, "10.11.12.13")
-                  .setProperty(NVRAMInfo.WAN_NETMASK, "255.0.0.0")
-                  .setProperty(NVRAMInfo.WAN_GATEWAY, "10.0.0.254")
-                  .setProperty(NVRAMInfo.WAN_GET_DNS, "8.8.8.8")
-                  .setProperty(NVRAMInfo.WAN_DNS, "8.8.4.4");
+                  .setProperty(NVRAMInfo.Companion.getWAN_3_G_SIGNAL(), "-10dBm")
+                  .setProperty(NVRAMInfo.Companion.getWAN_HWADDR(), "wa:nm:ac:hw:ad:dr")
+                  .setProperty(NVRAMInfo.Companion.getWAN_LEASE(), "14400")
+                  .setProperty(NVRAMInfo.Companion.getWAN_IPADDR(), "10.11.12.13")
+                  .setProperty(NVRAMInfo.Companion.getWAN_NETMASK(), "255.0.0.0")
+                  .setProperty(NVRAMInfo.Companion.getWAN_GATEWAY(), "10.0.0.254")
+                  .setProperty(NVRAMInfo.Companion.getWAN_GET_DNS(), "8.8.8.8")
+                  .setProperty(NVRAMInfo.Companion.getWAN_DNS(), "8.8.4.4");
             } else {
               nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                  mGlobalPreferences, NVRAMInfo.WAN_PROTO, NVRAMInfo.WAN_3_G_SIGNAL,
-                  NVRAMInfo.WAN_HWADDR, NVRAMInfo.WAN_LEASE, NVRAMInfo.WAN_IPADDR,
-                  NVRAMInfo.WAN_NETMASK, NVRAMInfo.WAN_GATEWAY, NVRAMInfo.WAN_GET_DNS,
-                  NVRAMInfo.WAN_DNS);
+                  mGlobalPreferences, NVRAMInfo.Companion.getWAN_PROTO(),
+                  NVRAMInfo.Companion.getWAN_3_G_SIGNAL(), NVRAMInfo.Companion.getWAN_HWADDR(),
+                  NVRAMInfo.Companion.getWAN_LEASE(), NVRAMInfo.Companion.getWAN_IPADDR(),
+                  NVRAMInfo.Companion.getWAN_NETMASK(), NVRAMInfo.Companion.getWAN_GATEWAY(),
+                  NVRAMInfo.Companion.getWAN_GET_DNS(), NVRAMInfo.Companion.getWAN_DNS());
             }
             updateProgressBarViewSeparator(50);
           } finally {
@@ -231,7 +232,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
                       String.format("%d:%02d:%02d", (minutes / 60) % 24, minutes % 60,
                           (int) uptime % 60);
 
-                  nvramInfo.setProperty(NVRAMInfo.WAN_CONNECTION_UPTIME, wanConnectionUptimeStr);
+                  nvramInfo.setProperty(NVRAMInfo.Companion.getWAN_CONNECTION_UPTIME(), wanConnectionUptimeStr);
                 } catch (final NumberFormatException nfe) {
                   nfe.printStackTrace();
                   //No Worries - WAN Uptime will be marked as "-"
@@ -297,7 +298,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
 
                       PublicIPChangesServiceTask.Companion.buildNotificationIfNeeded(mParentFragmentActivity,
                           mRouter, wanPublicIpCmdStatus,
-                          nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
+                          nvramInfo.getProperty(NVRAMInfo.Companion.getWAN_IPADDR()), null);
                     } else {
                       nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
                     }
@@ -431,7 +432,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
         //Connection Type
         final TextView wanConnTypeView =
             (TextView) this.layout.findViewById(R.id.tile_status_wan_config_connection_type);
-        final String wanProto = data.getProperty(NVRAMInfo.WAN_PROTO, "-");
+        final String wanProto = data.getProperty(NVRAMInfo.Companion.getWAN_PROTO(), "-");
         final String wanConnectionTypeManual;
 
         if ("ppoe".equalsIgnoreCase(wanProto)) {
@@ -446,7 +447,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
               (TextView) this.layout.findViewById(R.id.tile_status_wan_config_3g_signal);
           wan3gSignalFieldView.setVisibility(View.VISIBLE);
           wan3gSignalView.setVisibility(View.VISIBLE);
-          wan3gSignalView.setText(data.getProperty(NVRAMInfo.WAN_3_G_SIGNAL, "-"));
+          wan3gSignalView.setText(data.getProperty(NVRAMInfo.Companion.getWAN_3_G_SIGNAL(), "-"));
         } else if ("heartbeat".equalsIgnoreCase(wanProto)) {
           wanConnectionTypeManual = "Heartbeat Signal";
         } else if ("disabled".equalsIgnoreCase(wanProto)) {
@@ -460,15 +461,15 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
         //Connection Uptime
         final TextView wanUptimeView =
             (TextView) this.layout.findViewById(R.id.tile_status_wan_config_connection_uptime);
-        wanUptimeView.setText(data.getProperty(NVRAMInfo.WAN_CONNECTION_UPTIME, "-"));
+        wanUptimeView.setText(data.getProperty(NVRAMInfo.Companion.getWAN_CONNECTION_UPTIME(), "-"));
 
         //WAN MAC
         final TextView wanMacView =
             (TextView) this.layout.findViewById(R.id.tile_status_wan_config_wan_mac);
-        wanMacView.setText(data.getProperty(NVRAMInfo.WAN_HWADDR, "-"));
+        wanMacView.setText(data.getProperty(NVRAMInfo.Companion.getWAN_HWADDR(), "-"));
 
         //WAN IP
-        final String wanIpText = data.getProperty(NVRAMInfo.WAN_IPADDR, "-");
+        final String wanIpText = data.getProperty(NVRAMInfo.Companion.getWAN_IPADDR(), "-");
         final TextView wanIPView =
             (TextView) this.layout.findViewById(R.id.tile_status_wan_config_wan_ip);
         wanIPView.setText(wanIpText);
@@ -476,12 +477,12 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
         //Subnet
         final TextView wanSubnetView =
             (TextView) this.layout.findViewById(R.id.tile_status_wan_config_subnet_mask);
-        wanSubnetView.setText(data.getProperty(NVRAMInfo.WAN_NETMASK, "-"));
+        wanSubnetView.setText(data.getProperty(NVRAMInfo.Companion.getWAN_NETMASK(), "-"));
 
         //Gateway
         final TextView wanGatewayView =
             (TextView) this.layout.findViewById(R.id.tile_status_wan_config_subnet_gateway);
-        wanGatewayView.setText(data.getProperty(NVRAMInfo.WAN_GATEWAY, "-"));
+        wanGatewayView.setText(data.getProperty(NVRAMInfo.Companion.getWAN_GATEWAY(), "-"));
 
         //Public IP and Reverse DNS
         final TextView internetIpTitle =
@@ -521,8 +522,8 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
         //DNS
         final TextView wanDNSView =
             (TextView) this.layout.findViewById(R.id.tile_status_wan_config_dns);
-        final String wanDns = data.getProperty(NVRAMInfo.WAN_DNS);
-        final String wanGetDns = data.getProperty(NVRAMInfo.WAN_GET_DNS);
+        final String wanDns = data.getProperty(NVRAMInfo.Companion.getWAN_DNS());
+        final String wanGetDns = data.getProperty(NVRAMInfo.Companion.getWAN_GET_DNS());
         final String property =
             (!isEmpty(wanDns) ? wanDns : (!isEmpty(wanGetDns) ? wanGetDns : "-"));
         wanDNSView.setText(property.replaceAll(" ", ", "));

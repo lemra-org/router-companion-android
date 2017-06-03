@@ -128,10 +128,10 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
           try {
             updateProgressBarViewSeparator(10);
             if (isDemoRouter(mRouter)) {
-              nvramInfoTmp = new NVRAMInfo().setProperty(NVRAMInfo.CPU_CLOCK_FREQ, "100");
+              nvramInfoTmp = new NVRAMInfo().setProperty(NVRAMInfo.Companion.getCPU_CLOCK_FREQ(), "100");
             } else {
               nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                  mGlobalPreferences, NVRAMInfo.CPU_CLOCK_FREQ);
+                  mGlobalPreferences, NVRAMInfo.Companion.getCPU_CLOCK_FREQ());
             }
             updateProgressBarViewSeparator(45);
           } finally {
@@ -142,10 +142,11 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
             List<String> strings = Splitter.on(",")
                 .omitEmptyStrings()
                 .trimResults()
-                .splitToList(nullToEmpty(nvramInfo.getProperty(NVRAMInfo.CPU_CLOCK_FREQ)));
+                .splitToList(nullToEmpty(nvramInfo.getProperty(
+                    NVRAMInfo.Companion.getCPU_CLOCK_FREQ())));
             Crashlytics.log(Log.DEBUG, LOG_TAG, "strings for cpu clock: " + strings);
             if (strings != null && strings.size() > 0) {
-              nvramInfo.setProperty(NVRAMInfo.CPU_CLOCK_FREQ, strings.get(0));
+              nvramInfo.setProperty(NVRAMInfo.Companion.getCPU_CLOCK_FREQ(), strings.get(0));
             }
 
             final String[] otherCmds;
@@ -168,7 +169,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
 
               if (otherCmds.length >= 1) {
                 //Load Avg
-                nvramInfo.setProperty(NVRAMInfo.LOAD_AVERAGE,
+                nvramInfo.setProperty(NVRAMInfo.Companion.getLOAD_AVERAGE(),
                     StringUtils.trimToEmpty(otherCmds[0]));
               }
               if (otherCmds.length >= 2) {
@@ -178,14 +179,14 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                   final Set<String> list = new HashSet<>(
                       Splitter.on("#").trimResults().omitEmptyStrings().splitToList(modelNameLine));
                   if (!list.isEmpty()) {
-                    nvramInfo.setProperty(NVRAMInfo.CPU_MODEL, list.iterator().next());
+                    nvramInfo.setProperty(NVRAMInfo.Companion.getCPU_MODEL(), list.iterator().next());
                   }
                 }
               }
               if (otherCmds.length >= 3) {
                 //Nb Cores
                 final String nbCoresStr = otherCmds[2];
-                nvramInfo.setProperty(NVRAMInfo.CPU_CORES_COUNT, nbCoresStr);
+                nvramInfo.setProperty(NVRAMInfo.Companion.getCPU_CORES_COUNT(), nbCoresStr);
 
                 //Compute usage as well
                 final String loadAvg = otherCmds[0];
@@ -200,7 +201,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                       final int coresCount = Integer.parseInt(nbCoresStr);
 
                       if (coresCount > 0) {
-                        nvramInfo.setProperty(NVRAMInfo.CPU_USED_PERCENT, Integer.toString(
+                        nvramInfo.setProperty(NVRAMInfo.Companion.getCPU_USED_PERCENT(), Integer.toString(
                             Math.min(100,
                                 Double.valueOf(loadAvgTotal / coresCount * 33.3).intValue())));
                       }
@@ -306,23 +307,23 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
         //Clock Frequency
         final TextView cpuSpeedView =
             (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_speed);
-        final String property = data.getProperty(NVRAMInfo.CPU_CLOCK_FREQ);
+        final String property = data.getProperty(NVRAMInfo.Companion.getCPU_CLOCK_FREQ());
         cpuSpeedView.setText(Strings.isNullOrEmpty(property) ? null : (property + " MHz"));
 
         //Model
         final TextView cpuModelView =
             (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_model);
-        cpuModelView.setText(data.getProperty(NVRAMInfo.CPU_MODEL, "-"));
+        cpuModelView.setText(data.getProperty(NVRAMInfo.Companion.getCPU_MODEL(), "-"));
 
         //Cores Count
         final TextView cpuCountView =
             (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_cores);
-        cpuCountView.setText(data.getProperty(NVRAMInfo.CPU_CORES_COUNT, "-"));
+        cpuCountView.setText(data.getProperty(NVRAMInfo.Companion.getCPU_CORES_COUNT(), "-"));
 
         //Load Avg
         final TextView loadAvgView =
             (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_load_avg);
-        loadAvgView.setText(data.getProperty(NVRAMInfo.LOAD_AVERAGE, "-"));
+        loadAvgView.setText(data.getProperty(NVRAMInfo.Companion.getLOAD_AVERAGE(), "-"));
 
         //Load Avg Usage
         final ProgressBar pb =
@@ -331,7 +332,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
             (TextView) layout.findViewById(R.id.tile_status_router_router_cpu_load_avg_usage_text);
         try {
           final int propertyUtilization =
-              Integer.parseInt(data.getProperty(NVRAMInfo.CPU_USED_PERCENT));
+              Integer.parseInt(data.getProperty(NVRAMInfo.Companion.getCPU_USED_PERCENT()));
           if (propertyUtilization >= 0) {
             pb.setProgress(propertyUtilization);
             pbText.setText(propertyUtilization + "%");

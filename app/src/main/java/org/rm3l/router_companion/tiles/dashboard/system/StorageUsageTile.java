@@ -198,7 +198,7 @@ public class StorageUsageTile extends DDWRTTile<NVRAMInfo> {
         }
 
         try {
-          final String nvramUsedStr = data.getProperty(NVRAMInfo.NVRAM_USED_PERCENT);
+          final String nvramUsedStr = data.getProperty(NVRAMInfo.Companion.getNVRAM_USED_PERCENT());
           final int nvramUsed = Integer.parseInt(nvramUsedStr);
 
           //Update colors as per the usage
@@ -216,7 +216,8 @@ public class StorageUsageTile extends DDWRTTile<NVRAMInfo> {
         }
 
         try {
-          final String jffs2UsedStr = data.getProperty(NVRAMInfo.STORAGE_JFFS2_USED_PERCENT);
+          final String jffs2UsedStr = data.getProperty(
+              NVRAMInfo.Companion.getSTORAGE_JFFS2_USED_PERCENT());
           final int jffs2Used = Integer.parseInt(jffs2UsedStr);
 
           //Update colors as per the usage
@@ -234,7 +235,8 @@ public class StorageUsageTile extends DDWRTTile<NVRAMInfo> {
         }
 
         try {
-          final String cifsUsedStr = data.getProperty(NVRAMInfo.STORAGE_CIFS_USED_PERCENT);
+          final String cifsUsedStr = data.getProperty(
+              NVRAMInfo.Companion.getSTORAGE_CIFS_USED_PERCENT());
           final int cifsUsed = Integer.parseInt(cifsUsedStr);
 
           //Update colors as per the usage

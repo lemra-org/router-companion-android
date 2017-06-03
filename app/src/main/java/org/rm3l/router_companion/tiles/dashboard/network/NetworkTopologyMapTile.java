@@ -173,18 +173,18 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
           final Properties nvramInfoData = nvramInfo.getData();
           if (nvramInfoData != null) {
             //Active clients
-            if (nvramInfoData.containsKey(NVRAMInfo.NB_ACTIVE_CLIENTS)) {
+            if (nvramInfoData.containsKey(NVRAMInfo.Companion.getNB_ACTIVE_CLIENTS())) {
               final String activeClientsProperty =
-                  (String) nvramInfoData.remove(NVRAMInfo.NB_ACTIVE_CLIENTS);
+                  (String) nvramInfoData.remove(NVRAMInfo.Companion.getNB_ACTIVE_CLIENTS());
               if (!TextUtils.isEmpty(activeClientsProperty)) {
                 nbActiveClients.set(Integer.parseInt(activeClientsProperty));
               }
             }
 
             //Active DHCP Leases
-            if (nvramInfoData.containsKey(NVRAMInfo.NB_DHCP_LEASES)) {
+            if (nvramInfoData.containsKey(NVRAMInfo.Companion.getNB_DHCP_LEASES())) {
               final String dhcpLeasesProperty =
-                  (String) nvramInfoData.remove(NVRAMInfo.NB_DHCP_LEASES);
+                  (String) nvramInfoData.remove(NVRAMInfo.Companion.getNB_DHCP_LEASES());
               if (!TextUtils.isEmpty(dhcpLeasesProperty)) {
                 nbDhcpLeases.set(Integer.parseInt(dhcpLeasesProperty));
               }
@@ -255,7 +255,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
         //Router Name
         final TextView routerNameView =
             (TextView) this.layout.findViewById(R.id.tile_network_map_router_name);
-        final String routerName = data.getProperty(NVRAMInfo.ROUTER_NAME);
+        final String routerName = data.getProperty(NVRAMInfo.Companion.getROUTER_NAME());
         final boolean routerNameNull = (routerName == null);
         String routerNameToSet = routerName;
         if (routerNameNull) {
@@ -268,12 +268,12 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
         //WAN IP
         final TextView wanIpView =
             (TextView) this.layout.findViewById(R.id.tile_network_map_router_wan_ip);
-        wanIpView.setText("WAN IP: " + data.getProperty(NVRAMInfo.WAN_IPADDR, "-"));
+        wanIpView.setText("WAN IP: " + data.getProperty(NVRAMInfo.Companion.getWAN_IPADDR(), "-"));
 
         //LAN IP
         final TextView lanIpView =
             (TextView) this.layout.findViewById(R.id.tile_network_map_router_lan_ip);
-        lanIpView.setText("LAN IP: " + data.getProperty(NVRAMInfo.LAN_IPADDR, "-"));
+        lanIpView.setText("LAN IP: " + data.getProperty(NVRAMInfo.Companion.getLAN_IPADDR(), "-"));
 
         final TextView activeClientsView =
             (TextView) this.layout.findViewById(R.id.tile_network_map_active_clients);
@@ -292,9 +292,12 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
         ((TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView_devices)).setText(
             "Device" + (nbActiveClientsInt > 1 ? "s" : ""));
 
-        final boolean openvpnClEnabled = "1".equals(data.getProperty(NVRAMInfo.OPENVPNCL_ENABLE));
-        final String vpnClRemoteServerIp = data.getProperty(NVRAMInfo.OPENVPNCL_REMOTEIP);
-        final String vpnClRemoteServerPort = data.getProperty(NVRAMInfo.OPENVPNCL_REMOTEPORT);
+        final boolean openvpnClEnabled = "1".equals(data.getProperty(
+            NVRAMInfo.Companion.getOPENVPNCL_ENABLE()));
+        final String vpnClRemoteServerIp = data.getProperty(
+            NVRAMInfo.Companion.getOPENVPNCL_REMOTEIP());
+        final String vpnClRemoteServerPort = data.getProperty(
+            NVRAMInfo.Companion.getOPENVPNCL_REMOTEPORT());
         final View vpnClImageView = layout.findViewById(R.id.tile_network_map_wan_vpn);
         if (openvpnClEnabled) {
           vpnClImageView.setVisibility(View.VISIBLE);
@@ -363,7 +366,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
               + "Public IP Address on the Internet is: "
               + publicIp);
 
-          if (Objects.equal(publicIp, data.getProperty(NVRAMInfo.WAN_IPADDR))) {
+          if (Objects.equal(publicIp, data.getProperty(NVRAMInfo.Companion.getWAN_IPADDR()))) {
             wanIpView.setVisibility(View.INVISIBLE);
           }
         }

@@ -52,18 +52,20 @@ public class WANTrafficTileOpenWrt extends WANTrafficTile {
           final UCIInfo uciNetworkInfo =
               SSHUtils.getUCIInfoFromOpenWrtRouter(mParentFragmentActivity, mRouter,
                   mGlobalPreferences, "/sbin/uci -P/var/state show network | grep \""
-                      + UCIInfo.NETWORK_WAN_DEVICE
+                      + UCIInfo.Companion.getNETWORK_WAN_DEVICE()
                       + "\"");
           if (uciNetworkInfo == null) {
             throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
           }
 
-          final String property = uciNetworkInfo.getProperty(UCIInfo.NETWORK_WAN_DEVICE);
+          final String property = uciNetworkInfo.getProperty(
+              UCIInfo.Companion.getNETWORK_WAN_DEVICE());
           if (property != null) {
-            nvRamInfoFromRouter.setProperty(NVRAMInfo.WAN_IFACE, property);
+            nvRamInfoFromRouter.setProperty(NVRAMInfo.Companion.getWAN_IFACE(), property);
           }
 
-          final String wanIface = nvRamInfoFromRouter.getProperty(NVRAMInfo.WAN_IFACE);
+          final String wanIface = nvRamInfoFromRouter.getProperty(
+              NVRAMInfo.Companion.getWAN_IFACE());
 
           if (Strings.isNullOrEmpty(wanIface)) {
             throw new IllegalStateException("Whoops. WAN Iface could not be determined.");

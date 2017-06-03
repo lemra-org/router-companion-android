@@ -109,15 +109,16 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
           try {
             updateProgressBarViewSeparator(10);
             if (isDemoRouter(mRouter)) {
-              nvramInfoTmp = new NVRAMInfo().setProperty(NVRAMInfo.NTP_ENABLE, "1")
-                  .setProperty(NVRAMInfo.NTP_MODE, "")
-                  .setProperty(NVRAMInfo.NTP_SERVER, "time.serv.er")
-                  .setProperty(NVRAMInfo.TIME_ZONE, "+02:00")
-                  .setProperty(NVRAMInfo.DAYLIGHT_TIME, "3");
+              nvramInfoTmp = new NVRAMInfo().setProperty(NVRAMInfo.Companion.getNTP_ENABLE(), "1")
+                  .setProperty(NVRAMInfo.Companion.getNTP_MODE(), "")
+                  .setProperty(NVRAMInfo.Companion.getNTP_SERVER(), "time.serv.er")
+                  .setProperty(NVRAMInfo.Companion.getTIME_ZONE(), "+02:00")
+                  .setProperty(NVRAMInfo.Companion.getDAYLIGHT_TIME(), "3");
             } else {
               nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                  mGlobalPreferences, NVRAMInfo.NTP_ENABLE, NVRAMInfo.NTP_MODE,
-                  NVRAMInfo.NTP_SERVER, NVRAMInfo.TIME_ZONE, NVRAMInfo.DAYLIGHT_TIME);
+                  mGlobalPreferences, NVRAMInfo.Companion.getNTP_ENABLE(),
+                  NVRAMInfo.Companion.getNTP_MODE(), NVRAMInfo.Companion.getNTP_SERVER(),
+                  NVRAMInfo.Companion.getTIME_ZONE(), NVRAMInfo.Companion.getDAYLIGHT_TIME());
             }
             updateProgressBarViewSeparator(55);
           } finally {
@@ -137,7 +138,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
             }
             updateProgressBarViewSeparator(90);
             if (currentDate != null && currentDate.length > 0) {
-              nvramInfo.setProperty(NVRAMInfo.CURRENT_DATE, currentDate[0]);
+              nvramInfo.setProperty(NVRAMInfo.Companion.getCURRENT_DATE(), currentDate[0]);
             }
           }
 
@@ -186,24 +187,25 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
         }
 
         //Current Date
-        final String currentDate = data.getProperty(NVRAMInfo.CURRENT_DATE, "-");
+        final String currentDate = data.getProperty(NVRAMInfo.Companion.getCURRENT_DATE(), "-");
         ((TextView) layout.findViewById(R.id.tile_status_time_current_time)).setText(currentDate);
 
         //NTP Client
-        final boolean ntpClientEnabled = "1".equals(data.getProperty(NVRAMInfo.NTP_ENABLE));
+        final boolean ntpClientEnabled = "1".equals(data.getProperty(
+            NVRAMInfo.Companion.getNTP_ENABLE()));
         ((TextView) this.layout.findViewById(R.id.tile_status_time_ntp_client)).setText(
             (ntpClientEnabled ? "En" : "Dis") + "abled");
         if (ntpClientEnabled) {
           //NTP Server
           ((TextView) this.layout.findViewById(R.id.tile_status_time_time_server)).setText(
-              data.getProperty(NVRAMInfo.NTP_SERVER, "-"));
+              data.getProperty(NVRAMInfo.Companion.getNTP_SERVER(), "-"));
         } else {
           //NTP Server
           ((TextView) this.layout.findViewById(R.id.tile_status_time_time_server)).setText("-");
         }
 
         //Time Zone
-        final String timezone = data.getProperty(NVRAMInfo.TIME_ZONE);
+        final String timezone = data.getProperty(NVRAMInfo.Companion.getTIME_ZONE());
         final String tzValue;
         if (timezone == null || timezone.isEmpty()) {
           tzValue = "-";
@@ -216,7 +218,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
 
         //Daylight
         final String daylightPeriodString =
-            daylightMap.get(data.getProperty(NVRAMInfo.DAYLIGHT_TIME));
+            daylightMap.get(data.getProperty(NVRAMInfo.Companion.getDAYLIGHT_TIME()));
         ((TextView) this.layout.findViewById(R.id.tile_status_time_summertime)).setText(
             daylightPeriodString != null ? daylightPeriodString : "-");
 

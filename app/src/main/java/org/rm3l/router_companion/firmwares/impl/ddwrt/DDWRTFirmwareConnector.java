@@ -31,9 +31,6 @@ import org.rm3l.router_companion.utils.WANTrafficUtils;
 
 import static org.rm3l.router_companion.RouterCompanionAppConstants.NOK;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.UNKNOWN;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_DAYS;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_HOURS;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_MINUTES;
 import static org.rm3l.router_companion.tiles.dashboard.bandwidth.WANTotalTrafficOverviewTile.DDWRT_TRAFF_DATA_SIMPLE_DATE_FORMAT;
 import static org.rm3l.router_companion.tiles.dashboard.bandwidth.WANTotalTrafficOverviewTile.TRAFF_PREFIX;
 import static org.rm3l.router_companion.tiles.dashboard.network.NetworkTopologyMapTile.INTERNET_CONNECTIVITY_PUBLIC_IP;
@@ -97,7 +94,7 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
             final long nvramTotalBytesLong = Long.parseLong(nvramTotalBytes);
             final long nvramLeftBytesLong = Long.parseLong(nvramLeftBytes);
             final long nvramUsedBytesLong = nvramTotalBytesLong - nvramLeftBytesLong;
-            nvramInfo.setProperty(NVRAMInfo.NVRAM_USED_PERCENT,
+            nvramInfo.setProperty(NVRAMInfo.Companion.getNVRAM_USED_PERCENT(),
                 Long.toString(Math.min(100, 100 * nvramUsedBytesLong / nvramTotalBytesLong)));
           } catch (final NumberFormatException e) {
             e.printStackTrace();
@@ -133,7 +130,7 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
         }
       }
       if (totalSize > 0) {
-        nvramInfo.setProperty(NVRAMInfo.STORAGE_JFFS2_USED_PERCENT,
+        nvramInfo.setProperty(NVRAMInfo.Companion.getSTORAGE_JFFS2_USED_PERCENT(),
             Long.toString(Math.min(100, 100 * totalUsed / totalSize)));
       }
     }
@@ -164,7 +161,7 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
         }
       }
       if (totalSize > 0) {
-        nvramInfo.setProperty(NVRAMInfo.STORAGE_CIFS_USED_PERCENT,
+        nvramInfo.setProperty(NVRAMInfo.Companion.getSTORAGE_CIFS_USED_PERCENT(),
             Long.toString(Math.min(100, 100 * totalUsed / totalSize)));
       }
     }
@@ -233,7 +230,7 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
       }
 
       nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(context, router, globalSharedPreferences,
-          NVRAMInfo.TTRAFF_ENABLE, traffForPreviousMonthKey, traffForCurrentMonthKey,
+          NVRAMInfo.Companion.getTTRAFF_ENABLE(), traffForPreviousMonthKey, traffForCurrentMonthKey,
           traffForNextMonthKey);
     } finally {
       if (nvramInfoTmp != null) {
@@ -284,7 +281,7 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
           final String first = uptimeList.get(0).trim();
           if (StringUtils.contains(first, "day")) {
             //day
-            nvramInfo.setProperty(UPTIME_DAYS,
+            nvramInfo.setProperty(NVRAMInfo.Companion.getUPTIME_DAYS(),
                 first.replaceAll("days", "").replaceAll("day", "").trim());
 
             if (uptimeListSize >= 2) {
@@ -295,17 +292,17 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
                       Splitter.on(":").omitEmptyStrings().splitToList(other);
                   if (otherList != null) {
                     if (otherList.size() >= 1) {
-                      nvramInfo.setProperty(UPTIME_HOURS, otherList.get(0).trim());
+                      nvramInfo.setProperty(NVRAMInfo.Companion.getUPTIME_HOURS(), otherList.get(0).trim());
                     }
                     if (otherList.size() >= 2) {
-                      nvramInfo.setProperty(UPTIME_MINUTES, otherList.get(1).trim());
+                      nvramInfo.setProperty(NVRAMInfo.Companion.getUPTIME_MINUTES(), otherList.get(1).trim());
                     }
                   }
                 } else if (StringUtils.contains(other, "hour")) {
-                  nvramInfo.setProperty(UPTIME_HOURS,
+                  nvramInfo.setProperty(NVRAMInfo.Companion.getUPTIME_HOURS(),
                       other.replaceAll("hours", "").replaceAll("hour", "").trim());
                 } else if (StringUtils.contains(other, "min")) {
-                  nvramInfo.setProperty(UPTIME_MINUTES,
+                  nvramInfo.setProperty(NVRAMInfo.Companion.getUPTIME_MINUTES(),
                       other.replaceAll("mins", "").replaceAll("min", "").trim());
                 }
               }
@@ -314,17 +311,17 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
             final List<String> otherList = Splitter.on(":").omitEmptyStrings().splitToList(first);
             if (otherList != null) {
               if (otherList.size() >= 1) {
-                nvramInfo.setProperty(UPTIME_HOURS, otherList.get(0).trim());
+                nvramInfo.setProperty(NVRAMInfo.Companion.getUPTIME_HOURS(), otherList.get(0).trim());
               }
               if (otherList.size() >= 2) {
-                nvramInfo.setProperty(UPTIME_MINUTES, otherList.get(1).trim());
+                nvramInfo.setProperty(NVRAMInfo.Companion.getUPTIME_MINUTES(), otherList.get(1).trim());
               }
             }
           } else if (StringUtils.contains(first, "hour")) {
-            nvramInfo.setProperty(UPTIME_HOURS,
+            nvramInfo.setProperty(NVRAMInfo.Companion.getUPTIME_HOURS(),
                 first.replaceAll("hours", "").replaceAll("hour", "").trim());
           } else if (StringUtils.contains(first, "min")) {
-            nvramInfo.setProperty(UPTIME_MINUTES,
+            nvramInfo.setProperty(NVRAMInfo.Companion.getUPTIME_MINUTES(),
                 first.trim().replaceAll("mins", "").replaceAll("min", "").trim());
           }
         }
@@ -395,8 +392,9 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
     updateProgressBarViewSeparator(dataRetrievalListener, 10);
 
     NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(context, router, globalSharedPreferences,
-        NVRAMInfo.ROUTER_NAME, NVRAMInfo.WAN_IPADDR, NVRAMInfo.MODEL, NVRAMInfo.DIST_TYPE,
-        NVRAMInfo.LAN_IPADDR);
+        NVRAMInfo.Companion.getROUTER_NAME(), NVRAMInfo.Companion.getWAN_IPADDR(),
+        NVRAMInfo.Companion.getMODEL(), NVRAMInfo.Companion.getDIST_TYPE(),
+        NVRAMInfo.Companion.getLAN_IPADDR());
 
     if (nvramInfo == null) {
       nvramInfo = new NVRAMInfo();
@@ -423,7 +421,7 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
     if (otherCmds != null) {
       if (otherCmds.length >= 1) {
         //date
-        nvramInfo.setProperty(NVRAMInfo.CURRENT_DATE, otherCmds[0]);
+        nvramInfo.setProperty(NVRAMInfo.Companion.getCURRENT_DATE(), otherCmds[0]);
       }
       if (otherCmds.length >= 3) {
         String uptime = otherCmds[1];
@@ -434,26 +432,26 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
             uptime += (" (up " + elapsedFromUptime + ")");
           }
         }
-        nvramInfo.setProperty(NVRAMInfo.UPTIME, uptime);
+        nvramInfo.setProperty(NVRAMInfo.Companion.getUPTIME(), uptime);
       }
 
       if (otherCmds.length >= 4) {
         //Kernel
-        nvramInfo.setProperty(NVRAMInfo.KERNEL,
+        nvramInfo.setProperty(NVRAMInfo.Companion.getKERNEL(),
             StringUtils.replace(StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
-                nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME), ""));
+                nvramInfo.getProperty(NVRAMInfo.Companion.getROUTER_NAME()), ""));
       }
 
       if (otherCmds.length >= 5) {
         //Firmware
         final String fwString = otherCmds[4];
-        nvramInfo.setProperty(NVRAMInfo.FIRMWARE, fwString);
+        nvramInfo.setProperty(NVRAMInfo.Companion.getFIRMWARE(), fwString);
 
         final List<String> strings =
             Splitter.on("rev:").omitEmptyStrings().trimResults().splitToList(fwString);
         if (strings.size() >= 2) {
           try {
-            nvramInfo.setProperty(NVRAMInfo.OS_VERSION,
+            nvramInfo.setProperty(NVRAMInfo.Companion.getOS_VERSION(),
                 Long.toString(Long.parseLong(strings.get(1).trim())));
           } catch (final NumberFormatException nfe) {
             //No worries
@@ -479,7 +477,8 @@ public class DDWRTFirmwareConnector extends AbstractRouterFirmwareConnector {
           if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
 
-            PublicIPChangesServiceTask.Companion.buildNotificationIfNeeded(context, router, new String[] { wanPublicIp }, nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
+            PublicIPChangesServiceTask.Companion.buildNotificationIfNeeded(context, router, new String[] { wanPublicIp }, nvramInfo.getProperty(
+                NVRAMInfo.Companion.getWAN_IPADDR()), null);
           } else {
             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
           }

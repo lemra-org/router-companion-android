@@ -39,7 +39,7 @@ import org.rm3l.ddwrt.BuildConfig;
 /**
  * Utility class containing functions to read/write NFC tags with Wi-Fi configurations
  */
-public class NfcUtils {
+public final class NfcUtils {
   public static final String NFC_TOKEN_MIME_TYPE = "application/vnd.wfa.wsc";
   /*
    * ID into configuration record for SSID and Network Key in hex.
@@ -71,6 +71,10 @@ public class NfcUtils {
   public static final int MAX_NETWORK_KEY_SIZE_BYTES = 64;
   private static final String TAG = NfcUtils.class.getSimpleName();
   private static final String PACKAGE_NAME = BuildConfig.APPLICATION_ID;
+
+  private NfcUtils() {
+    throw new UnsupportedOperationException("Not instantiable");
+  }
 
   /**
    * Write the given Wi-Fi configuration to the NFC tag.

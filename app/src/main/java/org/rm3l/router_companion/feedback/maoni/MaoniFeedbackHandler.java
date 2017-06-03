@@ -115,10 +115,11 @@ public class MaoniFeedbackHandler implements Handler {
       final SharedPreferences routerPrefs =
           mContext.getSharedPreferences(mRouter.getUuid(), Context.MODE_PRIVATE);
       properties.put("Router Model", Router.getRouterModel(mContext, mRouter));
-      properties.put("Router Firmware", routerPrefs.getString(NVRAMInfo.LOGIN_PROMPT, "-"));
-      properties.put("Router Kernel", routerPrefs.getString(NVRAMInfo.KERNEL, "-"));
-      properties.put("Router CPU Model", routerPrefs.getString(NVRAMInfo.CPU_MODEL, "-"));
-      properties.put("Router CPU Cores", routerPrefs.getString(NVRAMInfo.CPU_CORES_COUNT, "-"));
+      properties.put("Router Firmware", routerPrefs.getString(NVRAMInfo.Companion.getLOGIN_PROMPT(), "-"));
+      properties.put("Router Kernel", routerPrefs.getString(NVRAMInfo.Companion.getKERNEL(), "-"));
+      properties.put("Router CPU Model", routerPrefs.getString(NVRAMInfo.Companion.getCPU_MODEL(), "-"));
+      properties.put("Router CPU Cores", routerPrefs.getString(
+          NVRAMInfo.Companion.getCPU_CORES_COUNT(), "-"));
     }
     //Also add build related properties
     properties.put(PROPERTY_BUILD_FLAVOR, BuildConfig.FLAVOR);
@@ -165,10 +166,10 @@ public class MaoniFeedbackHandler implements Handler {
               + "- Kernel: %s\n"
               + "- CPU Model: %s\n"
               + "- CPU Cores: %s\n", Router.getRouterModel(mContext, mRouter),
-          routerPrefs.getString(NVRAMInfo.LOGIN_PROMPT, "-"),
-          routerPrefs.getString(NVRAMInfo.KERNEL, "-"),
-          routerPrefs.getString(NVRAMInfo.CPU_MODEL, "-"),
-          routerPrefs.getString(NVRAMInfo.CPU_CORES_COUNT, "-")), TextView.BufferType.EDITABLE);
+          routerPrefs.getString(NVRAMInfo.Companion.getLOGIN_PROMPT(), "-"),
+          routerPrefs.getString(NVRAMInfo.Companion.getKERNEL(), "-"),
+          routerPrefs.getString(NVRAMInfo.Companion.getCPU_MODEL(), "-"),
+          routerPrefs.getString(NVRAMInfo.Companion.getCPU_CORES_COUNT(), "-")), TextView.BufferType.EDITABLE);
     }
   }
 

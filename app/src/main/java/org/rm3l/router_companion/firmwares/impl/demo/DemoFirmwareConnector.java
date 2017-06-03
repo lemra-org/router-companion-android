@@ -27,14 +27,6 @@ import org.rm3l.router_companion.utils.Utils;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.MB;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.NOK;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.UNKNOWN;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.TOTAL_DL_CURRENT_DAY;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.TOTAL_DL_CURRENT_DAY_MB;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.TOTAL_UL_CURRENT_DAY;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.TOTAL_UL_CURRENT_DAY_MB;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_DAYS;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_HOURS;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_MINUTES;
 import static org.rm3l.router_companion.tiles.dashboard.network.NetworkTopologyMapTile.INTERNET_CONNECTIVITY_PUBLIC_IP;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.HIDDEN_;
 import static org.rm3l.router_companion.utils.WANTrafficUtils.TOTAL_DL_CURRENT_MONTH;
@@ -58,15 +50,15 @@ public class DemoFirmwareConnector extends AbstractRouterFirmwareConnector {
       if (dataRetrievalListener != null) {
         dataRetrievalListener.onProgressUpdate(10);
       }
-      return new NVRAMInfo().setProperty(NVRAMInfo.ROUTER_NAME, "Demo Router (Test Data)")
-          .setProperty(NVRAMInfo.WAN_IPADDR, "1.2.3.4")
-          .setProperty(NVRAMInfo.LAN_IPADDR, "192.168.78.254")
-          .setProperty(NVRAMInfo.OPENVPNCL_ENABLE, Integer.toString(new Random().nextInt(2)))
-          .setProperty(NVRAMInfo.OPENVPNCL_REMOTEIP, "my.remote.vpn.servi.ce")
-          .setProperty(NVRAMInfo.OPENVPNCL_REMOTEPORT, "1234")
-          .setProperty(NVRAMInfo.NB_ACTIVE_CLIENTS, Integer.toString(new Random().nextInt(20)))
-          .setProperty(NVRAMInfo.NB_DHCP_LEASES, Integer.toString(new Random().nextInt(30)))
-          .setProperty(NVRAMInfo.INTERNET_CONNECTIVITY_PUBLIC_IP, "52."
+      return new NVRAMInfo().setProperty(NVRAMInfo.Companion.getROUTER_NAME(), "Demo Router (Test Data)")
+          .setProperty(NVRAMInfo.Companion.getWAN_IPADDR(), "1.2.3.4")
+          .setProperty(NVRAMInfo.Companion.getLAN_IPADDR(), "192.168.78.254")
+          .setProperty(NVRAMInfo.Companion.getOPENVPNCL_ENABLE(), Integer.toString(new Random().nextInt(2)))
+          .setProperty(NVRAMInfo.Companion.getOPENVPNCL_REMOTEIP(), "my.remote.vpn.servi.ce")
+          .setProperty(NVRAMInfo.Companion.getOPENVPNCL_REMOTEPORT(), "1234")
+          .setProperty(NVRAMInfo.Companion.getNB_ACTIVE_CLIENTS(), Integer.toString(new Random().nextInt(20)))
+          .setProperty(NVRAMInfo.Companion.getNB_DHCP_LEASES(), Integer.toString(new Random().nextInt(30)))
+          .setProperty(NVRAMInfo.Companion.getINTERNET_CONNECTIVITY_PUBLIC_IP(), "52."
               + (1 + new Random().nextInt(252))
               + "."
               + (1 + new Random().nextInt(252))
@@ -128,7 +120,7 @@ public class DemoFirmwareConnector extends AbstractRouterFirmwareConnector {
       dataRetrievalListener.onProgressUpdate(50);
     }
 
-    final NVRAMInfo nvramInfo = new NVRAMInfo().setProperty(NVRAMInfo.TTRAFF_ENABLE,
+    final NVRAMInfo nvramInfo = new NVRAMInfo().setProperty(NVRAMInfo.Companion.getTTRAFF_ENABLE(),
         new Random().nextBoolean() ? "1" : "0");
 
     final Random random = new Random();
@@ -143,13 +135,13 @@ public class DemoFirmwareConnector extends AbstractRouterFirmwareConnector {
         org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(totalUlMonth));
     nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB, HIDDEN_);
 
-    nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY,
+    nvramInfo.setProperty(NVRAMInfo.Companion.getTOTAL_DL_CURRENT_DAY(),
         org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(totalDlMonth / 30));
-    nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY_MB, HIDDEN_);
+    nvramInfo.setProperty(NVRAMInfo.Companion.getTOTAL_DL_CURRENT_DAY_MB(), HIDDEN_);
 
-    nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY,
+    nvramInfo.setProperty(NVRAMInfo.Companion.getTOTAL_UL_CURRENT_DAY(),
         org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(totalUlMonth / 30));
-    nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY_MB, HIDDEN_);
+    nvramInfo.setProperty(NVRAMInfo.Companion.getTOTAL_UL_CURRENT_DAY_MB(), HIDDEN_);
 
     return nvramInfo;
   }
@@ -165,16 +157,16 @@ public class DemoFirmwareConnector extends AbstractRouterFirmwareConnector {
     final String days = Integer.toString(random.nextInt(60));
     final String hours = Integer.toString(random.nextInt(23));
     final String minutes = Integer.toString(random.nextInt(59));
-    return new NVRAMInfo().setProperty(UPTIME, "22:31:45 up "
+    return new NVRAMInfo().setProperty(NVRAMInfo.Companion.getUPTIME(), "22:31:45 up "
         + days
         + " days, "
         + hours
         + ":"
         + minutes
         + ", load average: 0.11, 0.10, 0.09")
-        .setProperty(UPTIME_DAYS, days)
-        .setProperty(UPTIME_HOURS, hours)
-        .setProperty(UPTIME_MINUTES, minutes);
+        .setProperty(NVRAMInfo.Companion.getUPTIME_DAYS(), days)
+        .setProperty(NVRAMInfo.Companion.getUPTIME_HOURS(), hours)
+        .setProperty(NVRAMInfo.Companion.getUPTIME_MINUTES(), minutes);
   }
 
   @Override public List<String[]> getDataForMemoryAndCpuUsageTile(@NonNull Context context,
@@ -227,12 +219,12 @@ public class DemoFirmwareConnector extends AbstractRouterFirmwareConnector {
       @Nullable RemoteDataRetrievalListener dataRetrievalListener) throws Exception {
 
     final NVRAMInfo nvramInfo =
-        new NVRAMInfo().setProperty(NVRAMInfo.ROUTER_NAME, "Demo Router (Test Data)")
-            .setProperty(NVRAMInfo.WAN_IPADDR, "1.2.3.4")
-            .setProperty(NVRAMInfo.MODEL, "Router Model Family")
-            .setProperty(NVRAMInfo.DIST_TYPE, "Linux 2.4.37 #7583 Sat Oct 10 mips")
-            .setProperty(NVRAMInfo.LAN_IPADDR, "255.255.255.255")
-            .setProperty(NVRAMInfo.OS_VERSION, Integer.toString(1 + new Random().nextInt(65535)));
+        new NVRAMInfo().setProperty(NVRAMInfo.Companion.getROUTER_NAME(), "Demo Router (Test Data)")
+            .setProperty(NVRAMInfo.Companion.getWAN_IPADDR(), "1.2.3.4")
+            .setProperty(NVRAMInfo.Companion.getMODEL(), "Router Model Family")
+            .setProperty(NVRAMInfo.Companion.getDIST_TYPE(), "Linux 2.4.37 #7583 Sat Oct 10 mips")
+            .setProperty(NVRAMInfo.Companion.getLAN_IPADDR(), "255.255.255.255")
+            .setProperty(NVRAMInfo.Companion.getOS_VERSION(), Integer.toString(1 + new Random().nextInt(65535)));
 
     updateProgressBarViewSeparator(dataRetrievalListener, 50);
 
@@ -248,7 +240,7 @@ public class DemoFirmwareConnector extends AbstractRouterFirmwareConnector {
     otherCmds[4] = "DD-WRT v24-sp2 (10/10/09) - rev 7583";
 
     //date
-    nvramInfo.setProperty(NVRAMInfo.CURRENT_DATE, otherCmds[0]);
+    nvramInfo.setProperty(NVRAMInfo.Companion.getCURRENT_DATE(), otherCmds[0]);
 
     //uptime
     String uptime = otherCmds[1];
@@ -259,22 +251,22 @@ public class DemoFirmwareConnector extends AbstractRouterFirmwareConnector {
         uptime += (" (up " + elapsedFromUptime + ")");
       }
     }
-    nvramInfo.setProperty(NVRAMInfo.UPTIME, uptime);
+    nvramInfo.setProperty(NVRAMInfo.Companion.getUPTIME(), uptime);
 
     //Kernel
-    nvramInfo.setProperty(NVRAMInfo.KERNEL,
+    nvramInfo.setProperty(NVRAMInfo.Companion.getKERNEL(),
         StringUtils.replace(StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
-            nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME), ""));
+            nvramInfo.getProperty(NVRAMInfo.Companion.getROUTER_NAME()), ""));
 
     //Firmware
     final String fwString = otherCmds[4];
-    nvramInfo.setProperty(NVRAMInfo.FIRMWARE, fwString);
+    nvramInfo.setProperty(NVRAMInfo.Companion.getFIRMWARE(), fwString);
 
     final List<String> strings =
         Splitter.on("rev:").omitEmptyStrings().trimResults().splitToList(fwString);
     if (strings.size() >= 2) {
       try {
-        nvramInfo.setProperty(NVRAMInfo.OS_VERSION,
+        nvramInfo.setProperty(NVRAMInfo.Companion.getOS_VERSION(),
             Long.toString(Long.parseLong(strings.get(1).trim())));
       } catch (final NumberFormatException nfe) {
         //No worries

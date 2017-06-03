@@ -147,7 +147,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo>
 
     //Initialize w/ current cycle
     mCycleOfTheDay =
-        WANTrafficData.getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences);
+        WANTrafficData.Companion.getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences);
 
     mCurrentCycle = new AtomicReference<>(mCycleOfTheDay);
 
@@ -419,7 +419,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo>
                             .putInt(WAN_CYCLE_DAY_PREF, wanCycleDay)
                             .apply();
 
-                        mCycleOfTheDay = WANTrafficData.getCurrentWANCycle(mParentFragmentActivity,
+                        mCycleOfTheDay = WANTrafficData.Companion.getCurrentWANCycle(mParentFragmentActivity,
                             mParentFragmentPreferences);
 
                         mCurrentCycle.set(mCycleOfTheDay);
@@ -522,10 +522,10 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo>
           //Get TTRAFF_ENABLE
           final NVRAMInfo ttraffEnableNVRAMInfo =
               SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences,
-                  NVRAMInfo.TTRAFF_ENABLE);
+                  NVRAMInfo.Companion.getTTRAFF_ENABLE());
 
           updateProgressBarViewSeparator(20);
-          mCycleOfTheDay = WANTrafficData.getCurrentWANCycle(mParentFragmentActivity,
+          mCycleOfTheDay = WANTrafficData.Companion.getCurrentWANCycle(mParentFragmentActivity,
               mParentFragmentPreferences);
 
           MonthlyCycleItem cycleItem = null;
@@ -595,7 +595,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo>
         preliminaryCheckException = new DDWRTNoDataException("No Data!");
       } else //noinspection ThrowableResultOfMethodCallIgnored
         if (data.getException() == null) {
-          if (!"1".equals(data.getProperty(NVRAMInfo.TTRAFF_ENABLE))) {
+          if (!"1".equals(data.getProperty(NVRAMInfo.Companion.getTTRAFF_ENABLE()))) {
             preliminaryCheckException = new DDWRTTraffDataDisabled("Traffic monitoring disabled!");
           } else if (data.isEmpty()) {
             preliminaryCheckException = new DDWRTNoDataException("No Traffic Data!");
@@ -607,11 +607,11 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo>
       enableTraffDataButton.setVisibility(View.VISIBLE);
 
       final boolean makeToogleEnabled = (data != null && data.getData() != null && data.getData()
-          .containsKey(NVRAMInfo.TTRAFF_ENABLE));
+          .containsKey(NVRAMInfo.Companion.getTTRAFF_ENABLE()));
 
       if (!isToggleStateActionRunning.get()) {
         if (makeToogleEnabled) {
-          if ("1".equals(data.getProperty(NVRAMInfo.TTRAFF_ENABLE))) {
+          if ("1".equals(data.getProperty(NVRAMInfo.Companion.getTTRAFF_ENABLE()))) {
             //Enabled
             enableTraffDataButton.setChecked(true);
           } else {
@@ -707,7 +707,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo>
 
         currentButton.setOnClickListener(new View.OnClickListener() {
           @Override public void onClick(View v) {
-            mCycleOfTheDay = WANTrafficData.getCurrentWANCycle(mParentFragmentActivity,
+            mCycleOfTheDay = WANTrafficData.Companion.getCurrentWANCycle(mParentFragmentActivity,
                 mParentFragmentPreferences);
             mCurrentCycle.set(mCycleOfTheDay);
             monthYearDisplayed.setText(mCycleOfTheDay.getLabelWithYears());
@@ -1032,7 +1032,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo>
 
       final NVRAMInfo nvramInfoToSet = new NVRAMInfo();
 
-      nvramInfoToSet.setProperty(NVRAMInfo.TTRAFF_ENABLE, enable ? "1" : "0");
+      nvramInfoToSet.setProperty(NVRAMInfo.Companion.getTTRAFF_ENABLE(), enable ? "1" : "0");
 
       //Also set traff data loaded from preferences, if any
       if (enable && mParentFragmentPreferences != null) {

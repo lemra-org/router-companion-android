@@ -29,7 +29,7 @@ import com.google.common.base.Strings.isNullOrEmpty
 import org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED
 import org.rm3l.router_companion.resources.Encrypted.d
 import org.rm3l.router_companion.resources.Encrypted.e
-import org.rm3l.router_companion.resources.conn.NVRAMInfo.WAN_IPADDR
+import org.rm3l.router_companion.resources.conn.NVRAMInfo.Companion.WAN_IPADDR
 import org.rm3l.router_companion.utils.ImageUtils.updateNotificationIconWithRouterAvatar
 
 class PublicIPChangesServiceTask(ctx: Context) : AbstractBackgroundServiceTask(ctx) {
@@ -38,7 +38,7 @@ class PublicIPChangesServiceTask(ctx: Context) : AbstractBackgroundServiceTask(c
 
   @Throws(Exception::class)
   override fun runBackgroundServiceTask(router: Router) {
-    val routerPreferences = mCtx.getSharedPreferences(router.uuid, Context.MODE_PRIVATE) ?: return
+//    val routerPreferences = mCtx.getSharedPreferences(router.uuid, Context.MODE_PRIVATE) ?: return
 
     val nvramInfo = SSHUtils.getNVRamInfoFromRouter(mCtx, router, globalPreferences, WAN_IPADDR)
 

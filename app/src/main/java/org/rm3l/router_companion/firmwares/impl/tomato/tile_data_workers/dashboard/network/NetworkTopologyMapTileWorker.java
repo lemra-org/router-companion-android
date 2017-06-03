@@ -32,7 +32,8 @@ public final class NetworkTopologyMapTileWorker {
     NVRAMInfo nvramInfoTmp = null;
     try {
       nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(context, router, globalSharedPreferences,
-          NVRAMInfo.ROUTER_NAME, NVRAMInfo.WAN_IPADDR, NVRAMInfo.LAN_IPADDR
+          NVRAMInfo.Companion.getROUTER_NAME(), NVRAMInfo.Companion.getWAN_IPADDR(),
+          NVRAMInfo.Companion.getLAN_IPADDR()
           //TODO Investigate how OpenVPN Client is supported
           //Apparently, not by Stock Tomato, but other mods might support it (e.g, Tomato by Shibby)
           //                                            NVRAMInfo.OPENVPNCL_ENABLE,
@@ -51,7 +52,7 @@ public final class NetworkTopologyMapTileWorker {
           SSHUtils.getManualProperty(context, router, globalSharedPreferences,
               "arp -a 2>/dev/null");
       if (activeClients != null) {
-        nvramInfo.setProperty(NVRAMInfo.NB_ACTIVE_CLIENTS, Integer.toString(activeClients.length));
+        nvramInfo.setProperty(NVRAMInfo.Companion.getNB_ACTIVE_CLIENTS(), Integer.toString(activeClients.length));
       }
 
       if (dataRetrievalListener != null) {
@@ -64,11 +65,11 @@ public final class NetworkTopologyMapTileWorker {
               "cat /var/lib/misc/dnsmasq.leases 2>/dev/null || echo \"N_A\"");
       if (activeDhcpLeases != null) {
         if (activeDhcpLeases.length == 0 || !"N_A".equals(activeDhcpLeases[0])) {
-          nvramInfo.setProperty(NVRAMInfo.NB_DHCP_LEASES,
+          nvramInfo.setProperty(NVRAMInfo.Companion.getNB_DHCP_LEASES(),
               Integer.toString(activeDhcpLeases.length));
         } else {
           //File does not exist
-          nvramInfo.setProperty(NVRAMInfo.NB_DHCP_LEASES, "-1");
+          nvramInfo.setProperty(NVRAMInfo.Companion.getNB_DHCP_LEASES(), "-1");
         }
       }
 
@@ -83,22 +84,22 @@ public final class NetworkTopologyMapTileWorker {
             SSHUtils.getManualProperty(context, router, globalSharedPreferences,
                 Utils.getCommandForInternetIPResolution(context));
         if (wanPublicIpCmdStatus == null || wanPublicIpCmdStatus.length == 0) {
-          nvramInfo.setProperty(NVRAMInfo.INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+          nvramInfo.setProperty(NVRAMInfo.Companion.getINTERNET_CONNECTIVITY_PUBLIC_IP(), NOK);
         } else {
           final String wanPublicIp = wanPublicIpCmdStatus[wanPublicIpCmdStatus.length - 1].trim();
           if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
-            nvramInfo.setProperty(NVRAMInfo.INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
+            nvramInfo.setProperty(NVRAMInfo.Companion.getINTERNET_CONNECTIVITY_PUBLIC_IP(), wanPublicIp);
 
             PublicIPChangesServiceTask.Companion.buildNotificationIfNeeded(context, router,
                 wanPublicIpCmdStatus,
-                nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
+                nvramInfo.getProperty(NVRAMInfo.Companion.getWAN_IPADDR()), null);
           } else {
-            nvramInfo.setProperty(NVRAMInfo.INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+            nvramInfo.setProperty(NVRAMInfo.Companion.getINTERNET_CONNECTIVITY_PUBLIC_IP(), NOK);
           }
         }
       } catch (final Exception e) {
         e.printStackTrace();
-        nvramInfo.setProperty(NVRAMInfo.INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
+        nvramInfo.setProperty(NVRAMInfo.Companion.getINTERNET_CONNECTIVITY_PUBLIC_IP(), UNKNOWN);
       } finally {
         if (dataRetrievalListener != null) {
           dataRetrievalListener.doRegardlessOfStatus();

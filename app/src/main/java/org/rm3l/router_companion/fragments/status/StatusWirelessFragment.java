@@ -76,20 +76,20 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
           activity.getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
               Context.MODE_PRIVATE);
       final NVRAMInfo nvramInfo =
-          SSHUtils.getNVRamInfoFromRouter(activity, router, sharedPreferences, NVRAMInfo.LANDEVS,
-              NVRAMInfo.LAN_IFNAMES);
+          SSHUtils.getNVRamInfoFromRouter(activity, router, sharedPreferences,
+              NVRAMInfo.Companion.getLANDEVS(), NVRAMInfo.Companion.getLAN_IFNAMES());
 
       if (nvramInfo == null) {
         return null;
       }
 
-      String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS);
+      String landevs = nvramInfo.getProperty(NVRAMInfo.Companion.getLANDEVS());
       if (Strings.isNullOrEmpty(landevs)) {
         //Atheros
-        landevs = nvramInfo.getProperty(NVRAMInfo.LAN_IFNAMES, null);
+        landevs = nvramInfo.getProperty(NVRAMInfo.Companion.getLAN_IFNAMES(), null);
         if (!Strings.isNullOrEmpty(landevs)) {
           //noinspection ConstantConditions
-          nvramInfo.setProperty(NVRAMInfo.LANDEVS, landevs);
+          nvramInfo.setProperty(NVRAMInfo.Companion.getLANDEVS(), landevs);
         }
       }
 

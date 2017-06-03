@@ -253,13 +253,13 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
               //Start by getting information about the WAN iface name
               final NVRAMInfo nvRamInfoFromRouter =
                   SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                      mGlobalPreferences, NVRAMInfo.WAN_IFACE);
+                      mGlobalPreferences, NVRAMInfo.Companion.getWAN_IFACE());
               updateProgressBarViewSeparator(45);
               if (nvRamInfoFromRouter == null) {
                 throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
               }
 
-              wanIface = nvRamInfoFromRouter.getProperty(NVRAMInfo.WAN_IFACE);
+              wanIface = nvRamInfoFromRouter.getProperty(NVRAMInfo.Companion.getWAN_IFACE());
             } catch (final Exception e) {
               Crashlytics.logException(e);
               //No worries

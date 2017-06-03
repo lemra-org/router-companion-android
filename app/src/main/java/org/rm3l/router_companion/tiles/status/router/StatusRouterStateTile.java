@@ -175,7 +175,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
         //Router Name
         final TextView routerNameView =
             (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_title);
-        final String routerName = data.getProperty(NVRAMInfo.ROUTER_NAME);
+        final String routerName = data.getProperty(NVRAMInfo.Companion.getROUTER_NAME());
         final boolean routerNameNull = (routerName == null);
         String routerNameToSet = routerName;
         if (routerNameNull) {
@@ -191,7 +191,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
         //OS Version
         final TextView osVersionTv =
             (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_os_version);
-        final String osVersion = data.getProperty(NVRAMInfo.OS_VERSION);
+        final String osVersion = data.getProperty(NVRAMInfo.Companion.getOS_VERSION());
         if (TextUtils.isEmpty(osVersion)) {
           osVersionTv.setText("-");
           osVersionTv.setOnClickListener(null);
@@ -230,7 +230,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
         }
 
         //WAN IP
-        final String wanIpText = data.getProperty(NVRAMInfo.WAN_IPADDR, "-");
+        final String wanIpText = data.getProperty(NVRAMInfo.Companion.getWAN_IPADDR(), "-");
         final TextView wanIpViewDetail =
             (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_wan_ip_detail);
         wanIpViewDetail.setText(wanIpText);
@@ -258,37 +258,37 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
 
         final TextView routerModelView =
             (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_model);
-        final String routerModel = data.getProperty(NVRAMInfo.MODEL, "-");
+        final String routerModel = data.getProperty(NVRAMInfo.Companion.getMODEL(), "-");
         routerModelView.setText(routerModel);
         if (mParentFragmentPreferences != null) {
           final String routerModelFromPrefs =
-              mParentFragmentPreferences.getString(NVRAMInfo.MODEL, "-");
+              mParentFragmentPreferences.getString(NVRAMInfo.Companion.getMODEL(), "-");
           //noinspection ConstantConditions
           if (!("-".equals(routerModel) || routerModelFromPrefs.equals(routerModel))) {
-            mParentFragmentPreferences.edit().putString(NVRAMInfo.MODEL, routerModel).apply();
+            mParentFragmentPreferences.edit().putString(NVRAMInfo.Companion.getMODEL(), routerModel).apply();
             Utils.requestBackup(mParentFragmentActivity);
           }
         }
 
         final TextView lanIpView =
             (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_lan_ip);
-        lanIpView.setText(data.getProperty(NVRAMInfo.LAN_IPADDR, "-"));
+        lanIpView.setText(data.getProperty(NVRAMInfo.Companion.getLAN_IPADDR(), "-"));
 
         final TextView fwView =
             (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_firmware);
-        fwView.setText(data.getProperty(NVRAMInfo.FIRMWARE, "-"));
+        fwView.setText(data.getProperty(NVRAMInfo.Companion.getFIRMWARE(), "-"));
 
         final TextView kernelView =
             (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_kernel);
-        kernelView.setText(data.getProperty(NVRAMInfo.KERNEL, "-"));
+        kernelView.setText(data.getProperty(NVRAMInfo.Companion.getKERNEL(), "-"));
 
         final TextView uptimeView =
             (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_uptime);
-        uptimeView.setText(data.getProperty(NVRAMInfo.UPTIME, "-"));
+        uptimeView.setText(data.getProperty(NVRAMInfo.Companion.getUPTIME(), "-"));
 
         final TextView currentDateView =
             (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_datetime);
-        currentDateView.setText(data.getProperty(NVRAMInfo.CURRENT_DATE, "-"));
+        currentDateView.setText(data.getProperty(NVRAMInfo.Companion.getCURRENT_DATE(), "-"));
 
         //Update last sync
         final RelativeTimeTextView lastSyncView =

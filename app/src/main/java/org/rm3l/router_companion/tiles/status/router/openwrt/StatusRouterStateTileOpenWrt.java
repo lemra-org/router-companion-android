@@ -85,8 +85,8 @@ public class StatusRouterStateTileOpenWrt extends StatusRouterStateTile {
           NVRAMInfo nvramInfoTmp = null;
           try {
             nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                mGlobalPreferences, NVRAMInfo.ROUTER_NAME, NVRAMInfo.DIST_TYPE,
-                NVRAMInfo.LAN_IPADDR);
+                mGlobalPreferences, NVRAMInfo.Companion.getROUTER_NAME(),
+                NVRAMInfo.Companion.getDIST_TYPE(), NVRAMInfo.Companion.getLAN_IPADDR());
           } finally {
             if (nvramInfoTmp != null) {
               nvramInfo.putAll(nvramInfoTmp);
@@ -96,15 +96,15 @@ public class StatusRouterStateTileOpenWrt extends StatusRouterStateTile {
             final String[] infoFromUci =
                 SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                     "/sbin/uci -P/var/state show network | grep \""
-                        + UCIInfo.NETWORK_WAN_IPADDR
+                        + UCIInfo.Companion.getNETWORK_WAN_IPADDR()
                         + "\" | /usr/bin/awk -F'=' '{print $2}' ; "
                         + "cat /proc/diag/model");
             if (infoFromUci != null) {
               if (infoFromUci.length >= 1) {
-                nvramInfo.setProperty(NVRAMInfo.WAN_IPADDR, infoFromUci[0]);
+                nvramInfo.setProperty(NVRAMInfo.Companion.getWAN_IPADDR(), infoFromUci[0]);
               }
               if (infoFromUci.length >= 2) {
-                nvramInfo.setProperty(NVRAMInfo.MODEL, infoFromUci[1]);
+                nvramInfo.setProperty(NVRAMInfo.Companion.getMODEL(), infoFromUci[1]);
               }
             }
 
@@ -135,7 +135,7 @@ public class StatusRouterStateTileOpenWrt extends StatusRouterStateTile {
                 firmwareInfo += (nullToEmpty(fwInfo[0]).replaceAll("-", ""));
               }
             }
-            nvramInfo.setProperty(NVRAMInfo.FIRMWARE, firmwareInfo);
+            nvramInfo.setProperty(NVRAMInfo.Companion.getFIRMWARE(), firmwareInfo);
 
             //Add Kernel and Uptime
             final String[] otherCmds =
@@ -151,7 +151,7 @@ public class StatusRouterStateTileOpenWrt extends StatusRouterStateTile {
             if (otherCmds != null) {
               if (otherCmds.length >= 1) {
                 //date
-                nvramInfo.setProperty(NVRAMInfo.CURRENT_DATE, otherCmds[0]);
+                nvramInfo.setProperty(NVRAMInfo.Companion.getCURRENT_DATE(), otherCmds[0]);
               }
               if (otherCmds.length >= 3) {
                 String uptime = otherCmds[1];
@@ -162,14 +162,14 @@ public class StatusRouterStateTileOpenWrt extends StatusRouterStateTile {
                     uptime += ("\n(up " + elapsedFromUptime + ")");
                   }
                 }
-                nvramInfo.setProperty(NVRAMInfo.UPTIME, uptime);
+                nvramInfo.setProperty(NVRAMInfo.Companion.getUPTIME(), uptime);
               }
 
               if (otherCmds.length >= 4) {
                 //Kernel
-                nvramInfo.setProperty(NVRAMInfo.KERNEL,
+                nvramInfo.setProperty(NVRAMInfo.Companion.getKERNEL(),
                     StringUtils.replace(StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
-                        nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME), ""));
+                        nvramInfo.getProperty(NVRAMInfo.Companion.getROUTER_NAME()), ""));
               }
             }
           }

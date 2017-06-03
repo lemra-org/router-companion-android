@@ -92,17 +92,18 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
 
           updateProgressBarViewSeparator(30);
           if (Utils.isDemoRouter(mRouter)) {
-            nvramInfo = new NVRAMInfo().setProperty(NVRAMInfo.LAN_IPADDR, "172.17.17.1")
-                .setProperty(NVRAMInfo.LAN_DOMAIN, "lan.domain")
-                .setProperty(NVRAMInfo.LAN_GATEWAY, "172.17.17.254")
-                .setProperty(NVRAMInfo.LAN_HWADDR, "la:nm:ac:hw:ad:dr")
-                .setProperty(NVRAMInfo.LAN_NETMASK, "255.255.255.0")
-                .setProperty(NVRAMInfo.LOCAL_DNS, "172.17.17.1");
+            nvramInfo = new NVRAMInfo().setProperty(NVRAMInfo.Companion.getLAN_IPADDR(), "172.17.17.1")
+                .setProperty(NVRAMInfo.Companion.getLAN_DOMAIN(), "lan.domain")
+                .setProperty(NVRAMInfo.Companion.getLAN_GATEWAY(), "172.17.17.254")
+                .setProperty(NVRAMInfo.Companion.getLAN_HWADDR(), "la:nm:ac:hw:ad:dr")
+                .setProperty(NVRAMInfo.Companion.getLAN_NETMASK(), "255.255.255.0")
+                .setProperty(NVRAMInfo.Companion.getLOCAL_DNS(), "172.17.17.1");
           } else {
             nvramInfo = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                mGlobalPreferences, NVRAMInfo.LAN_IPADDR, NVRAMInfo.LAN_DOMAIN,
-                NVRAMInfo.LAN_GATEWAY, NVRAMInfo.LAN_HWADDR, NVRAMInfo.LAN_NETMASK,
-                NVRAMInfo.LOCAL_DNS);
+                mGlobalPreferences, NVRAMInfo.Companion.getLAN_IPADDR(),
+                NVRAMInfo.Companion.getLAN_DOMAIN(), NVRAMInfo.Companion.getLAN_GATEWAY(),
+                NVRAMInfo.Companion.getLAN_HWADDR(), NVRAMInfo.Companion.getLAN_NETMASK(),
+                NVRAMInfo.Companion.getLOCAL_DNS());
           }
           updateProgressBarViewSeparator(90);
           return nvramInfo;
@@ -183,21 +184,21 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
         //MAC Address
         final TextView macView =
             (TextView) this.layout.findViewById(R.id.tile_status_lan_status_mac);
-        macView.setText(data.getProperty(NVRAMInfo.LAN_HWADDR, "-"));
+        macView.setText(data.getProperty(NVRAMInfo.Companion.getLAN_HWADDR(), "-"));
 
         //IP Address
         final TextView ipView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_ip);
-        ipView.setText(data.getProperty(NVRAMInfo.LAN_IPADDR, "-"));
+        ipView.setText(data.getProperty(NVRAMInfo.Companion.getLAN_IPADDR(), "-"));
 
         //Subnet Mask
         final TextView maskView =
             (TextView) this.layout.findViewById(R.id.tile_status_lan_status_subnet_mask);
-        maskView.setText(data.getProperty(NVRAMInfo.LAN_NETMASK, "-"));
+        maskView.setText(data.getProperty(NVRAMInfo.Companion.getLAN_NETMASK(), "-"));
 
         //GW
         final TextView gwView =
             (TextView) this.layout.findViewById(R.id.tile_status_lan_status_gateway);
-        gwView.setText(data.getProperty(NVRAMInfo.LAN_GATEWAY, "-"));
+        gwView.setText(data.getProperty(NVRAMInfo.Companion.getLAN_GATEWAY(), "-"));
 
         //Update last sync
         final RelativeTimeTextView lastSyncView =

@@ -22,10 +22,6 @@ import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_DAYS;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_HOURS;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.UPTIME_MINUTES;
-
 public class UptimeTile extends DDWRTTile<NVRAMInfo> {
 
   public static final String N_A = "-";
@@ -120,7 +116,7 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
         }
 
         //Days
-        String property = data.getProperty(UPTIME_DAYS);
+        String property = data.getProperty(NVRAMInfo.Companion.getUPTIME_DAYS());
         try {
           final int value = Integer.parseInt(property);
           ((TextView) layout.findViewById(R.id.tile_overview_uptime_days_title)).setText(
@@ -134,7 +130,7 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
         ((TextView) layout.findViewById(R.id.tile_overview_uptime_days)).setText(property);
 
         //Hours
-        property = data.getProperty(UPTIME_HOURS);
+        property = data.getProperty(NVRAMInfo.Companion.getUPTIME_HOURS());
         try {
           final int value = Integer.parseInt(property);
           ((TextView) layout.findViewById(R.id.tile_overview_uptime_hours_title)).setText(
@@ -149,7 +145,7 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
         ((TextView) layout.findViewById(R.id.tile_overview_uptime_hours)).setText(property);
 
         //Minutes
-        property = data.getProperty(UPTIME_MINUTES);
+        property = data.getProperty(NVRAMInfo.Companion.getUPTIME_MINUTES());
         try {
           final int value = Integer.parseInt(property);
           ((TextView) layout.findViewById(R.id.tile_overview_uptime_minutes_title)).setText(

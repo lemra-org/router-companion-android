@@ -47,11 +47,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_VALUE_TO_DISPLAY;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WOL_ENABLE;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WOL_HOSTNAME;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WOL_INTERVAL;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WOL_MACS;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WOL_PASSWD;
 import static org.rm3l.router_companion.tiles.services.wol.EditWOLDaemonSettingsActivity.WOL_DAEMON_HOSTNAMES_PREF_KEY;
 
 /**
@@ -116,7 +111,8 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
           try {
             updateProgressBarViewSeparator(10);
             nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                mGlobalPreferences, WOL_ENABLE, WOL_INTERVAL, WOL_HOSTNAME, WOL_PASSWD, WOL_MACS);
+                mGlobalPreferences, NVRAMInfo.Companion.getWOL_ENABLE(), NVRAMInfo.Companion.getWOL_INTERVAL(),
+                NVRAMInfo.Companion.getWOL_HOSTNAME(), NVRAMInfo.Companion.getWOL_PASSWD(), NVRAMInfo.Companion.getWOL_MACS());
             updateProgressBarViewSeparator(45);
           } finally {
             if (nvramInfoTmp != null) {
@@ -124,11 +120,11 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
             }
 
             boolean applyNewPrefs = false;
-            String property = nvramInfo.getProperty(WOL_HOSTNAME);
+            String property = nvramInfo.getProperty(NVRAMInfo.Companion.getWOL_HOSTNAME());
             final SharedPreferences.Editor editor = mSharedPreferences.edit();
             if (!Strings.isNullOrEmpty(property)) {
               final Set<String> mSharedPreferencesStringSet = new HashSet<>(
-                  mSharedPreferences.getStringSet(WOL_HOSTNAME, new HashSet<String>()));
+                  mSharedPreferences.getStringSet(NVRAMInfo.Companion.getWOL_HOSTNAME(), new HashSet<String>()));
               if (!mSharedPreferencesStringSet.contains(property)) {
                 mSharedPreferencesStringSet.add(property);
                 editor.putStringSet(WOL_DAEMON_HOSTNAMES_PREF_KEY, mSharedPreferencesStringSet);
@@ -210,7 +206,7 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
         preliminaryCheckException = new DDWRTNoDataException("No Data!");
       } else //noinspection ThrowableResultOfMethodCallIgnored
         if (data.getException() == null) {
-          final String wolDaemonEnabled = data.getProperty(NVRAMInfo.WOL_ENABLE);
+          final String wolDaemonEnabled = data.getProperty(NVRAMInfo.Companion.getWOL_ENABLE());
           if (wolDaemonEnabled == null || !Arrays.asList("0", "1").contains(wolDaemonEnabled)) {
             //noinspection ThrowableInstanceNeverThrown
             preliminaryCheckException = new DDWRTWoLDaemonStateUnknown("Unknown state");
@@ -222,11 +218,11 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
       enableTraffDataButton.setVisibility(View.VISIBLE);
 
       final boolean makeToogleEnabled = (data != null && data.getData() != null && data.getData()
-          .containsKey(NVRAMInfo.WOL_ENABLE));
+          .containsKey(NVRAMInfo.Companion.getWOL_ENABLE()));
 
       if (!isToggleStateActionRunning.get()) {
         if (makeToogleEnabled) {
-          if ("1".equals(data.getProperty(NVRAMInfo.WOL_ENABLE))) {
+          if ("1".equals(data.getProperty(NVRAMInfo.Companion.getWOL_ENABLE()))) {
             //Enabled
             enableTraffDataButton.setChecked(true);
           } else {
@@ -301,7 +297,7 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
 
     //State
     final String statusKey = \"fake-key\";
-        data.getProperty(WOL_ENABLE, defaultValuesIfNotFound ? EMPTY_STRING : null);
+        data.getProperty(NVRAMInfo.Companion.getWOL_ENABLE(), defaultValuesIfNotFound ? EMPTY_STRING : null);
     if (statusKey != null) {
       final String statusValue;
       switch (statusKey) {
@@ -322,20 +318,23 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
 
     //Interval
     String property =
-        data.getProperty(WOL_INTERVAL, defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
+        data.getProperty(
+            NVRAMInfo.Companion.getWOL_INTERVAL(), defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
     if (property != null) {
       ((TextView) layout.findViewById(R.id.tile_services_wol_daemon_interval)).setText(property);
     }
 
     //Hostname
     property =
-        data.getProperty(WOL_HOSTNAME, defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
+        data.getProperty(
+            NVRAMInfo.Companion.getWOL_HOSTNAME(), defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
     if (property != null) {
       ((TextView) layout.findViewById(R.id.tile_services_wol_daemon_hostname)).setText(property);
     }
 
     //MAC Addresses
-    property = data.getProperty(WOL_MACS, defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
+    property = data.getProperty(
+        NVRAMInfo.Companion.getWOL_MACS(), defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
     if (property != null) {
       ((TextView) layout.findViewById(R.id.tile_services_wol_daemon_mac_addresses)).setText(
           property.replaceAll(" ", "\n"));
@@ -471,7 +470,7 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
 
       final NVRAMInfo nvramInfoToSet = new NVRAMInfo();
 
-      nvramInfoToSet.setProperty(NVRAMInfo.WOL_ENABLE, enable ? "1" : "0");
+      nvramInfoToSet.setProperty(NVRAMInfo.Companion.getWOL_ENABLE(), enable ? "1" : "0");
 
       new UndoBarController.UndoBar(mParentFragmentActivity).message(
           String.format("Wake on LAN Daemon will be %s on '%s' (%s). ",

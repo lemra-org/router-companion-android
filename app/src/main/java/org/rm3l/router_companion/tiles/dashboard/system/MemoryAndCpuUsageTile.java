@@ -133,7 +133,7 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo> {
                 .splitToList(memData[0].trim());
             if (strings != null && strings.size() >= 1) {
               memTotal = strings.get(0);
-              nvramInfo.setProperty(NVRAMInfo.MEMORY_TOTAL, memTotal);
+              nvramInfo.setProperty(NVRAMInfo.Companion.getMEMORY_TOTAL(), memTotal);
             }
 
             updateProgressBarViewSeparator(35);
@@ -146,7 +146,7 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo> {
                 .splitToList(memData[1].trim());
             if (strings != null && strings.size() >= 1) {
               memFree = strings.get(0);
-              nvramInfo.setProperty(NVRAMInfo.MEMORY_FREE, strings.get(0));
+              nvramInfo.setProperty(NVRAMInfo.Companion.getMEMORY_FREE(), strings.get(0));
             }
 
             updateProgressBarViewSeparator(40);
@@ -160,9 +160,9 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo> {
               final long memUsedLong = memTotalLong - memFreeLong;
               memUsed = (Long.toString(memUsedLong) + " kB");
 
-              nvramInfo.setProperty(NVRAMInfo.MEMORY_USED, memUsed);
+              nvramInfo.setProperty(NVRAMInfo.Companion.getMEMORY_USED(), memUsed);
               if (memTotalLong > 0L) {
-                nvramInfo.setProperty(NVRAMInfo.MEMORY_USED_PERCENT,
+                nvramInfo.setProperty(NVRAMInfo.Companion.getMEMORY_USED_PERCENT(),
                     Long.toString(Math.min(100, 100 * memUsedLong / memTotalLong)));
               }
             }
@@ -185,7 +185,7 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo> {
                     final int coresCount = Integer.parseInt(cpuUsageData[1]);
 
                     if (coresCount > 0) {
-                      nvramInfo.setProperty(NVRAMInfo.CPU_USED_PERCENT, Integer.toString(
+                      nvramInfo.setProperty(NVRAMInfo.Companion.getCPU_USED_PERCENT(), Integer.toString(
                           Math.min(100,
                               Double.valueOf(loadAvgTotal / coresCount * 33.3).intValue())));
                     }
@@ -272,7 +272,7 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo> {
         final int orange = ContextCompat.getColor(mParentFragmentActivity, R.color.win8_orange);
 
         try {
-          final String memUsedStr = data.getProperty(NVRAMInfo.MEMORY_USED_PERCENT);
+          final String memUsedStr = data.getProperty(NVRAMInfo.Companion.getMEMORY_USED_PERCENT());
           final int memUsed = Integer.parseInt(memUsedStr);
 
           //Update colors as per the usage
@@ -290,7 +290,7 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo> {
         }
 
         try {
-          final String cpuUsedStr = data.getProperty(NVRAMInfo.CPU_USED_PERCENT);
+          final String cpuUsedStr = data.getProperty(NVRAMInfo.Companion.getCPU_USED_PERCENT());
           final int cpuUsed = Integer.parseInt(cpuUsedStr);
 
           //Update colors as per the usage

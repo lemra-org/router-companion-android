@@ -58,7 +58,6 @@ import org.rm3l.router_companion.actions.RouterStreamActionListener;
 import org.rm3l.router_companion.exceptions.UnknownRouterFirmwareException;
 import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
 import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
-import org.rm3l.router_companion.resources.PublicIPInfo;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.resources.conn.openwrt.UCIInfo;
@@ -67,21 +66,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_CA;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_CLIENT;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_KEY;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_ROUTE;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_STATIC;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_TLSAUTH;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPN_CA;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPN_CLIENT;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPN_CRL;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPN_CRT;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPN_KEY;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPN_STATIC;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPN_TLSAUTH;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.SSHD_DSS_HOST_KEY;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.SSHD_RSA_HOST_KEY;
 import static org.rm3l.router_companion.resources.conn.Router.RouterFirmware;
 import static org.rm3l.router_companion.resources.conn.Router.RouterFirmware.DDWRT;
 import static org.rm3l.router_companion.resources.conn.Router.RouterFirmware.TOMATO;
@@ -102,9 +86,13 @@ public final class SSHUtils {
   public static final int MAX_NUMBER_OF_CONCURRENT_SSH_SESSIONS_PER_ROUTER = 3;
   private static final String TAG = SSHUtils.class.getSimpleName();
   private static final List<String> MULTI_OUTPUT_NVRAM_VARS =
-      Arrays.asList(SSHD_RSA_HOST_KEY, SSHD_DSS_HOST_KEY, OPENVPNCL_CA, OPENVPNCL_CLIENT,
-          OPENVPNCL_KEY, OPENVPNCL_TLSAUTH, OPENVPNCL_STATIC, OPENVPNCL_ROUTE, OPENVPN_CA,
-          OPENVPN_CLIENT, OPENVPN_KEY, OPENVPN_TLSAUTH, OPENVPN_CRT, OPENVPN_CRL, OPENVPN_STATIC);
+      Arrays.asList(NVRAMInfo.Companion.getSSHD_RSA_HOST_KEY(), NVRAMInfo.Companion.getSSHD_DSS_HOST_KEY(),
+          NVRAMInfo.Companion.getOPENVPNCL_CA(), NVRAMInfo.Companion.getOPENVPNCL_CLIENT(),
+          NVRAMInfo.Companion.getOPENVPNCL_KEY(), NVRAMInfo.Companion.getOPENVPNCL_TLSAUTH(),
+          NVRAMInfo.Companion.getOPENVPNCL_STATIC(), NVRAMInfo.Companion.getOPENVPNCL_ROUTE(),
+          NVRAMInfo.Companion.getOPENVPN_CA(), NVRAMInfo.Companion.getOPENVPN_CLIENT(), NVRAMInfo.Companion.getOPENVPN_KEY(),
+          NVRAMInfo.Companion.getOPENVPN_TLSAUTH(), NVRAMInfo.Companion.getOPENVPN_CRT(), NVRAMInfo.Companion.getOPENVPN_CRL(),
+          NVRAMInfo.Companion.getOPENVPN_STATIC());
 
   private static final Map<RouterFirmware, String> FIRMWARE_AUTODETECT_CMDS =
       Maps.newHashMapWithExpectedSize(RouterFirmware.values().length);

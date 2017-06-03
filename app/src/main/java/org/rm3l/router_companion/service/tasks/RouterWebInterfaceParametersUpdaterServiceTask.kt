@@ -1,9 +1,7 @@
 package org.rm3l.router_companion.service.tasks
 
 import android.content.Context
-import android.content.SharedPreferences
 import com.google.common.base.Objects
-import org.rm3l.router_companion.resources.conn.NVRAMInfo
 import org.rm3l.router_companion.resources.conn.Router
 import org.rm3l.router_companion.utils.SSHUtils
 import org.rm3l.router_companion.utils.Utils
@@ -11,11 +9,11 @@ import org.rm3l.router_companion.utils.Utils
 import org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_HTTP_PORT
 import org.rm3l.router_companion.resources.Encrypted.d
 import org.rm3l.router_companion.resources.Encrypted.e
-import org.rm3l.router_companion.resources.conn.NVRAMInfo.HTTPS_ENABLE
-import org.rm3l.router_companion.resources.conn.NVRAMInfo.HTTP_ENABLE
-import org.rm3l.router_companion.resources.conn.NVRAMInfo.HTTP_LANPORT
-import org.rm3l.router_companion.resources.conn.NVRAMInfo.HTTP_WANPORT
-import org.rm3l.router_companion.resources.conn.NVRAMInfo.REMOTE_MGT_HTTPS
+import org.rm3l.router_companion.resources.conn.NVRAMInfo.Companion.HTTPS_ENABLE
+import org.rm3l.router_companion.resources.conn.NVRAMInfo.Companion.HTTP_ENABLE
+import org.rm3l.router_companion.resources.conn.NVRAMInfo.Companion.HTTP_LANPORT
+import org.rm3l.router_companion.resources.conn.NVRAMInfo.Companion.HTTP_WANPORT
+import org.rm3l.router_companion.resources.conn.NVRAMInfo.Companion.REMOTE_MGT_HTTPS
 
 /**
  * Created by rm3l on 30/07/15.

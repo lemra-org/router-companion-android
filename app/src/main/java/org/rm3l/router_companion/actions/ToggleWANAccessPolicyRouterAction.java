@@ -61,7 +61,7 @@ public class ToggleWANAccessPolicyRouterAction extends AbstractRouterAction<Void
       final String filterRuleValue =
           String.format(Locale.US, "\\$STAT:%d\\$NAME:%s\\$DENY:%d\\$\\$", mEnableStatus,
               Strings.nullToEmpty(mWanAccessPolicy.getName()),
-              WANAccessPolicy.DENY.equals(mWanAccessPolicy.getDenyOrFilter()) ? 1 : 0);
+              WANAccessPolicy.Companion.getDENY().equals(mWanAccessPolicy.getDenyOrFilter()) ? 1 : 0);
 
       final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router,
           String.format(Locale.US, "/usr/sbin/nvram set filter_rule%d=\"%s\""

@@ -36,16 +36,6 @@ import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPN_CA;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPN_CLIENT;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPN_CONFIG;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPN_CRL;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPN_DH;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPN_ENABLE;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPN_KEY;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPN_ONWAN;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPN_TLSAUTH;
-
 /**
  * Created by rm3l on 05/09/15.
  */
@@ -104,23 +94,23 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
             nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                 mGlobalPreferences,
                 //Status: {1,0}
-                OPENVPN_ENABLE,
+                NVRAMInfo.Companion.getOPENVPN_ENABLE(),
                 //Start Type: {1=Wan Up, 0=System}
-                OPENVPN_ONWAN,
+                NVRAMInfo.Companion.getOPENVPN_ONWAN(),
                 //Public Server Cert
-                OPENVPN_CA,
+                NVRAMInfo.Companion.getOPENVPN_CA(),
                 //Certificate Revoke List
-                OPENVPN_CRL,
+                NVRAMInfo.Companion.getOPENVPN_CRL(),
                 //Public Client Cert
-                OPENVPN_CLIENT,
+                NVRAMInfo.Companion.getOPENVPN_CLIENT(),
                 //Private Client Key
-                OPENVPN_KEY,
+                NVRAMInfo.Companion.getOPENVPN_KEY(),
                 //DH PEM
-                OPENVPN_DH,
+                NVRAMInfo.Companion.getOPENVPN_DH(),
                 //OpenVPN Config
-                OPENVPN_CONFIG,
+                NVRAMInfo.Companion.getOPENVPN_CONFIG(),
                 //OpenVPN TLS Auth
-                OPENVPN_TLSAUTH);
+                NVRAMInfo.Companion.getOPENVPN_TLSAUTH());
           } finally {
             if (nvramInfoTmp != null) {
               nvramInfo.putAll(nvramInfoTmp);
@@ -171,7 +161,7 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
         preliminaryCheckException = new DDWRTNoDataException("No Data!");
       } else //noinspection ThrowableResultOfMethodCallIgnored
         if (data.getException() == null) {
-          final String pptpdServerEnabled = data.getProperty(OPENVPN_ENABLE);
+          final String pptpdServerEnabled = data.getProperty(NVRAMInfo.Companion.getOPENVPN_ENABLE());
           if (pptpdServerEnabled == null || !Arrays.asList("0", "1").contains(pptpdServerEnabled)) {
             //noinspection ThrowableInstanceNeverThrown
             preliminaryCheckException = new DDWRTOpenVPNdClienStateUnknown("Unknown state");
@@ -183,11 +173,12 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
       enableTraffDataButton.setVisibility(View.VISIBLE);
 
       final boolean makeToogleEnabled =
-          (data != null && data.getData() != null && data.getData().containsKey(OPENVPN_ENABLE));
+          (data != null && data.getData() != null && data.getData().containsKey(
+              NVRAMInfo.Companion.getOPENVPN_ENABLE()));
 
       if (!isToggleStateActionRunning.get()) {
         if (makeToogleEnabled) {
-          if ("1".equals(data.getProperty(OPENVPN_ENABLE))) {
+          if ("1".equals(data.getProperty(NVRAMInfo.Companion.getOPENVPN_ENABLE()))) {
             //Enabled
             enableTraffDataButton.setChecked(true);
           } else {
@@ -349,7 +340,7 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
 
       final NVRAMInfo nvramInfoToSet = new NVRAMInfo();
 
-      nvramInfoToSet.setProperty(OPENVPN_ENABLE, enable ? "1" : "0");
+      nvramInfoToSet.setProperty(NVRAMInfo.Companion.getOPENVPN_ENABLE(), enable ? "1" : "0");
 
       new UndoBarController.UndoBar(mParentFragmentActivity).message(
           String.format("OpenVPN Server will be %s on '%s' (%s). ", enable ? "enabled" : "disabled",

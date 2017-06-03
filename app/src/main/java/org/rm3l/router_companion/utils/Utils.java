@@ -934,12 +934,11 @@ public final class Utils {
             + "GET / HTTP/1.1\\r\\n"
             + "Host:%s\\r\\n"
             + "User-Agent:%s/%s\\r\\n\"; sleep 1) "
-            + "| %s %s %d", PublicIPInfo.ICANHAZIP_HOST,
+            + "| %s %s %d", PublicIPInfo.Companion.getICANHAZIP_HOST(),
         applicationName != null ? applicationName : BuildConfig.APPLICATION_ID,
         BuildConfig.VERSION_NAME, 
         (ncCmdPath == null || ncCmdPath.trim().isEmpty()) ? "/usr/bin/nc" : ncCmdPath,
-        PublicIPInfo.ICANHAZIP_HOST, 
-        PublicIPInfo.ICANHAZIP_PORT);
+        PublicIPInfo.Companion.getICANHAZIP_HOST(), PublicIPInfo.Companion.getICANHAZIP_PORT());
   }
 
   public static String getCommandForRevDnsPtrResolution(Context context) {
@@ -953,12 +952,11 @@ public final class Utils {
             + "GET / HTTP/1.1\\r\\n"
             + "Host:%s\\r\\n"
             + "User-Agent:%s/%s\\r\\n\"; sleep 1) "
-            + "| %s %s %d", PublicIPInfo.ICANHAZPTR_HOST,
+            + "| %s %s %d", PublicIPInfo.Companion.getICANHAZPTR_HOST(),
         applicationName != null ? applicationName : BuildConfig.APPLICATION_ID,
         BuildConfig.VERSION_NAME,
         (ncCmdPath == null || ncCmdPath.trim().isEmpty()) ? "/usr/bin/nc" : ncCmdPath,
-        PublicIPInfo.ICANHAZPTR_HOST,
-        PublicIPInfo.ICANHAZPTR_PORT);
+        PublicIPInfo.Companion.getICANHAZPTR_HOST(), PublicIPInfo.Companion.getICANHAZPTR_PORT());
   }
 
   public static int getResId(String resourceName, Class<?> clazz) {

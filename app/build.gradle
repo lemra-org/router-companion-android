@@ -36,9 +36,9 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
 //apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'android-apt'
+apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
 //apply plugin: 'tracepot'
 apply plugin: 'com.github.triplet.play'

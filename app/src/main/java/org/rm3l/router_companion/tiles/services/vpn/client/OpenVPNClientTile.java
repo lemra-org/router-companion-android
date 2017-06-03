@@ -75,33 +75,6 @@ import org.rm3l.router_companion.utils.Utils;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_ADV;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_AUTH;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_BRIDGE;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_CA;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_CERTTYPE;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_CIPHER;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_CLIENT;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_CONFIG;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_ENABLE;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_FRAGMENT;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_IP;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_KEY;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_LZO;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_MASK;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_MSSFIX;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_MTU;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_NAT;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_PKCS_12;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_PROTO;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_REMOTEIP;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_REMOTEPORT;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_ROUTE;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_SEC;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_STATIC;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_TLSAUTH;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_TLSCIP;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_TUNTAP;
 import static org.rm3l.router_companion.tiles.services.vpn.client.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_IPS_AUTOCOMPLETE_PREF;
 import static org.rm3l.router_companion.tiles.services.vpn.client.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_SUBNETS_AUTOCOMPLETE_PREF;
 import static org.rm3l.router_companion.tiles.services.vpn.client.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_MTU_SETTINGS_AUTOCOMPLETE_PREF;
@@ -174,21 +147,21 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
             nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                 mGlobalPreferences,
                 //Status: {1,0}
-                OPENVPNCL_ENABLE,
+                NVRAMInfo.Companion.getOPENVPNCL_ENABLE(),
                 //Server IP Name
-                OPENVPNCL_REMOTEIP,
+                NVRAMInfo.Companion.getOPENVPNCL_REMOTEIP(),
                 //Port (from 1 to 65535): default=1194
-                OPENVPNCL_REMOTEPORT,
+                NVRAMInfo.Companion.getOPENVPNCL_REMOTEPORT(),
                 //Tunnel Device: {"tun", "tap"}
-                OPENVPNCL_TUNTAP,
+                NVRAMInfo.Companion.getOPENVPNCL_TUNTAP(),
                 //Tunnel Protocol: { "udp", "tcp-client"}
-                OPENVPNCL_PROTO,
+                NVRAMInfo.Companion.getOPENVPNCL_PROTO(),
                 //Encryption Cipher:
                 //{aes-512-cbc, aes-256-cbc, aes-192-cbc, aes-128-cbc, bf-cbc, none}
-                OPENVPNCL_CIPHER,
+                NVRAMInfo.Companion.getOPENVPNCL_CIPHER(),
                 //Hash Algorithm
                 //{sha512, sha256, sha1, md5, md4, none}
-                OPENVPNCL_AUTH,
+                NVRAMInfo.Companion.getOPENVPNCL_AUTH(),
                 //TLS Cipher
                 //{TLS-DHE-RSA-WITH-AES-256-GCM-SHA384,
                 //TLS-DHE-RSA-WITH-AES-256-CBC-SHA256,
@@ -199,50 +172,50 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                 //TLS-RSA-WITH-RC4-128-MD5,
                 //0}
                 //Advanced Options: {1,0}
-                OPENVPNCL_ADV, OPENVPNCL_TLSCIP,
+                NVRAMInfo.Companion.getOPENVPNCL_ADV(), NVRAMInfo.Companion.getOPENVPNCL_TLSCIP(),
                 //LZO Compression: {yes, adaptive, no, off}
-                OPENVPNCL_LZO,
+                NVRAMInfo.Companion.getOPENVPNCL_LZO(),
                 //NAT: {1, 0}
-                OPENVPNCL_NAT,
+                NVRAMInfo.Companion.getOPENVPNCL_NAT(),
                 //Firewall Protection (enabled if openvpncl_nat==1): {1,0}
-                OPENVPNCL_SEC,
+                NVRAMInfo.Companion.getOPENVPNCL_SEC(),
                 //Bridge TAP to br0 (enabled if openvpncl_nat==0)"{1,0}
-                OPENVPNCL_BRIDGE,
+                NVRAMInfo.Companion.getOPENVPNCL_BRIDGE(),
                 //IP Address
-                OPENVPNCL_IP,
+                NVRAMInfo.Companion.getOPENVPNCL_IP(),
                 //Subnet Mask
-                OPENVPNCL_MASK,
+                NVRAMInfo.Companion.getOPENVPNCL_MASK(),
                 //Tunnel MTU Setting: (from 1 to 65535)
-                OPENVPNCL_MTU,
+                NVRAMInfo.Companion.getOPENVPNCL_MTU(),
                 //Tunnel UDP Fragment (num max chars=5): if nothing => Disabled
-                OPENVPNCL_FRAGMENT,
+                NVRAMInfo.Companion.getOPENVPNCL_FRAGMENT(),
                 //Tunnel UDP MSS-Fix: {1,0}
-                OPENVPNCL_MSSFIX,
+                NVRAMInfo.Companion.getOPENVPNCL_MSSFIX(),
                 //nsCertType verification: {1,0}
-                OPENVPNCL_CERTTYPE,
+                NVRAMInfo.Companion.getOPENVPNCL_CERTTYPE(),
                 //TLS Auth Key
-                OPENVPNCL_TLSAUTH,
+                NVRAMInfo.Companion.getOPENVPNCL_TLSAUTH(),
                 //Additional Config
-                OPENVPNCL_CONFIG,
+                NVRAMInfo.Companion.getOPENVPNCL_CONFIG(),
                 //Policy based Routing
-                OPENVPNCL_ROUTE,
+                NVRAMInfo.Companion.getOPENVPNCL_ROUTE(),
                 //PKCS12 Key
-                OPENVPNCL_PKCS_12,
+                NVRAMInfo.Companion.getOPENVPNCL_PKCS_12(),
                 //Static Key
-                OPENVPNCL_STATIC,
+                NVRAMInfo.Companion.getOPENVPNCL_STATIC(),
                 //CA Cert
-                OPENVPNCL_CA,
+                NVRAMInfo.Companion.getOPENVPNCL_CA(),
                 //Public Client Cert
-                OPENVPNCL_CLIENT,
+                NVRAMInfo.Companion.getOPENVPNCL_CLIENT(),
                 //Private Client Key
-                OPENVPNCL_KEY);
+                NVRAMInfo.Companion.getOPENVPNCL_KEY());
           } finally {
             if (nvramInfoTmp != null) {
               nvramInfo.putAll(nvramInfoTmp);
             }
 
             boolean applyNewPrefs = false;
-            String property = nvramInfo.getProperty(OPENVPNCL_REMOTEIP);
+            String property = nvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_REMOTEIP());
             final SharedPreferences.Editor editor = mGlobalPreferences.edit();
             if (!Strings.isNullOrEmpty(property)) {
               final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
@@ -257,7 +230,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
               }
             }
 
-            property = nvramInfo.getProperty(OPENVPNCL_REMOTEPORT);
+            property = nvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_REMOTEPORT());
             if (!Strings.isNullOrEmpty(property)) {
               final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
                   mGlobalPreferences.getStringSet(
@@ -271,7 +244,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
               }
             }
 
-            property = nvramInfo.getProperty(OPENVPNCL_IP);
+            property = nvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_IP());
             if (!Strings.isNullOrEmpty(property)) {
               final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
                   mGlobalPreferences.getStringSet(
@@ -285,7 +258,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
               }
             }
 
-            property = nvramInfo.getProperty(OPENVPNCL_MASK);
+            property = nvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_MASK());
             if (!Strings.isNullOrEmpty(property)) {
               final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
                   mGlobalPreferences.getStringSet(
@@ -299,7 +272,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
               }
             }
 
-            property = nvramInfo.getProperty(OPENVPNCL_MTU);
+            property = nvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_MTU());
             if (!Strings.isNullOrEmpty(property)) {
               final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
                   mGlobalPreferences.getStringSet(
@@ -313,7 +286,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
               }
             }
 
-            property = nvramInfo.getProperty(OPENVPNCL_FRAGMENT);
+            property = nvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_FRAGMENT());
             if (!Strings.isNullOrEmpty(property)) {
               final Set<String> mGlobalPreferencesStringSet = new HashSet<>(
                   mGlobalPreferences.getStringSet(
@@ -465,7 +438,8 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
         preliminaryCheckException = new DDWRTNoDataException("No Data!");
       } else //noinspection ThrowableResultOfMethodCallIgnored
         if (data.getException() == null) {
-          final String openvpnClEnabled = data.getProperty(NVRAMInfo.OPENVPNCL_ENABLE);
+          final String openvpnClEnabled = data.getProperty(
+              NVRAMInfo.Companion.getOPENVPNCL_ENABLE());
           if (openvpnClEnabled == null || !Arrays.asList("0", "1").contains(openvpnClEnabled)) {
             //noinspection ThrowableInstanceNeverThrown
             preliminaryCheckException = new DDWRTOpenvpnClStateUnknown("Unknown state");
@@ -477,11 +451,11 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
       enableTraffDataButton.setVisibility(View.VISIBLE);
 
       final boolean makeToogleEnabled = (data != null && data.getData() != null && data.getData()
-          .containsKey(NVRAMInfo.OPENVPNCL_ENABLE));
+          .containsKey(NVRAMInfo.Companion.getOPENVPNCL_ENABLE()));
 
       if (!isToggleStateActionRunning.get()) {
         if (makeToogleEnabled) {
-          if ("1".equals(data.getProperty(NVRAMInfo.OPENVPNCL_ENABLE))) {
+          if ("1".equals(data.getProperty(NVRAMInfo.Companion.getOPENVPNCL_ENABLE()))) {
             //Enabled
             enableTraffDataButton.setChecked(true);
           } else {
@@ -576,14 +550,15 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
     }
 
     //Server IP/Name
-    String property = data.getProperty(OPENVPNCL_REMOTEIP, defaultValuesIfNotFound ? N_A : null);
+    String property = data.getProperty(
+        NVRAMInfo.Companion.getOPENVPNCL_REMOTEIP(), defaultValuesIfNotFound ? N_A : null);
     if (property != null) {
       ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_server_ip_name)).setText(
           property);
     }
 
     //Port
-    property = data.getProperty(OPENVPNCL_REMOTEPORT, defaultValuesIfNotFound ? N_A : null);
+    property = data.getProperty(NVRAMInfo.Companion.getOPENVPNCL_REMOTEPORT(), defaultValuesIfNotFound ? N_A : null);
     if (property != null) {
       ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_server_port)).setText(
           property);
@@ -617,7 +592,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
     //Tunnel Device
     //noinspection ConstantConditions
-    property = data.getProperty(OPENVPNCL_TUNTAP, defaultValuesIfNotFound ? N_A : null);
+    property = data.getProperty(NVRAMInfo.Companion.getOPENVPNCL_TUNTAP(), defaultValuesIfNotFound ? N_A : null);
     if (property != null) {
       ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_tunnel_device)).setText(
           property.toUpperCase());
@@ -625,7 +600,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
     //Tunnel Proto
     final String protoProp =
-        data.getProperty(OPENVPNCL_PROTO, defaultValuesIfNotFound ? N_A : null);
+        data.getProperty(NVRAMInfo.Companion.getOPENVPNCL_PROTO(), defaultValuesIfNotFound ? N_A : null);
     if (protoProp != null) {
       final String tunnelProto;
       if ("tcp-client".equalsIgnoreCase(protoProp)) {
@@ -640,7 +615,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
     //Encryption Cipher
     final String encCipherProp =
-        data.getProperty(OPENVPNCL_CIPHER, defaultValuesIfNotFound ? N_A : null);
+        data.getProperty(NVRAMInfo.Companion.getOPENVPNCL_CIPHER(), defaultValuesIfNotFound ? N_A : null);
     if (encCipherProp != null) {
       final String encCipher;
       //noinspection ConstantConditions
@@ -670,7 +645,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
     //Hash Algo
     final String hashAlgoProp =
-        data.getProperty(OPENVPNCL_AUTH, defaultValuesIfNotFound ? N_A : null);
+        data.getProperty(NVRAMInfo.Companion.getOPENVPNCL_AUTH(), defaultValuesIfNotFound ? N_A : null);
     if (hashAlgoProp != null) {
       final String hashAlgo;
       if (!"none".equalsIgnoreCase(hashAlgoProp)) {
@@ -751,7 +726,8 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
         switch (RouterAction.valueOf(routerAction)) {
           case SET_NVRAM_VARIABLES:
             final NVRAMInfo nvramInfo = (NVRAMInfo) token.getSerializable(OPENVPNCL_NVRAMINFO);
-            final String openvpnClEnable = nullToEmpty(nvramInfo.getProperty(OPENVPNCL_ENABLE));
+            final String openvpnClEnable = nullToEmpty(nvramInfo.getProperty(
+                NVRAMInfo.Companion.getOPENVPNCL_ENABLE()));
 
             if (mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
                 VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE, false) && Arrays.asList("0", "1")
@@ -772,7 +748,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                   .setCancelable(true)
                   .setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface dialog, int which) {
-                      nvramInfo.setProperty(NVRAMInfo.PPTPD_CLIENT_ENABLE, pptpClientStatusToSet);
+                      nvramInfo.setProperty(NVRAMInfo.Companion.getPPTPD_CLIENT_ENABLE(), pptpClientStatusToSet);
                       ActionManager.runTasks(
                           new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfo,
                               true, OpenVPNClientTile.this, mGlobalPreferences));
@@ -880,7 +856,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
       final NVRAMInfo nvramInfoToSet = new NVRAMInfo();
 
-      nvramInfoToSet.setProperty(NVRAMInfo.OPENVPNCL_ENABLE, enable ? "1" : "0");
+      nvramInfoToSet.setProperty(NVRAMInfo.Companion.getOPENVPNCL_ENABLE(), enable ? "1" : "0");
 
       new UndoBarController.UndoBar(mParentFragmentActivity).message(
           String.format("OpenVPN Client will be %s on '%s' (%s). ", enable ? "enabled" : "disabled",
@@ -945,7 +921,8 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                               .setCancelable(true)
                               .setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
                                 @Override public void onClick(DialogInterface dialog, int which) {
-                                  nvramInfoToSet.setProperty(NVRAMInfo.PPTPD_CLIENT_ENABLE,
+                                  nvramInfoToSet.setProperty(
+                                      NVRAMInfo.Companion.getPPTPD_CLIENT_ENABLE(),
                                       pptpClStatusToSet ? "1" : "0");
 
                                   Utils.displayMessage(mParentFragmentActivity,

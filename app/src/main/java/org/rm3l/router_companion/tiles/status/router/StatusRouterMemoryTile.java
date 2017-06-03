@@ -154,7 +154,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
             if (strings != null && strings.size() >= 1) {
               memTotal = nullToEmpty(strings.get(0)).replaceAll(" kB", "").trim();
               memTotalLong = Long.parseLong(memTotal);
-              nvramInfo.setProperty(NVRAMInfo.MEMORY_TOTAL, memTotal);
+              nvramInfo.setProperty(NVRAMInfo.Companion.getMEMORY_TOTAL(), memTotal);
             }
 
             //Free
@@ -167,11 +167,11 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
             if (strings != null && strings.size() >= 1) {
               memFree = nullToEmpty(strings.get(0)).replaceAll(" kB", "").trim();
               memFreeLong = Long.parseLong(memFree);
-              nvramInfo.setProperty(NVRAMInfo.MEMORY_FREE, Long.toString(memFreeLong));
+              nvramInfo.setProperty(NVRAMInfo.Companion.getMEMORY_FREE(), Long.toString(memFreeLong));
 
               //Compute utlization
               if (memTotalLong > 0L) {
-                nvramInfo.setProperty(NVRAMInfo.MEMORY_FREE_PERCENT,
+                nvramInfo.setProperty(NVRAMInfo.Companion.getMEMORY_FREE_PERCENT(),
                     Long.toString(Math.min(100, 100 * memFreeLong / memTotalLong)));
               }
             }
@@ -184,9 +184,9 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
               memUsedLong = memTotalLong - memFreeLong;
               memUsed = Long.toString(memUsedLong);
 
-              nvramInfo.setProperty(NVRAMInfo.MEMORY_USED, memUsed);
+              nvramInfo.setProperty(NVRAMInfo.Companion.getMEMORY_USED(), memUsed);
               if (memTotalLong > 0L) {
-                nvramInfo.setProperty(NVRAMInfo.MEMORY_USED_PERCENT,
+                nvramInfo.setProperty(NVRAMInfo.Companion.getMEMORY_USED_PERCENT(),
                     Long.toString(Math.min(100, 100 * memUsedLong / memTotalLong)));
               }
             }
@@ -201,11 +201,11 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
             if (strings != null && strings.size() >= 1) {
               memBuffers = nullToEmpty(strings.get(0)).replaceAll(" kB", "").trim();
               memBuffersLong = Long.parseLong(memBuffers);
-              nvramInfo.setProperty(NVRAMInfo.MEMORY_BUFFERS, memBuffers);
+              nvramInfo.setProperty(NVRAMInfo.Companion.getMEMORY_BUFFERS(), memBuffers);
 
               //Compute utilization
               if (memUsedLong > 0L) {
-                nvramInfo.setProperty(NVRAMInfo.MEMORY_BUFFERS_PERCENT,
+                nvramInfo.setProperty(NVRAMInfo.Companion.getMEMORY_BUFFERS_PERCENT(),
                     Long.toString(Math.min(100, 100 * memBuffersLong / memUsedLong)));
               }
             }
@@ -220,10 +220,10 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
             if (strings != null && strings.size() >= 1) {
               memCached = nullToEmpty(strings.get(0)).replaceAll(" kB", "").trim();
               memCachedLong = Long.parseLong(memCached);
-              nvramInfo.setProperty(NVRAMInfo.MEMORY_CACHED, memCached);
+              nvramInfo.setProperty(NVRAMInfo.Companion.getMEMORY_CACHED(), memCached);
               //Compute utilization
               if (memUsedLong > 0L) {
-                nvramInfo.setProperty(NVRAMInfo.MEMORY_CACHED_PERCENT,
+                nvramInfo.setProperty(NVRAMInfo.Companion.getMEMORY_CACHED_PERCENT(),
                     Long.toString(Math.min(100, 100 * memCachedLong / memUsedLong)));
               }
             }
@@ -238,10 +238,10 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
             if (strings != null && strings.size() >= 1) {
               memActive = nullToEmpty(strings.get(0)).replaceAll(" kB", "").trim();
               memActiveLong = Long.parseLong(memActive);
-              nvramInfo.setProperty(NVRAMInfo.MEMORY_ACTIVE, memActive);
+              nvramInfo.setProperty(NVRAMInfo.Companion.getMEMORY_ACTIVE(), memActive);
               //Compute utilization
               if (memUsedLong > 0L) {
-                nvramInfo.setProperty(NVRAMInfo.MEMORY_ACTIVE_PERCENT,
+                nvramInfo.setProperty(NVRAMInfo.Companion.getMEMORY_ACTIVE_PERCENT(),
                     Long.toString(Math.min(100, 100 * memActiveLong / memUsedLong)));
               }
             }
@@ -256,10 +256,10 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
             if (strings != null && strings.size() >= 1) {
               memInactive = nullToEmpty(strings.get(0)).replaceAll(" kB", "").trim();
               memInactiveLong = Long.parseLong(memInactive);
-              nvramInfo.setProperty(NVRAMInfo.MEMORY_INACTIVE, memInactive);
+              nvramInfo.setProperty(NVRAMInfo.Companion.getMEMORY_INACTIVE(), memInactive);
               //Compute utilization
               if (memUsedLong > 0L) {
-                nvramInfo.setProperty(NVRAMInfo.MEMORY_INACTIVE_PERCENT,
+                nvramInfo.setProperty(NVRAMInfo.Companion.getMEMORY_INACTIVE_PERCENT(),
                     Long.toString(Math.min(100, 100 * memInactiveLong / memUsedLong)));
               }
             }
@@ -359,7 +359,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
         TextView pbText;
 
         //Total
-        property = data.getProperty(NVRAMInfo.MEMORY_TOTAL);
+        property = data.getProperty(NVRAMInfo.Companion.getMEMORY_TOTAL());
         final String memTotalKb = property != null ? (property + " kB") : "-";
 
         ((TextView) layout.findViewById(
@@ -368,14 +368,15 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
         //Free
         final TextView memFreeView =
             (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_free);
-        property = data.getProperty(NVRAMInfo.MEMORY_FREE);
+        property = data.getProperty(NVRAMInfo.Companion.getMEMORY_FREE());
         final String memFreeKb = property != null ? (property + " kB") : "-";
         memFreeView.setText(memFreeKb + " / " + memTotalKb);
 
         pb = (ProgressBar) layout.findViewById(R.id.tile_status_router_router_mem_free_usage);
         pbText = (TextView) layout.findViewById(R.id.tile_status_router_router_mem_free_usage_text);
         try {
-          propertyUtilization = Integer.parseInt(data.getProperty(NVRAMInfo.MEMORY_FREE_PERCENT));
+          propertyUtilization = Integer.parseInt(data.getProperty(
+              NVRAMInfo.Companion.getMEMORY_FREE_PERCENT()));
           if (propertyUtilization >= 0) {
             pb.setProgress(propertyUtilization);
             pbText.setText(propertyUtilization + "%");
@@ -394,13 +395,14 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
         //Used
         final TextView memUsedView =
             (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_used);
-        property = data.getProperty(NVRAMInfo.MEMORY_USED);
+        property = data.getProperty(NVRAMInfo.Companion.getMEMORY_USED());
         final String memUsedKb = property != null ? (property + " kB") : "-";
         memUsedView.setText(memUsedKb + " / " + memTotalKb);
         pb = (ProgressBar) layout.findViewById(R.id.tile_status_router_router_mem_used_usage);
         pbText = (TextView) layout.findViewById(R.id.tile_status_router_router_mem_used_usage_text);
         try {
-          propertyUtilization = Integer.parseInt(data.getProperty(NVRAMInfo.MEMORY_USED_PERCENT));
+          propertyUtilization = Integer.parseInt(data.getProperty(
+              NVRAMInfo.Companion.getMEMORY_USED_PERCENT()));
           if (propertyUtilization >= 0) {
             pb.setProgress(propertyUtilization);
             pbText.setText(propertyUtilization + "%");
@@ -419,7 +421,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
         //Buffers
         final TextView memBuffersView =
             (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_buffers);
-        property = data.getProperty(NVRAMInfo.MEMORY_BUFFERS);
+        property = data.getProperty(NVRAMInfo.Companion.getMEMORY_BUFFERS());
         final String memBuffersKb = property != null ? (property + " kB") : "-";
         memBuffersView.setText(memBuffersKb + " / " + memUsedKb);
         pb = (ProgressBar) layout.findViewById(R.id.tile_status_router_router_mem_buffers_usage);
@@ -427,7 +429,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
             (TextView) layout.findViewById(R.id.tile_status_router_router_mem_buffers_usage_text);
         try {
           propertyUtilization =
-              Integer.parseInt(data.getProperty(NVRAMInfo.MEMORY_BUFFERS_PERCENT));
+              Integer.parseInt(data.getProperty(NVRAMInfo.Companion.getMEMORY_BUFFERS_PERCENT()));
           if (propertyUtilization >= 0) {
             pb.setProgress(propertyUtilization);
             pbText.setText(propertyUtilization + "%");
@@ -446,14 +448,15 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
         //Cached
         final TextView memCachedView =
             (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_cached);
-        property = data.getProperty(NVRAMInfo.MEMORY_CACHED);
+        property = data.getProperty(NVRAMInfo.Companion.getMEMORY_CACHED());
         final String memCachedKb = property != null ? (property + " kB") : "-";
         memCachedView.setText(memCachedKb + " / " + memUsedKb);
         pb = (ProgressBar) layout.findViewById(R.id.tile_status_router_router_mem_cached_usage);
         pbText =
             (TextView) layout.findViewById(R.id.tile_status_router_router_mem_cached_usage_text);
         try {
-          propertyUtilization = Integer.parseInt(data.getProperty(NVRAMInfo.MEMORY_CACHED_PERCENT));
+          propertyUtilization = Integer.parseInt(data.getProperty(
+              NVRAMInfo.Companion.getMEMORY_CACHED_PERCENT()));
           if (propertyUtilization >= 0) {
             pb.setProgress(propertyUtilization);
             pbText.setText(propertyUtilization + "%");
@@ -472,14 +475,15 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
         //Active
         final TextView memActiveView =
             (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_active);
-        property = data.getProperty(NVRAMInfo.MEMORY_ACTIVE);
+        property = data.getProperty(NVRAMInfo.Companion.getMEMORY_ACTIVE());
         final String memActiveKb = property != null ? (property + " kB") : "-";
         memActiveView.setText(memActiveKb + " / " + memUsedKb);
         pb = (ProgressBar) layout.findViewById(R.id.tile_status_router_router_mem_active_usage);
         pbText =
             (TextView) layout.findViewById(R.id.tile_status_router_router_mem_active_usage_text);
         try {
-          propertyUtilization = Integer.parseInt(data.getProperty(NVRAMInfo.MEMORY_ACTIVE_PERCENT));
+          propertyUtilization = Integer.parseInt(data.getProperty(
+              NVRAMInfo.Companion.getMEMORY_ACTIVE_PERCENT()));
           if (propertyUtilization >= 0) {
             pb.setProgress(propertyUtilization);
             pbText.setText(propertyUtilization + "%");
@@ -498,7 +502,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
         //Inactive
         final TextView memInactiveView =
             (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_inactive);
-        property = data.getProperty(NVRAMInfo.MEMORY_INACTIVE);
+        property = data.getProperty(NVRAMInfo.Companion.getMEMORY_INACTIVE());
         final String memInactiveKb = property != null ? (property + " kB") : "-";
         memInactiveView.setText(memInactiveKb + " / " + memUsedKb);
         pb = (ProgressBar) layout.findViewById(R.id.tile_status_router_router_mem_inactive_usage);
@@ -506,7 +510,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
             (TextView) layout.findViewById(R.id.tile_status_router_router_mem_inactive_usage_text);
         try {
           propertyUtilization =
-              Integer.parseInt(data.getProperty(NVRAMInfo.MEMORY_INACTIVE_PERCENT));
+              Integer.parseInt(data.getProperty(NVRAMInfo.Companion.getMEMORY_INACTIVE_PERCENT()));
           if (propertyUtilization >= 0) {
             pb.setProgress(propertyUtilization);
             pbText.setText(propertyUtilization + "%");

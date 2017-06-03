@@ -105,8 +105,6 @@ import static android.support.v4.content.ContextCompat.getColor;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.SYSLOG;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.SYSLOGD_ENABLE;
 import static org.rm3l.router_companion.utils.Utils.fromHtml;
 
 /**
@@ -471,14 +469,14 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                     + "Refrigerate roasted lobsters in a cooker with hollandaise sauce for about an hour to enhance their thickness."
                     + "With escargots drink BBQ sauce.Yarr there's nothing like the misty amnesty screaming on the sea.\n"
                     + "Death is a stormy whale.The undead parrot smartly leads the anchor.\n\n\n";
-            nvramInfo.setProperty(SYSLOG, syslogData);
+            nvramInfo.setProperty(NVRAMInfo.Companion.getSYSLOG(), syslogData);
             final boolean syslogState = new Random().nextBoolean();
-            nvramInfo.setProperty(SYSLOGD_ENABLE, syslogState ? "1" : "0");
+            nvramInfo.setProperty(NVRAMInfo.Companion.getSYSLOGD_ENABLE(), syslogState ? "1" : "0");
           } else {
             NVRAMInfo nvramInfoTmp = null;
             try {
               nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                  mGlobalPreferences, SYSLOGD_ENABLE);
+                  mGlobalPreferences, NVRAMInfo.Companion.getSYSLOGD_ENABLE());
             } finally {
               updateProgressBarViewSeparator(50);
               if (nvramInfoTmp != null) {
@@ -494,14 +492,14 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
               } finally {
                 updateProgressBarViewSeparator(70);
                 if (logs != null) {
-                  nvramInfo.setProperty(SYSLOG, LOGS_JOINER.join(logs));
+                  nvramInfo.setProperty(NVRAMInfo.Companion.getSYSLOG(), LOGS_JOINER.join(logs));
                 }
               }
             }
           }
           updateProgressBarViewSeparator(90);
 
-          mLogs.set(nvramInfo.getProperty(SYSLOG));
+          mLogs.set(nvramInfo.getProperty(NVRAMInfo.Companion.getSYSLOG()));
 
           return nvramInfo;
         } catch (@NonNull final Exception e) {
@@ -536,7 +534,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
         preliminaryCheckException = new DDWRTNoDataException("No Data!");
       } else //noinspection ThrowableResultOfMethodCallIgnored
         if (data.getException() == null) {
-          final String syslogdEnabled = data.getProperty(SYSLOGD_ENABLE);
+          final String syslogdEnabled = data.getProperty(NVRAMInfo.Companion.getSYSLOGD_ENABLE());
           if (syslogdEnabled == null || !Arrays.asList("0", "1").contains(syslogdEnabled)) {
             //noinspection ThrowableInstanceNeverThrown
             preliminaryCheckException = new DDWRTSyslogdStateUnknown("Unknown state");
@@ -548,11 +546,12 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
       enableTraffDataButton.setVisibility(View.VISIBLE);
 
       final boolean makeToogleEnabled =
-          (data != null && data.getData() != null && data.getData().containsKey(SYSLOGD_ENABLE));
+          (data != null && data.getData() != null && data.getData().containsKey(
+              NVRAMInfo.Companion.getSYSLOGD_ENABLE()));
 
       if (!isToggleStateActionRunning.get()) {
         if (makeToogleEnabled) {
-          if ("1".equals(data.getProperty(SYSLOGD_ENABLE))) {
+          if ("1".equals(data.getProperty(NVRAMInfo.Companion.getSYSLOGD_ENABLE()))) {
             //Enabled
             enableTraffDataButton.setChecked(true);
           } else {
@@ -583,7 +582,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
           errorPlaceHolderView.setVisibility(View.GONE);
         }
 
-        final String syslogdEnabledPropertyValue = data.getProperty(SYSLOGD_ENABLE);
+        final String syslogdEnabledPropertyValue = data.getProperty(NVRAMInfo.Companion.getSYSLOGD_ENABLE());
         final boolean isSyslogEnabled = "1".equals(syslogdEnabledPropertyValue);
 
         final TextView syslogState =
@@ -608,7 +607,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
           logTextView.setTextColor(getColor(mParentFragmentActivity, R.color.white));
 
           //Highlight textToFind for new log lines
-          final String newSyslog = data.getProperty(SYSLOG, EMPTY_STRING);
+          final String newSyslog = data.getProperty(NVRAMInfo.Companion.getSYSLOG(), EMPTY_STRING);
 
           //noinspection ConstantConditions
           Spanned newSyslogSpan = new SpannableString(newSyslog);
@@ -797,7 +796,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
       final NVRAMInfo nvramInfoToSet = new NVRAMInfo();
 
-      nvramInfoToSet.setProperty(SYSLOGD_ENABLE, enable ? "1" : "0");
+      nvramInfoToSet.setProperty(NVRAMInfo.Companion.getSYSLOGD_ENABLE(), enable ? "1" : "0");
 
       final String title = getTitle();
 

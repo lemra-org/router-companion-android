@@ -386,7 +386,7 @@ public class Router implements Serializable {
       return null;
     }
     final String model = context.getSharedPreferences(routerAt.getUuid(), Context.MODE_PRIVATE)
-        .getString(NVRAMInfo.MODEL, routerAt.routerModel);
+        .getString(NVRAMInfo.Companion.getMODEL(), routerAt.routerModel);
     routerAt.setRouterModel(model);
     return model;
   }

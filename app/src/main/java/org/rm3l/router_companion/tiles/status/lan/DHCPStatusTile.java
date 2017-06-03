@@ -101,18 +101,19 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
           try {
             updateProgressBarViewSeparator(10);
             if (Utils.isDemoRouter(mRouter)) {
-              nvramInfoTmp = new NVRAMInfo().setProperty(NVRAMInfo.LAN_PROTO, "dhcp")
-                  .setProperty(NVRAMInfo.DHCP_DNSMASQ, "1")
-                  .setProperty(NVRAMInfo.DHCP_START, "30")
-                  .setProperty(NVRAMInfo.DHCP_NUM, "50")
-                  .setProperty(NVRAMInfo.DHCP_LEASE, "1440")
-                  .setProperty(NVRAMInfo.LAN_IPADDR, "172.17.17.1")
-                  .setProperty(NVRAMInfo.LAN_NETMASK, "255.255.255.0");
+              nvramInfoTmp = new NVRAMInfo().setProperty(NVRAMInfo.Companion.getLAN_PROTO(), "dhcp")
+                  .setProperty(NVRAMInfo.Companion.getDHCP_DNSMASQ(), "1")
+                  .setProperty(NVRAMInfo.Companion.getDHCP_START(), "30")
+                  .setProperty(NVRAMInfo.Companion.getDHCP_NUM(), "50")
+                  .setProperty(NVRAMInfo.Companion.getDHCP_LEASE(), "1440")
+                  .setProperty(NVRAMInfo.Companion.getLAN_IPADDR(), "172.17.17.1")
+                  .setProperty(NVRAMInfo.Companion.getLAN_NETMASK(), "255.255.255.0");
             } else {
               nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                  mGlobalPreferences, NVRAMInfo.LAN_PROTO, NVRAMInfo.DHCP_DNSMASQ,
-                  NVRAMInfo.DHCP_START, NVRAMInfo.DHCP_NUM, NVRAMInfo.DHCP_LEASE,
-                  NVRAMInfo.LAN_IPADDR, NVRAMInfo.LAN_NETMASK);
+                  mGlobalPreferences, NVRAMInfo.Companion.getLAN_PROTO(),
+                  NVRAMInfo.Companion.getDHCP_DNSMASQ(), NVRAMInfo.Companion.getDHCP_START(),
+                  NVRAMInfo.Companion.getDHCP_NUM(), NVRAMInfo.Companion.getDHCP_LEASE(),
+                  NVRAMInfo.Companion.getLAN_IPADDR(), NVRAMInfo.Companion.getLAN_NETMASK());
             }
             updateProgressBarViewSeparator(45);
           } finally {
@@ -121,8 +122,8 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
             }
 
             //Manually compute Start and End IP Addresses
-            final String lanAddr = nvramInfo.getProperty(NVRAMInfo.LAN_IPADDR);
-            final String dhcpStart = nvramInfo.getProperty(NVRAMInfo.DHCP_START);
+            final String lanAddr = nvramInfo.getProperty(NVRAMInfo.Companion.getLAN_IPADDR());
+            final String dhcpStart = nvramInfo.getProperty(NVRAMInfo.Companion.getDHCP_START());
 
             String dhcpStartIp = null;
             if (dhcpStart != null && lanAddr != null) {
@@ -135,8 +136,8 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
               }
             }
 
-            final String dhcpHostCountStr = nvramInfo.getProperty(NVRAMInfo.DHCP_NUM);
-            final String netmask = nvramInfo.getProperty(NVRAMInfo.LAN_NETMASK);
+            final String dhcpHostCountStr = nvramInfo.getProperty(NVRAMInfo.Companion.getDHCP_NUM());
+            final String netmask = nvramInfo.getProperty(NVRAMInfo.Companion.getLAN_NETMASK());
             if (netmask != null) {
               if (dhcpStartIp != null) {
                 final SubnetUtils subnetUtils = new SubnetUtils(dhcpStartIp, netmask);
@@ -255,7 +256,7 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
         //Server Status
         final TextView dhcpServerView =
             (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_server);
-        final String lanProto = data.getProperty(NVRAMInfo.LAN_PROTO);
+        final String lanProto = data.getProperty(NVRAMInfo.Companion.getLAN_PROTO());
         final String lanProtoTxt;
         if (lanProto == null) {
           lanProtoTxt = "-";
@@ -269,7 +270,7 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
         //Daemon
         final TextView dhcpDaemonView =
             (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_daemon);
-        final String dhcpDnsmasq = data.getProperty(NVRAMInfo.DHCP_DNSMASQ);
+        final String dhcpDnsmasq = data.getProperty(NVRAMInfo.Companion.getDHCP_DNSMASQ());
         final String dhcpDnsmasqTxt;
         if ("1".equalsIgnoreCase(dhcpDnsmasq)) {
           dhcpDnsmasqTxt = "DNSMasq";
@@ -288,7 +289,7 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
 
         final TextView clientLeaseView =
             (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_client_lease_time);
-        final String dhcpClientLeaseTime = data.getProperty(NVRAMInfo.DHCP_LEASE);
+        final String dhcpClientLeaseTime = data.getProperty(NVRAMInfo.Companion.getDHCP_LEASE());
         clientLeaseView.setText(
             Strings.isNullOrEmpty(dhcpClientLeaseTime) ? "-" : (dhcpClientLeaseTime + " min"));
 

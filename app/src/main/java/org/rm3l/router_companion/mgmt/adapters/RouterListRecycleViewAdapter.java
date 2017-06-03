@@ -159,7 +159,7 @@ public class RouterListRecycleViewAdapter
                   input.getRouterConnectionProtocol();
               final String inputModel =
                   activity.getSharedPreferences(input.getUuid(), Context.MODE_PRIVATE)
-                      .getString(NVRAMInfo.MODEL, "");
+                      .getString(NVRAMInfo.Companion.getMODEL(), "");
               //noinspection ConstantConditions
               return containsIgnoreCase(input.getName(), constraint) || containsIgnoreCase(
                   input.getRemoteIpAddress(), constraint) || containsIgnoreCase(inputModel,

@@ -192,7 +192,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
   private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 999;
   private static final int MAC_OUI_VENDOR_LOOKUP_CACHE_SIZE = 20;
   private static final MACOUILookupService mMACOUILookupService =
-      NetworkUtils.createApiService(null, MACOUIVendor.TOOLS_RM3L_PREFIX,
+      NetworkUtils.createApiService(null, MACOUIVendor.Companion.getTOOLS_RM3L_PREFIX(),
           MACOUILookupService.class);
   public static final LoadingCache<String, MACOUIVendor> mMacOuiVendorLookupCache =
       CacheBuilder.newBuilder()

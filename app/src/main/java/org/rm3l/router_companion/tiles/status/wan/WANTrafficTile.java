@@ -112,11 +112,11 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
     //Start by getting information about the WAN iface name
     final NVRAMInfo nvRamInfoFromRouter;
     if (isDemoRouter(mRouter)) {
-      nvRamInfoFromRouter = new NVRAMInfo().setProperty(NVRAMInfo.WAN_IFACE, "wan0");
+      nvRamInfoFromRouter = new NVRAMInfo().setProperty(NVRAMInfo.Companion.getWAN_IFACE(), "wan0");
     } else {
       nvRamInfoFromRouter =
           SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences,
-              NVRAMInfo.WAN_IFACE);
+              NVRAMInfo.Companion.getWAN_IFACE());
     }
 
     updateProgressBarViewSeparator(45);
@@ -125,7 +125,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
       throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
     }
 
-    final String wanIface = nvRamInfoFromRouter.getProperty(NVRAMInfo.WAN_IFACE);
+    final String wanIface = nvRamInfoFromRouter.getProperty(NVRAMInfo.Companion.getWAN_IFACE());
 
     if (Strings.isNullOrEmpty(wanIface)) {
       throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
@@ -248,7 +248,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
           errorPlaceHolderView.setVisibility(View.GONE);
         }
 
-        final String wanIface = data.getProperty(NVRAMInfo.WAN_IFACE);
+        final String wanIface = data.getProperty(NVRAMInfo.Companion.getWAN_IFACE());
 
         //Iface Name
         final TextView wanIfaceView =

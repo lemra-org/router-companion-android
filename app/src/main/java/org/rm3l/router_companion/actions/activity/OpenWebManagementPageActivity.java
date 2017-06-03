@@ -52,14 +52,6 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHAR
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
 import static org.rm3l.router_companion.main.DDWRTMainActivity.SAVE_ROUTER_SELECTED;
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.HTTPS_ENABLE;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.HTTP_LANPORT;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.HTTP_PASSWD;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.HTTP_USERNAME;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.HTTP_WANPORT;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.LAN_IPADDR;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.REMOTE_MGT_HTTPS;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.WAN_IPADDR;
 import static org.rm3l.router_companion.web.WebUtils.DO_NOT_VERIFY;
 import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
 
@@ -435,8 +427,10 @@ public class OpenWebManagementPageActivity extends WebActivity {
         final NVRAMInfo nvRamInfoFromRouter =
             SSHUtils.getNVRamInfoFromRouter(OpenWebManagementPageActivity.this, mRouter,
                 getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
-                LAN_IPADDR, WAN_IPADDR, HTTP_LANPORT, HTTP_WANPORT, HTTP_USERNAME, HTTP_PASSWD,
-                HTTPS_ENABLE, REMOTE_MGT_HTTPS);
+                NVRAMInfo.Companion.getLAN_IPADDR(), NVRAMInfo.Companion.getWAN_IPADDR(), NVRAMInfo.Companion.getHTTP_LANPORT(),
+                NVRAMInfo.Companion.getHTTP_WANPORT(), NVRAMInfo.Companion.getHTTP_USERNAME(),
+                NVRAMInfo.Companion.getHTTP_PASSWD(), NVRAMInfo.Companion.getHTTPS_ENABLE(),
+                NVRAMInfo.Companion.getREMOTE_MGT_HTTPS());
 
         if (nvRamInfoFromRouter == null || nvRamInfoFromRouter.isEmpty()) {
           throw new DDWRTCompanionException("Unable to retrieve info about HTTPd service");
@@ -444,16 +438,16 @@ public class OpenWebManagementPageActivity extends WebActivity {
 
         String lanUrl = "http";
         String wanUrl = "http";
-        final String lanIpAddr = nvRamInfoFromRouter.getProperty(LAN_IPADDR, EMPTY_STRING);
-        final String lanPort = nvRamInfoFromRouter.getProperty(HTTP_LANPORT, EMPTY_STRING);
+        final String lanIpAddr = nvRamInfoFromRouter.getProperty(NVRAMInfo.Companion.getLAN_IPADDR(), EMPTY_STRING);
+        final String lanPort = nvRamInfoFromRouter.getProperty(NVRAMInfo.Companion.getHTTP_LANPORT(), EMPTY_STRING);
 
-        final String wanIpAddr = nvRamInfoFromRouter.getProperty(WAN_IPADDR, EMPTY_STRING);
-        final String wanPort = nvRamInfoFromRouter.getProperty(HTTP_WANPORT, EMPTY_STRING);
+        final String wanIpAddr = nvRamInfoFromRouter.getProperty(NVRAMInfo.Companion.getWAN_IPADDR(), EMPTY_STRING);
+        final String wanPort = nvRamInfoFromRouter.getProperty(NVRAMInfo.Companion.getHTTP_WANPORT(), EMPTY_STRING);
 
-        if ("1".equals(nvRamInfoFromRouter.getProperty(HTTPS_ENABLE))) {
+        if ("1".equals(nvRamInfoFromRouter.getProperty(NVRAMInfo.Companion.getHTTPS_ENABLE()))) {
           lanUrl += "s";
         }
-        if ("1".equals(nvRamInfoFromRouter.getProperty(REMOTE_MGT_HTTPS))) {
+        if ("1".equals(nvRamInfoFromRouter.getProperty(NVRAMInfo.Companion.getREMOTE_MGT_HTTPS()))) {
           wanUrl += "s";
         }
         lanUrl += ("://" + lanIpAddr + (TextUtils.isEmpty(lanPort) ? "" : (":" + lanPort)));
@@ -467,7 +461,7 @@ public class OpenWebManagementPageActivity extends WebActivity {
           //Try with router IP / DNS
           String urlFromRouterRemoteIpOrDns = "http";
           final String remoteIpAddress = mRouter.getRemoteIpAddress();
-          if ("1".equals(nvRamInfoFromRouter.getProperty(HTTPS_ENABLE))) {
+          if ("1".equals(nvRamInfoFromRouter.getProperty(NVRAMInfo.Companion.getHTTPS_ENABLE()))) {
             urlFromRouterRemoteIpOrDns += "s";
           }
           urlFromRouterRemoteIpOrDns +=
@@ -477,7 +471,7 @@ public class OpenWebManagementPageActivity extends WebActivity {
           } else {
             //WAN
             urlFromRouterRemoteIpOrDns = "http";
-            if ("1".equals(nvRamInfoFromRouter.getProperty(REMOTE_MGT_HTTPS))) {
+            if ("1".equals(nvRamInfoFromRouter.getProperty(NVRAMInfo.Companion.getREMOTE_MGT_HTTPS()))) {
               urlFromRouterRemoteIpOrDns += "s";
             }
             urlFromRouterRemoteIpOrDns +=

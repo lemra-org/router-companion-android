@@ -59,33 +59,6 @@ import static android.widget.TextView.BufferType.EDITABLE;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_ADV;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_AUTH;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_BRIDGE;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_CA;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_CERTTYPE;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_CIPHER;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_CLIENT;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_CONFIG;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_ENABLE;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_FRAGMENT;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_IP;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_KEY;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_LZO;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_MASK;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_MSSFIX;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_MTU;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_NAT;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_PKCS_12;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_PROTO;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_REMOTEIP;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_REMOTEPORT;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_ROUTE;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_SEC;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_STATIC;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_TLSAUTH;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_TLSCIP;
-import static org.rm3l.router_companion.resources.conn.NVRAMInfo.OPENVPNCL_TUNTAP;
 
 public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
 
@@ -257,10 +230,10 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
   private void fillForm() {
     //Fill form with data loaded
     ((CheckBox) findViewById(R.id.openvpn_client_settings_status_flag)).setChecked(
-        "1".equals(mNvramInfo.getProperty(OPENVPNCL_ENABLE)));
+        "1".equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_ENABLE())));
 
     ((CheckBox) findViewById(R.id.openvpn_client_settings_advanced_options_flag)).setChecked(
-        "1".equals(mNvramInfo.getProperty(OPENVPNCL_ADV)));
+        "1".equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_ADV())));
 
     final AutoCompleteTextView serverIpOrNameAutoComplete =
         (AutoCompleteTextView) findViewById(R.id.openvpn_client_settings_server_ip_name);
@@ -270,7 +243,7 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
         new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
             editOpenVPNClientSettingsTargetServers.toArray(
                 new String[editOpenVPNClientSettingsTargetServers.size()])));
-    serverIpOrNameAutoComplete.setText(mNvramInfo.getProperty(OPENVPNCL_REMOTEIP), EDITABLE);
+    serverIpOrNameAutoComplete.setText(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_REMOTEIP()), EDITABLE);
 
     final AutoCompleteTextView serverPortAutoComplete =
         (AutoCompleteTextView) findViewById(R.id.openvpn_client_settings_port);
@@ -280,47 +253,47 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
     serverPortAutoComplete.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
         editOpenVPNClientSettingsServerPorts.toArray(
             new String[editOpenVPNClientSettingsServerPorts.size()])));
-    serverPortAutoComplete.setText(mNvramInfo.getProperty(OPENVPNCL_REMOTEPORT), EDITABLE);
+    serverPortAutoComplete.setText(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_REMOTEPORT()), EDITABLE);
 
-    final String tunnelDevice = mNvramInfo.getProperty(OPENVPNCL_TUNTAP);
+    final String tunnelDevice = mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_TUNTAP());
     Integer position =
         tunnelDevice != null ? tunnelDeviceSpinnerValues.get(tunnelDevice.toLowerCase()) : null;
     ((Spinner) findViewById(R.id.openvpn_client_settings_tunnel_device)).setSelection(
         position != null ? position : 0);
 
-    final String tunnelProto = mNvramInfo.getProperty(OPENVPNCL_PROTO);
+    final String tunnelProto = mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_PROTO());
     position = tunnelProto != null ? tunnelProtoSpinnerValues.get(tunnelProto.toLowerCase()) : null;
     ((Spinner) findViewById(R.id.openvpn_client_settings_tunnel_protocol)).setSelection(
         position != null ? position : 0);
 
-    final String encryptionCipher = mNvramInfo.getProperty(OPENVPNCL_CIPHER);
+    final String encryptionCipher = mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_CIPHER());
     position =
         encryptionCipher != null ? encryptionCipherSpinnerValues.get(encryptionCipher.toLowerCase())
             : null;
     ((Spinner) findViewById(R.id.openvpn_client_settings_encryption_cipher)).setSelection(
         position != null ? position : 5);
 
-    final String hashAlgorithm = mNvramInfo.getProperty(OPENVPNCL_AUTH);
+    final String hashAlgorithm = mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_AUTH());
     position =
         hashAlgorithm != null ? hashAlgoSpinnerValues.get(hashAlgorithm.toLowerCase()) : null;
     ((Spinner) findViewById(R.id.openvpn_client_settings_hash_algorithm)).setSelection(
         position != null ? position : 5);
 
     ((EditText) findViewById(R.id.openvpn_client_settings_ca_cert)).setText(
-        mNvramInfo.getProperty(OPENVPNCL_CA), EDITABLE);
+        mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_CA()), EDITABLE);
 
     ((EditText) findViewById(R.id.openvpn_client_settings_public_client_cert)).setText(
-        mNvramInfo.getProperty(OPENVPNCL_CLIENT), EDITABLE);
+        mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_CLIENT()), EDITABLE);
 
     ((EditText) findViewById(R.id.openvpn_client_settings_private_client_key)).setText(
-        mNvramInfo.getProperty(OPENVPNCL_KEY), EDITABLE);
+        mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_KEY()), EDITABLE);
 
-    final String tlsCipher = mNvramInfo.getProperty(OPENVPNCL_TLSCIP);
+    final String tlsCipher = mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_TLSCIP());
     position = tlsCipher != null ? tlsCipherSpinnerValues.get(tlsCipher) : null;
     ((Spinner) findViewById(R.id.openvpn_client_settings_tls_cipher)).setSelection(
         position != null ? position : 7);
 
-    final String lzoCompression = mNvramInfo.getProperty(OPENVPNCL_LZO);
+    final String lzoCompression = mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_LZO());
     position =
         lzoCompression != null ? lzoCompressionSpinnerValues.get(lzoCompression.toLowerCase())
             : null;
@@ -328,15 +301,15 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
         position != null ? position : 3);
 
     ((CheckBox) findViewById(R.id.openvpn_client_settings_advanced_options_nat)).setChecked(
-        "1".equals(mNvramInfo.getProperty(OPENVPNCL_NAT)));
+        "1".equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_NAT())));
 
     ((CheckBox) findViewById(
         R.id.openvpn_client_settings_advanced_options_nat_firewall)).setChecked(
-        "1".equals(mNvramInfo.getProperty(OPENVPNCL_SEC)));
+        "1".equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_SEC())));
 
     ((CheckBox) findViewById(
         R.id.openvpn_client_settings_advanced_options_nat_bridge_tap_to_br0)).setChecked(
-        "1".equals(mNvramInfo.getProperty(OPENVPNCL_BRIDGE)));
+        "1".equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_BRIDGE())));
 
     final AutoCompleteTextView localIps =
         (AutoCompleteTextView) findViewById(R.id.openvpn_client_settings_ip_address);
@@ -346,7 +319,7 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
     localIps.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
         editOpenVPNClientSettingsLocalIPs.toArray(
             new String[editOpenVPNClientSettingsLocalIPs.size()])));
-    localIps.setText(mNvramInfo.getProperty(OPENVPNCL_IP), EDITABLE);
+    localIps.setText(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_IP()), EDITABLE);
 
     final AutoCompleteTextView localSubnetMask =
         (AutoCompleteTextView) findViewById(R.id.openvpn_client_settings_subnet_mask);
@@ -355,7 +328,7 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
     localSubnetMask.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
         editOpenVPNClientSettingsLocalSubnets.toArray(
             new String[editOpenVPNClientSettingsLocalSubnets.size()])));
-    localSubnetMask.setText(mNvramInfo.getProperty(OPENVPNCL_MASK), EDITABLE);
+    localSubnetMask.setText(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_MASK()), EDITABLE);
 
     final AutoCompleteTextView mtuSettingAutoCompleteView =
         (AutoCompleteTextView) findViewById(R.id.openvpn_client_settings_tunnel_mtu_setting);
@@ -366,7 +339,7 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
         new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
             editOpenVPNClientSettingsMTUSettings.toArray(
                 new String[editOpenVPNClientSettingsMTUSettings.size()])));
-    mtuSettingAutoCompleteView.setText(mNvramInfo.getProperty(OPENVPNCL_MTU, "1400"), EDITABLE);
+    mtuSettingAutoCompleteView.setText(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_MTU(), "1400"), EDITABLE);
 
     final AutoCompleteTextView udpFragmentAutoCompleteView =
         (AutoCompleteTextView) findViewById(R.id.openvpn_client_settings_tunnel_udp_fragment);
@@ -376,31 +349,31 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
         new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
             editOpenVPNClientSettingsUDPFragment.toArray(
                 new String[editOpenVPNClientSettingsUDPFragment.size()])));
-    udpFragmentAutoCompleteView.setText(mNvramInfo.getProperty(OPENVPNCL_FRAGMENT), EDITABLE);
+    udpFragmentAutoCompleteView.setText(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_FRAGMENT()), EDITABLE);
 
     ((CheckBox) findViewById(
         R.id.openvpn_client_settings_advanced_options_tunnel_udp_mss_fix)).setChecked(
-        "1".equals(mNvramInfo.getProperty(OPENVPNCL_MSSFIX)));
+        "1".equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_MSSFIX())));
 
     ((CheckBox) findViewById(R.id.openvpn_client_settings_advanced_options_nscerttype)).setChecked(
-        "1".equals(mNvramInfo.getProperty(OPENVPNCL_CERTTYPE)));
+        "1".equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_CERTTYPE())));
 
     ((EditText) findViewById(
         R.id.openvpn_client_settings_advanced_options_additional_config)).setText(
-        mNvramInfo.getProperty(OPENVPNCL_CONFIG), EDITABLE);
+        mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_CONFIG()), EDITABLE);
 
     ((EditText) findViewById(R.id.openvpn_client_settings_advanced_options_tls_auth_key)).setText(
-        mNvramInfo.getProperty(OPENVPNCL_TLSAUTH), EDITABLE);
+        mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_TLSAUTH()), EDITABLE);
 
     ((EditText) findViewById(
         R.id.openvpn_client_settings_advanced_options_policy_based_routing)).setText(
-        mNvramInfo.getProperty(OPENVPNCL_ROUTE), EDITABLE);
+        mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_ROUTE()), EDITABLE);
 
     ((EditText) findViewById(R.id.openvpn_client_settings_advanced_options_pkcs12_key)).setText(
-        mNvramInfo.getProperty(OPENVPNCL_PKCS_12), EDITABLE);
+        mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_PKCS_12()), EDITABLE);
 
     ((EditText) findViewById(R.id.openvpn_client_settings_advanced_options_static_key)).setText(
-        mNvramInfo.getProperty(OPENVPNCL_STATIC), EDITABLE);
+        mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_STATIC()), EDITABLE);
   }
 
   @Override public void finish() {
@@ -424,14 +397,14 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
 
     final String isOpenVPNClientOn =
         ((CheckBox) findViewById(R.id.openvpn_client_settings_status_flag)).isChecked() ? "1" : "0";
-    if (!isOpenVPNClientOn.equals(mNvramInfo.getProperty(OPENVPNCL_ENABLE))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_ENABLE, isOpenVPNClientOn);
+    if (!isOpenVPNClientOn.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_ENABLE()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_ENABLE(), isOpenVPNClientOn);
     }
 
     final String serverIpName =
         ((EditText) findViewById(R.id.openvpn_client_settings_server_ip_name)).getText().toString();
-    if (!serverIpName.equals(mNvramInfo.getProperty(OPENVPNCL_REMOTEIP))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_REMOTEIP, serverIpName);
+    if (!serverIpName.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_REMOTEIP()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_REMOTEIP(), serverIpName);
       if (!isNullOrEmpty(serverIpName)) {
         final Set<String> mSharedPreferencesStringSet = new HashSet<>(
             sharedPreferences.getStringSet(
@@ -448,8 +421,8 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
 
     final String serverPort =
         ((EditText) findViewById(R.id.openvpn_client_settings_port)).getText().toString();
-    if (!serverPort.equals(mNvramInfo.getProperty(OPENVPNCL_REMOTEPORT))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_REMOTEPORT, serverPort);
+    if (!serverPort.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_REMOTEPORT()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_REMOTEPORT(), serverPort);
       if (!isNullOrEmpty(serverPort)) {
         final Set<String> mSharedPreferencesStringSet = new HashSet<>(
             sharedPreferences.getStringSet(
@@ -468,101 +441,101 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
         .get(((Spinner) findViewById(
             R.id.openvpn_client_settings_tunnel_device)).getSelectedItemPosition());
     if (tunnelDeviceSelectedItem != null && !tunnelDeviceSelectedItem.equals(
-        mNvramInfo.getProperty(OPENVPNCL_TUNTAP))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_TUNTAP, tunnelDeviceSelectedItem);
+        mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_TUNTAP()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_TUNTAP(), tunnelDeviceSelectedItem);
     }
 
     final String tunnelProtocolSelectedItem = tunnelProtoSpinnerValues.inverse()
         .get(((Spinner) findViewById(
             R.id.openvpn_client_settings_tunnel_protocol)).getSelectedItemPosition());
     if (tunnelProtocolSelectedItem != null && !tunnelProtocolSelectedItem.equals(
-        mNvramInfo.getProperty(OPENVPNCL_PROTO))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_PROTO, tunnelProtocolSelectedItem);
+        mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_PROTO()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_PROTO(), tunnelProtocolSelectedItem);
     }
 
     final String encryptionCipherSelectedItem = encryptionCipherSpinnerValues.inverse()
         .get(((Spinner) findViewById(
             R.id.openvpn_client_settings_encryption_cipher)).getSelectedItemPosition());
     if (encryptionCipherSelectedItem != null && !encryptionCipherSelectedItem.equals(
-        mNvramInfo.getProperty(OPENVPNCL_CIPHER))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_CIPHER, encryptionCipherSelectedItem);
+        mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_CIPHER()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_CIPHER(), encryptionCipherSelectedItem);
     }
 
     final String hashAlgorithmSelectedItem = hashAlgoSpinnerValues.inverse()
         .get(((Spinner) findViewById(
             R.id.openvpn_client_settings_hash_algorithm)).getSelectedItemPosition());
     if (hashAlgorithmSelectedItem != null && !hashAlgorithmSelectedItem.equals(
-        mNvramInfo.getProperty(OPENVPNCL_AUTH))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_AUTH, hashAlgorithmSelectedItem);
+        mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_AUTH()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_AUTH(), hashAlgorithmSelectedItem);
     }
 
     final String caCert =
         ((EditText) findViewById(R.id.openvpn_client_settings_ca_cert)).getText().toString();
-    if (!caCert.equals(mNvramInfo.getProperty(OPENVPNCL_CA))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_CA, caCert);
+    if (!caCert.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_CA()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_CA(), caCert);
     }
 
     final String publicClientCert =
         ((EditText) findViewById(R.id.openvpn_client_settings_public_client_cert)).getText()
             .toString();
-    if (!publicClientCert.equals(mNvramInfo.getProperty(OPENVPNCL_CLIENT))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_CLIENT, publicClientCert);
+    if (!publicClientCert.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_CLIENT()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_CLIENT(), publicClientCert);
     }
 
     final String privateClientKey = \"fake-key\";
         ((EditText) findViewById(R.id.openvpn_client_settings_private_client_key)).getText()
             .toString();
-    if (!privateClientKey.equals(mNvramInfo.getProperty(OPENVPNCL_KEY))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_KEY, privateClientKey);
+    if (!privateClientKey.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_KEY()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_KEY(), privateClientKey);
     }
 
     final String isAdvancedOptionsOn =
         ((CheckBox) findViewById(R.id.openvpn_client_settings_advanced_options_flag)).isChecked()
             ? "1" : "0";
-    if (!isAdvancedOptionsOn.equals(mNvramInfo.getProperty(OPENVPNCL_ADV))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_ADV, isAdvancedOptionsOn);
+    if (!isAdvancedOptionsOn.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_ADV()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_ADV(), isAdvancedOptionsOn);
     }
 
     final String tlsCipherSelectedItem = tlsCipherSpinnerValues.inverse()
         .get(((Spinner) findViewById(
             R.id.openvpn_client_settings_tls_cipher)).getSelectedItemPosition());
     if (tlsCipherSelectedItem != null && !tlsCipherSelectedItem.equals(
-        mNvramInfo.getProperty(OPENVPNCL_TLSCIP))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_TLSCIP, tlsCipherSelectedItem);
+        mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_TLSCIP()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_TLSCIP(), tlsCipherSelectedItem);
     }
 
     final String lzoCompressionSelectedItem = lzoCompressionSpinnerValues.inverse()
         .get(((Spinner) findViewById(
             R.id.openvpn_client_settings_lzo_compression)).getSelectedItemPosition());
     if (lzoCompressionSelectedItem != null && !lzoCompressionSelectedItem.equals(
-        mNvramInfo.getProperty(OPENVPNCL_LZO))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_LZO, lzoCompressionSelectedItem);
+        mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_LZO()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_LZO(), lzoCompressionSelectedItem);
     }
 
     final String isNatOn =
         ((CheckBox) findViewById(R.id.openvpn_client_settings_advanced_options_nat)).isChecked()
             ? "1" : "0";
-    if (!isNatOn.equals(mNvramInfo.getProperty(OPENVPNCL_NAT))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_NAT, isNatOn);
+    if (!isNatOn.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_NAT()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_NAT(), isNatOn);
     }
 
     final String isFWSecOn = ((CheckBox) findViewById(
         R.id.openvpn_client_settings_advanced_options_nat_firewall)).isChecked() ? "1" : "0";
-    if (!isFWSecOn.equals(mNvramInfo.getProperty(OPENVPNCL_SEC))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_SEC, isFWSecOn);
+    if (!isFWSecOn.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_SEC()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_SEC(), isFWSecOn);
     }
 
     final String isBridgeOn = ((CheckBox) findViewById(
         R.id.openvpn_client_settings_advanced_options_nat_bridge_tap_to_br0)).isChecked() ? "1"
         : "0";
-    if (!isBridgeOn.equals(mNvramInfo.getProperty(OPENVPNCL_BRIDGE))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_BRIDGE, isBridgeOn);
+    if (!isBridgeOn.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_BRIDGE()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_BRIDGE(), isBridgeOn);
     }
 
     final String ipAddr =
         ((EditText) findViewById(R.id.openvpn_client_settings_ip_address)).getText().toString();
-    if (!ipAddr.equals(mNvramInfo.getProperty(OPENVPNCL_IP))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_IP, ipAddr);
+    if (!ipAddr.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_IP()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_IP(), ipAddr);
       if (!isNullOrEmpty(ipAddr)) {
         final Set<String> mSharedPreferencesStringSet = new HashSet<>(
             sharedPreferences.getStringSet(
@@ -578,8 +551,8 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
 
     final String subnetMask =
         ((EditText) findViewById(R.id.openvpn_client_settings_subnet_mask)).getText().toString();
-    if (!subnetMask.equals(mNvramInfo.getProperty(OPENVPNCL_MASK))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_MASK, subnetMask);
+    if (!subnetMask.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_MASK()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_MASK(), subnetMask);
       if (!isNullOrEmpty(subnetMask)) {
         final Set<String> mSharedPreferencesStringSet = new HashSet<>(
             sharedPreferences.getStringSet(
@@ -597,8 +570,8 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
     final String tunnelMtu =
         ((EditText) findViewById(R.id.openvpn_client_settings_tunnel_mtu_setting)).getText()
             .toString();
-    if (!tunnelMtu.equals(mNvramInfo.getProperty(OPENVPNCL_MTU))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_MTU, tunnelMtu);
+    if (!tunnelMtu.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_MTU()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_MTU(), tunnelMtu);
       if (!isNullOrEmpty(tunnelMtu)) {
         final Set<String> mSharedPreferencesStringSet = new HashSet<>(
             sharedPreferences.getStringSet(
@@ -616,8 +589,8 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
     final String tunnelUdpFragment =
         ((EditText) findViewById(R.id.openvpn_client_settings_tunnel_udp_fragment)).getText()
             .toString();
-    if (!tunnelUdpFragment.equals(mNvramInfo.getProperty(OPENVPNCL_FRAGMENT))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_FRAGMENT, tunnelUdpFragment);
+    if (!tunnelUdpFragment.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_FRAGMENT()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_FRAGMENT(), tunnelUdpFragment);
       if (!isNullOrEmpty(tunnelUdpFragment)) {
         final Set<String> mSharedPreferencesStringSet = new HashSet<>(
             sharedPreferences.getStringSet(
@@ -638,44 +611,44 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
 
     final String isTunnelUdpMssFixOn = ((CheckBox) findViewById(
         R.id.openvpn_client_settings_advanced_options_tunnel_udp_mss_fix)).isChecked() ? "1" : "0";
-    if (!isTunnelUdpMssFixOn.equals(mNvramInfo.getProperty(OPENVPNCL_MSSFIX))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_MSSFIX, isTunnelUdpMssFixOn);
+    if (!isTunnelUdpMssFixOn.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_MSSFIX()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_MSSFIX(), isTunnelUdpMssFixOn);
     }
 
     final String isNsCerttypeOn = ((CheckBox) findViewById(
         R.id.openvpn_client_settings_advanced_options_nscerttype)).isChecked() ? "1" : "0";
-    if (!isNsCerttypeOn.equals(mNvramInfo.getProperty(OPENVPNCL_CERTTYPE))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_CERTTYPE, isNsCerttypeOn);
+    if (!isNsCerttypeOn.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_CERTTYPE()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_CERTTYPE(), isNsCerttypeOn);
     }
 
     final String additionalConfig = ((EditText) findViewById(
         R.id.openvpn_client_settings_advanced_options_additional_config)).getText().toString();
-    if (!additionalConfig.equals(mNvramInfo.getProperty(OPENVPNCL_CONFIG))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_CONFIG, additionalConfig);
+    if (!additionalConfig.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_CONFIG()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_CONFIG(), additionalConfig);
     }
 
     final String tlsAuthKey = \"fake-key\";
         R.id.openvpn_client_settings_advanced_options_tls_auth_key)).getText().toString();
-    if (!tlsAuthKey.equals(mNvramInfo.getProperty(OPENVPNCL_TLSAUTH))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_TLSAUTH, tlsAuthKey);
+    if (!tlsAuthKey.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_TLSAUTH()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_TLSAUTH(), tlsAuthKey);
     }
 
     final String policyBasedRouting = ((EditText) findViewById(
         R.id.openvpn_client_settings_advanced_options_policy_based_routing)).getText().toString();
-    if (!policyBasedRouting.equals(mNvramInfo.getProperty(OPENVPNCL_ROUTE))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_ROUTE, policyBasedRouting);
+    if (!policyBasedRouting.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_ROUTE()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_ROUTE(), policyBasedRouting);
     }
 
     final String pkcs12Key = \"fake-key\";
         R.id.openvpn_client_settings_advanced_options_pkcs12_key)).getText().toString();
-    if (!pkcs12Key.equals(mNvramInfo.getProperty(OPENVPNCL_PKCS_12))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_PKCS_12, pkcs12Key);
+    if (!pkcs12Key.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_PKCS_12()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_PKCS_12(), pkcs12Key);
     }
 
     final String staticKey = \"fake-key\";
         R.id.openvpn_client_settings_advanced_options_static_key)).getText().toString();
-    if (!staticKey.equals(mNvramInfo.getProperty(OPENVPNCL_STATIC))) {
-      nvramVarsToUpdate.setProperty(OPENVPNCL_STATIC, staticKey);
+    if (!staticKey.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_STATIC()))) {
+      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_STATIC(), staticKey);
     }
 
     Crashlytics.log(Log.DEBUG, TAG, "vars that have changed: " + nvramVarsToUpdate);

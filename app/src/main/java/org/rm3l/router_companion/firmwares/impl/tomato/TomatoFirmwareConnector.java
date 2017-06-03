@@ -89,7 +89,7 @@ public class TomatoFirmwareConnector extends AbstractRouterFirmwareConnector {
             final long nvramUsedBytesLong = Long.parseLong(nvramUsedBytesStr);
             final long nvramFreeBytesLong = Long.parseLong(nvramFreeBytesStr);
             final long nvramTotalBytesLong = nvramUsedBytesLong + nvramFreeBytesLong;
-            nvramInfo.setProperty(NVRAMInfo.NVRAM_USED_PERCENT,
+            nvramInfo.setProperty(NVRAMInfo.Companion.getNVRAM_USED_PERCENT(),
                 Long.toString(Math.min(100, 100 * nvramUsedBytesLong / nvramTotalBytesLong)));
           } catch (final NumberFormatException e) {
             e.printStackTrace();
@@ -125,7 +125,7 @@ public class TomatoFirmwareConnector extends AbstractRouterFirmwareConnector {
         }
       }
       if (totalSize > 0) {
-        nvramInfo.setProperty(NVRAMInfo.STORAGE_JFFS2_USED_PERCENT,
+        nvramInfo.setProperty(NVRAMInfo.Companion.getSTORAGE_JFFS2_USED_PERCENT(),
             Long.toString(Math.min(100, 100 * totalUsed / totalSize)));
       }
     }
@@ -156,7 +156,7 @@ public class TomatoFirmwareConnector extends AbstractRouterFirmwareConnector {
         }
       }
       if (totalSize > 0) {
-        nvramInfo.setProperty(NVRAMInfo.STORAGE_CIFS_USED_PERCENT,
+        nvramInfo.setProperty(NVRAMInfo.Companion.getSTORAGE_CIFS_USED_PERCENT(),
             Long.toString(Math.min(100, 100 * totalUsed / totalSize)));
       }
     }
@@ -247,8 +247,9 @@ public class TomatoFirmwareConnector extends AbstractRouterFirmwareConnector {
     updateProgressBarViewSeparator(dataRetrievalListener, 10);
 
     NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(context, router, globalSharedPreferences,
-        NVRAMInfo.ROUTER_NAME, NVRAMInfo.WAN_IPADDR, MODEL, NVRAMInfo.DIST_TYPE,
-        NVRAMInfo.LAN_IPADDR, NVRAMInfo.OS_VERSION);
+        NVRAMInfo.Companion.getROUTER_NAME(), NVRAMInfo.Companion.getWAN_IPADDR(), MODEL,
+        NVRAMInfo.Companion.getDIST_TYPE(), NVRAMInfo.Companion.getLAN_IPADDR(),
+        NVRAMInfo.Companion.getOS_VERSION());
 
     if (nvramInfo == null) {
       nvramInfo = new NVRAMInfo();
@@ -256,7 +257,7 @@ public class TomatoFirmwareConnector extends AbstractRouterFirmwareConnector {
 
     final String modelPropertyValue = nvramInfo.getProperty(MODEL);
     if (modelPropertyValue != null) {
-      nvramInfo.setProperty(NVRAMInfo.MODEL, modelPropertyValue);
+      nvramInfo.setProperty(NVRAMInfo.Companion.getMODEL(), modelPropertyValue);
     }
 
     updateProgressBarViewSeparator(dataRetrievalListener, 50);
@@ -277,7 +278,7 @@ public class TomatoFirmwareConnector extends AbstractRouterFirmwareConnector {
     if (otherCmds != null) {
       if (otherCmds.length >= 1) {
         //date
-        nvramInfo.setProperty(NVRAMInfo.CURRENT_DATE, otherCmds[0]);
+        nvramInfo.setProperty(NVRAMInfo.Companion.getCURRENT_DATE(), otherCmds[0]);
       }
       if (otherCmds.length >= 3) {
         String uptime = otherCmds[1];
@@ -288,20 +289,20 @@ public class TomatoFirmwareConnector extends AbstractRouterFirmwareConnector {
             uptime += (" (up " + elapsedFromUptime + ")");
           }
         }
-        nvramInfo.setProperty(NVRAMInfo.UPTIME, uptime);
+        nvramInfo.setProperty(NVRAMInfo.Companion.getUPTIME(), uptime);
       }
 
       if (otherCmds.length >= 4) {
         //Kernel
-        nvramInfo.setProperty(NVRAMInfo.KERNEL,
+        nvramInfo.setProperty(NVRAMInfo.Companion.getKERNEL(),
             StringUtils.replace(StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
-                nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME), ""));
+                nvramInfo.getProperty(NVRAMInfo.Companion.getROUTER_NAME()), ""));
       }
 
       if (otherCmds.length >= 5) {
         //Firmware
         final String fwString = otherCmds[4];
-        nvramInfo.setProperty(NVRAMInfo.FIRMWARE, fwString);
+        nvramInfo.setProperty(NVRAMInfo.Companion.getFIRMWARE(), fwString);
       }
     }
 
@@ -322,7 +323,8 @@ public class TomatoFirmwareConnector extends AbstractRouterFirmwareConnector {
           if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
 
-            PublicIPChangesServiceTask.Companion.buildNotificationIfNeeded(context, router, new String[] { wanPublicIp }, nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
+            PublicIPChangesServiceTask.Companion.buildNotificationIfNeeded(context, router, new String[] { wanPublicIp }, nvramInfo.getProperty(
+                NVRAMInfo.Companion.getWAN_IPADDR()), null);
           } else {
             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
           }

@@ -127,20 +127,20 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
       try {
         nvramInfoTmp =
             SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences,
-                NVRAMInfo.LAN_IFNAME, NVRAMInfo.LAN_IFNAMES, NVRAMInfo.WAN_IFNAME,
-                NVRAMInfo.LANDEVS);
+                NVRAMInfo.Companion.getLAN_IFNAME(), NVRAMInfo.Companion.getLAN_IFNAMES(),
+                NVRAMInfo.Companion.getWAN_IFNAME(), NVRAMInfo.Companion.getLANDEVS());
       } finally {
         if (nvramInfoTmp != null) {
           nvramInfo.putAll(nvramInfoTmp);
         }
 
-        String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS, null);
+        String landevs = nvramInfo.getProperty(NVRAMInfo.Companion.getLANDEVS(), null);
         if (Strings.isNullOrEmpty(landevs)) {
           //Atheros
-          landevs = nvramInfo.getProperty(NVRAMInfo.LAN_IFNAMES, null);
+          landevs = nvramInfo.getProperty(NVRAMInfo.Companion.getLAN_IFNAMES(), null);
           if (!Strings.isNullOrEmpty(landevs)) {
             //noinspection ConstantConditions
-            nvramInfo.setProperty(NVRAMInfo.LANDEVS, landevs);
+            nvramInfo.setProperty(NVRAMInfo.Companion.getLANDEVS(), landevs);
           }
         }
         if (landevs != null) {
@@ -184,7 +184,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
             }
           }
 
-          nvramInfo.setProperty(NVRAMInfo.LANDEVS, landevs);
+          nvramInfo.setProperty(NVRAMInfo.Companion.getLANDEVS(), landevs);
         }
       }
 
@@ -235,17 +235,17 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
         //LAN
         final TextView lanIfaceView =
             (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_lan);
-        lanIfaceView.setText(data.getProperty(NVRAMInfo.LAN_IFNAME, "-"));
+        lanIfaceView.setText(data.getProperty(NVRAMInfo.Companion.getLAN_IFNAME(), "-"));
 
         //WAN
         final TextView wanIfaceView =
             (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wan);
-        wanIfaceView.setText(data.getProperty(NVRAMInfo.WAN_IFNAME, "-"));
+        wanIfaceView.setText(data.getProperty(NVRAMInfo.Companion.getWAN_IFNAME(), "-"));
 
         //Wireless
         final TextView wlIfaceView =
             (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless);
-        wlIfaceView.setText(data.getProperty(NVRAMInfo.LANDEVS, "-"));
+        wlIfaceView.setText(data.getProperty(NVRAMInfo.Companion.getLANDEVS(), "-"));
 
         //Update last sync
         final RelativeTimeTextView lastSyncView =

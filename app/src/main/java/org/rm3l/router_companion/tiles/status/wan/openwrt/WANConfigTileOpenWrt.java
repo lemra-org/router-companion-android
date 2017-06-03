@@ -62,9 +62,11 @@ public class WANConfigTileOpenWrt extends WANConfigTile {
           NVRAMInfo nvramInfoTmp = null;
           try {
             nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                mGlobalPreferences, NVRAMInfo.WAN_PROTO, NVRAMInfo.WAN_3_G_SIGNAL,
-                NVRAMInfo.WAN_HWADDR, NVRAMInfo.WAN_LEASE, NVRAMInfo.WAN_IPADDR,
-                NVRAMInfo.WAN_NETMASK, NVRAMInfo.WAN_GATEWAY, NVRAMInfo.WAN_GET_DNS);
+                mGlobalPreferences, NVRAMInfo.Companion.getWAN_PROTO(),
+                NVRAMInfo.Companion.getWAN_3_G_SIGNAL(), NVRAMInfo.Companion.getWAN_HWADDR(),
+                NVRAMInfo.Companion.getWAN_LEASE(), NVRAMInfo.Companion.getWAN_IPADDR(),
+                NVRAMInfo.Companion.getWAN_NETMASK(), NVRAMInfo.Companion.getWAN_GATEWAY(),
+                NVRAMInfo.Companion.getWAN_GET_DNS());
           } finally {
             if (nvramInfoTmp != null) {
               nvramInfo.putAll(nvramInfoTmp);
@@ -76,15 +78,16 @@ public class WANConfigTileOpenWrt extends WANConfigTile {
 
             String wanUptimeStr = null;
             if (uciNetworkInfo != null) {
-              nvramInfo.setProperty(NVRAMInfo.WAN_IPADDR,
-                  uciNetworkInfo.getProperty(UCIInfo.NETWORK_WAN_IPADDR, "-"));
-              nvramInfo.setProperty(NVRAMInfo.WAN_NETMASK,
-                  uciNetworkInfo.getProperty(UCIInfo.NETWORK_WAN_NETMASK, "-"));
-              nvramInfo.setProperty(NVRAMInfo.WAN_GATEWAY,
-                  uciNetworkInfo.getProperty(UCIInfo.NETWORK_WAN_GATEWAY, "-"));
-              nvramInfo.setProperty(NVRAMInfo.WAN_GET_DNS,
-                  uciNetworkInfo.getProperty(UCIInfo.NETWORK_WAN_DNS, "-"));
-              wanUptimeStr = uciNetworkInfo.getProperty(UCIInfo.NETWORK_WAN_CONNECT_TIME);
+              nvramInfo.setProperty(NVRAMInfo.Companion.getWAN_IPADDR(),
+                  uciNetworkInfo.getProperty(UCIInfo.Companion.getNETWORK_WAN_IPADDR(), "-"));
+              nvramInfo.setProperty(NVRAMInfo.Companion.getWAN_NETMASK(),
+                  uciNetworkInfo.getProperty(UCIInfo.Companion.getNETWORK_WAN_NETMASK(), "-"));
+              nvramInfo.setProperty(NVRAMInfo.Companion.getWAN_GATEWAY(),
+                  uciNetworkInfo.getProperty(UCIInfo.Companion.getNETWORK_WAN_GATEWAY(), "-"));
+              nvramInfo.setProperty(NVRAMInfo.Companion.getWAN_GET_DNS(),
+                  uciNetworkInfo.getProperty(UCIInfo.Companion.getNETWORK_WAN_DNS(), "-"));
+              wanUptimeStr = uciNetworkInfo.getProperty(
+                  UCIInfo.Companion.getNETWORK_WAN_CONNECT_TIME());
             }
 
             //Connection Uptime is stored in /tmp/.wanuptime and sys uptime from /proc/uptime
@@ -118,7 +121,7 @@ public class WANConfigTileOpenWrt extends WANConfigTile {
                       String.format("%d:%02d:%02d", (minutes / 60) % 24, minutes % 60,
                           (int) uptime % 60);
 
-                  nvramInfo.setProperty(NVRAMInfo.WAN_CONNECTION_UPTIME, wanConnectionUptimeStr);
+                  nvramInfo.setProperty(NVRAMInfo.Companion.getWAN_CONNECTION_UPTIME(), wanConnectionUptimeStr);
                 } catch (final NumberFormatException nfe) {
                   nfe.printStackTrace();
                   //No Worries - WAN Uptime will be marked as "-"

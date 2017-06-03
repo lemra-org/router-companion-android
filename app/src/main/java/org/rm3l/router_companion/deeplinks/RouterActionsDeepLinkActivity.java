@@ -542,7 +542,7 @@ import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterActio
         case DISABLE_OPENVPN_CLIENT:
         case DISABLE_OPENVPNC: {
           final NVRAMInfo nvramInfo = new NVRAMInfo();
-          nvramInfo.setProperty(NVRAMInfo.OPENVPNCL_ENABLE,
+          nvramInfo.setProperty(NVRAMInfo.Companion.getOPENVPNCL_ENABLE(),
               action.startsWith("enable") ? "1" : "0");
           routerAction =
               new SetNVRAMVariablesAction(router, RouterActionsDeepLinkActivity.this, nvramInfo,
@@ -555,7 +555,8 @@ import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterActio
         case DISABLE_OPENVPN_SERVER:
         case DISABLE_OPENVPND: {
           final NVRAMInfo nvramInfo = new NVRAMInfo();
-          nvramInfo.setProperty(NVRAMInfo.OPENVPN_ENABLE, action.startsWith("enable") ? "1" : "0");
+          nvramInfo.setProperty(
+              NVRAMInfo.Companion.getOPENVPN_ENABLE(), action.startsWith("enable") ? "1" : "0");
           routerAction =
               new SetNVRAMVariablesAction(router, RouterActionsDeepLinkActivity.this, nvramInfo,
                   true, routerActionListener, globalPrefs);
@@ -567,7 +568,7 @@ import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterActio
         case DISABLE_PPTP_CLIENT:
         case DISABLE_PPTPC: {
           final NVRAMInfo nvramInfo = new NVRAMInfo();
-          nvramInfo.setProperty(NVRAMInfo.PPTPD_CLIENT_ENABLE,
+          nvramInfo.setProperty(NVRAMInfo.Companion.getPPTPD_CLIENT_ENABLE(),
               action.startsWith("enable") ? "1" : "0");
           routerAction =
               new SetNVRAMVariablesAction(router, RouterActionsDeepLinkActivity.this, nvramInfo,
@@ -580,7 +581,8 @@ import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterActio
         case DISABLE_PPTP_SERVER:
         case DISABLE_PPTPD: {
           final NVRAMInfo nvramInfo = new NVRAMInfo();
-          nvramInfo.setProperty(NVRAMInfo.PPTPD_ENABLE, action.startsWith("enable") ? "1" : "0");
+          nvramInfo.setProperty(
+              NVRAMInfo.Companion.getPPTPD_ENABLE(), action.startsWith("enable") ? "1" : "0");
           routerAction =
               new SetNVRAMVariablesAction(router, RouterActionsDeepLinkActivity.this, nvramInfo,
                   true, routerActionListener, globalPrefs);
@@ -594,7 +596,8 @@ import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterActio
         case DISABLE_WOL_DAEMON:
         case DISABLE_WOLD: {
           final NVRAMInfo nvramInfo = new NVRAMInfo();
-          nvramInfo.setProperty(NVRAMInfo.WOL_ENABLE, action.startsWith("enable") ? "1" : "0");
+          nvramInfo.setProperty(
+              NVRAMInfo.Companion.getWOL_ENABLE(), action.startsWith("enable") ? "1" : "0");
           routerAction =
               new SetNVRAMVariablesAction(router, RouterActionsDeepLinkActivity.this, nvramInfo,
                   true, routerActionListener, globalPrefs);
@@ -604,7 +607,8 @@ import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterActio
         case ENABLE_WAN_TRAFFIC_COUNTERS:
         case DISABLE_WAN_TRAFFIC_COUNTERS: {
           final NVRAMInfo nvramInfo = new NVRAMInfo();
-          nvramInfo.setProperty(NVRAMInfo.TTRAFF_ENABLE, action.startsWith("enable") ? "1" : "0");
+          nvramInfo.setProperty(
+              NVRAMInfo.Companion.getTTRAFF_ENABLE(), action.startsWith("enable") ? "1" : "0");
           routerAction =
               new SetNVRAMVariablesAction(router, RouterActionsDeepLinkActivity.this, nvramInfo,
                   false, routerActionListener, globalPrefs);
@@ -614,7 +618,8 @@ import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterActio
         case ENABLE_SYSLOG:
         case DISABLE_SYSLOG: {
           final NVRAMInfo nvramInfo = new NVRAMInfo();
-          nvramInfo.setProperty(NVRAMInfo.SYSLOGD_ENABLE, action.startsWith("enable") ? "1" : "0");
+          nvramInfo.setProperty(
+              NVRAMInfo.Companion.getSYSLOGD_ENABLE(), action.startsWith("enable") ? "1" : "0");
           routerAction =
               new SetNVRAMVariablesAction(router, RouterActionsDeepLinkActivity.this, nvramInfo,
                   true, routerActionListener, globalPrefs);
@@ -712,20 +717,20 @@ import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterActio
                             final String s =
                                 nameAndFollowingSplitter.get(1).replaceAll("\\$\\$", "");
                             if ("0".equals(s)) {
-                              wanAccessPolicy.setDenyOrFilter(WANAccessPolicy.FILTER);
+                              wanAccessPolicy.setDenyOrFilter(WANAccessPolicy.Companion.getFILTER());
                             } else {
-                              wanAccessPolicy.setDenyOrFilter(WANAccessPolicy.DENY);
+                              wanAccessPolicy.setDenyOrFilter(WANAccessPolicy.Companion.getDENY());
                             }
                           }
                         }
                       }
                     } else {
-                      wanAccessPolicy.setStatus(WANAccessPolicy.STATUS_UNKNOWN);
+                      wanAccessPolicy.setStatus(WANAccessPolicy.Companion.getSTATUS_UNKNOWN());
                     }
 
                     final boolean enable = (action.startsWith("enable"));
                     final int enableStatus = !enable ? DISABLE
-                        : WANAccessPolicy.DENY.equals(wanAccessPolicy.getDenyOrFilter()) ? ENABLE_1
+                        : WANAccessPolicy.Companion.getDENY().equals(wanAccessPolicy.getDenyOrFilter()) ? ENABLE_1
                             : ENABLE_2;
                     ActionManager.runTasks(new ToggleWANAccessPolicyRouterAction(router,
                         RouterActionsDeepLinkActivity.this, routerActionListener, globalPrefs,
