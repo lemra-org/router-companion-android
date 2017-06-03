@@ -75,7 +75,7 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.readystatesoftware.chuck.Chuck;
-import com.sloydev.preferator.Preferator;
+//import com.sloydev.preferator.Preferator;
 import com.stephentuso.welcome.WelcomeScreenHelper;
 import com.stephentuso.welcome.ui.WelcomeActivity;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
@@ -666,7 +666,8 @@ import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_LEAKCAN
 
       case R.id.debug_open_sharedprefs:
         if (BuildConfig.DEBUG) {
-          Preferator.launch(this);
+          Toast.makeText(this, "[Chuck] Not implemented", Toast.LENGTH_SHORT).show();
+          //Preferator.launch(this);
         } else {
           Crashlytics.log(Log.WARN, LOG_TAG,
               "[DEBUG] SharedPreferences menu option should not be visible...");

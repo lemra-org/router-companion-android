@@ -589,7 +589,7 @@ dependencies {
   //    }
 
   //Allows to expose the app SharedPreferences from within the app itself
-  compile 'com.sloydev:preferator:1.0.0'
+//  compile 'com.sloydev:preferator:1.0.0'
 
   //Chuck: in-app HTTP inspector for OkHttp
   debugCompile('com.readystatesoftware.chuck:library:1.0.4') {
