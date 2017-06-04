@@ -22,6 +22,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:baselineAligned="false"
     android:orientation="horizontal"
     >
@@ -65,7 +66,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
           android:background="@android:color/transparent"
           android:contentDescription="@string/menu"
           android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
-          android:visibility="gone"
           />
 
     </RelativeLayout>
@@ -201,6 +201,28 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
           android:textIsSelectable="true"
 
           android:textStyle="italic"
+          />
+
+      <android.support.design.widget.FloatingActionButton
+          android:id="@+id/wan_access_restriction_policy_add"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentBottom="true"
+          android:layout_alignParentEnd="true"
+          android:layout_alignParentRight="true"
+          android:layout_gravity="bottom|end"
+          android:layout_margin="@dimen/fab_margin"
+          android:layout_marginBottom="20dp"
+          android:clickable="true"
+          android:contentDescription="@string/add_new_wan_access_policy"
+          android:src="@drawable/ic_plus_white_24dp"
+          android:tint="@android:color/white"
+          app:elevation="6dp"
+          app:fabSize="normal"
+          app:layout_anchor="@id/tile_admin_access_restrictions_wan_access_ListView"
+          app:layout_anchorGravity="end|bottom|right"
+          app:layout_behavior="org.rm3l.ddwrt.widgets.ScrollAwareFABBehavior"
+          app:pressedTranslationZ="12dp"
           />
 
     </RelativeLayout>

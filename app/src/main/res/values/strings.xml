@@ -594,4 +594,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
   <string name="wan_ip">WAN IP</string>
   <string name="router_cpu_cpu_speed">Speed</string>
 
+  <string name="add_new_wan_access_policy">Add new WAN Access Policy</string>
+
 </resources>

@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
@@ -104,18 +105,21 @@ import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterActio
  * Created by rm3l on 20/01/16.
  */
 public class AccessRestrictionsWANAccessTile
-    extends DDWRTTile<AccessRestrictionsWANAccessTile.WANAccessPoliciesRouterData> {
+    extends DDWRTTile<AccessRestrictionsWANAccessTile.WANAccessPoliciesRouterData>
+    implements PopupMenu.OnMenuItemClickListener {
 
   private static final String LOG_TAG = AccessRestrictionsWANAccessTile.class.getSimpleName();
 
   private static final Splitter todHoursSplitter =
       Splitter.on(":").omitEmptyStrings().trimResults();
+  private final FloatingActionButton addNewButton;
 
   private RecyclerViewEmptySupport mRecyclerView;
   private RecyclerView.Adapter mAdapter;
   private RecyclerView.LayoutManager mLayoutManager;
 
   private long mLastSync;
+  private Menu mMenu;
 
   public AccessRestrictionsWANAccessTile(@NonNull Fragment parentFragment,
       @NonNull Bundle arguments, @Nullable Router router) {
@@ -156,6 +160,35 @@ public class AccessRestrictionsWANAccessTile
     int height = size.y;
     Log.d(LOG_TAG, "<width,height> = <" + width + "," + height + ">");
     mRecyclerView.setMinimumHeight(size.y);
+
+    addNewButton = (FloatingActionButton) layout.findViewById(R.id.wan_access_restriction_policy_add);
+
+    addNewButton.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        Toast.makeText(mParentFragmentActivity, "TODO Add new WAN Access Policy",
+            Toast.LENGTH_SHORT).show();
+      }
+    });
+
+    //Create Options Menu
+    final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_admin_access_restrictions_wan_access_menu);
+
+    if (!ColorUtils.isThemeLight(mParentFragmentActivity)) {
+      //Set menu background to white
+      tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+    }
+
+    tileMenu.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
+        popup.setOnMenuItemClickListener(AccessRestrictionsWANAccessTile.this);
+        final MenuInflater inflater = popup.getMenuInflater();
+        mMenu = popup.getMenu();
+        inflater.inflate(R.menu.tile_access_restrictions_wan_access_options, mMenu);
+        popup.show();
+      }
+    });
+
   }
 
   @NonNull private static String getHourFormatted(@NonNull final String todHour) {
@@ -453,6 +486,19 @@ public class AccessRestrictionsWANAccessTile
       mRefreshing.set(false);
       doneWithLoaderInstance(this, loader);
     }
+  }
+
+  @Override public boolean onMenuItemClick(MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.tile_access_policy_add: {
+        //TODO
+        Toast.makeText(mParentFragmentActivity, "TODO OnMenuItemClick: Add WAN Access Policy", Toast.LENGTH_SHORT).show();
+      }
+        return true;
+      default:
+        break;
+    }
+    return false;
   }
 
   static class WANAccessRulesRecyclerViewAdapter
