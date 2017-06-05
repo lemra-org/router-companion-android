@@ -234,7 +234,7 @@ import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_LEAKCAN
     mPreferences = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
     mCurrentTheme = mPreferences.getLong(THEMING_PREF, RouterCompanionAppConstants.DEFAULT_THEME);
 
-    ColorUtils.setAppTheme(this, null, false);
+    ColorUtils.Companion.setAppTheme(this, null, false);
 
     //        if (ColorUtils.isThemeLight(this)) {
     //            //Light
@@ -310,7 +310,7 @@ import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_LEAKCAN
     mRecyclerView.setLayoutManager(mLayoutManager);
 
     final TextView emptyView = (TextView) findViewById(R.id.empty_view);
-    if (ColorUtils.isThemeLight(this)) {
+    if (ColorUtils.Companion.isThemeLight(this)) {
       emptyView.setTextColor(ContextCompat.getColor(this, R.color.black));
     } else {
       emptyView.setTextColor(ContextCompat.getColor(this, R.color.white));

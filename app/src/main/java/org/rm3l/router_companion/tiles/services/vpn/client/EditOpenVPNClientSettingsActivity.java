@@ -146,8 +146,8 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
       return;
     }
 
-    final boolean themeLight = ColorUtils.isThemeLight(this);
-    ColorUtils.setAppTheme(this, router.getRouterFirmware(), false);
+    final boolean themeLight = ColorUtils.Companion.isThemeLight(this);
+    ColorUtils.Companion.setAppTheme(this, router.getRouterFirmware(), false);
     //        if (themeLight) {
     //            //Light
     //            setTheme(R.style.AppThemeLight);

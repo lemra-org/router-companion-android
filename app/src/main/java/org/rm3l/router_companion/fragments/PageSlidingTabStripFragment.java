@@ -164,8 +164,8 @@ public class PageSlidingTabStripFragment extends Fragment {
       int i = 0;
       for (final AbstractBaseFragment tab : tabs) {
         selectedIndicatorColors[i++] =
-            (tab != null ? ColorUtils.getColor(tab.getClass().getSimpleName())
-                : ColorUtils.genColor(colorsToSkip));
+            (tab != null ? ColorUtils.Companion.getColor(tab.getClass().getSimpleName())
+                : ColorUtils.Companion.genColor(colorsToSkip));
       }
       mSlidingTabLayout.setSelectedIndicatorColors(selectedIndicatorColors);
     } else {

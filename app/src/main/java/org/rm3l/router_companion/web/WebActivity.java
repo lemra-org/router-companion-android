@@ -58,7 +58,7 @@ public abstract class WebActivity extends AppCompatActivity
 
     super.onCreate(savedInstanceState);
 
-    ColorUtils.setAppTheme(this, null, false);
+    ColorUtils.Companion.setAppTheme(this, null, false);
 
     //        final boolean themeLight = ColorUtils.isThemeLight(this);
     //        if (themeLight) {

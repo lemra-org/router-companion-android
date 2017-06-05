@@ -166,7 +166,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     final ImageButton tileMenu =
         (ImageButton) layout.findViewById(R.id.tile_status_wireless_iface_menu);
 
-    final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+    final boolean isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
     if (!isThemeLight) {
       //Set menu background to white

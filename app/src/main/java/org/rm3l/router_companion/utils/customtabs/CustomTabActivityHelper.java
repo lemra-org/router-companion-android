@@ -42,7 +42,7 @@ public class CustomTabActivityHelper {
     // Changes the background color for the omnibox. colorInt is an int
     // that specifies a Color.
     builder.setToolbarColor(ContextCompat.getColor(context,
-        ColorUtils.isThemeLight(context) ? R.color.lightTheme_primary : R.color.darkTheme_primary));
+        ColorUtils.Companion.isThemeLight(context) ? R.color.lightTheme_primary : R.color.darkTheme_primary));
 
     builder.setStartAnimations(context, R.anim.slide_in_right, R.anim.slide_out_left);
     builder.setExitAnimations(context, android.R.anim.slide_in_left,

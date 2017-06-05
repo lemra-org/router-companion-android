@@ -326,9 +326,9 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
     mDestinationIpToCountry = new HashMap<>();
 
     final Router router = RouterManagementActivity.getDao(this).getRouter(mRouterUuid);
-    ColorUtils.setAppTheme(this, router != null ? router.getRouterFirmware() : null, false);
+    ColorUtils.Companion.setAppTheme(this, router != null ? router.getRouterFirmware() : null, false);
 
-    final boolean themeLight = ColorUtils.isThemeLight(this);
+    final boolean themeLight = ColorUtils.Companion.isThemeLight(this);
     //        if (themeLight) {
     //            //Light
     //            setTheme(R.style.AppThemeLight);
@@ -972,7 +972,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
       final View v = LayoutInflater.from(parent.getContext())
           .inflate(R.layout.activity_ip_connections_cardview, parent, false);
       final CardView cardView = (CardView) v.findViewById(R.id.activity_ip_connections_card_view);
-      if (ColorUtils.isThemeLight(activity)) {
+      if (ColorUtils.Companion.isThemeLight(activity)) {
         //Light
         cardView.setCardBackgroundColor(
             ContextCompat.getColor(activity, R.color.cardview_light_background));
@@ -1002,7 +1002,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         return;
       }
 
-      final boolean isThemeLight = ColorUtils.isThemeLight(activity);
+      final boolean isThemeLight = ColorUtils.Companion.isThemeLight(activity);
 
       cardView.setVisibility(View.VISIBLE);
 

@@ -49,7 +49,7 @@ public class LineView extends ImageView {
 
   private void initPaint(Context context) {
     mPaint = new Paint();
-    final boolean themeLight = ColorUtils.isThemeLight(context);
+    final boolean themeLight = ColorUtils.Companion.isThemeLight(context);
     if (themeLight) {
       mPaint.setColor(Color.BLACK);
     } else {

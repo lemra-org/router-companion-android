@@ -66,7 +66,7 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
       @Nullable Router router) {
     super(parentFragment, arguments, router, R.layout.tile_public_ip_geo, null);
 
-    isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+    isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
     //Permission requests
     final int rwExternalStoragePermissionCheck =
@@ -173,7 +173,7 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
               + " / nbRunsLoader="
               + nbRunsLoader);
 
-          isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+          isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
           if (mRefreshing.getAndSet(true)) {
             return (None) new None().setException(new DDWRTTileAutoRefreshNotAllowedException());

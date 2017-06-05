@@ -138,8 +138,8 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
       return;
     }
 
-    themeLight = ColorUtils.isThemeLight(this);
-    ColorUtils.setAppTheme(this, mRouter.getRouterFirmware(), false);
+    themeLight = ColorUtils.Companion.isThemeLight(this);
+    ColorUtils.Companion.setAppTheme(this, mRouter.getRouterFirmware(), false);
 
     //        if (themeLight) {
     //            //Light
@@ -371,7 +371,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
 
       // Creating XYSeriesRenderer to customize inboundSeries
       final XYSeriesRenderer inboundRenderer = new XYSeriesRenderer();
-      inboundRenderer.setColor(ColorUtils.getColor("WAN_TRAFFIC_BAR_IN"));
+      inboundRenderer.setColor(ColorUtils.Companion.getColor("WAN_TRAFFIC_BAR_IN"));
       inboundRenderer.setFillPoints(true);
       inboundRenderer.setLineWidth(2);
       inboundRenderer.setDisplayChartValues(false);
@@ -379,7 +379,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
 
       // Creating XYSeriesRenderer to customize outboundSeries
       final XYSeriesRenderer outboundRenderer = new XYSeriesRenderer();
-      outboundRenderer.setColor(ColorUtils.getColor("WAN_TRAFFIC_BAR_OUT"));
+      outboundRenderer.setColor(ColorUtils.Companion.getColor("WAN_TRAFFIC_BAR_OUT"));
       outboundRenderer.setFillPoints(true);
       outboundRenderer.setLineWidth(2);
       outboundRenderer.setDisplayChartValues(false);
@@ -478,7 +478,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
 
       //            multiRenderer.setLabelsTextSize(30f);
       final int blackOrWhite = ContextCompat.getColor(this,
-          ColorUtils.isThemeLight(this) ? R.color.black : R.color.white);
+          ColorUtils.Companion.isThemeLight(this) ? R.color.black : R.color.white);
       multiRenderer.setAxesColor(blackOrWhite);
       multiRenderer.setXLabelsColor(blackOrWhite);
       multiRenderer.setYLabelsColor(0, blackOrWhite);

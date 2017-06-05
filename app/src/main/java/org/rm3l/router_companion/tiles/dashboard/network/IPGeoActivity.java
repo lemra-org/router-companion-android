@@ -82,9 +82,9 @@ public class IPGeoActivity extends AppCompatActivity {
     mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
 
     final Router router = RouterManagementActivity.getDao(this).getRouter(mRouterUuid);
-    ColorUtils.setAppTheme(this, router != null ? router.getRouterFirmware() : null, false);
+    ColorUtils.Companion.setAppTheme(this, router != null ? router.getRouterFirmware() : null, false);
 
-    final boolean themeLight = ColorUtils.isThemeLight(this);
+    final boolean themeLight = ColorUtils.Companion.isThemeLight(this);
     //        if (themeLight) {
     //            //Light
     //            setTheme(R.style.AppThemeLight);
@@ -205,7 +205,7 @@ public class IPGeoActivity extends AppCompatActivity {
               //                                    .isThemeLight(IPGeoActivity.this));
               map.getOverlayManager()
                   .getTilesOverlay()
-                  .setColorFilter(ColorUtils.isThemeLight(IPGeoActivity.this) ? null
+                  .setColorFilter(ColorUtils.Companion.isThemeLight(IPGeoActivity.this) ? null
                       : TilesOverlay.INVERT_COLORS);
 
               //Act according to user-defined data usage control setting

@@ -69,7 +69,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
   public IfacesTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
     super(parentFragment, arguments, router, R.layout.tile_status_bandwidth_ifaces, null);
 
-    isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+    isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
     mProgressBar =
         (ProgressBar) layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view);

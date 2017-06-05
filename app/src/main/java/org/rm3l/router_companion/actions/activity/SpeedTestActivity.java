@@ -407,9 +407,9 @@ public class SpeedTestActivity extends AppCompatActivity
       return;
     }
 
-    mIsThemeLight = ColorUtils.isThemeLight(this);
+    mIsThemeLight = ColorUtils.Companion.isThemeLight(this);
 
-    ColorUtils.setAppTheme(this, mOriginalRouter.getRouterFirmware(), false);
+    ColorUtils.Companion.setAppTheme(this, mOriginalRouter.getRouterFirmware(), false);
 
     //        if (mIsThemeLight) {
     //            //Light
@@ -1677,7 +1677,7 @@ public class SpeedTestActivity extends AppCompatActivity
         case MEASURE_PING_LATENCY:
           mCancelFab.setProgress(100 * 2 / 4);
           noticeTextView.setText("2/3 - Measuring Internet (WAN) Latency...");
-          final int latencyColor = ColorUtils.getColor(NET_LATENCY);
+          final int latencyColor = ColorUtils.Companion.getColor(NET_LATENCY);
           internetRouterLink.setBackgroundColor(latencyColor);
           highlightTitleTextView(mSpeedtestLatencyTitle);
           break;
@@ -1685,7 +1685,7 @@ public class SpeedTestActivity extends AppCompatActivity
         case TEST_WAN_DL:
           mCancelFab.setProgress(100 * 3 / 4);
           noticeTextView.setText("3/3 - Measuring Internet (WAN) Download Speed...");
-          final int netDlColor = ColorUtils.getColor(NET_DL);
+          final int netDlColor = ColorUtils.Companion.getColor(NET_DL);
           internetRouterLink.setBackgroundColor(netDlColor);
           highlightTitleTextView(mSpeedtestWanDlTitle);
           break;
@@ -1694,7 +1694,7 @@ public class SpeedTestActivity extends AppCompatActivity
           mCancelFab.setProgress(100 * 4 / 4);
           //                    noticeTextView
           //                            .setText("4/4 - Measuring Internet (WAN) Upload Speed...");
-          final int netUlColor = ColorUtils.getColor(NET_UL);
+          final int netUlColor = ColorUtils.Companion.getColor(NET_UL);
           internetRouterLink.setBackgroundColor(netUlColor);
           //                    highlightTitleTextView(mSpeedtestWanUlTitle);
           break;

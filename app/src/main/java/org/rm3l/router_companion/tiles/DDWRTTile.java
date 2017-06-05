@@ -108,7 +108,7 @@ public abstract class DDWRTTile<T>
   private boolean mLoaderStopped = true;
   @Nullable private InterstitialAd mTileClickInterstitialAd;
 
-  public DDWRTTile(@NonNull final Fragment parentFragment, @NonNull final Bundle arguments,
+  public DDWRTTile(@NonNull final Fragment parentFragment, @Nullable final Bundle arguments,
       @Nullable Router router) {
     this.mParentFragment = parentFragment;
     this.mParentFragmentActivity = this.mParentFragment.getActivity();
@@ -136,7 +136,7 @@ public abstract class DDWRTTile<T>
     this.mRouterConnector = RouterFirmwareConnectorManager.getConnector(mRouter);
   }
 
-  public DDWRTTile(@NonNull final Fragment parentFragment, @NonNull final Bundle arguments,
+  public DDWRTTile(@NonNull final Fragment parentFragment, @Nullable final Bundle arguments,
       @Nullable final Router router, @Nullable final Integer layoutId,
       @Nullable final Integer toggleRefreshButtonId) {
     this(parentFragment, arguments, router);

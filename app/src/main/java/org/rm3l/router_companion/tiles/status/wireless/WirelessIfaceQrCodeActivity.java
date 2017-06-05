@@ -123,9 +123,9 @@ import static org.rm3l.router_companion.utils.Utils.fromHtml;
       return;
     }
 
-    ColorUtils.setAppTheme(this, router.getRouterFirmware(), false);
+    ColorUtils.Companion.setAppTheme(this, router.getRouterFirmware(), false);
 
-    final boolean themeLight = ColorUtils.isThemeLight(this);
+    final boolean themeLight = ColorUtils.Companion.isThemeLight(this);
     //        if (themeLight) {
     //            //Light
     //            setTheme(R.style.AppThemeLight);

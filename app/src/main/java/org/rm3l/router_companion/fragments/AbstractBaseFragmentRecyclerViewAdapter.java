@@ -54,11 +54,11 @@ public class AbstractBaseFragmentRecyclerViewAdapter
           .show();
       return;
     }
-    final boolean isThemeLight = ColorUtils.isThemeLight(mContext);
+    final boolean isThemeLight = ColorUtils.Companion.isThemeLight(mContext);
 
     final TextView titleTextView =
         (TextView) viewGroupLayout.findViewById(ddwrtTile.getTileTitleViewId());
-    ColorUtils.setTextColor(titleTextView, mRouter != null ? mRouter.getRouterFirmware() : null);
+    ColorUtils.Companion.setTextColor(titleTextView, mRouter != null ? mRouter.getRouterFirmware() : null);
     //        if (isThemeLight) {
     //            if (titleTextView != null) {
     //                titleTextView.setTextColor(ContextCompat.getColor(mContext,

@@ -85,9 +85,9 @@ public class WifiSharingActivity extends AppCompatActivity {
     }
 
     final Router.RouterFirmware routerFirmware = router.getRouterFirmware();
-    ColorUtils.setAppTheme(this, routerFirmware, false);
+    ColorUtils.Companion.setAppTheme(this, routerFirmware, false);
 
-    final boolean themeLight = ColorUtils.isThemeLight(this);
+    final boolean themeLight = ColorUtils.Companion.isThemeLight(this);
 
     setContentView(R.layout.activity_wifi_sharing);
 
@@ -142,7 +142,7 @@ public class WifiSharingActivity extends AppCompatActivity {
       actionBar.setHomeButtonEnabled(true);
     }
 
-    final Integer primaryColor = ColorUtils.getPrimaryColor(routerFirmware);
+    final Integer primaryColor = ColorUtils.Companion.getPrimaryColor(routerFirmware);
     if (primaryColor != null) {
       tabLayout.setBackgroundColor(ContextCompat.getColor(this, primaryColor));
     } else {

@@ -141,7 +141,7 @@ public class NVRAMDataRecyclerViewAdapter
 
     final Entry<Object, Object> entryAt = entryList.get(position);
 
-    final boolean themeLight = ColorUtils.isThemeLight(this.context);
+    final boolean themeLight = ColorUtils.Companion.isThemeLight(this.context);
     if (themeLight) {
       holder.cardView.setCardBackgroundColor(
           ContextCompat.getColor(context, R.color.cardview_light_background));

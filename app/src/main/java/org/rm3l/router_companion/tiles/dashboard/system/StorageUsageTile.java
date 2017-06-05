@@ -46,7 +46,7 @@ public class StorageUsageTile extends DDWRTTile<NVRAMInfo> {
   public StorageUsageTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
       @Nullable Router router) {
     super(parentFragment, arguments, router, R.layout.tile_dashboard_storage, null);
-    isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+    isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
     red = ContextCompat.getColor(mParentFragmentActivity, R.color.win8_red);
     orange = ContextCompat.getColor(mParentFragmentActivity, R.color.win8_orange);
@@ -100,7 +100,7 @@ public class StorageUsageTile extends DDWRTTile<NVRAMInfo> {
               + " / nbRunsLoader="
               + nbRunsLoader);
 
-          isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+          isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
           if (mRefreshing.getAndSet(true)) {
             return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());

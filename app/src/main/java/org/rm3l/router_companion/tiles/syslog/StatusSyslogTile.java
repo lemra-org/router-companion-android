@@ -146,7 +146,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
     // Create Options Menu
     mTileMenu = (ImageButton) layout.findViewById(R.id.tile_status_router_syslog_menu);
-    if (!ColorUtils.isThemeLight(mParentFragmentActivity)) {
+    if (!ColorUtils.Companion.isThemeLight(mParentFragmentActivity)) {
       //Set menu background to white
       mTileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
     }

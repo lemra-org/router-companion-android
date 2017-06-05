@@ -8,9 +8,11 @@ import org.rm3l.router_companion.utils.Utils
 /**
  * Created by rm3l on 11/11/15.
  */
-class WANTrafficData(val router: String, //YYYY-MM-dd
+class WANTrafficData(
+    val router: String, //YYYY-MM-dd
     val date: String,
-    val traffIn: Number, val traffOut: Number) {
+    val traffIn: Number,
+    val traffOut: Number) {
   /**
    * the internal id (in DB)
    */

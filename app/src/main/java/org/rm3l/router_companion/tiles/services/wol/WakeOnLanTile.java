@@ -102,7 +102,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
   public WakeOnLanTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
       @Nullable Router router) {
     super(parentFragment, arguments, router, R.layout.tile_services_wol_clients, null);
-    isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+    isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
     // Create Options Menu
 
@@ -552,7 +552,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
     try {
       Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-      isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+      isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
       final ImageButton globalTileMenu =
           (ImageButton) layout.findViewById(R.id.tile_services_wol_clients_menu);

@@ -47,7 +47,7 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo> {
   public MemoryAndCpuUsageTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
       @Nullable Router router) {
     super(parentFragment, arguments, router, R.layout.tile_dashboard_mem_cpu, null);
-    isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+    isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
     this.mMemArcProgress =
         (ArcProgress) layout.findViewById(R.id.tile_dashboard_mem_cpu_mem_arcprogress);
     this.mCpuArcProgress =
@@ -92,7 +92,7 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo> {
               + " / nbRunsLoader="
               + nbRunsLoader);
 
-          isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+          isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
           if (mRefreshing.getAndSet(true)) {
             return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());

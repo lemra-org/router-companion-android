@@ -130,7 +130,7 @@ public abstract class MaterialWizard extends WizardFragment
       }
     });
     toolbar.setPopupTheme(
-        ColorUtils.isThemeLight(getContext()) ? R.style.PopupThemeLight : R.style.PopupTheme);
+        ColorUtils.Companion.isThemeLight(getContext()) ? R.style.PopupThemeLight : R.style.PopupTheme);
     toolbar.inflateMenu(R.menu.menu_material_wizard);
     toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
       @Override public boolean onMenuItemClick(MenuItem item) {

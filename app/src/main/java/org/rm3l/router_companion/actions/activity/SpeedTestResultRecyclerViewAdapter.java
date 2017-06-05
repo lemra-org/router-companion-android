@@ -63,7 +63,7 @@ public class SpeedTestResultRecyclerViewAdapter
     final CardView cardView = (CardView) v.findViewById(R.id.speed_test_result_item_cardview);
     final ImageButton deleteImageButton =
         (ImageButton) cardView.findViewById(R.id.speedtest_result_delete);
-    if (ColorUtils.isThemeLight(activity)) {
+    if (ColorUtils.Companion.isThemeLight(activity)) {
       //Light
       cardView.setCardBackgroundColor(
           ContextCompat.getColor(activity, R.color.cardview_light_background));
@@ -94,7 +94,7 @@ public class SpeedTestResultRecyclerViewAdapter
       return;
     }
 
-    final boolean isThemeLight = ColorUtils.isThemeLight(activity);
+    final boolean isThemeLight = ColorUtils.Companion.isThemeLight(activity);
 
     final View containerView = holder.containerView;
 

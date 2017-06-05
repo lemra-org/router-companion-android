@@ -72,7 +72,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
   public StatusRouterMemoryTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
       @Nullable Router router) {
     super(parentFragment, arguments, router, R.layout.tile_status_router_router_mem, null);
-    isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+    isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
   }
 
   @Override public int getTileHeaderViewId() {

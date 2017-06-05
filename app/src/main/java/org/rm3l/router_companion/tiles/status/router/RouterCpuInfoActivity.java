@@ -91,9 +91,9 @@ public class RouterCpuInfoActivity extends AppCompatActivity {
       return;
     }
 
-    ColorUtils.setAppTheme(this, mRouter.getRouterFirmware(), false);
+    ColorUtils.Companion.setAppTheme(this, mRouter.getRouterFirmware(), false);
 
-    final boolean themeLight = ColorUtils.isThemeLight(this);
+    final boolean themeLight = ColorUtils.Companion.isThemeLight(this);
     //        if (themeLight) {
     //            //Light
     //            setTheme(R.style.AppThemeLight);

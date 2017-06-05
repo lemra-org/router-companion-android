@@ -94,8 +94,8 @@ public abstract class AbstractDDWRTSettingsActivity extends AppCompatActivity {
 
     super.onCreate(savedInstanceState);
 
-    final boolean themeLight = ColorUtils.isThemeLight(this);
-    ColorUtils.setAppTheme(this, null, false);
+    final boolean themeLight = ColorUtils.Companion.isThemeLight(this);
+    ColorUtils.Companion.setAppTheme(this, null, false);
     //        if (themeLight) {
     //            //Light
     //            setTheme(R.style.AppThemeLight);

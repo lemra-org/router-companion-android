@@ -136,9 +136,9 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
       return;
     }
 
-    ColorUtils.setAppTheme(this, router != null ? router.getRouterFirmware() : null, false);
+    ColorUtils.Companion.setAppTheme(this, router != null ? router.getRouterFirmware() : null, false);
 
-    final boolean themeLight = ColorUtils.isThemeLight(this);
+    final boolean themeLight = ColorUtils.Companion.isThemeLight(this);
     //        if (themeLight) {
     //            //Light
     ////            setTheme(R.style.AppThemeLight);

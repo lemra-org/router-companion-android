@@ -129,9 +129,9 @@ public class RouterActionsWidgetConfigureActivity extends AppCompatActivity
     // out of the widget placement if the user presses the back button.
     setResult(RESULT_CANCELED);
 
-    final boolean themeLight = ColorUtils.isThemeLight(this);
+    final boolean themeLight = ColorUtils.Companion.isThemeLight(this);
 
-    ColorUtils.setAppTheme(this, null, false);
+    ColorUtils.Companion.setAppTheme(this, null, false);
 
     //        if (themeLight) {
     //            //Light

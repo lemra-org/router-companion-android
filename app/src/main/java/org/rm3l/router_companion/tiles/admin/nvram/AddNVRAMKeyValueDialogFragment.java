@@ -68,7 +68,7 @@ public class AddNVRAMKeyValueDialogFragment extends DialogFragment {
 
     final FragmentActivity fragmentActivity = getActivity();
 
-    ColorUtils.setAppTheme(fragmentActivity, null, false);
+    ColorUtils.Companion.setAppTheme(fragmentActivity, null, false);
     //
     //        if (ColorUtils.isThemeLight(fragmentActivity)) {
     //            //Light

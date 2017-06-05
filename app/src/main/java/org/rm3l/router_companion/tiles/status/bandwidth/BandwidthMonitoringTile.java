@@ -262,7 +262,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
           final XYSeriesRenderer renderer = new XYSeriesRenderer();
           renderer.setLineWidth(2);
 
-          final Integer ifaceColor = ColorUtils.getColor(iface);
+          final Integer ifaceColor = ColorUtils.Companion.getColor(iface);
 
           renderer.setColor(ifaceColor);
           // Include low and max value

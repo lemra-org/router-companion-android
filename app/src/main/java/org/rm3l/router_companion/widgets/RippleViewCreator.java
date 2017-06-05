@@ -70,7 +70,7 @@ public class RippleViewCreator extends FrameLayout {
 
     paint.setStyle(Paint.Style.FILL);
     paint.setColor(ContextCompat.getColor(context,
-        ColorUtils.isThemeLight(context) ? R.color.control_highlight_color
+        ColorUtils.Companion.isThemeLight(context) ? R.color.control_highlight_color
             : R.color.control_highlight_color_dark));
     paint.setAntiAlias(true);
 

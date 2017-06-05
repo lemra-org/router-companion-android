@@ -158,9 +158,9 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
       return;
     }
 
-    mIsThemeLight = ColorUtils.isThemeLight(this);
+    mIsThemeLight = ColorUtils.Companion.isThemeLight(this);
 
-    ColorUtils.setAppTheme(this, mRouter.getRouterFirmware(), false);
+    ColorUtils.Companion.setAppTheme(this, mRouter.getRouterFirmware(), false);
     //        if (mIsThemeLight) {
     //            //Light
     //            setTheme(R.style.AppThemeLight);
@@ -826,7 +826,7 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
       // set the view's size, margins, paddings and layout parameters
       // ...
       final CardView cardView = (CardView) v.findViewById(R.id.router_alias_item_cardview);
-      if (ColorUtils.isThemeLight(context)) {
+      if (ColorUtils.Companion.isThemeLight(context)) {
         //Light
         cardView.setCardBackgroundColor(
             ContextCompat.getColor(context, R.color.cardview_light_background));
@@ -931,7 +931,7 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
         }
       });
 
-      final boolean isThemeLight = ColorUtils.isThemeLight(this.context);
+      final boolean isThemeLight = ColorUtils.Companion.isThemeLight(this.context);
 
       if (!isThemeLight) {
         //Set menu background to white
@@ -1067,7 +1067,7 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
 
       routerPreferences = fragmentActivity.getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
 
-      ColorUtils.setAppTheme(fragmentActivity, router.getRouterFirmware(), false);
+      ColorUtils.Companion.setAppTheme(fragmentActivity, router.getRouterFirmware(), false);
 
       //            if (ColorUtils.isThemeLight(fragmentActivity)) {
       //                //Light

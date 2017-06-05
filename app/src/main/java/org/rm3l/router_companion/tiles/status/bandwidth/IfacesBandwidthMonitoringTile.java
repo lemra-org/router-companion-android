@@ -517,7 +517,7 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
     Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
     try {
-      final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+      final boolean isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
       layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_loading_view)
           .setVisibility(View.GONE);
@@ -679,7 +679,7 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
       return;
     }
 
-    final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+    final boolean isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
     ((TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_title)).setText(
         this.mParentFragmentActivity.getResources().getString(R.string.bandwidth_usage_mb) + (
@@ -740,7 +740,7 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
       final XYSeriesRenderer renderer = new XYSeriesRenderer();
       renderer.setLineWidth(5);
 
-      final int colorForIface = ColorUtils.getColor(iface);
+      final int colorForIface = ColorUtils.Companion.getColor(iface);
       renderer.setColor(colorForIface);
       // Include low and max value
       renderer.setDisplayBoundingPoints(true);

@@ -1071,7 +1071,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
         linearLayout.setVisibility(View.VISIBLE);
         linearLayout.removeAllViews();
         if (fragmentTiles != null) {
-          final boolean isThemeLight = ColorUtils.isThemeLight(activity);
+          final boolean isThemeLight = ColorUtils.Companion.isThemeLight(activity);
 
           for (final DDWRTTile ddwrtTile : fragmentTiles) {
             if (ddwrtTile == null) {
@@ -1116,7 +1116,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
 
             final TextView titleTextView =
                 (TextView) viewGroupLayout.findViewById(ddwrtTile.getTileTitleViewId());
-            ColorUtils.setTextColor(titleTextView,
+            ColorUtils.Companion.setTextColor(titleTextView,
                 router != null ? router.getRouterFirmware() : null);
             //                        if (isThemeLight) {
             //                            if (titleTextView != null) {
@@ -1152,7 +1152,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
 
         if (recyclerViewEmptyView instanceof TextView) {
           final TextView emptyView = (TextView) recyclerViewEmptyView;
-          if (ColorUtils.isThemeLight(activity)) {
+          if (ColorUtils.Companion.isThemeLight(activity)) {
             emptyView.setTextColor(ContextCompat.getColor(activity, R.color.black));
           } else {
             emptyView.setTextColor(ContextCompat.getColor(activity, R.color.white));

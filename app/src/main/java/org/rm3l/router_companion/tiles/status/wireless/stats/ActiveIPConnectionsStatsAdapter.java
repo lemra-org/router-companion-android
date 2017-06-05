@@ -75,7 +75,7 @@ public class ActiveIPConnectionsStatsAdapter
         .inflate(R.layout.activity_ip_connections_stats_cardview, parent, false);
     final CardView cardView =
         (CardView) v.findViewById(R.id.activity_ip_connections_stats_card_view);
-    if (ColorUtils.isThemeLight(activity)) {
+    if (ColorUtils.Companion.isThemeLight(activity)) {
       //Light
       cardView.setCardBackgroundColor(
           ContextCompat.getColor(activity, R.color.cardview_light_background));
@@ -231,7 +231,7 @@ public class ActiveIPConnectionsStatsAdapter
     holder.stats6Other.setVisibility(viewsSet.contains(6) ? View.VISIBLE : View.GONE);
 
     holder.shareImageButton.setImageDrawable(ContextCompat.getDrawable(activity,
-        ColorUtils.isThemeLight(activity) ? R.drawable.ic_share_black_24dp
+        ColorUtils.Companion.isThemeLight(activity) ? R.drawable.ic_share_black_24dp
             : R.drawable.ic_share_white_24dp));
 
     holder.shareImageButton.setOnClickListener(new View.OnClickListener() {

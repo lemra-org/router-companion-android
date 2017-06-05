@@ -216,7 +216,7 @@ public class RouterListRecycleViewAdapter
     // set the view's size, margins, paddings and layout parameters
     // ...
     final CardView cardView = (CardView) v.findViewById(R.id.router_item_cardview);
-    if (ColorUtils.isThemeLight(activity)) {
+    if (ColorUtils.Companion.isThemeLight(activity)) {
       //Light
       cardView.setCardBackgroundColor(
           ContextCompat.getColor(activity, R.color.cardview_light_background));
@@ -290,7 +290,7 @@ public class RouterListRecycleViewAdapter
       holder.routerModel.setVisibility(View.VISIBLE);
     }
 
-    final boolean isThemeLight = ColorUtils.isThemeLight(this.activity);
+    final boolean isThemeLight = ColorUtils.Companion.isThemeLight(this.activity);
 
     if (!isThemeLight) {
       //Set menu background to white
@@ -837,7 +837,7 @@ public class RouterListRecycleViewAdapter
     }
 
     @Override public void onItemClear() {
-      if (ColorUtils.isThemeLight(mContext)) {
+      if (ColorUtils.Companion.isThemeLight(mContext)) {
         itemView.setBackgroundColor(
             ContextCompat.getColor(mContext, R.color.cardview_light_background));
       } else {

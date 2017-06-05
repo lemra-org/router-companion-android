@@ -82,7 +82,7 @@ public abstract class AbstractRouterSettingsActivity extends AbstractDDWRTSettin
     //Need to call super.onCreate prior to calling finish()
     super.onCreate(savedInstanceState);
 
-    ColorUtils.setAppTheme(this, mRouter.getRouterFirmware(), false);
+    ColorUtils.Companion.setAppTheme(this, mRouter.getRouterFirmware(), false);
 
     if (doFinish) {
       finish();

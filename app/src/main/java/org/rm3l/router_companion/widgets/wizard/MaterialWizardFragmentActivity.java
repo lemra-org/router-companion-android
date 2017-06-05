@@ -39,12 +39,12 @@ public abstract class MaterialWizardFragmentActivity extends FragmentActivity {
       final String routerSelected = intent.getStringExtra(ROUTER_SELECTED);
       if (routerSelected != null) {
         final Router router = RouterManagementActivity.getDao(this).getRouter(routerSelected);
-        ColorUtils.setAppTheme(this, router != null ? router.getRouterFirmware() : null, false);
+        ColorUtils.Companion.setAppTheme(this, router != null ? router.getRouterFirmware() : null, false);
       } else {
-        ColorUtils.setAppTheme(this, null, false);
+        ColorUtils.Companion.setAppTheme(this, null, false);
       }
     } else {
-      ColorUtils.setAppTheme(this, null, false);
+      ColorUtils.Companion.setAppTheme(this, null, false);
     }
 
     //        if (ColorUtils.isThemeLight(this)) {

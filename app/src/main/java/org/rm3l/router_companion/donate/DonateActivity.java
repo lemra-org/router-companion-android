@@ -79,7 +79,7 @@ public class DonateActivity extends FragmentActivity {
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    ColorUtils.setAppTheme(this, null, false);
+    ColorUtils.Companion.setAppTheme(this, null, false);
 
     //        if (ColorUtils.isThemeLight(this)) {
     //            //Light

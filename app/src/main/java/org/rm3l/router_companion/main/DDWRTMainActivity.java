@@ -366,8 +366,8 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
     this.mCurrentSyncInterval = mPreferences.getLong(AUTO_REFRESH_INTERVAL_SECONDS_PREF, -10l);
     this.mWithAutoRefresh = mPreferences.getBoolean(AUTO_REFRESH_PREF, false);
 
-    mIsThemeLight = ColorUtils.isThemeLight(this);
-    ColorUtils.setAppTheme(this, mRouter.getRouterFirmware(), true);
+    mIsThemeLight = ColorUtils.Companion.isThemeLight(this);
+    ColorUtils.Companion.setAppTheme(this, mRouter.getRouterFirmware(), true);
     //        if (mIsThemeLight) {
     //            //Light
     //            setTheme(R.style.AppThemeLight_StatusBarTransparent);
@@ -1584,7 +1584,7 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
     mViewPager = (ViewPager) findViewById(R.id.tabanim_viewpager);
     mTabLayout = (TabLayout) findViewById(R.id.tabanim_tabs);
     mTabLayout.setSelectedTabIndicatorColor(
-        ColorUtils.getColor(DDWRTMainActivity.class.getCanonicalName()));
+        ColorUtils.Companion.getColor(DDWRTMainActivity.class.getCanonicalName()));
 
     mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout) {
 

@@ -645,7 +645,7 @@ public final class Utils {
   public static void openFeedbackForm(final Activity activity, final Router router) {
     final MaoniFeedbackHandler handlerForMaoni = new MaoniFeedbackHandler(activity, router);
     new Maoni.Builder(RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY).withTheme(
-        ColorUtils.isThemeLight(activity) ? R.style.AppThemeLight_StatusBarTransparent
+        ColorUtils.Companion.isThemeLight(activity) ? R.style.AppThemeLight_StatusBarTransparent
             : R.style.AppThemeDark_StatusBarTransparent)
         .withWindowTitle("Send Feedback")
         .withExtraLayout(R.layout.activity_feedback_maoni)
@@ -693,7 +693,7 @@ public final class Utils {
             ReportingUtils.reportEvent(ReportingUtils.EVENT_RATING_INVITATON, eventMap);
           }
         })
-        .theme(ColorUtils.isThemeLight(activity) ? AppRateTheme.DARK : AppRateTheme.LIGHT)
+        .theme(ColorUtils.Companion.isThemeLight(activity) ? AppRateTheme.DARK : AppRateTheme.LIGHT)
         .text(R.string.app_rate)
         .checkAndShow();
   }

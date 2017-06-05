@@ -171,7 +171,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
     mRecyclerView.setLayoutManager(mLayoutManager);
 
     final TextView emptyView = (TextView) layout.findViewById(R.id.empty_view);
-    if (ColorUtils.isThemeLight(mParentFragmentActivity)) {
+    if (ColorUtils.Companion.isThemeLight(mParentFragmentActivity)) {
       emptyView.setTextColor(ContextCompat.getColor(mParentFragmentActivity, R.color.black));
     } else {
       emptyView.setTextColor(ContextCompat.getColor(mParentFragmentActivity, R.color.white));
@@ -205,7 +205,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
     //Create Options Menu
     final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_admin_nvram_menu);
 
-    if (!ColorUtils.isThemeLight(mParentFragmentActivity)) {
+    if (!ColorUtils.Companion.isThemeLight(mParentFragmentActivity)) {
       //Set menu background to white
       tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
     }

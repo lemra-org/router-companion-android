@@ -141,7 +141,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo>
     super(parentFragment, arguments, router, R.layout.tile_status_wan_monthly_traffic, null);
 
     dao = RouterManagementActivity.getDao(mParentFragmentActivity);
-    mIsThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+    mIsThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
     mGson = new Gson();
 
@@ -487,7 +487,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo>
 
         try {
 
-          mIsThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+          mIsThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
           Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
               + WANMonthlyTrafficTile.class
@@ -654,7 +654,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo>
       final ImageButton tileMenu =
           (ImageButton) layout.findViewById(R.id.tile_status_wan_monthly_traffic_menu);
 
-      if (!ColorUtils.isThemeLight(mParentFragmentActivity)) {
+      if (!ColorUtils.Companion.isThemeLight(mParentFragmentActivity)) {
         //Set menu background to white
         tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
       }

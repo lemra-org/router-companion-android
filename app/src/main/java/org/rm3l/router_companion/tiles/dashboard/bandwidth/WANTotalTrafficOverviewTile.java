@@ -97,12 +97,12 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo>
     super(parentFragment, arguments, router, R.layout.tile_overview_wan_total_traffic, null);
 
     dao = RouterManagementActivity.getDao(mParentFragmentActivity);
-    isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+    isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
     //Create Options Menu
     final ImageButton tileMenu =
         (ImageButton) layout.findViewById(R.id.tile_overview_wan_total_traffic_menu);
 
-    if (!ColorUtils.isThemeLight(mParentFragmentActivity)) {
+    if (!ColorUtils.Companion.isThemeLight(mParentFragmentActivity)) {
       //Set menu background to white
       tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
     }
@@ -192,7 +192,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo>
 
         try {
 
-          isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+          isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
           mCycle = (mParentFragmentPreferences != null ? mParentFragmentPreferences.getString(
               getFormattedPrefKey(CYCLE), CYCLE_MONTH) : null);
 

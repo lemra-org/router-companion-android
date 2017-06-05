@@ -160,7 +160,7 @@ public final class SnackbarUtils {
     final Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
     final ViewGroup group = (ViewGroup) snackbar.getView();
     group.setBackgroundColor(ContextCompat.getColor(context,
-        ColorUtils.isThemeLight(context) ? R.color.lightTheme_primary : R.color.darkTheme_primary));
+        ColorUtils.Companion.isThemeLight(context) ? R.color.lightTheme_primary : R.color.darkTheme_primary));
     return snackbar;
   }
 }

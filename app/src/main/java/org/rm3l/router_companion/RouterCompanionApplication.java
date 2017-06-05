@@ -198,7 +198,7 @@ public class RouterCompanionApplication extends Application
       ReportingUtils.reportEvent(ReportingUtils.EVENT_FIRST_LAUNCH, eventMap);
     }
 
-    ColorUtils.setAppTheme(this, null, false);
+    ColorUtils.Companion.setAppTheme(this, null, false);
     //        if (ColorUtils.isThemeLight(getApplicationContext())) {
     //            //Light
     //            setTheme(R.style.AppThemeLight);

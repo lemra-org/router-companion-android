@@ -80,11 +80,11 @@ public class WifiNetwork implements Serializable {
 
     if (authType == WifiAuthType.WEP) {
       if (keyLength != 5 && keyLength != 13) {
-        throw new WifiException(WifiException.Companion.getWEP_KEY_LENGTH_ERROR());
+        throw new WifiException(WifiException.WEP_KEY_LENGTH_ERROR);
       }
     } else { // WPA
       if ((keyLength >= 5 && keyLength < 8) || keyLength > 63) { // TODO: support hex key (64)
-        throw new WifiException(WifiException.Companion.getWPA_KEY_LENGTH_ERROR());
+        throw new WifiException(WifiException.WPA_KEY_LENGTH_ERROR);
       }
     }
 

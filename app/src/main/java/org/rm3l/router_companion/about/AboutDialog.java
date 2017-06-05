@@ -35,9 +35,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.TextView;
-import com.google.common.base.Charsets;
 import java.io.IOException;
 import java.util.Calendar;
+import kotlin.text.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -74,7 +74,7 @@ public class AboutDialog extends Dialog {
     super(context);
     mContext = context;
     super.setTitle(mContext.getString(R.string.menuitem_about));
-    isThemeLight = ColorUtils.isThemeLight(mContext);
+    isThemeLight = ColorUtils.Companion.isThemeLight(mContext);
   }
 
   /**

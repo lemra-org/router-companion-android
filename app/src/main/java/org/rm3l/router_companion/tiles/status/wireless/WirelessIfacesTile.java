@@ -253,7 +253,7 @@ public class WirelessIfacesTile extends IfacesTile {
       container.setBackgroundColor(
           ContextCompat.getColor(mParentFragmentActivity, android.R.color.transparent));
 
-      final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+      final boolean isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
       Exception preliminaryCheckException = null;
       if (data == null) {

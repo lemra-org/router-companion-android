@@ -289,7 +289,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
 
     this.wakeOnLanTileForDevicesRetrieval = new WakeOnLanTile(parentFragment, arguments, router);
 
-    isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+    isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
     mProgressBar =
         (ProgressBar) layout.findViewById(R.id.tile_status_wireless_clients_loading_view);
@@ -335,7 +335,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
     mRecyclerView.setLayoutManager(mLayoutManager);
 
     final TextView emptyView = (TextView) layout.findViewById(R.id.empty_view);
-    if (ColorUtils.isThemeLight(mParentFragmentActivity)) {
+    if (ColorUtils.Companion.isThemeLight(mParentFragmentActivity)) {
       emptyView.setTextColor(ContextCompat.getColor(mParentFragmentActivity, R.color.black));
     } else {
       emptyView.setTextColor(ContextCompat.getColor(mParentFragmentActivity, R.color.white));
@@ -663,7 +663,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
 
       @Nullable @Override public ClientDevices loadInBackground() {
 
-        isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+        isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
         Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
             + WirelessClientsTile.class

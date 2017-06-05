@@ -89,7 +89,7 @@ public class RouterMemInfoActivity extends AppCompatActivity {
       finish();
       return;
     }
-    ColorUtils.setAppTheme(this, mRouter.getRouterFirmware(), false);
+    ColorUtils.Companion.setAppTheme(this, mRouter.getRouterFirmware(), false);
 
     //        final boolean themeLight = ColorUtils.isThemeLight(this);
     //        if (themeLight) {

@@ -67,7 +67,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
   public NetworkTopologyMapTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
       @Nullable Router router) {
     super(parentFragment, arguments, router, R.layout.tile_network_map_overview, null);
-    isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+    isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
     routerStateClickListener = new View.OnClickListener() {
       @Override public void onClick(View v) {
@@ -127,7 +127,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
         try {
 
-          isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+          isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
           Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
               + NetworkTopologyMapTile.class

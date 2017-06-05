@@ -94,7 +94,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
     final ImageButton tileMenu =
         (ImageButton) layout.findViewById(R.id.tile_status_wan_config_menu);
 
-    if (!ColorUtils.isThemeLight(mParentFragmentActivity)) {
+    if (!ColorUtils.Companion.isThemeLight(mParentFragmentActivity)) {
       //Set menu background to white
       tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
     }
@@ -413,7 +413,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
         data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
       }
 
-      if (!ColorUtils.isThemeLight(mParentFragmentActivity)) {
+      if (!ColorUtils.Companion.isThemeLight(mParentFragmentActivity)) {
         //Set menu background to white
         tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
       }

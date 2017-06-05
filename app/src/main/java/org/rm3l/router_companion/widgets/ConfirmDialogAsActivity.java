@@ -21,7 +21,7 @@ public abstract class ConfirmDialogAsActivity extends Activity {
 
     super.onCreate(savedInstanceState);
 
-    ColorUtils.setAppTheme(this, null, false);
+    ColorUtils.Companion.setAppTheme(this, null, false);
 
     //        final boolean themeLight = ColorUtils.isThemeLight(this);
 

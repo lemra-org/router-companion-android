@@ -135,7 +135,7 @@ public class ViewSyslogActivity extends AppCompatActivity
         getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
 
     //        final boolean themeLight = ColorUtils.isThemeLight(this);
-    ColorUtils.setAppTheme(this, mRouter.getRouterFirmware(), false);
+    ColorUtils.Companion.setAppTheme(this, mRouter.getRouterFirmware(), false);
     //        if (themeLight) {
     //            //Light
     //            setTheme(R.style.AppThemeLight);
@@ -187,7 +187,7 @@ public class ViewSyslogActivity extends AppCompatActivity
     mRecyclerView.setLayoutManager(mLayoutManager);
 
     final TextView emptyView = (TextView) findViewById(R.id.empty_view);
-    if (ColorUtils.isThemeLight(this)) {
+    if (ColorUtils.Companion.isThemeLight(this)) {
       emptyView.setTextColor(ContextCompat.getColor(this, R.color.black));
     } else {
       emptyView.setTextColor(ContextCompat.getColor(this, R.color.white));

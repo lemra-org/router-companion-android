@@ -111,7 +111,7 @@ public class WirelessClientsRecyclerViewAdapter extends
     //Add padding in API v21+ as well to have the same measurements with previous versions.
     cardView.setUseCompatPadding(true);
 
-    final boolean isThemeLight = ColorUtils.isThemeLight(context);
+    final boolean isThemeLight = ColorUtils.Companion.isThemeLight(context);
 
     if (isThemeLight) {
       //Light
@@ -143,7 +143,7 @@ public class WirelessClientsRecyclerViewAdapter extends
 
     holder.legendView.setVisibility(View.GONE);
 
-    final boolean isThemeLight = ColorUtils.isThemeLight(holder.context);
+    final boolean isThemeLight = ColorUtils.Companion.isThemeLight(holder.context);
 
     if (!isThemeLight) {
       //Set menu background to white
@@ -396,7 +396,7 @@ public class WirelessClientsRecyclerViewAdapter extends
         final XYSeriesRenderer renderer = new XYSeriesRenderer();
         renderer.setLineWidth(5);
 
-        final int color = ColorUtils.getColor(inOrOut);
+        final int color = ColorUtils.Companion.getColor(inOrOut);
         renderer.setColor(color);
         // Include low and max value
         renderer.setDisplayBoundingPoints(true);
@@ -467,7 +467,7 @@ public class WirelessClientsRecyclerViewAdapter extends
       mRenderer.setFitLegend(true);
       mRenderer.setLabelsTextSize(30f);
       final int blackOrWhite = ContextCompat.getColor(holder.context,
-          ColorUtils.isThemeLight(holder.context) ? R.color.black : R.color.white);
+          ColorUtils.Companion.isThemeLight(holder.context) ? R.color.black : R.color.white);
       mRenderer.setAxesColor(blackOrWhite);
       mRenderer.setShowLegend(false);
       mRenderer.setXLabelsColor(blackOrWhite);
