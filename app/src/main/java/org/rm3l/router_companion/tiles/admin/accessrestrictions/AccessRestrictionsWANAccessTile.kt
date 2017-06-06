@@ -206,7 +206,7 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
   }
 
   override fun getLoader(id: Int,
-      args: Bundle): Loader<WANAccessPoliciesRouterData>? {
+      args: Bundle?): Loader<WANAccessPoliciesRouterData>? {
     return object : AsyncTaskLoader<WANAccessPoliciesRouterData>(this.mParentFragmentActivity) {
       override fun loadInBackground(): WANAccessPoliciesRouterData? {
         try {
