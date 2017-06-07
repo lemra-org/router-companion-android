@@ -276,6 +276,7 @@ import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterActio
           }
         }
       }
+        break;
       default:
         break;
     }
@@ -695,7 +696,8 @@ import static org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterActio
                     final String keyStr = key.toString();
                     final int keyNb = Integer.parseInt(keyStr.replace("filter_rule", "").trim());
 
-                    final WANAccessPolicy wanAccessPolicy = new WANAccessPolicy().setNumber(keyNb);
+                    final WANAccessPolicy wanAccessPolicy = new WANAccessPolicy();
+                    wanAccessPolicy.setNumber(keyNb);
 
                     final List<String> statusSplitter = Splitter.on("$NAME:")
                         .omitEmptyStrings()

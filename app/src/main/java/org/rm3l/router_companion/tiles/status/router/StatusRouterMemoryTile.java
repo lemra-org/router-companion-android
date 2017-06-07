@@ -55,7 +55,7 @@ import org.rm3l.router_companion.utils.Utils;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.rm3l.router_companion.firmwares.impl.ddwrt.DDWRTFirmwareConnector.getGrepProcMemInfo;
+import org.rm3l.router_companion.firmwares.impl.ddwrt.DDWRTFirmwareConnector;
 import static org.rm3l.router_companion.utils.Utils.isDemoRouter;
 
 /**
@@ -138,9 +138,12 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
           } else {
             otherCmds =
                 SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
-                    getGrepProcMemInfo("MemTotal:"), getGrepProcMemInfo("MemFree:"),
-                    getGrepProcMemInfo("Buffers:"), getGrepProcMemInfo("Cached:"),
-                    getGrepProcMemInfo("Active:"), getGrepProcMemInfo("Inactive:"));
+                    DDWRTFirmwareConnector.Companion.getGrepProcMemInfo("MemTotal:"),
+                    DDWRTFirmwareConnector.Companion.getGrepProcMemInfo("MemFree:"),
+                    DDWRTFirmwareConnector.Companion.getGrepProcMemInfo("Buffers:"),
+                    DDWRTFirmwareConnector.Companion.getGrepProcMemInfo("Cached:"),
+                    DDWRTFirmwareConnector.Companion.getGrepProcMemInfo("Active:"),
+                    DDWRTFirmwareConnector.Companion.getGrepProcMemInfo("Inactive:"));
           }
           updateProgressBarViewSeparator(30);
           if (otherCmds != null && otherCmds.length >= 6) {
