@@ -347,8 +347,8 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
 
   override fun getWANAccessPolicies(context: Context, router: Router,
       dataRetrievalListener: RemoteDataRetrievalListener?): WANAccessPoliciesRouterData? {
-    TODO(
-        "not implemented yet") //To change body of created functions use File | Settings | File Templates.
+    //Kotlin's TODO throws an Error
+    throw UnsupportedOperationException("not implemented yet") //To change body of created functions use File | Settings | File Templates.
   }
 
 }
