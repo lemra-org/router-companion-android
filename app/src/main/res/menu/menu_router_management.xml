@@ -162,6 +162,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
           app:showAsAction="never"
           android:visible="false"/>
       <item
+          android:id="@+id/debug_resourceinspector"
+          android:checkable="true"
+          android:title="Toggle ResourceInspector"
+          app:showAsAction="never"/>
+      <item
           android:id="@+id/debug_leakcanary"
           android:checkable="true"
           android:title="Toggle LeakCanary"

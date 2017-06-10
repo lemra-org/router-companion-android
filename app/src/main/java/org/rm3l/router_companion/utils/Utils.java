@@ -70,11 +70,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
+import cn.nekocode.resinspector.ResourceInspector;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Transformation;
+import org.rm3l.router_companion.RouterCompanionApplication;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import fr.nicolaspomepuy.discreetapprate.AppRate;
 import fr.nicolaspomepuy.discreetapprate.AppRateTheme;
@@ -118,6 +120,7 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.FIRST_APP_LA
 import static org.rm3l.router_companion.RouterCompanionAppConstants.IS_FIRST_LAUNCH_PREF_KEY;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.OLD_IS_FIRST_LAUNCH_PREF_KEY;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.WAN_CYCLE_DAY_PREF;
+import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_RESOURCE_INSPECTOR_PREF_KEY;
 
 /**
  * General utilities
@@ -990,6 +993,16 @@ public final class Utils {
       wanCycleDay = 1;
     }
     return wanCycleDay;
+  }
+
+  public static Context getBaseContextToAttach(final Context rootCtx, @Nullable final Context base) {
+    final Context newBase;
+    if (BuildConfig.DEBUG && RouterCompanionApplication.isDebugResourceInspectorEnabled()) {
+      newBase = ResourceInspector.wrap(base);
+    } else {
+      newBase = base;
+    }
+    return newBase;
   }
 
   protected static final class BugReportException extends DDWRTCompanionException {

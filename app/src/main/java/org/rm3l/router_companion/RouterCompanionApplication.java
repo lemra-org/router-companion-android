@@ -76,6 +76,8 @@ public class RouterCompanionApplication extends Application
     implements Application.ActivityLifecycleCallbacks {
 
   public static final String DEBUG_LEAKCANARY_PREF_KEY = \"fake-key\";
+  private static boolean isDebugResourceInspectorEnabled = false;
+  public static final String DEBUG_RESOURCE_INSPECTOR_PREF_KEY = \"fake-key\";
   private static final String TAG = RouterCompanionApplication.class.getSimpleName();
   private static final List<String> GOOGLE_INSTALLER_PACKAGE_NAMES =
       Arrays.asList("com.android.vending", "com.google.android.feedback");
@@ -89,11 +91,17 @@ public class RouterCompanionApplication extends Application
     return mCurrentActivity != null ? mCurrentActivity.get() : null;
   }
 
+  public static boolean isDebugResourceInspectorEnabled() {
+    return isDebugResourceInspectorEnabled;
+  }
+
   @Override public void onCreate() {
     super.onCreate();
 
     final SharedPreferences appPreferences =
         getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE);
+
+    isDebugResourceInspectorEnabled = appPreferences.getBoolean(DEBUG_RESOURCE_INSPECTOR_PREF_KEY, false);
 
     //        if (BuildConfig.DEBUG) {
     //            //Enable Strict Mode in DEBUG mode

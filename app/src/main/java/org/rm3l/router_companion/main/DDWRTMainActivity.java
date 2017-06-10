@@ -260,7 +260,7 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
 
   @Override
   protected void attachBaseContext(Context newBase) {
-    super.attachBaseContext(BuildConfig.DEBUG ? ResourceInspector.wrap(newBase) : newBase);
+    super.attachBaseContext(Utils.getBaseContextToAttach(this, newBase));
   }
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {

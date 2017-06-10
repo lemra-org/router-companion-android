@@ -122,6 +122,7 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATION
 import static org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.THEMING_PREF;
 import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_LEAKCANARY_PREF_KEY;
+import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_RESOURCE_INSPECTOR_PREF_KEY;
 
 //import com.madx.updatechecker.lib.UpdateRunnable;
 //import com.pusher.client.Pusher;
@@ -174,7 +175,7 @@ import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_LEAKCAN
 
   @Override
   protected void attachBaseContext(Context newBase) {
-    super.attachBaseContext(BuildConfig.DEBUG ? ResourceInspector.wrap(newBase) : newBase);
+    super.attachBaseContext(Utils.getBaseContextToAttach(this, newBase));
   }
 
   public static void startActivity(Activity activity, View view, Intent ddWrtMainIntent) {
@@ -594,6 +595,10 @@ import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_LEAKCAN
     Crashlytics.log(Log.DEBUG, LOG_TAG, "XXX debug_leakcanary: " + debugLeakCanary);
     menu.findItem(R.id.debug_leakcanary).setChecked(debugLeakCanary);
 
+    final boolean debugResourceInspector = mPreferences.getBoolean(DEBUG_RESOURCE_INSPECTOR_PREF_KEY, false);
+    Crashlytics.log(Log.DEBUG, LOG_TAG, "XXX debug_resourceInspector: " + debugResourceInspector);
+    menu.findItem(R.id.debug_resourceinspector).setChecked(debugResourceInspector);
+
     final MenuItem donateMenuItem = menu.findItem(R.id.router_list_donate);
     if (donateMenuItem != null) {
       donateMenuItem.setVisible(BuildConfig.DONATIONS);
@@ -715,6 +720,35 @@ import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_LEAKCAN
         } else {
           Crashlytics.log(Log.WARN, LOG_TAG,
               "[DEBUG] LeakCanary menu option should not be visible...");
+        }
+        return true;
+
+      case R.id.debug_resourceinspector:
+
+        if (BuildConfig.DEBUG) {
+          final boolean checked = item.isChecked();
+          item.setChecked(!checked);
+          final boolean commit =
+              mPreferences.edit().putBoolean(DEBUG_RESOURCE_INSPECTOR_PREF_KEY, !checked).commit();
+          Utils.requestBackup(RouterManagementActivity.this);
+          //Restart activity
+          final ProgressDialog alertDialog = ProgressDialog.show(this,
+              String.format("%sabling ResourceInspector", checked ? "Dis" : "En"),
+              "Preference update commit: " + commit + ". Please wait...", true);
+          new Handler().postDelayed(new Runnable() {
+            @Override public void run() {
+              alertDialog.cancel();
+              final PendingIntent intent =
+                  PendingIntent.getActivity(getBaseContext(), 0, new Intent(getIntent()),
+                      PendingIntent.FLAG_CANCEL_CURRENT);
+              final AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+              manager.set(AlarmManager.RTC, System.currentTimeMillis() + 100, intent);
+              System.exit(2);
+            }
+          }, 2000);
+        } else {
+          Crashlytics.log(Log.WARN, LOG_TAG,
+              "[DEBUG] ResourceInspector menu option should not be visible...");
         }
         return true;
 
