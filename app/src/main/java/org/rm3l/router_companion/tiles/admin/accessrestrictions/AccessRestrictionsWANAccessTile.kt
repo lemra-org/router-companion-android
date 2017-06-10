@@ -33,6 +33,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.find
 import org.jetbrains.anko.imageResource
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.toast
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style
@@ -69,6 +70,7 @@ import org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterAction.DISAB
 import org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterAction.ENABLE_1
 import org.rm3l.router_companion.actions.ToggleWANAccessPolicyRouterAction.ENABLE_2
 import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener
+import org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED
 import org.rm3l.router_companion.tiles.admin.accessrestrictions.AccessRestrictionsWANAccessTile.Companion
 import org.rm3l.router_companion.utils.kotlin.isThemeLight
 
@@ -149,10 +151,16 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
     mRecyclerView.minimumHeight = size.y
 
     addNewButton = layout.find<FloatingActionButton>(R.id.wan_access_restriction_policy_add)
-    addNewButton.visibility = View.GONE
+//    addNewButton.visibility = View.GONE
 
     addNewButton.setOnClickListener {
       mParentFragmentActivity.toast("TODO Add new WAN Access Policy")
+      mParentFragmentActivity.startActivity(
+          mParentFragmentActivity.intentFor<AddOrEditWANAccessPolicyActivity>(
+              ROUTER_SELECTED to mRouter?.uuid,
+              "id" to 5
+          )
+      )
     }
 
     //Create Options Menu

@@ -243,4 +243,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <item name="android:windowBackground">@drawable/background_splash</item>
   </style>
 
+  <style name="AppThemeDark.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+  <style name="AppThemeDark.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
 </resources>
