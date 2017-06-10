@@ -600,6 +600,10 @@ dependencies {
   }
   releaseCompile 'com.readystatesoftware.chuck:library-no-op:1.0.4'
 
+  debugCompile "com.github.nekocode.ResourceInspector:resinspector:0.4"
+  releaseCompile "com.github.nekocode.ResourceInspector:resinspector-no-op:0.4"
+  testCompile "com.github.nekocode.ResourceInspector:resinspector-no-op:0.4"
+
   //use FB's Stetho network inspector instead
 //  compile 'com.github.ihsanbal:LoggingInterceptor:1.0.4'
 }

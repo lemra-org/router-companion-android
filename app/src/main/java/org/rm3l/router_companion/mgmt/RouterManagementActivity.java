@@ -65,6 +65,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import cn.nekocode.resinspector.ResourceInspector;
 import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter;
 import co.paulburke.android.itemtouchhelperdemo.helper.OnStartDragListener;
 import com.airbnb.deeplinkdispatch.DeepLink;
@@ -169,6 +170,11 @@ import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_LEAKCAN
 
   @NonNull public static DDWRTCompanionDAO getDao(Context context) {
     return DDWRTCompanionSqliteDAOImpl.getInstance();
+  }
+
+  @Override
+  protected void attachBaseContext(Context newBase) {
+    super.attachBaseContext(BuildConfig.DEBUG ? ResourceInspector.wrap(newBase) : newBase);
   }
 
   public static void startActivity(Activity activity, View view, Intent ddWrtMainIntent) {

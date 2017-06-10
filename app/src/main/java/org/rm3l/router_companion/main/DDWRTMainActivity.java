@@ -65,6 +65,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import cn.nekocode.resinspector.ResourceInspector;
 import com.airbnb.deeplinkdispatch.DeepLink;
 import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
@@ -256,6 +257,11 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
   private TabLayout mTabLayout;
   private GoogleApiClient mClient;
   private CustomTabActivityHelper mCustomTabActivityHelper;
+
+  @Override
+  protected void attachBaseContext(Context newBase) {
+    super.attachBaseContext(BuildConfig.DEBUG ? ResourceInspector.wrap(newBase) : newBase);
+  }
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
