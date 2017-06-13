@@ -24,6 +24,7 @@ package org.rm3l.router_companion.utils;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.os.Build;
 import android.support.annotation.Nullable;
 
 public final class AndroidHelper {
@@ -53,5 +54,9 @@ public final class AndroidHelper {
       result = resources.getDimensionPixelSize(resourceId);
     }
     return result;
+  }
+
+  public static boolean isAtLeastMarshmallow() {
+    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
   }
 }
