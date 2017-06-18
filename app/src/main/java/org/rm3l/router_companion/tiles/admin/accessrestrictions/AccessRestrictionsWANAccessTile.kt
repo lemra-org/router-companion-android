@@ -34,6 +34,7 @@ import org.jetbrains.anko.debug
 import org.jetbrains.anko.find
 import org.jetbrains.anko.imageResource
 import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.onClick
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.toast
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style
@@ -153,7 +154,7 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
     addNewButton = layout.find<FloatingActionButton>(R.id.wan_access_restriction_policy_add)
 //    addNewButton.visibility = View.GONE
 
-    addNewButton.setOnClickListener {
+    addNewButton.onClick {
       mParentFragmentActivity.toast("TODO Add new WAN Access Policy")
       mParentFragmentActivity.startActivity(
           mParentFragmentActivity.intentFor<AddOrEditWANAccessPolicyActivity>(

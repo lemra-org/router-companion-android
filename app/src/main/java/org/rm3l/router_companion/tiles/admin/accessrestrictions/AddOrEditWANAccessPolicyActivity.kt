@@ -20,6 +20,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import com.google.common.base.Strings.isNullOrEmpty
+import org.jetbrains.anko.find
+import org.jetbrains.anko.onClick
 import org.jetbrains.anko.toast
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.mgmt.RouterManagementActivity
@@ -74,7 +76,7 @@ class AddOrEditWANAccessPolicyActivity : AppCompatActivity() {
 
     setContentView(R.layout.activity_add_or_edit_wan_access_policy)
 
-    val toolbar = findViewById(R.id.toolbar) as Toolbar
+    val toolbar = find<Toolbar>(R.id.toolbar)
     setSupportActionBar(toolbar)
     supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     // Create the adapter that will return a fragment for each of the three
@@ -82,12 +84,12 @@ class AddOrEditWANAccessPolicyActivity : AppCompatActivity() {
     mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
 
     // Set up the ViewPager with the sections adapter.
-    mViewPager = findViewById(R.id.container) as ViewPager
+    mViewPager = find<ViewPager>(R.id.container)
     mViewPager!!.adapter = mSectionsPagerAdapter
 
-    val fab = findViewById(R.id.fab) as FloatingActionButton
-    fab.setOnClickListener { view ->
-      Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+    val fab = find<FloatingActionButton>(R.id.fab)
+    fab.onClick {
+      Snackbar.make(it!!, "Replace with your own action", Snackbar.LENGTH_LONG)
           .setAction("Action", null)
           .show()
     }
@@ -103,14 +105,10 @@ class AddOrEditWANAccessPolicyActivity : AppCompatActivity() {
     // Handle action bar item clicks here. The action bar will
     // automatically handle clicks on the Home/Up button, so long
     // as you specify a parent activity in AndroidManifest.xml.
-    val id = item.itemId
-
-
-    if (id == R.id.action_settings) {
-      return true
+    when (item.itemId) {
+      R.id.action_settings -> return true
+      else -> return super.onOptionsItemSelected(item)
     }
-
-    return super.onOptionsItemSelected(item)
   }
 
   /**
