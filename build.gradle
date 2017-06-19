@@ -25,7 +25,7 @@
 final homePath = System.properties['user.home']
 
 buildscript {
-  ext.kotlin_version = '1.1.2-3'
+  ext.kotlin_version = '1.1.2-5'
   //Workaround to have the 'com.android.application' plugin with any version of Gradle (other than the expected one)
   //see https://github.com/gradle/gradle-script-kotlin/issues/2#issuecomment-222120296
   System.properties['com.android.build.gradle.overrideVersionCheck'] = 'true'
