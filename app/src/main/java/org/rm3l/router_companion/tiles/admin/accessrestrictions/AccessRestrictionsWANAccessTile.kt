@@ -34,6 +34,7 @@ import org.jetbrains.anko.debug
 import org.jetbrains.anko.find
 import org.jetbrains.anko.imageResource
 import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.onClick
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.toast
@@ -74,6 +75,7 @@ import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener
 import org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED
 import org.rm3l.router_companion.tiles.admin.accessrestrictions.AccessRestrictionsWANAccessTile.Companion
 import org.rm3l.router_companion.utils.kotlin.isThemeLight
+import org.rm3l.router_companion.utils.kotlin.visible
 
 /**
  * WAN Access Policies tile
@@ -172,8 +174,8 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
       tileMenu.imageResource = R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark
     }
 
-    tileMenu.setOnClickListener { v ->
-      val popup = PopupMenu(mParentFragmentActivity, v)
+    tileMenu.onClick {
+      val popup = PopupMenu(mParentFragmentActivity, it)
       popup.setOnMenuItemClickListener(this@AccessRestrictionsWANAccessTile)
       val inflater = popup.menuInflater
       mMenu = popup.menu
@@ -301,12 +303,12 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
         val rootCause = Throwables.getRootCause(exception)
         errorPlaceHolderView.text = "Error: ${rootCause?.message?:"null"}"
         val parentContext = this.mParentFragmentActivity
-        errorPlaceHolderView.setOnClickListener {
-          if (rootCause != null) {
-            Toast.makeText(parentContext, rootCause.message, Toast.LENGTH_LONG).show()
+        errorPlaceHolderView.onClick {
+          rootCause?.let {
+            parentContext.longToast(it.message?:"Internal Error")
           }
         }
-        errorPlaceHolderView.visibility = View.VISIBLE
+        errorPlaceHolderView.visible()
         updateProgressBarWithError()
       } else if (exception == null) {
         updateProgressBarWithSuccess()
@@ -482,7 +484,9 @@ internal class WANAccessRulesRecyclerViewAdapter(
     holder.wanPolicyStateText.setBackgroundColor(
         ContextCompat.getColor(tile.mParentFragmentActivity, stateBgColor))
 
-    holder.wanPolicyStateText.setOnClickListener { holder.menuImageButton.performClick() }
+    holder.wanPolicyStateText.onClick {
+      holder.menuImageButton.performClick()
+    }
 
     val removeWanPolicyDialog = AlertDialog.Builder(tile.mParentFragmentActivity).setIcon(
         R.drawable.ic_action_alert_warning)
@@ -558,8 +562,8 @@ internal class WANAccessRulesRecyclerViewAdapter(
           R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark)
     }
 
-    holder.menuImageButton.setOnClickListener { v ->
-      val popup = PopupMenu(tile.mParentFragmentActivity, v)
+    holder.menuImageButton.onClick {
+      val popup = PopupMenu(tile.mParentFragmentActivity, it)
       popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
         when (item.itemId) {
           R.id.tile_wan_access_policy_toggle -> {
@@ -603,7 +607,7 @@ internal class WANAccessRulesRecyclerViewAdapter(
       popup.show()
     }
 
-    holder.removeImageButton.setOnClickListener { removeWanPolicyDialog.show() }
+    holder.removeImageButton.onClick { removeWanPolicyDialog.show() }
   }
 
   override fun getItemCount(): Int {
