@@ -529,7 +529,7 @@ dependencies {
   compile 'com.squareup.retrofit2:converter-gson:2.1.0'
   compile 'com.squareup.okhttp3:logging-interceptor:3.4.2'
 
-  compile('org.rm3l:maoni:3.1.0@aar') {
+  compile('org.rm3l:maoni:4.0.0@aar') {
     transitive = true
     exclude group: 'com.android.support', module: 'appcompat-v7'
     exclude group: 'com.android.support', module: 'design'
@@ -538,6 +538,14 @@ dependencies {
   }
 
   compile('org.rm3l:maoni-doorbell:2.4.0') {
+    transitive = false;
+    exclude group: 'com.android.support', module: 'appcompat-v7'
+    exclude group: 'com.android.support', module: 'design'
+    exclude group: 'com.android.support', module: 'support-v4'
+  }
+
+  //Send notifications on Slack as well
+  compile ('org.rm3l:maoni-slack:0.1.4') {
     transitive = false;
     exclude group: 'com.android.support', module: 'appcompat-v7'
     exclude group: 'com.android.support', module: 'design'
