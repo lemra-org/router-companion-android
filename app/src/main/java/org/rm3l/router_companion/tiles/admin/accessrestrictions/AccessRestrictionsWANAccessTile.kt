@@ -277,7 +277,7 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
       }
       exception = data.getException()
 
-      layout.findViewById(
+      layout.find<View>(
           R.id.tile_admin_access_restrictions_wan_access_loading_view).visibility = View.GONE
 
       val errorPlaceHolderView = this.layout.find<TextView>(
@@ -293,7 +293,7 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
         mAdapter.notifyDataSetChanged()
 
         //Update last sync
-        val lastSyncView = layout.findViewById(R.id.tile_last_sync) as RelativeTimeTextView
+        val lastSyncView = layout.find<RelativeTimeTextView>(R.id.tile_last_sync)
         lastSyncView.setReferenceTime(mLastSync)
         lastSyncView.prefix = "Last sync: "
       }

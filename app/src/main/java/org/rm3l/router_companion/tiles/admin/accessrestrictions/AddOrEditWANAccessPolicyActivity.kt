@@ -120,7 +120,7 @@ class AddOrEditWANAccessPolicyActivity : AppCompatActivity() {
         savedInstanceState: Bundle?): View? {
       val rootView = inflater!!.inflate(R.layout.fragment_add_or_edit_wan_access_policy, container,
           false)
-      val textView = rootView.findViewById(R.id.section_label) as TextView
+      val textView = rootView.find<TextView>(R.id.section_label)
       textView.text = getString(R.string.section_format, arguments.getInt(ARG_SECTION_NUMBER))
       return rootView
     }
