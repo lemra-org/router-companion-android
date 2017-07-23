@@ -46,74 +46,9 @@ repositories {
 apply plugin: 'android-apt'
 apply plugin: 'com.github.triplet.play'
 
-final homePath = System.properties['user.home']
-
-//Prompt for keystore file and password (same for private key and store file)
-// Will take care of prompting via console or via a dialog form (if no console available, which
-// can be the case if building with Android Studio, or with gradle daemon mode)
-gradle.taskGraph.whenReady { taskGraph ->
-  if (taskGraph.hasTask(':tasker-plugin:assembleRelease') || taskGraph.hasTask(
-      ':tasker-plugin:assembleGenericRelease') ||
-      taskGraph.hasTask(':tasker-plugin:assembleGoogleRelease') ||
-      taskGraph.hasTask(':tasker-plugin:assembleAmazonRelease')) {
-
-    def password = ""
-    def storeFile = ""
-
-    //Attempt to read keystore.properties file, if any first
-    final propsFile = new File(homePath.toString() + "/.droid/", "keystore.properties")
-    final configName = 'release'
-
-    if (propsFile.exists() && android.signingConfigs.hasProperty(configName)) {
-      printf("Using properties file located at " + propsFile.absolutePath)
-      final props = new Properties()
-      props.load(new FileInputStream(propsFile))
-      storeFile = new File(props['keystore'].toString())
-      //            password = props['storePassword']
-      //            android.signingConfigs[configName].keyAlias = props['keyAlias']
-      password = props['keyPassword']
-    } else if (System.console() == null) {
-      storeFile = "UNDEFINED"
-      password = "UNDEFINED"
-    } else {
-      storeFile = System.console().readLine("\nPlease enter path to keystore file: ")
-      storeFile = new File(storeFile)
-      password = System.console().readPassword("\nPlease enter signing config password: ")
-    }
-
-    if (storeFile == null || !storeFile.exists()) {
-      throw new InvalidUserDataException("Keystore path not specified or file does not exist")
-    }
-
-    if (password.size() <= 0) {
-      throw new InvalidUserDataException("You must enter the password to proceed.")
-    }
-
-    // For debugging, friendly print the version output to the Gradle console
-    printf("\n-------- SIGNING CONFIG --------\n" + "- storeFile.absolutePath: [" +
-        storeFile.absolutePath +
-        "]\n----------------------------\n")
-
-    android.signingConfigs.release.storeFile = storeFile
-    android.signingConfigs.release.storePassword = password
-    android.signingConfigs.release.keyPassword = password
-  }
-}
-
-def getVersionName(String flavorName) {
-  // Fetch the version according to git latest tag and "how far we are from last tag"
-  def longVersionName = "git -C ${rootDir} describe --tags --long".execute().text.trim()
-  def (fullVersionTag, versionBuild, gitSha) = longVersionName.tokenize('-')
-  def (versionMajor, versionMinor, versionPatch) = fullVersionTag.tokenize('.')
-  def gitCommitHash = "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
-
-  // Return the version name
-  "$versionMajor.$versionMinor.$versionPatch ($gitCommitHash-$flavorName)"
-}
-
 android {
-  compileSdkVersion 26
-  buildToolsVersion "25.0.3"
+  compileSdkVersion android_sdk
+  buildToolsVersion buildTools_version
 
   playAccountConfigs {
     defaultAccountConfig {
@@ -129,10 +64,7 @@ android {
   signingConfigs {
     release {
       keyAlias 'DDWRTCompanionAndroidKey'
-      //User will be prompted for the parameters below, for 'assemble*Release' tasks
-      keyPassword ''
-      storeFile file('/dev/null')
-      storePassword ''
+      (storeFile, storePassword, keyPassword) = rootProject.getAndroidSigningConfig()
     }
   }
 
@@ -166,31 +98,15 @@ android {
     applicationId "org.rm3l.ddwrt.tasker"
     testApplicationId "org.rm3l.ddwrt.tasker.tests"
     minSdkVersion 15
-    targetSdkVersion 26
+    targetSdkVersion android_sdk
 
     // Enabling multidex support.
     //        multiDexEnabled true
     // Fetch the version according to git latest tag and "how far are we from last tag"
-    def longVersionName = "git -C ${rootDir} describe --tags --long".execute().text.trim()
-    def (fullVersionTag, versionBuild, gitSha) = longVersionName.tokenize('-')
-    def (versionMajor, versionMinor, versionPatch) = fullVersionTag.tokenize('.')
-    //        def gitCommitHash = "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
-
-    // Set the version name
-    versionName getVersionName("default")
-    //        versionName "$versionMajor.$versionMinor.$versionPatch ($gitCommitHash)"
-
-    // Turn the version name into a version code
-    //noinspection GroovyAssignabilityCheck
-    versionCode versionMajor.toInteger() * 100000 +
-        versionMinor.toInteger() *
-        10000 +
-        versionPatch.toInteger() *
-        1000 +
-        versionBuild.toInteger()
+    (versionCode, versionName) = rootProject.getVersionCodeAndName("default")
 
     // For debugging, friendly print the version output to the Gradle console
-    printf("\n--------" + "VERSION DATA--------" +
+    printf("\n-------- VERSION DATA for '$project.name' --------" +
         "\n" +
         "- CODE: " +
         versionCode +
@@ -259,17 +175,17 @@ android {
       minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
       zipAlignEnabled true
-
-      //Android-Debug-Database
-      resValue("string", "PORT_NUMBER", "8081")
     }
   }
 }
 
 //Automate the way version name is built for each flavor
-android.productFlavors.each { flavor -> flavor.versionName = getVersionName(flavor.name)
+android.productFlavors.each {
+  flavor ->
+    def (versionCode, versionName) = rootProject.getVersionCodeAndName(flavor.name)
+    flavor.versionCode = versionCode
+    flavor.versionName = versionName
 }
-
 
 dependencies {
 
@@ -290,16 +206,17 @@ dependencies {
 
   // Required for instrumented tests
   androidTestCompile "com.android.support:support-annotations:$support_version"
-  androidTestCompile 'com.android.support.test:runner:0.5'
+  androidTestCompile "com.android.support.test:runner:0.5"
 
   compile "com.android.support:appcompat-v7:$support_version"
+  compile "com.android.support:design:$support_version"
 
   compile('org.rm3l:maoni:4.0.0@aar') {
     transitive = true
-//    exclude group: 'com.android.support', module: 'appcompat-v7'
-//    exclude group: 'com.android.support', module: 'design'
-//    exclude group: 'com.android.support', module: 'support-v4'
-    //    exclude group: 'org.rm3l', module: 'maoni-email'
+    exclude group: 'com.android.support', module: 'appcompat-v7'
+    exclude group: 'com.android.support', module: 'design'
+    exclude group: 'com.android.support', module: 'support-v4'
+    exclude group: 'org.rm3l', module: 'maoni-email'
   }
 
   compile('org.rm3l:maoni-doorbell:2.4.0') {
@@ -310,14 +227,15 @@ dependencies {
   }
 
   //Send notifications on Slack as well
-  compile ('org.rm3l:maoni-slack:0.1.4') {
-    transitive = false;
-    exclude group: 'com.android.support', module: 'appcompat-v7'
-    exclude group: 'com.android.support', module: 'design'
-    exclude group: 'com.android.support', module: 'support-v4'
-  }
+//  compile ('org.rm3l:maoni-slack:0.1.4') {
+//    transitive = true;
+//    exclude group: 'org.rm3l', module: 'maoni-common'
+//    exclude group: 'com.android.support', module: 'appcompat-v7'
+//    exclude group: 'com.android.support', module: 'design'
+//    exclude group: 'com.android.support', module: 'support-v4'
+//  }
 
-  compile('com.mikepenz:aboutlibraries:5.9.2@aar') {
+  compile('com.mikepenz:aboutlibraries:5.9.6@aar') {
     transitive = true
   }
 
@@ -333,33 +251,34 @@ dependencies {
   compile group: 'com.twofortyfouram', name: 'android-spackle', version: "[2.0.0,3.0["
 
   androidTestCompile group: 'com.twofortyfouram', name: 'android-test', version: "[1.0.0,2.0["
-  compile('com.crashlytics.sdk.android:crashlytics:2.6.1@aar') {
+  compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
     transitive = true;
   }
 
-  compile 'com.google.code.gson:gson:2.8.0'
+  compile 'com.google.code.gson:gson:2.8.1'
   compile 'com.google.guava:guava:22.0-android'
 
 //  compile 'org.apache.commons:commons-lang3:3.5'
 
   //Retrofit
-  compile 'com.squareup.retrofit2:retrofit:2.1.0'
-  compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-  compile 'com.squareup.okhttp3:logging-interceptor:3.4.2'
+  compile 'com.squareup.retrofit2:retrofit:2.3.0'
+  compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+  compile 'com.squareup.okhttp3:logging-interceptor:3.8.1'
 
   //LeakCanary - to detect memory leaks (only in debug flavor)
   debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
   releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
   testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
 
-  compile 'com.facebook.stetho:stetho:1.4.1'
-  compile 'com.facebook.stetho:stetho-okhttp3:1.4.1'
+  compile 'com.facebook.stetho:stetho:1.5.0'
+  compile 'com.facebook.stetho:stetho-okhttp3:1.5.0'
 
   compile 'com.zsoltsafrany:needle:1.0.0'
 
-  compile 'com.amazonaws:aws-android-sdk-core:2.3.3'
-  compile 'com.amazonaws:aws-android-sdk-s3:2.3.3'
+  compile 'com.amazonaws:aws-android-sdk-core:2.4.5'
+  compile 'com.amazonaws:aws-android-sdk-s3:2.4.5'
 
+  //TODO Migrate to >= 1.0.0
   compile 'com.stephentuso:welcome:0.7.2'
 
   compile 'com.sothree.slidinguppanel:library:3.3.1'
@@ -376,8 +295,6 @@ dependencies {
     exclude group: 'com.android.support', module: 'support-v4'
   }
   releaseCompile 'com.readystatesoftware.chuck:library-no-op:1.0.4'
-
-//  compile 'com.github.ihsanbal:LoggingInterceptor:1.0.4'
 }
 
 
@@ -385,7 +302,6 @@ play {
   // ...
   track = 'beta'
   untrackOld = true // will untrack 'alpha' while upload to 'beta'
-
   uploadImages = false
   errorOnSizeLimit = true
 }

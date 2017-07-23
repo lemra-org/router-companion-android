@@ -64,8 +64,8 @@ android {
     }
   }
 
-  compileSdkVersion 26
-  buildToolsVersion '25.0.3'
+  compileSdkVersion android_sdk
+  buildToolsVersion buildTools_version
 
   playAccountConfigs {
     defaultAccountConfig {
@@ -105,7 +105,7 @@ android {
     applicationId "org.rm3l.ddwrt"
     testApplicationId "org.rm3l.ddwrt.tests"
     minSdkVersion 15
-    targetSdkVersion 26
+    targetSdkVersion android_sdk
 
     vectorDrawables.useSupportLibrary = true
 
@@ -113,6 +113,15 @@ android {
     //        multiDexEnabled true
     // Fetch the version according to git latest tag and "how far are we from last tag"
     (versionCode, versionName) = rootProject.getVersionCodeAndName("default")
+
+    printf("\n-------- VERSION DATA for '$project.name' --------" +
+        "\n" +
+        "- CODE: " +
+        versionCode +
+        "\n" +
+        "- NAME: " +
+        versionName +
+        "\n----------------------------\n")
 
     //        testInstrumentationRunner "android.support.multidex.MultiDexTestRunner"
 
@@ -335,7 +344,7 @@ dependencies {
 
   // Required for instrumented tests
   androidTestCompile "com.android.support:support-annotations:$support_version"
-  androidTestCompile 'com.android.support.test:runner:0.5'
+  androidTestCompile "com.android.support.test:runner:0.5"
 
   compile project(':common')
 
@@ -410,7 +419,7 @@ dependencies {
     exclude group: 'com.android.support', module: 'appcompat-v7'
     exclude group: 'com.android.support', module: 'design'
     exclude group: 'com.android.support', module: 'support-v4'
-//    exclude group: 'org.rm3l', module: 'maoni-email'
+    exclude group: 'org.rm3l', module: 'maoni-email'
   }
 
   compile('org.rm3l:maoni-doorbell:2.4.0') {
@@ -421,13 +430,13 @@ dependencies {
   }
 
   //Send notifications on Slack as well
-  compile ('org.rm3l:maoni-slack:0.1.4') {
-    transitive = true;
-    exclude group: 'org.rm3l', module: 'maoni-common'
-    exclude group: 'com.android.support', module: 'appcompat-v7'
-    exclude group: 'com.android.support', module: 'design'
-    exclude group: 'com.android.support', module: 'support-v4'
-  }
+//  compile ('org.rm3l:maoni-slack:0.1.4') {
+//    transitive = true;
+//    exclude group: 'org.rm3l', module: 'maoni-common'
+//    exclude group: 'com.android.support', module: 'appcompat-v7'
+//    exclude group: 'com.android.support', module: 'design'
+//    exclude group: 'com.android.support', module: 'support-v4'
+//  }
 
   //LeakCanary - to detect memory leaks (only in debug flavor)
   debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
