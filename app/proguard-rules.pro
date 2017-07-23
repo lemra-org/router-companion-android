@@ -265,6 +265,7 @@
     @com.squareup.otto.Subscribe public *;
     @com.squareup.otto.Produce public *;
 }
+-dontwarn com.squareup.otto.*
 
 # LeakCanary
 -keep class org.eclipse.mat.** { *; }
