@@ -34,31 +34,20 @@ import org.rm3l.router_companion.utils.kotlin.show
 class AvocarrotNativeAdTile(parentFragment: Fragment, arguments: Bundle, router: Router?)
   : DDWRTTile<Unit>(parentFragment, arguments, router, R.layout.tile_native_ad, null) {
 
-  override fun getTileHeaderViewId(): Int {
-    return R.id.tile_native_ad_hdr
-  }
+  private val loader: AsyncTaskLoader<Unit>
 
-  override fun getTileTitleViewId(): Int {
-    return R.id.tile_native_ad_headline
-  }
-
-  override fun getLoader(id: Int, args: Bundle): Loader<Unit>? {
-    return object : AsyncTaskLoader<Unit>(mParentFragmentActivity) {
+  init {
+    loader = object: AsyncTaskLoader<Unit>(mParentFragmentActivity) {
       override fun loadInBackground() {}
     }
   }
 
-  override fun getLogTag(): String? {
-    return LOG_TAG
-  }
-
-  override fun getOnclickIntent(): DDWRTTile<Unit>.OnClickIntent? {
-    return null
-  }
-
-  override fun isAdTile(): Boolean {
-    return true
-  }
+  override fun getTileHeaderViewId() = R.id.tile_native_ad_hdr
+  override fun getTileTitleViewId() = R.id.tile_native_ad_headline
+  override fun getLoader(id: Int, args: Bundle) = loader
+  override fun getLogTag() = LOG_TAG
+  override fun getOnclickIntent() = null
+  override fun isAdTile() = true
 
   override fun onLoadFinished(loader: Loader<Unit>, data: Unit) {
     Avocarrot.build(mParentFragmentActivity,
