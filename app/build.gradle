@@ -318,6 +318,7 @@ repositories {
   maven {
     url 'https://maven.fabric.io/public'
   }
+  maven { url "https://s3.amazonaws.com/avocarrot-android-builds/dist" }
 }
 
 /*
@@ -384,6 +385,7 @@ dependencies {
   compile 'com.github.curioustechizen.android-ago:library:1.3.4'
   //    compile 'com.github.danielemaddaluno.androidupdatechecker:library:1.0.2'
   compile 'com.google.android.gms:play-services-ads:11.0.2'
+  compile('com.avocarrot:android-sdk:4.0.+')
   compile 'fr.nicolaspomepuy:discreetapprate:2.0.4@aar'
   compile 'com.squareup.picasso:picasso:2.5.2'
   //    compile 'com.github.halysongoncalves:pugnotification:1.8.1'
@@ -419,7 +421,7 @@ dependencies {
     exclude group: 'com.android.support', module: 'appcompat-v7'
     exclude group: 'com.android.support', module: 'design'
     exclude group: 'com.android.support', module: 'support-v4'
-    exclude group: 'org.rm3l', module: 'maoni-email'
+//    exclude group: 'org.rm3l', module: 'maoni-email'
   }
 
   compile('org.rm3l:maoni-doorbell:2.4.0') {

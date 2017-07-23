@@ -96,7 +96,7 @@ import org.rm3l.router_companion.prefs.sort.DDWRTSortingStrategy;
 import org.rm3l.router_companion.prefs.sort.SortingStrategy;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.resources.conn.Router.RouterFirmware;
-import org.rm3l.router_companion.tiles.AvocarrotNativeAdTile;
+import org.rm3l.router_companion.tiles.ads.AvocarrotNativeAdTile;
 import org.rm3l.router_companion.tiles.BannerAdTile;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.utils.ColorUtils;
