@@ -1,5 +1,6 @@
 package org.rm3l.router_companion.tiles.ads
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.AsyncTaskLoader
@@ -37,7 +38,7 @@ class AvocarrotNativeAdTile(parentFragment: Fragment, arguments: Bundle, router:
   private val loader: AsyncTaskLoader<Unit>
 
   init {
-    loader = object: AsyncTaskLoader<Unit>(mParentFragmentActivity) {
+    loader = object: AsyncTaskLoader<Unit>(mParentFragmentActivity as Context?) {
       override fun loadInBackground() {}
     }
   }
