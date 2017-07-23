@@ -28,8 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.codepond.wizardroid.Wizard;
 import org.codepond.wizardroid.WizardStep;
 import org.rm3l.ddwrt.R;
@@ -62,6 +60,7 @@ import static org.rm3l.router_companion.utils.Utils.isDemoRouter;
 public class ReviewStep extends MaterialWizardStep {
 
   private static final String TAG = ReviewStep.class.getSimpleName();
+  public static final String END_OF_IO_STREAM_READ = "end of io stream read";
 
   private final Gson gson = MaterialWizard.GSON_BUILDER.create();
 
@@ -282,8 +281,7 @@ public class ReviewStep extends MaterialWizardStep {
       if (Utils.isDemoRouter(routerIpOrDns)) {
         useLocalSSIDLookupView.setText("N/A");
       } else {
-        String useLocalSSIDText =
-            StringUtils.capitalize(BooleanUtils.toStringYesNo(useLocalSSIDLookup).toLowerCase());
+        String useLocalSSIDText = useLocalSSIDLookup ? "Yes" : "No";
         if (useLocalSSIDLookup) {
           useLocalSSIDText += (" (" + lookups.size() + " lookup entries)");
         }
@@ -339,7 +337,17 @@ public class ReviewStep extends MaterialWizardStep {
 
     final Object useLocalSSIDLookupObj = wizardContext.get("useLocalSSIDLookup");
     if (useLocalSSIDLookupObj != null) {
-      useLocalSSIDLookup = BooleanUtils.toBoolean(useLocalSSIDLookupObj.toString());
+      switch (useLocalSSIDLookupObj.toString().toLowerCase()) {
+        case "yes":
+        case "true":
+        case "on":
+          useLocalSSIDLookup = true;
+          break;
+        default:
+          useLocalSSIDLookup = false;
+          break;
+      }
+      //useLocalSSIDLookup = BooleanUtils.toBoolean(useLocalSSIDLookupObj.toString());
     }
 
     final Object localSSIDLookupDetailsObj = wizardContext.get("localSSIDLookupDetails");
@@ -499,22 +507,25 @@ public class ReviewStep extends MaterialWizardStep {
         && action != RouterWizardAction.ADD
         && action != RouterWizardAction.COPY) {
       //This is an update - check whether any of the connection parameters have changed
-      if (StringUtils.equals(routerSelected.getRemoteIpAddress(), router.getRemoteIpAddress())
+      if (routerSelected.getRemoteIpAddress().equals(router.getRemoteIpAddress())
           && routerSelected.getRouterFirmware() == router.getRouterFirmware()
           && routerSelected.getRouterConnectionProtocol() == router.getRouterConnectionProtocol()
           && routerSelected.getRemotePort() == router.getRemotePort()
-          && StringUtils.equals(routerSelected.getUsernamePlain(), router.getUsernamePlain())
+          && routerSelected.getUsernamePlain() != null &&
+          routerSelected.getUsernamePlain().equals(router.getUsernamePlain())
           && routerSelected.getSshAuthenticationMethod() == router.getSshAuthenticationMethod()) {
 
         //Check actual password and privkey
         switch (routerSelected.getSshAuthenticationMethod()) {
           case PASSWORD:
             checkActualConnection =
-                !StringUtils.equals(routerSelected.getPasswordPlain(), router.getPasswordPlain());
+                !(routerSelected.getPasswordPlain() != null &&
+                    routerSelected.getPasswordPlain().equals(router.getPasswordPlain()));
             break;
           case PUBLIC_PRIVATE_KEY:
             checkActualConnection =
-                !StringUtils.equals(routerSelected.getPrivKeyPlain(), router.getPrivKeyPlain());
+                !(routerSelected.getPrivKeyPlain() != null &&
+                    routerSelected.getPrivKeyPlain().equals(router.getPrivKeyPlain()));
             break;
           default:
             checkActualConnection = false;
@@ -614,10 +625,8 @@ public class ReviewStep extends MaterialWizardStep {
             Color.WHITE, null, Color.YELLOW, Snackbar.LENGTH_LONG, null, null, true);
         //                Utils.buildAlertDialog(getActivity(), "Error", getString(R.string.router_add_connection_unsuccessful) +
         //                        ": " + (rootCause != null ? rootCause.getMessage() : e.getMessage()), true, true).show();
-        if (StringUtils.containsIgnoreCase(e.getMessage(), "End of IO Stream Read") || (rootCause
-            != null &&
-            //                          (rootCause instanceof IOException) &&
-            StringUtils.containsIgnoreCase(rootCause.getMessage(), "End of IO Stream Read"))) {
+        if (e.getMessage().toLowerCase().contains(END_OF_IO_STREAM_READ) ||
+            (rootCause != null && rootCause.getMessage().toLowerCase().contains(END_OF_IO_STREAM_READ))) {
           //Common issue with some routers
           Utils.buildAlertDialog(getActivity(), "SSH Error: End of IO Stream Read",
               "Some firmware builds (like DD-WRT r21061) reportedly have non-working SSH server versions "

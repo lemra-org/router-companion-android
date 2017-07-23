@@ -37,7 +37,6 @@ import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
-import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
@@ -631,7 +630,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
     //        final String securityMode = mNvramInfo.getProperty(isNullOrEmpty(this.mParentIface) ?
     //                (this.mPhyIface + "_security_mode") : (this.mPhyIface + "_akm"));
     final String securityMode = mNvramInfo.getProperty(this.mPhyIface + "_security_mode",
-        mNvramInfo.getProperty(StringUtils.replace(this.mPhyIface, ".", "X") + "_security_mode"));
+        mNvramInfo.getProperty(this.mPhyIface.replace(".", "X") + "_security_mode"));
     Integer position = (securityMode != null ? securityModeValues.get(securityMode) : null);
     if (!securityModeValues.containsKey(securityMode)) {
       Utils.reportException(null,
@@ -885,7 +884,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
         securityModeValues.inverse().get(securityModeSelectedItemPosition);
     if (securityModeSelectedItem != null && !securityModeSelectedItem.equals(
         mNvramInfo.getProperty(this.mPhyIface + "_security_mode", mNvramInfo.getProperty(
-            StringUtils.replace(this.mPhyIface, ".", "X") + "_security_mode")))) {
+            this.mPhyIface.replace(".", "X") + "_security_mode")))) {
       final Properties props = mNvramInfo.getData();
       if (props == null) {
         Toast.makeText(this, "Internal Error - please try again later.", Toast.LENGTH_SHORT).show();
@@ -897,7 +896,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
       if (props.containsKey(this.mPhyIface + "_security_mode")) {
         nvramVarsToUpdate.setProperty(this.mPhyIface + "_security_mode", securityModeSelectedItem);
       } else {
-        nvramVarsToUpdate.setProperty(StringUtils.replace(this.mPhyIface, ".", "X"),
+        nvramVarsToUpdate.setProperty(this.mPhyIface.replace(".", "X"),
             securityModeSelectedItem);
       }
     }

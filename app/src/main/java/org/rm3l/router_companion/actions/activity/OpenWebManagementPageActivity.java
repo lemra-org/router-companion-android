@@ -35,7 +35,6 @@ import java.net.URL;
 import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 import needle.UiRelatedProgressTask;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
@@ -502,7 +501,7 @@ public class OpenWebManagementPageActivity extends WebActivity {
         @SuppressWarnings("ThrowableResultOfMethodCallIgnored") final Throwable rootCause =
             Throwables.getRootCause(exception);
         mErrorTextView.setVisibility(View.VISIBLE);
-        mErrorTextView.setText("Error: " + ExceptionUtils.getRootCauseMessage(exception));
+        mErrorTextView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
         mErrorTextView.setOnClickListener(new View.OnClickListener() {
           @Override public void onClick(View v) {
             //noinspection ThrowableResultOfMethodCallIgnored

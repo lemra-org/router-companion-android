@@ -85,6 +85,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.google.common.hash.Hashing;
+import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -105,8 +106,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
@@ -651,7 +650,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
     }
     final Set<String> activeIpConnectionsForClient = new HashSet<>();
     for (final String activeIPConnection : activeIPConnections) {
-      if (StringUtils.containsIgnoreCase(activeIPConnection, clientIpAddr)) {
+      if (activeIPConnection != null && activeIPConnection.toLowerCase()
+          .contains(clientIpAddr.toLowerCase())) {
         activeIpConnectionsForClient.add(activeIPConnection);
       }
     }
@@ -1005,7 +1005,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
               for (int idx = 0; idx < assocList.length; idx++) {
                 final String assoc = assocList[idx];
                 iface = null;
-                if (StringUtils.startsWithIgnoreCase(assoc, "iface ")) {
+                if (assoc != null && assoc.toLowerCase().startsWith("iface ")) {
                   iface = assoc.replaceAll("iface ", "").trim();
                 }
                 if (iface == null) {
@@ -1017,7 +1017,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                   if ("done".equalsIgnoreCase(assocForIface)) {
                     break;
                   }
-                  if (StringUtils.startsWithIgnoreCase(assocForIface, "iface ")) {
+                  if (assocForIface.toLowerCase().startsWith("iface ")) {
                     continue;
                   }
                   wirelessIfaceAssocList.put(iface, assocForIface.toLowerCase());
@@ -1087,7 +1087,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
 
               boolean isOnWirelessNetwork = false;
               for (final String wlAssocListMacAddr : wlAssocListMacAddrs) {
-                if (StringUtils.equalsIgnoreCase(macAddress, wlAssocListMacAddr)) {
+                if (wlAssocListMacAddr != null &&
+                    macAddress.toLowerCase().equals(wlAssocListMacAddr.toLowerCase())) {
                   isOnWirelessNetwork = true;
                   break;
                 }
@@ -1100,7 +1101,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                   final String wlIface = entry.getKey();
                   final Collection<String> assocList = entry.getValue();
                   for (final String assoc : assocList) {
-                    if (StringUtils.equalsIgnoreCase(macAddress, assoc)) {
+                    if (macAddress.equalsIgnoreCase(assoc)) {
                       iface = wlIface;
                       break;
                     }
@@ -1195,7 +1196,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
 
               if (activeClients != null) {
                 for (final String activeClient : activeClients) {
-                  if (StringUtils.containsIgnoreCase(activeClient, macAddress)) {
+                  if (activeClient != null &&
+                      activeClient.toLowerCase().contains(macAddress.toLowerCase())) {
                     device.setActive(true);
                     break;
                   }
@@ -1476,8 +1478,10 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
             wrtbwmonScriptPath = new File(mParentFragmentActivity.getCacheDir(),
                 WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME);
 
-            FileUtils.copyInputStreamToFile(mParentFragmentActivity.getResources()
-                .openRawResource(R.raw.wrtbwmon_ddwrtcompanion), wrtbwmonScriptPath);
+            Files.write(ByteStreams.toByteArray(mParentFragmentActivity.getResources()
+                .openRawResource(R.raw.wrtbwmon_ddwrtcompanion)), wrtbwmonScriptPath);
+            //FileUtils.copyInputStreamToFile(mParentFragmentActivity.getResources()
+            //    .openRawResource(R.raw.wrtbwmon_ddwrtcompanion), wrtbwmonScriptPath);
 
             //Compare MD5 checksum locally on remotely. If any differences, overwrite the remote one
             final String localChecksum = Files.hash(wrtbwmonScriptPath, Hashing.md5()).toString();
@@ -1655,8 +1659,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                   final String macAddr = nullToEmpty(device.getMacAddress()).toLowerCase();
                   boolean wanAccessDisabled = false;
                   for (final String wanAccessIptablesChainLine : wanAccessIptablesChainDump) {
-                    if (StringUtils.containsIgnoreCase(wanAccessIptablesChainLine, macAddr)
-                        && StringUtils.containsIgnoreCase(wanAccessIptablesChainLine, "DROP")) {
+                    if (wanAccessIptablesChainLine != null &&
+                        wanAccessIptablesChainLine.toLowerCase().contains(macAddr.toLowerCase())
+                        && wanAccessIptablesChainLine.toLowerCase().contains("drop")) {
                       device.setWanAccessState(Device.WANAccessState.WAN_ACCESS_DISABLED);
                       wanAccessDisabled = true;
                       break;

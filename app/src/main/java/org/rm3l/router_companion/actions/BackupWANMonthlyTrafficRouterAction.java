@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.commons.lang3.StringUtils;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.common.resources.audit.ActionLog;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
@@ -122,9 +121,12 @@ public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<St
           continue;
         }
 
-        if (!StringUtils.startsWithIgnoreCase(key.toString(), "traff-")) {
+        if (!(key.toString().toLowerCase().startsWith("traff-"))) {
           continue;
         }
+        //if (!StringUtils.startsWithIgnoreCase(key.toString(), "traff-")) {
+        //  continue;
+        //}
 
         nvramInfoWithTraffData.setProperty(key.toString(), value.toString());
 
@@ -151,7 +153,7 @@ public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<St
 
         int dayNum = 1;
         for (final String dailyInOutTraffData : dailyTraffDataList) {
-          if (StringUtils.contains(dailyInOutTraffData, "[")) {
+          if (dailyInOutTraffData.contains("[")) {
             continue;
           }
           final List<String> dailyInOutTraffDataList =

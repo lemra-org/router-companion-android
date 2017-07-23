@@ -35,10 +35,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.TextView;
+import com.google.common.io.ByteStreams;
 import java.io.IOException;
 import java.util.Calendar;
-import kotlin.text.Charsets;
-import org.apache.commons.io.IOUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
@@ -100,7 +99,7 @@ public class AboutDialog extends Dialog {
    */
   @Nullable private String readRawTextFile(int id) {
     try {
-      return IOUtils.toString(mContext.getResources().openRawResource(id), Charsets.UTF_8);
+      return new String(ByteStreams.toByteArray(mContext.getResources().openRawResource(id)));
     } catch (final IOException e) {
       e.printStackTrace();
     }

@@ -32,13 +32,14 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Strings;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -377,7 +378,8 @@ public class ImportAliasesDialogFragment extends DialogFragment {
                           File.createTempFile("aliases_to_import_" + mRouter.getUuid(), ".json",
                               context.getCacheDir());
 
-                      FileUtils.copyInputStreamToFile(mSelectedBackupInputStream, tempFile);
+                      Files.write(ByteStreams.toByteArray(mSelectedBackupInputStream), tempFile);
+                      //FileUtils.copyInputStreamToFile(mSelectedBackupInputStream, tempFile);
 
                       if (mUriCursor != null) {
                         mUriCursor.close();
@@ -418,7 +420,8 @@ public class ImportAliasesDialogFragment extends DialogFragment {
                       final Map<String, String> aliasesToPersist = new HashMap<>();
 
                       try {
-                        final String fileToString = FileUtils.readFileToString(tempFile);
+                        //final String fileToString = FileUtils.readFileToString(tempFile);
+                        final String fileToString = new String(Files.toByteArray(tempFile));
 
                         final JSONObject jsonObject = new JSONObject(fileToString);
 

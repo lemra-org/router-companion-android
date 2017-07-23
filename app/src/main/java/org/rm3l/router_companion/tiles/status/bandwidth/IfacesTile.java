@@ -40,7 +40,6 @@ import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
@@ -148,8 +147,8 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
           if (splitToList != null && !splitToList.isEmpty()) {
 
             for (final String landev : splitToList) {
-              if (landev == null || landev.isEmpty() || StringUtils.startsWithIgnoreCase(landev,
-                  "vlan")) {
+              if (landev == null || landev.isEmpty() ||
+                  landev.toLowerCase().startsWith("vlan")) {
                 continue;
               }
               //Also get Virtual Interfaces

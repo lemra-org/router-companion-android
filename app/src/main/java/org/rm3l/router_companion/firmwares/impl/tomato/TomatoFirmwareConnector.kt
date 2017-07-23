@@ -8,7 +8,6 @@ import com.crashlytics.android.Crashlytics
 import com.google.common.base.Splitter
 import com.google.common.base.Strings
 import java.util.Arrays
-import org.apache.commons.lang3.StringUtils
 import org.rm3l.router_companion.RouterCompanionAppConstants
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException
 import org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector
@@ -163,9 +162,14 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
 
       if (otherCmds.size >= 4) {
         //Kernel
-        nvramInfo.setProperty(NVRAMInfo.KERNEL,
-            StringUtils.replace(StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
-                nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME), ""))
+        otherCmds[3]?.let {
+          val valueWithoutGnuLinux = it.replace("GNU/Linux", "")
+          nvramInfo?.setProperty(NVRAMInfo.KERNEL,
+              valueWithoutGnuLinux.replace(nvramInfo?.getProperty(NVRAMInfo.ROUTER_NAME)?:"", ""))
+        }
+//        nvramInfo.setProperty(NVRAMInfo.KERNEL,
+//            StringUtils.replace(StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
+//                nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME), ""))
       }
 
       if (otherCmds.size >= 5) {

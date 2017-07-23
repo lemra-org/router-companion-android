@@ -3,7 +3,6 @@ package org.rm3l.router_companion.help;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
-import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.web.WebActivity;
@@ -21,7 +20,7 @@ public class ChangelogActivity extends WebActivity {
 
     super.onCreate(savedInstanceState);
     final View checkForUpdatesButton = findViewById(R.id.button_check_updates);
-    if (checkForUpdatesButton != null && StringUtils.startsWithIgnoreCase(FLAVOR, "google")) {
+    if (checkForUpdatesButton != null && FLAVOR.toLowerCase().startsWith("google")) {
       //This library currently supports Google Play only
       checkForUpdatesButton.setVisibility(View.GONE);
       //            checkForUpdatesButton.setOnClickListener(new View.OnClickListener() {

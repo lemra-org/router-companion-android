@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.lang3.StringUtils;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.SSHUtils;
@@ -51,9 +50,12 @@ public class EraseWANMonthlyTrafficRouterAction extends AbstractRouterAction<Voi
         }
 
         final String keyToString = key.toString();
-        if (!StringUtils.startsWithIgnoreCase(keyToString, "traff-")) {
+        if (!keyToString.toLowerCase().startsWith("traff-")) {
           continue;
         }
+        //if (!StringUtils.startsWithIgnoreCase(keyToString, "traff-")) {
+        //  continue;
+        //}
 
         if (keyToString.length() != 13) {
           continue;

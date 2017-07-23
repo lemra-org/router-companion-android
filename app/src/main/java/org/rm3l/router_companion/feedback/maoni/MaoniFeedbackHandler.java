@@ -21,15 +21,15 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.facebook.device.yearclass.YearClass;
+import com.google.common.base.Throwables;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import needle.UiRelatedProgressTask;
 import okhttp3.ResponseBody;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.maoni.common.contract.Handler;
@@ -197,7 +197,7 @@ public class MaoniFeedbackHandler implements Handler {
   }
 
   private class FeedbackSenderTask extends
-      UiRelatedProgressTask<ImmutablePair<Response<ResponseBody>, ? extends Exception>, Integer> {
+      UiRelatedProgressTask<Map.Entry<Response<ResponseBody>, ? extends Exception>, Integer> {
 
     private static final int STARTED = 1;
     private static final int UPLOADING_ATTACHMENT = 2;
@@ -239,7 +239,7 @@ public class MaoniFeedbackHandler implements Handler {
       });
     }
 
-    @Override protected ImmutablePair<Response<ResponseBody>, ? extends Exception> doWork() {
+    @Override protected Map.Entry<Response<ResponseBody>, ? extends Exception> doWork() {
       publishProgress(STARTED);
       final boolean includeScreenshot = feedback.includeScreenshot;
       final boolean includeLogs = feedback.includeLogs;
@@ -302,7 +302,8 @@ public class MaoniFeedbackHandler implements Handler {
             if (TransferState.COMPLETED.equals(transferState) || TransferState.FAILED.equals(
                 transferState)) {
               if (TransferState.FAILED.equals(transferState)) {
-                return ImmutablePair.of(null,
+                return new AbstractMap.SimpleImmutableEntry<Response<ResponseBody>, Exception>(
+                    null,
                     new IllegalStateException("Failed to upload screenshot capture"));
               } else {
                 //Set URL TO S3
@@ -376,7 +377,8 @@ public class MaoniFeedbackHandler implements Handler {
             if (TransferState.COMPLETED.equals(transferState) || TransferState.FAILED.equals(
                 transferState)) {
               if (TransferState.FAILED.equals(transferState)) {
-                return ImmutablePair.of(null, new IllegalStateException("Failed to upload logs"));
+                return new AbstractMap.SimpleImmutableEntry<Response<ResponseBody>, Exception>(
+                    null, new IllegalStateException("Failed to upload logs"));
               } else {
                 //Set URL TO S3
                 final GooGlData gooGlData = new GooGlData();
@@ -402,7 +404,8 @@ public class MaoniFeedbackHandler implements Handler {
         NetworkUtils.checkResponseSuccessful(openResponse);
 
         if (openResponse.code() != 201) {
-          return ImmutablePair.of(openResponse, new IllegalStateException());
+          return new AbstractMap.SimpleImmutableEntry<Response<ResponseBody>, Exception>(
+              openResponse, new IllegalStateException());
         }
 
         //3. Submit the actual feedback
@@ -444,14 +447,14 @@ public class MaoniFeedbackHandler implements Handler {
 
         NetworkUtils.checkResponseSuccessful(response);
 
-        return ImmutablePair.of(response, null);
+        return new AbstractMap.SimpleImmutableEntry<>(response, null);
       } catch (final Exception e) {
-        return ImmutablePair.of(null, e);
+        return new AbstractMap.SimpleImmutableEntry<>(null, e);
       }
     }
 
     @Override protected void thenDoUiRelatedWork(
-        ImmutablePair<Response<ResponseBody>, ? extends Exception> result) {
+        Map.Entry<Response<ResponseBody>, ? extends Exception> result) {
       try {
         if (FeedbackSenderTask.this.isCanceled()) {
           Toast.makeText(mContext, "Cancelled.", Toast.LENGTH_SHORT).show();
@@ -459,8 +462,8 @@ public class MaoniFeedbackHandler implements Handler {
         if (result == null) {
           return;
         }
-        final Response<ResponseBody> response = result.left;
-        final Exception exception = result.right;
+        final Response<ResponseBody> response = result.getKey();
+        final Exception exception = result.getValue();
 
         if (exception != null) {
           String errorMsg = null;
@@ -468,7 +471,7 @@ public class MaoniFeedbackHandler implements Handler {
             errorMsg = response.message();
           }
           if (TextUtils.isEmpty(errorMsg)) {
-            errorMsg = ExceptionUtils.getRootCauseMessage(exception);
+            errorMsg = Throwables.getRootCause(exception).getMessage();
           }
           Toast.makeText(mContext, "Error: " + errorMsg, Toast.LENGTH_LONG).show();
           return;

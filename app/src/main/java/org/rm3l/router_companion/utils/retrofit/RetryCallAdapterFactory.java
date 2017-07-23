@@ -1,5 +1,6 @@
 package org.rm3l.router_companion.utils.retrofit;
 
+import android.support.annotation.NonNull;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -32,7 +33,9 @@ public class RetryCallAdapterFactory extends CallAdapter.Factory {
   }
 
   @Override
-  public CallAdapter<?> get(final Type returnType, Annotation[] annotations, Retrofit retrofit) {
+  public CallAdapter<?,?> get(@NonNull final Type returnType,
+      @NonNull Annotation[] annotations,
+      @NonNull Retrofit retrofit) {
     boolean hasRetryAnnotation = false;
     int value = 0;
     for (Annotation annotation : annotations) {
@@ -43,20 +46,21 @@ public class RetryCallAdapterFactory extends CallAdapter.Factory {
     }
     final boolean shouldRetryCall = hasRetryAnnotation;
     final int maxRetries = value;
-    final CallAdapter<?> delegate = retrofit.nextCallAdapter(this, returnType, annotations);
-    return new CallAdapter<Object>() {
+    final CallAdapter<?,?> delegate = retrofit.nextCallAdapter(this, returnType, annotations);
+    return new CallAdapter<Object, Object>() {
       @Override public Type responseType() {
         return delegate.responseType();
       }
 
-      @Override public <R> Object adapt(Call<R> call) {
+      @SuppressWarnings("unchecked")
+      @Override public Object adapt(@NonNull Call call) {
         return delegate.adapt(
             shouldRetryCall ? new RetryingCall<>(call, mExecutor, maxRetries) : call);
       }
     };
   }
 
-  static final class RetryingCall<T> implements Call<T> {
+  private static final class RetryingCall<T> implements Call<T> {
     private final Call<T> mDelegate;
     private final ScheduledExecutorService mExecutor;
     private final int mMaxRetries;
@@ -64,7 +68,7 @@ public class RetryCallAdapterFactory extends CallAdapter.Factory {
     private final AtomicBoolean isExecuted;
     private final AtomicBoolean isCanceled;
 
-    public RetryingCall(Call<T> delegate, ScheduledExecutorService executor, int maxRetries) {
+    RetryingCall(Call<T> delegate, ScheduledExecutorService executor, int maxRetries) {
       mDelegate = delegate;
       mExecutor = executor;
       mMaxRetries = maxRetries;
@@ -77,7 +81,7 @@ public class RetryCallAdapterFactory extends CallAdapter.Factory {
       return mDelegate.execute();
     }
 
-    @Override public void enqueue(Callback<T> callback) {
+    @Override public void enqueue(@NonNull Callback<T> callback) {
       mDelegate.enqueue(new RetryingCallback<>(mDelegate, callback, mExecutor, mMaxRetries));
     }
 
@@ -105,7 +109,7 @@ public class RetryCallAdapterFactory extends CallAdapter.Factory {
   }
 
   // Exponential backoff approach from https://developers.google.com/drive/web/handle-errors
-  static final class RetryingCallback<T> implements Callback<T> {
+  private static final class RetryingCallback<T> implements Callback<T> {
     private static Random random = new Random();
     private final int mMaxRetries;
     private final Call<T> mCall;
@@ -137,11 +141,11 @@ public class RetryCallAdapterFactory extends CallAdapter.Factory {
       }, (1 << mRetries) * 1000 + random.nextInt(1001), TimeUnit.MILLISECONDS);
     }
 
-    @Override public void onResponse(Call<T> call, Response<T> response) {
+    @Override public void onResponse(@NonNull Call<T> call, @NonNull Response<T> response) {
       mDelegate.onResponse(call, response);
     }
 
-    @Override public void onFailure(Call<T> call, Throwable throwable) {
+    @Override public void onFailure(@NonNull Call<T> call, @NonNull Throwable throwable) {
       // Retry failed request
       if (mRetries < mMaxRetries) {
         retryCall();

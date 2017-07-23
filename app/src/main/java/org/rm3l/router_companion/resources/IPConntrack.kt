@@ -24,7 +24,6 @@ package org.rm3l.router_companion.resources
 
 import com.google.common.base.Splitter
 import com.google.common.base.Strings
-import org.apache.commons.lang3.StringUtils
 import org.rm3l.router_companion.utils.ReportingUtils
 
 import com.google.common.base.Strings.nullToEmpty
@@ -314,8 +313,8 @@ class IPConntrack {
                       firstPart, ignoreCase = true)) {
                     ipConntrack.structUseCount = Integer.parseInt(secondPart)
                   }
-                } else if (StringUtils.startsWith(sequence, "[")) {
-                  ipConntrack.isAssured = StringUtils.containsIgnoreCase(sequence, "assured")
+                } else if (sequence.startsWith("[")) {
+                  ipConntrack.isAssured = sequence.contains("assured", ignoreCase = true)
                 }
               }
             }
@@ -364,8 +363,8 @@ class IPConntrack {
                     firstPart, ignoreCase = true)) {
                   ipConntrack.structUseCount = Integer.parseInt(secondPart)
                 }
-              } else if (StringUtils.startsWith(sequence, "[")) {
-                ipConntrack.isAssured = StringUtils.containsIgnoreCase(sequence, "assured")
+              } else if (sequence.startsWith("[")) {
+                ipConntrack.isAssured = sequence.contains("assured", ignoreCase = true)
               }
             }
           }
@@ -422,8 +421,8 @@ class IPConntrack {
                     ignoreCase = true)) {
                   ipConntrack.icmpCode = Integer.parseInt(secondPart)
                 }
-              } else if (StringUtils.startsWith(sequence, "[")) {
-                ipConntrack.isAssured = StringUtils.containsIgnoreCase(sequence, "assured")
+              } else if (sequence.startsWith("[")) {
+                ipConntrack.isAssured = sequence.contains("assured", ignoreCase = true)
               }
             }
           }
@@ -471,8 +470,8 @@ class IPConntrack {
                     firstPart, ignoreCase = true)) {
                   ipConntrack.structUseCount = Integer.parseInt(secondPart)
                 }
-              } else if (StringUtils.startsWith(sequence, "[")) {
-                ipConntrack.isAssured = StringUtils.containsIgnoreCase(sequence, "assured")
+              } else if (sequence.startsWith("[")) {
+                ipConntrack.isAssured = sequence.contains("assured", ignoreCase = true)
               }
             }
           }

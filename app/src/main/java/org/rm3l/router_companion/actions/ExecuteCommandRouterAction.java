@@ -5,13 +5,14 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.common.base.Joiner;
+import com.google.common.io.Files;
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import org.apache.commons.io.FileUtils;
 import org.rm3l.router_companion.common.resources.audit.ActionLog;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.ReportingUtils;
@@ -72,7 +73,10 @@ public class ExecuteCommandRouterAction extends AbstractRouterAction<String[]> {
         try {
           outputFile = File.createTempFile(ExecuteCommandRouterAction.class.getSimpleName(), ".sh",
               mContext.getCacheDir());
-          FileUtils.writeStringToFile(outputFile, Joiner.on(" && ").skipNulls().join(mCmd));
+          Files.write(
+              Joiner.on(" && ").skipNulls().join(mCmd).getBytes(Charset.forName("UTF-8")),
+              outputFile);
+          //FileUtils.writeStringToFile(outputFile, Joiner.on(" && ").skipNulls().join(mCmd));
           //Now upload this file onto the remote router
           if (!SSHUtils.scpTo(mContext, router, globalSharedPreferences,
               outputFile.getAbsolutePath(), remotePath)) {

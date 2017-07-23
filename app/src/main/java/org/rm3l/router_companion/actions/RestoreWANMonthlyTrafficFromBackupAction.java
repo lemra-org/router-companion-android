@@ -5,12 +5,13 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.common.base.Splitter;
+import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
-import org.apache.commons.io.FileUtils;
+//import org.apache.commons.io.FileUtils;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
@@ -45,7 +46,8 @@ public class RestoreWANMonthlyTrafficFromBackupAction extends AbstractRouterActi
       tempFile = File.createTempFile("ttraffbak_to_restore_" + router.getUuid(), ".bin",
           mContext.getCacheDir());
 
-      FileUtils.copyInputStreamToFile(mBackupFileInputStream, tempFile);
+      Files.write(ByteStreams.toByteArray(mBackupFileInputStream), tempFile);
+      //FileUtils.copyInputStreamToFile(mBackupFileInputStream, tempFile);
 
       final List<String> fileLines = Files.readLines(tempFile, RouterCompanionAppConstants.CHARSET);
       final NVRAMInfo linesToNVRAM = new NVRAMInfo();

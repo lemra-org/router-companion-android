@@ -28,7 +28,6 @@ import com.google.common.collect.Maps;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
-import org.apache.commons.lang3.StringUtils;
 import org.rm3l.router_companion.fragments.AbstractBaseFragment;
 
 /**
@@ -48,7 +47,7 @@ public abstract class SortingStrategy {
       final TreeMap<String, AbstractBaseFragment> tabsMap = Maps.newTreeMap(this.getComparator());
       for (int i = 0; i < tabs.length; i++) {
         final AbstractBaseFragment tab = tabs[i];
-        tabsMap.put(StringUtils.lowerCase(tab.getTabTitle().toString()), tab);
+        tabsMap.put(tab.getTabTitle().toString().toLowerCase(), tab);
       }
 
       final AbstractBaseFragment[] output = new AbstractBaseFragment[tabsMap.size()];

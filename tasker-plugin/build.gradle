@@ -340,7 +340,7 @@ dependencies {
   compile 'com.google.code.gson:gson:2.8.0'
   compile 'com.google.guava:guava:22.0-android'
 
-  compile 'org.apache.commons:commons-lang3:3.5'
+//  compile 'org.apache.commons:commons-lang3:3.5'
 
   //Retrofit
   compile 'com.squareup.retrofit2:retrofit:2.1.0'

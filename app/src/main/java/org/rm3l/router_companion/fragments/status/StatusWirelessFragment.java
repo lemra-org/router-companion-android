@@ -49,8 +49,6 @@ import org.rm3l.router_companion.tiles.status.wireless.WirelessIfacesTile;
 import org.rm3l.router_companion.utils.NVRAMParser;
 import org.rm3l.router_companion.utils.SSHUtils;
 
-import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
-
 /**
  *
  */
@@ -139,7 +137,7 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
           continue;
         }
         final String landev = landevRaw.trim();
-        if (startsWithIgnoreCase(landev, "vlan")) {
+        if (landev.toLowerCase().startsWith("vlan")) {
           continue;
         }
 

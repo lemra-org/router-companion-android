@@ -27,7 +27,6 @@ import java.util.Comparator
 import java.util.HashSet
 import java.util.TreeMap
 import java.util.regex.Pattern
-import org.apache.commons.lang3.StringUtils
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.RouterCompanionAppConstants
 import org.rm3l.router_companion.main.DDWRTMainActivity
@@ -101,7 +100,7 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
         val macAddress = Strings.nullToEmpty(`as`[1]).toLowerCase()
         if (isNullOrEmpty(macAddress)
             || "00:00:00:00:00:00" == macAddress
-            || StringUtils.containsIgnoreCase(macAddress, "incomplete")) {
+            || macAddress.contains("incomplete", ignoreCase = true)) {
           //Skip clients with incomplete ARP set-up
           continue
         }
@@ -132,7 +131,7 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
 
         if (activeClients != null) {
           for (activeClient in activeClients) {
-            if (StringUtils.containsIgnoreCase(activeClient, macAddress)) {
+            if (activeClient.contains(macAddress, ignoreCase = true)) {
               device.isActive = true
               break
             }

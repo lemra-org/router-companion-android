@@ -32,7 +32,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
-import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -264,8 +263,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo>
             if (!(dailyTraffDataList == null || dailyTraffDataList.isEmpty())) {
               if (mCurrentDay > 1 && dailyTraffDataList.size() >= mCurrentDay) {
                 final String dailyInOutTraffData = dailyTraffDataList.get(mCurrentDay - 1);
-                if (!(Strings.isNullOrEmpty(dailyInOutTraffData) || StringUtils.contains(
-                    dailyInOutTraffData, "["))) {
+                if (!(Strings.isNullOrEmpty(dailyInOutTraffData) ||
+                    dailyInOutTraffData.contains("["))) {
                   //Day
                   final List<String> currentDayTraffData =
                       DAILY_TRAFF_DATA_SPLITTER.splitToList(dailyInOutTraffData);

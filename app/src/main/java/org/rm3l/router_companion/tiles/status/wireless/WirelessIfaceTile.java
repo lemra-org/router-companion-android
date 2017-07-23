@@ -55,6 +55,8 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -66,8 +68,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.actions.ActionManager;
@@ -96,7 +96,6 @@ import org.rm3l.router_companion.utils.Utils;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.COLON;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_VALUE_TO_DISPLAY;
@@ -306,7 +305,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                   wlIface + "_net_mode", wlIface + "_ssid", wlIface + "_channel",
                   wlIface + "_txpwr", wlIface + "_rate", wlIface + "_akm", //FIXME Useless?
                   wlIface + "_wpa_psk", wlIface + "_security_mode",
-                  StringUtils.replace(wlIface, ".", "X") + "_security_mode", wlIface + "_crypto",
+                  wlIface.replace(".", "X") + "_security_mode", wlIface + "_crypto",
                   wlIface + "_wl_unmask", wlIface + "_wpa_gtk_rekey", wlIface + "_radius_ipaddr",
                   wlIface + "_radius_port", wlIface + "_radius_key", wlIface + "_radius_unmask",
                   wlIface + "_radmactype", wlIface + "_key", wlIface + "_key1", wlIface + "_key2",
@@ -639,7 +638,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
    * them to you through new calls here.  You should not monitor the
    * data yourself.  For example, if the data is a {@link android.database.Cursor}
    * and you place it in a {@link android.widget.CursorAdapter}, use
-   * the {@link android.widget.CursorAdapter#CursorAdapter(android.content.Context, * android.database.Cursor, int)} constructor <em>without</em> passing
+   * the android.widget.CursorAdapter constructor <em>without</em> passing
    * in either {@link android.widget.CursorAdapter#FLAG_AUTO_REQUERY}
    * or {@link android.widget.CursorAdapter#FLAG_REGISTER_CONTENT_OBSERVER}
    * (that is, use 0 for the flags argument).  This prevents the CursorAdapter
@@ -742,11 +741,11 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     final TextView encryptionView =
         (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_encryption);
     final String wlSecModeToDisplay = data.getProperty(this.iface + "_security_mode",
-        data.getProperty(StringUtils.replace(this.iface, ".", "X") + "_security_mode",
+        data.getProperty(this.iface.replace(".", "X") + "_security_mode",
             defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null));
     if (wlSecModeToDisplay != null) {
       final String wlSecurityMode = data.getProperty(this.iface + "_security_mode",
-          data.getProperty(StringUtils.replace(this.iface, ".", "X") + "_security_mode"));
+          data.getProperty(this.iface.replace(".", "X") + "_security_mode"));
       String encryption = wlSecurityMode;
       if ("disabled".equalsIgnoreCase(wlSecurityMode)) {
         encryption = "Disabled";
@@ -775,9 +774,9 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WEP;
       }
 
-      if (startsWith(encryption, "WPA")) {
+      if (encryption.startsWith("WPA")) {
         this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WPA;
-      } else if (startsWith(encryption, "WEP")) {
+      } else if (encryption.startsWith("WEP")) {
         this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WEP;
       } else if (!"radius".equalsIgnoreCase(encryption)) {
         this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.NONE;
@@ -974,14 +973,27 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
             defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null));
     if (Strings.isNullOrEmpty(noiseProp)) {
       noiseView.setText(EMPTY_VALUE_TO_DISPLAY);
-    } else if (NumberUtils.isParsable(noiseProp) || NumberUtils.isCreatable(noiseProp)) {
-      noiseView.setText(noiseProp + " dBm");
-    } else {
-      final List<String> strings = Splitter.on("(").limit(2).splitToList(noiseProp);
-      if (strings.size() >= 2) {
-        noiseView.setText(strings.get(0) + "dBm (" + strings.get(1));
+    }
+    //else if (NumberUtils.isParsable(noiseProp) || NumberUtils.isCreatable(noiseProp)) {
+    //  noiseView.setText(noiseProp + " dBm");
+    //}
+    else {
+      boolean isNumber = false;
+      try {
+        NumberFormat.getInstance().parse(noiseProp);
+        isNumber = true;
+      } catch (ParseException e) {
+        Crashlytics.logException(e);
+      }
+      if (isNumber) {
+        noiseView.setText(noiseProp + " dBm");
       } else {
-        noiseView.setText(noiseProp);
+        final List<String> strings = Splitter.on("(").limit(2).splitToList(noiseProp);
+        if (strings.size() >= 2) {
+          noiseView.setText(strings.get(0) + "dBm (" + strings.get(1));
+        } else {
+          noiseView.setText(noiseProp);
+        }
       }
     }
 
@@ -1101,7 +1113,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                           @Override public void run() {
                             ((TextView) layout.findViewById(
                                 R.id.tile_status_wireless_iface_state)).setText(
-                                StringUtils.capitalize(interfaceState.toString().toLowerCase()));
+                                interfaceState.toString().toLowerCase());
                           }
                         });
                       }

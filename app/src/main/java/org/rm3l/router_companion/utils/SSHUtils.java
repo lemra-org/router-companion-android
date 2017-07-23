@@ -51,7 +51,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.router_companion.actions.RouterAction;
 import org.rm3l.router_companion.actions.RouterStreamActionListener;
@@ -64,7 +63,6 @@ import org.rm3l.router_companion.resources.conn.openwrt.UCIInfo;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
 import static org.rm3l.router_companion.resources.conn.Router.RouterFirmware;
 import static org.rm3l.router_companion.resources.conn.Router.RouterFirmware.DDWRT;
@@ -484,7 +482,7 @@ public final class SSHUtils {
           continue;
         }
         for (final String multiOutputNvramVar : MULTI_OUTPUT_NVRAM_VARS) {
-          if (containsIgnoreCase(fieldToFetch, multiOutputNvramVar)) {
+          if (multiOutputNvramVar != null && fieldToFetch.toLowerCase().contains(multiOutputNvramVar.toLowerCase())) {
             getMultiOutput = true;
             break;
           }
@@ -530,7 +528,7 @@ public final class SSHUtils {
       for (final String aNvramShow : nvramShow) {
         boolean skip = false;
         for (final String varToFix : varsToFix) {
-          if (StringUtils.contains(varToFix, aNvramShow)) {
+          if (varToFix != null && varToFix.contains(aNvramShow)) {
             skip = true;
             break;
           }

@@ -73,6 +73,7 @@ import android.widget.Toast;
 import cn.nekocode.resinspector.ResourceInspector;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Transformation;
@@ -93,8 +94,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.maoni.Maoni;
@@ -369,7 +368,7 @@ public final class Utils {
       @Nullable final String featureTitle, @NonNull final String message) {
 
     final String dialogMsg =
-        (StringUtils.replace(message, "Thank you for supporting this initiative!", "")
+        (message.replace("Thank you for supporting this initiative!", "")
             + "More details on https://goo.gl/QnJB01\n\n"
             + "Thank you for supporting this initiative!");
 
@@ -860,7 +859,7 @@ public final class Utils {
     if (exception == null) {
       return Pair.create(EMPTY_STRING, EMPTY_STRING);
     }
-    final Throwable rootCause = ExceptionUtils.getRootCause(exception);
+    final Throwable rootCause = Throwables.getRootCause(exception);
     final String exceptionMessage = nullToEmpty(exception.getMessage());
     if (rootCause == null) {
       return Pair.create(exceptionMessage, exceptionMessage);
@@ -869,7 +868,7 @@ public final class Utils {
     if (isNullOrEmpty(rootCauseMessage)) {
       return Pair.create(exceptionMessage, exceptionMessage);
     }
-    return Pair.create(rootCauseMessage, ExceptionUtils.getRootCauseMessage(exception));
+    return Pair.create(rootCauseMessage, Throwables.getRootCause(exception).getMessage());
   }
 
   /**

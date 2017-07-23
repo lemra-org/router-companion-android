@@ -25,9 +25,9 @@ package org.rm3l.router_companion;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import com.amazonaws.regions.Regions;
+import com.google.common.base.Charsets;
 import java.io.File;
 import java.nio.charset.Charset;
-import org.apache.commons.lang3.CharEncoding;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.rm3l.ddwrt.BuildConfig;
@@ -39,7 +39,7 @@ public final class RouterCompanionAppConstants {
 
   public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-  public static final Charset CHARSET = Charset.forName(CharEncoding.UTF_8);
+  public static final Charset CHARSET = Charsets.UTF_8;
 
   //Defaut ato-refresh interval: 5 minutes
   public static final long TILE_REFRESH_SECONDS = 5 * 60l;

@@ -96,7 +96,6 @@ import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.widgets.RecyclerViewEmptySupport;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
 import static org.rm3l.router_companion.utils.Utils.fromHtml;
 
@@ -376,8 +375,8 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                   if (key == null) {
                     continue;
                   }
-                  if (containsIgnoreCase(key.toString(), textToFind) || containsIgnoreCase(
-                      value.toString(), textToFind)) {
+                  if (key.toString().toLowerCase().contains(textToFind.toLowerCase()) ||
+                      value.toString().toLowerCase().contains(textToFind.toLowerCase())) {
                     mNvramInfoToDisplayCopy.put(key, value);
                   }
                 }
@@ -391,14 +390,14 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                 if (key == null) {
                   continue;
                 }
-                if (containsIgnoreCase(key.toString(), textToFind) || containsIgnoreCase(
-                    value.toString(), textToFind)) {
+                if (key.toString().toLowerCase().contains(textToFind.toLowerCase()) ||
+                    value.toString().toLowerCase().contains(textToFind.toLowerCase())) {
                   mNvramInfoToDisplayCopy.put(key, value);
                 }
               }
             }
 
-            ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplayCopy);
+            mAdapter.setEntryList(mNvramInfoToDisplayCopy);
             mAdapter.notifyDataSetChanged();
 
             return true;
@@ -862,8 +861,8 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
             if (key == null) {
               continue;
             }
-            if (containsIgnoreCase(key.toString(), textToFind) || containsIgnoreCase(
-                value.toString(), textToFind)) {
+            if (key.toString().toLowerCase().contains(textToFind.toLowerCase()) ||
+                value.toString().toLowerCase().contains(textToFind.toLowerCase())) {
               mNvramInfoToDisplayCopy.put(key, value);
             }
           }

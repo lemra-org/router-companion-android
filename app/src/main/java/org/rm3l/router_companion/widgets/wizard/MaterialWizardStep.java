@@ -5,12 +5,11 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Produce;
+//import com.squareup.otto.Bus;
+//import com.squareup.otto.Produce;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
 import org.codepond.wizardroid.WizardStep;
 import org.codepond.wizardroid.persistence.ContextVariable;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
@@ -27,7 +26,7 @@ public abstract class MaterialWizardStep extends WizardStep implements WizardSte
 
   private static final String LOG_TAG = MaterialWizardStep.class.getSimpleName();
 
-  protected final Bus busInstance = BusSingleton.getBusInstance();
+  //protected final Bus busInstance = BusSingleton.getBusInstance();
 
   // create boolean for fetching data
   protected boolean isViewShown = false;
@@ -109,16 +108,16 @@ public abstract class MaterialWizardStep extends WizardStep implements WizardSte
 
   private void viewDidAppear() {
     // your logic
-    busInstance.register(this);
+    //busInstance.register(this);
     this.onVisibleToUser();
-    Crashlytics.log(Log.DEBUG, LOG_TAG,
-        "POST event wizardStepVisibleToUser(" + getWizardStepTitle() + ") on bus " + busInstance);
-    busInstance.post(new WizardStepVisibleToUserEvent(this.getWizardStepTitle()));
+    //Crashlytics.log(Log.DEBUG, LOG_TAG,
+    //    "POST event wizardStepVisibleToUser(" + getWizardStepTitle() + ") on bus " + busInstance);
+    //busInstance.post(new WizardStepVisibleToUserEvent(this.getWizardStepTitle()));
   }
 
   private void viewDidHide() {
     // your logic
-    busInstance.unregister(this);
+    //busInstance.unregister(this);
     isViewShown = false;
     onHiddenToUser();
   }
@@ -161,7 +160,7 @@ public abstract class MaterialWizardStep extends WizardStep implements WizardSte
           if (value == null) {
             wizardContextMap.remove(key);
           } else {
-            if (key != null && StringUtils.containsIgnoreCase(key, "password")) {
+            if (key != null && key.toLowerCase().contains("password")) {
               //Encrypt
               wizardContextMap.put(key, Encrypted.e(value.toString()));
             } else {
@@ -179,7 +178,8 @@ public abstract class MaterialWizardStep extends WizardStep implements WizardSte
     }
   }
 
-  @Produce public WizardStepVisibleToUserEvent produceInitialEvent() {
+  //@Produce
+  public WizardStepVisibleToUserEvent produceInitialEvent() {
     return new WizardStepVisibleToUserEvent(this.getWizardStepTitle());
   }
 }

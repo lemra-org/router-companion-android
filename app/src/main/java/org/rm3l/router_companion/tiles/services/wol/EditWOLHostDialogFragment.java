@@ -12,7 +12,6 @@ import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.actions.RouterAction;
 import org.rm3l.router_companion.actions.RouterActionListener;
@@ -126,7 +125,11 @@ public class EditWOLHostDialogFragment extends AddWOLHostDialogFragment {
           newWolHosts.add(WakeOnLanTile.GSON_BUILDER.create().toJson(mDeviceToEdit));
           if (wolHosts != null) {
             for (final String wolHost : wolHosts) {
-              if (StringUtils.containsIgnoreCase(wolHost, mDeviceToEditUuid)) {
+              if (wolHost == null) {
+                continue;
+              }
+              if (mDeviceToEditUuid != null &&
+                  wolHost.toLowerCase().contains(mDeviceToEditUuid.toLowerCase())) {
                 continue;
               }
               newWolHosts.add(wolHost);

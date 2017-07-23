@@ -112,7 +112,6 @@ import retrofit2.Response;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION;
 import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_COUNTRY;
 import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_PORT;
@@ -935,16 +934,21 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                       return false;
                     }
                     //Filter on visible fields: source IP/port, dest. IP/port, transport protocol and TCP State, device name, dest. WHOIS
-                    return (containsIgnoreCase(input.getSourceAddressOriginalSide(), constraint)
-                        || containsIgnoreCase("" + input.getSourcePortOriginalSide(), constraint)
-                        || containsIgnoreCase("" + input.getDestinationAddressOriginalSide(),
-                        constraint)
-                        || containsIgnoreCase("" + input.getDestinationPortOriginalSide(),
-                        constraint)
-                        || containsIgnoreCase(input.getTransportProtocol(), constraint)
-                        || containsIgnoreCase(input.getTcpConnectionState(), constraint)
-                        || containsIgnoreCase(input.getSourceHostname(), constraint)
-                        || containsIgnoreCase(input.getDestWhoisOrHostname(), constraint));
+                    final String constraintLowerCase = constraint.toString().toLowerCase();
+                    return (input.getSourceAddressOriginalSide() != null &&
+                        input.getSourceAddressOriginalSide().toLowerCase().contains(constraintLowerCase))
+                        || Integer.toString(input.getSourcePortOriginalSide()).contains(constraintLowerCase)
+                        || (input.getDestinationAddressOriginalSide() != null &&
+                        input.getDestinationAddressOriginalSide().toLowerCase().contains(constraintLowerCase))
+                        || Integer.toString(input.getDestinationPortOriginalSide()).contains(constraintLowerCase)
+                        || (input.getTransportProtocol() != null &&
+                        input.getTransportProtocol().toLowerCase().contains(constraintLowerCase))
+                        || (input.getTcpConnectionState() != null &&
+                        input.getTcpConnectionState().toLowerCase().contains(constraintLowerCase))
+                        || (input.getSourceHostname() != null &&
+                        input.getSourceHostname().toLowerCase().contains(constraintLowerCase))
+                        || (input.getDestWhoisOrHostname() != null &&
+                        input.getDestWhoisOrHostname().toLowerCase().contains(constraintLowerCase));
                   }
                 }).toList();
           }

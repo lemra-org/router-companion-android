@@ -62,6 +62,7 @@ import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
@@ -74,7 +75,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import needle.UiRelatedTask;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.common.utils.ViewIDUtils;
@@ -89,7 +89,6 @@ import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.widgets.RecyclerViewEmptySupport;
 
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.router_companion.utils.Utils.fromHtml;
 
@@ -519,7 +518,7 @@ public class ViewSyslogActivity extends AppCompatActivity
         try {
           if (exception != null) {
             Toast.makeText(ViewSyslogActivity.this,
-                "Error: " + ExceptionUtils.getRootCauseMessage(exception), Toast.LENGTH_LONG)
+                "Error: " + Throwables.getRootCause(exception).getMessage(), Toast.LENGTH_LONG)
                 .show();
             Crashlytics.logException(exception);
           } else {
@@ -655,7 +654,9 @@ public class ViewSyslogActivity extends AppCompatActivity
             //Filter aliases list
             oReturn.values = FluentIterable.from(mLogs).filter(new Predicate<CharSequence>() {
               @Override public boolean apply(CharSequence input) {
-                return input != null && containsIgnoreCase(input, constraint);
+                return input != null && input.toString()
+                    .toLowerCase()
+                    .contains(constraint.toString().toLowerCase());
               }
             }).transform(new Function<CharSequence, Spanned>() {
               @javax.annotation.Nullable @Override

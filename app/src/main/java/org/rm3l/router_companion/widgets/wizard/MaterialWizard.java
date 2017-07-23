@@ -26,8 +26,8 @@ import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
+//import com.squareup.otto.Bus;
+//import com.squareup.otto.Subscribe;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -218,15 +218,15 @@ public abstract class MaterialWizard extends WizardFragment
 
   @Override public void onStart() {
     super.onStart();
-    final Bus busInstance = BusSingleton.getBusInstance();
-    Crashlytics.log(Log.DEBUG, LOG_TAG, "onStart: Register on bus (" + busInstance + ")");
-    busInstance.register(this);
+    //final Bus busInstance = BusSingleton.getBusInstance();
+    //Crashlytics.log(Log.DEBUG, LOG_TAG, "onStart: Register on bus (" + busInstance + ")");
+    //busInstance.register(this);
   }
 
   @Override public void onStop() {
-    final Bus busInstance = BusSingleton.getBusInstance();
-    Crashlytics.log(Log.DEBUG, LOG_TAG, "onStop: Unregister from bus (" + busInstance + ")");
-    busInstance.unregister(this);
+    //final Bus busInstance = BusSingleton.getBusInstance();
+    //Crashlytics.log(Log.DEBUG, LOG_TAG, "onStop: Unregister from bus (" + busInstance + ")");
+    //busInstance.unregister(this);
     super.onStop();
   }
 
@@ -316,7 +316,8 @@ public abstract class MaterialWizard extends WizardFragment
     }
   }
 
-  @Subscribe public void wizardStepVisibleToUser(final WizardStepVisibleToUserEvent event) {
+  //@Subscribe
+  public void wizardStepVisibleToUser(final WizardStepVisibleToUserEvent event) {
     final String eventStepTitle = event.getStepTitle();
     Crashlytics.log(Log.DEBUG, LOG_TAG, "wizardStepVisibleToUser(" + eventStepTitle + ")");
     wizardSubTitle.setText(eventStepTitle);

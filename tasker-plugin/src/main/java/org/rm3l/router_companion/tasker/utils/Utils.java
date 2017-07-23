@@ -8,9 +8,9 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;
+import com.google.common.base.Throwables;
 import java.util.List;
 import java.util.Locale;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.router_companion.tasker.Constants;
 import org.rm3l.router_companion.tasker.exception.DDWRTCompanionPackageVersionRequiredNotFoundException;
 
@@ -31,7 +31,8 @@ public final class Utils {
       return packageManager.getPackageInfo(packagename, PackageManager.GET_ACTIVITIES);
     } catch (final PackageManager.NameNotFoundException e) {
       Crashlytics.log(Log.WARN, Constants.TAG,
-          "Package not installed: " + packagename + ". " + ExceptionUtils.getRootCauseMessage(e));
+          "Package not installed: " + packagename + ". " +
+              Throwables.getRootCause(e).getMessage());
       return null;
     }
   }

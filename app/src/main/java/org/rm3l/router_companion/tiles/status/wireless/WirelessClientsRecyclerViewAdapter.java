@@ -47,7 +47,6 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
-import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.common.utils.ViewIDUtils;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
@@ -154,9 +153,8 @@ public class WirelessClientsRecyclerViewAdapter extends
 
     final String name = device.getName();
     final String nameForAvatar;
-    if (isNullOrEmpty(device.getAlias())
-        && isNullOrEmpty(device.getSystemName())
-        && StringUtils.equals(name, macAddress)) {
+    if (isNullOrEmpty(device.getAlias()) && isNullOrEmpty(device.getSystemName()) && name.equals(
+        macAddress)) {
       holder.deviceNameView.setText(EMPTY_VALUE_TO_DISPLAY);
       nameForAvatar = EMPTY_VALUE_TO_DISPLAY;
     } else {

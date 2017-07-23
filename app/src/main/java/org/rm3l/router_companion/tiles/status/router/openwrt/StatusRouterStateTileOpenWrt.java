@@ -29,7 +29,6 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import com.crashlytics.android.Crashlytics;
-import org.apache.commons.lang3.StringUtils;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
@@ -114,19 +113,19 @@ public class StatusRouterStateTileOpenWrt extends StatusRouterStateTile {
                 SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                     "cat /etc/openwrt_release | grep -E \"DISTRIB_ID.*|DISTRIB_CODENAME.*\";");
             String codename = "";
-            if (fwInfo != null) {
-              for (int i = 0; i < fwInfo.length; i++) {
-                final String str = fwInfo[i];
-                if (StringUtils.startsWith(str, "DISTRIB_ID")) {
-                  firmwareInfo = str.replace("DISTRIB_ID=", "").replaceAll("\"", "");
-                } else if (StringUtils.startsWith(str, "DISTRIB_CODENAME")) {
-                  codename = str.replace("DISTRIB_CODENAME=", "").replaceAll("\"", "");
-                }
-                if (!(isNullOrEmpty(codename) || isNullOrEmpty(firmwareInfo))) {
-                  break;
-                }
-              }
-            }
+            //if (fwInfo != null) {
+            //  for (int i = 0; i < fwInfo.length; i++) {
+            //    final String str = fwInfo[i];
+            //    if (StringUtils.startsWith(str, "DISTRIB_ID")) {
+            //      firmwareInfo = str.replace("DISTRIB_ID=", "").replaceAll("\"", "");
+            //    } else if (StringUtils.startsWith(str, "DISTRIB_CODENAME")) {
+            //      codename = str.replace("DISTRIB_CODENAME=", "").replaceAll("\"", "");
+            //    }
+            //    if (!(isNullOrEmpty(codename) || isNullOrEmpty(firmwareInfo))) {
+            //      break;
+            //    }
+            //  }
+            //}
             if (!isNullOrEmpty(codename)) {
               fwInfo =
                   SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
@@ -165,12 +164,12 @@ public class StatusRouterStateTileOpenWrt extends StatusRouterStateTile {
                 nvramInfo.setProperty(NVRAMInfo.Companion.getUPTIME(), uptime);
               }
 
-              if (otherCmds.length >= 4) {
-                //Kernel
-                nvramInfo.setProperty(NVRAMInfo.Companion.getKERNEL(),
-                    StringUtils.replace(StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
-                        nvramInfo.getProperty(NVRAMInfo.Companion.getROUTER_NAME()), ""));
-              }
+              //if (otherCmds.length >= 4) {
+              //  //Kernel
+              //  nvramInfo.setProperty(NVRAMInfo.Companion.getKERNEL(),
+              //      StringUtils.replace(StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
+              //          nvramInfo.getProperty(NVRAMInfo.Companion.getROUTER_NAME()), ""));
+              //}
             }
           }
 

@@ -29,7 +29,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
-import org.apache.commons.io.IOUtils;
+//import org.apache.commons.io.IOUtils;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 import org.codepond.wizardroid.Wizard;
 import org.codepond.wizardroid.persistence.ContextVariable;
 import org.rm3l.ddwrt.R;
@@ -439,7 +441,9 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
 
           //Set file actual content in hidden field
           try {
-            privkeyPathView.setText(IOUtils.toString(contentResolver.openInputStream(uri)));
+            privkeyPathView.setText(
+                new String(ByteStreams.toByteArray(contentResolver.openInputStream(uri))));
+            //privkeyPathView.setText(IOUtils.toString(contentResolver.openInputStream(uri)));
             privkeyErrorMsgView.setText(null);
           } catch (final Exception e) {
             e.printStackTrace();

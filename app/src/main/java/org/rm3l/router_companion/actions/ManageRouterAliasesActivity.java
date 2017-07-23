@@ -89,8 +89,6 @@ import org.rm3l.router_companion.widgets.RecyclerViewEmptySupport;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.rm3l.router_companion.main.DDWRTMainActivity.IMPORT_ALIASES_FRAGMENT_TAG;
 import static org.rm3l.router_companion.main.DDWRTMainActivity.MAIN_ACTIVITY_ACTION;
 import static org.rm3l.router_companion.utils.Utils.fromHtml;
@@ -778,9 +776,17 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
                     final String macAddr = input.first;
                     final String alias = input.second;
 
-                    final boolean containsIgnoreCase =
-                        containsIgnoreCase(macAddr, constraint) || containsIgnoreCase(alias,
-                            constraint);
+                    if (macAddr == null || alias == null) {
+                      return false;
+                    }
+
+                    final String constraintLowerCase = constraint.toString().toLowerCase();
+                    final boolean containsIgnoreCase = macAddr.toLowerCase().contains(
+                        constraintLowerCase) ||
+                        alias.toLowerCase().contains(constraintLowerCase);
+                    //final boolean containsIgnoreCase =
+                    //    containsIgnoreCase(macAddr, constraint) || containsIgnoreCase(alias,
+                    //        constraint);
 
                     if (containsIgnoreCase) {
                       return true;
@@ -795,8 +801,16 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
                       //No worries
                     }
 
-                    return (macouiVendor != null && containsIgnoreCase(macouiVendor.getCompany(),
-                        constraint));
+                    if (macouiVendor == null) {
+                      return false;
+                    }
+                    final String company = macouiVendor.getCompany();
+                    if (company == null) {
+                      return false;
+                    }
+                    return company.toLowerCase().contains(constraint.toString().toLowerCase());
+                    //return (macouiVendor != null && containsIgnoreCase(macouiVendor.getCompany(),
+                    //    constraint));
                   }
                 }).toList();
           }
@@ -1090,7 +1104,8 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
       final LayoutInflater inflater = activity.getLayoutInflater();
 
       final View view = inflater.inflate(R.layout.add_or_edit_router_alias, null);
-      final boolean isNewAlias = isEmpty(this.mMacAddr);
+      final boolean isNewAlias = Strings.isNullOrEmpty(
+          this.mMacAddr != null ? this.mMacAddr.toString() : null);
       builder.setTitle((isNewAlias ? "Set" : "Update") + " Device Alias")
           .setMessage(
               "Note that the Alias you define here is stored locally only, not on the router.")
@@ -1134,7 +1149,7 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
 
             final String macValueToPersist = nullToEmpty(macValue.toString()).toLowerCase();
 
-            if (isEmpty(macValueToPersist)) {
+            if (Strings.isNullOrEmpty(macValueToPersist)) {
               //Crouton
               Utils.displayMessage(getActivity(), "MAC Address is required", ALERT,
                   (ViewGroup) (d.findViewById(

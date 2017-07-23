@@ -96,7 +96,6 @@ import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 
-import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.MAX_ROUTERS_FREE_VERSION;
@@ -161,12 +160,14 @@ public class RouterListRecycleViewAdapter
                   activity.getSharedPreferences(input.getUuid(), Context.MODE_PRIVATE)
                       .getString(NVRAMInfo.Companion.getMODEL(), "");
               //noinspection ConstantConditions
-              return containsIgnoreCase(input.getName(), constraint) || containsIgnoreCase(
-                  input.getRemoteIpAddress(), constraint) || containsIgnoreCase(inputModel,
-                  constraint) || (routerFirmware != null && containsIgnoreCase(
-                  routerFirmware.toString(), constraint)) || containsIgnoreCase(
-                  input.getUsernamePlain(), constraint) || (routerConnectionProtocol != null
-                  && containsIgnoreCase(routerConnectionProtocol.toString(), constraint));
+              final String constraintLowerCase = constraint.toString().toLowerCase();
+              return (input.getName() != null && input.getName().toLowerCase().contains(constraintLowerCase)) ||
+                  input.getRemoteIpAddress().toLowerCase().contains(constraintLowerCase) ||
+                  inputModel.toLowerCase().contains(constraintLowerCase) ||
+                  (routerFirmware != null && routerFirmware.toString().toLowerCase().contains(constraintLowerCase)) ||
+                  (input.getUsernamePlain() != null && input.getUsernamePlain().toLowerCase().contains(constraintLowerCase)) ||
+                  (routerConnectionProtocol != null &&
+                      routerConnectionProtocol.toString().toLowerCase().contains(constraintLowerCase));
             }
           }).toList();
         }

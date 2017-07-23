@@ -44,7 +44,6 @@ import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -170,7 +169,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
               if (otherCmds.length >= 1) {
                 //Load Avg
                 nvramInfo.setProperty(NVRAMInfo.Companion.getLOAD_AVERAGE(),
-                    StringUtils.trimToEmpty(otherCmds[0]));
+                    Strings.nullToEmpty(otherCmds[0]).trim());
               }
               if (otherCmds.length >= 2) {
                 //Model

@@ -29,6 +29,7 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.Files;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
-import org.apache.commons.io.FileUtils;
+//import org.apache.commons.io.FileUtils;
 import org.rm3l.router_companion.common.resources.audit.ActionLog;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
@@ -108,7 +109,8 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
       // => copy all those in a temporary file, upload the file to the router and exec it
       outputFile = File.createTempFile(SetNVRAMVariablesAction.class.getSimpleName(), ".sh",
           mContext.getCacheDir());
-      FileUtils.writeStringToFile(outputFile, Joiner.on(" && ").skipNulls().join(cmdList));
+      Files.write(Joiner.on(" && ").skipNulls().join(cmdList).getBytes(), outputFile);
+      //FileUtils.writeStringToFile(outputFile, Joiner.on(" && ").skipNulls().join(cmdList));
 
       //Now upload this file onto the remote router
       if (!SSHUtils.scpTo(mContext, router, globalSharedPreferences, outputFile.getAbsolutePath(),

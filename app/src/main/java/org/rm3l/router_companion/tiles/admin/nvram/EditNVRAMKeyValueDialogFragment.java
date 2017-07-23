@@ -38,7 +38,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.cocosw.undobar.UndoBarController;
-import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.Utils;
@@ -157,7 +156,7 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
           final EditText editText = (EditText) d.findViewById(R.id.tile_admin_nvram_edit_value);
           final Editable newValue = editText.getText();
 
-          if (mValue != null && StringUtils.equals(newValue.toString(), mValue.toString())) {
+          if (mValue != null && newValue.toString().equals(mValue.toString())) {
             //Crouton
             Utils.displayMessage(getActivity(), "No change", ALERT,
                 (ViewGroup) (d.findViewById(R.id.tile_admin_nvram_edit_notification_viewgroup)));

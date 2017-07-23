@@ -46,12 +46,12 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import com.cocosw.undobar.UndoBarController;
+import com.google.common.base.Throwables;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import needle.UiRelatedTask;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
@@ -187,7 +187,7 @@ public class NVRAMDataRecyclerViewAdapter
                       Utils.displayMessage(context, "Error while trying to unset NVRAM variable: "
                           + nvramKey
                           + ": "
-                          + ExceptionUtils.getRootCauseMessage(exception), Style.ALERT);
+                          + Throwables.getRootCause(exception).getMessage(), Style.ALERT);
                     } else {
                       Utils.displayMessage(context, "Done unsetting NVRAM variable: " + nvramKey,
                           Style.CONFIRM);
@@ -360,6 +360,7 @@ public class NVRAMDataRecyclerViewAdapter
               break;
             case ADD:
               notifyItemInserted(0);
+              break;
             default:
               break;
           }

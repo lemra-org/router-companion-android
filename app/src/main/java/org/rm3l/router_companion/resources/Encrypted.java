@@ -23,6 +23,7 @@
 package org.rm3l.router_companion.resources;
 
 import android.support.annotation.Nullable;
+import android.util.Base64;
 import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import java.io.UnsupportedEncodingException;
@@ -37,10 +38,9 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.ArrayUtils;
+//import org.apache.commons.codec.binary.Base64;
 
-import static org.apache.commons.lang3.CharEncoding.UTF_8;
+import static com.google.common.base.Charsets.UTF_8;
 
 /**
  * An encrypted object
@@ -67,11 +67,7 @@ public class Encrypted {
       return null;
     }
 
-    try {
-      return new String(Base64.encodeBase64(e(data.getBytes(UTF_8))), UTF_8);
-    } catch (UnsupportedEncodingException e1) {
-      return null;
-    }
+    return new String(Base64.encode(e(data.getBytes(UTF_8)), Base64.DEFAULT), UTF_8);
   }
 
   /**
@@ -87,13 +83,8 @@ public class Encrypted {
       return null;
     }
 
-    try {
-      final byte[] b64 = d(Base64.decodeBase64(encryptedData.getBytes(UTF_8)));
-
-      return b64 != null ? new String(b64, UTF_8) : null;
-    } catch (UnsupportedEncodingException e) {
-      return null;
-    }
+    final byte[] b64 = d(Base64.decode(encryptedData.getBytes(UTF_8), Base64.DEFAULT));
+    return b64 != null ? new String(b64, UTF_8) : null;
   }
 
   @Nullable public static byte[] e(@Nullable final byte[] byteArrayToEncrypt) {
@@ -118,8 +109,11 @@ public class Encrypted {
       cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec);
       ciphertext = cipher.doFinal(byteArrayToEncrypt);
 
-      return ArrayUtils.addAll(ciphertext, iv);
-    } catch (final IllegalBlockSizeException | NoSuchPaddingException | NoSuchAlgorithmException | UnsupportedEncodingException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException ibse) {
+      final byte[] result = Arrays.copyOf(ciphertext, ciphertext.length + iv.length);
+      System.arraycopy(iv, 0, result, ciphertext.length, iv.length);
+      //return ArrayUtils.addAll(ciphertext, iv);
+      return result;
+    } catch (final IllegalBlockSizeException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException ibse) {
       e = ibse;
     }
 
@@ -150,20 +144,8 @@ public class Encrypted {
       uncipheredtext = cipher.doFinal(byteArrayToDecrypt);
 
       return uncipheredtext;
-    } catch (final IllegalBlockSizeException ibse) {
+    } catch (final IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException | InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException ibse) {
       e = ibse;
-    } catch (final NoSuchPaddingException nspe) {
-      e = nspe;
-    } catch (final NoSuchAlgorithmException nsae) {
-      e = nsae;
-    } catch (final UnsupportedEncodingException uee) {
-      e = uee;
-    } catch (final InvalidKeyException ike) {
-      e = ike;
-    } catch (final InvalidAlgorithmParameterException iape) {
-      e = iape;
-    } catch (final BadPaddingException bpe) {
-      e = bpe;
     }
 
     Crashlytics.log(Log.ERROR, LOG_TAG, "Failed to decrypt: " + e);

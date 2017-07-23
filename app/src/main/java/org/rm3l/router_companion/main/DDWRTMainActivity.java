@@ -107,7 +107,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HttpsURLConnection;
 import needle.UiRelatedTask;
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -977,7 +976,7 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
       }
     }
 
-    if (!StringUtils.containsIgnoreCase(BuildConfig.FLAVOR, "google")) {
+    if (!BuildConfig.FLAVOR.toLowerCase().contains("google")) {
       //Only available on Google Play Store
       final MenuItem item = menu.findItem(R.id.action_take_bug_report);
       if (item != null) {

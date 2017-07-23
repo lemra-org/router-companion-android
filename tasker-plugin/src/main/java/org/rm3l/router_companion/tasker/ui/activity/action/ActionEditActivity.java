@@ -33,6 +33,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
+import com.google.common.base.Throwables;
 import com.mikepenz.aboutlibraries.Libs;
 import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.twofortyfouram.locale.sdk.client.ui.activity.AbstractAppCompatPluginActivity;
@@ -41,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import net.jcip.annotations.NotThreadSafe;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.maoni.Maoni;
 import org.rm3l.router_companion.common.IRouterCompanionService;
 import org.rm3l.router_companion.common.resources.RouterInfo;
@@ -573,7 +573,7 @@ import static org.rm3l.router_companion.tasker.bundle.PluginBundleValues.BUNDLE_
           e.printStackTrace();
           Toast.makeText(ActionEditActivity.this, "Internal Error - please try again later",
               Toast.LENGTH_LONG).show();
-          mErrorPlaceholder.setText("Error: " + ExceptionUtils.getRootCauseMessage(e));
+          mErrorPlaceholder.setText("Error: " + Throwables.getRootCause(e).getMessage());
           mErrorPlaceholder.setVisibility(View.VISIBLE);
           mIsCancelled = true;
           finish();
@@ -606,7 +606,7 @@ import static org.rm3l.router_companion.tasker.bundle.PluginBundleValues.BUNDLE_
         e.printStackTrace();
         Toast.makeText(ActionEditActivity.this, "Internal Error - please try again later",
             Toast.LENGTH_SHORT).show();
-        mErrorPlaceholder.setText("Error: " + ExceptionUtils.getRootCauseMessage(e));
+        mErrorPlaceholder.setText("Error: " + Throwables.getRootCause(e).getMessage());
         mErrorPlaceholder.setVisibility(View.VISIBLE);
         mIsCancelled = true;
         finish();

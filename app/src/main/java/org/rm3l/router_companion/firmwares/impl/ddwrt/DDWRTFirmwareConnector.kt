@@ -11,7 +11,6 @@ import com.google.common.base.Strings
 import java.util.Arrays
 import java.util.Calendar
 import java.util.Date
-import org.apache.commons.lang3.StringUtils
 import org.rm3l.router_companion.RouterCompanionAppConstants
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException
 import org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector
@@ -151,7 +150,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
         val uptimeListSize = uptimeList.size
         if (uptimeListSize > 0) {
           val first = uptimeList[0].trim { it <= ' ' }
-          if (StringUtils.contains(first, "day")) {
+          if (first.contains("day", ignoreCase = true)) {
             //day
             nvramInfo.setProperty(NVRAMInfo.UPTIME_DAYS,
                 first.replace("days".toRegex(), "").replace("day".toRegex(), "").trim { it <= ' ' })
@@ -170,18 +169,18 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                           otherList[1].trim { it <= ' ' })
                     }
                   }
-                } else if (StringUtils.contains(other, "hour")) {
+                } else if (other.contains("hour", ignoreCase = true)) {
                   nvramInfo.setProperty(NVRAMInfo.UPTIME_HOURS,
                       other.replace("hours".toRegex(), "").replace("hour".toRegex(),
                           "").trim { it <= ' ' })
-                } else if (StringUtils.contains(other, "min")) {
+                } else if (other.contains("min", ignoreCase = true)) {
                   nvramInfo.setProperty(NVRAMInfo.UPTIME_MINUTES,
                       other.replace("mins".toRegex(), "").replace("min".toRegex(),
                           "").trim { it <= ' ' })
                 }
               }
             }
-          } else if (StringUtils.contains(first, ":")) {
+          } else if (first.contains(":")) {
             val otherList = Splitter.on(":").omitEmptyStrings().splitToList(first)
             if (otherList != null) {
               if (otherList.size >= 1) {
@@ -191,11 +190,11 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                 nvramInfo.setProperty(NVRAMInfo.UPTIME_MINUTES, otherList[1].trim { it <= ' ' })
               }
             }
-          } else if (StringUtils.contains(first, "hour")) {
+          } else if (first.contains("hour", ignoreCase = true)) {
             nvramInfo.setProperty(NVRAMInfo.UPTIME_HOURS,
                 first.replace("hours".toRegex(), "").replace("hour".toRegex(),
                     "").trim { it <= ' ' })
-          } else if (StringUtils.contains(first, "min")) {
+          } else if (first.contains("min", ignoreCase = true)) {
             nvramInfo.setProperty(NVRAMInfo.UPTIME_MINUTES,
                 first.trim { it <= ' ' }.replace("mins".toRegex(), "").replace("min".toRegex(),
                     "").trim { it <= ' ' })
@@ -285,7 +284,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
         + "cut -d' ' -f3` - SVN rev: `/sbin/softwarerevision`\"")
 
     if (otherCmds != null) {
-      if (otherCmds.size >= 1) {
+      if (otherCmds.isNotEmpty()) {
         //date
         nvramInfo.setProperty(NVRAMInfo.CURRENT_DATE, otherCmds[0])
       }
@@ -303,9 +302,14 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
 
       if (otherCmds.size >= 4) {
         //Kernel
-        nvramInfo.setProperty(NVRAMInfo.KERNEL,
-            StringUtils.replace(StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
-                nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME), ""))
+        otherCmds[3]?.let {
+          val valueWithoutGnuLinux = it.replace("GNU/Linux", "")
+          nvramInfo?.setProperty(NVRAMInfo.KERNEL,
+              valueWithoutGnuLinux.replace(nvramInfo?.getProperty(NVRAMInfo.ROUTER_NAME)?:"", ""))
+        }
+//        nvramInfo.setProperty(NVRAMInfo.KERNEL,
+//            StringUtils.replace(StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
+//                nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME), ""))
       }
 
       if (otherCmds.size >= 5) {

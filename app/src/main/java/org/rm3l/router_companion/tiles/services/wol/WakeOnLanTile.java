@@ -54,7 +54,6 @@ import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
@@ -273,7 +272,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
           final String macAddress = Strings.nullToEmpty(as.get(1)).toLowerCase();
           if (isNullOrEmpty(macAddress)
               || "00:00:00:00:00:00".equals(macAddress)
-              || StringUtils.containsIgnoreCase(macAddress, "incomplete")) {
+              || macAddress.toLowerCase().contains("incomplete")) {
             //Skip clients with incomplete ARP set-up
             continue;
           }
@@ -855,7 +854,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
           final String name = device.getName();
           if (isNullOrEmpty(device.getAlias())
               && isNullOrEmpty(device.getSystemName())
-              && StringUtils.equals(name, macAddress)) {
+              && name.equals(macAddress)) {
             deviceNameView.setText(EMPTY_VALUE_TO_DISPLAY);
           } else {
             deviceNameView.setText(name);
@@ -1068,7 +1067,10 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                               new HashSet<String>()));
                       final HashSet<String> newSet = new HashSet<>();
                       for (final String s : stringHashSet) {
-                        if (StringUtils.containsIgnoreCase(s, device.getMacAddress())) {
+                        if (s == null) {
+                          continue;
+                        }
+                        if (s.toLowerCase().contains(device.getMacAddress().toLowerCase())) {
                           continue;
                         }
                         newSet.add(s);

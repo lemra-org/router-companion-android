@@ -11,7 +11,6 @@ import java.util.Date
 import java.util.Random
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
-import org.apache.commons.lang3.StringUtils
 import org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector
 import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener
 import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager
@@ -237,9 +236,14 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
     nvramInfo.setProperty(NVRAMInfo.UPTIME, uptime)
 
     //Kernel
-    nvramInfo.setProperty(NVRAMInfo.KERNEL,
-        StringUtils.replace(StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
-            nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME), ""))
+    otherCmds[3].let {
+      val valueWithoutGnuLinux = it.replace("GNU/Linux", "")
+      nvramInfo.setProperty(NVRAMInfo.KERNEL,
+          valueWithoutGnuLinux.replace(nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME)?:"", ""))
+    }
+//    nvramInfo.setProperty(NVRAMInfo.KERNEL,
+//        StringUtils.replace(StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
+//            nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME), ""))
 
     //Firmware
     val fwString = otherCmds[4]

@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import org.apache.commons.lang3.StringUtils;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.router_companion.resources.WANTrafficData;
@@ -97,7 +96,7 @@ public final class WANTrafficUtils {
         continue;
       }
 
-      if (!StringUtils.startsWithIgnoreCase(key.toString(), "traff-")) {
+      if (!key.toString().startsWith("traff-")) {
         continue;
       }
 
@@ -115,7 +114,10 @@ public final class WANTrafficUtils {
 
       int dayNum = 0;
       for (final String dailyInOutTraffData : dailyTraffDataList) {
-        if (StringUtils.contains(dailyInOutTraffData, "[")) {
+        if (dailyInOutTraffData == null) {
+          continue;
+        }
+        if (dailyInOutTraffData.contains("[")) {
           continue;
         }
         final List<String> dailyInOutTraffDataList =
