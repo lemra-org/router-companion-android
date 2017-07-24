@@ -94,22 +94,11 @@ public abstract class AbstractDDWRTSettingsActivity extends AppCompatActivity {
 
     super.onCreate(savedInstanceState);
 
-    final boolean themeLight = ColorUtils.Companion.isThemeLight(this);
     ColorUtils.Companion.setAppTheme(this, null, false);
-    //        if (themeLight) {
-    //            //Light
-    //            setTheme(R.style.AppThemeLight);
-    ////            getWindow().getDecorView()
-    ////                    .setBackgroundColor(ContextCompat.getColor(this,
-    ////                            android.R.color.white));
-    //        } else {
-    //            //Default is Dark
-    //            setTheme(R.style.AppThemeDark);
-    //        }
 
     setContentView(R.layout.settings);
 
-    final Toolbar toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
+    final Toolbar toolbar = findViewById(R.id.settings_toolbar);
     if (toolbar != null) {
       final String toolbarTitle = getToolbarTitle();
       toolbar.setTitle(Strings.isNullOrEmpty(toolbarTitle) ? SETTINGS : toolbarTitle);
@@ -129,11 +118,6 @@ public abstract class AbstractDDWRTSettingsActivity extends AppCompatActivity {
       actionBar.setHomeButtonEnabled(true);
     }
 
-    //        if (themeLight) {
-    //            getWindow().getDecorView()
-    //                    .setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
-    //        }
-
     getFragmentManager().beginTransaction()
         .replace(R.id.settings_content_frame, this.getPreferenceFragment())
         .commit();
@@ -147,17 +131,6 @@ public abstract class AbstractDDWRTSettingsActivity extends AppCompatActivity {
 
       case R.id.action_feedback:
         Utils.openFeedbackForm(this, getRouterUuid());
-        //                final Intent intent = new Intent(AbstractDDWRTSettingsActivity.this, FeedbackActivity.class);
-        //                final String routerUuid = getRouterUuid();
-        //                if (routerUuid != null) {
-        //                    intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
-        //                }
-        //                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
-        //                ViewGroupUtils.exportViewToFile(AbstractDDWRTSettingsActivity.this, getWindow().getDecorView(), screenshotFile);
-        //                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
-        //                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
-        //                startActivity(intent);
-        //                return true;
     }
 
     return super.onOptionsItemSelected(item);

@@ -660,6 +660,10 @@ public final class Utils {
     openFeedbackForm(activity, RouterManagementActivity.getDao(activity).getRouter(routerUuid));
   }
 
+  public static void openFeedbackForm(final Activity activity) {
+    openFeedbackForm(activity, (Router) null);
+  }
+
   public static boolean isDemoRouter(@Nullable final Router router) {
     return (router != null && isDemoRouter(router.getRemoteIpAddress()));
   }

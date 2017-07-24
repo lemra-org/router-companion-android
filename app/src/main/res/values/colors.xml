@@ -352,6 +352,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
   <color name="red_background">#D32F2F</color>
   <color name="purple_background">#7B1FA2</color>
 
-  <color name="passcodelock_background">@color/DarkGray</color>
+  <!--<color name="passcodelock_background">@color/DarkGray</color>-->
+  <!-- Colors for customizing the Passcode Lock interface -->
+  <color name="passcodelock_background">@color/lightTheme_primary_dark</color>
+  <color name="passcodelock_button_background_color">@android:color/transparent</color>
+  <color name="passcodelock_button_text_color">@color/black</color>
+  <color name="passcodelock_field_background_color">@color/white</color>
+  <color name="passcodelock_field_hint_text_color">#5f5f5f</color>
+  <color name="passcodelock_field_text_color">#444444</color>
+  <color name="passcodelock_prompt_text_color">@color/white</color>
 
 </resources>

@@ -131,6 +131,7 @@ public class RouterCompanionApplication extends Application
       AppLockManager.getInstance().getAppLock().setExemptActivities(new String[] {
           SplashActivity.class.getCanonicalName(), GettingStartedActivity.class.getCanonicalName(),
           DeepLinkActivity.class.getCanonicalName(),
+          DeepLinkActivity.class.getCanonicalName(),
           RouterActionsDeepLinkActivity.class.getCanonicalName()
       });
     }

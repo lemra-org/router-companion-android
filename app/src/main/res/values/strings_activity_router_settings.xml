@@ -21,6 +21,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <resources>
   <string name="title_activity_router_settings">Settings</string>
+  <string name="title_activity_pin_lock_settings">Settings</string>
 
   <!-- Strings related to Settings -->
 

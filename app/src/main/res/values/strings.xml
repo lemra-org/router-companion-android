@@ -563,6 +563,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
   <string name="passcode_turn_on">Turn PIN lock on</string>
   <string name="passcodelock_prompt_message">Please enter your PIN for DD-WRT Companion</string>
 
+  <string name="preferences_header_security">Security</string>
+
+  <!-- Strings for customizing the Passcode Lock interface -->
+  <string name="cd_passcodelock_logo">PasscodeLock Logo</string>
+  <string name="passcode_fingerprint_supported">Fingerprint Supported</string>
+
   <string name="pref_3rd_party_integration_title">Third-party integration</string>
   <string name="pref_3rd_party_integration_disabled">Disabled. Other apps (such as \'DD-WRT Companion Tasker Plugin\') may not function properly.</string>
   <string name="pref_3rd_party_integration_enabled">Enabled. Other apps (such as \'DD-WRT Companion Tasker Plugin\') are allowed to trigger actions on routers. We recommend that you PIN-protect the app to add an additional security layer, using the setting above.</string>
