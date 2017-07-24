@@ -396,3 +396,7 @@
 -dontwarn org.json.**
 -dontwarn java.util.Base64
 -dontwarn java.util.Base64$Encoder
+
+# In https://github.com/ckurtm/FabButton/blob/master/fabbutton/src/main/java/mbanje/kurt/fabbutton/FabButton.java , 
+# R.anim.design_fab_in is used only for SDK >= 14, and we are using a minSDK of 15
+-dontwarn mbanje.kurt.fabbutton.FabButton$Behavior
