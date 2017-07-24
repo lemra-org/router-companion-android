@@ -9,5 +9,6 @@ build:
   artifacts:
     paths:
     - app/build/outputs/
+    - app/build/doc
     - tasker-plugin/build/outputs
 
