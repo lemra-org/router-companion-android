@@ -32,11 +32,13 @@ buildscript {
   dependencies {
     //noinspection GradleDynamicVersion
     classpath 'io.fabric.tools:gradle:1.+'
+    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.7.3'
   }
 }
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'io.fabric'
 
 repositories {
