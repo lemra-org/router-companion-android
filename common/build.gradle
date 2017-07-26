@@ -1,4 +1,15 @@
+buildscript {
+    repositories {
+        mavenCentral() // or jcenter()
+    }
+
+    dependencies {
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.7.3'
+    }
+}
+
 apply plugin: 'com.android.library'
+apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
   compileSdkVersion android_sdk
