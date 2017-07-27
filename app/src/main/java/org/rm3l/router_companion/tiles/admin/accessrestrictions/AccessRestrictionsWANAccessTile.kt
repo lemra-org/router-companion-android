@@ -137,7 +137,7 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
     //
     val emptyView = layout.find<TextView>(R.id.empty_view)
     emptyView.textColor = ContextCompat.getColor(mParentFragmentActivity,
-        if (mParentFragmentActivity?.isThemeLight()) R.color.black else R.color.white)
+        if (mParentFragmentActivity.isThemeLight()) R.color.black else R.color.white)
     mRecyclerView.setEmptyView(emptyView)
 
     // specify an adapter (see also next example)
