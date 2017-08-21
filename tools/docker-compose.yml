@@ -1,0 +1,22 @@
+#
+# Compose is a tool for defining and running multi-container Dockerized applications.
+#
+
+version: '2'
+
+services:
+  #
+  # MAC OUI
+  #
+  mac-oui:
+    image: klauspost/oui
+    ports:
+      - "5000:5000"
+
+  #
+  # GeoIP Lookup
+  #
+  geoip:
+    image: fiorix/freegeoip
+    ports:
+      - "8080:5080"

@@ -4,10 +4,36 @@ stages:
   - build
   - deploy
 
+before_script:
+  - chmod +x ./gradlew
+
+  # For CD pipeline
+  # Install ssh-agent if not already installed, it is required by Docker.
+  # (change apt-get to yum if you use a CentOS-based image)
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+
+  # Run ssh-agent (inside the build environment)
+  - eval $(ssh-agent -s)
+
+  # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+  - ssh-add <(echo "$SSH_PRIVATE_KEY")
+
+  # For Docker builds disable host key checking. Be aware that by adding that
+  # you are suspectible to man-in-the-middle attacks.
+  # WARNING: Use this only with the Docker executor, if you use it with shell
+  # you will overwrite your user's SSH config.
+  # - mkdir -p ~/.ssh
+  # - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  # In order to properly check the server's host key, assuming you created the
+  # SSH_SERVER_HOSTKEYS variable previously, uncomment the following two lines
+  # instead.
+  - mkdir -p ~/.ssh
+  - '[[ -f /.dockerenv ]] && echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts'
+
+  - apt-get install rsync -y
+
 build:
   stage: build
-  before_script:
-    - chmod +x ./gradlew
   script:
     - ./gradlew :app:assembleAmazonDebug :tasker-plugin:assembleAmazonDebug
   artifacts:
@@ -18,37 +44,20 @@ build:
 
 production_messaging:
   stage: deploy
-  before_script:
-    # For CD pipeline
-    # Install ssh-agent if not already installed, it is required by Docker.
-    # (change apt-get to yum if you use a CentOS-based image)
-    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-
-    # Run ssh-agent (inside the build environment)
-    - eval $(ssh-agent -s)
-
-    # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
-    - ssh-add <(echo "$SSH_PRIVATE_KEY")
-
-    # For Docker builds disable host key checking. Be aware that by adding that
-    # you are suspectible to man-in-the-middle attacks.
-    # WARNING: Use this only with the Docker executor, if you use it with shell
-    # you will overwrite your user's SSH config.
-    # - mkdir -p ~/.ssh
-    # - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    # In order to properly check the server's host key, assuming you created the
-    # SSH_SERVER_HOSTKEYS variable previously, uncomment the following two lines
-    # instead.
-    - mkdir -p ~/.ssh
-    - '[[ -f /.dockerenv ]] && echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts'
-
-    - apt-get install rsync -y
-
   script:
     - ssh -p 1022 ci@rm3l.org "mkdir -p /home/ci/router-companion-android"
     - rsync -ravz -e 'ssh -p 1022' --exclude='.git/' --exclude='.gitlab-ci.yml' --exclude='.gradle' --exclude='build' --delete-excluded ./messaging ci@rm3l.org:/home/ci/router-companion-android
     - ssh -p 1022 ci@rm3l.org "cd /home/ci/router-companion-android/messaging && docker-compose -p router-companion-android-messaging -v /home/ci/.data/router-companion-android:/data up -d --build"
+  only:
+    - master
+  environment: production
 
+production_tools:
+  stage: deploy
+  script:
+    - ssh -p 1022 ci@rm3l.org "mkdir -p /home/ci/router-companion-android"
+    - rsync -ravz -e 'ssh -p 1022' --exclude='.git/' --exclude='.gitlab-ci.yml' --exclude='.gradle' --exclude='build' --delete-excluded ./tools ci@rm3l.org:/home/ci/router-companion-android
+    - ssh -p 1022 ci@rm3l.org "cd /home/ci/router-companion-android/tools && docker-compose -p router-companion-android-tools up -d --build"
   only:
     - master
   environment: production
