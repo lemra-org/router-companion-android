@@ -217,7 +217,7 @@ dependencies {
 
   // Required for instrumented tests
   androidTestImplementation "com.android.support:support-annotations:$support_version"
-  androidTestImplementation "com.android.support.test:runner:0.5"
+  androidTestImplementation "com.android.support.test:runner:1.0.0"
 
   implementation "com.android.support:appcompat-v7:$support_version"
   implementation "com.android.support:design:$support_version"
@@ -267,7 +267,7 @@ dependencies {
   }
 
   implementation 'com.google.code.gson:gson:2.8.1'
-  implementation 'com.google.guava:guava:22.0-android'
+  implementation 'com.google.guava:guava:23.0-android'
 
 //  implementation 'org.apache.commons:commons-lang3:3.5'
 

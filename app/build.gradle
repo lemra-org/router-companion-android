@@ -368,7 +368,7 @@ dependencies {
 
   // Required for instrumented tests
   androidTestImplementation "com.android.support:support-annotations:$support_version"
-  androidTestImplementation "com.android.support.test:runner:0.5"
+  androidTestImplementation "com.android.support.test:runner:1.0.0"
 
   implementation project(':common')
 
@@ -386,7 +386,7 @@ dependencies {
 
   implementation 'org.achartengine:achartengine:1.2.0'
   //    implementation 'org.sufficientlysecure:donations:2.4'
-  implementation 'com.google.guava:guava:22.0-android'
+  implementation 'com.google.guava:guava:23.0-android'
 //  implementation 'commons-io:commons-io:2.5'
   implementation 'commons-net:commons-net:3.5'
 //  implementation 'org.apache.commons:commons-lang3:3.5'
@@ -407,7 +407,7 @@ dependencies {
   implementation 'com.google.zxing:core:3.3.0'
   implementation 'com.github.curioustechizen.android-ago:library:1.3.4'
   //    implementation 'com.github.danielemaddaluno.androidupdatechecker:library:1.0.2'
-  implementation 'com.google.android.gms:play-services-ads:11.0.2'
+  implementation 'com.google.android.gms:play-services-ads:11.2.0'
   implementation('com.avocarrot:android-sdk:4.0.+')
   implementation 'fr.nicolaspomepuy:discreetapprate:2.0.4@aar'
   implementation 'com.squareup.picasso:picasso:2.5.2'
@@ -421,7 +421,7 @@ dependencies {
   implementation 'mbanje.kurt:fabbutton:1.2.4@aar'
   implementation 'com.sothree.slidinguppanel:library:3.3.1'
 
-  implementation 'com.google.firebase:firebase-appindexing:11.0.2'
+  implementation 'com.google.firebase:firebase-appindexing:11.2.0'
 
   /*
    * AirBnB DeepLinkDispatch
@@ -496,7 +496,7 @@ dependencies {
     exclude group: 'com.android.support', module: 'appcompat-v7'
   }
 
-  implementation 'com.google.firebase:firebase-messaging:11.0.2'
+  implementation 'com.google.firebase:firebase-messaging:11.2.0'
 
   //Stetho already does the same
 //  debugImplementation 'com.amitshekhar.android:debug-db:1.0.0'
