@@ -2,7 +2,7 @@
 # Compose is a tool for defining and running multi-container Dockerized applications.
 #
 
-version: '2'
+version: '3.3'
 
 networks:
   # Database management network
@@ -21,6 +21,18 @@ services:
             - fcm-app-server
     working_dir: /src/gcm-playground/server/
     command: go run server.go
+    expose:
+      - "4260"
+    labels:
+      org.rm3l.router_companion.service_name: "fcm-app-server"
+      org.rm3l.router_companion.service_description: "Firebase Cloud Messaging (FCM) App Server"
+      org.rm3l.router_companion.service_url: "_INTERNAL_"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4260/ping"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+    restart: always
 
   #
   # DD-WRT Notifier service: connects to ftp://dd-wrt.com/betas and 
@@ -39,3 +51,9 @@ services:
       - internal-api
     working_dir: /code/
     command: /usr/sbin/crond -l 2 -f
+    labels:
+      org.rm3l.router_companion.service_name: "DD-WRT Notifier service"
+      org.rm3l.router_companion.service_description: "DD-WRT Notifier service: connects to ftp://dd-wrt.com/betas and checks for new updates. Posts a Cloud Notification if any update found."
+      org.rm3l.router_companion.service_url: "_INTERNAL_"
+      org.rm3l.router_companion.service_schedule: "/usr/sbin/crond -l 2 -f"
+    restart: always
