@@ -1,8 +1,8 @@
 #
-# Compose is a tool for defining and running multi-container Dockerized applications.
+# Extra-services, deployed to tools.rm3l.org
 #
 
-version: '2'
+version: '3.3'
 
 services:
   #
@@ -12,6 +12,20 @@ services:
     image: klauspost/oui
     ports:
       - "5000:5000"
+    labels:
+      org.rm3l.router_companion.service_name: "mac-oui"
+      org.rm3l.router_companion.service_description: "Microservice for looking up manufacturers from MAC addresses"
+      org.rm3l.router_companion.service_url: "http://tools.rm3l.org:5000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/fc:aa:14"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+    restart: always
+    #   resources:
+    #     limits:
+    #       cpus: '0.001'
+    #       memory: 50M
 
   #
   # GeoIP Lookup
@@ -19,4 +33,15 @@ services:
   geoip:
     image: fiorix/freegeoip
     ports:
-      - "8080:5080"
+      - "5080:8080"
+    labels:
+      org.rm3l.router_companion.service_name: "geoip"
+      org.rm3l.router_companion.service_description: "IP geolocation web server"
+      org.rm3l.router_companion.service_url: "http://tools.rm3l.org:5080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/json/8.8.8.8"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+    restart: always
+    
