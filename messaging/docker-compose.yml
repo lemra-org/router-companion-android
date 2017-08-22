@@ -34,7 +34,7 @@ services:
       context: ./dd-wrt-notifier
     volumes:
       - /tmp
-      - /data
+      - /home/ci/.data/router-companion-android:/data
     networks:
       - internal-api
     working_dir: /code/

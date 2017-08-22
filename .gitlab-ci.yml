@@ -47,7 +47,7 @@ production_messaging:
   script:
     - ssh -p 1022 ci@rm3l.org "mkdir -p /home/ci/router-companion-android"
     - rsync -ravz -e 'ssh -p 1022' --exclude='.git/' --exclude='.gitlab-ci.yml' --exclude='.gradle' --exclude='build' --delete-excluded ./messaging ci@rm3l.org:/home/ci/router-companion-android
-    - ssh -p 1022 ci@rm3l.org "cd /home/ci/router-companion-android/messaging && docker-compose -p router-companion-android-messaging -v /home/ci/.data/router-companion-android:/data up -d --build"
+    - ssh -p 1022 ci@rm3l.org "cd /home/ci/router-companion-android/messaging && docker-compose -p router-companion-android-messaging up -d --build"
   only:
     - master
   environment: production
