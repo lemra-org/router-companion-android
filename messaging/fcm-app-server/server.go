@@ -123,6 +123,10 @@ func ListClients(w http.ResponseWriter, r *http.Request) {
 	sendJSON(w, clientArray)
 }
 
+func Ping(w http.ResponseWriter, r *http.Request) {
+    SendOkResponse(w, nil)
+}
+
 func SendOkResponse(w http.ResponseWriter, res interface{}) {
 	log.Printf("Response: %+v", res)
 	w.WriteHeader(http.StatusOK)
@@ -280,6 +284,9 @@ func Handler() http.Handler {
 	//	// GET /clients
 	//	// List all registered registration IDs
 	//	router.HandleFunc("/clients", ListClients).Methods("GET")
+	
+	//PING
+	router.HandleFunc("/ping", Ping).Methods("GET")
 
 	// POST /message
 	// Send a new message
