@@ -21,7 +21,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.google.common.base.Strings.isNullOrEmpty
 import org.jetbrains.anko.find
-import org.jetbrains.anko.onClick
+import org.jetbrains.anko.sdk25.listeners.onClick
 import org.jetbrains.anko.toast
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.mgmt.RouterManagementActivity

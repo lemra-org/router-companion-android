@@ -356,8 +356,9 @@ play {
 dependencies {
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-  implementation "org.jetbrains.anko:anko-sdk15:$anko_version"
-  implementation "org.jetbrains.anko:anko-common:$anko_version"
+  implementation "org.jetbrains.anko:anko-sdk25:$anko_version"
+  implementation "org.jetbrains.anko:anko-sdk25-listeners:$anko_version"
+  implementation "org.jetbrains.anko:anko:$anko_version"
 
   // Unit testing dependencies
   testImplementation 'junit:junit:4.12'

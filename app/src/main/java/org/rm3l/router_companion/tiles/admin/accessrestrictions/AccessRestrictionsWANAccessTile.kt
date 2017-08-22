@@ -35,7 +35,7 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.imageResource
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
-import org.jetbrains.anko.onClick
+import org.jetbrains.anko.sdk25.listeners.onClick
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.toast
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style
