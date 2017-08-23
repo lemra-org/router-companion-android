@@ -23,6 +23,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <resources>
 
   <style name="DDWRT_AppThemeLight" parent="Theme.AppCompat.Light.NoActionBar">
+    <item name="android:fontFamily">@font/interface_font</item>
     <!--<item name="windowNoTitle">true</item>-->
     <!--<item name="windowActionBar">false</item>-->
     <item name="colorPrimary">@color/ddwrt_primary</item>
@@ -77,6 +78,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
   </style>
 
   <style name="DDWRT_AppThemeDark" parent="Theme.AppCompat.NoActionBar">
+    <item name="android:fontFamily">@font/interface_font</item>
     <!--<item name="windowNoTitle">true</item>-->
     <!--<item name="windowActionBar">false</item>-->
     <item name="colorPrimary">@color/ddwrt_primary</item>

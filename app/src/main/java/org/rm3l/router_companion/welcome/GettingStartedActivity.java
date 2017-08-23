@@ -26,8 +26,8 @@ public class GettingStartedActivity extends WelcomeActivity {
 
         .theme(R.style.CustomWelcomeScreenTheme)
 
-        .defaultTitleTypefacePath("Montserrat-Bold.ttf")
-        .defaultHeaderTypefacePath("Montserrat-Bold.ttf")
+        //.defaultTitleTypefacePath("Montserrat-Bold.ttf")
+        //.defaultHeaderTypefacePath("Montserrat-Bold.ttf")
 
         .titlePage(R.drawable.logo_ddwrt_companion__large, "Welcome. Swipe to get started",
             R.color.purple_background)

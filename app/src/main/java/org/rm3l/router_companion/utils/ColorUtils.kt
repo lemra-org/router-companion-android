@@ -217,7 +217,7 @@ class ColorUtils private constructor() {
       } else {
         val themeLight = isThemeLight(activity)
         try {
-          //Determine style by intropsection
+          //Determine style by introspection
           @StyleRes val styleResId = Utils.getResId(
               String.format("%s_AppTheme%s%s", routerFirmware!!.name,
                   if (themeLight) "Light" else "Dark",
