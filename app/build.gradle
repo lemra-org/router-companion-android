@@ -331,9 +331,10 @@ android.productFlavors.each {
 
 //Other external repositories, to be used besides jcenter
 repositories {
-  maven {
-    url "https://repository-achartengine.forge.cloudbees.com/snapshot/"
-  }
+//  maven {
+  //Statically added in the libs folder, to avoid surprises with this repository suddenly becoming unavailable
+//    url "https://repository-achartengine.forge.cloudbees.com/snapshot/"
+//  }
   maven {
     url 'http://dl.bintray.com/amulyakhare/maven'
   }
@@ -385,7 +386,7 @@ dependencies {
 
 //  implementation 'net.i2p.android.ext:floatingactionbutton:1.10.1'
 
-  implementation 'org.achartengine:achartengine:1.2.0'
+//  implementation 'org.achartengine:achartengine:1.2.0'
   //    implementation 'org.sufficientlysecure:donations:2.4'
   implementation 'com.google.guava:guava:23.0-android'
 //  implementation 'commons-io:commons-io:2.5'
