@@ -383,7 +383,9 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
             summaryText += ")"
           }
 
-          val mBuilder = NotificationCompat.Builder(mCtx).setSmallIcon(
+          val mBuilder = NotificationCompat.Builder(mCtx, router.notificationChannelId)
+                  .setGroup(router.uuid)
+                  .setSmallIcon(
               R.drawable.ic_connected_hosts_notification)
               .setLargeIcon(largeIcon)
               .setAutoCancel(true)

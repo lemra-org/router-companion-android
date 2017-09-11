@@ -181,7 +181,9 @@ class PublicIPChangesServiceTask(ctx: Context) : AbstractBackgroundServiceTask(c
                 summaryText += ")"
               }
 
-              val mBuilder = NotificationCompat.Builder(mCtx).setSmallIcon(R.drawable.ic_stat_ip)
+              val mBuilder = NotificationCompat.Builder(mCtx, router.notificationChannelId)
+                      .setGroup(router.uuid)
+                      .setSmallIcon(R.drawable.ic_stat_ip)
                   .setLargeIcon(largeIcon)
                   .setAutoCancel(true)
                   .setGroup(PublicIPChangesServiceTask::class.java.simpleName)

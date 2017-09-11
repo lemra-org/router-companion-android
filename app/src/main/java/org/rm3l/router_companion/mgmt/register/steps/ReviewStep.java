@@ -45,6 +45,7 @@ import org.rm3l.router_companion.service.tasks.RouterModelUpdaterServiceTask;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
+import org.rm3l.router_companion.utils.notifications.NotificationHelperKt;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.widgets.wizard.MaterialWizard;
 import org.rm3l.router_companion.widgets.wizard.MaterialWizardStep;
@@ -140,27 +141,23 @@ public class ReviewStep extends MaterialWizardStep {
 
     final View v = inflater.inflate(R.layout.wizard_manage_router_4_review, container, false);
 
-    uuidView = (TextView) v.findViewById(R.id.wizard_add_router_review_router_uuid);
-    routerNameView = (TextView) v.findViewById(R.id.wizard_add_router_review_router_name);
-    routerIpOrDnsView = (TextView) v.findViewById(R.id.wizard_add_router_review_router_ip_dns);
-    routerFirmwareView = (TextView) v.findViewById(R.id.wizard_add_router_review_router_firmware);
-    connectionProtocolView =
-        (TextView) v.findViewById(R.id.wizard_add_router_review_router_conn_proto);
-    portView = (TextView) v.findViewById(R.id.wizard_add_router_review_router_conn_proto_ssh_port);
-    usernameView =
-        (TextView) v.findViewById(R.id.wizard_add_router_review_router_conn_proto_ssh_username);
-    authMethodView = (TextView) v.findViewById(R.id.wizard_add_router_review_ssh_auth_method);
-    authMethodHidden =
-        (TextView) v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_hidden);
+    uuidView = v.findViewById(R.id.wizard_add_router_review_router_uuid);
+    routerNameView = v.findViewById(R.id.wizard_add_router_review_router_name);
+    routerIpOrDnsView = v.findViewById(R.id.wizard_add_router_review_router_ip_dns);
+    routerFirmwareView = v.findViewById(R.id.wizard_add_router_review_router_firmware);
+    connectionProtocolView = v.findViewById(R.id.wizard_add_router_review_router_conn_proto);
+    portView = v.findViewById(R.id.wizard_add_router_review_router_conn_proto_ssh_port);
+    usernameView = v.findViewById(R.id.wizard_add_router_review_router_conn_proto_ssh_username);
+    authMethodView = v.findViewById(R.id.wizard_add_router_review_ssh_auth_method);
+    authMethodHidden = v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_hidden);
     privkeyButtonHintView =
-        (TextView) v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_privkey_path);
-    passwordView =
-        (EditText) v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_password_value);
+        v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_privkey_path);
+    passwordView = v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_password_value);
     useLocalSSIDLookupView =
-        (TextView) v.findViewById(R.id.wizard_add_router_review_use_local_ssid_lookup_yes_no);
+        v.findViewById(R.id.wizard_add_router_review_use_local_ssid_lookup_yes_no);
 
     final CheckBox showPasswordCheckBox =
-        (CheckBox) v.findViewById(R.id.wizard_add_router_review_password_show_checkbox);
+        v.findViewById(R.id.wizard_add_router_review_password_show_checkbox);
     showPasswordCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (!isChecked) {
@@ -188,9 +185,9 @@ public class ReviewStep extends MaterialWizardStep {
         final String valueString = s.toString();
         try {
           final TextView privkeyHdrView =
-              (TextView) v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_privkey_hdr);
+              v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_privkey_hdr);
           final TextView passwordHdrView =
-              (TextView) v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_password_hdr);
+              v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_password_hdr);
           switch (Integer.parseInt(valueString)) {
             case Router.SSHAuthenticationMethod_PASSWORD: {
               authMethodView.setText("Password");
@@ -482,16 +479,22 @@ public class ReviewStep extends MaterialWizardStep {
 
   @Override protected void onExitNext() {
     final Router dbRouter;
+    final Context context = getContext();
     if (routerSelected != null
         && action != RouterWizardAction.ADD
         && action != RouterWizardAction.COPY) {
       dbRouter = this.dao.updateRouter(router);
+      if (dbRouter != null) {
+        NotificationHelperKt.createNotificationChannelGroup(dbRouter, context);
+      }
     } else {
       //This is a new router to add
       dbRouter = this.dao.insertRouter(router);
+      if (dbRouter != null) {
+        NotificationHelperKt.createNotificationChannelGroup(dbRouter, context);
+      }
     }
     if (dbRouter != null) {
-      final Context context = getContext();
       context.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
           .edit()
           .putString(ManageRouterWizard.class.getSimpleName(), dbRouter.getUuid())

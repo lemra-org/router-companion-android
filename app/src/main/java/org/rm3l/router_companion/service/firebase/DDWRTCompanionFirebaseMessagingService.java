@@ -26,7 +26,9 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.api.urlshortener.goo_gl.GooGlService;
 import org.rm3l.router_companion.api.urlshortener.goo_gl.resources.GooGlData;
+import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.NetworkUtils;
+import org.rm3l.router_companion.utils.notifications.NotificationHelperKt;
 import retrofit2.Response;
 
 import static org.rm3l.router_companion.RouterCompanionAppConstants.CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES;
@@ -185,7 +187,9 @@ public class DDWRTCompanionFirebaseMessagingService extends FirebaseMessagingSer
 
     //        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
     final NotificationCompat.Builder notificationBuilder =
-        new NotificationCompat.Builder(this).setLargeIcon(largeIcon)
+        new NotificationCompat.Builder(this, Router.RouterFirmware.DDWRT.name())
+                .setGroup(NotificationHelperKt.NOTIFICATION_GROUP_GENERAL_UPDATES)
+                .setLargeIcon(largeIcon)
             .setSmallIcon(R.mipmap.ic_launcher_ddwrt_companion)
             .setContentTitle(title)
             .setContentText(messageBody)

@@ -79,6 +79,7 @@ import com.readystatesoftware.chuck.Chuck;
 //import com.sloydev.preferator.Preferator;
 import com.stephentuso.welcome.WelcomeScreenHelper;
 import com.stephentuso.welcome.ui.WelcomeActivity;
+import org.rm3l.router_companion.utils.notifications.NotificationHelperKt;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -304,7 +305,15 @@ import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_RESOURC
 
     this.dao = getDao(this);
 
-    mRecyclerView = (RecyclerViewEmptySupport) findViewById(R.id.routersListView);
+    final List<Router> allRouters = this.dao.getAllRouters();
+//    for (final Router router : allRouters) {
+//      if (router == null) {
+//        continue;
+//      }
+//      NotificationHelperKt.createNotificationChannelGroup(router, this);
+//    }
+
+    mRecyclerView = findViewById(R.id.routersListView);
 
     // use this setting to improve performance if you know that changes
     // in content do not change the layout size of the RecyclerView
@@ -325,7 +334,7 @@ import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_RESOURC
     mRecyclerView.setEmptyView(emptyView);
 
     // specify an adapter (see also next example)
-    mAdapter = new RouterListRecycleViewAdapter(this, this.dao.getAllRouters());
+    mAdapter = new RouterListRecycleViewAdapter(this, allRouters);
     mRecyclerView.setAdapter(mAdapter);
 
     final ItemTouchHelper.Callback callback =

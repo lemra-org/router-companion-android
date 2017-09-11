@@ -673,6 +673,10 @@ public class Router implements Serializable {
     return this;
   }
 
+  @NonNull public String getNotificationChannelId() {
+    return (this.uuid + "-router-events");
+  }
+
   /**
    * @return the privKey
    */

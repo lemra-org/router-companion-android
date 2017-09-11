@@ -60,6 +60,7 @@ import org.rm3l.router_companion.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImp
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
+import org.rm3l.router_companion.utils.notifications.NotificationHelperKt;
 import org.rm3l.router_companion.welcome.GettingStartedActivity;
 import org.wordpress.passcodelock.AppLockManager;
 
@@ -153,6 +154,9 @@ public class RouterCompanionApplication extends Application
     LocalBroadcastManager.getInstance(this).registerReceiver(new DeepLinkReceiver(), intentFilter);
 
     DDWRTCompanionSqliteDAOImpl.initialize(getApplicationContext());
+
+    //General Notification Channel
+    NotificationHelperKt.createOrUpdateNotificationChannels(this);
 
     //initialize and create the image loader logic (for MaterialDrawer, used throughout the app)
     DrawerImageLoader.init(new AbstractDrawerImageLoader() {
