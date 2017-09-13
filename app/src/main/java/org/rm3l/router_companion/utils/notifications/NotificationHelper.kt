@@ -31,6 +31,7 @@ fun Router.createNotificationChannelGroup(context: Context) {
     val channelDescription = "Events occurring in Router"
     val channelImportance = NotificationManager.IMPORTANCE_DEFAULT
     val channel = NotificationChannel(channelId, channelName, channelImportance)
+    channel.setShowBadge(true)
     channel.description = channelDescription
     channel.enableLights(true)
     val lightColor: Int? = when (this.routerFirmware) {
@@ -40,7 +41,7 @@ fun Router.createNotificationChannelGroup(context: Context) {
     }
     lightColor?.let { channel.lightColor = it }
     channel.enableVibration(true)
-    channel.vibrationPattern = longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)
+    channel.vibrationPattern = longArrayOf(100)
     channel.group = group
     mNotificationManager.createNotificationChannel(channel)
   }
@@ -71,6 +72,7 @@ fun Context.createGeneralNotificationChannelGroup() {
           val channelImportance = NotificationManager.IMPORTANCE_DEFAULT
           val channel = NotificationChannel(channelId, channelName, channelImportance)
           channel.description = channelDescription
+          channel.setShowBadge(true)
           channel.enableLights(true)
           val lightColor: Int? = when (it) {
             DDWRT -> R.color.ddwrt_primary
@@ -79,7 +81,7 @@ fun Context.createGeneralNotificationChannelGroup() {
           }
           lightColor?.let { channel.lightColor = it }
           channel.enableVibration(true)
-          channel.vibrationPattern = longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)
+          channel.vibrationPattern = longArrayOf(100)
 
           channel.group = NOTIFICATION_GROUP_GENERAL_UPDATES
           channel
