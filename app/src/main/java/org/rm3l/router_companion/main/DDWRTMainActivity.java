@@ -701,12 +701,7 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
                   break;
                 case 1004:
                   //About
-                  new LibsBuilder()
-                      //provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
-                      .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
-                      //start the activity
-                      .start(DDWRTMainActivity.this);
-                  //new AboutDialog(DDWRTMainActivity.this).show();
+                  Utils.launchAboutActivity(DDWRTMainActivity.this);
                   break;
                 default:
                   break;
