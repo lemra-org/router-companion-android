@@ -75,6 +75,8 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.mikepenz.aboutlibraries.Libs;
+import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.readystatesoftware.chuck.Chuck;
 //import com.sloydev.preferator.Preferator;
 import com.stephentuso.welcome.WelcomeScreenHelper;
@@ -810,7 +812,7 @@ import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_RESOURC
         Utils.openDonateActivity(this);
         return true;
       case R.id.router_list_about:
-        new AboutDialog(this).show();
+        Utils.launchAboutActivity(RouterManagementActivity.this);
         return true;
       case R.id.router_list_settings:
         this.startActivityForResult(new Intent(this, RouterManagementSettingsActivity.class),

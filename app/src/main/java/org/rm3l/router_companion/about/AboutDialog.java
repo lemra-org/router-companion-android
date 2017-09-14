@@ -50,6 +50,7 @@ import org.rm3l.router_companion.utils.Utils;
  *
  * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
+@Deprecated
 public class AboutDialog extends Dialog {
 
   public static final String CURRENT_YEAR_INFO_TXT = "%CURRENT_YEAR%";
@@ -117,7 +118,7 @@ public class AboutDialog extends Dialog {
     setContentView(R.layout.about);
 
     boolean fileFound;
-    TextView tv = (TextView) findViewById(R.id.legal_text);
+    TextView tv = findViewById(R.id.legal_text);
     if (BuildConfig.DONATIONS) {
       //Show GPL License terms
       final String legalTxtRaw = readRawTextFile(R.raw.legal);
@@ -130,7 +131,7 @@ public class AboutDialog extends Dialog {
       tv.setVisibility(View.GONE);
     }
 
-    tv = (TextView) findViewById(R.id.info_text);
+    tv = findViewById(R.id.info_text);
     final String infoText = readRawTextFile(R.raw.info);
     fileFound = (infoText != null);
     if (fileFound) {
@@ -143,10 +144,11 @@ public class AboutDialog extends Dialog {
     }
     tv.setVisibility(fileFound ? View.VISIBLE : View.GONE);
 
-    tv = (TextView) findViewById(R.id.contributors);
+    tv = findViewById(R.id.contributors);
     final String contributorsTxt = readRawTextFile(R.raw.contributors);
     fileFound = (contributorsTxt != null);
     if (fileFound) {
+      //noinspection ConstantConditions
       setTextContentAndLinkify(tv, contributorsTxt.replaceAll(DONATIONS_LIB_INFO_TXT,
           BuildConfig.DONATIONS ? "&#8226; <a href=\"https://github.com/dschuermann/"
               + "android-donations-lib\" target=\"_blank\">android-donations-lib</a>" : ""));

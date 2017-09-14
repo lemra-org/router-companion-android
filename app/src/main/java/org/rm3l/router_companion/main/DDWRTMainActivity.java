@@ -82,6 +82,8 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.mikepenz.aboutlibraries.Libs;
+import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -699,7 +701,12 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
                   break;
                 case 1004:
                   //About
-                  new AboutDialog(DDWRTMainActivity.this).show();
+                  new LibsBuilder()
+                      //provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
+                      .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
+                      //start the activity
+                      .start(DDWRTMainActivity.this);
+                  //new AboutDialog(DDWRTMainActivity.this).show();
                   break;
                 default:
                   break;
@@ -1052,7 +1059,7 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
         Utils.openDonateActivity(this);
         return true;
       case R.id.action_about:
-        new AboutDialog(this).show();
+        Utils.launchAboutActivity(DDWRTMainActivity.this);
         eventMap.put("Menu Item", "About");
         ReportingUtils.reportEvent(ReportingUtils.EVENT_MENU_ITEM, eventMap);
         return true;

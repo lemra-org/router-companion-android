@@ -403,3 +403,10 @@
 
 # osmdroid
 -dontwarn org.osmdroid.tileprovider.modules.NetworkAvailabliltyCheck
+
+#aboutlibraries (with auto-detection)
+-keep class .R
+-keep class **.R$* {
+    <fields>;
+}
+-dontwarn com.mikepenz.iconics.**

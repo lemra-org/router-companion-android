@@ -75,9 +75,12 @@ import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import com.mikepenz.aboutlibraries.Libs;
+import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Transformation;
 import org.rm3l.router_companion.RouterCompanionApplication;
+import org.rm3l.router_companion.utils.kotlin.Context_extKt;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import fr.nicolaspomepuy.discreetapprate.AppRate;
 import fr.nicolaspomepuy.discreetapprate.AppRateTheme;
@@ -1006,6 +1009,16 @@ public final class Utils {
       newBase = base;
     }
     return newBase;
+  }
+
+  public static void launchAboutActivity(@NonNull final Context context) {
+    new LibsBuilder().withFields(R.string.class.getFields())
+        .withActivityTitle("About")
+        //provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
+        .withActivityStyle(Context_extKt.isThemeLight(context) ?
+            Libs.ActivityStyle.LIGHT : Libs.ActivityStyle.DARK)
+        //start the activity
+        .start(context);
   }
 
   protected static final class BugReportException extends DDWRTCompanionException {
