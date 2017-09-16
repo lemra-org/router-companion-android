@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+<string name="define_commons_net" translatable="false"/>
+<!-- Author section -->
+<string name="library_commons_net_author" translatable="false">The Apache Software Foundation</string>
+<string name="library_commons_net_authorWebsite" translatable="false">https://www.apache.org</string>
+<!-- Library section -->
+<string name="library_commons_net_libraryName" translatable="false">Apache Commons Net</string>
+<string name="library_commons_net_libraryDescription" translatable="false">Apache Commons Net&#8482; library implements the client side of many basic Internet protocols. The purpose of the library is to provide fundamental protocol access, not higher-level abstractions.</string>
+<string name="library_commons_net_libraryWebsite" translatable="false">https://commons.apache.org/proper/commons-net/</string>
+<string name="library_commons_net_libraryVersion" translatable="false">3.5</string>
+<!-- OpenSource section -->
+<string name="library_commons_net_isOpenSource" translatable="false">true</string>
+<string name="library_commons_net_repositoryLink" translatable="false">http://svn.apache.org/viewvc/commons/proper/net/trunk/</string>
+<!-- ClassPath for autoDetect section -->
+<!--<string translatable="false" name="library_commons_net_classPath">com.facebook.commons_net</string>-->
+<!-- License section -->
+<string name="library_commons_net_licenseId" translatable="false">apache_2_0</string>
+<!-- Custom variables section -->
+</resources>

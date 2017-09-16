@@ -23,13 +23,12 @@ SOFTWARE.
   <string name="aboutLibraries_description_showIcon" translatable="false">true</string>
   <string name="aboutLibraries_description_showVersion" translatable="false">true</string>
   <string name="aboutLibraries_description_text" translatable="false"><![CDATA[
-  DD-WRT Companion is a mobile app that lets you connect to, monitor and manage your DD-WRT routers on the go.
-  <br/><b><a href="http://ddwrt-companion.rm3l.org" target="_blank">http://ddwrt-companion.rm3l.org</a></b>
+  App that lets you connect to, monitor and manage your DD-WRT (and variants) routers on the go.
+  <br/><a href="http://ddwrt-companion.rm3l.org" target="_blank">http://ddwrt-companion.rm3l.org</a>
  &mdash;
 <a href="mailto:apps+ddwrt@rm3l.org?subject=DD-WRT%20Companion%20Android%20Application">apps+ddwrt@rm3l.org</a>
-<b><br/>
-  Copyright © 2014-2017 Armel Soro.<o/>
-
+<br/>
+  Copyright © 2014-2017 Armel Soro.
     ]]></string>
   <string name="aboutLibraries_description_name" translatable="false">DD-WRT Companion</string>
 

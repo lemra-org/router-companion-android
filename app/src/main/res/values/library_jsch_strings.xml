@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+<string name="define_jsch" translatable="false"/>
+<!-- Author section -->
+<string name="library_jsch_author" translatable="false">JCraft, Inc.</string>
+<string name="library_jsch_authorWebsite" translatable="false">http://www.jcraft.com</string>
+<!-- Library section -->
+<string name="library_jsch_libraryName" translatable="false">JSch</string>
+<string name="library_jsch_libraryDescription" translatable="false">JSch is a pure Java implementation of SSH2. JSch allows you to connect to an sshd server and use port forwarding, X11 forwarding, file transfer, etc., and you can integrate its functionality into your own Java programs.</string>
+<string name="library_jsch_libraryWebsite" translatable="false">http://www.jcraft.com/jsch/</string>
+<string name="library_jsch_libraryVersion" translatable="false">0.1.51</string>
+<!-- OpenSource section -->
+<string name="library_jsch_isOpenSource" translatable="false">true</string>
+<string name="library_jsch_repositoryLink" translatable="false">https://sourceforge.net/projects/jsch/</string>
+<!-- ClassPath for autoDetect section -->
+<!--<string translatable="false" name="library_jsch_classPath">com.facebook.jsch</string>-->
+<!-- License section -->
+  <string name="library_jsch_licenseVersion">BSD-style License</string>
+  <string name="library_jsch_licenseLink">http://www.jcraft.com/jsch/LICENSE.txt</string>
+  <string name="library_jsch_licenseContent">
+    <![CDATA[
+Copyright &#169; 2002-2015 Atsuhiko Yamanaka, JCraft,Inc. <br/>
+All rights reserved.<br/>
+<br/>
+Redistribution and use in source and binary forms, with or without<br/>
+modification, are permitted provided that the following conditions are met:<br/>
+<br/>
+  1. Redistributions of source code must retain the above copyright notice,<br/>
+     this list of conditions and the following disclaimer.<br/>
+<br/>
+  2. Redistributions in binary form must reproduce the above copyright<br/>
+     notice, this list of conditions and the following disclaimer in <br/>
+     the documentation and/or other materials provided with the distribution.<br/>
+<br/>
+  3. The names of the authors may not be used to endorse or promote products<br/>
+     derived from this software without specific prior written permission.<br/>
+<br/>
+THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,<br/>
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND<br/>
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JCRAFT,<br/>
+INC. OR ANY CONTRIBUTORS TO THIS SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT,<br/>
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT<br/>
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,<br/>
+OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF<br/>
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING<br/>
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,<br/>
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.<br/>
+        ]]>
+  </string>
+<!-- Custom variables section -->
+</resources>

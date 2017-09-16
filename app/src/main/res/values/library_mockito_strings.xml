@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+Copyright (c) 2016 Armel Soro
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+
+<resources>
+  <string name="define_mockito" translatable="false"/>
+  <!-- Author section -->
+  <string name="library_mockito_author" translatable="false">Mockito contributors</string>
+  <string name="library_mockito_authorWebsite" translatable="false">http://mockito.org/</string>
+  <!-- Library section -->
+  <string name="library_mockito_libraryName" translatable="false">Mockito</string>
+  <string name="library_mockito_libraryDescription" translatable="false">Tasty mocking framework for unit tests in Java.</string>
+  <string name="library_mockito_libraryWebsite" translatable="false">http://site.mockito.org/</string>
+  <string name="library_mockito_libraryVersion" translatable="false">2.2.26</string>
+  <!-- OpenSource section -->
+  <string name="library_mockito_isOpenSource" translatable="false">true</string>
+  <string name="library_mockito_repositoryLink" translatable="false">https://github.com/mockito/mockito</string>
+  <!-- ClassPath for autoDetect section -->
+  <!--<string translatable="false" name="library_mockito_classPath">com.facebook.mockito</string>-->
+  <!-- License section -->
+  <string name="library_mockito_licenseId" translatable="false">mit</string>
+  <!-- Custom variables section -->
+</resources>
