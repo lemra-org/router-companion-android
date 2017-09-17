@@ -24,566 +24,400 @@ SOFTWARE.
   <string name="aboutLibraries_description_showVersion" translatable="false">true</string>
   <string name="aboutLibraries_description_text" translatable="false"><![CDATA[
   App that lets you connect to, monitor and manage your DD-WRT (and variants) routers on the go.
-  <br/><a href="http://ddwrt-companion.rm3l.org" target="_blank">http://ddwrt-companion.rm3l.org</a>
+  <br/><br/>
+  <a href="http://ddwrt-companion.rm3l.org" target="_blank">http://ddwrt-companion.rm3l.org</a>
  &mdash;
 <a href="mailto:apps+ddwrt@rm3l.org?subject=DD-WRT%20Companion%20Android%20Application">apps+ddwrt@rm3l.org</a>
-<br/>
-  Copyright © 2014-2017 Armel Soro.
+<br/><br/>
+  Copyright &#169; 2014-2017 Armel Soro.<br/>
     ]]></string>
   <string name="aboutLibraries_description_name" translatable="false">DD-WRT Companion</string>
 
   <!-- Just remove those entries if you don't want to use a special button with a text within your about this app view :D -->
-  <string translatable="false" name="aboutLibraries_description_special1_name">EULA</string>
+  <!--<string translatable="false" name="aboutLibraries_description_special3_name">EULA</string>-->
+  <!--<string translatable="false" name="aboutLibraries_description_special3_text">-->
+  <!--<![CDATA[This is a small sample which can be set in the about my app description file.<br /><br /><b>You can style this with html markup :D</b>]]>-->
+  <!--</string>-->
+  <!--<string translatable="false" name="aboutLibraries_description_special2_name">AGB</string>-->
+  <!--<string translatable="false" name="aboutLibraries_description_special2_text">-->
+  <!--<![CDATA[This is a small <i>sample</i> which can be set in the about my app description file.<br /><br /><b>You can style this with html markup :D</b>]]>-->
+  <!--</string>-->
+  <string translatable="false" name="aboutLibraries_description_special1_name">What\'s new?</string>
   <string translatable="false" name="aboutLibraries_description_special1_text">
-  <![CDATA[This is a small sample which can be set in the about my app description file.<br /><br /><b>You can style this with html markup :D</b>]]>
-  </string>
-  <string translatable="false" name="aboutLibraries_description_special2_name">AGB</string>
-  <string translatable="false" name="aboutLibraries_description_special2_text">
-  <![CDATA[This is a small <i>sample</i> which can be set in the about my app description file.<br /><br /><b>You can style this with html markup :D</b>]]>
-  </string>
-  <string translatable="false" name="aboutLibraries_description_special3_name">Changelog</string>
-  <string translatable="false" name="aboutLibraries_description_special3_text">
   <![CDATA[
-  <h4 id="2017-02-20">2017-02-20</h4>
-<p>Version Code: <b>903000</b> | Version Short Name: <b>9.0.3</b></p>
-
+<h4>2017-05-15: Version 9.0.5</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
 <ul>
-  <li>Bug, reliability &amp; performance fixes
-    <ul>
-      <li>Fixed an issue with some hosts not being displayed in the ‘Clients list’. This has been rewritten from the ground up with performance in mind</li>
-      <li>Fixed an issue with WAN Traffic monitoring ending at the 28th of each month</li>
-      <li>Fixed an issue with toggling Access Policies on some devices: you are now able to explicitly force-enable/disable policies on demand</li>
-    </ul>
-  </li>
-  <li>New features
-    <ul>
-      <li>Experimental Support for Tomato firmware. This is still highly experimental, and not all features are supported.</li>
-      <li>Update to overall app look</li>
-    </ul>
-  </li>
+  <li>Fixed an issue with some hosts not being displayed in the ‘Clients list’. This has been rewritten from the ground up with performance in mind</li>
+  <li>Fixed an issue with WAN Traffic monitoring ending at the 28th of each month</li>
+  <li>Fixed an issue with toggling Access Policies on some devices: you are now able to explicitly force-enable/disable policies on demand</li>
 </ul>
-<hr/>
-
-<h4 id="2017-01-04">2017-01-04</h4>
-<p>Version Code: <b>804000</b> | Version Short Name: <b>8.0.4</b></p>
-
-<p>Happy New Year 2017!</p>
-
+<h6>New features</h6>
 <ul>
-  <li>Bug, reliability &amp; performance fixes
-    <ul>
-      <li>Syslog tile has been rewritten from the ground up, with a focus on usability</li>
-      <li>Fixed few memory leaks</li>
-      <li>Fixed potential router connection issues</li>
-    </ul>
-  </li>
-  <li>New features
-    <ul>
-      <li>Notifications of new DD-WRT Build updates</li>
-      <li>Ability to reorder list of routers, plus Swipe-To-Remove behaviour</li>
-      <li>Android N compatibility: app shortcuts</li>
-      <li>NFC-sharing of WiFi Networks (for compatible devices)</li>
-      <li>Auto-Refresh (see individual Router Settings)</li>
-    </ul>
-  </li>
+  <li>Experimental Support for Tomato firmware. This is still highly experimental, and not all features are supported.</li>
+  <li>Update to overall app look</li>
 </ul>
-<hr/>
+--------------<br/>
 
-<h4 id="2016-09-21">2016-09-21</h4>
-<p>Version Code: <b>710052</b> | Version Short Name: <b>7.1.0</b></p>
-
+<h4>2017-02-20: Version 9.0.3</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
 <ul>
-  <li>Bug, reliability &amp; performance fixes
-    <ul>
-      <li>Fixed Access Control Filter bug: filter no longer changed to ‘Deny’</li>
-      <li>Fixed bandwidth monitoring data retrieval</li>
-    </ul>
-  </li>
-  <li>New features
-    <ul>
-      <li>New logo : the app has a cleaner logo</li>
-      <li>Security
-        <ul>
-          <li>This was a popular request: you are now able to PIN-protect the app. Head to the global settings to manage the PIN lock</li>
-        </ul>
-      </li>
-      <li>3rd party integration
-        <ul>
-          <li>I am working on allowing external interactions with the app. For now, this is limited to a new ‘<a href="https://play.google.com/store/apps/details?id=org.rm3l.ddwrt.tasker" target="_blank">DD-WRT Companion Tasker Plugin</a>’ app, available for download. It allows to automate the act of launching actions against your remote routers.</li>
-          <li>Again, as security matters, this is entirely in your control. You can disable such feature from the global settings.</li>
-        </ul>
-      </li>
-      <li>Redesigned the WAN bandwidths graphs, which are now easier to read and use</li>
-      <li>Sending feedbacks from within the app now easier, with the ability to annotate screen captures and attach logs</li>
-    </ul>
-  </li>
+  <li>Fixed an issue with some hosts not being displayed in the ‘Clients list’. This has been rewritten from the ground up with performance in mind</li>
+  <li>Fixed an issue with WAN Traffic monitoring ending at the 28th of each month</li>
+  <li>Fixed an issue with toggling Access Policies on some devices: you are now able to explicitly force-enable/disable policies on demand</li>
 </ul>
-<hr/>
+<h6>New features</h6>
+<ul>
+  <li>Experimental Support for Tomato firmware. This is still highly experimental, and not all features are supported.</li>
+  <li>Update to overall app look</li>
+</ul>
+--------------<br/>
 
-<h4 id="2016-08-02">2016-08-02</h4>
-<p>Version Code: <b>704001</b> | Version Short Name: <b>7.0.4</b></p>
+<h4>2017-01-04: Version 8.0.4</h4>
+<p><b>Happy New Year 2017!</b></p>
+<h6>Bug, reliability &amp; performance fixes</h6>
+<ul>
+  <li>Syslog tile has been rewritten from the ground up, with a focus on usability</li>
+  <li>Fixed few memory leaks</li>
+  <li>Fixed potential router connection issues</li>
+</ul>
+<h6>New features</h6>
+<ul>
+  <li>Notifications of new DD-WRT Build updates</li>
+  <li>Ability to reorder list of routers, plus Swipe-To-Remove behaviour</li>
+  <li>Android N compatibility: app shortcuts</li>
+  <li>NFC-sharing of WiFi Networks (for compatible devices)</li>
+  <li>Auto-Refresh (see individual Router Settings)</li>
+</ul>
+--------------<br/>
 
+
+<h4>2016-09-21: Version 7.1.0</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
+<ul>
+  <li>Fixed Access Control Filter bug: filter no longer changed to ‘Deny’</li>
+  <li>Fixed bandwidth monitoring data retrieval</li>
+</ul>
+<h6>New features</h6>
+<b>Security</b><br/>
+This was a popular request: you are now able to PIN-protect the app. Head to the global settings to manage the PIN lock.<br/>
+<br/>
+<b>3rd party integration</b>
+<ul>
+  <li>I am working on allowing external interactions with the app. For now, this is limited to a new ‘<a href="https://play.google.com/store/apps/details?id=org.rm3l.ddwrt.tasker" target="_blank">DD-WRT Companion Tasker Plugin</a>’ app, available for download. It allows to automate the act of launching actions against your remote routers.</li>
+  <li>Again, as security matters, this is entirely in your control. You can disable such feature from the global settings.</li>
+</ul>
+<b>Other features</b>
+<ul>
+  <li>New logo : the app has a cleaner logo</li>
+  <li>Redesigned the WAN bandwidths graphs, which are now easier to read and use</li>
+  <li>Sending feedback from within the app now easier, with the ability to annotate screen captures and attach logs</li>
+</ul>
+--------------<br/>
+
+<h4>2016-08-02: Version 7.0.4</h4>
 <p>This release essentially contains bug fixes:</p>
-
+<h6>Bug, reliability &amp; performance fixes</h6>
 <ul>
-  <li>Bug, reliability &amp; performance fixes
-    <ul>
-      <li>Fixed Java errors that sometimes happened when trying to connect to routers</li>
-      <li>Fixed IP geolocation feature: maps now show up correctly</li>
-      <li>In the “Add Router” wizard, router names are no longer validated against strict DNS patterns. The reason behind this is, even if they are not valid DNS names, they might be resolvable within a local LAN context</li>
-    </ul>
-  </li>
+  <li>Fixed Java errors that sometimes happened when trying to connect to routers</li>
+  <li>Fixed IP geolocation feature: maps now show up correctly</li>
+  <li>In the “Add Router” wizard, router names are no longer validated against strict DNS patterns. The reason behind this is, even if they are not valid DNS names, they might be resolvable within a local LAN context</li>
 </ul>
-<hr/>
+--------------<br/>
 
-<h4 id="2016-07-06">2016-07-06</h4>
-<p>Version Code: <b>703001</b> | Version Short Name: <b>7.0.3</b></p>
-
+<h4>2016-07-06: Version 7.0.3</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
 <ul>
-  <li>Bug, reliability &amp; performance fixes
-    <ul>
-      <li>Fixed issue with clients list not displaying: MAC addresses resolution now done in the background</li>
-      <li>Dialogs for managing routers rewritten from the ground up: now as a step-by-step wizard</li>
-      <li>Charts are more readable now</li>
-    </ul>
-  </li>
-  <li>New features
-    <ul>
-      <li>App indexing from your Google App</li>
-      <li>Admin Web page now available right from the app</li>
-      <li>Active IP Connections redesigned, with a Stats section</li>
-      <li>More Material Design experience
-        <ul>
-          <li>New look and feel. Sending feedbacks is also now easier than ever</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
+  <li>Fixed issue with clients list not displaying: MAC addresses resolution now done in the background</li>
+  <li>Dialogs for managing routers rewritten from the ground up: now as a step-by-step wizard</li>
+  <li>Charts are more readable now</li>
 </ul>
-<hr/>
-
-<h4 id="2016-02-05">2016-02-05</h4>
-<p>Version Code: <b>601000</b> | Version Short Name: <b>6.0.1</b></p>
-
+<h6>New features</h6>
 <ul>
-  <li>Bug, reliability &amp; performance fixes
-    <ul>
-      <li>Addressed potential battery drain issues</li>
-      <li>Improved support of Android Marshmallow’s new permissions model</li>
-      <li>More Material Design experience</li>
-    </ul>
-  </li>
-  <li>New features
-    <ul>
-      <li>Introducing Access Restrictions (Parental Control). For now, you have the ability to toggle WAN Access policies. More features will be added in upcoming versions.</li>
-      <li>Run Speed Tests and geolocate IPs. Measure WAN Ping (Latency) and WAN Download against servers located worldwide. You can either pick a specific server location in the settings, choose a Random one or let the app auto-select one (the one with the lowest latency). WAN Upload is to come very soon.</li>
-      <li>Manage local aliases, with the ability to Import and Export them. This may be of help when upgrading from the Lite to the full-featured version of the app. See the Actions Menu Item.</li>
-      <li>More actions: clear ARP &amp; DNS caches, toggle HTTPd (web server)</li>
-      <li>Introducing Home Launcher Screen shortcuts, to get a quick access to your routers</li>
-      <li>OpenVPN and PPTP Clients may now be toggled in a mutually exclusive manner. For example, if you choose to disable the PPTP Client, the app will also suggest you disable the OpenVPN Client at the same time.</li>
-    </ul>
-  </li>
+  <li>App indexing from your Google App</li>
+  <li>Admin Web page now available right from the app</li>
+  <li>Active IP Connections redesigned, with a Stats section</li>
+  <li>More Material Design experience: New look and feel. Sending feedback is also now easier than ever</li>
 </ul>
-<hr/>
+--------------<br/>
 
-<h4 id="2015-12-01">2015-12-01</h4>
-<p>Version Code: <b>511000</b> | Version Short Name: <b>5.1.1</b></p>
-
+<h4>2016-02-05: Version 6.0.1</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
 <ul>
-  <li>Bug and performance fixes</li>
+  <li>Addressed potential battery drain issues</li>
+  <li>Improved support of Android Marshmallow’s new permissions model</li>
+  <li>More Material Design experience</li>
 </ul>
-<hr/>
-
-<h4 id="2015-11-27">2015-11-27</h4>
-<p>Version Code: <b>510001</b> | Version Short Name: <b>5.1.0</b></p>
-
+<h6>New features</h6>
 <ul>
-  <li>Bug, reliability &amp; performance fixes
-    <ul>
-      <li>Fixed issue with clients list not displaying on some devices</li>
-      <li>Made SSH connections more reliable</li>
-      <li>Address potential battery drain issues.
-        <ul>
-          <li>Among other strategies, auto-refresh is now deprecated, and you need to pull to manually refresh data whenever needed</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>New features
-    <ul>
-      <li>Added the ability to specify custom WAN Monthly Cycle start day</li>
-      <li>More material design experience</li>
-    </ul>
-  </li>
+  <li>Introducing Access Restrictions (Parental Control). For now, you have the ability to toggle WAN Access policies. More features will be added in upcoming versions.</li>
+  <li>Run Speed Tests and geolocate IPs. Measure WAN Ping (Latency) and WAN Download against servers located worldwide. You can either pick a specific server location in the settings, choose a Random one or let the app auto-select one (the one with the lowest latency). WAN Upload is to come very soon.</li>
+  <li>Manage local aliases, with the ability to Import and Export them. This may be of help when upgrading from the Lite to the full-featured version of the app. See the Actions Menu Item.</li>
+  <li>More actions: clear ARP &amp; DNS caches, toggle HTTPd (web server)</li>
+  <li>Introducing Home Launcher Screen shortcuts, to get a quick access to your routers</li>
+  <li>OpenVPN and PPTP Clients may now be toggled in a mutually exclusive manner. For example, if you choose to disable the PPTP Client, the app will also suggest you disable the OpenVPN Client at the same time.</li>
 </ul>
-<hr/>
+--------------<br/>
 
-<h4 id="2015-11-05">2015-11-05</h4>
-<p>Version Code: <b>500000</b> | Version Short Name: <b>5.0.0</b></p>
-
+<h4>2015-12-01: Version 5.1.1</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
 <ul>
-  <li>Bug, reliability &amp; performance fixes
-    <ul>
-      <li>Fixed potential “Force Close” issues when opening a given router details</li>
-      <li>Address potential battery drain issues
-        <ul>
-          <li>Global Background Service default frequency increased to 6 hours</li>
-          <li>Per-router “auto-refresh” default frequency increased to 1 hour
-            <ul>
-              <li>You now have the ability to manually refresh the router data whenever needed</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>New features
-    <ul>
-      <li>Support for Android Marshmallow 6.0</li>
-      <li>More Wireless Settings
-        <ul>
-          <li>Ability to edit Wireless Security Settings: you can now change the passwords of your wireless networks</li>
-          <li>Ability to toggle wireless interfaces states: you can manually bring them up or down</li>
-        </ul>
-      </li>
-      <li>WAN Traffic Overview Tile allows to switch between a monthly view or daily view: current day / current month</li>
-      <li>Ability to manually refresh router data, using a “Pull To Refresh” gesture</li>
-      <li>More material design experience
-        <ul>
-          <li>Completely redesigned the left side menu, so you can get a quick access to your routers and the menu items</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
+  <li>Addressed potential battery drain issues</li>
 </ul>
-<hr/>
-
-<h4 id="2015-09-18">2015-09-18</h4>
-<p>Version Code: <b>400000</b> | Version Short Name: <b>4.0.0</b></p>
-
+<h6>New features</h6>
 <ul>
-  <li>Bug, reliability &amp; performance fixes
-    <ul>
-      <li>Review &amp; clean-up app permissions
-        <ul>
-          <li>NOTE: Many of you have reported intrusive permissions requests from 3.3.0 version, such as Location and Identity. Those permissions were inadvertently inherited from some third-party libraries used throughout the app. As they are not relevant whatsoever for this app, they have been removed. For your information, <a href="http://help.ddwrt-companion.rm3l.org/android/permissions.html">this page</a> lists the sole permissions required by the app. Thanks for your feedbacks.</li>
-        </ul>
-      </li>
-      <li>WAN monitoring graphs now fixed</li>
-      <li>Fixed data retrieval issues on some devices</li>
-    </ul>
-  </li>
-  <li>New features
-    <ul>
-      <li>Overview tiles for having useful information at a glance:
-        <ul>
-          <li>A simple network topology map</li>
-          <li>Router Uptime</li>
-          <li>WAN Total traffic for the current month</li>
-        </ul>
-      </li>
-      <li>Notifications for WAN/Public IP changes - can also show up on Android Wear</li>
-      <li>Details about OpenVPN Server, PPTP Client and Server, Syslog: with On/Off toggles</li>
-      <li>Wireless Radio On/Off toggle button</li>
-      <li>DHCP Release/Renew action</li>
-      <li>More material design experience</li>
-    </ul>
-  </li>
+  <li>Introducing Access Restrictions (Parental Control). For now, you have the ability to toggle WAN Access policies. More features will be added in upcoming versions.</li>
+  <li>Run Speed Tests and geolocate IPs. Measure WAN Ping (Latency) and WAN Download against servers located worldwide. You can either pick a specific server location in the settings, choose a Random one or let the app auto-select one (the one with the lowest latency). WAN Upload is to come very soon.</li>
+  <li>Manage local aliases, with the ability to Import and Export them. This may be of help when upgrading from the Lite to the full-featured version of the app. See the Actions Menu Item.</li>
+  <li>More actions: clear ARP &amp; DNS caches, toggle HTTPd (web server)</li>
+  <li>Introducing Home Launcher Screen shortcuts, to get a quick access to your routers</li>
+  <li>OpenVPN and PPTP Clients may now be toggled in a mutually exclusive manner. For example, if you choose to disable the PPTP Client, the app will also suggest you disable the OpenVPN Client at the same time.</li>
 </ul>
-<hr/>
+--------------<br/>
 
-<h4 id="2015-08-04">2015-08-04</h4>
-<p>Version Code: <b>330000</b> | Version Short Name: <b>3.3.0</b></p>
-
+<h4>2015-11-27: Version 5.1.0</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
 <ul>
-  <li>Bug, reliability &amp; performance fixes
-    <ul>
-      <li>Connected Hosts Bandwidth graphs now fixed</li>
-      <li>Fixed data retrieval issues on some devices</li>
-      <li>Fixed an issue with the “Add Router” dialog stuck at the password field.</li>
-    </ul>
-  </li>
-  <li>New features
-    <ul>
-      <li>Local SSID lookup, with the ability to auto-detect networks.
-        <ul>
-          <li>When adding/editing a router entry, you can specify a set of alternate IP/DNS to use.</li>
-          <li>The app automagically makes use of the specified IP/DNS/port as soon as it detects a connection to the WiFi network specified</li>
-        </ul>
-      </li>
-      <li>Notifications for connected clients - can also show up on wearable devices</li>
-      <li>More material design experience</li>
-    </ul>
-  </li>
+  <li>Fixed issue with clients list not displaying on some devices</li>
+  <li>Made SSH connections more reliable</li>
+  <li>Address potential battery drain issues. Among other strategies, auto-refresh is now deprecated,
+  and you need to pull to manually refresh data whenever needed</li>
 </ul>
-<hr/>
-
-<h4 id="2015-06-05">2015-06-05</h4>
-<p>Version Code: <b>320014</b> | Version Short Name: <b>3.2.0</b></p>
-
+<h6>New features</h6>
 <ul>
-  <li>Bug, reliability &amp; performance fixes
-    <ul>
-      <li>Issue when installing both Lite &amp; Premium versions</li>
-      <li>Wireless Ifaces &amp; Clients list sometimes not displaying</li>
-    </ul>
-  </li>
-  <li>New features
-    <ul>
-      <li>Dedicated Help menu item</li>
-      <li>Backup/Share &amp; Restore Router configuration (see Actions menu)</li>
-      <li>Manage WAN Monthly Traffic Monitoring
-        <ul>
-          <li>Switch on/off</li>
-          <li>Backup/Share &amp; Restore Traffic Data
-            <ul>
-              <li>Backup Raw file or as a CSV file</li>
-              <li>Share Backup files (e.g., via Gmail, Drive, …)</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </li>
+  <li>Added the ability to specify custom WAN Monthly Cycle start day</li>
+  <li>More material design experience</li>
 </ul>
-<hr/>
+--------------<br/>
 
-<h4 id="2015-05-02">2015-05-02</h4>
-<p>Version Code: <b>311000</b> | Version Short Name: <b>3.1.1</b></p>
-
+<h4>2015-11-05: Version 5.0.0</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
 <ul>
-  <li>Bug, reliability and performance fixes</li>
-  <li>Enhancements
-    <ul>
-      <li>Introducing Bulk Actions (e.g., reboot all routers listed or a given selection): accessible from the Routers list window</li>
-      <li>Add help link to instructions on how to setup SSH on a given DD-WRT Router</li>
-      <li>Backup more and more items through Android’s Backup Service</li>
-    </ul>
-  </li>
+  <li>Fixed potential “Force Close” issues when opening a given router details</li>
+  <li>Address potential battery drain issues. Global Background Service default frequency increased to 6 hours.
+  Per-router “auto-refresh” default frequency increased to 1 hour.
+  And you now have the ability to manually refresh the router data whenever needed</li>
 </ul>
-<hr/>
-
-<h4 id="2015-04-27">2015-04-27</h4>
-<p>Version Code: <b>310008</b> | Version Short Name: <b>3.1.0</b></p>
-
+<h6>New features</h6>
 <ul>
-  <li>Bug, reliability and performance fixes</li>
-  <li>Enhancements
-    <ul>
-      <li>Wake on LAN (+ Wake on LAN Daemon Settings) now available as a separate menu item/tab</li>
-      <li>Beautiful Home Screen Widgets: actions on Router + Wake on LAN. More to come in future releases.</li>
-      <li>Enhance the use of the Android’s Backup Service so as to provide a restore point for the app data and settings</li>
-    </ul>
-  </li>
+  <li>Support for Android Marshmallow 6.0</li>
+  <li>More Wireless Settings: Ability to edit Wireless Security Settings: you can now change the passwords of your wireless networks.
+  Ability to toggle wireless interfaces states: you can manually bring them up or down</li>
+  <li>WAN Traffic Overview Tile allows to switch between a monthly view or daily view: current day / current month</li>
+  <li>Ability to manually refresh router data, using a “Pull To Refresh” gesture</li>
+  <li>More material design experience:
+  Completely redesigned the left side menu, so you can get a quick access to your routers and the menu items</li>
 </ul>
-<hr/>
+--------------<br/>
 
-<h4 id="2015-03-29">2015-03-29</h4>
-<p>Version Code: <b>304000</b> | Version Short Name: <b>3.0.4</b></p>
-
+<h4>2015-09-18: Version 4.0.0</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
 <ul>
-  <li>Bug, reliability and performance fixes
-    <ul>
-      <li>Hotfix app crash when trying to edit or duplicate a router</li>
-    </ul>
-  </li>
+  <li>Review &amp; clean-up app permissions.
+  Many of you have reported intrusive permissions requests from 3.3.0 version,
+  such as Location and Identity.
+  Those permissions were inadvertently inherited from some third-party libraries used throughout
+  the app. As they are not relevant whatsoever for this app, they have been removed.
+  For your information, <a href="http://help.ddwrt-companion.rm3l.org/android/permissions.html">this page</a>
+  lists the sole permissions required by the app. Thanks for your feedbacks.</li>
+  <li>WAN monitoring graphs now fixed</li>
+  <li>Fixed data retrieval issues on some devices</li>
 </ul>
-<hr/>
-
-<h4 id="2015-03-29-1">2015-03-29</h4>
-<p>Version Code: <b>303001</b> | Version Short Name: <b>3.0.3</b></p>
-
+<h6>New features</h6>
 <ul>
-  <li>Bug, reliability and performance fixes
-    <ul>
-      <li>Fix app crashes when trying to edit or duplicate a router</li>
-      <li>Fix WLAN ifaces retrieval issues for Atheros chipsets</li>
-      <li>Fix Connected Hosts retrieval issues for some devices</li>
-    </ul>
-  </li>
-  <li>Enhancements
-    <ul>
-      <li>Restructure app navigation drawer menu items</li>
-      <li>Display detailed progress bar when retrieving connected hosts</li>
-      <li>Add Search views in routers and IP Connections lists</li>
-      <li>Leverage Android’s Backup Service so as to provide a restore point for the app data and settings</li>
-    </ul>
-  </li>
+  <li>Overview tiles for having useful information at a glance: A simple network topology map. Router Uptime.
+  WAN Total traffic for the current month</li>
+  <li>Notifications for WAN/Public IP changes - can also show up on Android Wear</li>
+  <li>Details about OpenVPN Server, PPTP Client and Server, Syslog: with On/Off toggles</li>
+  <li>Wireless Radio On/Off toggle button</li>
+  <li>DHCP Release/Renew action</li>
+  <li>More material design experience</li>
 </ul>
-<hr/>
+--------------<br/>
 
-<h4 id="2015-03-23">2015-03-23</h4>
-<p>Version Code: <b>302001</b> | Version Short Name: <b>3.0.2</b></p>
+<h4>2015-08-04: Version 3.3.0</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
+<ul>
+  <li>Connected Hosts Bandwidth graphs now fixed</li>
+  <li>Fixed data retrieval issues on some devices</li>
+  <li>Fixed an issue with the “Add Router” dialog stuck at the password field.</li>
+</ul>
+<h6>New features</h6>
+<ul>
+  <li>Local SSID lookup, with the ability to auto-detect networks.
+  When adding/editing a router entry, you can specify a set of alternate IP/DNS to use.
+  The app also automagically makes use of the specified IP/DNS/port as soon as it detects a
+  connection to the WiFi network specified</li>
+  <li>Notifications for connected clients - can also show up on wearable devices</li>
+  <li>More material design experience</li>
+</ul>
+--------------<br/>
 
+<h4>2015-06-05: Version 3.2.0</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
+<ul>
+  <li>Issue when installing both Lite &amp; Premium versions</li>
+  <li>Wireless Ifaces &amp; Clients list sometimes not displaying</li>
+</ul>
+<h6>New features</h6>
+<ul>
+  <li>Dedicated Help menu item</li>
+  <li>Backup/Share &amp; Restore Router configuration (see Actions menu)</li>
+  <li>Manage WAN Monthly Traffic Monitoring. Switch on/off.
+  Backup/Share &amp; Restore Traffic Data: Backup Raw file or as a CSV file.
+  Share Backup files (e.g., via Gmail, Drive, …)</li>
+</ul>
+--------------<br/>
+
+<h4>2015-05-02: Version 3.1.1</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
+<ul>
+  <li>Introducing Bulk Actions (e.g., reboot all routers listed or a given selection): accessible from the Routers list window</li>
+  <li>Add help link to instructions on how to setup SSH on a given DD-WRT Router</li>
+  <li>Backup more and more items through Android’s Backup Service</li>
+</ul>
+--------------<br/>
+
+<h4>2015-04-27: Version 3.1.0</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
+<ul>
+  <li>Wake on LAN (+ Wake on LAN Daemon Settings) now available as a separate menu item/tab</li>
+  <li>Beautiful Home Screen Widgets: actions on Router + Wake on LAN. More to come in future releases.</li>
+  <li>Enhance the use of the Android’s Backup Service so as to provide a restore point for the app data and settings</li>
+</ul>
+--------------<br/>
+
+<h4>2015-03-29: Version 3.0.4</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
+<ul>
+  <li>Hotfix app crash when trying to edit or duplicate a router</li>
+</ul>
+--------------<br/>
+
+<h4>2015-03-29: Version 3.0.3</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
+<ul>
+  <li>Fix app crashes when trying to edit or duplicate a router</li>
+  <li>Fix WLAN ifaces retrieval issues for Atheros chipsets</li>
+  <li>Fix Connected Hosts retrieval issues for some devices</li>
+</ul>
+<h6>New features</h6>
+<ul>
+  <li>Restructure app navigation drawer menu items</li>
+  <li>Display detailed progress bar when retrieving connected hosts</li>
+  <li>Add Search views in routers and IP Connections lists</li>
+  <li>Leverage Android’s Backup Service so as to provide a restore point for the app data and settings</li>
+</ul>
+--------------<br/>
+
+<h4>2015-03-23: Version 3.0.2</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
 <ul>
   <li>Regression fixes</li>
 </ul>
-<hr/>
+--------------<br/>
 
-<h4 id="2015-03-22">2015-03-22</h4>
-<p>Version Code: <b>300000</b> | Version Short Name: <b>3.0.0</b></p>
-
+<h4>2015-03-22: Version 3.0.0</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
 <ul>
-  <li>Bug, reliability and performance fixes
-    <ul>
-      <li>Fix WLAN Interfaces retrieval issues for Atheros chipsets</li>
-      <li>Fix Connected Hosts retrieval issues for some devices</li>
-    </ul>
-  </li>
-  <li>New features
-    <ul>
-      <li>Redesigned the navigation menu, to easily switch from one router to another</li>
-      <li>‘Admin&gt;Commands’ tab, to issue any commands</li>
-      <li>‘Toolbox’ menu item: include network diagnostics utilities (ping, traceroute, nslookup, …)</li>
-      <li>Active IP Connections redesign + pie chart (to see top IP destinations, and top local IP hosts)</li>
-    </ul>
-  </li>
+  <li>Fix WLAN Interfaces retrieval issues for Atheros chipsets</li>
+  <li>Fix Connected Hosts retrieval issues for some devices</li>
 </ul>
-<hr/>
+<h6>New features</h6>
+<ul>
+  <li>Redesigned the navigation menu, to easily switch from one router to another</li>
+  <li>‘Admin&gt;Commands’ tab, to issue any commands</li>
+  <li>‘Toolbox’ menu item: include network diagnostics utilities (ping, traceroute, nslookup, …)</li>
+  <li>Active IP Connections redesign + pie chart (to see top IP destinations, and top local IP hosts)</li>
+</ul>
+--------------<br/>
 
-<h4 id="2015-03-04">2015-03-04</h4>
-<p>Version Code: <b>211003</b> | Version Short Name: <b>2.1.1</b></p>
-
+<h4>2015-03-04: Version 2.1.1</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
 <ul>
   <li>Bug fixes on some specific devices</li>
 </ul>
-<hr/>
+--------------<br/>
 
-<h4 id="2015-03-03">2015-03-03</h4>
-<p>Version Code: <b>210001</b> | Version Short Name: <b>2.1.0</b></p>
-
+<h4>2015-03-03: Version 2.1.0</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
 <ul>
-  <li>Bug, reliability and performance fixes
-    <ul>
-      <li>Redesigned WAN traffic charts for a better usability</li>
-      <li>Fix WLAN Interfaces retrieval issues for Atheros routers</li>
-      <li>Fix Connected Hosts retrieval issues for some devices</li>
-    </ul>
-  </li>
-  <li>New features
-    <ul>
-      <li>Setting to have finer control over the app network usage</li>
-      <li>Share WAN Traffic chart and daily breakdown</li>
-      <li>Added an icon for wireless clients</li>
-      <li>Added RSSI, Signal Strength and SNR for wireless clients</li>
-      <li>Ability to see Active IP Connections (overall and per-client)</li>
-    </ul>
-  </li>
+  <li>Redesigned WAN traffic charts for a better usability</li>
+  <li>Fix WLAN Interfaces retrieval issues for Atheros routers</li>
+  <li>Fix Connected Hosts retrieval issues for some devices</li>
 </ul>
-<hr/>
-
-<h4 id="2015-02-09">2015-02-09</h4>
-<p>Version Code: <b>200002</b> | Version Short Name: <b>2.0.0</b></p>
-
+<h6>New features</h6>
 <ul>
-  <li>Bug, reliability and performance fixes</li>
-  <li>New features
-    <ul>
-      <li>Material Design UI, with Dark and Light themes</li>
-      <li>Realtime graphs for clients bandwidth usage (resolution of at most 5 seconds)</li>
-      <li>Autocomplete suggestions in OpenVPN Client settings form. Suggestions are based upon what you previously entered in the form.</li>
-    </ul>
-  </li>
+  <li>Setting to have finer control over the app network usage</li>
+  <li>Share WAN Traffic chart and daily breakdown</li>
+  <li>Added an icon for wireless clients</li>
+  <li>Added RSSI, Signal Strength and SNR for wireless clients</li>
+  <li>Ability to see Active IP Connections (overall and per-client)</li>
 </ul>
-<hr/>
+--------------<br/>
 
-<h4 id="2015-01-31">2015-01-31</h4>
-<p>Version Code: <b>130016</b> | Version Short Name: <b>1.3.0</b></p>
-
+<h4>2015-02-09: Version 2.0.0</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
+<h6>New features</h6>
 <ul>
-  <li>Bug, reliability and performance fixes
-    <ul>
-      <li>Fix crash on LG and Nexus devices</li>
-      <li>WOL packets are now sent from the router, not from the smartphone/tablet</li>
-    </ul>
-  </li>
-  <li>New features
-    <ul>
-      <li>Per-Client Bandwidth Real-time Usage
-        <ul>
-          <li>Bandwidth Usage</li>
-          <li>Ability to filter and/or Sort</li>
-          <li>Ability to set a local alias for each of the Devices listed</li>
-          <li>Ability to manage WAN (Internet) access: you can enable or disable Internet access on a per-client basis</li>
-        </ul>
-      </li>
-      <li>Detailed Mem and CPU Infos, by clicking on the corresponding tiles</li>
-    </ul>
-  </li>
+  <li>Material Design UI, with Dark and Light themes</li>
+  <li>Realtime graphs for clients bandwidth usage (resolution of at most 5 seconds)</li>
+  <li>Autocomplete suggestions in OpenVPN Client settings form. Suggestions are based upon what you previously entered in the form.</li>
 </ul>
-<hr/>
+--------------<br/>
 
-<h4 id="2015-01-16">2015-01-16</h4>
-<p>Version Code: <b>121000</b> | Version Short Name: <b>1.2.1</b></p>
-
+<h4>2015-01-31: Version 1.3.0</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
 <ul>
-  <li>Bug, reliability and performance fixes
-    <ul>
-      <li>Fix crash on LG and Nexus devices</li>
-    </ul>
-  </li>
+  <li>Fix crash on LG and Nexus devices</li>
+  <li>WOL packets are now sent from the router, not from the smartphone/tablet</li>
 </ul>
-<hr/>
-
-<h4 id="2015-01-15">2015-01-15</h4>
-<p>Version Code: <b>120004</b> | Version Short Name: <b>1.2.0</b></p>
-
+<h6>New features</h6>
 <ul>
-  <li>Bug, reliability and performance fixes
-    <ul>
-      <li>Better SSH connection handling</li>
-    </ul>
-  </li>
-  <li>New features
-    <ul>
-      <li>Add Remote Actions: Reboot router or hard-reset router (restore factory defaults)</li>
-      <li>Wake on LAN (WOL) support</li>
-      <li>WiFi QR-Codes: you now no longer need to share your WiFi password. Just share the QR Code generated for instant connection (using a compatible scanner app)</li>
-      <li>OpenVPN Client settings editing: for example, you can change the target VPN server</li>
-    </ul>
-  </li>
+  <li>Per-Client Bandwidth Real-time Usage: Bandwidth Usage. Ability to filter and/or Sort.
+  Ability to set a local alias for each of the Devices listed.
+  Ability to manage WAN (Internet) access: you can enable or disable Internet access on a per-client basis</li>
+  <li>Detailed Mem and CPU Infos, by clicking on the corresponding tiles</li>
 </ul>
-<hr/>
+--------------<br/>
 
-<h4 id="2015-01-03">2015-01-03</h4>
-<p>Version Code: <b>110000</b> | Version Short Name: <b>1.1.0</b></p>
-
+<h4>2015-01-16: Version 1.2.1</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
 <ul>
-  <li>Bug, reliability and performance fixes</li>
-  <li>New features
-    <ul>
-      <li>Clicking on a Wireless client Device (in ‘Status &gt; Wireless &gt; Clients’ tab) now opens up a page where we can see the device network card manufacturer (if available)</li>
-      <li>Add a new Dark theme, with a per-router ability to switch between Light and Dark themes</li>
-      <li>Add VPN logs</li>
-      <li>Add a new “Admin Area” menu item: NVRAM variables listing and editing</li>
-      <li>Add the ability to share NVRAM variables as a file</li>
-    </ul>
-  </li>
+  <li>Fix crash on LG and Nexus devices</li>
 </ul>
-<hr/>
+--------------<br/>
 
-<h4 id="2014-12-21">2014-12-21</h4>
-<p>Version Code: <b>100015</b> | Version Short Name: <b>1.0.0</b></p>
-
+<h4>2015-01-15: Version 1.2.0</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
 <ul>
-  <li>Bug fixes</li>
+  <li>Better SSH connection handling</li>
 </ul>
-<hr/>
-
-<h4 id="2014-12-21-1">2014-12-21</h4>
-<p>Version Code: <b>100012</b> | Version Short Name: <b>1.0.0</b></p>
-
+<h6>New features</h6>
 <ul>
-  <li>Bug fixes</li>
+  <li>Add Remote Actions: Reboot router or hard-reset router (restore factory defaults)</li>
+  <li>Wake on LAN (WOL) support</li>
+  <li>WiFi QR-Codes: you now no longer need to share your WiFi password. Just share the QR Code generated for instant connection (using a compatible scanner app)</li>
+  <li>OpenVPN Client settings editing: for example, you can change the target VPN server</li>
 </ul>
-<hr/>
+--------------<br/>
 
-<h4 id="2014-12-20">2014-12-20</h4>
-<p>Version Code: <b>100010</b> | Version Short Name: <b>1.0.0</b></p>
-
+<h4>2015-01-03: Version 1.1.0</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
+<h6>New features</h6>
 <ul>
-  <li>Initial Release</li>
+  <li>Clicking on a Wireless client Device (in ‘Status &gt; Wireless &gt; Clients’ tab) now opens up a page where we can see the device network card manufacturer (if available)</li>
+  <li>Add a new Dark theme, with a per-router ability to switch between Light and Dark themes</li>
+  <li>Add VPN logs</li>
+  <li>Add a new “Admin Area” menu item: NVRAM variables listing and editing</li>
+  <li>Add the ability to share NVRAM variables as a file</li>
 </ul>
+--------------<br/>
+
+<h4>2014-12-20: Version 1.0.0</h4>
+<p><b>Initial Release</b></p>
+--------------<br/>
+
   ]]>
   </string>
 </resources>
