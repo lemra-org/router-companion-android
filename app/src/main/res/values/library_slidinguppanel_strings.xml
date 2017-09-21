@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<resources>
+  <string name="define_slidinguppanel" translatable="false"/>
+  <!-- Author section -->
+  <string name="library_slidinguppanel_author" translatable="false">Umano</string>
+  <string name="library_slidinguppanel_authorWebsite" translatable="false">http://umano.me</string>
+  <!-- Library section -->
+  <string name="library_slidinguppanel_libraryName" translatable="false">Android Sliding Up Panel</string>
+  <string name="library_slidinguppanel_libraryDescription" translatable="false">This library provides a simple way to add a draggable sliding up panel (popularized by Google Music and Google Maps) to your Android application. Brought to you by Umano (now acquired by Dropbox).</string>
+  <string name="library_slidinguppanel_libraryWebsite" translatable="false">https://github.com/umano/AndroidSlidingUpPanel</string>
+  <string name="library_slidinguppanel_libraryVersion" translatable="false">3.3.1</string>
+  <!-- OpenSource section -->
+  <string name="library_slidinguppanel_isOpenSource" translatable="false">true</string>
+  <string name="library_slidinguppanel_repositoryLink" translatable="false">https://github.com/umano/AndroidSlidingUpPanel</string>
+  <!-- ClassPath for autoDetect section -->
+  <!--<string translatable="false" name="library_slidinguppanel_classPath">com.facebook.slidinguppanel</string>-->
+  <!-- License section -->
+  <string name="library_slidinguppanel_licenseId" translatable="false">apache_2_0</string>
+  <!-- Custom variables section -->
+</resources>

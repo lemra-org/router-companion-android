@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<resources>
+  <string name="define_aws_mobile_sdk" translatable="false"/>
+  <!-- Author section -->
+  <string name="library_aws_mobile_sdk_author" translatable="false">Amazon</string>
+  <string name="library_aws_mobile_sdk_authorWebsite" translatable="false">https://aws.amazon.com</string>
+  <!-- Library section -->
+  <string name="library_aws_mobile_sdk_libraryName" translatable="false">AWS Mobile SDK</string>
+  <string name="library_aws_mobile_sdk_libraryDescription" translatable="false">The AWS Mobile SDK helps you build high quality mobile apps quickly and easily. It provides easy access to a range of AWS services, including AWS Lambda, Amazon S3, Amazon DynamoDB, Amazon Mobile Analytics, Amazon Machine Learning, Elastic Load balancing, Auto Scaling and more.</string>
+  <string name="library_aws_mobile_sdk_libraryWebsite" translatable="false">https://aws.amazon.com/mobile/sdk/</string>
+  <string name="library_aws_mobile_sdk_libraryVersion" translatable="false">2.4.5</string>
+  <!-- OpenSource section -->
+  <string name="library_aws_mobile_sdk_isOpenSource" translatable="false">true</string>
+  <string name="library_aws_mobile_sdk_repositoryLink" translatable="false">https://github.com/aws/aws-sdk-android</string>
+  <!-- ClassPath for autoDetect section -->
+  <!--<string translatable="false" name="library_aws_mobile_sdk_classPath">com.facebook.slidinguppanel</string>-->
+  <!-- License section -->
+  <string name="library_aws_mobile_sdk_licenseId" translatable="false">apache_2_0</string>
+  <!-- Custom variables section -->
+</resources>

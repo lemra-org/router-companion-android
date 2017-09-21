@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<resources>
+  <string name="define_fabbutton" translatable="false"/>
+  <!-- Author section -->
+  <string name="library_fabbutton_author" translatable="false">Kurt Mbanje</string>
+  <string name="library_fabbutton_authorWebsite" translatable="false">http://www.peirr.com</string>
+  <!-- Library section -->
+  <string name="library_fabbutton_libraryName" translatable="false">FabButton</string>
+  <string name="library_fabbutton_libraryDescription" translatable="false">Android Floating ActionButton with a progress indicator ring</string>
+  <string name="library_fabbutton_libraryWebsite" translatable="false">https://github.com/ckurtm/FabButton</string>
+  <string name="library_fabbutton_libraryVersion" translatable="false">1.2.4</string>
+  <!-- OpenSource section -->
+  <string name="library_fabbutton_isOpenSource" translatable="false">true</string>
+  <string name="library_fabbutton_repositoryLink" translatable="false">https://github.com/ckurtm/FabButton</string>
+  <!-- ClassPath for autoDetect section -->
+  <!--<string translatable="false" name="library_fabbutton_classPath">com.facebook.fabbutton</string>-->
+  <!-- License section -->
+  <string name="library_fabbutton_licenseId" translatable="false">mit</string>
+  <!-- Custom variables section -->
+</resources>
