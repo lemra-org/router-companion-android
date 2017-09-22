@@ -385,7 +385,7 @@ dependencies {
   }
 
   implementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
-    transitive = true;
+    transitive = true
   }
 
 //  implementation 'net.i2p.android.ext:floatingactionbutton:1.10.1'
@@ -450,6 +450,10 @@ dependencies {
     exclude group: 'com.android.support', module: 'appcompat-v7'
     exclude group: 'com.android.support', module: 'design'
     exclude group: 'com.android.support', module: 'support-v4'
+    exclude group: 'com.android.support', module: 'animated-vector-drawable'
+    exclude group: 'com.android.support', module: 'recyclerview-v7'
+    exclude group: 'com.android.support', module: 'support-annotations'
+    exclude group: 'com.android.support', module: 'support-compat'
 //    exclude group: 'org.rm3l', module: 'maoni-email'
   }
 
@@ -458,6 +462,10 @@ dependencies {
     exclude group: 'com.android.support', module: 'appcompat-v7'
     exclude group: 'com.android.support', module: 'design'
     exclude group: 'com.android.support', module: 'support-v4'
+    exclude group: 'com.android.support', module: 'animated-vector-drawable'
+    exclude group: 'com.android.support', module: 'recyclerview-v7'
+    exclude group: 'com.android.support', module: 'support-annotations'
+    exclude group: 'com.android.support', module: 'support-compat'
   }
 
   //Send notifications on Slack as well
