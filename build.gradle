@@ -25,8 +25,8 @@
 buildscript {
   ext.android_sdk = 26
   ext.buildTools_version = '26.0.1'
-  ext.support_version = '26.0.2'
-  ext.kotlin_version = '1.1.4-3'
+  ext.support_version = '26.1.0'
+  ext.kotlin_version = '1.1.50'
   ext.anko_version = '0.10.1'
   //Workaround to have the 'com.android.application' plugin with any version of Gradle (other than the expected one)
   //see https://github.com/gradle/gradle-script-kotlin/issues/2#issuecomment-222120296
