@@ -93,7 +93,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
-import org.rm3l.router_companion.about.AboutDialog;
 import org.rm3l.router_companion.actions.ActionManager;
 import org.rm3l.router_companion.actions.RebootRouterAction;
 import org.rm3l.router_companion.actions.RouterAction;

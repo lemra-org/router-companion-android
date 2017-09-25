@@ -113,7 +113,6 @@ import org.json.JSONObject;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
-import org.rm3l.router_companion.about.AboutDialog;
 import org.rm3l.router_companion.actions.ActionManager;
 import org.rm3l.router_companion.actions.BackupRouterAction;
 import org.rm3l.router_companion.actions.ClearARPCacheRouterAction;

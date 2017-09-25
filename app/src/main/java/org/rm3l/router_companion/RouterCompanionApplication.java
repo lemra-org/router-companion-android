@@ -39,6 +39,8 @@ import com.airbnb.deeplinkdispatch.DeepLinkHandler;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 import com.facebook.stetho.Stetho;
+//import com.facebook.stetho.dumpapp.DumperPlugin;
+//import com.facebook.stetho.inspector.protocol.ChromeDevtoolsDomain;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.leakcanary.LeakCanary;
@@ -64,6 +66,7 @@ import org.rm3l.router_companion.utils.notifications.NotificationHelperKt;
 import org.rm3l.router_companion.welcome.GettingStartedActivity;
 import org.wordpress.passcodelock.AppLockManager;
 
+import static com.facebook.stetho.Stetho.newInitializerBuilder;
 import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.router_companion.utils.Utils.isFirstLaunch;
@@ -138,7 +141,12 @@ public class RouterCompanionApplication extends Application
     }
 
     if (BuildConfig.DEBUG) {
-      Stetho.initializeWithDefaults(this);
+      //Stetho.initializeWithDefaults(this);
+      Stetho.initialize(
+          newInitializerBuilder(this)
+              .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+              .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+              .build());
     }
 
     if (BuildConfig.DEBUG && appPreferences.getBoolean(DEBUG_LEAKCANARY_PREF_KEY, false)) {

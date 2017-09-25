@@ -1,5 +1,6 @@
 package org.rm3l.router_companion.actions.activity;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -28,14 +29,14 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
-import com.google.common.base.Splitter;
-import com.google.common.base.Throwables;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 import needle.UiRelatedProgressTask;
 import org.rm3l.ddwrt.R;
+import org.rm3l.router_companion.common.utils.ExceptionUtils;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
@@ -49,6 +50,7 @@ import org.rm3l.router_companion.web.WebActivity;
 
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
+import static org.rm3l.router_companion.common.utils.ExceptionUtils.getRootCause;
 import static org.rm3l.router_companion.main.DDWRTMainActivity.SAVE_ROUTER_SELECTED;
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.router_companion.web.WebUtils.DO_NOT_VERIFY;
@@ -392,8 +394,8 @@ public class OpenWebManagementPageActivity extends WebActivity {
         final int statusCode = urlConnection.getResponseCode();
         String wwwAuthenticateHeaderField = urlConnection.getHeaderField("WWW-Authenticate");
         if (wwwAuthenticateHeaderField != null) {
-          final List<String> stringList =
-              Splitter.on("=").omitEmptyStrings().splitToList(wwwAuthenticateHeaderField);
+          final List<String> stringList = Arrays.asList(wwwAuthenticateHeaderField.split("="));
+              //Splitter.on("=").omitEmptyStrings().splitToList(wwwAuthenticateHeaderField);
           if (stringList.size() >= 2) {
             final String realm = stringList.get(0);
             if (realm != null) {
@@ -494,21 +496,20 @@ public class OpenWebManagementPageActivity extends WebActivity {
 
     }
 
+    @SuppressLint("SetTextI18n")
     @Override protected void thenDoUiRelatedWork(WebManagementLoaderTask.Result result) {
       mLoadingView.setVisibility(View.GONE);
       final Exception exception = result.getException();
       if (exception != null) {
         @SuppressWarnings("ThrowableResultOfMethodCallIgnored") final Throwable rootCause =
-            Throwables.getRootCause(exception);
+            getRootCause(exception);
         mErrorTextView.setVisibility(View.VISIBLE);
-        mErrorTextView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
+        mErrorTextView.setText("Error: " + rootCause.getMessage());
         mErrorTextView.setOnClickListener(new View.OnClickListener() {
           @Override public void onClick(View v) {
             //noinspection ThrowableResultOfMethodCallIgnored
-            if (rootCause != null) {
-              Toast.makeText(OpenWebManagementPageActivity.this, rootCause.getMessage(),
-                  Toast.LENGTH_LONG).show();
-            }
+            Toast.makeText(OpenWebManagementPageActivity.this, rootCause.getMessage(),
+                Toast.LENGTH_LONG).show();
           }
         });
         mWebview.setVisibility(View.GONE);
