@@ -34,12 +34,16 @@ build:
   image: registry.gitlab.com/lemra/router-companion-android:latest
   stage: build
   script:
-    - ./gradlew :app:assembleAmazonDebug :tasker-plugin:assembleAmazonDebug
+    - ./gradlew htmlDependencyReport :app:assembleAmazonDebug :tasker-plugin:assembleAmazonDebug
   artifacts:
     paths:
+    - app/build/reports   
     - app/build/outputs/
     - app/build/doc
+    - common/build/reports
+    - common/build/outputs
     - tasker-plugin/build/outputs
+    - tasker-plugin/build/reports
 
 production_messaging:
   image: debian:jessie

@@ -36,6 +36,7 @@ buildscript {
   }
 }
 
+apply plugin: 'project-report'
 apply plugin: 'com.android.application'
 //apply plugin: 'me.tatarka.retrolambda'
 //apply plugin: 'android-apt'

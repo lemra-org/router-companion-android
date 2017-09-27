@@ -35,6 +35,8 @@ buildscript {
     classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.7.3'
   }
 }
+
+apply plugin: 'project-report'
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
