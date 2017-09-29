@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -31,7 +32,6 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Predicate;
@@ -42,6 +42,8 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.GsonBuilder;
+import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -587,105 +589,145 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                     final Bundle token = new Bundle();
                     token.putString(ROUTER_ACTION, RouterAction.WAKE_ON_LAN.name());
 
-                    new UndoBarController.UndoBar(mParentFragmentActivity).message(
+                    SnackbarUtils.buildSnackbar(mParentFragmentActivity,
                         String.format("WOL Request will be sent from router to %d hosts",
-                            mCurrentDevicesList.size()))
-                        .listener(new UndoBarController.AdvancedUndoListener() {
-                          @Override public void onHide(@Nullable Parcelable parcelable) {
+                            mCurrentDevicesList.size()), "CANCEL", Snackbar.LENGTH_LONG,
+                        new SnackbarCallback() {
+                          @Override public void onShowEvent(@Nullable Bundle bundle)
+                              throws Exception {
 
-                            if (parcelable instanceof Bundle) {
-                              final Bundle token = (Bundle) parcelable;
-                              final String routerAction = token.getString(ROUTER_ACTION);
-                              Crashlytics.log(Log.DEBUG, LOG_TAG,
-                                  "routerAction: [" + routerAction + "]");
-                              if (isNullOrEmpty(routerAction)) {
-                                return;
-                              }
-                              try {
-                                switch (RouterAction.valueOf(routerAction)) {
-                                  case WAKE_ON_LAN:
+                          }
 
-                                    final AtomicInteger currentNum = new AtomicInteger(0);
-                                    final AtomicInteger numActionsWithNoSuccess =
-                                        new AtomicInteger(0);
-                                    final int totalNumOfDevices = mCurrentDevicesList.size();
+                          @Override
+                          public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
+                              throws Exception {
 
-                                    final WakeOnLANRouterAction[] wolActions =
-                                        new WakeOnLANRouterAction[totalNumOfDevices];
-                                    int i = 0;
-                                    for (final Device device : mCurrentDevicesList) {
-                                      wolActions[i++] = new WakeOnLANRouterAction(mRouter,
-                                          mParentFragmentActivity, new RouterActionListener() {
-                                        @Override public void onRouterActionSuccess(
-                                            @NonNull RouterAction routerAction,
-                                            @NonNull Router router, Object returnData) {
-                                          final int incrementAndGet = currentNum.incrementAndGet();
-                                          if (incrementAndGet >= totalNumOfDevices) {
-                                            final int numActionsThatDidNotSucceed =
-                                                numActionsWithNoSuccess.get();
-                                            if (numActionsThatDidNotSucceed > 0) {
-                                              //An error occurred
-                                              Utils.displayMessage(mParentFragmentActivity,
-                                                  String.format(
-                                                      "Action '%s' executed but %d error(s) occurred",
-                                                      routerAction.toString(),
-                                                      numActionsThatDidNotSucceed), Style.INFO);
-                                            } else {
-                                              //No error
-                                              Utils.displayMessage(mParentFragmentActivity,
-                                                  String.format(
-                                                      "Action '%s' executed successfully on host '%s'",
-                                                      routerAction.toString(),
-                                                      router.getRemoteIpAddress()), Style.CONFIRM);
-                                            }
-                                          }
-                                        }
+                          }
 
-                                        @Override public void onRouterActionFailure(
-                                            @NonNull RouterAction routerAction,
-                                            @NonNull Router router, @Nullable Exception exception) {
-                                          final int incrementAndGet = currentNum.incrementAndGet();
-                                          numActionsWithNoSuccess.incrementAndGet();
-                                          if (incrementAndGet >= totalNumOfDevices) {
+                          @Override
+                          public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+                              throws Exception {
+
+                          }
+
+                          @Override
+                          public void onDismissEventTimeout(int event, @Nullable Bundle token)
+                              throws Exception {
+                            final String routerAction =
+                                token != null ? token.getString(ROUTER_ACTION) : null;
+                            Crashlytics.log(Log.DEBUG, LOG_TAG,
+                                "routerAction: [" + routerAction + "]");
+                            if (isNullOrEmpty(routerAction)) {
+                              return;
+                            }
+                            try {
+                              switch (RouterAction.valueOf(routerAction)) {
+                                case WAKE_ON_LAN:
+
+                                  final AtomicInteger currentNum = new AtomicInteger(0);
+                                  final AtomicInteger numActionsWithNoSuccess =
+                                      new AtomicInteger(0);
+                                  final int totalNumOfDevices = mCurrentDevicesList.size();
+
+                                  final WakeOnLANRouterAction[] wolActions =
+                                      new WakeOnLANRouterAction[totalNumOfDevices];
+                                  int i = 0;
+                                  for (final Device device : mCurrentDevicesList) {
+                                    wolActions[i++] = new WakeOnLANRouterAction(mRouter,
+                                        mParentFragmentActivity, new RouterActionListener() {
+                                      @Override public void onRouterActionSuccess(
+                                          @NonNull RouterAction routerAction,
+                                          @NonNull Router router, Object returnData) {
+                                        final int incrementAndGet = currentNum.incrementAndGet();
+                                        if (incrementAndGet >= totalNumOfDevices) {
+                                          final int numActionsThatDidNotSucceed =
+                                              numActionsWithNoSuccess.get();
+                                          if (numActionsThatDidNotSucceed > 0) {
                                             //An error occurred
                                             Utils.displayMessage(mParentFragmentActivity,
                                                 String.format(
-                                                    "Action '%s' executed but %d error(s) occurred: %s",
+                                                    "Action '%s' executed but %d error(s) occurred",
                                                     routerAction.toString(),
-                                                    numActionsWithNoSuccess.get(),
-                                                    Utils.handleException(exception).first),
-                                                Style.INFO);
+                                                    numActionsThatDidNotSucceed), Style.INFO);
+                                          } else {
+                                            //No error
+                                            Utils.displayMessage(mParentFragmentActivity,
+                                                String.format(
+                                                    "Action '%s' executed successfully on host '%s'",
+                                                    routerAction.toString(),
+                                                    router.getRemoteIpAddress()), Style.CONFIRM);
                                           }
                                         }
-                                      }, mGlobalPreferences, device, device.getWolPort(),
-                                          broadcastAddresses.toArray(
-                                              new String[broadcastAddresses.size()]));
-                                    }
-                                    ActionManager.runTasks(wolActions);
-                                    break;
-                                  default:
-                                    //Ignored
-                                    break;
-                                }
-                              } catch (IllegalArgumentException | NullPointerException e) {
-                                e.printStackTrace();
-                                Utils.displayMessage(mParentFragmentActivity,
-                                    "WOL Internal Error. Try again later.", Style.ALERT);
-                                Utils.reportException(null, e);
+                                      }
+
+                                      @Override public void onRouterActionFailure(
+                                          @NonNull RouterAction routerAction,
+                                          @NonNull Router router, @Nullable Exception exception) {
+                                        final int incrementAndGet = currentNum.incrementAndGet();
+                                        numActionsWithNoSuccess.incrementAndGet();
+                                        if (incrementAndGet >= totalNumOfDevices) {
+                                          //An error occurred
+                                          Utils.displayMessage(mParentFragmentActivity,
+                                              String.format(
+                                                  "Action '%s' executed but %d error(s) occurred: %s",
+                                                  routerAction.toString(),
+                                                  numActionsWithNoSuccess.get(),
+                                                  Utils.handleException(exception).first),
+                                              Style.INFO);
+                                        }
+                                      }
+                                    }, mGlobalPreferences, device, device.getWolPort(),
+                                        broadcastAddresses.toArray(
+                                            new String[broadcastAddresses.size()]));
+                                  }
+                                  ActionManager.runTasks(wolActions);
+                                  break;
+                                default:
+                                  //Ignored
+                                  break;
                               }
+                            } catch (IllegalArgumentException | NullPointerException e) {
+                              e.printStackTrace();
+                              Utils.displayMessage(mParentFragmentActivity,
+                                  "WOL Internal Error. Try again later.", Style.ALERT);
+                              Utils.reportException(null, e);
                             }
                           }
 
-                          @Override public void onClear(@NonNull Parcelable[] parcelables) {
+                          @Override
+                          public void onDismissEventManual(int event, @Nullable Bundle bundle)
+                              throws Exception {
 
                           }
 
-                          @Override public void onUndo(@Nullable Parcelable parcelable) {
+                          @Override
+                          public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+                              throws Exception {
 
                           }
-                        })
-                        .token(token)
-                        .show();
+                        }, token, true);
+
+                    //new UndoBarController.UndoBar(mParentFragmentActivity).message(
+                    //    String.format("WOL Request will be sent from router to %d hosts",
+                    //        mCurrentDevicesList.size()))
+                    //    .listener(new UndoBarController.AdvancedUndoListener() {
+                    //      @Override public void onHide(@Nullable Parcelable parcelable) {
+                    //
+                    //        if (parcelable instanceof Bundle) {
+                    //
+                    //        }
+                    //      }
+                    //
+                    //      @Override public void onClear(@NonNull Parcelable[] parcelables) {
+                    //
+                    //      }
+                    //
+                    //      @Override public void onUndo(@Nullable Parcelable parcelable) {
+                    //
+                    //      }
+                    //    })
+                    //    .token(token)
+                    //    .show();
                     return true;
                   case R.id.tile_services_wol_clients_delete_all:
                     new AlertDialog.Builder(mParentFragmentActivity).setIcon(
@@ -961,12 +1003,20 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
               final Bundle token = new Bundle();
               token.putString(ROUTER_ACTION, RouterAction.WAKE_ON_LAN.name());
 
-              new UndoBarController.UndoBar(mParentFragmentActivity).message(
+              SnackbarUtils.buildSnackbar(mParentFragmentActivity,
                   String.format("WOL Request will be sent from router to '%s' (%s)",
-                      device.getName(), device.getMacAddress()))
-                  .listener(getUndoBarListener(device))
-                  .token(token)
-                  .show();
+                      device.getName(), device.getMacAddress()),
+                  "CANCEL",
+                  Snackbar.LENGTH_LONG,
+                  getSnackbarCb(device),
+                  token, true);
+
+              //new UndoBarController.UndoBar(mParentFragmentActivity).message(
+              //    String.format("WOL Request will be sent from router to '%s' (%s)",
+              //        device.getName(), device.getMacAddress()))
+              //    .listener(getSnackbarCb(device))
+              //    .token(token)
+              //    .show();
             }
           });
 
@@ -1098,12 +1148,20 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
             final Bundle token = new Bundle();
             token.putString(ROUTER_ACTION, RouterAction.WAKE_ON_LAN.name());
 
-            new UndoBarController.UndoBar(mParentFragmentActivity).message(
+            SnackbarUtils.buildSnackbar(mParentFragmentActivity,
                 String.format("WOL Request will be sent from router to '%s' (%s)", device.getName(),
-                    device.getMacAddress()))
-                .listener(getUndoBarListener(device))
-                .token(token)
-                .show();
+                    device.getMacAddress()),
+                "CANCEL",
+                Snackbar.LENGTH_LONG,
+                getSnackbarCb(device),
+                token, true);
+
+            //new UndoBarController.UndoBar(mParentFragmentActivity).message(
+            //    String.format("WOL Request will be sent from router to '%s' (%s)", device.getName(),
+            //        device.getMacAddress()))
+            //    .listener(getSnackbarCb(device))
+            //    .token(token)
+            //    .show();
 
             return true;
           default:
@@ -1114,59 +1172,72 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
     };
   }
 
-  private UndoBarController.AdvancedUndoListener getUndoBarListener(final Device device) {
-    return new UndoBarController.AdvancedUndoListener() {
-      @Override public void onHide(@Nullable Parcelable parcelable) {
+  private SnackbarCallback getSnackbarCb(final Device device) {
+    return new SnackbarCallback() {
+      @Override public void onShowEvent(@Nullable Bundle bundle) throws Exception {
 
-        if (parcelable instanceof Bundle) {
-          final Bundle token = (Bundle) parcelable;
-          final String routerAction = token.getString(ROUTER_ACTION);
-          Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
-          if (isNullOrEmpty(routerAction)) {
-            return;
-          }
-          try {
-            switch (RouterAction.valueOf(routerAction)) {
-              case WAKE_ON_LAN:
-                ActionManager.runTasks(new WakeOnLANRouterAction(mRouter, mParentFragmentActivity,
-                    new RouterActionListener() {
-                      @Override
-                      public void onRouterActionSuccess(@NonNull RouterAction routerAction,
-                          @NonNull Router router, Object returnData) {
-                        Utils.displayMessage(mParentFragmentActivity,
-                            String.format("Action '%s' executed successfully on host '%s'",
-                                routerAction.toString(), router.getRemoteIpAddress()),
-                            Style.CONFIRM);
-                      }
+      }
 
-                      @Override
-                      public void onRouterActionFailure(@NonNull RouterAction routerAction,
-                          @NonNull Router router, @Nullable Exception exception) {
-                        Utils.displayMessage(mParentFragmentActivity,
-                            String.format("Error on action '%s': %s", routerAction.toString(),
-                                Utils.handleException(exception).first), Style.ALERT);
-                      }
-                    }, mGlobalPreferences, device, device.getWolPort(),
-                    broadcastAddresses.toArray(new String[broadcastAddresses.size()])));
-                break;
-              default:
-                //Ignored
-                break;
-            }
-          } catch (IllegalArgumentException | NullPointerException e) {
-            e.printStackTrace();
-            Utils.displayMessage(mParentFragmentActivity, "WOL Internal Error. Try again later.",
-                Style.ALERT);
-            Utils.reportException(null, e);
+      @Override public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
+          throws Exception {
+
+      }
+
+      @Override public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+          throws Exception {
+
+      }
+
+      @Override public void onDismissEventTimeout(int event, @Nullable Bundle token)
+          throws Exception {
+        final String routerAction = token != null ? token.getString(ROUTER_ACTION) : null;
+        Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
+        if (isNullOrEmpty(routerAction)) {
+          return;
+        }
+        try {
+          switch (RouterAction.valueOf(routerAction)) {
+            case WAKE_ON_LAN:
+              ActionManager.runTasks(new WakeOnLANRouterAction(mRouter, mParentFragmentActivity,
+                  new RouterActionListener() {
+                    @Override
+                    public void onRouterActionSuccess(@NonNull RouterAction routerAction,
+                        @NonNull Router router, Object returnData) {
+                      Utils.displayMessage(mParentFragmentActivity,
+                          String.format("Action '%s' executed successfully on host '%s'",
+                              routerAction.toString(), router.getRemoteIpAddress()),
+                          Style.CONFIRM);
+                    }
+
+                    @Override
+                    public void onRouterActionFailure(@NonNull RouterAction routerAction,
+                        @NonNull Router router, @Nullable Exception exception) {
+                      Utils.displayMessage(mParentFragmentActivity,
+                          String.format("Error on action '%s': %s", routerAction.toString(),
+                              Utils.handleException(exception).first), Style.ALERT);
+                    }
+                  }, mGlobalPreferences, device, device.getWolPort(),
+                  broadcastAddresses.toArray(new String[broadcastAddresses.size()])));
+              break;
+            default:
+              //Ignored
+              break;
           }
+        } catch (IllegalArgumentException | NullPointerException e) {
+          e.printStackTrace();
+          Utils.displayMessage(mParentFragmentActivity, "WOL Internal Error. Try again later.",
+              Style.ALERT);
+          Utils.reportException(null, e);
         }
       }
 
-      @Override public void onClear(@NonNull Parcelable[] parcelables) {
+      @Override public void onDismissEventManual(int event, @Nullable Bundle bundle)
+          throws Exception {
 
       }
 
-      @Override public void onUndo(@Nullable Parcelable parcelable) {
+      @Override public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+          throws Exception {
 
       }
     };

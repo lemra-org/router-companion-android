@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
@@ -37,10 +38,10 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.cocosw.undobar.UndoBarController;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.Utils;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 
 import static org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style.ALERT;
 
@@ -181,11 +182,18 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
           token.putInt(ACTION, EDIT);
 
           //nvram set data changed
-          new UndoBarController.UndoBar(getActivity()).message(
-              String.format("Variable '%s' will be updated", variableKey))
-              .listener(nvramDataRecyclerViewAdapter)
-              .token(token)
-              .show();
+          SnackbarUtils.buildSnackbar(getActivity(),
+              String.format("Variable '%s' will be updated", variableKey),
+              "CANCEL",
+              Snackbar.LENGTH_LONG,
+              nvramDataRecyclerViewAdapter,
+              token, true);
+
+          //new UndoBarController.UndoBar(getActivity()).message(
+          //    String.format("Variable '%s' will be updated", variableKey))
+          //    .listener(nvramDataRecyclerViewAdapter)
+          //    .token(token)
+          //    .show();
 
           d.cancel();
         }

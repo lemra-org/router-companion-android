@@ -64,7 +64,6 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Joiner;
@@ -800,98 +799,137 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
       final String title = getTitle();
 
-      new UndoBarController.UndoBar(mParentFragmentActivity).message(
+      SnackbarUtils.buildSnackbar(mParentFragmentActivity,
           String.format("%s will be %s on '%s' (%s). Router will be rebooted. ", title,
               enable ? "enabled" : "disabled", mRouter.getDisplayName(),
-              mRouter.getRemoteIpAddress())).listener(new UndoBarController.AdvancedUndoListener() {
-                                                        @Override public void onHide(@Nullable Parcelable parcelable) {
+              mRouter.getRemoteIpAddress()), "CANCEL", Snackbar.LENGTH_LONG,
+          new SnackbarCallback() {
+            @Override public void onShowEvent(@Nullable Bundle bundle) throws Exception {
 
-                                                          Utils.displayMessage(mParentFragmentActivity,
-                                                              String.format("%s %s...", enable ? "Enabling" : "Disabling", title), Style.INFO);
+            }
 
-                                                          ActionManager.runTasks(
-                                                              new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfoToSet, true,
-                                                                  new RouterActionListener() {
-                                                                    @Override public void onRouterActionSuccess(@NonNull RouterAction routerAction,
-                                                                        @NonNull final Router router, Object returnData) {
-                                                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                                        @Override public void run() {
+            @Override public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
 
-                                                                          try {
-                                                                            compoundButton.setChecked(enable);
-                                                                            Utils.displayMessage(mParentFragmentActivity,
-                                                                                String.format("%s %s successfully on host '%s' (%s). ", title,
-                                                                                    enable ? "enabled" : "disabled", router.getDisplayName(),
-                                                                                    router.getRemoteIpAddress()), Style.CONFIRM);
-                                                                          } finally {
-                                                                            compoundButton.setEnabled(true);
-                                                                            isToggleStateActionRunning.set(false);
-                                                                            if (mLoader != null) {
-                                                                              //Reload everything right away
-                                                                              doneWithLoaderInstance(StatusSyslogTile.this, mLoader, 1l);
-                                                                            }
-                                                                          }
-                                                                        }
-                                                                      });
-                                                                    }
+            @Override public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
 
-                                                                    @Override public void onRouterActionFailure(@NonNull RouterAction routerAction,
-                                                                        @NonNull final Router router, @Nullable final Exception exception) {
-                                                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                                        @Override public void run() {
-                                                                          try {
-                                                                            compoundButton.setChecked(!enable);
-                                                                            Utils.displayMessage(mParentFragmentActivity,
-                                                                                String.format("Error while trying to %s %s on '%s' (%s): %s",
-                                                                                    enable ? "enable" : "disable", title, router.getDisplayName(),
-                                                                                    router.getRemoteIpAddress(),
-                                                                                    Utils.handleException(exception).first), Style.ALERT);
-                                                                          } finally {
-                                                                            compoundButton.setEnabled(true);
-                                                                            isToggleStateActionRunning.set(false);
-                                                                          }
-                                                                        }
-                                                                      });
-                                                                    }
-                                                                  }
+            @Override public void onDismissEventTimeout(int event, @Nullable Bundle token)
+                throws Exception {
+              Utils.displayMessage(mParentFragmentActivity,
+                  String.format("%s %s...", enable ? "Enabling" : "Disabling", title), Style.INFO);
 
-                                                                  , mGlobalPreferences));
-                                                        }
+              ActionManager.runTasks(
+                  new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfoToSet, true,
+                      new RouterActionListener() {
+                        @Override public void onRouterActionSuccess(@NonNull RouterAction routerAction,
+                            @NonNull final Router router, Object returnData) {
+                          mParentFragmentActivity.runOnUiThread(new Runnable() {
+                            @Override public void run() {
 
-                                                        @Override public void onClear(@NonNull Parcelable[] parcelables) {
-                                                          mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                            @Override public void run() {
-                                                              try {
-                                                                compoundButton.setChecked(!enable);
-                                                                compoundButton.setEnabled(true);
-                                                              } finally {
-                                                                isToggleStateActionRunning.set(false);
-                                                              }
-                                                            }
-                                                          });
-                                                        }
+                              try {
+                                compoundButton.setChecked(enable);
+                                Utils.displayMessage(mParentFragmentActivity,
+                                    String.format("%s %s successfully on host '%s' (%s). ", title,
+                                        enable ? "enabled" : "disabled", router.getDisplayName(),
+                                        router.getRemoteIpAddress()), Style.CONFIRM);
+                              } finally {
+                                compoundButton.setEnabled(true);
+                                isToggleStateActionRunning.set(false);
+                                if (mLoader != null) {
+                                  //Reload everything right away
+                                  doneWithLoaderInstance(StatusSyslogTile.this, mLoader, 1l);
+                                }
+                              }
+                            }
+                          });
+                        }
 
-                                                        @Override public void onUndo(@Nullable Parcelable parcelable) {
-                                                          mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                            @Override public void run() {
-                                                              try {
-                                                                compoundButton.setChecked(!enable);
-                                                                compoundButton.setEnabled(true);
-                                                              } finally {
-                                                                isToggleStateActionRunning.set(false);
-                                                              }
-                                                            }
-                                                          });
-                                                        }
-                                                      }
+                        @Override public void onRouterActionFailure(@NonNull RouterAction routerAction,
+                            @NonNull final Router router, @Nullable final Exception exception) {
+                          mParentFragmentActivity.runOnUiThread(new Runnable() {
+                            @Override public void run() {
+                              try {
+                                compoundButton.setChecked(!enable);
+                                Utils.displayMessage(mParentFragmentActivity,
+                                    String.format("Error while trying to %s %s on '%s' (%s): %s",
+                                        enable ? "enable" : "disable", title, router.getDisplayName(),
+                                        router.getRemoteIpAddress(),
+                                        Utils.handleException(exception).first), Style.ALERT);
+                              } finally {
+                                compoundButton.setEnabled(true);
+                                isToggleStateActionRunning.set(false);
+                              }
+                            }
+                          });
+                        }
+                      }
 
-      ).
+                      , mGlobalPreferences));
+            }
 
-          token(new Bundle()
+            @Override public void onDismissEventManual(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
 
-          ).
+            @Override public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
 
-          show();
+            private void cancel() {
+              mParentFragmentActivity.runOnUiThread(new Runnable() {
+                @Override public void run() {
+                  try {
+                    compoundButton.setChecked(!enable);
+                    compoundButton.setEnabled(true);
+                  } finally {
+                    isToggleStateActionRunning.set(false);
+                  }
+                }
+              });
+            }
+          }, new Bundle(), true);
+
+      //new UndoBarController.UndoBar(mParentFragmentActivity).message(
+      //    String.format("%s will be %s on '%s' (%s). Router will be rebooted. ", title,
+      //        enable ? "enabled" : "disabled", mRouter.getDisplayName(),
+      //        mRouter.getRemoteIpAddress())).listener(new UndoBarController.AdvancedUndoListener() {
+      //                                                  @Override public void onHide(@Nullable Parcelable parcelable) {
+      //
+      //
+      //                                                  }
+      //
+      //                                                  @Override public void onClear(@NonNull Parcelable[] parcelables) {
+      //
+      //                                                  }
+      //
+      //                                                  @Override public void onUndo(@Nullable Parcelable parcelable) {
+      //                                                    mParentFragmentActivity.runOnUiThread(new Runnable() {
+      //                                                      @Override public void run() {
+      //                                                        try {
+      //                                                          compoundButton.setChecked(!enable);
+      //                                                          compoundButton.setEnabled(true);
+      //                                                        } finally {
+      //                                                          isToggleStateActionRunning.set(false);
+      //                                                        }
+      //                                                      }
+      //                                                    });
+      //                                                  }
+      //                                                }
+      //
+      //).
+      //
+      //    token(new Bundle()
+      //
+      //    ).
+      //
+      //    show();
     }
   }
 }

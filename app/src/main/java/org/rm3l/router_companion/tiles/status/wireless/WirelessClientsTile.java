@@ -60,7 +60,6 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.android.gms.ads.AdListener;
@@ -2142,11 +2141,18 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
         final Bundle token = new Bundle();
         token.putString(ROUTER_ACTION, RouterAction.RESET_COUNTERS.name());
 
-        new UndoBarController.UndoBar(mParentFragmentActivity).message(
-            "Bandwidth Monitoring counters will be reset.")
-            .listener(new MenuActionItemClickListener())
-            .token(token)
-            .show();
+        SnackbarUtils.buildSnackbar(mParentFragmentActivity,
+            "Bandwidth Monitoring counters will be reset.",
+            "CANCEL",
+            Snackbar.LENGTH_LONG,
+            new MenuActionItemClickListener(),
+            token, true);
+
+        //new UndoBarController.UndoBar(mParentFragmentActivity).message(
+        //    "Bandwidth Monitoring counters will be reset.")
+        //    .listener(new MenuActionItemClickListener())
+        //    .token(token)
+        //    .show();
         return true;
       }
       case R.id.tile_status_wireless_clients_show_only_hosts_with_wan_access_disabled: {
@@ -2339,47 +2345,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
   }
 
   private class MenuActionItemClickListener
-      implements UndoBarController.AdvancedUndoListener, RouterActionListener {
-
-    @Override public void onHide(@android.support.annotation.Nullable Parcelable parcelable) {
-      if (parcelable instanceof Bundle) {
-        final Bundle token = (Bundle) parcelable;
-        final String routerAction = token.getString(ROUTER_ACTION);
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
-        if (isNullOrEmpty(routerAction)) {
-          return;
-        }
-        try {
-          switch (RouterAction.valueOf(routerAction)) {
-            case RESET_COUNTERS:
-              MultiThreadingManager.getMiscTasksExecutor().execute(new Runnable() {
-                @Override public void run() {
-                  synchronized (usageDataLock) {
-                    ActionManager.runTasks(new ResetBandwidthMonitoringCountersRouterAction(mRouter,
-                        mParentFragmentActivity, MenuActionItemClickListener.this,
-                        mGlobalPreferences));
-                  }
-                }
-              });
-              break;
-            default:
-              //Ignored
-              break;
-          }
-        } catch (IllegalArgumentException | NullPointerException e) {
-          e.printStackTrace();
-          Utils.reportException(null, e);
-        }
-      }
-    }
-
-    @Override public void onClear(@NonNull Parcelable[] parcelables) {
-      //Nothing to do
-    }
-
-    @Override public void onUndo(@android.support.annotation.Nullable Parcelable parcelable) {
-      //Nothing to do
-    }
+      implements SnackbarCallback, RouterActionListener {
 
     @Override
     public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router,
@@ -2413,10 +2379,63 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
           String.format("Error on action '%s': %s", routerAction.toString(),
               Utils.handleException(exception).first), Style.ALERT);
     }
+
+    @Override public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+    }
+
+    @Override public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+    }
+
+    @Override public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+        throws Exception {
+
+    }
+
+    @Override public void onDismissEventTimeout(int event, @Nullable Bundle token)
+        throws Exception {
+      final String routerAction = token != null ? token.getString(ROUTER_ACTION) : null;
+      Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
+      if (isNullOrEmpty(routerAction)) {
+        return;
+      }
+      try {
+        switch (RouterAction.valueOf(routerAction)) {
+          case RESET_COUNTERS:
+            MultiThreadingManager.getMiscTasksExecutor().execute(new Runnable() {
+              @Override public void run() {
+                synchronized (usageDataLock) {
+                  ActionManager.runTasks(new ResetBandwidthMonitoringCountersRouterAction(mRouter,
+                      mParentFragmentActivity, MenuActionItemClickListener.this,
+                      mGlobalPreferences));
+                }
+              }
+            });
+            break;
+          default:
+            //Ignored
+            break;
+        }
+      } catch (IllegalArgumentException | NullPointerException e) {
+        e.printStackTrace();
+        Utils.reportException(null, e);
+      }
+    }
+
+    @Override public void onDismissEventManual(int event, @Nullable Bundle bundle)
+        throws Exception {
+
+    }
+
+    @Override public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+        throws Exception {
+
+    }
   }
 
   class DeviceOnMenuItemClickListener
-      implements PopupMenu.OnMenuItemClickListener, UndoBarController.AdvancedUndoListener,
+      implements PopupMenu.OnMenuItemClickListener, SnackbarCallback,
       RouterActionListener {
 
     @NonNull private final TextView deviceNameView;
@@ -2469,12 +2488,20 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                           disableWanAccess ? RouterAction.DISABLE_WAN_ACCESS.name()
                               : RouterAction.ENABLE_WAN_ACCESS.name());
 
-                      new UndoBarController.UndoBar(mParentFragmentActivity).message(
+                      SnackbarUtils.buildSnackbar(mParentFragmentActivity,
                           String.format("WAN Access will be %s for '%s' (%s)",
-                              disableWanAccess ? "disabled" : "enabled", deviceName, macAddress))
-                          .listener(DeviceOnMenuItemClickListener.this)
-                          .token(token)
-                          .show();
+                              disableWanAccess ? "disabled" : "enabled", deviceName, macAddress),
+                          "CANCEL",
+                          Snackbar.LENGTH_LONG,
+                          DeviceOnMenuItemClickListener.this,
+                          token, true);
+
+                      //new UndoBarController.UndoBar(mParentFragmentActivity).message(
+                      //    String.format("WAN Access will be %s for '%s' (%s)",
+                      //        disableWanAccess ? "disabled" : "enabled", deviceName, macAddress))
+                      //    .listener(DeviceOnMenuItemClickListener.this)
+                      //    .token(token)
+                      //    .show();
                     }
                   })
               .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -2505,12 +2532,20 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                   final Bundle token = new Bundle();
                   token.putString(ROUTER_ACTION, RouterAction.WAKE_ON_LAN.name());
 
-                  new UndoBarController.UndoBar(mParentFragmentActivity).message(
+                  SnackbarUtils.buildSnackbar(mParentFragmentActivity,
                       String.format("WOL Request will be sent from router to '%s' (%s)", deviceName,
-                          macAddress))
-                      .listener(DeviceOnMenuItemClickListener.this)
-                      .token(token)
-                      .show();
+                          macAddress),
+                      "CANCEL",
+                      Snackbar.LENGTH_LONG,
+                      DeviceOnMenuItemClickListener.this,
+                      token, true);
+
+                  //new UndoBarController.UndoBar(mParentFragmentActivity).message(
+                  //    String.format("WOL Request will be sent from router to '%s' (%s)", deviceName,
+                  //        macAddress))
+                  //    .listener(DeviceOnMenuItemClickListener.this)
+                  //    .token(token)
+                  //    .show();
 
                   //                                    new WoLUtils.SendWoLMagicPacketAsyncTask(mParentFragmentActivity, device).execute(macAddress, mBroadcastAddress);
                 }
@@ -2579,55 +2614,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
       return false;
     }
 
-    @Override public void onHide(@android.support.annotation.Nullable Parcelable parcelable) {
-      if (parcelable instanceof Bundle) {
-        final Bundle token = (Bundle) parcelable;
-        final String routerAction = token.getString(ROUTER_ACTION);
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
-        if (isNullOrEmpty(routerAction)) {
-          return;
-        }
-        try {
-          switch (RouterAction.valueOf(routerAction)) {
-            case WAKE_ON_LAN:
-              if (broadcastAddresses == null) {
-                Utils.displayMessage(mParentFragmentActivity,
-                    "WOL Internal Error: unable to fetch broadcast addresses. Try again later.",
-                    Style.ALERT);
-                Utils.reportException(null, new IllegalStateException(
-                    "WOL Internal Error: unable to fetch broadcast addresses. Try again later."));
-                return;
-              }
-              ActionManager.runTasks(
-                  new WakeOnLANRouterAction(mRouter, mParentFragmentActivity, this,
-                      mGlobalPreferences, device,
-                      broadcastAddresses.toArray(new String[broadcastAddresses.size()])));
-              break;
-            case DISABLE_WAN_ACCESS:
-              ActionManager.runTasks(
-                  new DisableWANAccessRouterAction(mRouter, mParentFragmentActivity, this,
-                      mGlobalPreferences, device));
-              break;
-            case ENABLE_WAN_ACCESS:
-              ActionManager.runTasks(
-                  new EnableWANAccessRouterAction(mRouter, mParentFragmentActivity, this,
-                      mGlobalPreferences, device));
-              break;
-            default:
-              //Ignored
-              break;
-          }
-        } catch (IllegalArgumentException | NullPointerException e) {
-          e.printStackTrace();
-          Utils.reportException(null, e);
-        }
-      }
-    }
-
-    @Override public void onClear(@NonNull Parcelable[] parcelables) {
-      //Nothing to do
-    }
-
     @Override
     public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router,
         Object returnData) {
@@ -2644,8 +2630,70 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
               Utils.handleException(exception).first), Style.ALERT);
     }
 
-    @Override public void onUndo(@android.support.annotation.Nullable Parcelable parcelable) {
-      //Nothing to do
+    @Override public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+    }
+
+    @Override public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+    }
+
+    @Override public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+        throws Exception {
+
+    }
+
+    @Override public void onDismissEventTimeout(int event, @Nullable Bundle token)
+        throws Exception {
+      final String routerAction = token != null ? token.getString(ROUTER_ACTION) : null;
+      Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
+      if (isNullOrEmpty(routerAction)) {
+        return;
+      }
+      try {
+        switch (RouterAction.valueOf(routerAction)) {
+          case WAKE_ON_LAN:
+            if (broadcastAddresses == null) {
+              Utils.displayMessage(mParentFragmentActivity,
+                  "WOL Internal Error: unable to fetch broadcast addresses. Try again later.",
+                  Style.ALERT);
+              Utils.reportException(null, new IllegalStateException(
+                  "WOL Internal Error: unable to fetch broadcast addresses. Try again later."));
+              return;
+            }
+            ActionManager.runTasks(
+                new WakeOnLANRouterAction(mRouter, mParentFragmentActivity, this,
+                    mGlobalPreferences, device,
+                    broadcastAddresses.toArray(new String[broadcastAddresses.size()])));
+            break;
+          case DISABLE_WAN_ACCESS:
+            ActionManager.runTasks(
+                new DisableWANAccessRouterAction(mRouter, mParentFragmentActivity, this,
+                    mGlobalPreferences, device));
+            break;
+          case ENABLE_WAN_ACCESS:
+            ActionManager.runTasks(
+                new EnableWANAccessRouterAction(mRouter, mParentFragmentActivity, this,
+                    mGlobalPreferences, device));
+            break;
+          default:
+            //Ignored
+            break;
+        }
+      } catch (IllegalArgumentException | NullPointerException e) {
+        e.printStackTrace();
+        Utils.reportException(null, e);
+      }
+    }
+
+    @Override public void onDismissEventManual(int event, @Nullable Bundle bundle)
+        throws Exception {
+
+    }
+
+    @Override public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+        throws Exception {
+
     }
   }
 }

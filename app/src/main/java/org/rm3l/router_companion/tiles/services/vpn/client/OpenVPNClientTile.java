@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -40,12 +41,13 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
+import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -86,7 +88,7 @@ import static org.rm3l.router_companion.tiles.status.wireless.WirelessIfaceTile.
 import static org.rm3l.router_companion.tiles.status.wireless.WirelessIfaceTile.IfaceStatsType.TX_BYTES;
 
 public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
-    implements DDWRTTile.ActivityResultListener, UndoBarController.AdvancedUndoListener,
+    implements DDWRTTile.ActivityResultListener, SnackbarCallback,
     RouterActionListener {
 
   public static final String OPENVPNCL__DEV = "___openvpncl__dev";
@@ -705,82 +707,20 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
         token.putString(DDWRTMainActivity.ROUTER_ACTION, RouterAction.SET_NVRAM_VARIABLES.name());
         token.putSerializable(OPENVPNCL_NVRAMINFO, newNvramInfoData);
 
-        new UndoBarController.UndoBar(mParentFragmentActivity).message(
-            "OpenVPN Client Settings will be updated").listener(this).token(token).show();
+        SnackbarUtils.buildSnackbar(mParentFragmentActivity,
+            "OpenVPN Client Settings will be updated",
+            "CANCEL",
+            Snackbar.LENGTH_LONG,
+            this,
+            token, true);
+
+        //new UndoBarController.UndoBar(mParentFragmentActivity).message(
+        //    "OpenVPN Client Settings will be updated").listener(this).token(token).show();
         break;
       default:
         //Ignored
         break;
     }
-  }
-
-  @Override public void onHide(@android.support.annotation.Nullable Parcelable parcelable) {
-    if (parcelable instanceof Bundle) {
-      final Bundle token = (Bundle) parcelable;
-      final String routerAction = token.getString(DDWRTMainActivity.ROUTER_ACTION);
-      Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
-      if (isNullOrEmpty(routerAction)) {
-        return;
-      }
-      try {
-        switch (RouterAction.valueOf(routerAction)) {
-          case SET_NVRAM_VARIABLES:
-            final NVRAMInfo nvramInfo = (NVRAMInfo) token.getSerializable(OPENVPNCL_NVRAMINFO);
-            final String openvpnClEnable = nullToEmpty(nvramInfo.getProperty(
-                NVRAMInfo.Companion.getOPENVPNCL_ENABLE()));
-
-            if (mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
-                VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE, false) && Arrays.asList("0", "1")
-                .contains(openvpnClEnable)) {
-              //Display a popup inviting user to toggle PPTP Client status at the same time
-              final String pptpClientStatusToSet;
-              if ("0".equals(openvpnClEnable)) {
-                pptpClientStatusToSet = "1";
-              } else {
-                pptpClientStatusToSet = "0";
-              }
-              new AlertDialog.Builder(mParentFragmentActivity).setIcon(
-                  R.drawable.ic_action_alert_warning)
-                  .setTitle("Toggle PPTP Client status")
-                  .setMessage(String.format(Locale.US,
-                      "Router will be rebooted. Do you wish to %s PPTP Client at the same time?",
-                      "0".equals(pptpClientStatusToSet) ? "stop" : "start"))
-                  .setCancelable(true)
-                  .setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialog, int which) {
-                      nvramInfo.setProperty(NVRAMInfo.Companion.getPPTPD_CLIENT_ENABLE(), pptpClientStatusToSet);
-                      ActionManager.runTasks(
-                          new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfo,
-                              true, OpenVPNClientTile.this, mGlobalPreferences));
-                    }
-                  })
-                  .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialogInterface, int i) {
-                      ActionManager.runTasks(
-                          new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfo,
-                              true, OpenVPNClientTile.this, mGlobalPreferences));
-                    }
-                  })
-                  .create()
-                  .show();
-            } else {
-              ActionManager.runTasks(
-                  new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfo, true,
-                      this, mGlobalPreferences));
-            }
-            break;
-          default:
-            //Ignored
-            break;
-        }
-      } catch (IllegalArgumentException | NullPointerException e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
-  @Override public void onClear(@NonNull Parcelable[] parcelables) {
-    //Nothing to do
   }
 
   @Override
@@ -806,8 +746,89 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
         String.format("Error: %s", Utils.handleException(exception).first), Style.ALERT);
   }
 
-  @Override public void onUndo(@android.support.annotation.Nullable Parcelable parcelable) {
-    //Nothing to do
+  @Override public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+  }
+
+  @Override public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+  }
+
+  @Override public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+      throws Exception {
+
+  }
+
+  @Override public void onDismissEventTimeout(int event, @Nullable Bundle token) throws Exception {
+    final String routerAction =
+        token != null ? token.getString(DDWRTMainActivity.ROUTER_ACTION) : null;
+    Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
+    if (isNullOrEmpty(routerAction)) {
+      return;
+    }
+    try {
+      switch (RouterAction.valueOf(routerAction)) {
+        case SET_NVRAM_VARIABLES:
+          final NVRAMInfo nvramInfo = (NVRAMInfo) token.getSerializable(OPENVPNCL_NVRAMINFO);
+          final String openvpnClEnable = nullToEmpty(nvramInfo.getProperty(
+              NVRAMInfo.Companion.getOPENVPNCL_ENABLE()));
+
+          if (mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
+              VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE, false) && Arrays.asList("0", "1")
+              .contains(openvpnClEnable)) {
+            //Display a popup inviting user to toggle PPTP Client status at the same time
+            final String pptpClientStatusToSet;
+            if ("0".equals(openvpnClEnable)) {
+              pptpClientStatusToSet = "1";
+            } else {
+              pptpClientStatusToSet = "0";
+            }
+            new AlertDialog.Builder(mParentFragmentActivity).setIcon(
+                R.drawable.ic_action_alert_warning)
+                .setTitle("Toggle PPTP Client status")
+                .setMessage(String.format(Locale.US,
+                    "Router will be rebooted. Do you wish to %s PPTP Client at the same time?",
+                    "0".equals(pptpClientStatusToSet) ? "stop" : "start"))
+                .setCancelable(true)
+                .setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
+                  @Override public void onClick(DialogInterface dialog, int which) {
+                    nvramInfo.setProperty(NVRAMInfo.Companion.getPPTPD_CLIENT_ENABLE(), pptpClientStatusToSet);
+                    ActionManager.runTasks(
+                        new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfo,
+                            true, OpenVPNClientTile.this, mGlobalPreferences));
+                  }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                  @Override public void onClick(DialogInterface dialogInterface, int i) {
+                    ActionManager.runTasks(
+                        new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfo,
+                            true, OpenVPNClientTile.this, mGlobalPreferences));
+                  }
+                })
+                .create()
+                .show();
+          } else {
+            ActionManager.runTasks(
+                new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfo, true,
+                    this, mGlobalPreferences));
+          }
+          break;
+        default:
+          //Ignored
+          break;
+      }
+    } catch (IllegalArgumentException | NullPointerException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Override public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+
+  }
+
+  @Override public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+      throws Exception {
+
   }
 
   private class DDWRTOpenvpnClStateUnknown extends DDWRTNoDataException {
@@ -858,157 +879,197 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
       nvramInfoToSet.setProperty(NVRAMInfo.Companion.getOPENVPNCL_ENABLE(), enable ? "1" : "0");
 
-      new UndoBarController.UndoBar(mParentFragmentActivity).message(
+      SnackbarUtils.buildSnackbar(mParentFragmentActivity,
           String.format("OpenVPN Client will be %s on '%s' (%s). ", enable ? "enabled" : "disabled",
-              mRouter.getDisplayName(), mRouter.getRemoteIpAddress()))
-          .listener(new UndoBarController.AdvancedUndoListener() {
-                      @Override public void onHide(@Nullable Parcelable parcelable) {
+              mRouter.getDisplayName(), mRouter.getRemoteIpAddress()), "CANCEL",
+          Snackbar.LENGTH_LONG, new SnackbarCallback() {
+            @Override public void onShowEvent(@Nullable Bundle bundle) throws Exception {
 
-                        final RouterActionListener listener = new RouterActionListener() {
-                          @Override public void onRouterActionSuccess(@NonNull RouterAction routerAction,
-                              @NonNull final Router router, Object returnData) {
-                            mParentFragmentActivity.runOnUiThread(new Runnable() {
-                              @Override public void run() {
+            }
 
-                                try {
-                                  compoundButton.setChecked(enable);
-                                  Utils.displayMessage(mParentFragmentActivity,
-                                      String.format("OpenVPN Client %s successfully on host '%s' (%s). ",
-                                          enable ? "enabled" : "disabled", router.getDisplayName(),
-                                          router.getRemoteIpAddress()), Style.CONFIRM);
-                                } finally {
-                                  compoundButton.setEnabled(true);
-                                  isToggleStateActionRunning.set(false);
-                                  if (mLoader != null) {
-                                    //Reload everything right away
-                                    doneWithLoaderInstance(OpenVPNClientTile.this, mLoader, 1l);
-                                  }
-                                }
-                              }
-                            });
-                          }
+            @Override public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
 
-                          @Override public void onRouterActionFailure(@NonNull RouterAction routerAction,
-                              @NonNull final Router router, @Nullable final Exception exception) {
-                            mParentFragmentActivity.runOnUiThread(new Runnable() {
-                              @Override public void run() {
-                                try {
-                                  compoundButton.setChecked(!enable);
-                                  Utils.displayMessage(mParentFragmentActivity, String.format(
-                                      "Error while trying to %s OpenVPN Client on '%s' (%s): %s",
-                                      enable ? "enable" : "disable", router.getDisplayName(),
-                                      router.getRemoteIpAddress(), Utils.handleException(exception).first),
-                                      Style.ALERT);
-                                } finally {
-                                  compoundButton.setEnabled(true);
-                                  isToggleStateActionRunning.set(false);
-                                }
-                              }
-                            });
-                          }
-                        };
+            @Override public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
 
-                        final boolean pptpClStatusToSet = !enable;
+            @Override public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
+                throws Exception {
+              final RouterActionListener listener = new RouterActionListener() {
+                @Override public void onRouterActionSuccess(@NonNull RouterAction routerAction,
+                    @NonNull final Router router, Object returnData) {
+                  mParentFragmentActivity.runOnUiThread(new Runnable() {
+                    @Override public void run() {
 
-                        if (mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
-                            VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE, false)) {
-                          new AlertDialog.Builder(mParentFragmentActivity).setIcon(
-                              R.drawable.ic_action_alert_warning)
-                              .setTitle("Toggle PPTP Client status")
-                              .setMessage(String.format(Locale.US,
-                                  "Router will be rebooted. Do you wish to %s PPTP Client at the same time?",
-                                  pptpClStatusToSet ? "start" : "stop"))
-                              .setCancelable(true)
-                              .setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
-                                @Override public void onClick(DialogInterface dialog, int which) {
-                                  nvramInfoToSet.setProperty(
-                                      NVRAMInfo.Companion.getPPTPD_CLIENT_ENABLE(),
-                                      pptpClStatusToSet ? "1" : "0");
-
-                                  Utils.displayMessage(mParentFragmentActivity,
-                                      String.format("%s OpenVPN Client (and %s PPTP Client) ...",
-                                          enable ? "Enabling" : "Disabling",
-                                          pptpClStatusToSet ? "Enabling" : "Disabling"), Style.INFO);
-
-                                  ActionManager.runTasks(
-                                      new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity,
-                                          nvramInfoToSet, true, listener, mGlobalPreferences));
-                                }
-                              })
-                              .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                @Override public void onClick(DialogInterface dialogInterface, int i) {
-
-                                  Utils.displayMessage(mParentFragmentActivity,
-                                      String.format("%s OpenVPN Client...",
-                                          enable ? "Enabling" : "Disabling"), Style.INFO);
-
-                                  ActionManager.runTasks(
-                                      new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity,
-                                          nvramInfoToSet, true, listener, mGlobalPreferences));
-                                }
-                              })
-                              .create()
-                              .show();
-
-                          //                                      Utils.displayMessage(mParentFragmentActivity,
-                          //                                              String.format("%s OpenVPN Client...",
-                          //                                                      enable ? "Enabling" : "Disabling"),
-                          //                                              Style.INFO);
-
-                          //                                      new SetNVRAMVariablesAction(mParentFragmentActivity,
-                          //                                              nvramInfoToSet,
-                          //                                              true,
-                          //                                              listener,
-                          //                                              mGlobalPreferences).
-                          //
-                          //                                              execute(mRouter);
-                        } else {
-                          Utils.displayMessage(mParentFragmentActivity,
-                              String.format("%s OpenVPN Client...", enable ? "Enabling" : "Disabling"),
-                              Style.INFO);
-
-                          ActionManager.runTasks(
-                              new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfoToSet,
-                                  true, listener, mGlobalPreferences));
+                      try {
+                        compoundButton.setChecked(enable);
+                        Utils.displayMessage(mParentFragmentActivity,
+                            String.format("OpenVPN Client %s successfully on host '%s' (%s). ",
+                                enable ? "enabled" : "disabled", router.getDisplayName(),
+                                router.getRemoteIpAddress()), Style.CONFIRM);
+                      } finally {
+                        compoundButton.setEnabled(true);
+                        isToggleStateActionRunning.set(false);
+                        if (mLoader != null) {
+                          //Reload everything right away
+                          doneWithLoaderInstance(OpenVPNClientTile.this, mLoader, 1l);
                         }
                       }
+                    }
+                  });
+                }
 
-                      @Override public void onClear(@NonNull Parcelable[] parcelables) {
-                        mParentFragmentActivity.runOnUiThread(new Runnable() {
-                          @Override public void run() {
-                            try {
-                              compoundButton.setChecked(!enable);
-                              compoundButton.setEnabled(true);
-                            } finally {
-                              isToggleStateActionRunning.set(false);
-                            }
-                          }
-                        });
-                      }
-
-                      @Override public void onUndo(@Nullable Parcelable parcelable) {
-                        mParentFragmentActivity.runOnUiThread(new Runnable() {
-                          @Override public void run() {
-                            try {
-                              compoundButton.setChecked(!enable);
-                              compoundButton.setEnabled(true);
-                            } finally {
-                              isToggleStateActionRunning.set(false);
-                            }
-                          }
-                        });
+                @Override public void onRouterActionFailure(@NonNull RouterAction routerAction,
+                    @NonNull final Router router, @Nullable final Exception exception) {
+                  mParentFragmentActivity.runOnUiThread(new Runnable() {
+                    @Override public void run() {
+                      try {
+                        compoundButton.setChecked(!enable);
+                        Utils.displayMessage(mParentFragmentActivity, String.format(
+                            "Error while trying to %s OpenVPN Client on '%s' (%s): %s",
+                            enable ? "enable" : "disable", router.getDisplayName(),
+                            router.getRemoteIpAddress(), Utils.handleException(exception).first),
+                            Style.ALERT);
+                      } finally {
+                        compoundButton.setEnabled(true);
+                        isToggleStateActionRunning.set(false);
                       }
                     }
+                  });
+                }
+              };
 
-          )
-          .
+              final boolean pptpClStatusToSet = !enable;
 
-              token(new Bundle()
+              if (mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
+                  VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE, false)) {
+                new AlertDialog.Builder(mParentFragmentActivity).setIcon(
+                    R.drawable.ic_action_alert_warning)
+                    .setTitle("Toggle PPTP Client status")
+                    .setMessage(String.format(Locale.US,
+                        "Router will be rebooted. Do you wish to %s PPTP Client at the same time?",
+                        pptpClStatusToSet ? "start" : "stop"))
+                    .setCancelable(true)
+                    .setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
+                      @Override public void onClick(DialogInterface dialog, int which) {
+                        nvramInfoToSet.setProperty(
+                            NVRAMInfo.Companion.getPPTPD_CLIENT_ENABLE(),
+                            pptpClStatusToSet ? "1" : "0");
 
-              )
-          .
+                        Utils.displayMessage(mParentFragmentActivity,
+                            String.format("%s OpenVPN Client (and %s PPTP Client) ...",
+                                enable ? "Enabling" : "Disabling",
+                                pptpClStatusToSet ? "Enabling" : "Disabling"), Style.INFO);
 
-              show();
+                        ActionManager.runTasks(
+                            new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity,
+                                nvramInfoToSet, true, listener, mGlobalPreferences));
+                      }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                      @Override public void onClick(DialogInterface dialogInterface, int i) {
+
+                        Utils.displayMessage(mParentFragmentActivity,
+                            String.format("%s OpenVPN Client...",
+                                enable ? "Enabling" : "Disabling"), Style.INFO);
+
+                        ActionManager.runTasks(
+                            new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity,
+                                nvramInfoToSet, true, listener, mGlobalPreferences));
+                      }
+                    })
+                    .create()
+                    .show();
+
+                //                                      Utils.displayMessage(mParentFragmentActivity,
+                //                                              String.format("%s OpenVPN Client...",
+                //                                                      enable ? "Enabling" : "Disabling"),
+                //                                              Style.INFO);
+
+                //                                      new SetNVRAMVariablesAction(mParentFragmentActivity,
+                //                                              nvramInfoToSet,
+                //                                              true,
+                //                                              listener,
+                //                                              mGlobalPreferences).
+                //
+                //                                              execute(mRouter);
+              } else {
+                Utils.displayMessage(mParentFragmentActivity,
+                    String.format("%s OpenVPN Client...", enable ? "Enabling" : "Disabling"),
+                    Style.INFO);
+
+                ActionManager.runTasks(
+                    new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfoToSet,
+                        true, listener, mGlobalPreferences));
+              }
+            }
+
+            @Override public void onDismissEventManual(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
+
+            @Override public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
+
+            private void cancel() {
+              mParentFragmentActivity.runOnUiThread(new Runnable() {
+                @Override public void run() {
+                  try {
+                    compoundButton.setChecked(!enable);
+                    compoundButton.setEnabled(true);
+                  } finally {
+                    isToggleStateActionRunning.set(false);
+                  }
+                }
+              });
+            }
+
+          }, new Bundle(), true);
+
+
+      //new UndoBarController.UndoBar(mParentFragmentActivity).message(
+      //    String.format("OpenVPN Client will be %s on '%s' (%s). ", enable ? "enabled" : "disabled",
+      //        mRouter.getDisplayName(), mRouter.getRemoteIpAddress()))
+      //    .listener(new UndoBarController.AdvancedUndoListener() {
+      //                @Override public void onHide(@Nullable Parcelable parcelable) {
+      //
+      //
+      //                }
+      //
+      //                @Override public void onClear(@NonNull Parcelable[] parcelables) {
+      //
+      //                }
+      //
+      //                @Override public void onUndo(@Nullable Parcelable parcelable) {
+      //                  mParentFragmentActivity.runOnUiThread(new Runnable() {
+      //                    @Override public void run() {
+      //                      try {
+      //                        compoundButton.setChecked(!enable);
+      //                        compoundButton.setEnabled(true);
+      //                      } finally {
+      //                        isToggleStateActionRunning.set(false);
+      //                      }
+      //                    }
+      //                  });
+      //                }
+      //              }
+      //
+      //    )
+      //    .
+      //
+      //        token(new Bundle()
+      //
+      //        )
+      //    .
+      //
+      //        show();
     }
   }
 }

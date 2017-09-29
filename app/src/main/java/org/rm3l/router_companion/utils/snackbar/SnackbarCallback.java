@@ -36,9 +36,9 @@ public interface SnackbarCallback {
    * Snackbar was dismissed via a timeout
    *
    * @param event Event is {@link Snackbar.Callback#DISMISS_EVENT_TIMEOUT}
-   * @param bundle data passed to the callback
+   * @param token data passed to the callback
    */
-  void onDismissEventTimeout(int event, @Nullable final Bundle bundle) throws Exception;
+  void onDismissEventTimeout(int event, @Nullable final Bundle token) throws Exception;
 
   /**
    * Snackbar was dismissed via a call to

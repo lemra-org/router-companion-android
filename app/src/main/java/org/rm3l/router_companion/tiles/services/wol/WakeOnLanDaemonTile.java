@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -17,11 +18,12 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -53,7 +55,7 @@ import static org.rm3l.router_companion.tiles.services.wol.EditWOLDaemonSettings
  * Created by rm3l on 10/04/15.
  */
 public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
-    implements DDWRTTile.ActivityResultListener, UndoBarController.AdvancedUndoListener,
+    implements DDWRTTile.ActivityResultListener, SnackbarCallback,
     RouterActionListener {
 
   public static final String WOL_DAEMON_NVRAMINFO = "WOL_DAEMON_NVRAMINFO";
@@ -355,46 +357,23 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
         token.putString(DDWRTMainActivity.ROUTER_ACTION, RouterAction.SET_NVRAM_VARIABLES.name());
         token.putSerializable(WOL_DAEMON_NVRAMINFO, newNvramInfoData);
 
-        new UndoBarController.UndoBar(mParentFragmentActivity).message(
-            "WOL Daemon Settings will be updated on the Router.")
-            .listener(this)
-            .token(token)
-            .show();
+        SnackbarUtils.buildSnackbar(mParentFragmentActivity,
+            "WOL Daemon Settings will be updated on the Router.",
+            "CANCEL",
+            Snackbar.LENGTH_LONG,
+            this,
+            token, true);
+
+        //new UndoBarController.UndoBar(mParentFragmentActivity).message(
+        //    "WOL Daemon Settings will be updated on the Router.")
+        //    .listener(this)
+        //    .token(token)
+        //    .show();
         break;
       default:
         //Ignored
         break;
     }
-  }
-
-  @Override public void onHide(@Nullable Parcelable parcelable) {
-    if (parcelable instanceof Bundle) {
-      final Bundle token = (Bundle) parcelable;
-      final String routerAction = token.getString(DDWRTMainActivity.ROUTER_ACTION);
-      Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
-      if (isNullOrEmpty(routerAction)) {
-        return;
-      }
-      try {
-        switch (RouterAction.valueOf(routerAction)) {
-          case SET_NVRAM_VARIABLES:
-            ActionManager.runTasks(new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity,
-                (NVRAMInfo) token.getSerializable(WOL_DAEMON_NVRAMINFO), true,
-                //Reboot Router at the end of the operation
-                this, mGlobalPreferences));
-            break;
-          default:
-            //Ignored
-            break;
-        }
-      } catch (IllegalArgumentException | NullPointerException e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
-  @Override public void onClear(@NonNull Parcelable[] parcelables) {
-    //Nothing to do
   }
 
   @Override
@@ -420,8 +399,50 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
         String.format("Error: %s", Utils.handleException(exception).first), Style.ALERT);
   }
 
-  @Override public void onUndo(@Nullable Parcelable parcelable) {
-    //Nothing to do
+  @Override public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+  }
+
+  @Override public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+  }
+
+  @Override public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+      throws Exception {
+
+  }
+
+  @Override public void onDismissEventTimeout(int event, @Nullable Bundle token) throws Exception {
+    final String routerAction =
+        token != null ? token.getString(DDWRTMainActivity.ROUTER_ACTION) : null;
+    Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
+    if (isNullOrEmpty(routerAction)) {
+      return;
+    }
+    try {
+      switch (RouterAction.valueOf(routerAction)) {
+        case SET_NVRAM_VARIABLES:
+          ActionManager.runTasks(new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity,
+              (NVRAMInfo) token.getSerializable(WOL_DAEMON_NVRAMINFO), true,
+              //Reboot Router at the end of the operation
+              this, mGlobalPreferences));
+          break;
+        default:
+          //Ignored
+          break;
+      }
+    } catch (IllegalArgumentException | NullPointerException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Override public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+
+  }
+
+  @Override public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+      throws Exception {
+
   }
 
   private class DDWRTWoLDaemonStateUnknown extends DDWRTNoDataException {
@@ -472,99 +493,137 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
 
       nvramInfoToSet.setProperty(NVRAMInfo.Companion.getWOL_ENABLE(), enable ? "1" : "0");
 
-      new UndoBarController.UndoBar(mParentFragmentActivity).message(
+      SnackbarUtils.buildSnackbar(mParentFragmentActivity,
           String.format("Wake on LAN Daemon will be %s on '%s' (%s). ",
               enable ? "enabled" : "disabled", mRouter.getDisplayName(),
-              mRouter.getRemoteIpAddress())).listener(new UndoBarController.AdvancedUndoListener() {
-                                                        @Override public void onHide(@Nullable Parcelable parcelable) {
+              mRouter.getRemoteIpAddress()), "CANCEL", Snackbar.LENGTH_LONG,
+          new SnackbarCallback() {
+            @Override public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+            }
 
-                                                          Utils.displayMessage(mParentFragmentActivity,
-                                                              String.format("%s Wake on LAN Daemon...", enable ? "Enabling" : "Disabling"),
-                                                              Style.INFO);
+            @Override public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
 
-                                                          ActionManager.runTasks(
-                                                              new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfoToSet, true,
-                                                                  new RouterActionListener() {
-                                                                    @Override public void onRouterActionSuccess(@NonNull RouterAction routerAction,
-                                                                        @NonNull final Router router, Object returnData) {
-                                                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                                        @Override public void run() {
+            @Override public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
 
-                                                                          try {
-                                                                            compoundButton.setChecked(enable);
-                                                                            Utils.displayMessage(mParentFragmentActivity, String.format(
-                                                                                "Wake on LAN Daemon %s successfully on host '%s' (%s). ",
-                                                                                enable ? "enabled" : "disabled", router.getDisplayName(),
-                                                                                router.getRemoteIpAddress()), Style.CONFIRM);
-                                                                          } finally {
-                                                                            compoundButton.setEnabled(true);
-                                                                            isToggleStateActionRunning.set(false);
-                                                                            if (mLoader != null) {
-                                                                              //Reload everything right away
-                                                                              doneWithLoaderInstance(WakeOnLanDaemonTile.this, mLoader, 1l);
-                                                                            }
-                                                                          }
-                                                                        }
-                                                                      });
-                                                                    }
+            @Override public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
+                throws Exception {
+              Utils.displayMessage(mParentFragmentActivity,
+                  String.format("%s Wake on LAN Daemon...", enable ? "Enabling" : "Disabling"),
+                  Style.INFO);
 
-                                                                    @Override public void onRouterActionFailure(@NonNull RouterAction routerAction,
-                                                                        @NonNull final Router router, @Nullable final Exception exception) {
-                                                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                                        @Override public void run() {
-                                                                          try {
-                                                                            compoundButton.setChecked(!enable);
-                                                                            Utils.displayMessage(mParentFragmentActivity, String.format(
-                                                                                "Error while trying to %s Wake on LAN Daemon on '%s' (%s): %s",
-                                                                                enable ? "enable" : "disable", router.getDisplayName(),
-                                                                                router.getRemoteIpAddress(),
-                                                                                Utils.handleException(exception).first), Style.ALERT);
-                                                                          } finally {
-                                                                            compoundButton.setEnabled(true);
-                                                                            isToggleStateActionRunning.set(false);
-                                                                          }
-                                                                        }
-                                                                      });
-                                                                    }
-                                                                  }
+              ActionManager.runTasks(
+                  new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfoToSet, true,
+                      new RouterActionListener() {
+                        @Override public void onRouterActionSuccess(@NonNull RouterAction routerAction,
+                            @NonNull final Router router, Object returnData) {
+                          mParentFragmentActivity.runOnUiThread(new Runnable() {
+                            @Override public void run() {
 
-                                                                  , mGlobalPreferences));
-                                                        }
+                              try {
+                                compoundButton.setChecked(enable);
+                                Utils.displayMessage(mParentFragmentActivity, String.format(
+                                    "Wake on LAN Daemon %s successfully on host '%s' (%s). ",
+                                    enable ? "enabled" : "disabled", router.getDisplayName(),
+                                    router.getRemoteIpAddress()), Style.CONFIRM);
+                              } finally {
+                                compoundButton.setEnabled(true);
+                                isToggleStateActionRunning.set(false);
+                                if (mLoader != null) {
+                                  //Reload everything right away
+                                  doneWithLoaderInstance(WakeOnLanDaemonTile.this, mLoader, 1l);
+                                }
+                              }
+                            }
+                          });
+                        }
 
-                                                        @Override public void onClear(@NonNull Parcelable[] parcelables) {
-                                                          mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                            @Override public void run() {
-                                                              try {
-                                                                compoundButton.setChecked(!enable);
-                                                                compoundButton.setEnabled(true);
-                                                              } finally {
-                                                                isToggleStateActionRunning.set(false);
-                                                              }
-                                                            }
-                                                          });
-                                                        }
+                        @Override public void onRouterActionFailure(@NonNull RouterAction routerAction,
+                            @NonNull final Router router, @Nullable final Exception exception) {
+                          mParentFragmentActivity.runOnUiThread(new Runnable() {
+                            @Override public void run() {
+                              try {
+                                compoundButton.setChecked(!enable);
+                                Utils.displayMessage(mParentFragmentActivity, String.format(
+                                    "Error while trying to %s Wake on LAN Daemon on '%s' (%s): %s",
+                                    enable ? "enable" : "disable", router.getDisplayName(),
+                                    router.getRemoteIpAddress(),
+                                    Utils.handleException(exception).first), Style.ALERT);
+                              } finally {
+                                compoundButton.setEnabled(true);
+                                isToggleStateActionRunning.set(false);
+                              }
+                            }
+                          });
+                        }
+                      }
 
-                                                        @Override public void onUndo(@Nullable Parcelable parcelable) {
-                                                          mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                            @Override public void run() {
-                                                              try {
-                                                                compoundButton.setChecked(!enable);
-                                                                compoundButton.setEnabled(true);
-                                                              } finally {
-                                                                isToggleStateActionRunning.set(false);
-                                                              }
-                                                            }
-                                                          });
-                                                        }
-                                                      }
+                      , mGlobalPreferences));
+            }
 
-      ).
+            @Override public void onDismissEventManual(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
 
-          token(new Bundle()
+            @Override public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
 
-          ).
+            private void cancel() {
+              mParentFragmentActivity.runOnUiThread(new Runnable() {
+                @Override public void run() {
+                  try {
+                    compoundButton.setChecked(!enable);
+                    compoundButton.setEnabled(true);
+                  } finally {
+                    isToggleStateActionRunning.set(false);
+                  }
+                }
+              });
+            }
 
-          show();
+          }, new Bundle(), true);
+
+      //new UndoBarController.UndoBar(mParentFragmentActivity).message(
+      //    String.format("Wake on LAN Daemon will be %s on '%s' (%s). ",
+      //        enable ? "enabled" : "disabled", mRouter.getDisplayName(),
+      //        mRouter.getRemoteIpAddress())).listener(new UndoBarController.AdvancedUndoListener() {
+      //                                                  @Override public void onHide(@Nullable Parcelable parcelable) {
+      //
+      //                                                  }
+      //
+      //                                                  @Override public void onClear(@NonNull Parcelable[] parcelables) {
+      //
+      //                                                  }
+      //
+      //                                                  @Override public void onUndo(@Nullable Parcelable parcelable) {
+      //                                                    mParentFragmentActivity.runOnUiThread(new Runnable() {
+      //                                                      @Override public void run() {
+      //                                                        try {
+      //                                                          compoundButton.setChecked(!enable);
+      //                                                          compoundButton.setEnabled(true);
+      //                                                        } finally {
+      //                                                          isToggleStateActionRunning.set(false);
+      //                                                        }
+      //                                                      }
+      //                                                    });
+      //                                                  }
+      //                                                }
+      //
+      //).
+      //
+      //    token(new Bundle()
+      //
+      //    ).
+      //
+      //    show();
     }
   }
 }

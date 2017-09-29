@@ -65,9 +65,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import cn.nekocode.resinspector.ResourceInspector;
 import com.airbnb.deeplinkdispatch.DeepLink;
-import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.InterstitialAd;
@@ -82,8 +80,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.mikepenz.aboutlibraries.Libs;
-import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -95,6 +91,8 @@ import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.squareup.picasso.Picasso;
+import java.io.IOException;
+import org.json.JSONException;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -172,8 +170,6 @@ import static org.rm3l.router_companion.utils.Utils.fromHtml;
 import static org.rm3l.router_companion.web.WebUtils.DO_NOT_VERIFY;
 import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
 
-//import com.mikepenz.materialdrawer.util.RecyclerViewCacheUtil;
-
 /**
  * Main Android Activity
  * <p/>
@@ -181,7 +177,7 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
 @DeepLink({
     "ddwrt://routers/{routerUuid}", "dd-wrt://routers/{routerUuid}"
 }) public class DDWRTMainActivity extends AppCompatActivity
-    implements ViewPager.OnPageChangeListener, UndoBarController.AdvancedUndoListener,
+    implements ViewPager.OnPageChangeListener,
     RouterActionListener, RouterMgmtDialogListener, RouterRestoreDialogListener,
     NavigationView.OnNavigationItemSelectedListener, SnackbarCallback,
     CustomTabActivityHelper.ConnectionCallback {
@@ -1242,12 +1238,20 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
                 final Bundle token = new Bundle();
                 token.putString(ROUTER_ACTION, RouterAction.REBOOT.name());
 
-                new UndoBarController.UndoBar(DDWRTMainActivity.this).message(
+                SnackbarUtils.buildSnackbar(DDWRTMainActivity.this,
                     String.format("Router '%s' (%s) will be rebooted", displayName,
-                        mRouter.getRemoteIpAddress()))
-                    .listener(DDWRTMainActivity.this)
-                    .token(token)
-                    .show();
+                        mRouter.getRemoteIpAddress()),
+                    "CANCEL",
+                    Snackbar.LENGTH_LONG,
+                    DDWRTMainActivity.this,
+                    token, true);
+
+                //new UndoBarController.UndoBar(DDWRTMainActivity.this).message(
+                //    String.format("Router '%s' (%s) will be rebooted", displayName,
+                //        mRouter.getRemoteIpAddress()))
+                //    .listener(DDWRTMainActivity.this)
+                //    .token(token)
+                //    .show();
               }
             })
             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -1298,12 +1302,20 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
                 final Bundle token = new Bundle();
                 token.putString(ROUTER_ACTION, RouterAction.RESTORE_FACTORY_DEFAULTS.name());
 
-                new UndoBarController.UndoBar(DDWRTMainActivity.this).message(
+                SnackbarUtils.buildSnackbar(DDWRTMainActivity.this,
                     String.format("Router '%s' (%s) will be reset", displayName,
-                        mRouter.getRemoteIpAddress()))
-                    .listener(DDWRTMainActivity.this)
-                    .token(token)
-                    .show();
+                        mRouter.getRemoteIpAddress()),
+                    "CANCEL",
+                    Snackbar.LENGTH_LONG,
+                    DDWRTMainActivity.this,
+                    token, true);
+
+                //new UndoBarController.UndoBar(DDWRTMainActivity.this).message(
+                //    String.format("Router '%s' (%s) will be reset", displayName,
+                //        mRouter.getRemoteIpAddress()))
+                //    .listener(DDWRTMainActivity.this)
+                //    .token(token)
+                //    .show();
               }
             })
             .create()
@@ -1358,7 +1370,7 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
       case R.id.action_ddwrt_actions_clear_arp_cache: {
         SnackbarUtils.buildSnackbar(this,
             String.format("ARP Cache will be flushed on '%s' (%s)...", mRouter.getDisplayName(),
-                mRouter.getRemoteIpAddress()), "Undo", Snackbar.LENGTH_SHORT,
+                mRouter.getRemoteIpAddress()), "CANCEL", Snackbar.LENGTH_SHORT,
             new SnackbarCallback() {
               @Override public void onShowEvent(@Nullable Bundle bundle) throws Exception {
 
@@ -1397,7 +1409,7 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
       case R.id.action_ddwrt_actions_clear_dns_cache: {
         SnackbarUtils.buildSnackbar(this,
             String.format("DNS Cache will be flushed on '%s' (%s)...", mRouter.getDisplayName(),
-                mRouter.getRemoteIpAddress()), "Undo", Snackbar.LENGTH_SHORT,
+                mRouter.getRemoteIpAddress()), "CANCEL", Snackbar.LENGTH_SHORT,
             new SnackbarCallback() {
               @Override public void onShowEvent(@Nullable Bundle bundle) throws Exception {
 
@@ -1453,7 +1465,7 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
         }
         SnackbarUtils.buildSnackbar(this,
             String.format("Web Server (httpd) will be %s on '%s' (%s)...", actionMessage,
-                mRouter.getDisplayName(), mRouter.getRemoteIpAddress()), "Undo",
+                mRouter.getDisplayName(), mRouter.getRemoteIpAddress()), "CANCEL",
             Snackbar.LENGTH_SHORT, new SnackbarCallback() {
               @Override public void onShowEvent(@Nullable Bundle bundle) throws Exception {
 
@@ -1510,12 +1522,20 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
             final Bundle token = new Bundle();
             token.putString(ROUTER_ACTION, RouterAction.BACKUP.name());
 
-            new UndoBarController.UndoBar(DDWRTMainActivity.this).message(
+            SnackbarUtils.buildSnackbar(DDWRTMainActivity.this,
                 String.format("Backup of Router '%s' (%s) is going to start...", displayName,
-                    mRouter.getRemoteIpAddress()))
-                .listener(DDWRTMainActivity.this)
-                .token(token)
-                .show();
+                    mRouter.getRemoteIpAddress()),
+                "CANCEL",
+                Snackbar.LENGTH_LONG,
+                DDWRTMainActivity.this,
+                token, true);
+
+            //new UndoBarController.UndoBar(DDWRTMainActivity.this).message(
+            //    String.format("Backup of Router '%s' (%s) is going to start...", displayName,
+            //        mRouter.getRemoteIpAddress()))
+            //    .listener(DDWRTMainActivity.this)
+            //    .token(token)
+            //    .show();
           }
         })
         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -1587,8 +1607,8 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
   }
 
   private void setUpViewPager() {
-    mViewPager = (ViewPager) findViewById(R.id.tabanim_viewpager);
-    mTabLayout = (TabLayout) findViewById(R.id.tabanim_tabs);
+    mViewPager = findViewById(R.id.tabanim_viewpager);
+    mTabLayout = findViewById(R.id.tabanim_tabs);
     mTabLayout.setSelectedTabIndicatorColor(
         ColorUtils.Companion.getColor(DDWRTMainActivity.class.getCanonicalName()));
 
@@ -1681,150 +1701,6 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
    * @see android.support.v4.view.ViewPager#SCROLL_STATE_SETTLING
    */
   @Override public void onPageScrollStateChanged(int state) {
-  }
-
-  @Override public void onUndo(@android.support.annotation.Nullable Parcelable parcelable) {
-    //Nothing to do
-  }
-
-  @Override public void onHide(@android.support.annotation.Nullable Parcelable parcelable) {
-    if (parcelable instanceof Bundle) {
-      final Bundle token = (Bundle) parcelable;
-      final String routerAction = token.getString(ROUTER_ACTION);
-      Crashlytics.log(Log.DEBUG, TAG, "routerAction: [" + routerAction + "]");
-      if (isNullOrEmpty(routerAction)) {
-        return;
-      }
-      try {
-        switch (RouterAction.valueOf(routerAction)) {
-          case REBOOT:
-            ActionManager.runTasks(new RebootRouterAction(mRouter, this, this, mGlobalPreferences));
-            break;
-          case RESTORE_FACTORY_DEFAULTS:
-            ActionManager.runTasks(
-                new RestoreRouterDefaultsAction(mRouter, this, this, mGlobalPreferences));
-            break;
-          case UPGRADE_FIRMWARE:
-            //TODO
-            break;
-          case BACKUP:
-            final AlertDialog alertDialog = Utils.
-                buildAlertDialog(DDWRTMainActivity.this, null, "Backing up - please hold on...",
-                    false, false);
-            alertDialog.show();
-            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(
-                Gravity.CENTER_HORIZONTAL);
-            ActionManager.runTasks(
-                new BackupRouterAction(mRouter, DDWRTMainActivity.this, new RouterActionListener() {
-                  @Override public void onRouterActionSuccess(@NonNull RouterAction routerAction,
-                      @NonNull Router router, Object returnData) {
-                    try {
-                      String msg;
-                      if (!((returnData instanceof Object[])
-                          && ((Object[]) returnData).length >= 2)) {
-                        msg = String.format("Action '%s' executed "
-                                + "successfully on host '%s', but an internal error occurred. "
-                                + "The issue will be reported. Please try again later.",
-                            routerAction.toString(), router.getRemoteIpAddress());
-                        Utils.displayMessage(DDWRTMainActivity.this, msg, Style.INFO);
-                        ReportingUtils.reportException(DDWRTMainActivity.this,
-                            new IllegalStateException(msg));
-                        return;
-                      }
-
-                      final Object[] returnDataObjectArray = ((Object[]) returnData);
-                      final Object backupDateObject = returnDataObjectArray[0];
-                      final Object localBackupFileObject = returnDataObjectArray[1];
-
-                      if (!((backupDateObject instanceof Date)
-                          && (localBackupFileObject instanceof File))) {
-                        msg = String.format("Action '%s' executed "
-                                + "successfully on host '%s', but could not determine where "
-                                + "local backup file has been saved. Please try again later.",
-                            routerAction.toString(), router.getRemoteIpAddress());
-                        Utils.displayMessage(DDWRTMainActivity.this, msg, Style.INFO);
-                        ReportingUtils.reportException(DDWRTMainActivity.this,
-                            new IllegalStateException(msg));
-                        return;
-                      }
-
-                      Utils.displayMessage(DDWRTMainActivity.this, String.format(
-                          "Action '%s' executed successfully on host '%s'. "
-                              + "Now loading the file sharing activity chooser...",
-                          routerAction.toString(), router.getRemoteIpAddress()), Style.CONFIRM);
-
-                      final File localBackupFile = (File) (((Object[]) returnData)[1]);
-                      final Date backupDate = (Date) (((Object[]) returnData)[0]);
-
-                      final Uri uriForFile = FileProvider.getUriForFile(DDWRTMainActivity.this,
-                          RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY, localBackupFile);
-                      grantUriPermission(getPackageName(), uriForFile,
-                          Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-                      final Intent shareIntent = new Intent();
-                      shareIntent.setAction(Intent.ACTION_SEND);
-                      shareIntent.putExtra(Intent.EXTRA_SUBJECT,
-                          String.format("Backup of Router '%s'",
-                              mRouter.getCanonicalHumanReadableName()));
-                      shareIntent.setType("text/html");
-                      shareIntent.putExtra(Intent.EXTRA_TEXT, fromHtml(("Backup Date: "
-                          + backupDate
-                          + "\n\n"
-                          + "You may restore your router later using this Backup Configuration file.\n"
-                          + "Restoring can be performed either via the 'DD-WRT Companion' app, or using "
-                          + "the Web Management Interface.\n"
-                          + "Restoring will overwrite all current configurations "
-                          + "with the ones in this backup file.\n"
-                          + "\n"
-                          + "Please also note that you must only "
-                          + "restore configurations with files "
-                          + "backed up using the same firmware and "
-                          + "the same model of router.\n\n\n").replaceAll("\n", "<br/>")
-                          + Utils.getShareIntentFooter()));
-                      shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
-                      //                                            shareIntent.setType("*/*");
-                      startActivity(Intent.createChooser(shareIntent,
-                          getResources().getText(R.string.share_backup)));
-                    } finally {
-                      runOnUiThread(new Runnable() {
-                        @Override public void run() {
-                          alertDialog.cancel();
-                        }
-                      });
-                    }
-                  }
-
-                  @Override public void onRouterActionFailure(@NonNull RouterAction routerAction,
-                      @NonNull Router router, @Nullable Exception exception) {
-                    try {
-                      Utils.displayMessage(DDWRTMainActivity.this,
-                          String.format("Error on action '%s': %s", routerAction.toString(),
-                              Utils.handleException(exception).first), Style.ALERT);
-                    } finally {
-                      runOnUiThread(new Runnable() {
-                        @Override public void run() {
-                          alertDialog.cancel();
-                        }
-                      });
-                    }
-                  }
-                }, mGlobalPreferences));
-            break;
-          case RESTORE:
-            //TODO
-            break;
-          default:
-            //Ignored
-            break;
-        }
-      } catch (IllegalArgumentException | NullPointerException e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
-  @Override public void onClear(@NonNull Parcelable[] parcelables) {
-    //Nothing to do
   }
 
   @Override
@@ -1926,10 +1802,18 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
 
   }
 
-  @Override public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
+  @Override public void onDismissEventTimeout(int event, @Nullable Bundle token) throws Exception {
+    final String routerAction = token != null ? token.getString(ROUTER_ACTION) : null;
+    Crashlytics.log(Log.DEBUG, TAG, "routerAction: [" + routerAction + "]");
+    if (!isNullOrEmpty(routerAction)) {
+      handleRouterAction(routerAction);
+    } else {
+      handleMainActivityAction(token);
+    }
+  }
 
-    final Integer action = bundle != null ? bundle.getInt(MAIN_ACTIVITY_ACTION) : null;
-
+  private void handleMainActivityAction(@Nullable Bundle token) throws JSONException, IOException {
+    final Integer action = token != null ? token.getInt(MAIN_ACTIVITY_ACTION) : null;
     if (action == null) {
       return;
     }
@@ -1974,8 +1858,7 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
         StorageUtils.createDirectoryOrRaiseException(aliasesDir);
 
         final File outputFile = new File(aliasesDir, Utils.getEscapedFileName(
-            String.format("Aliases_for_%s_%s_%s", mRouter.getDisplayName(),
-                mRouter.getRemoteIpAddress(), mRouter.getUuid())) + ".json");
+            String.format("Aliases_for_%s_%s_%s", mRouter.getDisplayName(), mRouter.getRemoteIpAddress(), mRouter.getUuid())) + ".json");
 
         final Date backupDate = new Date();
         final String aliasesStr = new JSONObject(aliases).toString(2);
@@ -1991,29 +1874,25 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
         }
 
         Utils.displayMessage(this, String.format(
-            "Action 'Export Aliases' executed successfully on host '%s'. " + "Path: '%s'",
-            mRouter.getRemoteIpAddress(), outputFile.getAbsolutePath()), Style.CONFIRM);
+            "Action 'Export Aliases' executed successfully on host '%s'. " + "Path: '%s'", mRouter.getRemoteIpAddress(), outputFile.getAbsolutePath()), Style.CONFIRM);
 
         try {
           //Now allow user to share file if needed
-          final Uri uriForFile =
-              FileProvider.getUriForFile(this, RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY,
-                  outputFile);
-          this.grantUriPermission(this.getPackageName(), uriForFile,
-              Intent.FLAG_GRANT_READ_URI_PERMISSION);
+          final Uri uriForFile = FileProvider.getUriForFile(this, RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY,
+              outputFile);
+          this.grantUriPermission(this.getPackageName(), uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
           final Intent shareIntent = new Intent();
           shareIntent.setAction(Intent.ACTION_SEND);
-          shareIntent.putExtra(Intent.EXTRA_SUBJECT, String.format("Aliases Backup for Router '%s'",
-              mRouter.getCanonicalHumanReadableName()));
+          shareIntent.putExtra(Intent.EXTRA_SUBJECT,
+              String.format("Aliases Backup for Router '%s'", mRouter.getCanonicalHumanReadableName()));
           shareIntent.setType("text/html");
           shareIntent.putExtra(Intent.EXTRA_TEXT, fromHtml(
               ("Backup Date: " + backupDate + "\n\n" + aliasesStr + "\n\n\n").replaceAll("\n",
                   "<br/>") + Utils.getShareIntentFooter()));
           shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
           //                                            shareIntent.setType("*/*");
-          this.startActivity(Intent.createChooser(shareIntent,
-              this.getResources().getText(R.string.share_backup)));
+          this.startActivity(Intent.createChooser(shareIntent, this.getResources().getText(R.string.share_backup)));
         } catch (final Exception e) {
           e.printStackTrace();
           Utils.reportException(this, e);
@@ -2024,6 +1903,120 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
       default:
         //Ignored
         break;
+    }
+  }
+
+  private void handleRouterAction(String routerAction) {
+    try {
+      switch (RouterAction.valueOf(routerAction)) {
+        case REBOOT:
+          ActionManager.runTasks(new RebootRouterAction(mRouter, this, this, mGlobalPreferences));
+          break;
+        case RESTORE_FACTORY_DEFAULTS:
+          ActionManager.runTasks(
+              new RestoreRouterDefaultsAction(mRouter, this, this, mGlobalPreferences));
+          break;
+        case UPGRADE_FIRMWARE:
+          //TODO
+          break;
+        case BACKUP:
+          final AlertDialog alertDialog = Utils.
+              buildAlertDialog(DDWRTMainActivity.this, null, "Backing up - please hold on...",
+                  false, false);
+          alertDialog.show();
+          ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+          ActionManager.runTasks(new BackupRouterAction(mRouter, DDWRTMainActivity.this, new RouterActionListener() {
+            @Override public void onRouterActionSuccess(@NonNull RouterAction routerAction,
+                @NonNull Router router, Object returnData) {
+              try {
+                String msg;
+                if (!((returnData instanceof Object[]) && ((Object[]) returnData).length >= 2)) {
+                  msg = String.format("Action '%s' executed "
+                      + "successfully on host '%s', but an internal error occurred. "
+                      + "The issue will be reported. Please try again later.", routerAction.toString(), router.getRemoteIpAddress());
+                  Utils.displayMessage(DDWRTMainActivity.this, msg, Style.INFO);
+                  ReportingUtils.reportException(DDWRTMainActivity.this, new IllegalStateException(msg));
+                  return;
+                }
+
+                final Object[] returnDataObjectArray = ((Object[]) returnData);
+                final Object backupDateObject = returnDataObjectArray[0];
+                final Object localBackupFileObject = returnDataObjectArray[1];
+
+                if (!((backupDateObject instanceof Date) && (localBackupFileObject instanceof File))) {
+                  msg = String.format("Action '%s' executed "
+                      + "successfully on host '%s', but could not determine where "
+                      + "local backup file has been saved. Please try again later.", routerAction.toString(), router.getRemoteIpAddress());
+                  Utils.displayMessage(DDWRTMainActivity.this, msg, Style.INFO);
+                  ReportingUtils.reportException(DDWRTMainActivity.this, new IllegalStateException(msg));
+                  return;
+                }
+
+                Utils.displayMessage(DDWRTMainActivity.this, String.format(
+                    "Action '%s' executed successfully on host '%s'. " + "Now loading the file sharing activity chooser...",
+                    routerAction.toString(), router.getRemoteIpAddress()), Style.CONFIRM);
+
+                final File localBackupFile = (File) (((Object[]) returnData)[1]);
+                final Date backupDate = (Date) (((Object[]) returnData)[0]);
+
+                final Uri uriForFile = FileProvider.getUriForFile(DDWRTMainActivity.this,
+                    RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY, localBackupFile);
+                grantUriPermission(getPackageName(), uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                final Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT,
+                    String.format("Backup of Router '%s'", mRouter.getCanonicalHumanReadableName()));
+                shareIntent.setType("text/html");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, fromHtml(("Backup Date: "
+                    + backupDate
+                    + "\n\n"
+                    + "You may restore your router later using this Backup Configuration file.\n"
+                    + "Restoring can be performed either via the 'DD-WRT Companion' app, or using "
+                    + "the Web Management Interface.\n"
+                    + "Restoring will overwrite all current configurations "
+                    + "with the ones in this backup file.\n"
+                    + "\n"
+                    + "Please also note that you must only "
+                    + "restore configurations with files "
+                    + "backed up using the same firmware and "
+                    + "the same model of router.\n\n\n").replaceAll("\n", "<br/>") + Utils.getShareIntentFooter()));
+                shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+                //                                            shareIntent.setType("*/*");
+                startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.share_backup)));
+              } finally {
+                runOnUiThread(new Runnable() {
+                  @Override public void run() {
+                    alertDialog.cancel();
+                  }
+                });
+              }
+            }
+
+            @Override public void onRouterActionFailure(@NonNull RouterAction routerAction,
+                @NonNull Router router, @Nullable Exception exception) {
+              try {
+                Utils.displayMessage(DDWRTMainActivity.this,
+                    String.format("Error on action '%s': %s", routerAction.toString(), Utils.handleException(exception).first), Style.ALERT);
+              } finally {
+                runOnUiThread(new Runnable() {
+                  @Override public void run() {
+                    alertDialog.cancel();
+                  }
+                });
+              }
+            }
+          }, mGlobalPreferences));
+          break;
+        case RESTORE:
+          //TODO
+          break;
+        default:
+          //Ignored
+          break;
+      }
+    } catch (IllegalArgumentException | NullPointerException e) {
+      e.printStackTrace();
     }
   }
 

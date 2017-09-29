@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -17,11 +18,12 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -295,7 +297,7 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
       }
 
       final TextView errorPlaceHolderView =
-          (TextView) this.layout.findViewById(R.id.tile_services_pptp_client_error);
+          this.layout.findViewById(R.id.tile_services_pptp_client_error);
 
       final Exception exception = data.getException();
 
@@ -311,8 +313,7 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
         updateTileDisplayData(data, true);
 
         //Update last sync
-        final RelativeTimeTextView lastSyncView =
-            (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+        final RelativeTimeTextView lastSyncView = layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }
@@ -485,156 +486,201 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
 
       nvramInfoToSet.setProperty(NVRAMInfo.Companion.getPPTPD_CLIENT_ENABLE(), enable ? "1" : "0");
 
-      new UndoBarController.UndoBar(mParentFragmentActivity).message(
+      SnackbarUtils.buildSnackbar(mParentFragmentActivity,
           String.format("PPTP Client will be %s on '%s' (%s). ", enable ? "enabled" : "disabled",
-              mRouter.getDisplayName(), mRouter.getRemoteIpAddress()))
-          .listener(new UndoBarController.AdvancedUndoListener() {
-                      @Override public void onHide(@Nullable Parcelable parcelable) {
+              mRouter.getDisplayName(), mRouter.getRemoteIpAddress()), "CANCEL",
+          Snackbar.LENGTH_LONG, new SnackbarCallback() {
+            @Override public void onShowEvent(@Nullable Bundle bundle) throws Exception {
 
-                        final RouterActionListener listener = new RouterActionListener() {
-                          @Override public void onRouterActionSuccess(@NonNull RouterAction routerAction,
-                              @NonNull final Router router, Object returnData) {
-                            mParentFragmentActivity.runOnUiThread(new Runnable() {
-                              @Override public void run() {
+            }
 
-                                try {
-                                  compoundButton.setChecked(enable);
-                                  Utils.displayMessage(mParentFragmentActivity,
-                                      String.format("PPTP Client %s successfully on host '%s' (%s). ",
-                                          enable ? "enabled" : "disabled", router.getDisplayName(),
-                                          router.getRemoteIpAddress()), Style.CONFIRM);
-                                } finally {
-                                  compoundButton.setEnabled(true);
-                                  isToggleStateActionRunning.set(false);
-                                  if (mLoader != null) {
-                                    //Reload everything right away
-                                    doneWithLoaderInstance(PPTPClientTile.this, mLoader, 1l);
-                                  }
-                                }
-                              }
-                            });
-                          }
+            @Override public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
 
-                          @Override public void onRouterActionFailure(@NonNull RouterAction routerAction,
-                              @NonNull final Router router, @Nullable final Exception exception) {
-                            mParentFragmentActivity.runOnUiThread(new Runnable() {
-                              @Override public void run() {
-                                try {
-                                  compoundButton.setChecked(!enable);
-                                  Utils.displayMessage(mParentFragmentActivity,
-                                      String.format("Error while trying to %s PPTP Client on '%s' (%s): %s",
-                                          enable ? "enable" : "disable", router.getDisplayName(),
-                                          router.getRemoteIpAddress(),
-                                          Utils.handleException(exception).first), Style.ALERT);
-                                } finally {
-                                  compoundButton.setEnabled(true);
-                                  isToggleStateActionRunning.set(false);
-                                }
-                              }
-                            });
-                          }
-                        };
+            @Override public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
 
-                        final boolean openvpnClStatusToSet = !enable;
+            @Override public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
+                throws Exception {
+              final RouterActionListener listener = new RouterActionListener() {
+                @Override public void onRouterActionSuccess(@NonNull RouterAction routerAction,
+                    @NonNull final Router router, Object returnData) {
+                  mParentFragmentActivity.runOnUiThread(new Runnable() {
+                    @Override public void run() {
 
-                        if (mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
-                            VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE, false)) {
-
-                          new AlertDialog.Builder(mParentFragmentActivity).setIcon(
-                              R.drawable.ic_action_alert_warning)
-                              .setTitle("Toggle OpenVPN Client status")
-                              .setMessage(String.format(Locale.US,
-                                  "Router will be rebooted. Do you wish to %s OpenVPN Client at the same time?",
-                                  openvpnClStatusToSet ? "start" : "stop"))
-                              .setCancelable(true)
-                              .setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
-                                @Override public void onClick(DialogInterface dialog, int which) {
-                                  nvramInfoToSet.setProperty(
-                                      NVRAMInfo.Companion.getOPENVPNCL_ENABLE(),
-                                      openvpnClStatusToSet ? "1" : "0");
-                                  Utils.displayMessage(mParentFragmentActivity,
-                                      String.format("%s PPTP Client (and %s OpenVPN Client) ...",
-                                          enable ? "Enabling" : "Disabling",
-                                          openvpnClStatusToSet ? "Enabling" : "Disabling"), Style.INFO);
-
-                                  ActionManager.runTasks(
-                                      new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity,
-                                          nvramInfoToSet, true, listener, mGlobalPreferences));
-                                }
-                              })
-                              .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                @Override public void onClick(DialogInterface dialogInterface, int i) {
-
-                                  Utils.displayMessage(mParentFragmentActivity,
-                                      String.format("%s PPTP Client...", enable ? "Enabling" : "Disabling"),
-                                      Style.INFO);
-
-                                  ActionManager.runTasks(
-                                      new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity,
-                                          nvramInfoToSet, true, listener, mGlobalPreferences));
-                                }
-                              })
-                              .create()
-                              .show();
-                        } else {
-                          Utils.displayMessage(mParentFragmentActivity,
-                              String.format("%s PPTP Client...", enable ? "Enabling" : "Disabling"),
-                              Style.INFO);
-
-                          ActionManager.runTasks(
-                              new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfoToSet,
-                                  true, listener, mGlobalPreferences));
+                      try {
+                        compoundButton.setChecked(enable);
+                        Utils.displayMessage(mParentFragmentActivity,
+                            String.format("PPTP Client %s successfully on host '%s' (%s). ",
+                                enable ? "enabled" : "disabled", router.getDisplayName(),
+                                router.getRemoteIpAddress()), Style.CONFIRM);
+                      } finally {
+                        compoundButton.setEnabled(true);
+                        isToggleStateActionRunning.set(false);
+                        if (mLoader != null) {
+                          //Reload everything right away
+                          doneWithLoaderInstance(PPTPClientTile.this, mLoader, 1l);
                         }
-
-                        //                                      Utils.displayMessage(mParentFragmentActivity,
-                        //                                              String.format("%s PPTP Client...",
-                        //                                                      enable ? "Enabling" : "Disabling"),
-                        //                                              Style.INFO);
-
-                        //                                      new SetNVRAMVariablesAction(mParentFragmentActivity,
-                        //                                              nvramInfoToSet,
-                        //                                              true,
-                        //                                              listener,
-                        //                                              mGlobalPreferences).execute(mRouter);
-
-                      }
-
-                      @Override public void onClear(@NonNull Parcelable[] parcelables) {
-                        mParentFragmentActivity.runOnUiThread(new Runnable() {
-                          @Override public void run() {
-                            try {
-                              compoundButton.setChecked(!enable);
-                              compoundButton.setEnabled(true);
-                            } finally {
-                              isToggleStateActionRunning.set(false);
-                            }
-                          }
-                        });
-                      }
-
-                      @Override public void onUndo(@Nullable Parcelable parcelable) {
-                        mParentFragmentActivity.runOnUiThread(new Runnable() {
-                          @Override public void run() {
-                            try {
-                              compoundButton.setChecked(!enable);
-                              compoundButton.setEnabled(true);
-                            } finally {
-                              isToggleStateActionRunning.set(false);
-                            }
-                          }
-                        });
                       }
                     }
+                  });
+                }
 
-          )
-          .
+                @Override public void onRouterActionFailure(@NonNull RouterAction routerAction,
+                    @NonNull final Router router, @Nullable final Exception exception) {
+                  mParentFragmentActivity.runOnUiThread(new Runnable() {
+                    @Override public void run() {
+                      try {
+                        compoundButton.setChecked(!enable);
+                        Utils.displayMessage(mParentFragmentActivity,
+                            String.format("Error while trying to %s PPTP Client on '%s' (%s): %s",
+                                enable ? "enable" : "disable", router.getDisplayName(),
+                                router.getRemoteIpAddress(),
+                                Utils.handleException(exception).first), Style.ALERT);
+                      } finally {
+                        compoundButton.setEnabled(true);
+                        isToggleStateActionRunning.set(false);
+                      }
+                    }
+                  });
+                }
+              };
 
-              token(new Bundle()
+              final boolean openvpnClStatusToSet = !enable;
 
-              )
-          .
+              if (mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
+                  VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE, false)) {
 
-              show();
+                new AlertDialog.Builder(mParentFragmentActivity).setIcon(
+                    R.drawable.ic_action_alert_warning)
+                    .setTitle("Toggle OpenVPN Client status")
+                    .setMessage(String.format(Locale.US,
+                        "Router will be rebooted. Do you wish to %s OpenVPN Client at the same time?",
+                        openvpnClStatusToSet ? "start" : "stop"))
+                    .setCancelable(true)
+                    .setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
+                      @Override public void onClick(DialogInterface dialog, int which) {
+                        nvramInfoToSet.setProperty(
+                            NVRAMInfo.Companion.getOPENVPNCL_ENABLE(),
+                            openvpnClStatusToSet ? "1" : "0");
+                        Utils.displayMessage(mParentFragmentActivity,
+                            String.format("%s PPTP Client (and %s OpenVPN Client) ...",
+                                enable ? "Enabling" : "Disabling",
+                                openvpnClStatusToSet ? "Enabling" : "Disabling"), Style.INFO);
+
+                        ActionManager.runTasks(
+                            new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity,
+                                nvramInfoToSet, true, listener, mGlobalPreferences));
+                      }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                      @Override public void onClick(DialogInterface dialogInterface, int i) {
+
+                        Utils.displayMessage(mParentFragmentActivity,
+                            String.format("%s PPTP Client...", enable ? "Enabling" : "Disabling"),
+                            Style.INFO);
+
+                        ActionManager.runTasks(
+                            new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity,
+                                nvramInfoToSet, true, listener, mGlobalPreferences));
+                      }
+                    })
+                    .create()
+                    .show();
+              } else {
+                Utils.displayMessage(mParentFragmentActivity,
+                    String.format("%s PPTP Client...", enable ? "Enabling" : "Disabling"),
+                    Style.INFO);
+
+                ActionManager.runTasks(
+                    new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfoToSet,
+                        true, listener, mGlobalPreferences));
+              }
+
+              //                                      Utils.displayMessage(mParentFragmentActivity,
+              //                                              String.format("%s PPTP Client...",
+              //                                                      enable ? "Enabling" : "Disabling"),
+              //                                              Style.INFO);
+
+              //                                      new SetNVRAMVariablesAction(mParentFragmentActivity,
+              //                                              nvramInfoToSet,
+              //                                              true,
+              //                                              listener,
+              //                                              mGlobalPreferences).execute(mRouter);
+
+            }
+
+            @Override public void onDismissEventManual(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
+
+            @Override public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
+
+            private void cancel() {
+              mParentFragmentActivity.runOnUiThread(new Runnable() {
+                @Override public void run() {
+                  try {
+                    compoundButton.setChecked(!enable);
+                    compoundButton.setEnabled(true);
+                  } finally {
+                    isToggleStateActionRunning.set(false);
+                  }
+                }
+              });
+            }
+          }, new Bundle(), true);
+
+      //new UndoBarController.UndoBar(mParentFragmentActivity).message(
+      //    String.format("PPTP Client will be %s on '%s' (%s). ", enable ? "enabled" : "disabled",
+      //        mRouter.getDisplayName(), mRouter.getRemoteIpAddress()))
+      //    .listener(new UndoBarController.AdvancedUndoListener() {
+      //                @Override public void onHide(@Nullable Parcelable parcelable) {
+      //                }
+      //
+      //                @Override public void onClear(@NonNull Parcelable[] parcelables) {
+      //                  mParentFragmentActivity.runOnUiThread(new Runnable() {
+      //                    @Override public void run() {
+      //                      try {
+      //                        compoundButton.setChecked(!enable);
+      //                        compoundButton.setEnabled(true);
+      //                      } finally {
+      //                        isToggleStateActionRunning.set(false);
+      //                      }
+      //                    }
+      //                  });
+      //                }
+      //
+      //                @Override public void onUndo(@Nullable Parcelable parcelable) {
+      //                  mParentFragmentActivity.runOnUiThread(new Runnable() {
+      //                    @Override public void run() {
+      //                      try {
+      //                        compoundButton.setChecked(!enable);
+      //                        compoundButton.setEnabled(true);
+      //                      } finally {
+      //                        isToggleStateActionRunning.set(false);
+      //                      }
+      //                    }
+      //                  });
+      //                }
+      //              }
+      //
+      //    )
+      //    .
+      //
+      //        token(new Bundle()
+      //
+      //        )
+      //    .
+      //
+      //        show();
     }
   }
 }

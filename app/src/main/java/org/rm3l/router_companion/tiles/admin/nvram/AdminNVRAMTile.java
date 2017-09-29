@@ -191,7 +191,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
     Log.d(LOG_TAG, "<width,height> = <" + width + "," + height + ">");
     mRecyclerView.setMinimumHeight(size.y);
 
-    addNewButton = (FloatingActionButton) layout.findViewById(R.id.nvram_var_add);
+    addNewButton = layout.findViewById(R.id.nvram_var_add);
 
     addNewButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {

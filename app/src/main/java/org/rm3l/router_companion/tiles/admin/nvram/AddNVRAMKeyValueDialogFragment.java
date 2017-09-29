@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
@@ -37,10 +38,11 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.cocosw.undobar.UndoBarController;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.Utils;
+import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 
 import static org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style.ALERT;
 import static org.rm3l.router_companion.tiles.admin.nvram.EditNVRAMKeyValueDialogFragment.ACTION;
@@ -49,13 +51,13 @@ public class AddNVRAMKeyValueDialogFragment extends DialogFragment {
 
   public static final String KEY = \"fake-key\";
   public static final String VALUE = "value";
-  private UndoBarController.UndoListener undoListener;
+  private SnackbarCallback snackbarCallback;
 
   @NonNull public static AddNVRAMKeyValueDialogFragment newInstance(
-      UndoBarController.UndoListener undoListener) {
+      SnackbarCallback snackbarCallback) {
     final AddNVRAMKeyValueDialogFragment fragment = new AddNVRAMKeyValueDialogFragment();
 
-    fragment.undoListener = undoListener;
+    fragment.snackbarCallback = snackbarCallback;
 
     final Bundle args = new Bundle();
     fragment.setArguments(args);
@@ -149,11 +151,18 @@ public class AddNVRAMKeyValueDialogFragment extends DialogFragment {
           token.putCharSequence(KEY, variableKey);
           token.putInt(ACTION, EditNVRAMKeyValueDialogFragment.ADD);
 
-          new UndoBarController.UndoBar(getActivity()).message(
-              String.format("Variable '%s' will be added", variableKey))
-              .listener(undoListener)
-              .token(token)
-              .show();
+          SnackbarUtils.buildSnackbar(getActivity(),
+              String.format("Variable '%s' will be added", variableKey),
+              "CANCEL",
+              Snackbar.LENGTH_LONG,
+              snackbarCallback,
+              token, true);
+
+          //new UndoBarController.UndoBar(getActivity()).message(
+          //    String.format("Variable '%s' will be added", variableKey))
+          //    .listener(snackbarCallback)
+          //    .token(token)
+          //    .show();
 
           d.cancel();
         }

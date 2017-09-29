@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -14,10 +15,11 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Throwables;
+import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -342,101 +344,148 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
 
       nvramInfoToSet.setProperty(NVRAMInfo.Companion.getOPENVPN_ENABLE(), enable ? "1" : "0");
 
-      new UndoBarController.UndoBar(mParentFragmentActivity).message(
+      SnackbarUtils.buildSnackbar(mParentFragmentActivity,
           String.format("OpenVPN Server will be %s on '%s' (%s). ", enable ? "enabled" : "disabled",
-              mRouter.getDisplayName(), mRouter.getRemoteIpAddress()))
-          .listener(new UndoBarController.AdvancedUndoListener() {
-                      @Override public void onHide(@Nullable Parcelable parcelable) {
+              mRouter.getDisplayName(), mRouter.getRemoteIpAddress()), "CANCEL",
+          Snackbar.LENGTH_LONG, new SnackbarCallback() {
+            @Override public void onShowEvent(@Nullable Bundle bundle) throws Exception {
 
-                        Utils.displayMessage(mParentFragmentActivity,
-                            String.format("%s OpenVPN Server...", enable ? "Enabling" : "Disabling"),
-                            Style.INFO);
+            }
 
-                        ActionManager.runTasks(
-                            new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfoToSet,
-                                true, new RouterActionListener() {
-                              @Override public void onRouterActionSuccess(@NonNull RouterAction routerAction,
-                                  @NonNull final Router router, Object returnData) {
-                                mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                  @Override public void run() {
+            private void cancel() {
+              mParentFragmentActivity.runOnUiThread(new Runnable() {
+                @Override public void run() {
+                  try {
+                    compoundButton.setChecked(!enable);
+                    compoundButton.setEnabled(true);
+                  } finally {
+                    isToggleStateActionRunning.set(false);
+                  }
+                }
+              });
+            }
 
-                                    try {
-                                      compoundButton.setChecked(enable);
-                                      Utils.displayMessage(mParentFragmentActivity,
-                                          String.format("OpenVPN Server %s successfully on host '%s' (%s). ",
-                                              enable ? "enabled" : "disabled", router.getDisplayName(),
-                                              router.getRemoteIpAddress()), Style.CONFIRM);
-                                    } finally {
-                                      compoundButton.setEnabled(true);
-                                      isToggleStateActionRunning.set(false);
-                                      if (mLoader != null) {
-                                        //Reload everything right away
-                                        doneWithLoaderInstance(OpenVPNServerTile.this, mLoader, 1l);
-                                      }
-                                    }
-                                  }
-                                });
-                              }
+            @Override public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
 
-                              @Override public void onRouterActionFailure(@NonNull RouterAction routerAction,
-                                  @NonNull final Router router, @Nullable final Exception exception) {
-                                mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                  @Override public void run() {
-                                    try {
-                                      compoundButton.setChecked(!enable);
-                                      Utils.displayMessage(mParentFragmentActivity, String.format(
-                                          "Error while trying to %s OpenVPN Server on '%s' (%s): %s",
-                                          enable ? "enable" : "disable", router.getDisplayName(),
-                                          router.getRemoteIpAddress(),
-                                          Utils.handleException(exception).first), Style.ALERT);
-                                    } finally {
-                                      compoundButton.setEnabled(true);
-                                      isToggleStateActionRunning.set(false);
-                                    }
-                                  }
-                                });
-                              }
-                            }
+            @Override public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
 
-                                , mGlobalPreferences));
-                      }
+            @Override public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
+                throws Exception {
+              Utils.displayMessage(mParentFragmentActivity,
+                  String.format("%s OpenVPN Server...", enable ? "Enabling" : "Disabling"),
+                  Style.INFO);
 
-                      @Override public void onClear(@NonNull Parcelable[] parcelables) {
-                        mParentFragmentActivity.runOnUiThread(new Runnable() {
-                          @Override public void run() {
-                            try {
-                              compoundButton.setChecked(!enable);
-                              compoundButton.setEnabled(true);
-                            } finally {
-                              isToggleStateActionRunning.set(false);
+              ActionManager.runTasks(
+                  new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfoToSet,
+                      true, new RouterActionListener() {
+                    @Override public void onRouterActionSuccess(@NonNull RouterAction routerAction,
+                        @NonNull final Router router, Object returnData) {
+                      mParentFragmentActivity.runOnUiThread(new Runnable() {
+                        @Override public void run() {
+
+                          try {
+                            compoundButton.setChecked(enable);
+                            Utils.displayMessage(mParentFragmentActivity,
+                                String.format("OpenVPN Server %s successfully on host '%s' (%s). ",
+                                    enable ? "enabled" : "disabled", router.getDisplayName(),
+                                    router.getRemoteIpAddress()), Style.CONFIRM);
+                          } finally {
+                            compoundButton.setEnabled(true);
+                            isToggleStateActionRunning.set(false);
+                            if (mLoader != null) {
+                              //Reload everything right away
+                              doneWithLoaderInstance(OpenVPNServerTile.this, mLoader, 1l);
                             }
                           }
-                        });
-                      }
-
-                      @Override public void onUndo(@Nullable Parcelable parcelable) {
-                        mParentFragmentActivity.runOnUiThread(new Runnable() {
-                          @Override public void run() {
-                            try {
-                              compoundButton.setChecked(!enable);
-                              compoundButton.setEnabled(true);
-                            } finally {
-                              isToggleStateActionRunning.set(false);
-                            }
-                          }
-                        });
-                      }
+                        }
+                      });
                     }
 
-          )
-          .
+                    @Override public void onRouterActionFailure(@NonNull RouterAction routerAction,
+                        @NonNull final Router router, @Nullable final Exception exception) {
+                      mParentFragmentActivity.runOnUiThread(new Runnable() {
+                        @Override public void run() {
+                          try {
+                            compoundButton.setChecked(!enable);
+                            Utils.displayMessage(mParentFragmentActivity, String.format(
+                                "Error while trying to %s OpenVPN Server on '%s' (%s): %s",
+                                enable ? "enable" : "disable", router.getDisplayName(),
+                                router.getRemoteIpAddress(),
+                                Utils.handleException(exception).first), Style.ALERT);
+                          } finally {
+                            compoundButton.setEnabled(true);
+                            isToggleStateActionRunning.set(false);
+                          }
+                        }
+                      });
+                    }
+                  }
 
-              token(new Bundle()
+                      , mGlobalPreferences));
+            }
 
-              )
-          .
+            @Override public void onDismissEventManual(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
 
-              show();
+            @Override public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+                throws Exception {
+              cancel();
+            }
+          }, new Bundle(), true);
+
+      //new UndoBarController.UndoBar(mParentFragmentActivity).message(
+      //    String.format("OpenVPN Server will be %s on '%s' (%s). ", enable ? "enabled" : "disabled",
+      //        mRouter.getDisplayName(), mRouter.getRemoteIpAddress()))
+      //    .listener(new UndoBarController.AdvancedUndoListener() {
+      //                @Override public void onHide(@Nullable Parcelable parcelable) {
+      //
+      //
+      //                }
+      //
+      //                @Override public void onClear(@NonNull Parcelable[] parcelables) {
+      //                  mParentFragmentActivity.runOnUiThread(new Runnable() {
+      //                    @Override public void run() {
+      //                      try {
+      //                        compoundButton.setChecked(!enable);
+      //                        compoundButton.setEnabled(true);
+      //                      } finally {
+      //                        isToggleStateActionRunning.set(false);
+      //                      }
+      //                    }
+      //                  });
+      //                }
+      //
+      //                @Override public void onUndo(@Nullable Parcelable parcelable) {
+      //                  mParentFragmentActivity.runOnUiThread(new Runnable() {
+      //                    @Override public void run() {
+      //                      try {
+      //                        compoundButton.setChecked(!enable);
+      //                        compoundButton.setEnabled(true);
+      //                      } finally {
+      //                        isToggleStateActionRunning.set(false);
+      //                      }
+      //                    }
+      //                  });
+      //                }
+      //              }
+      //
+      //    )
+      //    .
+      //
+      //        token(new Bundle()
+      //
+      //        )
+      //    .
+      //
+      //        show();
     }
   }
 }

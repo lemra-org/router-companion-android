@@ -199,7 +199,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
   <!--</style>-->
 
   <style name="MaterialTheme" parent="android:Theme.Light">
-    <item name="undoBarStyle">@style/UndoBarMaterialStyle</item>
+    <!--<item name="undoBarStyle">@style/UndoBarMaterialStyle</item>-->
   </style>
 
   <style name="PopupTheme" parent="@android:style/Theme.Holo.Dialog">

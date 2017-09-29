@@ -26,7 +26,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -45,8 +44,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import com.cocosw.undobar.UndoBarController;
 import com.google.common.base.Throwables;
+import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +75,7 @@ import static org.rm3l.router_companion.tiles.admin.nvram.EditNVRAMKeyValueDialo
 
 public class NVRAMDataRecyclerViewAdapter
     extends RecyclerView.Adapter<NVRAMDataRecyclerViewAdapter.ViewHolder>
-    implements UndoBarController.AdvancedUndoListener {
+    implements SnackbarCallback {
 
   private final FragmentActivity context;
   private final List<Entry<Object, Object>> entryList = new ArrayList<>();
@@ -246,25 +245,36 @@ public class NVRAMDataRecyclerViewAdapter
     return entryList.size();
   }
 
-  @Override public void onHide(@android.support.annotation.Nullable Parcelable parcelable) {
-    //Update entry in remote router, and notify item changed
-    if (parcelable instanceof Bundle) {
-      //Background task
-      MultiThreadingManager.getActionExecutor()
-          .execute(new AddOrEditNVRAMVariableTask((Bundle) parcelable));
-    }
-  }
-
-  @Override public void onClear(@NonNull Parcelable[] parcelables) {
-    //Nothing to do
-  }
-
-  @Override public void onUndo(@android.support.annotation.Nullable Parcelable parcelable) {
-    //Nothing to do
-  }
-
   private void displayMessage(String msg, Style style) {
     Utils.displayMessage(context, msg, style);
+  }
+
+  @Override public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+  }
+
+  @Override public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+  }
+
+  @Override public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+      throws Exception {
+
+  }
+
+  @Override public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
+    //Update entry in remote router, and notify item changed
+    //Background task
+    MultiThreadingManager.getActionExecutor().execute(new AddOrEditNVRAMVariableTask(bundle));
+  }
+
+  @Override public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+
+  }
+
+  @Override public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+      throws Exception {
+
   }
 
   // Provide a reference to the views for each data item

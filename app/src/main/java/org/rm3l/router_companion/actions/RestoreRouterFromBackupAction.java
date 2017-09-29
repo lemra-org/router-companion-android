@@ -10,7 +10,6 @@ import com.google.common.io.Files;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Date;
-//import org.apache.commons.io.FileUtils;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.AdUtils;

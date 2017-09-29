@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -40,18 +41,18 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.actions.ActionManager;
@@ -62,7 +63,6 @@ import org.rm3l.router_companion.actions.RouterActionListener;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
-import org.rm3l.router_companion.resources.PublicIPInfo;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.service.tasks.PublicIPChangesServiceTask;
@@ -604,12 +604,27 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
         mDhcpActionRunning.set(true);
         layout.findViewById(R.id.tile_status_wan_config_menu).setEnabled(false);
 
-        new UndoBarController.UndoBar(mParentFragmentActivity).message(
+        SnackbarUtils.buildSnackbar(mParentFragmentActivity,
             String.format("WAN DHCP Lease will be %s on '%s' (%s). ",
                 renew ? "renewed" : "released", mRouter.getDisplayName(),
-                mRouter.getRemoteIpAddress()))
-            .listener(new UndoBarController.AdvancedUndoListener() {
-              @Override public void onHide(@Nullable Parcelable parcelable) {
+                mRouter.getRemoteIpAddress()), "CANCEL", Snackbar.LENGTH_LONG,
+            new SnackbarCallback() {
+              @Override public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+              }
+
+              @Override public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
+                  throws Exception {
+                cancel();
+              }
+
+              @Override public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+                  throws Exception {
+                cancel();
+              }
+
+              @Override public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
+                  throws Exception {
                 Utils.displayMessage(mParentFragmentActivity,
                     String.format("%s WAN DHCP Lease...", renew ? "Renewing" : "Releasing"),
                     Style.INFO);
@@ -661,7 +676,17 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
                     }, mGlobalPreferences, dhcpClientRouterAction));
               }
 
-              @Override public void onClear(@NonNull Parcelable[] parcelables) {
+              @Override public void onDismissEventManual(int event, @Nullable Bundle bundle)
+                  throws Exception {
+                cancel();
+              }
+
+              @Override public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+                  throws Exception {
+                cancel();
+              }
+
+              private void cancel() {
                 mParentFragmentActivity.runOnUiThread(new Runnable() {
                   @Override public void run() {
                     try {
@@ -673,20 +698,35 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
                 });
               }
 
-              @Override public void onUndo(@Nullable Parcelable parcelable) {
-                mParentFragmentActivity.runOnUiThread(new Runnable() {
-                  @Override public void run() {
-                    try {
-                      layout.findViewById(R.id.tile_status_wan_config_menu).setEnabled(true);
-                    } finally {
-                      mDhcpActionRunning.set(false);
-                    }
-                  }
-                });
-              }
-            })
-            .token(new Bundle())
-            .show();
+            }, new Bundle(), true);
+
+        //new UndoBarController.UndoBar(mParentFragmentActivity).message(
+        //    String.format("WAN DHCP Lease will be %s on '%s' (%s). ",
+        //        renew ? "renewed" : "released", mRouter.getDisplayName(),
+        //        mRouter.getRemoteIpAddress()))
+        //    .listener(new UndoBarController.AdvancedUndoListener() {
+        //      @Override public void onHide(@Nullable Parcelable parcelable) {
+        //
+        //      }
+        //
+        //      @Override public void onClear(@NonNull Parcelable[] parcelables) {
+        //        mParentFragmentActivity.runOnUiThread(new Runnable() {
+        //          @Override public void run() {
+        //            try {
+        //              layout.findViewById(R.id.tile_status_wan_config_menu).setEnabled(true);
+        //            } finally {
+        //              mDhcpActionRunning.set(false);
+        //            }
+        //          }
+        //        });
+        //      }
+        //
+        //      @Override public void onUndo(@Nullable Parcelable parcelable) {
+        //
+        //      }
+        //    })
+        //    .token(new Bundle())
+        //    .show();
         return true;
       default:
         break;

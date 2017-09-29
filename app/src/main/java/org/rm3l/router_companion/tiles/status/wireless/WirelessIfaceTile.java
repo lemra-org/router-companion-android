@@ -32,6 +32,7 @@ import android.os.Looper;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -49,7 +50,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import be.brunoparmentier.wifikeyshare.utils.NfcUtils;
 import com.amulyakhare.textdrawable.TextDrawable;
-import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -57,6 +57,8 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -1069,75 +1071,109 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
         token.putSerializable(PHYSICAL_IFACE_STATE_ACTION, physicalInterfaceState);
 
-        new UndoBarController.UndoBar(mParentFragmentActivity).message(
+        SnackbarUtils.buildSnackbar(mParentFragmentActivity,
             String.format("Bringing %s physical interface %s (backing wireless network '%s').",
-                physicalInterfaceState.toString().toLowerCase(), phyIface, wifiSsid))
-            .listener(new UndoBarController.AdvancedUndoListener() {
+                physicalInterfaceState.toString().toLowerCase(), phyIface, wifiSsid), "CANCEL",
+            Snackbar.LENGTH_LONG, new SnackbarCallback() {
+              @Override public void onShowEvent(@Nullable Bundle bundle) throws Exception {
 
-              @Override public void onUndo(@Nullable Parcelable token) {
-                //Nothing to do
               }
 
-              @Override public void onHide(@Nullable Parcelable parcelable) {
-                if (parcelable instanceof Bundle) {
-                  final Bundle token = (Bundle) parcelable;
+              @Override public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
+                  throws Exception {
 
-                  try {
-                    final Serializable phyInterfaceStateSer =
-                        token.getSerializable(PHYSICAL_IFACE_STATE_ACTION);
-                    Crashlytics.log(Log.DEBUG, LOG_TAG,
-                        "phyInterfaceStateSer: [" + phyInterfaceStateSer + "]");
-                    if (!(phyInterfaceStateSer instanceof PhysicalInterfaceState)) {
-                      return;
+              }
+
+              @Override public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+                  throws Exception {
+
+              }
+
+              @Override public void onDismissEventTimeout(int event, @Nullable Bundle token)
+                  throws Exception {
+                try {
+                  final Serializable phyInterfaceStateSer =
+                      token != null ? token.getSerializable(PHYSICAL_IFACE_STATE_ACTION) : null;
+                  Crashlytics.log(Log.DEBUG, LOG_TAG,
+                      "phyInterfaceStateSer: [" + phyInterfaceStateSer + "]");
+                  if (!(phyInterfaceStateSer instanceof PhysicalInterfaceState)) {
+                    return;
+                  }
+
+                  final PhysicalInterfaceState interfaceState =
+                      (PhysicalInterfaceState) phyInterfaceStateSer;
+
+                  ActionManager.runTasks(new TogglePhysicalInterfaceStateRouterAction(mRouter,
+                      mParentFragmentActivity, new RouterActionListener() {
+                    @Override
+                    public void onRouterActionSuccess(@NonNull RouterAction routerAction,
+                        @NonNull Router router, Object returnData) {
+                      Utils.displayMessage(mParentFragmentActivity, "Physical Interface '"
+                          + phyIface
+                          + "' (for wireless network '"
+                          + wifiSsid
+                          + "') is now '"
+                          + interfaceState
+                          + "'", Style.CONFIRM);
+                      // Update info right away
+                      //Run on main thread to avoid the exception:
+                      //"Only the original thread that created a view hierarchy can touch its views."
+                      mParentFragmentActivity.runOnUiThread(new Runnable() {
+                        @Override public void run() {
+                          ((TextView) layout.findViewById(
+                              R.id.tile_status_wireless_iface_state)).setText(
+                              interfaceState.toString().toLowerCase());
+                        }
+                      });
                     }
 
-                    final PhysicalInterfaceState interfaceState =
-                        (PhysicalInterfaceState) phyInterfaceStateSer;
-
-                    ActionManager.runTasks(new TogglePhysicalInterfaceStateRouterAction(mRouter,
-                        mParentFragmentActivity, new RouterActionListener() {
-                      @Override
-                      public void onRouterActionSuccess(@NonNull RouterAction routerAction,
-                          @NonNull Router router, Object returnData) {
-                        Utils.displayMessage(mParentFragmentActivity, "Physical Interface '"
-                            + phyIface
-                            + "' (for wireless network '"
-                            + wifiSsid
-                            + "') is now '"
-                            + interfaceState
-                            + "'", Style.CONFIRM);
-                        // Update info right away
-                        //Run on main thread to avoid the exception:
-                        //"Only the original thread that created a view hierarchy can touch its views."
-                        mParentFragmentActivity.runOnUiThread(new Runnable() {
-                          @Override public void run() {
-                            ((TextView) layout.findViewById(
-                                R.id.tile_status_wireless_iface_state)).setText(
-                                interfaceState.toString().toLowerCase());
-                          }
-                        });
-                      }
-
-                      @Override
-                      public void onRouterActionFailure(@NonNull RouterAction routerAction,
-                          @NonNull Router router, @Nullable Exception exception) {
-                        Utils.displayMessage(mParentFragmentActivity,
-                            String.format("Error: %s", Utils.handleException(exception).first),
-                            Style.ALERT);
-                      }
-                    }, mGlobalPreferences, phyIface, interfaceState));
-                  } catch (IllegalArgumentException | NullPointerException | IllegalStateException e) {
-                    e.printStackTrace();
-                  }
+                    @Override
+                    public void onRouterActionFailure(@NonNull RouterAction routerAction,
+                        @NonNull Router router, @Nullable Exception exception) {
+                      Utils.displayMessage(mParentFragmentActivity,
+                          String.format("Error: %s", Utils.handleException(exception).first),
+                          Style.ALERT);
+                    }
+                  }, mGlobalPreferences, phyIface, interfaceState));
+                } catch (IllegalArgumentException | NullPointerException | IllegalStateException e) {
+                  e.printStackTrace();
                 }
               }
 
-              @Override public void onClear(@NonNull Parcelable[] token) {
-                //Nothing to do
+              @Override public void onDismissEventManual(int event, @Nullable Bundle bundle)
+                  throws Exception {
+
               }
-            })
-            .token(token)
-            .show();
+
+              @Override public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+                  throws Exception {
+
+              }
+            }, token, true);
+
+        //new UndoBarController.UndoBar(mParentFragmentActivity).message(
+        //    String.format("Bringing %s physical interface %s (backing wireless network '%s').",
+        //        physicalInterfaceState.toString().toLowerCase(), phyIface, wifiSsid))
+        //    .listener(new UndoBarController.AdvancedUndoListener() {
+        //
+        //      @Override public void onUndo(@Nullable Parcelable token) {
+        //        //Nothing to do
+        //      }
+        //
+        //      @Override public void onHide(@Nullable Parcelable parcelable) {
+        //        if (parcelable instanceof Bundle) {
+        //          final Bundle token = (Bundle) parcelable;
+        //
+        //
+        //        }
+        //      }
+        //
+        //      @Override public void onClear(@NonNull Parcelable[] token) {
+        //        //Nothing to do
+        //      }
+        //    })
+        //    .token(token)
+        //    .show();
       }
       return true;
       case R.id.tile_status_wireless_iface_security: {
@@ -1226,7 +1262,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
   }
 
   private class WirelessSecuritySettingsActivityResultListener
-      implements ActivityResultListener, UndoBarController.AdvancedUndoListener,
+      implements ActivityResultListener, SnackbarCallback,
       RouterActionListener {
 
     @NonNull private final String wifiSsid;
@@ -1252,9 +1288,17 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                 RouterAction.SET_NVRAM_VARIABLES.name());
             token.putSerializable(WL_SECURITY_NVRAMINFO, newNvramInfoData);
 
-            new UndoBarController.UndoBar(mParentFragmentActivity).message(
+            SnackbarUtils.buildSnackbar(mParentFragmentActivity,
                 String.format("Security Settings for wireless network '%s' will be updated.",
-                    wifiSsid)).listener(this).token(token).show();
+                    wifiSsid),
+                "CANCEL",
+                Snackbar.LENGTH_LONG,
+                this,
+                token, true);
+
+            //new UndoBarController.UndoBar(mParentFragmentActivity).message(
+            //    String.format("Security Settings for wireless network '%s' will be updated.",
+            //        wifiSsid)).listener(this).token(token).show();
             break;
           default:
             //Ignored
@@ -1263,53 +1307,6 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
       } finally {
         mWirelessSecurityFormOpened.set(false);
       }
-    }
-
-    @Override public void onHide(@Nullable Parcelable parcelable) {
-      if (parcelable instanceof Bundle) {
-        final Bundle token = (Bundle) parcelable;
-        final String routerAction = token.getString(DDWRTMainActivity.ROUTER_ACTION);
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
-        if (isNullOrEmpty(routerAction)) {
-          return;
-        }
-        try {
-          switch (RouterAction.valueOf(routerAction)) {
-            case SET_NVRAM_VARIABLES:
-              final NVRAMInfo nvramInfo = (NVRAMInfo) token.getSerializable(WL_SECURITY_NVRAMINFO);
-              if (nvramInfo == null) {
-                throw new IllegalStateException("Internal error - please try again later.");
-              }
-              ActionManager.runTasks(
-                  new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfo, false,
-                      this, mGlobalPreferences, "/sbin/startservice wlconf"
-                      //shall we stopservice first???
-                      //Maybe /sbin/startservice lan or /sbin/startservice wan ?
-                      //                                    ,
-                      //                                    /*
-                      //                                    # the next few lines will restart the interface,
-                      //                                    # which simulates the save and apply buttons in the webGUI
-                      //                                     */
-                      //                                    "( /sbin/stopservice wan || true ) && sleep 2 && ( /sbin/startservice wan || true )"
-                  ));
-
-              break;
-            default:
-              //Ignored
-              break;
-          }
-        } catch (IllegalArgumentException | NullPointerException | IllegalStateException e) {
-          e.printStackTrace();
-        }
-      }
-    }
-
-    @Override public void onClear(@NonNull Parcelable[] parcelables) {
-      //Nothing to do
-    }
-
-    @Override public void onUndo(@Nullable Parcelable parcelable) {
-      //Nothing to do
     }
 
     @Override
@@ -1334,6 +1331,66 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         @Nullable Exception exception) {
       Utils.displayMessage(mParentFragmentActivity,
           String.format("Error: %s", Utils.handleException(exception).first), Style.ALERT);
+    }
+
+    @Override public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+    }
+
+    @Override public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+    }
+
+    @Override public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+        throws Exception {
+
+    }
+
+    @Override public void onDismissEventTimeout(int event, @Nullable Bundle token)
+        throws Exception {
+      final String routerAction = token.getString(DDWRTMainActivity.ROUTER_ACTION);
+      Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
+      if (isNullOrEmpty(routerAction)) {
+        return;
+      }
+      try {
+        switch (RouterAction.valueOf(routerAction)) {
+          case SET_NVRAM_VARIABLES:
+            final NVRAMInfo nvramInfo = (NVRAMInfo) token.getSerializable(WL_SECURITY_NVRAMINFO);
+            if (nvramInfo == null) {
+              throw new IllegalStateException("Internal error - please try again later.");
+            }
+            ActionManager.runTasks(
+                new SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfo, false,
+                    this, mGlobalPreferences, "/sbin/startservice wlconf"
+                    //shall we stopservice first???
+                    //Maybe /sbin/startservice lan or /sbin/startservice wan ?
+                    //                                    ,
+                    //                                    /*
+                    //                                    # the next few lines will restart the interface,
+                    //                                    # which simulates the save and apply buttons in the webGUI
+                    //                                     */
+                    //                                    "( /sbin/stopservice wan || true ) && sleep 2 && ( /sbin/startservice wan || true )"
+                ));
+
+            break;
+          default:
+            //Ignored
+            break;
+        }
+      } catch (IllegalArgumentException | NullPointerException | IllegalStateException e) {
+        e.printStackTrace();
+      }
+    }
+
+    @Override public void onDismissEventManual(int event, @Nullable Bundle bundle)
+        throws Exception {
+
+    }
+
+    @Override public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+        throws Exception {
+
     }
   }
 }

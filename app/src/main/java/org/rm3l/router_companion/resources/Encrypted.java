@@ -26,7 +26,6 @@ import android.support.annotation.Nullable;
 import android.util.Base64;
 import android.util.Log;
 import com.crashlytics.android.Crashlytics;
-import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -38,7 +37,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-//import org.apache.commons.codec.binary.Base64;
 
 import static com.google.common.base.Charsets.UTF_8;
 
