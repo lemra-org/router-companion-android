@@ -45,7 +45,7 @@
 
 -dontwarn javax.annotation.**
 -dontwarn org.ietf.jgss.**
--dontwarn com.jcraft.jzlib.**
+#-dontwarn com.jcraft.jzlib.**
 -dontwarn sun.misc.**
 
 # Because the following classes make use of reflection (clazz.newInstance(...))
@@ -404,9 +404,14 @@
 # osmdroid
 -dontwarn org.osmdroid.tileprovider.modules.NetworkAvailabliltyCheck
 
+# MaterialDrawer
+-dontwarn com.mikepenz.iconics.**
+
 #aboutlibraries (with auto-detection)
 #-keep class .R
 #-keep class **.R$* {
 #    <fields>;
 #}
--dontwarn com.mikepenz.iconics.**
+-keepclasseswithmembers class **.R$* {
+    public static final int define_*;
+}
