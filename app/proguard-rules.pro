@@ -45,7 +45,7 @@
 
 -dontwarn javax.annotation.**
 -dontwarn org.ietf.jgss.**
-#-dontwarn com.jcraft.jzlib.**
+-dontwarn com.jcraft.jzlib.**
 -dontwarn sun.misc.**
 
 # Because the following classes make use of reflection (clazz.newInstance(...))

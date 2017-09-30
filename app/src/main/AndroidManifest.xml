@@ -26,7 +26,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
   <uses-sdk
       android:minSdkVersion="15"
-      tools:overrideLibrary="com.readystatesoftware.chuck, com.facebook.stetho"/>
+      tools:overrideLibrary="com.readystatesoftware.chuck, com.facebook.stetho, cn.nekocode.resinspector"/>
 
   <!-- "Normal Permission" -->
   <!-- To connect to the router, and donation providers such as Flattr, as well as Feedback Server -->
