@@ -49,6 +49,10 @@ class RouterAvatarDownloadTargetForAppShortcut implements Target {
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
 
       final ShortcutManager shortcutManager = mContext.getSystemService(ShortcutManager.class);
+      if (shortcutManager == null) {
+        Crashlytics.log(Log.WARN, TAG, "shortcutManager == null");
+        return;
+      }
       final String routerUuid = router.getUuid();
       final String routerName = router.getName();
       final String routerCanonicalHumanReadableName = router.getCanonicalHumanReadableName();
@@ -71,21 +75,19 @@ class RouterAvatarDownloadTargetForAppShortcut implements Target {
       if (isUpdateAppShortcutOperation) {
         boolean exists = false;
         final List<ShortcutInfo> dynamicShortcuts = shortcutManager.getDynamicShortcuts();
-        if (dynamicShortcuts != null) {
-          for (final ShortcutInfo dynamicShortcut : dynamicShortcuts) {
-            if (dynamicShortcut == null) {
-              continue;
-            }
-            if (routerUuid.equals(dynamicShortcut.getId())) {
-              exists = true;
-              break;
-            }
+        for (final ShortcutInfo dynamicShortcut : dynamicShortcuts) {
+          if (dynamicShortcut == null) {
+            continue;
           }
-          if (exists) {
-            shortcutManager.updateShortcuts(Collections.singletonList(shortcut));
-          } else {
-            shortcutManager.addDynamicShortcuts(Collections.singletonList(shortcut));
+          if (routerUuid.equals(dynamicShortcut.getId())) {
+            exists = true;
+            break;
           }
+        }
+        if (exists) {
+          shortcutManager.updateShortcuts(Collections.singletonList(shortcut));
+        } else {
+          shortcutManager.addDynamicShortcuts(Collections.singletonList(shortcut));
         }
       } else {
         shortcutManager.addDynamicShortcuts(Collections.singletonList(shortcut));
