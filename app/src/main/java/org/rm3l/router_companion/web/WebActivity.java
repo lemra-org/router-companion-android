@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -16,6 +17,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.Window;
@@ -27,6 +29,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -38,11 +41,15 @@ import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.Utils;
 
+import static android.webkit.WebView.RENDERER_PRIORITY_BOUND;
+
 /**
  * Created by rm3l on 04/07/15.
  */
 public abstract class WebActivity extends AppCompatActivity
     implements SwipeRefreshLayout.OnRefreshListener {
+
+  private static final String TAG = WebActivity.class.getSimpleName();
 
   protected Toolbar mToolbar;
 
@@ -58,19 +65,13 @@ public abstract class WebActivity extends AppCompatActivity
 
     super.onCreate(savedInstanceState);
 
-    ColorUtils.Companion.setAppTheme(this, null, false);
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+      final PackageInfo currentWebViewPackage = WebView.getCurrentWebViewPackage();
+      Crashlytics.log(Log.INFO, TAG, "WebView version: " +
+          (currentWebViewPackage != null ? currentWebViewPackage.versionName : "N/A"));
+    }
 
-    //        final boolean themeLight = ColorUtils.isThemeLight(this);
-    //        if (themeLight) {
-    //            //Light
-    //            setTheme(R.style.AppThemeLight);
-    ////            getWindow().getDecorView()
-    ////                    .setBackgroundColor(ContextCompat.getColor(this,
-    ////                            android.R.color.white));
-    //        } else {
-    //            //Default is Dark
-    //            setTheme(R.style.AppThemeDark);
-    //        }
+    ColorUtils.Companion.setAppTheme(this, null, false);
 
     setContentView(R.layout.activity_web);
 
@@ -79,7 +80,7 @@ public abstract class WebActivity extends AppCompatActivity
 
     AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.web_adView));
 
-    mToolbar = (Toolbar) findViewById(R.id.web_toolbar);
+    mToolbar = findViewById(R.id.web_toolbar);
     if (mToolbar != null) {
       final int titleResId = this.getTitleResId();
       if (titleResId > 0) {
@@ -104,11 +105,11 @@ public abstract class WebActivity extends AppCompatActivity
       actionBar.setHomeButtonEnabled(true);
     }
 
-    mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.web_webview_swiperefresh);
+    mSwipeRefreshLayout = findViewById(R.id.web_webview_swiperefresh);
 
     mSwipeRefreshLayout.setOnRefreshListener(this);
 
-    mWebview = (WebView) findViewById(R.id.web_webview);
+    mWebview = findViewById(R.id.web_webview);
 
     final WebSettings webSettings = mWebview.getSettings();
     //FIXME Review
@@ -118,6 +119,17 @@ public abstract class WebActivity extends AppCompatActivity
     webSettings.setBuiltInZoomControls(true);
     webSettings.setLoadWithOverviewMode(true);
     webSettings.setAllowFileAccess(true);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      /*
+       * the renderer's priority is the same as (or "is bound to") the default priority for the app.
+        * The true argument decreases the renderer's priority to RENDERER_PRIORITY_WAIVED when the
+        * associated WebView object is no longer visible.
+        * In other words, a true argument indicates that your app doesn't care whether the system
+        * keeps the renderer process alive. In fact, this lower priority level makes it likely
+        * that the renderer process is killed in out-of-memory situations.
+       */
+      mWebview.setRendererPriorityPolicy(RENDERER_PRIORITY_BOUND, true);
+    }
 
     final Activity activity = this;
     mWebview.setWebChromeClient(new WebChromeClient() {
