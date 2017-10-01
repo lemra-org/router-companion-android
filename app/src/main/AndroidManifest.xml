@@ -114,6 +114,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
   <application
       android:name="org.rm3l.router_companion.RouterCompanionApplication"
+      android:appCategory="productivity"
       android:allowBackup="true"
       android:backupAgent="org.rm3l.router_companion.backup.DDWRTCompanionBackupAgent"
       android:fullBackupContent="true"
@@ -122,7 +123,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
       android:icon="@mipmap/ic_launcher_ddwrt_companion"
       android:label="@string/app_name"
       android:theme="@style/AppThemeDark"
-      tools:replace="android:theme,android:icon">
+      tools:replace="android:theme,android:icon"
+      tools:ignore="UnusedAttribute">
     <meta-data
         android:name="com.google.android.backup.api_key"
         android:value="AEdPqrEAAAAIex8fLj0PcvM6dwNd7Je9mgYuzCTRw4IZq5_jBQ"/>
