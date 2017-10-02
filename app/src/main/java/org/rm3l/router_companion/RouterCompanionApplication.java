@@ -161,7 +161,9 @@ public class RouterCompanionApplication extends Application
     final IntentFilter intentFilter = new IntentFilter(DeepLinkHandler.ACTION);
     LocalBroadcastManager.getInstance(this).registerReceiver(new DeepLinkReceiver(), intentFilter);
 
-    DDWRTCompanionSqliteDAOImpl.initialize(getApplicationContext());
+    if (!DDWRTCompanionSqliteDAOImpl.isInitialized()) {
+      DDWRTCompanionSqliteDAOImpl.initialize(getApplicationContext());
+    }
 
     //General Notification Channel
     NotificationHelperKt.createOrUpdateNotificationChannels(this);

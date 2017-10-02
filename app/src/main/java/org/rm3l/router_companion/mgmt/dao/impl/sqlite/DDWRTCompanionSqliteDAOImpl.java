@@ -158,6 +158,10 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     }
   }
 
+  public static synchronized boolean isInitialized() {
+    return (instance != null);
+  }
+
   public static synchronized DDWRTCompanionSqliteDAOImpl getInstance() {
     if (instance == null) {
       throw new IllegalStateException(DDWRTCompanionSqliteDAOImpl.class.getSimpleName()

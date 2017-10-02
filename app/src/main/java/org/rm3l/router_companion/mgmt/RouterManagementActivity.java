@@ -172,6 +172,9 @@ import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_RESOURC
   private ItemTouchHelper mItemTouchHelper;
 
   @NonNull public static DDWRTCompanionDAO getDao(Context context) {
+    if (!DDWRTCompanionSqliteDAOImpl.isInitialized()) {
+      DDWRTCompanionSqliteDAOImpl.initialize(context);
+    }
     return DDWRTCompanionSqliteDAOImpl.getInstance();
   }
 
