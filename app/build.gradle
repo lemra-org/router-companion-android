@@ -535,6 +535,8 @@ dependencies {
   debugImplementation "com.github.nekocode.ResourceInspector:resinspector:0.5.3"
   releaseImplementation "com.github.nekocode.ResourceInspector:resinspector-no-op:0.5.3"
   testImplementation "com.github.nekocode.ResourceInspector:resinspector-no-op:0.5.3"
+
+  implementation 'com.evernote:android-job:1.2.0-RC4'
 }
 
 play {

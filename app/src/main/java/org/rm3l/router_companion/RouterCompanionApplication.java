@@ -38,6 +38,7 @@ import android.widget.ImageView;
 import com.airbnb.deeplinkdispatch.DeepLinkHandler;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
+import com.evernote.android.job.JobManager;
 import com.facebook.stetho.Stetho;
 //import com.facebook.stetho.dumpapp.DumperPlugin;
 //import com.facebook.stetho.inspector.protocol.ChromeDevtoolsDomain;
@@ -58,6 +59,7 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.deeplinks.DeepLinkActivity;
 import org.rm3l.router_companion.deeplinks.DeepLinkReceiver;
 import org.rm3l.router_companion.deeplinks.RouterActionsDeepLinkActivity;
+import org.rm3l.router_companion.job.RouterCompanionJobCreator;
 import org.rm3l.router_companion.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
@@ -101,6 +103,8 @@ public class RouterCompanionApplication extends Application
 
   @Override public void onCreate() {
     super.onCreate();
+
+    JobManager.create(this).addJobCreator(new RouterCompanionJobCreator(this));
 
     final SharedPreferences appPreferences =
         getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE);
