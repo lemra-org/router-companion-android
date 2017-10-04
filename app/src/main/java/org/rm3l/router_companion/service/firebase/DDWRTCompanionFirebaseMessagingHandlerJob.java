@@ -221,14 +221,15 @@ public class DDWRTCompanionFirebaseMessagingHandlerJob extends RouterCompanionJo
     public final Long revisionNumber;
 
     @SuppressLint("SimpleDateFormat")
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
 
     public DDWRTRelease(Integer year, Date date, String revision) {
       this.year = year;
       this.date = date;
       this.revision = revision;
       if (this.revision != null) {
-        this.revisionNumber = Long.parseLong(this.revision.replace("r", "").trim());
+        this.revisionNumber =
+            Long.parseLong(this.revision.replace("r", "").trim().split("-")[0]);
       } else {
         this.revisionNumber = null;
       }
@@ -258,6 +259,20 @@ public class DDWRTCompanionFirebaseMessagingHandlerJob extends RouterCompanionJo
       result = 31 * result + (date != null ? date.hashCode() : 0);
       result = 31 * result + (revision != null ? revision.hashCode() : 0);
       return result;
+    }
+
+    @Override public String toString() {
+      return "DDWRTRelease{"
+          + "year="
+          + year
+          + ", date="
+          + date
+          + ", revision='"
+          + revision
+          + '\''
+          + ", revisionNumber="
+          + revisionNumber
+          + '}';
     }
   }
 }

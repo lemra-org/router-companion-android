@@ -1277,7 +1277,10 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
                 @SuppressWarnings("ConstantConditions") final String osVersion =
                     nvramInfo.getProperty(NVRAMInfo.Companion.getOS_VERSION(), "").trim();
                 final boolean emptyOsVersion = TextUtils.isEmpty(osVersion);
-                final Long osVersionLong = emptyOsVersion ? null : Long.parseLong(osVersion);
+                final Long osVersionLong = emptyOsVersion ? null :
+                    Long.parseLong(osVersion.split("-")[0]);
+                Crashlytics.log(Log.DEBUG, TAG, "<osVersion, osVersionLong>=<" + osVersion + "," +
+                    osVersionLong + ">");
                 //Now browse the DD-WRT update website and check for the most recent
                 ftp = new FTPClient();
                 //final FTPClientConfig config = new FTPClientConfig();
@@ -1297,18 +1300,16 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
                 final List<DDWRTRelease> newerReleases = new ArrayList<>();
                 final FTPFile[] directories = ftp.listDirectories();
                 if (directories != null) {
-                  Crashlytics.log(Log.DEBUG, TAG, "Found dirs: " + Arrays.toString(directories));
                   for (final FTPFile directory : directories) {
                     if (directory == null) {
                       continue;
                     }
                     final String year = directory.getName();
+                    Crashlytics.log(Log.DEBUG, TAG, "Found dir: " + year);
                     final FTPFile[] releasesForYear = ftp.listDirectories(year);
                     if (releasesForYear == null) {
                       continue;
                     }
-                    Crashlytics.log(Log.DEBUG, TAG, "Found releases for year: "
-                        + year + ": " + Arrays.toString(releasesForYear));
                     for (final FTPFile releaseByDay : releasesForYear) {
                       if (releaseByDay == null) {
                         continue;
@@ -1323,9 +1324,11 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
                           String.format("%s-%s-%s", releaseByDaySplitList.get(0),
                               releaseByDaySplitList.get(1), releaseByDaySplitList.get(2)),
                           releaseByDaySplitList.get(3));
+                      Crashlytics.log(Log.DEBUG, TAG, "Found release for year: "
+                          + year + ": " + releaseByDayName + " => " + ddwrtRelease);
                       if (osVersionLong == null ||
                           (ddwrtRelease.revisionNumber != null &&
-                              (ddwrtRelease.revisionNumber > Long.parseLong(osVersion)))) {
+                              (ddwrtRelease.revisionNumber > osVersionLong))) {
                         newerReleases.add(ddwrtRelease);
                       }
                     }
@@ -1381,10 +1384,11 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
                   }
                   return new AbstractMap.SimpleImmutableEntry<>(linkToPotentialLatestRelease, null);
                 } else {
-                  throw new IllegalStateException();
+                  //No candidate found => return null
+                  return null;
                 }
               } else {
-                throw new IllegalStateException();
+                throw new IllegalStateException("Could not retrieve local data");
               }
             } catch (final Exception e) {
               Crashlytics.logException(e);
@@ -1403,12 +1407,12 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
           @Override protected void thenDoUiRelatedWork(Map.Entry<String, Exception> result) {
             Crashlytics.log(Log.DEBUG, TAG, "result: " + result);
             alertDialog.cancel();
-            if (result.getValue() != null) {
+            if (result != null && result.getValue() != null) {
               Utils.displayMessage(DDWRTMainActivity.this,
                   "Could not check for update: " +
                       ExceptionUtils.getRootCause(result.getValue()).getMessage(),
                   Style.ALERT);
-            } else if (mNewerRelease != null && result.getKey() != null) {
+            } else if (result != null && mNewerRelease != null && result.getKey() != null) {
               //Display notification
               //TODO Implement as a Snackbar instead (INFO Style, with an action button that opens up the browser)
               DDWRTCompanionFirebaseMessagingHandlerJob.notifyReleaseAvailable(
