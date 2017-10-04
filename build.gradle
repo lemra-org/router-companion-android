@@ -24,7 +24,7 @@
 
 buildscript {
   ext.android_sdk = 26
-  ext.buildTools_version = '26.0.1'
+  ext.buildTools_version = '26.0.2'
   ext.support_version = '26.1.0'
   ext.kotlin_version = '1.1.50'
   ext.anko_version = '0.10.1'
@@ -40,7 +40,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.0.0-beta6'
+    classpath 'com.android.tools.build:gradle:3.0.0-beta7'
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
     //        classpath 'com.tracepot.plugins.gradle:tracepot:1.+'

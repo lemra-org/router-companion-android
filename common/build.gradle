@@ -63,6 +63,7 @@ android {
       zipAlignEnabled true
     }
   }
+  buildToolsVersion '26.0.2'
 }
 
 
