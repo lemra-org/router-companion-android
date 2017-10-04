@@ -396,6 +396,7 @@ dependencies {
   }
 
   implementation 'com.google.guava:guava:23.0-android'
+  implementation 'commons-net:commons-net:3.5'
   implementation 'com.jcraft:jsch:0.1.51'
   implementation 'com.google.code.gson:gson:2.8.1'
   implementation "com.android.support:design:$support_version"

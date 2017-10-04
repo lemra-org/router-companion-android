@@ -1,5 +1,6 @@
 package org.rm3l.router_companion.service.firebase;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -19,6 +20,9 @@ import com.evernote.android.job.JobRequest;
 import com.evernote.android.job.util.support.PersistableBundleCompat;
 import com.google.common.base.Splitter;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +45,8 @@ public class DDWRTCompanionFirebaseMessagingHandlerJob extends RouterCompanionJo
   public static final String TAG = DDWRTCompanionFirebaseMessagingHandlerJob.class.getSimpleName();
 
   public static final int FCM_NOTIFICATION_ID = 27635;
-  public static final String FTP_DDWRT_FORMAT_BASE = "ftp://ftp.dd-wrt.com/betas";
+  public static final String FTP_DDWRT_HOST = "ftp.dd-wrt.com";
+  public static final String FTP_DDWRT_FORMAT_BASE = ("ftp://" + FTP_DDWRT_HOST + "/betas");
   public static final String FTP_DDWRT_FORMAT = (FTP_DDWRT_FORMAT_BASE + "/%s/%s");
 
   private static final int MAX_RETRIES = 10;
@@ -147,7 +152,14 @@ public class DDWRTCompanionFirebaseMessagingHandlerJob extends RouterCompanionJo
 
     Crashlytics.log(Log.DEBUG, TAG,
         "[Firebase] releaseLinkShortened: [" + releaseLinkShortened + "]");
+    notifyReleaseAvailable(title, messageBody, releaseLinkShortened, mContext, mGlobalPreferences);
+  }
 
+  public static void notifyReleaseAvailable(String title,
+      String messageBody,
+      String releaseLinkShortened,
+      Context mContext,
+      SharedPreferences mGlobalPreferences) {
     // pending implicit intent to view url
     final Intent resultIntent = new Intent(Intent.ACTION_VIEW);
     resultIntent.setData(Uri.parse(releaseLinkShortened));
@@ -199,6 +211,53 @@ public class DDWRTCompanionFirebaseMessagingHandlerJob extends RouterCompanionJo
     if (notificationManager != null) {
       notificationManager.notify(FCM_NOTIFICATION_ID /* ID of notification */,
           notificationBuilder.build());
+    }
+  }
+
+  public static class DDWRTRelease {
+    public final Integer year;
+    public final Date date;
+    public final String revision;
+    public final Long revisionNumber;
+
+    @SuppressLint("SimpleDateFormat")
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+    public DDWRTRelease(Integer year, Date date, String revision) {
+      this.year = year;
+      this.date = date;
+      this.revision = revision;
+      if (this.revision != null) {
+        this.revisionNumber = Long.parseLong(this.revision.replace("r", "").trim());
+      } else {
+        this.revisionNumber = null;
+      }
+    }
+
+    public DDWRTRelease(Integer year, String dateString, String revision) throws ParseException {
+      this(year, dateFormat.parse(dateString), revision);
+    }
+
+    @SuppressLint("DefaultLocale") public String getDirectLink() {
+      return String.format("%s/%d/%s-%s", FTP_DDWRT_FORMAT_BASE, year, dateFormat.format(date), revision);
+    }
+
+    @Override public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      DDWRTRelease that = (DDWRTRelease) o;
+
+      if (year != null ? !year.equals(that.year) : that.year != null) return false;
+      if (date != null ? !date.equals(that.date) : that.date != null) return false;
+      return revision != null ? revision.equals(that.revision) : that.revision == null;
+    }
+
+    @Override public int hashCode() {
+      int result = year != null ? year.hashCode() : 0;
+      result = 31 * result + (date != null ? date.hashCode() : 0);
+      result = 31 * result + (revision != null ? revision.hashCode() : 0);
+      return result;
     }
   }
 }
