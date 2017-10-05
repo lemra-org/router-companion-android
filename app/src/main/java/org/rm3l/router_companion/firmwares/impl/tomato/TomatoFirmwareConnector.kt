@@ -24,6 +24,7 @@ import org.rm3l.router_companion.utils.Utils
 
 import org.rm3l.router_companion.RouterCompanionAppConstants.NOK
 import org.rm3l.router_companion.RouterCompanionAppConstants.UNKNOWN
+import org.rm3l.router_companion.firmwares.FirmwareRelease
 import org.rm3l.router_companion.tiles.admin.accessrestrictions.WANAccessPoliciesRouterData
 import org.rm3l.router_companion.tiles.dashboard.network.NetworkTopologyMapTile.INTERNET_CONNECTIVITY_PUBLIC_IP
 import org.rm3l.router_companion.utils.Utils.COMMA_SPLITTER
@@ -353,6 +354,11 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
       dataRetrievalListener: RemoteDataRetrievalListener?): WANAccessPoliciesRouterData? {
     //Kotlin's TODO throws an Error
     throw UnsupportedOperationException("not implemented yet") //To change body of created functions use File | Settings | File Templates.
+  }
+
+  override fun manuallyCheckForFirmwareUpdateAndReturnDownloadLink(currentFwVer: String?): FirmwareRelease? {
+    //Kotlin's TODO throws an Error
+    throw UnsupportedOperationException("not implemented yet")
   }
 
 }

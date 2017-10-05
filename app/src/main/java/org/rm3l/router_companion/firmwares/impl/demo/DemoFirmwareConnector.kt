@@ -23,8 +23,10 @@ import org.rm3l.router_companion.utils.Utils
 import org.rm3l.router_companion.RouterCompanionAppConstants.MB
 import org.rm3l.router_companion.RouterCompanionAppConstants.NOK
 import org.rm3l.router_companion.RouterCompanionAppConstants.UNKNOWN
+import org.rm3l.router_companion.firmwares.FirmwareRelease
 import org.rm3l.router_companion.resources.WANAccessPolicy
 import org.rm3l.router_companion.resources.conn.Router.RouterFirmware
+import org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseMessagingHandlerJob.FTP_DDWRT_FORMAT_BASE
 import org.rm3l.router_companion.tiles.admin.accessrestrictions.WANAccessPoliciesRouterData
 import org.rm3l.router_companion.tiles.dashboard.network.NetworkTopologyMapTile.INTERNET_CONNECTIVITY_PUBLIC_IP
 import org.rm3l.router_companion.utils.WANTrafficUtils.HIDDEN_
@@ -314,6 +316,26 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
         wanAccessPolicies) as WANAccessPoliciesRouterData
     dataRetrievalListener?.onProgressUpdate(90)
     return routerData
+  }
+
+  override fun manuallyCheckForFirmwareUpdateAndReturnDownloadLink(currentFwVer: String?): FirmwareRelease? {
+    val index = Random().nextInt(11)
+    return when (index) {
+      4 -> throw UnsupportedOperationException("not implemented yet") //not implemented
+      2 -> throw IllegalStateException("Error simulated!")
+      1,3,5,6,7,8 -> DemoFirmwareRelease(index)
+      else -> null //no update
+    }
+  }
+}
+
+data class DemoFirmwareRelease(val index: Int): FirmwareRelease(index.toString()) {
+  override fun getDirectLink(): String {
+    return when(index) {
+      1,3,5,8 -> FTP_DDWRT_FORMAT_BASE
+      6,7 -> "http://ddwrt-companion.rm3l.org"
+      else -> "N/A"
+    }
   }
 
 }

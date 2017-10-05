@@ -1,18 +1,24 @@
 package org.rm3l.router_companion.service.firebase;
 
-import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import com.crashlytics.android.Crashlytics;
@@ -20,21 +26,30 @@ import com.evernote.android.job.JobRequest;
 import com.evernote.android.job.util.support.PersistableBundleCompat;
 import com.google.common.base.Splitter;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import needle.UiRelatedTask;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.api.urlshortener.goo_gl.GooGlService;
 import org.rm3l.router_companion.api.urlshortener.goo_gl.resources.GooGlData;
+import org.rm3l.router_companion.common.utils.ExceptionUtils;
+import org.rm3l.router_companion.firmwares.FirmwareRelease;
+import org.rm3l.router_companion.firmwares.NoNewFirmwareUpdate;
+import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
 import org.rm3l.router_companion.job.RouterCompanionJob;
+import org.rm3l.router_companion.multithreading.MultiThreadingManager;
+import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
+import org.rm3l.router_companion.tiles.status.router.StatusRouterStateTile;
 import org.rm3l.router_companion.utils.NetworkUtils;
+import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.notifications.NotificationHelperKt;
+import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import retrofit2.Response;
 
 import static org.rm3l.router_companion.RouterCompanionAppConstants.GOOGLE_API_KEY;
@@ -214,65 +229,113 @@ public class DDWRTCompanionFirebaseMessagingHandlerJob extends RouterCompanionJo
     }
   }
 
-  public static class DDWRTRelease {
-    public final Integer year;
-    public final Date date;
-    public final String revision;
-    public final Long revisionNumber;
-
-    @SuppressLint("SimpleDateFormat")
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
-
-    public DDWRTRelease(Integer year, Date date, String revision) {
-      this.year = year;
-      this.date = date;
-      this.revision = revision;
-      if (this.revision != null) {
-        this.revisionNumber =
-            Long.parseLong(this.revision.replace("r", "").trim().split("-")[0]);
-      } else {
-        this.revisionNumber = null;
+  public static void manualCheckForFirmwareUpdate(@NonNull final Activity activity,
+      @Nullable final GooGlService gooGlService,
+      @NonNull final Router router) {
+    final ProgressDialog alertDialog =
+        ProgressDialog.show(activity, "Checking for firmware updates", "Please wait...",
+            true);
+    MultiThreadingManager.getWebTasksExecutor().execute(new UiRelatedTask<Map.Entry<String, Exception>>() {
+      private FirmwareRelease mNewerRelease;
+      @Override protected Map.Entry<String, Exception> doWork() {
+        //First determine current version
+        try {
+          final NVRAMInfo nvramInfo = RouterFirmwareConnectorManager.getConnector(router)
+              .getDataFor(activity, router,
+                  StatusRouterStateTile.class, null);
+          //noinspection ConstantConditions
+          if (nvramInfo == null) {
+            throw new IllegalStateException("Could not retrieve local data");
+          }
+          @SuppressWarnings("ConstantConditions") final String currentFwVer =
+              nvramInfo.getProperty(NVRAMInfo.Companion.getOS_VERSION(), "").trim();
+          if (currentFwVer.trim().isEmpty()) {
+            throw new IllegalStateException("Could not retrieve current firmware version");
+          }
+          mNewerRelease = RouterFirmwareConnectorManager.getConnector(router)
+              .manuallyCheckForFirmwareUpdateAndReturnDownloadLink(currentFwVer);
+          if (mNewerRelease == null) {
+            //No new update
+            throw new IllegalStateException("Could not retrieve current firmware version");
+          }
+          String newReleaseDLLink = mNewerRelease.getDirectLink();
+          if (gooGlService != null) {
+            try {
+              final GooGlData gooGlData = new GooGlData();
+              gooGlData.setLongUrl(newReleaseDLLink);
+              final Response<GooGlData> response =
+                  gooGlService.shortenLongUrl(GOOGLE_API_KEY, gooGlData).execute();
+              NetworkUtils.checkResponseSuccessful(response);
+              //noinspection ConstantConditions
+              newReleaseDLLink = response.body().getId();
+            } catch (final Exception e) {
+              //Do not worry about that => fallback to the original DL link
+            }
+          }
+          return new AbstractMap.SimpleImmutableEntry<>(newReleaseDLLink, null);
+        } catch (final Exception e) {
+          Crashlytics.logException(e);
+          return new AbstractMap.SimpleImmutableEntry<>(null, e);
+        }
       }
-    }
 
-    public DDWRTRelease(Integer year, String dateString, String revision) throws ParseException {
-      this(year, dateFormat.parse(dateString), revision);
-    }
+      @Override protected void thenDoUiRelatedWork(final Map.Entry<String, Exception> result) {
+        Crashlytics.log(Log.DEBUG, TAG, "result: " + result);
+        alertDialog.cancel();
+        if (result == null) {
+          Utils.displayMessage(activity,
+              "Internal Error. Please try again later.",
+              SnackbarUtils.Style.ALERT);
+          return;
+        }
+        final Exception exception = result.getValue();
+        if (exception != null) {
+          if (exception instanceof NoNewFirmwareUpdate) {
+            Utils.displayMessage(activity,
+                "Your router ("
+                    + router.getCanonicalHumanReadableName()
+                    + ") is up to date.",
+                SnackbarUtils.Style.CONFIRM);
+          } else {
+            Utils.displayMessage(activity,
+                "Could not check for update: " + ExceptionUtils.getRootCause(exception).getMessage(),
+                SnackbarUtils.Style.ALERT);
+          }
+        } else if (mNewerRelease != null && result.getKey() != null) {
+          final Router.RouterFirmware routerFirmware = router.getRouterFirmware();
+          SnackbarUtils.buildSnackbar(activity, activity.findViewById(android.R.id.content),
+              ContextCompat.getColor(activity, R.color.win8_blue),
+              String.format("A new %sBuild (%s) is available for '%s'",
+                  routerFirmware != null ? (routerFirmware.officialName + " ") : "",
+                  mNewerRelease.getVersion(),
+                  router.getCanonicalHumanReadableName()),
+              Color.WHITE,
+              "View", //TODO Reconsider once we have an auto-upgrade firmware feature
+              Color.YELLOW,
+              Snackbar.LENGTH_LONG,
+              new SnackbarCallback() {
+                @Override public void onShowEvent(@Nullable Bundle bundle) throws Exception {}
+                @Override public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
+                    throws Exception {}
 
-    @SuppressLint("DefaultLocale") public String getDirectLink() {
-      return String.format("%s/%d/%s-%s", FTP_DDWRT_FORMAT_BASE, year, dateFormat.format(date), revision);
-    }
+                @Override public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+                    throws Exception {
+                  activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(result.getKey())));
+                }
 
-    @Override public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      DDWRTRelease that = (DDWRTRelease) o;
-
-      if (year != null ? !year.equals(that.year) : that.year != null) return false;
-      if (date != null ? !date.equals(that.date) : that.date != null) return false;
-      return revision != null ? revision.equals(that.revision) : that.revision == null;
-    }
-
-    @Override public int hashCode() {
-      int result = year != null ? year.hashCode() : 0;
-      result = 31 * result + (date != null ? date.hashCode() : 0);
-      result = 31 * result + (revision != null ? revision.hashCode() : 0);
-      return result;
-    }
-
-    @Override public String toString() {
-      return "DDWRTRelease{"
-          + "year="
-          + year
-          + ", date="
-          + date
-          + ", revision='"
-          + revision
-          + '\''
-          + ", revisionNumber="
-          + revisionNumber
-          + '}';
-    }
+                @Override public void onDismissEventTimeout(int event, @Nullable Bundle token)
+                    throws Exception {}
+                @Override public void onDismissEventManual(int event, @Nullable Bundle bundle)
+                    throws Exception {}
+                @Override public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+                    throws Exception {}
+              }, null, true);
+        } else {
+          Utils.displayMessage(activity,
+              "Internal Error. Please try again later.",
+              SnackbarUtils.Style.ALERT);
+        }
+      }
+    });
   }
 }

@@ -1,7 +1,6 @@
 package org.rm3l.router_companion.firmwares
 
 import android.content.Context
-import android.content.SharedPreferences
 import com.crashlytics.android.Crashlytics
 import java.lang.reflect.InvocationTargetException
 import org.rm3l.router_companion.resources.MonthlyCycleItem
@@ -11,9 +10,11 @@ import org.rm3l.router_companion.tiles.DDWRTTile
 import org.rm3l.router_companion.tiles.admin.accessrestrictions.WANAccessPoliciesRouterData
 import org.rm3l.router_companion.utils.Utils
 
-/**
- * Created by rm3l on 08/01/2017.
- */
+class NoNewFirmwareUpdate: RuntimeException {
+  constructor(): super()
+  constructor(message: String?, cause: Throwable?): super(message, cause)
+}
+
 abstract class AbstractRouterFirmwareConnector {
 
   protected fun updateProgressBarViewSeparator(
@@ -95,4 +96,10 @@ abstract class AbstractRouterFirmwareConnector {
   abstract fun getWANAccessPolicies(context: Context,
       router: Router,
       dataRetrievalListener: RemoteDataRetrievalListener?): WANAccessPoliciesRouterData?
+
+  abstract fun manuallyCheckForFirmwareUpdateAndReturnDownloadLink(currentFwVer: String?): FirmwareRelease?
+}
+
+abstract class FirmwareRelease protected constructor(val version: String) {
+  abstract fun getDirectLink(): String
 }

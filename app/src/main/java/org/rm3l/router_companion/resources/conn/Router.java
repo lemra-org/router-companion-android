@@ -1237,19 +1237,23 @@ public class Router implements Serializable {
 
   public enum RouterFirmware {
 
-    DDWRT("DD-WRT", null, getTabsForDDWRT(), "/usr/sbin/nvram"),
+    DDWRT("DD-WRT", "DD-WRT", null, getTabsForDDWRT(), "/usr/sbin/nvram"),
 
     //TODO Not supported as yet
-    OPENWRT("OpenWrt (Beta)", null, null /*getTabsForOpenWRT()*/, null),
+    OPENWRT("OpenWrt", "OpenWrt (Beta)", null, null /*getTabsForOpenWRT()*/, null),
 
-    TOMATO("Tomato (Experimental)", R.drawable.tomato_nav_drawer_header_bg, getTabsForTomato(),
+    TOMATO("Tomato", "Tomato (Experimental)", R.drawable.tomato_nav_drawer_header_bg, getTabsForTomato(),
         "/bin/nvram"),
 
-    DEMO("Demo", null, getTabsForDDWRT(), null),
+    DEMO("Demo", "Demo", null, getTabsForDDWRT(), null),
 
-    AUTO("Auto-detect", null, null, null), UNKNOWN("???", null, null, null);
+    AUTO("-", "Auto-detect", null, null, null),
+
+    UNKNOWN("???", "???", null, null, null);
 
     private static ImmutableList<RouterFirmware> values;
+
+    @NonNull public final String officialName;
 
     @NonNull public final String displayName;
 
@@ -1261,10 +1265,12 @@ public class Router implements Serializable {
 
     @Nullable public final String nvramPath;
 
-    RouterFirmware(@NonNull final String displayName,
+    RouterFirmware(@NonNull final String officialName,
+        @NonNull final String displayName,
         @Nullable final Integer drawerHeaderBackgroundDrawable, @Nullable
         ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> fragmentTabs,
         @Nullable final String nvramPath) {
+      this.officialName = officialName;
       this.displayName = displayName;
       if (drawerHeaderBackgroundDrawable == null) {
         this.drawerHeaderBackgroundDrawable = R.drawable.nav_drawer_header_bg;

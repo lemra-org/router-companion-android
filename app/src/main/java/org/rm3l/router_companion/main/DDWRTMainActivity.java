@@ -40,7 +40,6 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -91,41 +90,22 @@ import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.squareup.picasso.Picasso;
-import java.io.IOException;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPClientConfig;
-import org.apache.commons.net.ftp.FTPFile;
-import org.apache.commons.net.ftp.FTPReply;
-import org.json.JSONException;
-import org.rm3l.router_companion.api.urlshortener.goo_gl.GooGlService;
-import org.rm3l.router_companion.api.urlshortener.goo_gl.resources.GooGlData;
-import org.rm3l.router_companion.common.utils.ExceptionUtils;
-import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
-import org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseMessagingHandlerJob;
-import org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseMessagingHandlerJob.DDWRTRelease;
-import org.rm3l.router_companion.tiles.status.router.StatusRouterStateTile;
-import org.rm3l.router_companion.utils.NetworkUtils;
-import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HttpsURLConnection;
 import needle.UiRelatedTask;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -145,6 +125,7 @@ import org.rm3l.router_companion.actions.RouterActions;
 import org.rm3l.router_companion.actions.RouterRestoreDialogListener;
 import org.rm3l.router_companion.actions.activity.OpenWebManagementPageActivity;
 import org.rm3l.router_companion.actions.activity.SpeedTestActivity;
+import org.rm3l.router_companion.api.urlshortener.goo_gl.GooGlService;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.exceptions.StorageException;
 import org.rm3l.router_companion.fragments.PageSlidingTabStripFragment;
@@ -158,11 +139,13 @@ import org.rm3l.router_companion.multithreading.MultiThreadingManager;
 import org.rm3l.router_companion.prefs.sort.SortingStrategy;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
+import org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseMessagingHandlerJob;
 import org.rm3l.router_companion.settings.RouterSettingsActivity;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.AppShortcutUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
+import org.rm3l.router_companion.utils.NetworkUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.StorageUtils;
@@ -170,7 +153,7 @@ import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.customtabs.CustomTabActivityHelper;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
-import retrofit2.Response;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -179,7 +162,6 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.AUTO_REFRESH
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_THEME;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
-import static org.rm3l.router_companion.RouterCompanionAppConstants.GOOGLE_API_KEY;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.MAX_ROUTERS_FREE_VERSION;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.SORTING_STRATEGY_PREF;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.THEMING_PREF;
@@ -187,8 +169,6 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.TILE_REFRESH
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.NEW_ROUTER_ADDED;
 import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.router_companion.resources.conn.Router.RouterFirmware;
-import static org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseMessagingHandlerJob.FTP_DDWRT_FORMAT_BASE;
-import static org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseMessagingHandlerJob.FTP_DDWRT_HOST;
 import static org.rm3l.router_companion.utils.Utils.fromHtml;
 import static org.rm3l.router_companion.web.WebUtils.DO_NOT_VERIFY;
 import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
@@ -1015,11 +995,14 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
       }
     }
 
+    final RouterFirmware routerFirmware = mRouter.getRouterFirmware();
+
     //Check for updates (only for DD-WRT at this time)
     final MenuItem checkForUpdatesMenuItem = menu.findItem(R.id.action_ddwrt_check_for_updates);
     if (checkForUpdatesMenuItem != null) {
       //TODO Only supported for DD-WRT for now
-      final boolean enabled = RouterFirmware.DDWRT.equals(mRouter.getRouterFirmware());
+      final boolean enabled = (routerFirmware != null &&
+          EnumSet.of(RouterFirmware.DDWRT, RouterFirmware.DEMO).contains(routerFirmware));
       checkForUpdatesMenuItem.setVisible(enabled);
       checkForUpdatesMenuItem.setEnabled(enabled);
     }
@@ -1028,7 +1011,7 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
     if (item != null) {
       //FIXME Command used to restore factory defaults works best on DD-WRT, not on OpenWRT and other firmwares
       // So hide this menu item until we find a better way to achieve this!
-      final boolean enabled = RouterFirmware.DDWRT.equals(mRouter.getRouterFirmware());
+      final boolean enabled = RouterFirmware.DDWRT.equals(routerFirmware);
       item.setVisible(enabled);
       item.setEnabled(enabled);
     }
@@ -1258,179 +1241,9 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
       }
       return true;
 
-      case R.id.action_ddwrt_check_for_updates: {
-        final ProgressDialog alertDialog =
-            ProgressDialog.show(this, "Checking for updates", "Please wait...",
-                true);
-        //TODO Extract logic in RouterFirmwareConnector
-        MultiThreadingManager.getWebTasksExecutor().execute(new UiRelatedTask<Map.Entry<String, Exception>>() {
-          private DDWRTRelease mNewerRelease;
-          @Override protected Map.Entry<String, Exception> doWork() {
-            //First determine current version
-            FTPClient ftp = null;
-            try {
-              final NVRAMInfo nvramInfo = RouterFirmwareConnectorManager.getConnector(mRouter)
-                  .getDataFor(DDWRTMainActivity.this, mRouter,
-                      StatusRouterStateTile.class, null);
-              //noinspection ConstantConditions
-              if (nvramInfo != null) {
-                @SuppressWarnings("ConstantConditions") final String osVersion =
-                    nvramInfo.getProperty(NVRAMInfo.Companion.getOS_VERSION(), "").trim();
-                final boolean emptyOsVersion = TextUtils.isEmpty(osVersion);
-                final Long osVersionLong = emptyOsVersion ? null :
-                    Long.parseLong(osVersion.split("-")[0]);
-                Crashlytics.log(Log.DEBUG, TAG, "<osVersion, osVersionLong>=<" + osVersion + "," +
-                    osVersionLong + ">");
-                //Now browse the DD-WRT update website and check for the most recent
-                ftp = new FTPClient();
-                //final FTPClientConfig config = new FTPClientConfig();
-                //config.setXXX(YYY); // change required options
-                //ftp.configure(config );
-                ftp.connect(FTP_DDWRT_HOST);
-                final int reply = ftp.getReplyCode();
-                Crashlytics.log(Log.INFO, TAG, "Connected to FTP Server: " + FTP_DDWRT_HOST +
-                    ". replyCode=" + reply);
-                if (!FTPReply.isPositiveCompletion(reply)) {
-                  ftp.disconnect();
-                  Crashlytics.log(Log.INFO, TAG, "Disconnected from FTP Server: " + FTP_DDWRT_HOST);
-                  throw new IllegalStateException("Server refused connection. Please try again later...");
-                }
-                ftp.login("anonymous", "anonymous");
-                ftp.changeWorkingDirectory("betas");
-                final List<DDWRTRelease> newerReleases = new ArrayList<>();
-                final FTPFile[] directories = ftp.listDirectories();
-                if (directories != null) {
-                  for (final FTPFile directory : directories) {
-                    if (directory == null) {
-                      continue;
-                    }
-                    final String year = directory.getName();
-                    Crashlytics.log(Log.DEBUG, TAG, "Found dir: " + year);
-                    final FTPFile[] releasesForYear = ftp.listDirectories(year);
-                    if (releasesForYear == null) {
-                      continue;
-                    }
-                    for (final FTPFile releaseByDay : releasesForYear) {
-                      if (releaseByDay == null) {
-                        continue;
-                      }
-                      final String releaseByDayName = releaseByDay.getName();
-                      final List<String> releaseByDaySplitList = Splitter.on('-')
-                          .limit(4)
-                          .omitEmptyStrings()
-                          .trimResults()
-                          .splitToList(releaseByDayName);
-                      final DDWRTRelease ddwrtRelease = new DDWRTRelease(Integer.parseInt(year.trim()),
-                          String.format("%s-%s-%s", releaseByDaySplitList.get(0),
-                              releaseByDaySplitList.get(1), releaseByDaySplitList.get(2)),
-                          releaseByDaySplitList.get(3));
-                      Crashlytics.log(Log.DEBUG, TAG, "Found release for year: "
-                          + year + ": " + releaseByDayName + " => " + ddwrtRelease);
-                      if (osVersionLong == null ||
-                          (ddwrtRelease.revisionNumber != null &&
-                              (ddwrtRelease.revisionNumber > osVersionLong))) {
-                        newerReleases.add(ddwrtRelease);
-                      }
-                    }
-                  }
-                }
-                Collections.sort(newerReleases, new Comparator<DDWRTRelease>() {
-                  @Override public int compare(DDWRTRelease one, DDWRTRelease second) {
-                    if (one == second) {
-                      return 0;
-                    }
-                    if (one == null) {
-                      return -1;
-                    }
-                    if (second == null) {
-                      return 1;
-                    }
-                    if (one.equals(second)) {
-                      return 0;
-                    }
-                    final Long oneRevisionNumber = one.revisionNumber;
-                    final Long secondRevisionNumber = second.revisionNumber;
-                    if (oneRevisionNumber == null) {
-                      return -1;
-                    }
-                    if (secondRevisionNumber == null) {
-                      return 1;
-                    }
-                    if (oneRevisionNumber.equals(secondRevisionNumber)) {
-                      return 0;
-                    }
-                    return oneRevisionNumber.compareTo(secondRevisionNumber);
-                  }
-                });
-                ftp.logout();
-                //Link found - shorten it, and do not abort if an error occurred.
-                final int nbPotentialReleases = newerReleases.size();
-                final String directLink;
-                if (nbPotentialReleases >= 1) {
-                  mNewerRelease = newerReleases.get(nbPotentialReleases - 1);
-                  directLink = mNewerRelease.getDirectLink();
-                  String linkToPotentialLatestRelease = directLink;
-                  try {
-                    final GooGlData gooGlData = new GooGlData();
-                    gooGlData.setLongUrl(directLink);
-                    final Response<GooGlData> response =
-                        mGooGlService.shortenLongUrl(GOOGLE_API_KEY, gooGlData)
-                            .execute();
-                    NetworkUtils.checkResponseSuccessful(response);
-                    //noinspection ConstantConditions
-                    linkToPotentialLatestRelease = response.body().getId();
-                  } catch (final Exception e) {
-                    //Do not worry about that
-                  }
-                  return new AbstractMap.SimpleImmutableEntry<>(linkToPotentialLatestRelease, null);
-                } else {
-                  //No candidate found => return null
-                  return null;
-                }
-              } else {
-                throw new IllegalStateException("Could not retrieve local data");
-              }
-            } catch (final Exception e) {
-              Crashlytics.logException(e);
-              return new AbstractMap.SimpleImmutableEntry<>(null, e);
-            } finally {
-              if (ftp != null && ftp.isConnected()) {
-                try {
-                  ftp.disconnect();
-                } catch(final IOException ignored) {
-                  ignored.printStackTrace();
-                }
-              }
-            }
-          }
-
-          @Override protected void thenDoUiRelatedWork(Map.Entry<String, Exception> result) {
-            Crashlytics.log(Log.DEBUG, TAG, "result: " + result);
-            alertDialog.cancel();
-            if (result != null && result.getValue() != null) {
-              Utils.displayMessage(DDWRTMainActivity.this,
-                  "Could not check for update: " +
-                      ExceptionUtils.getRootCause(result.getValue()).getMessage(),
-                  Style.ALERT);
-            } else if (result != null && mNewerRelease != null && result.getKey() != null) {
-              //Display notification
-              //TODO Implement as a Snackbar instead (INFO Style, with an action button that opens up the browser)
-              DDWRTCompanionFirebaseMessagingHandlerJob.notifyReleaseAvailable(
-                  "A new DD-WRT Build is available",
-                  mNewerRelease.revision,
-                  result.getKey(),
-                  DDWRTMainActivity.this,
-                  mGlobalPreferences);
-            } else {
-              Utils.displayMessage(DDWRTMainActivity.this,
-                  "Your router ("
-                      + mRouter.getCanonicalHumanReadableName()
-                      + ") is up to date.",
-                  Style.CONFIRM);
-            }
-          }
-        });
-      }
+      case R.id.action_ddwrt_check_for_updates:
+        DDWRTCompanionFirebaseMessagingHandlerJob
+            .manualCheckForFirmwareUpdate(this, mGooGlService, mRouter);
         return true;
 
       case R.id.action_ddwrt_actions_ssh_router: {

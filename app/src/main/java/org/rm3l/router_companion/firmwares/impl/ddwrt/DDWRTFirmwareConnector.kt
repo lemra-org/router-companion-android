@@ -1,13 +1,15 @@
 package org.rm3l.router_companion.firmwares.impl.ddwrt
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
 import android.text.TextUtils
 import android.util.Log
 import android.util.Patterns
 import com.crashlytics.android.Crashlytics
 import com.google.common.base.Splitter
 import com.google.common.base.Strings
+import org.apache.commons.net.ftp.FTPClient
+import org.apache.commons.net.ftp.FTPReply
 import java.util.Arrays
 import java.util.Calendar
 import java.util.Date
@@ -17,7 +19,6 @@ import org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector
 import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener
 import org.rm3l.router_companion.firmwares.impl.ddwrt.tile_data_workers.dashboard.network.NetworkTopologyMapTileWorker
 import org.rm3l.router_companion.mgmt.RouterManagementActivity
-import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO
 import org.rm3l.router_companion.resources.MonthlyCycleItem
 import org.rm3l.router_companion.resources.conn.NVRAMInfo
 import org.rm3l.router_companion.resources.conn.Router
@@ -28,9 +29,12 @@ import org.rm3l.router_companion.utils.WANTrafficUtils
 
 import org.rm3l.router_companion.RouterCompanionAppConstants.NOK
 import org.rm3l.router_companion.RouterCompanionAppConstants.UNKNOWN
+import org.rm3l.router_companion.firmwares.FirmwareRelease
+import org.rm3l.router_companion.firmwares.NoNewFirmwareUpdate
 import org.rm3l.router_companion.resources.WANAccessPolicy
+import org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseMessagingHandlerJob.FTP_DDWRT_FORMAT_BASE
+import org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseMessagingHandlerJob.FTP_DDWRT_HOST
 import org.rm3l.router_companion.tiles.admin.accessrestrictions.AccessRestrictionsWANAccessTile
-import org.rm3l.router_companion.tiles.admin.accessrestrictions.AccessRestrictionsWANAccessTile.Companion
 import org.rm3l.router_companion.tiles.admin.accessrestrictions.WANAccessPoliciesRouterData
 import org.rm3l.router_companion.tiles.dashboard.bandwidth.WANTotalTrafficOverviewTile.DDWRT_TRAFF_DATA_SIMPLE_DATE_FORMAT
 import org.rm3l.router_companion.tiles.dashboard.bandwidth.WANTotalTrafficOverviewTile.TRAFF_PREFIX
@@ -39,6 +43,8 @@ import org.rm3l.router_companion.tiles.status.router.StatusRouterCPUTile.GREP_MO
 import org.rm3l.router_companion.utils.Utils.COMMA_SPLITTER
 import org.rm3l.router_companion.utils.Utils.SPACE_SPLITTER
 import org.rm3l.router_companion.utils.WANTrafficUtils.retrieveAndPersistMonthlyTrafficData
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.ArrayList
 import java.util.Locale
 import java.util.Properties
@@ -373,6 +379,8 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
 
   companion object {
 
+    val TAG: String = DDWRTFirmwareConnector::class.java.simpleName
+
     @JvmField
     val MODEL = "DD_BOARD"
 
@@ -634,5 +642,85 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
     return routerData
   }
 
+  override fun manuallyCheckForFirmwareUpdateAndReturnDownloadLink(currentFwVer: String?): DDWRTRelease? {
+    var ftp: FTPClient? = null
+    try {
+      val currentFwVerLong = currentFwVer?.split("-")?.get(0)?.toLongOrNull()
+      Crashlytics.log(Log.DEBUG, TAG,
+          "<currentFwVer, currentFwVerLong>=<$currentFwVer,$currentFwVerLong>")
+      //Now browse the DD-WRT update website and check for the most recent
+      ftp = FTPClient()
+      //final FTPClientConfig config = new FTPClientConfig();
+      //config.setXXX(YYY); // change required options
+      //ftp.configure(config );
+      ftp.connect(FTP_DDWRT_HOST)
+      val reply = ftp.replyCode
+      Crashlytics.log(Log.INFO, TAG, "Connected to FTP Server: $FTP_DDWRT_HOST. replyCode=$reply")
+      if (!FTPReply.isPositiveCompletion(reply)) {
+        ftp.disconnect()
+        Crashlytics.log(Log.INFO, TAG, "Disconnected from FTP Server: $FTP_DDWRT_HOST")
+        throw IllegalStateException("Server refused connection. Please try again later...")
+      }
+      ftp.login("anonymous", "anonymous")
+      ftp.changeWorkingDirectory("betas")
+      val directories = ftp.listDirectories()
+      val newerReleases = directories.
+          map {
+            Crashlytics.log(Log.DEBUG, TAG, "Found dir: ${it.name}")
+            it.name
+          }
+          .map { it to ftp!!.listDirectories(it).toList() }
+          .flatMap { yearReleasesPair ->
+            val year = yearReleasesPair.first
+            yearReleasesPair.second
+                .map { releaseByDay ->
+                  val releaseByDayName = releaseByDay.name
+                  val releaseByDaySplitList = releaseByDayName.split(delimiters = "-", limit = 4)
+                  val ddwrtRelease = DDWRTRelease(
+                      year.trim().toInt(),
+                      "${releaseByDaySplitList[0]}-${releaseByDaySplitList[1]}-${releaseByDaySplitList[2]}",
+                      releaseByDaySplitList[3])
+                  Crashlytics.log(Log.DEBUG, TAG,
+                      "Found release for year: $year : $releaseByDayName =>  $ddwrtRelease")
+                  ddwrtRelease
+                }
+                .toList()
+          }
+          .filter { ddwrtRelease ->
+            currentFwVerLong == null ||
+                (ddwrtRelease.revisionNumber != null && ddwrtRelease.revisionNumber >= currentFwVerLong)
+          }
+          .sortedBy { it.revisionNumber }
+          .toList()
+      ftp.logout()
+      if (newerReleases.isEmpty()) {
+        //No new release
+        throw NoNewFirmwareUpdate()
+      }
+      return newerReleases.last()
+    } finally {
+      if (ftp?.isConnected == true) {
+        try {
+          ftp.disconnect()
+        } catch (ignored: Exception) {
+          ignored.printStackTrace()
+        }
+      }
+    }
+  }
 
+
+}
+
+@SuppressLint("SimpleDateFormat")
+val releaseDateFormat = SimpleDateFormat("MM-dd-yyyy")
+
+data class DDWRTRelease(val year: Int?, val date: Date?, private val revision: String): FirmwareRelease(revision) {
+  val revisionNumber = this.revision.trim().replaceFirst("r", "").toLongOrNull()
+
+  @Throws(ParseException::class)
+  constructor(year: Int?, dateString: String, revision: String) :
+      this(year, releaseDateFormat.parse(dateString), revision)
+
+  override fun getDirectLink() = "$FTP_DDWRT_FORMAT_BASE/$year/${releaseDateFormat.format(date)}-$revision"
 }
