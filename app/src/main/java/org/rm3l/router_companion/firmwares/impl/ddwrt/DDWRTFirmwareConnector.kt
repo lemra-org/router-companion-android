@@ -688,7 +688,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
           }
           .filter { ddwrtRelease ->
             currentFwVerLong == null ||
-                (ddwrtRelease.revisionNumber != null && ddwrtRelease.revisionNumber >= currentFwVerLong)
+                (ddwrtRelease.revisionNumber != null && ddwrtRelease.revisionNumber > currentFwVerLong)
           }
           .sortedBy { it.revisionNumber }
           .toList()
