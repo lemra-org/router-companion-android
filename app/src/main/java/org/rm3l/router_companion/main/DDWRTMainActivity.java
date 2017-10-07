@@ -131,6 +131,7 @@ import org.rm3l.router_companion.exceptions.StorageException;
 import org.rm3l.router_companion.fragments.PageSlidingTabStripFragment;
 import org.rm3l.router_companion.help.ChangelogActivity;
 import org.rm3l.router_companion.help.HelpActivity;
+import org.rm3l.router_companion.job.firmware_update.FirmwareUpdateCheckerJob;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.RouterMgmtDialogListener;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
@@ -139,7 +140,6 @@ import org.rm3l.router_companion.multithreading.MultiThreadingManager;
 import org.rm3l.router_companion.prefs.sort.SortingStrategy;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
-import org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseMessagingHandlerJob;
 import org.rm3l.router_companion.settings.RouterSettingsActivity;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.utils.AdUtils;
@@ -1242,8 +1242,7 @@ import static org.rm3l.router_companion.web.WebUtils.trustAllHosts;
       return true;
 
       case R.id.action_ddwrt_check_for_updates:
-        DDWRTCompanionFirebaseMessagingHandlerJob
-            .manualCheckForFirmwareUpdate(this, mGooGlService, mRouter);
+        FirmwareUpdateCheckerJob.manualCheckForFirmwareUpdate(this, mGooGlService, mRouter);
         return true;
 
       case R.id.action_ddwrt_actions_ssh_router: {

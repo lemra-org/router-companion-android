@@ -413,7 +413,7 @@ dependencies {
   implementation 'com.github.curioustechizen.android-ago:library:1.3.4'
   //    implementation 'com.github.danielemaddaluno.androidupdatechecker:library:1.0.2'
 //  implementation 'com.google.android.gms:play-services-ads:11.4.0'
-  implementation 'com.google.android.gms:play-services-ads-lite:11.4.0' //only for distrib. via Play Store
+  implementation 'com.google.android.gms:play-services-ads-lite:11.4.2' //only for distrib. via Play Store
   implementation('com.avocarrot:android-sdk:4.0.+')
   implementation 'fr.nicolaspomepuy:discreetapprate:2.0.4@aar'
   implementation 'com.squareup.picasso:picasso:2.5.2'
@@ -426,7 +426,7 @@ dependencies {
   implementation 'mbanje.kurt:fabbutton:1.2.4@aar'
   implementation 'com.sothree.slidinguppanel:library:3.4.0'
 
-  implementation 'com.google.firebase:firebase-appindexing:11.4.0'
+  implementation 'com.google.firebase:firebase-appindexing:11.4.2'
 
   /*
    * AirBnB DeepLinkDispatch
@@ -509,7 +509,7 @@ dependencies {
     exclude group: 'com.android.support', module: 'appcompat-v7'
   }
 
-  implementation 'com.google.firebase:firebase-messaging:11.4.0'
+//  implementation 'com.google.firebase:firebase-messaging:11.4.2'
 
   //Stetho already does the same
 //  debugImplementation 'com.amitshekhar.android:debug-db:1.0.0'
@@ -537,7 +537,7 @@ dependencies {
   releaseImplementation "com.github.nekocode.ResourceInspector:resinspector-no-op:0.5.3"
   testImplementation "com.github.nekocode.ResourceInspector:resinspector-no-op:0.5.3"
 
-  implementation 'com.evernote:android-job:1.2.0-RC4'
+  implementation 'com.evernote:android-job:1.2.0'
 }
 
 play {

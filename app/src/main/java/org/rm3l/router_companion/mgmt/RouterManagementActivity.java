@@ -74,9 +74,6 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.mikepenz.aboutlibraries.Libs;
-import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.readystatesoftware.chuck.Chuck;
 //import com.sloydev.preferator.Preferator;
 import com.stephentuso.welcome.WelcomeScreenHelper;
@@ -414,17 +411,17 @@ import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_RESOURC
     //            }
     //        });
 
-    //If needed, register to DD-WRT Build Updates
-    final Set<String> notificationChoices =
-        this.mPreferences.getStringSet(NOTIFICATIONS_CHOICE_PREF, new HashSet<String>());
-    if (notificationChoices.contains(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES)) {
-      //Subscribe to topic
-      FirebaseMessaging.getInstance().subscribeToTopic(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES);
-    } else {
-      //Unsubscribe from topic
-      FirebaseMessaging.getInstance()
-          .unsubscribeFromTopic(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES);
-    }
+    ////If needed, register to DD-WRT Build Updates
+    //final Set<String> notificationChoices =
+    //    this.mPreferences.getStringSet(NOTIFICATIONS_CHOICE_PREF, new HashSet<String>());
+    //if (notificationChoices.contains(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES)) {
+    //  //Subscribe to topic
+    //  FirebaseMessaging.getInstance().subscribeToTopic(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES);
+    //} else {
+    //  //Unsubscribe from topic
+    //  FirebaseMessaging.getInstance()
+    //      .unsubscribeFromTopic(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES);
+    //}
 
     Utils.requestAppPermissions(this);
 
@@ -948,17 +945,17 @@ import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_RESOURC
         // Make sure the request was successful and reload U if necessary
         if (resultCode == RESULT_OK) {
           //If needed, register to DD-WRT Build Updates
-          final Set<String> notificationChoices =
-              this.mPreferences.getStringSet(NOTIFICATIONS_CHOICE_PREF, new HashSet<String>());
-          if (notificationChoices.contains(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES)) {
-            //Subscribe to topic
-            FirebaseMessaging.getInstance()
-                .subscribeToTopic(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES);
-          } else {
-            //Unsubscribe from topic
-            FirebaseMessaging.getInstance()
-                .unsubscribeFromTopic(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES);
-          }
+          //final Set<String> notificationChoices =
+          //    this.mPreferences.getStringSet(NOTIFICATIONS_CHOICE_PREF, new HashSet<String>());
+          //if (notificationChoices.contains(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES)) {
+          //  //Subscribe to topic
+          //  FirebaseMessaging.getInstance()
+          //      .subscribeToTopic(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES);
+          //} else {
+          //  //Unsubscribe from topic
+          //  FirebaseMessaging.getInstance()
+          //      .unsubscribeFromTopic(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES);
+          //}
 
           //Reset Crashlytics user email addr
           final String acraEmailAddr =

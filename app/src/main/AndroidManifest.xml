@@ -575,20 +575,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </service>
 
     <!-- Firebase (FCM) -->
-    <service android:name="org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseMessagingService">
+    <!--<service android:name="org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseMessagingService">-->
 
-      <!-- message handling beyond receiving notifications on apps in the background -->
-      <intent-filter>
-        <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-      </intent-filter>
-    </service>
-    <service android:name="org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseInstanceIDService">
+      <!--&lt;!&ndash; message handling beyond receiving notifications on apps in the background &ndash;&gt;-->
+      <!--<intent-filter>-->
+        <!--<action android:name="com.google.firebase.MESSAGING_EVENT"/>-->
+      <!--</intent-filter>-->
+    <!--</service>-->
+    <!--<service android:name="org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseInstanceIDService">-->
 
-      <!-- handle the creation, rotation, and updating of registration tokens -->
-      <intent-filter>
-        <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
-      </intent-filter>
-    </service>
+      <!--&lt;!&ndash; handle the creation, rotation, and updating of registration tokens &ndash;&gt;-->
+      <!--<intent-filter>-->
+        <!--<action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>-->
+      <!--</intent-filter>-->
+    <!--</service>-->
 
     <meta-data
         android:name="io.fabric.ApiKey"

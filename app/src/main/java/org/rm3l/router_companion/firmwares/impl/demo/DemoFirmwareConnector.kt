@@ -3,6 +3,7 @@ package org.rm3l.router_companion.firmwares.impl.demo
 import android.content.Context
 import com.google.common.base.Splitter
 import com.google.common.base.Strings
+import org.rm3l.router_companion.RouterCompanionAppConstants
 import java.util.ArrayList
 import java.util.Arrays
 import java.util.Calendar
@@ -26,7 +27,6 @@ import org.rm3l.router_companion.RouterCompanionAppConstants.UNKNOWN
 import org.rm3l.router_companion.firmwares.FirmwareRelease
 import org.rm3l.router_companion.resources.WANAccessPolicy
 import org.rm3l.router_companion.resources.conn.Router.RouterFirmware
-import org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseMessagingHandlerJob.FTP_DDWRT_FORMAT_BASE
 import org.rm3l.router_companion.tiles.admin.accessrestrictions.WANAccessPoliciesRouterData
 import org.rm3l.router_companion.tiles.dashboard.network.NetworkTopologyMapTile.INTERNET_CONNECTIVITY_PUBLIC_IP
 import org.rm3l.router_companion.utils.WANTrafficUtils.HIDDEN_
@@ -332,7 +332,7 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
 data class DemoFirmwareRelease(val index: Int): FirmwareRelease(index.toString()) {
   override fun getDirectLink(): String {
     return when(index) {
-      1,3,5,8 -> FTP_DDWRT_FORMAT_BASE
+      1,3,5,8 -> RouterCompanionAppConstants.DDWRT_RELEASE_BASE_URL
       6,7 -> "http://ddwrt-companion.rm3l.org"
       else -> "N/A"
     }

@@ -211,6 +211,10 @@ public final class RouterCompanionAppConstants {
   public static final String GOOGLE_API_KEY = \"fake-api-key\";
   public static int MB = 1024 * 1024;
 
+  public static final String DDWRT_RELEASE_REMOTE_HOST = "ftp.dd-wrt.com";
+  public static final String DDWRT_RELEASE_BASE_URL = ("ftp://" + DDWRT_RELEASE_REMOTE_HOST + "/betas");
+  public static final String DDWRT_RELEASE_URL_FORMAT = (DDWRT_RELEASE_BASE_URL + "/%s/%s");
+
   private RouterCompanionAppConstants() {
   }
 

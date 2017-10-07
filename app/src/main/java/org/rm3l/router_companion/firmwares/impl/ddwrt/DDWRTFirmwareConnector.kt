@@ -14,6 +14,8 @@ import java.util.Arrays
 import java.util.Calendar
 import java.util.Date
 import org.rm3l.router_companion.RouterCompanionAppConstants
+import org.rm3l.router_companion.RouterCompanionAppConstants.DDWRT_RELEASE_REMOTE_HOST
+import org.rm3l.router_companion.RouterCompanionAppConstants.DDWRT_RELEASE_URL_FORMAT
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException
 import org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector
 import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener
@@ -32,8 +34,6 @@ import org.rm3l.router_companion.RouterCompanionAppConstants.UNKNOWN
 import org.rm3l.router_companion.firmwares.FirmwareRelease
 import org.rm3l.router_companion.firmwares.NoNewFirmwareUpdate
 import org.rm3l.router_companion.resources.WANAccessPolicy
-import org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseMessagingHandlerJob.FTP_DDWRT_FORMAT_BASE
-import org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseMessagingHandlerJob.FTP_DDWRT_HOST
 import org.rm3l.router_companion.tiles.admin.accessrestrictions.AccessRestrictionsWANAccessTile
 import org.rm3l.router_companion.tiles.admin.accessrestrictions.WANAccessPoliciesRouterData
 import org.rm3l.router_companion.tiles.dashboard.bandwidth.WANTotalTrafficOverviewTile.DDWRT_TRAFF_DATA_SIMPLE_DATE_FORMAT
@@ -653,12 +653,12 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
       //final FTPClientConfig config = new FTPClientConfig();
       //config.setXXX(YYY); // change required options
       //ftp.configure(config );
-      ftp.connect(FTP_DDWRT_HOST)
+      ftp.connect(DDWRT_RELEASE_REMOTE_HOST)
       val reply = ftp.replyCode
-      Crashlytics.log(Log.INFO, TAG, "Connected to FTP Server: $FTP_DDWRT_HOST. replyCode=$reply")
+      Crashlytics.log(Log.INFO, TAG, "Connected to FTP Server: $DDWRT_RELEASE_REMOTE_HOST. replyCode=$reply")
       if (!FTPReply.isPositiveCompletion(reply)) {
         ftp.disconnect()
-        Crashlytics.log(Log.INFO, TAG, "Disconnected from FTP Server: $FTP_DDWRT_HOST")
+        Crashlytics.log(Log.INFO, TAG, "Disconnected from FTP Server: $DDWRT_RELEASE_REMOTE_HOST")
         throw IllegalStateException("Server refused connection. Please try again later...")
       }
       ftp.login("anonymous", "anonymous")
@@ -722,5 +722,5 @@ data class DDWRTRelease(val year: Int?, val date: Date?, private val revision: S
   constructor(year: Int?, dateString: String, revision: String) :
       this(year, releaseDateFormat.parse(dateString), revision)
 
-  override fun getDirectLink() = "$FTP_DDWRT_FORMAT_BASE/$year/${releaseDateFormat.format(date)}-$revision"
+  override fun getDirectLink() = DDWRT_RELEASE_URL_FORMAT.format(year, "${releaseDateFormat.format(date)}-$revision")
 }

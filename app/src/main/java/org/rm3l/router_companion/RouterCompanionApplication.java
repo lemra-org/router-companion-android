@@ -60,6 +60,7 @@ import org.rm3l.router_companion.deeplinks.DeepLinkActivity;
 import org.rm3l.router_companion.deeplinks.DeepLinkReceiver;
 import org.rm3l.router_companion.deeplinks.RouterActionsDeepLinkActivity;
 import org.rm3l.router_companion.job.RouterCompanionJobCreator;
+import org.rm3l.router_companion.job.firmware_update.FirmwareUpdateCheckerJob;
 import org.rm3l.router_companion.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
@@ -235,6 +236,9 @@ public class RouterCompanionApplication extends Application
     //        }
 
     OpenStreetMapTileProviderConstants.setUserAgentValue(BuildConfig.APPLICATION_ID);
+
+    //Daily jobs
+    FirmwareUpdateCheckerJob.schedule();
   }
 
   @Override public void onTerminate() {
