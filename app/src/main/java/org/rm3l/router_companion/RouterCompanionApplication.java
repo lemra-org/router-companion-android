@@ -53,7 +53,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.deeplinks.DeepLinkActivity;
@@ -62,6 +61,7 @@ import org.rm3l.router_companion.deeplinks.RouterActionsDeepLinkActivity;
 import org.rm3l.router_companion.job.RouterCompanionJobCreator;
 import org.rm3l.router_companion.job.firmware_update.FirmwareUpdateCheckerJob;
 import org.rm3l.router_companion.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
+import org.rm3l.router_companion.service.BackgroundService;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
@@ -235,9 +235,10 @@ public class RouterCompanionApplication extends Application
     //            setTheme(R.style.AppThemeDark);
     //        }
 
-    OpenStreetMapTileProviderConstants.setUserAgentValue(BuildConfig.APPLICATION_ID);
+    org.osmdroid.config.Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
 
     //Daily jobs
+    BackgroundService.schedule();
     FirmwareUpdateCheckerJob.schedule();
   }
 

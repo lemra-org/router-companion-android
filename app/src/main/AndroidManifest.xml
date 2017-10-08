@@ -144,15 +144,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
           android:resource="@xml/file_paths"/>
     </provider>
 
-    <receiver android:name="org.rm3l.router_companion.mgmt.BootReceiver">
-      <intent-filter>
-        <action android:name="android.intent.action.BOOT_COMPLETED"/>
-      </intent-filter>
-    </receiver>
+    <!--<receiver android:name="org.rm3l.router_companion.mgmt.BootReceiver">-->
+      <!--<intent-filter>-->
+        <!--<action android:name="android.intent.action.BOOT_COMPLETED"/>-->
+      <!--</intent-filter>-->
+    <!--</receiver>-->
 
-    <service
-        android:name="org.rm3l.router_companion.service.BackgroundService"
-        android:exported="false"/>
+    <!--<service-->
+        <!--android:name="org.rm3l.router_companion.service.BackgroundService"-->
+        <!--android:exported="false"/>-->
 
     <activity
         android:name="org.rm3l.router_companion.SplashActivity"
