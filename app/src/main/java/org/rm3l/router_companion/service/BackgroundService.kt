@@ -50,16 +50,22 @@ class BackgroundService(context: Context?) : DailyJob(), RouterCompanionJob {
         tasks.add(RouterModelUpdaterServiceTask(context))
         tasks.add(RouterInfoForFeedbackServiceTask(context))
         tasks.add(RouterWebInterfaceParametersUpdaterServiceTask(context))
-        //According to user preference
-        val notificationsChoiceSet = globalPreferences?.getStringSet(
-            RouterCompanionAppConstants.NOTIFICATIONS_CHOICE_PREF,
-            emptySet()) ?: emptySet()
-        Crashlytics.log(Log.DEBUG, TAG, "notificationsChoiceSet: " + notificationsChoiceSet)
-        if (notificationsChoiceSet.contains(ConnectedHostsServiceTask::class.java.simpleName)) {
-          tasks.add(ConnectedHostsServiceTask(context))
-        }
-        if (notificationsChoiceSet.contains(PublicIPChangesServiceTask::class.java.simpleName)) {
-          tasks.add(PublicIPChangesServiceTask(context))
+        if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+          Crashlytics.log(Log.DEBUG, TAG,
+              "ConnectedHostsServiceTask and PublicIPChangesServiceTask background notifications" +
+                  " are *Premium* features!")
+        } else {
+          //According to user preference
+          val notificationsChoiceSet = globalPreferences?.getStringSet(
+              RouterCompanionAppConstants.NOTIFICATIONS_CHOICE_PREF,
+              emptySet()) ?: emptySet()
+          Crashlytics.log(Log.DEBUG, TAG, "notificationsChoiceSet: " + notificationsChoiceSet)
+          if (notificationsChoiceSet.contains(ConnectedHostsServiceTask::class.java.simpleName)) {
+            tasks.add(ConnectedHostsServiceTask(context))
+          }
+          if (notificationsChoiceSet.contains(PublicIPChangesServiceTask::class.java.simpleName)) {
+            tasks.add(PublicIPChangesServiceTask(context))
+          }
         }
         //Add any other tasks over here
 
@@ -93,17 +99,13 @@ class BackgroundService(context: Context?) : DailyJob(), RouterCompanionJob {
 
     @JvmStatic
     fun schedule() {
-      //This is a premium feature
-      if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-        Crashlytics.log(Log.DEBUG, TAG, "Firmware Build Updates feature is *premium*!")
-        return
-      }
-
       if (!JobManager.instance().getAllJobRequestsForTag(TAG).isEmpty()) {
         // job already scheduled, nothing to do
         return
       }
-      val builder = JobRequest.Builder(TAG).setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
+      val builder = JobRequest.Builder(TAG)
+          .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
+          .setRequiresBatteryNotLow(true)
       // run job between 6am and 5am
       DailyJob.schedule(builder, TimeUnit.HOURS.toMillis(6), TimeUnit.HOURS.toMillis(5))
     }

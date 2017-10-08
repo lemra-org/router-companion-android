@@ -74,7 +74,9 @@ class FirmwareUpdateCheckerJob(context: Context?) : DailyJob(), RouterCompanionJ
         // job already scheduled, nothing to do
         return
       }
-      val builder = JobRequest.Builder(TAG).setRequiredNetworkType(JobRequest.NetworkType.UNMETERED)
+      val builder = JobRequest.Builder(TAG)
+          .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
+          .setRequiresCharging(true)
       // run job between 9am and 9pm
       DailyJob.schedule(builder, TimeUnit.HOURS.toMillis(9), TimeUnit.HOURS.toMillis(21))
     }
