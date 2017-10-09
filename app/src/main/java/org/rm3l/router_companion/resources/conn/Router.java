@@ -141,6 +141,8 @@ public class Router implements Serializable {
   public static final int SSHAuthenticationMethod_NONE = 1;
   public static final int SSHAuthenticationMethod_PASSWORD = 2;
   public static final int SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY = \"fake-key\";
+  public static final int RouterIcon_Auto = 10;
+  public static final int RouterIcon_Custom=11;
   private static final String TAG = Router.class.getSimpleName();
   private final LoadingCache<RouterForSessionCache, Session> sessionsCache;
   private final Striped<Lock> sessionsStripes;
@@ -195,6 +197,9 @@ public class Router implements Serializable {
   private boolean strictHostKeyChecking = false;
   @Nullable private RouterFirmware routerFirmware;
   @Nullable private String routerModel;
+
+  private int iconMethod = RouterIcon_Auto;
+  private String iconPath;
 
   /**
    * Default constructor
@@ -403,12 +408,14 @@ public class Router implements Serializable {
 
   public static String getRouterAvatarUrl(@Nullable final String routerModel,
       @Nullable final String[] opts) throws UnsupportedEncodingException {
-    return String.format("%s/%s/%s.jpg", RouterCompanionAppConstants.IMAGE_CDN_URL_PREFIX,
-        Joiner.on(",")
-            .skipNulls()
-            .join(opts != null ? opts : RouterCompanionAppConstants.CLOUDINARY_OPTS),
-        URLEncoder.encode(nullToEmpty(routerModel).toLowerCase().replaceAll("\\s+", ""),
-            Charsets.UTF_8.name()));
+    final String remoteUrl =
+        String.format("%s/%s/%s.jpg", RouterCompanionAppConstants.IMAGE_CDN_URL_PREFIX,
+            Joiner.on(",")
+                .skipNulls()
+                .join(opts != null ? opts : RouterCompanionAppConstants.CLOUDINARY_OPTS),
+            URLEncoder.encode(nullToEmpty(routerModel).toLowerCase().replaceAll("\\s+", ""),
+                Charsets.UTF_8.name()));
+    return remoteUrl;
   }
 
   @Nullable public static SharedPreferences getPreferences(@Nullable final Router router,
@@ -731,6 +738,22 @@ public class Router implements Serializable {
   @NonNull public Router setStrictHostKeyChecking(final boolean strictHostKeyChecking) {
     this.strictHostKeyChecking = strictHostKeyChecking;
     return this;
+  }
+
+  public int getIconMethod() {
+    return iconMethod;
+  }
+
+  public void setIconMethod(int iconMethod) {
+    this.iconMethod = iconMethod;
+  }
+
+  public String getIconPath() {
+    return iconPath;
+  }
+
+  public void setIconPath(String iconPath) {
+    this.iconPath = iconPath;
   }
 
   /**

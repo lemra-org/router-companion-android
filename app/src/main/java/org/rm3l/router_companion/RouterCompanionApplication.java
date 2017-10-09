@@ -105,10 +105,22 @@ public class RouterCompanionApplication extends Application
   @Override public void onCreate() {
     super.onCreate();
 
-    JobManager.create(this).addJobCreator(new RouterCompanionJobCreator(this));
-
     final SharedPreferences appPreferences =
         getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE);
+
+    // Set up Crashlytics, disabled for debug builds
+    final Crashlytics crashlyticsKit = new Crashlytics.Builder()
+        .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+        .build();
+    Fabric.with(this, crashlyticsKit);
+    Crashlytics.setBool("DEBUG", BuildConfig.DEBUG);
+    Crashlytics.setBool("WITH_ADS", BuildConfig.WITH_ADS);
+
+    final String acraEmailAddr =
+        appPreferences.getString(RouterCompanionAppConstants.ACRA_USER_EMAIL, null);
+    Crashlytics.setUserEmail(acraEmailAddr);
+
+    JobManager.create(this).addJobCreator(new RouterCompanionJobCreator(this));
 
     isDebugResourceInspectorEnabled = appPreferences.getBoolean(DEBUG_RESOURCE_INSPECTOR_PREF_KEY, false);
 
@@ -170,9 +182,6 @@ public class RouterCompanionApplication extends Application
       DDWRTCompanionSqliteDAOImpl.initialize(getApplicationContext());
     }
 
-    //General Notification Channel
-    NotificationHelperKt.createOrUpdateNotificationChannels(this);
-
     //initialize and create the image loader logic (for MaterialDrawer, used throughout the app)
     DrawerImageLoader.init(new AbstractDrawerImageLoader() {
       @Override public void set(ImageView imageView, Uri uri, Drawable placeholder) {
@@ -194,18 +203,6 @@ public class RouterCompanionApplication extends Application
         return ContextCompat.getDrawable(ctx, R.drawable.router);
       }
     });
-
-    // Set up Crashlytics, disabled for debug builds
-    final Crashlytics crashlyticsKit = new Crashlytics.Builder()
-        .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
-        .build();
-    Fabric.with(this, crashlyticsKit);
-    Crashlytics.setBool("DEBUG", BuildConfig.DEBUG);
-    Crashlytics.setBool("WITH_ADS", BuildConfig.WITH_ADS);
-
-    final String acraEmailAddr =
-        appPreferences.getString(RouterCompanionAppConstants.ACRA_USER_EMAIL, null);
-    Crashlytics.setUserEmail(acraEmailAddr);
 
     //We must initialize Fabric prior to calling this
     if (isFirstLaunch(this)) {
@@ -236,6 +233,9 @@ public class RouterCompanionApplication extends Application
     //        }
 
     org.osmdroid.config.Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
+
+    //General Notification Channel
+    NotificationHelperKt.createOrUpdateNotificationChannels(this);
 
     //Daily jobs
     BackgroundService.schedule();

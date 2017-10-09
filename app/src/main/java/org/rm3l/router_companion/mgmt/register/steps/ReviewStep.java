@@ -98,6 +98,13 @@ public class ReviewStep extends MaterialWizardStep {
 
   private String privkeyContent;
 
+  private String routerIconMethod;
+  private TextView routerIconMethodView;
+  private TextView routerIconMethodHidden;
+  private String routerIconButtonHint;
+  private TextView routerIconButtonHintView;
+  private String routerIconContent;
+
   private boolean useLocalSSIDLookup;
   private TextView useLocalSSIDLookupView;
 
@@ -155,6 +162,11 @@ public class ReviewStep extends MaterialWizardStep {
     passwordView = v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_password_value);
     useLocalSSIDLookupView =
         v.findViewById(R.id.wizard_add_router_review_use_local_ssid_lookup_yes_no);
+    routerIconMethodView = v.findViewById(R.id.wizard_add_router_review_router_icon_method);
+    routerIconMethodHidden = v.findViewById(R.id.wizard_add_router_review_router_icon_method_hidden);
+    routerIconButtonHintView =
+        v.findViewById(R.id.wizard_add_router_review_router_icon_custom_path);
+
 
     final CheckBox showPasswordCheckBox =
         v.findViewById(R.id.wizard_add_router_review_password_show_checkbox);
@@ -171,6 +183,7 @@ public class ReviewStep extends MaterialWizardStep {
     });
 
     authMethodView.setVisibility(View.VISIBLE);
+    routerIconMethodView.setVisibility(View.VISIBLE);
 
     authMethodHidden.addTextChangedListener(new TextWatcher() {
       @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -244,6 +257,46 @@ public class ReviewStep extends MaterialWizardStep {
       }
     });
 
+    routerIconMethodHidden.addTextChangedListener(new TextWatcher() {
+      @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+      @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+      @Override public void afterTextChanged(Editable s) {
+        final String valueString = s.toString();
+        try {
+          final TextView routerIconHdrView =
+              v.findViewById(R.id.wizard_add_router_review_router_icon_custom_hdr);
+          switch (Integer.parseInt(valueString)) {
+            case Router.RouterIcon_Auto: {
+              authMethodView.setText("-Auto-guess-");
+              routerIconHdrView.setVisibility(View.GONE);
+              privkeyButtonHintView.setText(null);
+              privkeyButtonHintView.setVisibility(View.GONE);
+              passwordView.setText(password);
+              passwordView.setVisibility(View.VISIBLE);
+              showPasswordCheckBox.setVisibility(View.VISIBLE);
+            }
+            break;
+            case Router.RouterIcon_Custom: {
+              authMethodView.setText("Custom");
+              routerIconHdrView.setVisibility(View.VISIBLE);
+              routerIconButtonHintView.setText(routerIconButtonHint);
+              routerIconButtonHintView.setVisibility(View.VISIBLE);
+            }
+            break;
+            default: {
+              authMethodView.setText("None");
+              routerIconHdrView.setVisibility(View.GONE);
+              routerIconButtonHintView.setText(null);
+              routerIconButtonHintView.setVisibility(View.GONE);
+            }
+            break;
+          }
+        } catch (final NumberFormatException nfe) {
+          nfe.printStackTrace();
+        }
+      }
+    });
+
     if (!isViewShown) {
       loadFromWizardContext();
     }
@@ -273,6 +326,12 @@ public class ReviewStep extends MaterialWizardStep {
       Crashlytics.log(Log.DEBUG, TAG, "authMethod: [" + authMethod + "]");
       if (authMethod != null) {
         authMethodHidden.setText(authMethod);
+      }
+
+      routerIconButtonHintView.setText(isNullOrEmpty(routerIconButtonHint) ? "-" : routerIconButtonHint);
+      Crashlytics.log(Log.DEBUG, TAG, "routerIconMethod: [" + routerIconMethod + "]");
+      if (routerIconMethod != null) {
+        routerIconMethodHidden.setText(routerIconMethod);
       }
 
       if (Utils.isDemoRouter(routerIpOrDns)) {
@@ -327,6 +386,24 @@ public class ReviewStep extends MaterialWizardStep {
     if (authMethodObj != null) {
       try {
         authMethod = authMethodObj.toString();
+      } catch (final NumberFormatException e) {
+        e.printStackTrace();
+      }
+    }
+
+    final Object customIconButtonHintObj = wizardContext.get("customIconButtonHint");
+    routerIconButtonHint = customIconButtonHintObj != null ? customIconButtonHintObj.toString() : null;
+
+    final Object customIconContentObj = wizardContext.get("customIconPath");
+    if (customIconContentObj != null) {
+      routerIconButtonHint = customIconContentObj.toString();
+    }
+
+    final Object routerIconMethodObj = wizardContext.get("routerIconMethod");
+    Crashlytics.log(Log.DEBUG, TAG, "routerIconMethodObj: " + routerIconMethodObj);
+    if (routerIconMethodObj != null) {
+      try {
+        routerIconMethod = routerIconMethodObj.toString();
       } catch (final NumberFormatException e) {
         e.printStackTrace();
       }
@@ -388,6 +465,12 @@ public class ReviewStep extends MaterialWizardStep {
       router.setUuid(UUID.randomUUID().toString());
     }
     router.setName(routerName);
+    try {
+      router.setIconMethod(Integer.parseInt(routerIconMethod));
+    } catch (final Exception e) {
+      e.printStackTrace();
+    }
+    router.setIconPath(routerIconContent);
     router.setRemoteIpAddress(routerIpOrDns);
     router.setRemotePort(port != null ? Integer.parseInt(port) : 22);
     router.setRouterConnectionProtocol(

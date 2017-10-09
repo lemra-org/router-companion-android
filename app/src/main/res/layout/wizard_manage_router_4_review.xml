@@ -83,6 +83,55 @@
         android:textIsSelectable="true"
         />
 
+    <!-- Icon Method -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Router Icon"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textStyle="bold"
+        />
+    <TextView
+        android:id="@+id/wizard_add_router_review_router_icon_method"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:ellipsize="end"
+        android:gravity="start"
+        android:textIsSelectable="true"
+        />
+    <TextView
+        android:id="@+id/wizard_add_router_review_router_icon_method_hidden"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:ellipsize="end"
+        android:gravity="start"
+        android:textIsSelectable="true"
+        android:visibility="gone"
+        />
+
+    <!-- Custom Icon -->
+    <TextView
+        android:id="@+id/wizard_add_router_review_router_icon_custom_hdr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Custom Icon"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textStyle="bold"
+        />
+    <TextView
+        android:id="@+id/wizard_add_router_review_router_icon_custom_path"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:ellipsize="end"
+        android:gravity="start"
+        android:textIsSelectable="true"
+        />
+
     <!-- Router Connection Proto -->
     <TextView
         android:layout_width="wrap_content"

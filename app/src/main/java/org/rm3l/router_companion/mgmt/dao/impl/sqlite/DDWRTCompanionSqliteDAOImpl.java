@@ -53,7 +53,9 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.router_companion.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ARCHIVED;
 import static org.rm3l.router_companion.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.COLUMN_ID;
 import static org.rm3l.router_companion.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ORDER_INDEX;
+import static org.rm3l.router_companion.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_CUSTOM_ICON;
 import static org.rm3l.router_companion.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_FIRMWARE;
+import static org.rm3l.router_companion.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_ICON_METHOD;
 import static org.rm3l.router_companion.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_IP;
 import static org.rm3l.router_companion.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_NAME;
 import static org.rm3l.router_companion.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_PASSWORD;
@@ -111,7 +113,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
   @NonNull private static final String[] routersAllColumns = {
       COLUMN_ID, ROUTER_UUID, ROUTER_NAME, ROUTER_IP, ROUTER_PROTOCOL, ROUTER_PORT,
       ROUTER_SSH_STRICT_HOST_KEY_CHECKING, ROUTER_USERNAME, ROUTER_PASSWORD, ROUTER_PRIVKEY,
-      ROUTER_FIRMWARE, ORDER_INDEX, ARCHIVED
+      ROUTER_FIRMWARE, ORDER_INDEX, ARCHIVED, ROUTER_ICON_METHOD, ROUTER_CUSTOM_ICON
   };
   @NonNull private static final String[] wanTrafficAllColumns = {
       TABLE_WAN_TRAFFIC_COLUMN_ID, TABLE_WAN_TRAFFIC_ROUTER_UUID, TABLE_WAN_TRAFFIC_TRAFFIC_DATE,
@@ -816,6 +818,8 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     router.setRouterFirmware(cursor.getString(10));
     router.setOrderIndex(cursor.getInt(11));
     router.setArchivedFromInt(cursor.getInt(12));
+    router.setIconMethod(cursor.getInt(13));
+    router.setIconPath(cursor.getString(14));
 
     return router;
   }
@@ -884,6 +888,8 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     }
     values.put(ORDER_INDEX, router.getOrderIndex());
     values.put(ARCHIVED, router.getArchivedAsInt());
+    values.put(ROUTER_ICON_METHOD, router.getIconMethod());
+    values.put(ROUTER_CUSTOM_ICON, router.getIconPath());
     return values;
   }
 

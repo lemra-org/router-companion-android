@@ -22,6 +22,7 @@
 
 package org.rm3l.router_companion.mgmt.dao.impl.sqlite;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -33,6 +34,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import java.util.Collection;
 import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.router_companion.resources.conn.Router;
 
 public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
 
@@ -54,6 +56,8 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
   public static final String ROUTER_PORT = "port";
   public static final String ROUTER_FIRMWARE = "firmware";
   public static final String ROUTER_SSH_STRICT_HOST_KEY_CHECKING = "ssh_strict_host_key_checking";
+  public static final String ROUTER_ICON_METHOD = "icon_method";
+  public static final String ROUTER_CUSTOM_ICON = "custom_icon";
   /*
    * DB Table: wan_traffic
    */
@@ -142,7 +146,10 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
       + " INTEGER NOT NULL DEFAULT 0 CHECK ("
       + ARCHIVED
       + " IN (0,1))"
-      + ");";
+      + "), "
+      + ROUTER_ICON_METHOD + " INTEGER NOT NULL DEFAULT " + Router.RouterIcon_Auto + ", "
+      + ROUTER_CUSTOM_ICON + "TEXT DEFAULT NULL"
+      + ";";
   // Database creation sql statement
   private static final String TABLE_WAN_TRAFFIC_CREATE = "CREATE TABLE IF NOT EXISTS "
       + TABLE_WAN_TRAFFIC
@@ -267,7 +274,7 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
    update DATABASE_TABLES_TO_CREATE (for newer installs), and
    add an entry into DATABASE_UPGRADES map
   */
-  private static final int DATABASE_VERSION = 22;
+  private static final int DATABASE_VERSION = 24;
 
   //TODO Don't forget to add new SQL here if a new table is to be created!
   private static final String[] DATABASE_TABLES_TO_CREATE = new String[] {
@@ -338,6 +345,14 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
     DATABASE_UPGRADES.put(22,
         String.format("UPDATE %s SET %s=\"DEMO\" WHERE %s=\"%s\"; ", TABLE_ROUTERS, ROUTER_FIRMWARE,
             ROUTER_IP, BuildConfig.APPLICATION_ID));
+
+    //#254: support for custom icons
+    DATABASE_UPGRADES.put(24,
+        String.format("ALTER TABLE %s ADD COLUMN %s INTEGER NOT NULL DEFAULT %d; ",
+            TABLE_ROUTERS, ROUTER_ICON_METHOD, Router.RouterIcon_Auto));
+    DATABASE_UPGRADES.put(24,
+        String.format("ALTER TABLE %s ADD COLUMN %s TEXT DEFAULT NULL; ",
+            TABLE_ROUTERS, ROUTER_CUSTOM_ICON));
   }
 
   public DDWRTCompanionSqliteOpenHelper(Context context) {

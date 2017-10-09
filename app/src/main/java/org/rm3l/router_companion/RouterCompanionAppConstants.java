@@ -84,7 +84,8 @@ public final class RouterCompanionAppConstants {
 
   //FIXME Update prior to release
   public static final boolean TEST_MODE = false;
-  public static final long MAX_PRIVKEY_SIZE_BYTES = 300 * 1024l;
+  public static final long MAX_PRIVKEY_SIZE_BYTES = 300 * 1024L;
+  public static final long MAX_CUSTOM_ICON_SIZE_BYTES = 100 * 1024L;
 
   public static final String WAN_CYCLE_DAY_PREF = "wan_cycle_day";
 
