@@ -622,7 +622,7 @@ public class RouterListRecycleViewAdapter
             };
 
             //Download image in the background
-            Utils.downloadImageForRouter(activity, routerModelStr, holder.routerAvatarImage, null, null,
+            Utils.downloadImageForRouter(activity, routerAt, holder.routerAvatarImage, null, null,
                     R.drawable.router, opts);
         }
 

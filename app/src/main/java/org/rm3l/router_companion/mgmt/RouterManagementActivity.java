@@ -1666,7 +1666,9 @@ public class RouterManagementActivity extends AppCompatActivity
                     try {
 
                         ImageUtils.downloadImageFromUrl(this,
-                                Router.getRouterAvatarUrl(Router.getRouterModel(this, router),
+                                Router.getRouterAvatarUrl(
+                                        this,
+                                        router,
                                         Router.mAvatarDownloadOpts),
                                 new RouterAvatarDownloadTargetForAppShortcut(this, router, true), null, null, null);
                     } catch (final Exception e) {

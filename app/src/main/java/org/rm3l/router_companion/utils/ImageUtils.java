@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.Notification;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -17,8 +18,7 @@ import android.widget.RemoteViews;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.crashlytics.android.Crashlytics;
-import com.google.common.base.Charsets;
-import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -29,14 +29,12 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.squareup.picasso.Target;
 import com.squareup.picasso.Transformation;
-import java.net.URLEncoder;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
-import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.main.DDWRTMainActivity;
 import org.rm3l.router_companion.resources.conn.Router;
@@ -87,118 +85,21 @@ public final class ImageUtils {
     private static TextDrawable.IBuilder TEXTDRAWABLE_BUILDER =
             TextDrawable.builder().beginConfig().withBorder(4).toUpperCase().endConfig().roundRect(15);
 
-    public static void downloadImageForRouter(@Nullable Context context,
-            @NonNull final String routerModel, @Nullable final ImageView imageView) {
-        downloadImageForRouter(context, routerModel, imageView, null,
-                R.drawable.router_picker_background);
-    }
-
-    public static void downloadImageForRouter(@Nullable Context context,
-            @NonNull final String routerModel, @Nullable final ImageView imageView,
-            @Nullable final Integer placeHolderRes, @Nullable final Integer errorPlaceHolderRes) {
-        downloadImageForRouter(context, routerModel, imageView, placeHolderRes, errorPlaceHolderRes,
-                null);
-    }
-
-    public static void downloadImageForRouter(@Nullable Context context,
-            @NonNull final String routerModel, @Nullable final ImageView imageView,
-            @Nullable final Integer placeHolderRes, @Nullable final Integer errorPlaceHolderRes,
-            @Nullable final String[] opts) {
-        downloadImageForRouter(context, routerModel, imageView, null, placeHolderRes,
-                errorPlaceHolderRes, opts);
-    }
-
-    public static void downloadImageForRouter(@Nullable Context context,
-            @NonNull final String routerModel, @Nullable final ImageView imageView,
-            @Nullable final List<Transformation> transformations, @Nullable final Integer placeHolderRes,
-            @Nullable final Integer errorPlaceHolderRes, @Nullable final String[] opts) {
-
-        try {
-            final String routerModelNormalized = routerModel.toLowerCase().replaceAll("\\s+", "");
-            final String url = Router.getRouterAvatarUrl(routerModel, opts);
-
-            downloadImageFromUrl(context, url, imageView, transformations,
-                    placeHolderRes != null ? placeHolderRes : null,
-                    errorPlaceHolderRes != null ? errorPlaceHolderRes : null, new Callback() {
-                        @Override
-                        public void onError() {
-                            Crashlytics.log(Log.DEBUG, TAG, "onError: " + url);
-                            reportException(null, new MissingRouterModelImageException(
-                                    routerModel + " (" + routerModelNormalized + ")"));
-                            //Report event
-                            final Map<String, Object> eventMap = new HashMap<>();
-                            eventMap.put("Status", "Error");
-                            eventMap.put("Model", routerModel);
-                            ReportingUtils.reportEvent(ReportingUtils.EVENT_IMAGE_DOWNLOAD, eventMap);
-                        }
-
-                        @Override
-                        public void onSuccess() {
-                            //Great!
-                            Crashlytics.log(Log.DEBUG, TAG, "onSuccess: " + url);
-
-                            //Report event
-                            final Map<String, Object> eventMap = new HashMap<>();
-                            eventMap.put("Status", "Success");
-                            eventMap.put("Model", routerModel);
-                            ReportingUtils.reportEvent(ReportingUtils.EVENT_IMAGE_DOWNLOAD, eventMap);
-                        }
-                    });
-        } catch (final Exception e) {
-            e.printStackTrace();
-            reportException(null, new DownloadImageException(e));
-        }
-    }
-
-    public static void downloadImageForRouter(@Nullable Context context,
-            @NonNull final String routerModel, @Nullable final ImageView imageView,
-            @Nullable final Integer placeHolderRes, @Nullable final Integer errorPlaceHolderRes,
-            @Nullable final String[] opts, @Nullable final Callback callback) {
-        try {
-            final String routerModelNormalized = routerModel.toLowerCase().replaceAll("\\s+", "");
-            final String url =
-                    String.format("%s/%s/%s.jpg", RouterCompanionAppConstants.IMAGE_CDN_URL_PREFIX,
-                            Joiner.on(",")
-                                    .skipNulls()
-                                    .join(opts != null ? opts : RouterCompanionAppConstants.CLOUDINARY_OPTS),
-                            URLEncoder.encode(routerModelNormalized, Charsets.UTF_8.name()));
-
-            downloadImageFromUrl(context, url, imageView, placeHolderRes != null ? placeHolderRes : null,
-                    errorPlaceHolderRes != null ? errorPlaceHolderRes : null, new Callback() {
-                        @Override
-                        public void onError() {
-                            Crashlytics.log(Log.DEBUG, TAG, "onError: " + url);
-                            reportException(null, new MissingRouterModelImageException(
-                                    routerModel + " (" + routerModelNormalized + ")"));
-                            if (callback != null) {
-                                callback.onError();
-                            }
-                        }
-
-                        @Override
-                        public void onSuccess() {
-                            //Great!
-                            reportException(null, new SuccessfulRouterModelImageDownloadNotice(
-                                    routerModel + " (" + routerModelNormalized + ")"));
-                            if (callback != null) {
-                                callback.onSuccess();
-                            }
-                        }
-                    });
-        } catch (final Exception e) {
-            e.printStackTrace();
-            reportException(null, new DownloadImageException(e));
-        }
-    }
-
-    public static void downloadImageFromUrl(@Nullable Context context, @NonNull final String url,
+    public static void downloadImageFromUrl(@Nullable Context context, @Nullable final Uri url,
             @Nullable final ImageView imageView, @Nullable final Integer placeHolderDrawable,
             @Nullable final Integer errorPlaceHolderDrawable, @Nullable final Callback callback) {
         downloadImageFromUrl(context, url, imageView, null, placeHolderDrawable,
                 errorPlaceHolderDrawable, callback);
     }
 
-    public static void downloadImageFromUrl(@Nullable Context context, @NonNull final String url,
+    public static void downloadImageFromUrl(@Nullable Context context, @Nullable final String url,
+            @Nullable final ImageView imageView, @Nullable final Integer placeHolderDrawable,
+            @Nullable final Integer errorPlaceHolderDrawable, @Nullable final Callback callback) {
+        downloadImageFromUrl(context, url != null ? Uri.parse(url) : null, imageView, null, placeHolderDrawable,
+                errorPlaceHolderDrawable, callback);
+    }
+
+    public static void downloadImageFromUrl(@Nullable Context context, @Nullable final Uri url,
             @Nullable final ImageView imageView, @Nullable final List<Transformation> transformations,
             @Nullable final Integer placeHolderDrawable, @Nullable final Integer errorPlaceHolderDrawable,
             @Nullable final Callback callback) {
@@ -230,7 +131,7 @@ public final class ImageUtils {
         }
     }
 
-    public static void downloadImageFromUrl(@Nullable Context context, @NonNull final String url,
+    public static void downloadImageFromUrl(@Nullable Context context, @Nullable final Uri url,
             @Nullable final Target target, @Nullable final List<Transformation> transformations,
             @Nullable final Integer placeHolderDrawable,
             @Nullable final Integer errorPlaceHolderDrawable) {
@@ -349,7 +250,7 @@ public final class ImageUtils {
             picasso.setIndicatorsEnabled(false);
             picasso.setLoggingEnabled(BuildConfig.DEBUG);
             final RequestCreator requestCreator = picasso.load(
-                    Router.getRouterAvatarUrl(Router.getRouterModel(mCtx, router), DDWRTMainActivity.opts));
+                    Router.getRouterAvatarUrl(mCtx, router, DDWRTMainActivity.opts));
             final Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
@@ -373,5 +274,49 @@ public final class ImageUtils {
     }
 
     private ImageUtils() {
+    }
+
+    static void downloadImageForRouter(@Nullable Context context,
+            @NonNull final Router router, @Nullable final ImageView imageView,
+            @Nullable final List<Transformation> transformations, @Nullable final Integer placeHolderRes,
+            @Nullable final Integer errorPlaceHolderRes, @Nullable final String[] opts) {
+
+        try {
+            final String routerModel = Router.getRouterModel(context, router);
+            final String routerModelNormalized = Strings.nullToEmpty(routerModel).toLowerCase()
+                    .replaceAll("\\s+", "");
+            final Uri url = Router.getRouterAvatarUrl(context, router, opts);
+
+            downloadImageFromUrl(context, url, imageView, transformations,
+                    placeHolderRes,
+                    errorPlaceHolderRes, new Callback() {
+                        @Override
+                        public void onError() {
+                            Crashlytics.log(Log.DEBUG, TAG, "onError: " + url);
+                            reportException(null, new MissingRouterModelImageException(
+                                    routerModel + " (" + routerModelNormalized + ")"));
+                            //Report event
+                            final Map<String, Object> eventMap = new HashMap<>();
+                            eventMap.put("Status", "Error");
+                            eventMap.put("Model", routerModel);
+                            ReportingUtils.reportEvent(ReportingUtils.EVENT_IMAGE_DOWNLOAD, eventMap);
+                        }
+
+                        @Override
+                        public void onSuccess() {
+                            //Great!
+                            Crashlytics.log(Log.DEBUG, TAG, "onSuccess: " + url);
+
+                            //Report event
+                            final Map<String, Object> eventMap = new HashMap<>();
+                            eventMap.put("Status", "Success");
+                            eventMap.put("Model", routerModel);
+                            ReportingUtils.reportEvent(ReportingUtils.EVENT_IMAGE_DOWNLOAD, eventMap);
+                        }
+                    });
+        } catch (final Exception e) {
+            e.printStackTrace();
+            reportException(null, new DownloadImageException(e));
+        }
     }
 }

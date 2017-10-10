@@ -406,18 +406,25 @@ public final class Utils {
     }
 
     public static void downloadImageForRouter(@Nullable Context context,
-            @NonNull final String routerModel, @Nullable final ImageView imageView,
+            @NonNull final Router router, @Nullable final ImageView imageView,
             @Nullable final List<Transformation> transformations, @Nullable final Integer placeHolderRes,
             @Nullable final Integer errorPlaceHolderRes, @Nullable final String[] opts) {
 
-        ImageUtils.downloadImageForRouter(context, routerModel, imageView, transformations,
+        ImageUtils.downloadImageForRouter(context, router, imageView, transformations,
                 placeHolderRes, errorPlaceHolderRes, opts);
     }
 
-    public static void downloadImageFromUrl(@Nullable Context context, @NonNull final String url,
+    public static void downloadImageFromUrl(@Nullable Context context, @Nullable final Uri url,
             @Nullable final ImageView imageView, @Nullable final Integer placeHolderDrawable,
             @Nullable final Integer errorPlaceHolderDrawable, @Nullable final Callback callback) {
         ImageUtils.downloadImageFromUrl(context, url, imageView, placeHolderDrawable,
+                errorPlaceHolderDrawable, callback);
+    }
+
+    public static void downloadImageFromUrl(@Nullable Context context, @Nullable final String url,
+            @Nullable final ImageView imageView, @Nullable final Integer placeHolderDrawable,
+            @Nullable final Integer errorPlaceHolderDrawable, @Nullable final Callback callback) {
+        ImageUtils.downloadImageFromUrl(context, url != null ? Uri.parse(url) : null, imageView, placeHolderDrawable,
                 errorPlaceHolderDrawable, callback);
     }
 

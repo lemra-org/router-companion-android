@@ -77,6 +77,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+import java.io.File;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -565,7 +566,7 @@ public class Router implements Serializable {
             //final String[] opts = new String[] {"w_65","h_45", "e_sharpen"};
 
             //Download image in the background
-            Utils.downloadImageForRouter(context, routerModelStr, routerImageView, null, null,
+            Utils.downloadImageForRouter(context, mRouter, routerImageView, null, null,
                     R.drawable.router, mAvatarDownloadOpts);
         }
     }
@@ -679,16 +680,24 @@ public class Router implements Serializable {
         return ctx.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE);
     }
 
-    public static String getRouterAvatarUrl(@Nullable final String routerModel,
+    @Nullable
+    public static Uri getRouterAvatarUrl(
+            @Nullable final Context context,
+            @Nullable final Router router,
             @Nullable final String[] opts) throws UnsupportedEncodingException {
-        final String remoteUrl =
-                String.format("%s/%s/%s.jpg", RouterCompanionAppConstants.IMAGE_CDN_URL_PREFIX,
-                        Joiner.on(",")
-                                .skipNulls()
-                                .join(opts != null ? opts : RouterCompanionAppConstants.CLOUDINARY_OPTS),
-                        URLEncoder.encode(nullToEmpty(routerModel).toLowerCase().replaceAll("\\s+", ""),
-                                Charsets.UTF_8.name()));
-        return remoteUrl;
+        if (router == null) {
+            return null;
+        }
+        if (router.getIconMethod() == RouterIcon_Custom && !TextUtils.isEmpty(router.getIconPath())) {
+            return Uri.fromFile(new File(router.getIconPath()));
+        }
+        return Uri.parse(String.format("%s/%s/%s.jpg", RouterCompanionAppConstants.IMAGE_CDN_URL_PREFIX,
+                Joiner.on(",")
+                        .skipNulls()
+                        .join(opts != null ? opts : RouterCompanionAppConstants.CLOUDINARY_OPTS),
+                URLEncoder.encode(nullToEmpty(Router.getRouterModel(context, router))
+                                .toLowerCase().replaceAll("\\s+", ""),
+                        Charsets.UTF_8.name())));
     }
 
     @Nullable
@@ -932,7 +941,7 @@ public class Router implements Serializable {
                 //Leverage Picasso to fetch router icon, if available
                 try {
                     ImageUtils.downloadImageFromUrl(contextForshortcut,
-                            getRouterAvatarUrl(getRouterModel(contextForshortcut, this), mAvatarDownloadOpts),
+                            getRouterAvatarUrl(contextForshortcut, this, mAvatarDownloadOpts),
                             new Target() {
                                 @Override
                                 public void onBitmapFailed(Drawable errorDrawable) {
@@ -1016,7 +1025,7 @@ public class Router implements Serializable {
                 //Leverage Picasso to fetch router icon, if available
                 try {
                     ImageUtils.downloadImageFromUrl(contextForshortcut,
-                            getRouterAvatarUrl(getRouterModel(contextForshortcut, this), mAvatarDownloadOpts),
+                            getRouterAvatarUrl(contextForshortcut, this, mAvatarDownloadOpts),
                             this.new RouterShortcutAvatarDownloader(contextForshortcut, shortcutIntent, addIntent),
                             null, null, null);
                 } catch (final Exception e) {
