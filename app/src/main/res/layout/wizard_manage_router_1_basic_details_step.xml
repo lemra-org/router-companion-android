@@ -114,7 +114,7 @@
             android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="@string/router_icon" />
+            android:text="Router Icon" />
 
         <RadioGroup
             android:id="@+id/router_add_icon_method"
