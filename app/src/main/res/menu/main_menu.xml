@@ -23,226 +23,226 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-  <item
-      android:id="@+id/action_ddwrt_actions"
-      android:alphabeticShortcut="a"
-      android:icon="@drawable/ic_launch_white_24dp"
-      android:title="@string/menuitem_actions"
-      app:showAsAction="ifRoom">
-
-    <menu>
-
-      <item
-          android:title="Actions"
-          app:showAsAction="ifRoom">
+    <item
+        android:id="@+id/action_ddwrt_actions"
+        android:alphabeticShortcut="a"
+        android:icon="@drawable/ic_launch_white_24dp"
+        android:title="@string/menuitem_actions"
+        app:showAsAction="ifRoom">
 
         <menu>
 
-          <item
-              android:id="@+id/action_ddwrt_actions_reboot_router"
-              android:alphabeticShortcut="R"
-              android:title="@string/menuitem_actions_reboot_router"
-              app:showAsAction="ifRoom"/>
+            <item
+                android:title="Actions"
+                app:showAsAction="ifRoom">
 
-          <!-- Clear ARP Cache -->
-          <!-- Action cmd: 'ip -s -s neigh flush all' (cf. http://linux-audit.com/how-to-clear-the-arp-cache-on-linux/) -->
-          <item
-              android:id="@+id/action_ddwrt_actions_clear_arp_cache"
-              android:checkable="false"
-              android:checked="false"
-              android:title="Clear ARP Cache"
-              app:showAsAction="never"/>
+                <menu>
 
-          <!-- Clear DNS Cache -->
-          <!-- Action is 'killall -1 dnsmasq' or 'killall -HUP dnsmasq' (cf. https://ariejan.net/2007/07/07/clear-dns-cache-on-your-router/) -->
-          <item
-              android:id="@+id/action_ddwrt_actions_clear_dns_cache"
-              android:checkable="false"
-              android:checked="false"
-              android:title="Clear DNS Cache"
-              app:showAsAction="never"/>
+                    <item
+                        android:id="@+id/action_ddwrt_actions_reboot_router"
+                        android:alphabeticShortcut="R"
+                        android:title="@string/menuitem_actions_reboot_router"
+                        app:showAsAction="ifRoom" />
 
-          <item
-              android:checkable="false"
-              android:checked="false"
-              android:title="HTTPd (Web Server)"
-              app:showAsAction="ifRoom">
-            <menu>
-              <!-- Start httpd -->
-              <item
-                  android:id="@+id/action_ddwrt_actions_httpd_start"
-                  android:checkable="false"
-                  android:checked="false"
-                  android:title="Start HTTPd"
-                  app:showAsAction="never"/>
-              <!-- Stop httpd -->
-              <item
-                  android:id="@+id/action_ddwrt_actions_httpd_stop"
-                  android:checkable="false"
-                  android:checked="false"
-                  android:title="Stop HTTPd"
-                  app:showAsAction="never"/>
-              <!-- Restart httpd -->
-              <item
-                  android:id="@+id/action_ddwrt_actions_httpd_restart"
-                  android:checkable="false"
-                  android:checked="false"
-                  android:title="Restart HTTPd"
-                  app:showAsAction="never"/>
+                    <!-- Clear ARP Cache -->
+                    <!-- Action cmd: 'ip -s -s neigh flush all' (cf. http://linux-audit.com/how-to-clear-the-arp-cache-on-linux/) -->
+                    <item
+                        android:id="@+id/action_ddwrt_actions_clear_arp_cache"
+                        android:checkable="false"
+                        android:checked="false"
+                        android:title="Clear ARP Cache"
+                        app:showAsAction="never" />
 
-            </menu>
-          </item>
+                    <!-- Clear DNS Cache -->
+                    <!-- Action is 'killall -1 dnsmasq' or 'killall -HUP dnsmasq' (cf. https://ariejan.net/2007/07/07/clear-dns-cache-on-your-router/) -->
+                    <item
+                        android:id="@+id/action_ddwrt_actions_clear_dns_cache"
+                        android:checkable="false"
+                        android:checked="false"
+                        android:title="Clear DNS Cache"
+                        app:showAsAction="never" />
 
-          <item
-              android:id="@+id/action_ddwrt_actions_backup_restore_router"
-              android:title="Backup / Restore"
-              app:showAsAction="ifRoom">
+                    <item
+                        android:checkable="false"
+                        android:checked="false"
+                        android:title="HTTPd (Web Server)"
+                        app:showAsAction="ifRoom">
+                        <menu>
+                            <!-- Start httpd -->
+                            <item
+                                android:id="@+id/action_ddwrt_actions_httpd_start"
+                                android:checkable="false"
+                                android:checked="false"
+                                android:title="Start HTTPd"
+                                app:showAsAction="never" />
+                            <!-- Stop httpd -->
+                            <item
+                                android:id="@+id/action_ddwrt_actions_httpd_stop"
+                                android:checkable="false"
+                                android:checked="false"
+                                android:title="Stop HTTPd"
+                                app:showAsAction="never" />
+                            <!-- Restart httpd -->
+                            <item
+                                android:id="@+id/action_ddwrt_actions_httpd_restart"
+                                android:checkable="false"
+                                android:checked="false"
+                                android:title="Restart HTTPd"
+                                app:showAsAction="never" />
 
-            <menu>
-              <item
-                  android:id="@+id/action_ddwrt_actions_backup_restore_router_backup"
-                  android:alphabeticShortcut="R"
-                  android:title="Backup"
-                  app:showAsAction="ifRoom"/>
-              <item
-                  android:id="@+id/action_ddwrt_actions_backup_restore_router_restore"
-                  android:alphabeticShortcut="R"
-                  android:title="Restore"
-                  app:showAsAction="ifRoom"/>
-            </menu>
-          </item>
+                        </menu>
+                    </item>
 
-          <item
-              android:id="@+id/action_ddwrt_actions_restore_factory_defaults"
-              android:alphabeticShortcut="D"
-              android:title="@string/menuitem_actions_restore_factory_defaults"
-              app:showAsAction="ifRoom"/>
+                    <item
+                        android:id="@+id/action_ddwrt_actions_backup_restore_router"
+                        android:title="Backup / Restore"
+                        app:showAsAction="ifRoom">
 
-          <!-- TODO Hidden for now -->
-          <item
-              android:id="@+id/action_ddwrt_actions_firmware_upgrade"
-              android:alphabeticShortcut="U"
-              android:enabled="false"
-              android:title="@string/menuitem_actions_upgrade_firmware"
-              android:visible="false"
-              app:showAsAction="ifRoom"/>
+                        <menu>
+                            <item
+                                android:id="@+id/action_ddwrt_actions_backup_restore_router_backup"
+                                android:alphabeticShortcut="R"
+                                android:title="Backup"
+                                app:showAsAction="ifRoom" />
+                            <item
+                                android:id="@+id/action_ddwrt_actions_backup_restore_router_restore"
+                                android:alphabeticShortcut="R"
+                                android:title="Restore"
+                                app:showAsAction="ifRoom" />
+                        </menu>
+                    </item>
+
+                    <item
+                        android:id="@+id/action_ddwrt_actions_restore_factory_defaults"
+                        android:alphabeticShortcut="D"
+                        android:title="@string/menuitem_actions_restore_factory_defaults"
+                        app:showAsAction="ifRoom" />
+
+                    <!-- TODO Hidden for now -->
+                    <item
+                        android:id="@+id/action_ddwrt_actions_firmware_upgrade"
+                        android:alphabeticShortcut="U"
+                        android:enabled="false"
+                        android:title="@string/menuitem_actions_upgrade_firmware"
+                        android:visible="false"
+                        app:showAsAction="ifRoom" />
+
+                </menu>
+
+            </item>
+
+
+            <!-- Aliases -->
+            <item
+                android:id="@+id/action_ddwrt_actions_manage_aliases"
+                android:checkable="false"
+                android:checked="false"
+                android:title="Manage Aliases"
+                app:showAsAction="ifRoom" />
+
+            <item
+                android:checkable="false"
+                android:checked="false"
+                android:title="Utilities"
+                app:showAsAction="ifRoom">
+
+                <menu>
+                    <!-- Speed Test -->
+                    <item
+                        android:id="@+id/action_ddwrt_actions_speedtest"
+                        android:checkable="false"
+                        android:checked="false"
+                        android:title="Speed Test"
+                        app:showAsAction="never" />
+
+                    <item
+                        android:id="@+id/action_ddwrt_actions_ssh_router"
+                        android:title="Open SSH Console"
+                        app:showAsAction="ifRoom" />
+
+                    <!-- TODO Store http port (or WAN port) in router preferences. If available, pick it from there. Otherwise, ask user to provide the right port.
+                    Remind to detect whether to use WAN or LAN IP Address (based on the current network we are connected to)
+                    -->
+                    <item
+                        android:id="@+id/action_ddwrt_actions_open_webinterface"
+                        android:alphabeticShortcut="W"
+                        android:title="Open Web Interface"
+                        android:visible="true"
+                        app:showAsAction="ifRoom" />
+
+                    <item
+                        android:id="@+id/main_add_home_shortcut"
+                        android:title="@string/add_shortcut_to_home_screen"
+                        app:showAsAction="never" />
+
+                </menu>
+            </item>
+
+            <!-- Check for updates -->
+            <item
+                android:id="@+id/action_ddwrt_check_for_updates"
+                android:checkable="false"
+                android:checked="false"
+                android:title="Check for updates"
+                app:showAsAction="ifRoom" />
 
         </menu>
+    </item>
 
-      </item>
+    <item
+        android:id="@+id/action_settings"
+        android:alphabeticShortcut="s"
+        android:icon="@drawable/ic_settings_white_24dp"
+        android:title="@string/menuitem_settings"
+        app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/action_donate"
+        android:alphabeticShortcut="d"
+        android:title="@string/menuitem_donate"
+        app:showAsAction="never" />
 
-      <!-- Aliases -->
-      <item
-          android:id="@+id/action_ddwrt_actions_manage_aliases"
-          android:checkable="false"
-          android:checked="false"
-          android:title="Manage Aliases"
-          app:showAsAction="ifRoom"/>
+    <!-- Seems redundant with the send_feedback menu item-->
+    <item
+        android:id="@+id/action_take_bug_report"
+        android:title="Take Bug Report"
+        android:visible="false"
+        app:showAsAction="never" />
 
-      <item
-          android:checkable="false"
-          android:checked="false"
-          android:title="Utilities"
-          app:showAsAction="ifRoom">
+    <item
+        android:id="@+id/action_remove_ads"
+        android:alphabeticShortcut="P"
+        android:title="@string/remove_ads"
+        app:showAsAction="never" />
 
-        <menu>
-          <!-- Speed Test -->
-          <item
-              android:id="@+id/action_ddwrt_actions_speedtest"
-              android:checkable="false"
-              android:checked="false"
-              android:title="Speed Test"
-              app:showAsAction="never"/>
+    <item
+        android:id="@+id/help"
+        android:alphabeticShortcut="H"
+        android:title="@string/help"
+        app:showAsAction="never" />
 
-          <item
-              android:id="@+id/action_ddwrt_actions_ssh_router"
-              android:title="Open SSH Console"
-              app:showAsAction="ifRoom"/>
-
-          <!-- TODO Store http port (or WAN port) in router preferences. If available, pick it from there. Otherwise, ask user to provide the right port.
-          Remind to detect whether to use WAN or LAN IP Address (based on the current network we are connected to)
-          -->
-          <item
-              android:id="@+id/action_ddwrt_actions_open_webinterface"
-              android:alphabeticShortcut="W"
-              android:title="Open Web Interface"
-              android:visible="true"
-              app:showAsAction="ifRoom"/>
-
-          <item
-              android:id="@+id/main_add_home_shortcut"
-              android:title="@string/add_shortcut_to_home_screen"
-              app:showAsAction="never"/>
-
-        </menu>
-      </item>
-
-      <!-- Check for updates -->
-      <item
-          android:id="@+id/action_ddwrt_check_for_updates"
-          android:checkable="false"
-          android:checked="false"
-          android:title="Check for updates"
-          app:showAsAction="ifRoom"/>
-
-    </menu>
-  </item>
-
-  <item
-      android:id="@+id/action_settings"
-      android:alphabeticShortcut="s"
-      android:icon="@drawable/ic_settings_white_24dp"
-      android:title="@string/menuitem_settings"
-      app:showAsAction="ifRoom"/>
-
-  <item
-      android:id="@+id/action_donate"
-      android:alphabeticShortcut="d"
-      android:title="@string/menuitem_donate"
-      app:showAsAction="never"/>
-
-  <!-- Seems redundant with the send_feedback menu item-->
-  <item
-      android:id="@+id/action_take_bug_report"
-      android:title="Take Bug Report"
-      android:visible="false"
-      app:showAsAction="never"/>
-
-  <item
-      android:id="@+id/action_remove_ads"
-      android:alphabeticShortcut="P"
-      android:title="@string/remove_ads"
-      app:showAsAction="never"/>
-
-  <item
-      android:id="@+id/help"
-      android:alphabeticShortcut="H"
-      android:title="@string/help"
-      app:showAsAction="never"/>
-
-  <item
-      android:id="@+id/changelog"
-      android:title="What's new"
-      app:showAsAction="never"/>
+    <item
+        android:id="@+id/changelog"
+        android:title="What's new"
+        app:showAsAction="never" />
 
 
-  <item
-      android:id="@+id/action_feedback"
-      android:alphabeticShortcut="f"
-      android:title="@string/send_feedback"
-      app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_feedback"
+        android:alphabeticShortcut="f"
+        android:title="@string/send_feedback"
+        app:showAsAction="never" />
 
-  <item
-      android:id="@+id/action_about"
-      android:alphabeticShortcut="A"
-      android:title="@string/menuitem_about"
-      app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_about"
+        android:alphabeticShortcut="A"
+        android:title="@string/menuitem_about"
+        app:showAsAction="never" />
 
-  <item
-      android:id="@+id/close"
-      android:title="@string/close"
-      app:showAsAction="never"/>
+    <item
+        android:id="@+id/close"
+        android:title="@string/close"
+        app:showAsAction="never" />
 
 
 </menu>

@@ -2,21 +2,21 @@
 
 
 <resources>
-  <string name="define_undobar" translatable="false"/>
-  <!-- Author section -->
-  <string name="library_undobar_author" translatable="false">Kai Liao</string>
-  <string name="library_undobar_authorWebsite" translatable="false">http://cocosw.com/</string>
-  <!-- Library section -->
-  <string name="library_undobar_libraryName" translatable="false">UndoBar</string>
-  <string name="library_undobar_libraryDescription" translatable="false">Android Library that implements Snackbars (former known as Undobar) from Google\'s Material Design documentation.</string>
-  <string name="library_undobar_libraryWebsite" translatable="false">http://cocosw.com/UndoBar/</string>
-  <string name="library_undobar_libraryVersion" translatable="false">1.8.1</string>
-  <!-- OpenSource section -->
-  <string name="library_undobar_isOpenSource" translatable="false">true</string>
-  <string name="library_undobar_repositoryLink" translatable="false">https://github.com/soarcn/UndoBar</string>
-  <!-- ClassPath for autoDetect section -->
-  <!--<string translatable="false" name="library_undobar_classPath">com.facebook.undobar</string>-->
-  <!-- License section -->
-  <string name="library_undobar_licenseId" translatable="false">apache_2_0</string>
-  <!-- Custom variables section -->
+    <string name="define_undobar" translatable="false" />
+    <!-- Author section -->
+    <string name="library_undobar_author" translatable="false">Kai Liao</string>
+    <string name="library_undobar_authorWebsite" translatable="false">http://cocosw.com/</string>
+    <!-- Library section -->
+    <string name="library_undobar_libraryName" translatable="false">UndoBar</string>
+    <string name="library_undobar_libraryDescription" translatable="false">Android Library that implements Snackbars (former known as Undobar) from Google\'s Material Design documentation.</string>
+    <string name="library_undobar_libraryWebsite" translatable="false">http://cocosw.com/UndoBar/</string>
+    <string name="library_undobar_libraryVersion" translatable="false">1.8.1</string>
+    <!-- OpenSource section -->
+    <string name="library_undobar_isOpenSource" translatable="false">true</string>
+    <string name="library_undobar_repositoryLink" translatable="false">https://github.com/soarcn/UndoBar</string>
+    <!-- ClassPath for autoDetect section -->
+    <!--<string translatable="false" name="library_undobar_classPath">com.facebook.undobar</string>-->
+    <!-- License section -->
+    <string name="library_undobar_licenseId" translatable="false">apache_2_0</string>
+    <!-- Custom variables section -->
 </resources>

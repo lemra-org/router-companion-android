@@ -17,22 +17,23 @@ import org.rm3l.router_companion.utils.customtabs.CustomTabActivityHelper;
  */
 public class SendFeedbackBroadcastReceiver extends BroadcastReceiver {
 
-  private static final String TAG = SendFeedbackBroadcastReceiver.class.getSimpleName();
+    private static final String TAG = SendFeedbackBroadcastReceiver.class.getSimpleName();
 
-  @Override public void onReceive(Context context, Intent intent) {
+    @Override
+    public void onReceive(Context context, Intent intent) {
 
-    if (!intent.getBooleanExtra(CustomTabActivityHelper.class.getSimpleName(), false)) {
-      //Ignore origin
-      return;
+        if (!intent.getBooleanExtra(CustomTabActivityHelper.class.getSimpleName(), false)) {
+            //Ignore origin
+            return;
+        }
+
+        final Activity currentActivity = RouterCompanionApplication.getCurrentActivity();
+        if (currentActivity == null) {
+            Toast.makeText(context, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
+            Crashlytics.log(Log.WARN, TAG, "Unable to retrieve current activity");
+            return;
+        }
+        Utils.openFeedbackForm(currentActivity,
+                intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED));
     }
-
-    final Activity currentActivity = RouterCompanionApplication.getCurrentActivity();
-    if (currentActivity == null) {
-      Toast.makeText(context, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
-      Crashlytics.log(Log.WARN, TAG, "Unable to retrieve current activity");
-      return;
-    }
-    Utils.openFeedbackForm(currentActivity,
-        intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED));
-  }
 }

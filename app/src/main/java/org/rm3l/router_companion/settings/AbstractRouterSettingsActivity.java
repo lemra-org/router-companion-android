@@ -21,6 +21,8 @@
  */
 package org.rm3l.router_companion.settings;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -35,8 +37,6 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
  * handset devices, settings are presented as a single list. On tablets,
@@ -50,59 +50,70 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  */
 public abstract class AbstractRouterSettingsActivity extends AbstractDDWRTSettingsActivity {
 
-  @NonNull protected String mRouterUuid;
+    @Nullable
+    protected Router mRouter;
 
-  @Nullable protected Router mRouter;
+    @NonNull
+    protected String mRouterUuid;
 
-  @Nullable @Override protected String getRouterUuid() {
-    return mRouterUuid;
-  }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        this.mRouterUuid = getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
 
-  @Override public SharedPreferences getSharedPreferences(String name, int mode) {
-    if (isNullOrEmpty(this.mRouterUuid)) {
-      Toast.makeText(this, "Whoops - internal error. Issue will be reported!", Toast.LENGTH_LONG)
-          .show();
-      ReportingUtils.reportException(null, new IllegalStateException(
-          "RouterSettingsActivity: Router UUID is null: " + this.mRouterUuid));
-      finish();
-    }
-    return super.getSharedPreferences(this.mRouterUuid, mode);
-  }
+        boolean doFinish = false;
+        //noinspection ConstantConditions
+        if ((mRouter = RouterManagementActivity.getDao(this).getRouter(this.mRouterUuid)) == null) {
+            Toast.makeText(this, "No router set or router no longer exists", Toast.LENGTH_LONG).show();
+            doFinish = true;
+        }
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    this.mRouterUuid = getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+        //Need to call super.onCreate prior to calling finish()
+        super.onCreate(savedInstanceState);
 
-    boolean doFinish = false;
-    //noinspection ConstantConditions
-    if ((mRouter = RouterManagementActivity.getDao(this).getRouter(this.mRouterUuid)) == null) {
-      Toast.makeText(this, "No router set or router no longer exists", Toast.LENGTH_LONG).show();
-      doFinish = true;
+        ColorUtils.Companion.setAppTheme(this, mRouter.getRouterFirmware(), false);
+
+        if (doFinish) {
+            finish();
+        }
     }
 
-    //Need to call super.onCreate prior to calling finish()
-    super.onCreate(savedInstanceState);
+    @Override
+    public void finish() {
+        final Intent data = new Intent();
+        setResult(RESULT_OK, data);
 
-    ColorUtils.Companion.setAppTheme(this, mRouter.getRouterFirmware(), false);
-
-    if (doFinish) {
-      finish();
+        super.finish();
     }
-  }
 
-  @Nullable @Override protected String getToolbarSubtitle() {
-    if (mRouter == null) {
-      return null;
+    @Override
+    public SharedPreferences getSharedPreferences(String name, int mode) {
+        if (isNullOrEmpty(this.mRouterUuid)) {
+            Toast.makeText(this, "Whoops - internal error. Issue will be reported!", Toast.LENGTH_LONG)
+                    .show();
+            ReportingUtils.reportException(null, new IllegalStateException(
+                    "RouterSettingsActivity: Router UUID is null: " + this.mRouterUuid));
+            finish();
+        }
+        return super.getSharedPreferences(this.mRouterUuid, mode);
     }
-    return String.format(Locale.US, "%s (%s:%d)", mRouter.getDisplayName(),
-        mRouter.getRemoteIpAddress(), mRouter.getRemotePort());
-  }
 
-  @Override public void finish() {
-    final Intent data = new Intent();
-    setResult(RESULT_OK, data);
+    @NonNull
+    @Override
+    protected abstract PreferenceFragment getPreferenceFragment();
 
-    super.finish();
-  }
+    @Nullable
+    @Override
+    protected String getRouterUuid() {
+        return mRouterUuid;
+    }
 
-  @NonNull @Override protected abstract PreferenceFragment getPreferenceFragment();
+    @Nullable
+    @Override
+    protected String getToolbarSubtitle() {
+        if (mRouter == null) {
+            return null;
+        }
+        return String.format(Locale.US, "%s (%s:%d)", mRouter.getDisplayName(),
+                mRouter.getRemoteIpAddress(), mRouter.getRemotePort());
+    }
 }

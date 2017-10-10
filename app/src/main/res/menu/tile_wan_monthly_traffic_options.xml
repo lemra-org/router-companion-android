@@ -23,48 +23,48 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-  <item
-      android:id="@+id/tile_wan_monthly_traffic_backup"
-      android:icon="@drawable/ic_action_action_backup"
-      android:orderInCategory="1"
-      android:title="Backup"
-      app:showAsAction="ifRoom">
+    <item
+        android:id="@+id/tile_wan_monthly_traffic_backup"
+        android:icon="@drawable/ic_action_action_backup"
+        android:orderInCategory="1"
+        android:title="Backup"
+        app:showAsAction="ifRoom">
 
-    <menu>
-      <item
-          android:id="@+id/tile_wan_monthly_traffic_backup_raw"
-          android:orderInCategory="1"
-          android:title="as Raw File"
-          app:showAsAction="ifRoom"/>
+        <menu>
+            <item
+                android:id="@+id/tile_wan_monthly_traffic_backup_raw"
+                android:orderInCategory="1"
+                android:title="as Raw File"
+                app:showAsAction="ifRoom" />
 
-      <item
-          android:id="@+id/tile_wan_monthly_traffic_backup_csv"
-          android:orderInCategory="2"
-          android:title="as CSV File"
-          app:showAsAction="ifRoom"/>
-    </menu>
+            <item
+                android:id="@+id/tile_wan_monthly_traffic_backup_csv"
+                android:orderInCategory="2"
+                android:title="as CSV File"
+                app:showAsAction="ifRoom" />
+        </menu>
 
-  </item>
+    </item>
 
-  <item
-      android:id="@+id/tile_wan_monthly_traffic_restore"
-      android:icon="@drawable/ic_action_action_restore"
-      android:orderInCategory="2"
-      android:title="Restore"
-      app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/tile_wan_monthly_traffic_restore"
+        android:icon="@drawable/ic_action_action_restore"
+        android:orderInCategory="2"
+        android:title="Restore"
+        app:showAsAction="ifRoom" />
 
-  <item
-      android:id="@+id/tile_wan_monthly_traffic_delete"
-      android:icon="@drawable/ic_action_remove_ddwrt_companion"
-      android:orderInCategory="3"
-      android:title="Delete"
-      app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/tile_wan_monthly_traffic_delete"
+        android:icon="@drawable/ic_action_remove_ddwrt_companion"
+        android:orderInCategory="3"
+        android:title="Delete"
+        app:showAsAction="ifRoom" />
 
-  <item
-      android:id="@+id/tile_wan_monthly_traffic_change_cycle"
-      android:checkable="false"
-      android:orderInCategory="4"
-      android:title="Change monthly cycle..."
-      app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/tile_wan_monthly_traffic_change_cycle"
+        android:checkable="false"
+        android:orderInCategory="4"
+        android:title="Change monthly cycle..."
+        app:showAsAction="ifRoom" />
 
 </menu>

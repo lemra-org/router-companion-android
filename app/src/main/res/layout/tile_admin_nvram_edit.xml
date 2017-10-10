@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -24,85 +23,79 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
-
-  <LinearLayout
-      android:id="@+id/tile_admin_nvram_edit_notification_viewgroup"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="vertical"
-      />
-
-  <ScrollView
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:scrollbars="none"
-      >
+    android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/tile_admin_nvram_edit_notification_viewgroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical" />
 
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="4dp"
-          android:layout_marginRight="4dp"
-          android:text="@string/key"
-          android:textAppearance="?android:textAppearanceMedium"
-          />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
 
-      <TextView
-          android:id="@+id/tile_admin_nvram_edit_key"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="16dp"
-          android:layout_marginLeft="4dp"
-          android:layout_marginRight="4dp"
-          android:layout_marginTop="4dp"
-          android:textIsSelectable="true"
-          />
-
-      <!--<TextView-->
-      <!--android:textIsSelectable="true"-->
-      <!--android:id="@+id/tile_admin_nvram_edit_value_textview"-->
-      <!--android:layout_marginLeft="4dp"-->
-      <!--android:layout_marginRight="4dp"-->
-      <!--android:layout_width="wrap_content"-->
-      <!--android:layout_height="wrap_content"-->
-      <!--android:textAppearance="?android:textAppearanceMedium"-->
-      <!--android:text="@string/value"/>-->
-
-      <android.support.design.widget.TextInputLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="16dp"
-          android:layout_marginLeft="4dp"
-          android:layout_marginRight="4dp"
-          android:layout_marginTop="4dp"
-          >
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/tile_admin_nvram_edit_value"
-            android:layout_width="fill_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawableBottom="@android:color/holo_blue_dark"
-            android:hint="@string/nvram_var_value"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="textMultiLine"
-            android:isScrollContainer="true"
-            android:selectAllOnFocus="true"
-            >
-          <requestFocus/>
-        </android.support.design.widget.TextInputEditText>
-      </android.support.design.widget.TextInputLayout>
+            android:layout_marginTop="17dp"
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:text="@string/key"
+                android:textAppearance="?android:textAppearanceMedium" />
 
-  </ScrollView>
+            <TextView
+                android:id="@+id/tile_admin_nvram_edit_key"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp"
+                android:textIsSelectable="true" />
+
+            <!--<TextView-->
+            <!--android:textIsSelectable="true"-->
+            <!--android:id="@+id/tile_admin_nvram_edit_value_textview"-->
+            <!--android:layout_marginLeft="4dp"-->
+            <!--android:layout_marginRight="4dp"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:textAppearanceMedium"-->
+            <!--android:text="@string/value"/>-->
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/tile_admin_nvram_edit_value"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableBottom="@android:color/holo_blue_dark"
+                    android:hint="@string/nvram_var_value"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="textMultiLine"
+                    android:isScrollContainer="true"
+                    android:selectAllOnFocus="true">
+
+                    <requestFocus />
+                </android.support.design.widget.TextInputEditText>
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>

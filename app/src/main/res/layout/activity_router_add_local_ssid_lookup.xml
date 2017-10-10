@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -24,112 +23,105 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
-
-  <LinearLayout
-      android:id="@+id/router_add_local_ssid_lookup_notification_viewgroup"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="vertical"
-      />
-
-  <ScrollView
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:scrollbars="vertical"
-      >
+    android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/router_add_local_ssid_lookup_notification_viewgroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:weightSum="1"
-        >
+        android:orientation="vertical" />
 
-      <!-- SSID -->
-      <!--<TextView-->
-      <!--android:layout_width="wrap_content"-->
-      <!--android:layout_height="wrap_content"-->
-      <!--android:layout_marginLeft="4dp"-->
-      <!--android:layout_marginStart="4dp"-->
-      <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
-      <!--android:text="Local Wireless Network SSID" />-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical">
 
-      <android.support.design.widget.TextInputLayout
-          android:id="@+id/router_add_local_ssid_lookup_ssid_til"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="4dp"
-          android:layout_marginStart="4dp"
-          android:layout_marginTop="@dimen/activity_vertical_margin"
-          >
-        <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
-            android:id="@+id/router_add_local_ssid_lookup_ssid"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:hint="Local Wireless Network SSID"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="text"
-            android:maxLines="1"
-            />
-      </android.support.design.widget.TextInputLayout>
+            android:orientation="vertical"
+            android:weightSum="1">
 
-      <!-- IP / DNS -->
-      <android.support.design.widget.TextInputLayout
-          android:id="@+id/router_add_local_ssid_lookup_ip_til"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="4dp"
-          android:layout_marginStart="4dp"
-          android:layout_marginTop="@dimen/activity_vertical_margin"
-          >
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/router_add_local_ssid_lookup_ip"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:hint="Alt. IP / DNS, e.g., 172.17.0.254 or myrouter.dns.com"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="text"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            />
-      </android.support.design.widget.TextInputLayout>
+            <!-- SSID -->
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="4dp"-->
+            <!--android:layout_marginStart="4dp"-->
+            <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
+            <!--android:text="Local Wireless Network SSID" />-->
 
-      <!-- SSH Port -->
-      <android.support.design.widget.TextInputLayout
-          android:id="@+id/router_add_local_ssid_lookup_port_til"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="4dp"
-          android:layout_marginStart="4dp"
-          android:layout_marginTop="@dimen/activity_vertical_margin"
-          >
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/router_add_local_ssid_lookup_port"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:ems="10"
-            android:hint="Alternate SSH Port, e.g., 22"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="numberSigned"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            android:text="@string/router_add_default_ssh_port"
-            />
-      </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/router_add_local_ssid_lookup_ssid_til"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin">
 
-    </LinearLayout>
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
+                    android:id="@+id/router_add_local_ssid_lookup_ssid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:hint="Local Wireless Network SSID"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
 
-  </ScrollView>
+            <!-- IP / DNS -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/router_add_local_ssid_lookup_ip_til"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/router_add_local_ssid_lookup_ip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:hint="Alt. IP / DNS, e.g., 172.17.0.254 or myrouter.dns.com"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:selectAllOnFocus="true" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- SSH Port -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/router_add_local_ssid_lookup_port_til"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/router_add_local_ssid_lookup_port"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ems="10"
+                    android:hint="Alternate SSH Port, e.g., 22"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="numberSigned"
+                    android:maxLines="1"
+                    android:selectAllOnFocus="true"
+                    android:text="@string/router_add_default_ssh_port" />
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>

@@ -36,11 +36,13 @@ import org.rm3l.router_companion.tiles.status.lan.LANStateTile;
  */
 public class StatusLANFragment extends AbstractBaseFragment {
 
-  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return Arrays.<DDWRTTile>asList(new LANStateTile(this, savedInstanceState, this.router),
-        //                new LANClientsTile(this, savedInstanceState, this.router),
-        new DHCPStatusTile(this, savedInstanceState, this.router)
-        //                new DHCPClientsTile(this, savedInstanceState, this.router)
-    );
-  }
+    @Nullable
+    @Override
+    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+        return Arrays.<DDWRTTile>asList(new LANStateTile(this, savedInstanceState, this.router),
+                //                new LANClientsTile(this, savedInstanceState, this.router),
+                new DHCPStatusTile(this, savedInstanceState, this.router)
+                //                new DHCPClientsTile(this, savedInstanceState, this.router)
+        );
+    }
 }

@@ -27,67 +27,60 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".tiles.dashboard.network.IPGeoActivity"
-    >
+    tools:context=".tiles.dashboard.network.IPGeoActivity">
 
-  <android.support.v7.widget.Toolbar
-      android:id="@+id/activity_ip_geo_toolbar"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:background="?attr/colorPrimary"
-      android:minHeight="?attr/actionBarSize"
-      >
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/activity_ip_geo_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize">
 
-  </android.support.v7.widget.Toolbar>
+    </android.support.v7.widget.Toolbar>
 
-  <com.google.android.gms.ads.AdView
-      android:id="@+id/activity_ip_geo_adView"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center_horizontal"
-      android:layout_marginBottom="5dp"
-      android:layout_marginTop="5dp"
-      android:visibility="gone"
-      ads:adSize="BANNER"
-      ads:adUnitId="@string/banner_ad_unit_id_router_management_activity"
-      />
-
-  <RelativeLayout
-      android:id="@+id/activity_ip_geo_container"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:layout_marginTop="15dp"
-      android:orientation="vertical"
-      >
-
-    <org.osmdroid.views.MapView
-        android:id="@+id/activity_ip_geo_map"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:visibility="gone"
-        />
-
-    <ProgressBar
-        android:id="@+id/activity_ip_geo_map_loading"
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/activity_ip_geo_adView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        />
-
-    <!-- Error message placeholder -->
-    <TextView
-        android:id="@+id/activity_ip_geo_map_error"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:textColor="@color/ddwrt_purple"
-        android:textIsSelectable="true"
-        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
         android:visibility="gone"
-        />
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id_router_management_activity" />
 
-  </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/activity_ip_geo_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical">
+
+        <org.osmdroid.views.MapView
+            android:id="@+id/activity_ip_geo_map"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/activity_ip_geo_map_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+        <!-- Error message placeholder -->
+        <TextView
+            android:id="@+id/activity_ip_geo_map_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/ddwrt_purple"
+            android:textIsSelectable="true"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+    </RelativeLayout>
 
 </LinearLayout>

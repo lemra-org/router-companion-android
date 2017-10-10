@@ -32,29 +32,36 @@ import org.rm3l.router_companion.resources.conn.Router;
 
 public class ToolboxTracerouteTile extends AbstractToolboxTile {
 
-  public ToolboxTracerouteTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
-      @Nullable Router router) {
-    super(parentFragment, arguments, router);
-  }
+    public ToolboxTracerouteTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
+            @Nullable Router router) {
+        super(parentFragment, arguments, router);
+    }
 
-  @Nullable @Override protected Integer getInfoText() {
-    return R.string.traceroute_info;
-  }
+    @Override
+    protected int getEditTextHint() {
+        return R.string.traceroute_edit_text_hint;
+    }
 
-  @Override protected int getEditTextHint() {
-    return R.string.traceroute_edit_text_hint;
-  }
+    @Nullable
+    @Override
+    protected Integer getInfoText() {
+        return R.string.traceroute_info;
+    }
 
-  @Override protected int getSubmitButtonText() {
-    return R.string.toolbox_traceroute;
-  }
+    @NonNull
+    @Override
+    protected AbstractRouterAction<?> getRouterAction(String textToFind) {
+        return new TracerouteFromRouterAction(mRouter, mParentFragmentActivity, mRouterActionListener,
+                mGlobalPreferences, textToFind);
+    }
 
-  @Override protected int getTileTitle() {
-    return R.string.traceroute;
-  }
+    @Override
+    protected int getSubmitButtonText() {
+        return R.string.toolbox_traceroute;
+    }
 
-  @NonNull @Override protected AbstractRouterAction<?> getRouterAction(String textToFind) {
-    return new TracerouteFromRouterAction(mRouter, mParentFragmentActivity, mRouterActionListener,
-        mGlobalPreferences, textToFind);
-  }
+    @Override
+    protected int getTileTitle() {
+        return R.string.traceroute;
+    }
 }

@@ -5,18 +5,18 @@ package org.rm3l.router_companion.tasker.exception;
  */
 public class DDWRTCompanionPackageNotFoundException extends DDWRTCompanionTaskerException {
 
-  public DDWRTCompanionPackageNotFoundException() {
-  }
+    public DDWRTCompanionPackageNotFoundException() {
+    }
 
-  public DDWRTCompanionPackageNotFoundException(String message) {
-    super(message);
-  }
+    public DDWRTCompanionPackageNotFoundException(String message) {
+        super(message);
+    }
 
-  public DDWRTCompanionPackageNotFoundException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public DDWRTCompanionPackageNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-  public DDWRTCompanionPackageNotFoundException(Throwable cause) {
-    super(cause);
-  }
+    public DDWRTCompanionPackageNotFoundException(Throwable cause) {
+        super(cause);
+    }
 }

@@ -2,21 +2,21 @@
 
 
 <resources>
-  <string name="define_discreetapprate" translatable="false"/>
-  <!-- Author section -->
-  <string name="library_discreetapprate_author" translatable="false">Nicolas Pomepuy</string>
-  <string name="library_discreetapprate_authorWebsite" translatable="false">http://nicolaspomepuy.fr</string>
-  <!-- Library section -->
-  <string name="library_discreetapprate_libraryName" translatable="false">Discreet App Rate</string>
-  <string name="library_discreetapprate_libraryDescription" translatable="false">A lightweight non intrusive app rate reminder for Android</string>
-  <string name="library_discreetapprate_libraryWebsite" translatable="false">http://nicolaspomepuy.fr/non-intrusive-app-rate/</string>
-  <string name="library_discreetapprate_libraryVersion" translatable="false">2.0.4</string>
-  <!-- OpenSource section -->
-  <string name="library_discreetapprate_isOpenSource" translatable="false">true</string>
-  <string name="library_discreetapprate_repositoryLink" translatable="false">https://github.com/PomepuyN/discreet-app-rate</string>
-  <!-- ClassPath for autoDetect section -->
-  <!--<string translatable="false" name="library_discreetapprate_classPath">com.facebook.discreetapprate</string>-->
-  <!-- License section -->
-  <string name="library_discreetapprate_licenseId" translatable="false">apache_2_0</string>
-  <!-- Custom variables section -->
+    <string name="define_discreetapprate" translatable="false" />
+    <!-- Author section -->
+    <string name="library_discreetapprate_author" translatable="false">Nicolas Pomepuy</string>
+    <string name="library_discreetapprate_authorWebsite" translatable="false">http://nicolaspomepuy.fr</string>
+    <!-- Library section -->
+    <string name="library_discreetapprate_libraryName" translatable="false">Discreet App Rate</string>
+    <string name="library_discreetapprate_libraryDescription" translatable="false">A lightweight non intrusive app rate reminder for Android</string>
+    <string name="library_discreetapprate_libraryWebsite" translatable="false">http://nicolaspomepuy.fr/non-intrusive-app-rate/</string>
+    <string name="library_discreetapprate_libraryVersion" translatable="false">2.0.4</string>
+    <!-- OpenSource section -->
+    <string name="library_discreetapprate_isOpenSource" translatable="false">true</string>
+    <string name="library_discreetapprate_repositoryLink" translatable="false">https://github.com/PomepuyN/discreet-app-rate</string>
+    <!-- ClassPath for autoDetect section -->
+    <!--<string translatable="false" name="library_discreetapprate_classPath">com.facebook.discreetapprate</string>-->
+    <!-- License section -->
+    <string name="library_discreetapprate_licenseId" translatable="false">apache_2_0</string>
+    <!-- Custom variables section -->
 </resources>

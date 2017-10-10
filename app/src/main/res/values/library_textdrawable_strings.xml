@@ -21,21 +21,21 @@ SOFTWARE.
 -->
 
 <resources>
-  <string name="define_textdrawable" translatable="false"/>
-  <!-- Author section -->
-  <string name="library_textdrawable_author" translatable="false">Amulya Khare</string>
-  <string name="library_textdrawable_authorWebsite" translatable="false">http://www.wix.com/amulyakhare/portfolio</string>
-  <!-- Library section -->
-  <string name="library_textdrawable_libraryName" translatable="false">TextDrawable</string>
-  <string name="library_textdrawable_libraryDescription" translatable="false">This light-weight library provides images with letter/text like the Gmail app. It extends the Drawable class thus can be used with existing/custom/network ImageView classes. Also included is a fluent interface for creating drawables and a customizable ColorGenerator.</string>
-  <string name="library_textdrawable_libraryWebsite" translatable="false">https://github.com/amulyakhare/TextDrawable</string>
-  <string name="library_textdrawable_libraryVersion" translatable="false">1.0.1</string>
-  <!-- OpenSource section -->
-  <string name="library_textdrawable_isOpenSource" translatable="false">true</string>
-  <string name="library_textdrawable_repositoryLink" translatable="false">https://github.com/amulyakhare/TextDrawable</string>
-  <!-- ClassPath for autoDetect section -->
-  <!--<string translatable="false" name="library_textdrawable_classPath">com.facebook.maoni</string>-->
-  <!-- License section -->
-  <string name="library_textdrawable_licenseId" translatable="false">mit</string>
-  <!-- Custom variables section -->
+    <string name="define_textdrawable" translatable="false" />
+    <!-- Author section -->
+    <string name="library_textdrawable_author" translatable="false">Amulya Khare</string>
+    <string name="library_textdrawable_authorWebsite" translatable="false">http://www.wix.com/amulyakhare/portfolio</string>
+    <!-- Library section -->
+    <string name="library_textdrawable_libraryName" translatable="false">TextDrawable</string>
+    <string name="library_textdrawable_libraryDescription" translatable="false">This light-weight library provides images with letter/text like the Gmail app. It extends the Drawable class thus can be used with existing/custom/network ImageView classes. Also included is a fluent interface for creating drawables and a customizable ColorGenerator.</string>
+    <string name="library_textdrawable_libraryWebsite" translatable="false">https://github.com/amulyakhare/TextDrawable</string>
+    <string name="library_textdrawable_libraryVersion" translatable="false">1.0.1</string>
+    <!-- OpenSource section -->
+    <string name="library_textdrawable_isOpenSource" translatable="false">true</string>
+    <string name="library_textdrawable_repositoryLink" translatable="false">https://github.com/amulyakhare/TextDrawable</string>
+    <!-- ClassPath for autoDetect section -->
+    <!--<string translatable="false" name="library_textdrawable_classPath">com.facebook.maoni</string>-->
+    <!-- License section -->
+    <string name="library_textdrawable_licenseId" translatable="false">mit</string>
+    <!-- Custom variables section -->
 </resources>

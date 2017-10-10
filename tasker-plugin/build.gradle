@@ -23,17 +23,17 @@
 /**
  * Gradle build file*/
 buildscript {
-  repositories {
-    maven { url 'https://maven.fabric.io/public' }
-    maven { url 'http://dl.bintray.com/amulyakhare/maven' }
-    mavenCentral()
-  }
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+        maven { url 'http://dl.bintray.com/amulyakhare/maven' }
+        mavenCentral()
+    }
 
-  dependencies {
-    //noinspection GradleDynamicVersion
-    classpath 'io.fabric.tools:gradle:1.+'
-    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.7.3'
-  }
+    dependencies {
+        //noinspection GradleDynamicVersion
+        classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.7.3'
+    }
 }
 
 apply plugin: 'project-report'
@@ -44,203 +44,203 @@ apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'io.fabric'
 
 repositories {
-  maven { url 'https://maven.fabric.io/public' }
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 //apply plugin: 'android-apt'
 apply plugin: 'com.github.triplet.play'
 
 android {
-  compileSdkVersion android_sdk
-  buildToolsVersion buildTools_version
+    compileSdkVersion android_sdk
+    buildToolsVersion buildTools_version
 
-  playAccountConfigs {
-    defaultAccountConfig {
-      jsonFile = rootProject.getPlayStoreConfig()
-    }
-  }
-
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_7
-    targetCompatibility JavaVersion.VERSION_1_7
-  }
-
-  signingConfigs {
-    release {
-      keyAlias 'DDWRTCompanionAndroidKey'
-      (storeFile, storePassword, keyPassword) = rootProject.getAndroidSigningConfig()
-    }
-  }
-
-  sourceSets {
-    main {
-      manifest.srcFile 'src/main/AndroidManifest.xml'
-      //noinspection GroovyAssignabilityCheck
-      java.srcDirs = ['src/main/java']
-      //noinspection GroovyAssignabilityCheck
-      resources.srcDirs = ['src/main/res']
-      aidl.srcDirs = ['src/main/res']
-      renderscript.srcDirs = ['src/main/java']
-      res.srcDirs = ['src/main/res']
-      assets.srcDirs = ['src/main/assets']
+    playAccountConfigs {
+        defaultAccountConfig {
+            jsonFile = rootProject.getPlayStoreConfig()
+        }
     }
 
-    // Move the tests to tests/java, tests/res, etc...
-    instrumentTest.setRoot('src/androidTests')
-
-    // Move the build types to build-types/<type>
-    // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...
-    // This moves them out of them default location under src/<type>/... which would
-    // conflict with src/ being used by the main source set.
-    // Adding new build types or product flavors should be accompanied
-    // by a similar customization.
-    debug.setRoot('build-types/debug')
-    release.setRoot('build-types/release')
-  }
-
-  defaultConfig {
-    applicationId "org.rm3l.ddwrt.tasker"
-    testApplicationId "org.rm3l.ddwrt.tasker.tests"
-    minSdkVersion 15
-    targetSdkVersion android_sdk
-
-    // Enabling multidex support.
-    //        multiDexEnabled true
-    // Fetch the version according to git latest tag and "how far are we from last tag"
-    (versionCode, versionName) = rootProject.getVersionCodeAndName("default")
-
-    // For debugging, friendly print the version output to the Gradle console
-    printf("\n-------- VERSION DATA for '$project.name' --------" +
-        "\n" +
-        "- CODE: " +
-        versionCode +
-        "\n" +
-        "- NAME: " +
-        versionName +
-        "\n----------------------------\n")
-
-    playAccountConfig = playAccountConfigs.defaultAccountConfig
-  }
-
-  //Those files, from Apache Commons lib cause build errors
-  packagingOptions {
-    exclude 'META-INF/LICENSE.txt'
-    exclude 'META-INF/NOTICE.txt'
-  }
-  lintOptions {
-    abortOnError false
-    disable 'TypographyEllipsis'
-  }
-
-  /**
-   * Flavors: this is because apps uploaded to Play Store will certainly be banned if
-   * they contain link to billing platforms other than Google*/
-  productFlavors {
-    generic {
-      dimension "mode"
-      //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
-      //            buildConfigField "boolean", "DONATIONS", "false"
-      //            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
-      //            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
-      //            buildConfigField "boolean", "WITH_ADS", "false"
-      //            buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
-    google {
-      dimension "mode"
-      //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
-      //            buildConfigField "boolean", "DONATIONS", "false"
-      //            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
-      //            buildConfigField "boolean", "DONATIONS_GOOGLE", "true"
-      //            buildConfigField "boolean", "WITH_ADS", "false"
-      //            buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
-    }
-    amazon {
-      dimension "mode"
-      //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
-      //            buildConfigField "boolean", "DONATIONS", "false"
-      //            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
-      //            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
-      //            buildConfigField "boolean", "WITH_ADS", "false"
-      //            buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
-    }
-  }
 
-  buildTypes {
-    //        release {
-    //            minifyEnabled false
-    //            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-    //        }
-    release {
-      minifyEnabled true
-      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-      signingConfig signingConfigs.release
-      zipAlignEnabled true
+    signingConfigs {
+        release {
+            keyAlias 'DDWRTCompanionAndroidKey'
+            (storeFile, storePassword, keyPassword) = rootProject.getAndroidSigningConfig()
+        }
     }
-    debug {
-      // Disable fabric build ID generation for debug builds
-      ext.enableCrashlytics = false
-      minifyEnabled true
-      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-      zipAlignEnabled true
-    }
-  }
 
-  // Specifies the flavor dimensions you want to use. The order in which you
-  // list each dimension determines its priority, from highest to lowest,
-  // when Gradle merges variant sources and configurations. You must assign
-  // each product flavor you configure to one of the flavor dimensions.
-  flavorDimensions "mode"
+    sourceSets {
+        main {
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+            //noinspection GroovyAssignabilityCheck
+            java.srcDirs = ['src/main/java']
+            //noinspection GroovyAssignabilityCheck
+            resources.srcDirs = ['src/main/res']
+            aidl.srcDirs = ['src/main/res']
+            renderscript.srcDirs = ['src/main/java']
+            res.srcDirs = ['src/main/res']
+            assets.srcDirs = ['src/main/assets']
+        }
+
+        // Move the tests to tests/java, tests/res, etc...
+        instrumentTest.setRoot('src/androidTests')
+
+        // Move the build types to build-types/<type>
+        // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...
+        // This moves them out of them default location under src/<type>/... which would
+        // conflict with src/ being used by the main source set.
+        // Adding new build types or product flavors should be accompanied
+        // by a similar customization.
+        debug.setRoot('build-types/debug')
+        release.setRoot('build-types/release')
+    }
+
+    defaultConfig {
+        applicationId "org.rm3l.ddwrt.tasker"
+        testApplicationId "org.rm3l.ddwrt.tasker.tests"
+        minSdkVersion 15
+        targetSdkVersion android_sdk
+
+        // Enabling multidex support.
+        //        multiDexEnabled true
+        // Fetch the version according to git latest tag and "how far are we from last tag"
+        (versionCode, versionName) = rootProject.getVersionCodeAndName("default")
+
+        // For debugging, friendly print the version output to the Gradle console
+        printf("\n-------- VERSION DATA for '$project.name' --------" +
+                "\n" +
+                "- CODE: " +
+                versionCode +
+                "\n" +
+                "- NAME: " +
+                versionName +
+                "\n----------------------------\n")
+
+        playAccountConfig = playAccountConfigs.defaultAccountConfig
+    }
+
+    //Those files, from Apache Commons lib cause build errors
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+    lintOptions {
+        abortOnError false
+        disable 'TypographyEllipsis'
+    }
+
+    /**
+     * Flavors: this is because apps uploaded to Play Store will certainly be banned if
+     * they contain link to billing platforms other than Google*/
+    productFlavors {
+        generic {
+            dimension "mode"
+            //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
+            //            buildConfigField "boolean", "DONATIONS", "false"
+            //            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
+            //            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
+            //            buildConfigField "boolean", "WITH_ADS", "false"
+            //            buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
+        }
+        google {
+            dimension "mode"
+            //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
+            //            buildConfigField "boolean", "DONATIONS", "false"
+            //            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
+            //            buildConfigField "boolean", "DONATIONS_GOOGLE", "true"
+            //            buildConfigField "boolean", "WITH_ADS", "false"
+            //            buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
+        }
+        amazon {
+            dimension "mode"
+            //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
+            //            buildConfigField "boolean", "DONATIONS", "false"
+            //            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
+            //            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
+            //            buildConfigField "boolean", "WITH_ADS", "false"
+            //            buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
+        }
+    }
+
+    buildTypes {
+        //        release {
+        //            minifyEnabled false
+        //            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        //        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+            zipAlignEnabled true
+        }
+        debug {
+            // Disable fabric build ID generation for debug builds
+            ext.enableCrashlytics = false
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            zipAlignEnabled true
+        }
+    }
+
+    // Specifies the flavor dimensions you want to use. The order in which you
+    // list each dimension determines its priority, from highest to lowest,
+    // when Gradle merges variant sources and configurations. You must assign
+    // each product flavor you configure to one of the flavor dimensions.
+    flavorDimensions "mode"
 }
 
 //Automate the way version name is built for each flavor
 android.productFlavors.each {
-  flavor ->
-    def (versionCode, versionName) = rootProject.getVersionCodeAndName(flavor.name)
-    flavor.versionCode = versionCode
-    flavor.versionName = versionName
+    flavor ->
+        def (versionCode, versionName) = rootProject.getVersionCodeAndName(flavor.name)
+        flavor.versionCode = versionCode
+        flavor.versionName = versionName
 }
 
 dependencies {
 
-  implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-  implementation "org.jetbrains.anko:anko-sdk25:$anko_version"
-  implementation "org.jetbrains.anko:anko-sdk25-listeners:$anko_version"
-  implementation "org.jetbrains.anko:anko:$anko_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.anko:anko-sdk25:$anko_version"
+    implementation "org.jetbrains.anko:anko-sdk25-listeners:$anko_version"
+    implementation "org.jetbrains.anko:anko:$anko_version"
 
-  implementation project(':common')
+    implementation project(':common')
 
-  implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-  // Unit testing dependencies
-  testImplementation 'junit:junit:4.12'
-  // Set this dependency if you want to use the Hamcrest matcher library
-  testImplementation 'org.hamcrest:hamcrest-library:1.4-atlassian-1'
-  // more stuff, e.g., Mockito
-  testImplementation 'org.mockito:mockito-core:2.2.26'
+    // Unit testing dependencies
+    testImplementation 'junit:junit:4.12'
+    // Set this dependency if you want to use the Hamcrest matcher library
+    testImplementation 'org.hamcrest:hamcrest-library:1.4-atlassian-1'
+    // more stuff, e.g., Mockito
+    testImplementation 'org.mockito:mockito-core:2.2.26'
 
-  // Required for instrumented tests
-  androidTestImplementation "com.android.support:support-annotations:$support_version"
-  androidTestImplementation "com.android.support.test:runner:1.0.0"
+    // Required for instrumented tests
+    androidTestImplementation "com.android.support:support-annotations:$support_version"
+    androidTestImplementation "com.android.support.test:runner:1.0.0"
 
-  implementation "com.android.support:appcompat-v7:$support_version"
-  implementation "com.android.support:design:$support_version"
+    implementation "com.android.support:appcompat-v7:$support_version"
+    implementation "com.android.support:design:$support_version"
 
-  implementation('org.rm3l:maoni:4.0.1@aar') {
-    transitive = true
-    exclude group: 'com.android.support', module: 'appcompat-v7'
-    exclude group: 'com.android.support', module: 'design'
-    exclude group: 'com.android.support', module: 'support-v4'
+    implementation('org.rm3l:maoni:4.0.1@aar') {
+        transitive = true
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'design'
+        exclude group: 'com.android.support', module: 'support-v4'
 //    exclude group: 'org.rm3l', module: 'maoni-email'
-  }
+    }
 
-  implementation('org.rm3l:maoni-doorbell:2.4.0') {
-    transitive = false;
-    exclude group: 'com.android.support', module: 'appcompat-v7'
-    exclude group: 'com.android.support', module: 'design'
-    exclude group: 'com.android.support', module: 'support-v4'
-  }
+    implementation('org.rm3l:maoni-doorbell:2.4.0') {
+        transitive = false;
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'design'
+        exclude group: 'com.android.support', module: 'support-v4'
+    }
 
-  //Send notifications on Slack as well
+    //Send notifications on Slack as well
 //  implementation ('org.rm3l:maoni-slack:0.1.4') {
 //    transitive = true;
 //    exclude group: 'org.rm3l', module: 'maoni-common'
@@ -249,73 +249,73 @@ dependencies {
 //    exclude group: 'com.android.support', module: 'support-v4'
 //  }
 
-  implementation('com.mikepenz:aboutlibraries:5.9.6@aar') {
-    transitive = true
-  }
+    implementation('com.mikepenz:aboutlibraries:5.9.6@aar') {
+        transitive = true
+    }
 
-  implementation group: 'net.jcip', name: 'jcip-annotations', version: "1.0"
-  //    implementation group:'com.android.support', name:'support-annotations', version:"${ANDROID_SUPPORT_VERSION_MATCHER}"
-  //    implementation group:'com.android.support', name:'appcompat-v7', version:"${ANDROID_SUPPORT_VERSION_MATCHER}"
-  implementation group: 'com.twofortyfouram', name: 'android-annotation', version: "[2.0.1,3.0["
-  implementation group: 'com.twofortyfouram', name: 'android-assertion', version: "[1.0.4,2.0["
-  implementation group: 'com.twofortyfouram', name: 'android-plugin-api-for-locale',
-      version: "[1.0.1,2.0.0["
-  implementation group: 'com.twofortyfouram', name: 'android-plugin-client-sdk-for-locale',
-      version: "[4.0.2,5.0["
-  implementation group: 'com.twofortyfouram', name: 'android-spackle', version: "[2.0.0,3.0["
+    implementation group: 'net.jcip', name: 'jcip-annotations', version: "1.0"
+    //    implementation group:'com.android.support', name:'support-annotations', version:"${ANDROID_SUPPORT_VERSION_MATCHER}"
+    //    implementation group:'com.android.support', name:'appcompat-v7', version:"${ANDROID_SUPPORT_VERSION_MATCHER}"
+    implementation group: 'com.twofortyfouram', name: 'android-annotation', version: "[2.0.1,3.0["
+    implementation group: 'com.twofortyfouram', name: 'android-assertion', version: "[1.0.4,2.0["
+    implementation group: 'com.twofortyfouram', name: 'android-plugin-api-for-locale',
+            version: "[1.0.1,2.0.0["
+    implementation group: 'com.twofortyfouram', name: 'android-plugin-client-sdk-for-locale',
+            version: "[4.0.2,5.0["
+    implementation group: 'com.twofortyfouram', name: 'android-spackle', version: "[2.0.0,3.0["
 
-  androidTestImplementation group: 'com.twofortyfouram', name: 'android-test', version: "[1.0.0,2.0["
-  implementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
-    transitive = true;
-  }
+    androidTestImplementation group: 'com.twofortyfouram', name: 'android-test', version: "[1.0.0,2.0["
+    implementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+        transitive = true;
+    }
 
-  implementation 'com.google.code.gson:gson:2.8.1'
-  implementation 'com.google.guava:guava:23.0-android'
+    implementation 'com.google.code.gson:gson:2.8.1'
+    implementation 'com.google.guava:guava:23.0-android'
 
 //  implementation 'org.apache.commons:commons-lang3:3.5'
 
-  //Retrofit
-  implementation 'com.squareup.retrofit2:retrofit:2.3.0'
-  implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
-  implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1'
+    //Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1'
 
-  //LeakCanary - to detect memory leaks (only in debug flavor)
-  debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.1'
-  releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-  testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+    //LeakCanary - to detect memory leaks (only in debug flavor)
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.1'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+    testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
 
-  implementation 'com.facebook.stetho:stetho:1.5.0'
-  implementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
+    implementation 'com.facebook.stetho:stetho:1.5.0'
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
 
-  implementation 'com.zsoltsafrany:needle:1.0.0'
+    implementation 'com.zsoltsafrany:needle:1.0.0'
 
-  implementation 'com.amazonaws:aws-android-sdk-core:2.4.5'
-  implementation 'com.amazonaws:aws-android-sdk-s3:2.4.5'
+    implementation 'com.amazonaws:aws-android-sdk-core:2.4.5'
+    implementation 'com.amazonaws:aws-android-sdk-s3:2.4.5'
 
-  //TODO Migrate to >= 1.0.0
-  implementation 'com.stephentuso:welcome:0.7.2'
+    //TODO Migrate to >= 1.0.0
+    implementation 'com.stephentuso:welcome:0.7.2'
 
-  implementation 'com.sothree.slidinguppanel:library:3.3.1'
+    implementation 'com.sothree.slidinguppanel:library:3.3.1'
 
 //  debugImplementation 'com.amitshekhar.android:debug-db:0.4.0'
 
-  implementation 'com.facebook.device.yearclass:yearclass:2.0.0'
+    implementation 'com.facebook.device.yearclass:yearclass:2.0.0'
 
-  //Chuck: in-app HTTP inspector for OkHttp
-  debugImplementation('com.readystatesoftware.chuck:library:1.0.4') {
-    exclude group: 'com.android.support', module: 'appcompat-v7'
-    exclude group: 'com.android.support', module: 'design'
-    exclude group: 'com.android.support', module: 'recyclerview-v7'
-    exclude group: 'com.android.support', module: 'support-v4'
-  }
-  releaseImplementation 'com.readystatesoftware.chuck:library-no-op:1.0.4'
+    //Chuck: in-app HTTP inspector for OkHttp
+    debugImplementation('com.readystatesoftware.chuck:library:1.0.4') {
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'design'
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
+        exclude group: 'com.android.support', module: 'support-v4'
+    }
+    releaseImplementation 'com.readystatesoftware.chuck:library-no-op:1.0.4'
 }
 
 
 play {
-  // ...
-  track = 'beta'
-  untrackOld = true // will untrack 'alpha' while upload to 'beta'
-  uploadImages = false
-  errorOnSizeLimit = true
+    // ...
+    track = 'beta'
+    untrackOld = true // will untrack 'alpha' while upload to 'beta'
+    uploadImages = false
+    errorOnSizeLimit = true
 }

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -21,42 +20,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-  <item>
-    <shape>
-      <padding
-          android:bottom="8.0dip"
-          android:left="8.0dip"
-          android:right="8.0dip"
-          android:top="8.0dip"/>
-      <solid android:color="@android:color/transparent"/>
-    </shape>
-  </item>
-  <item
-      android:left="1.0px"
-      android:right="1.0px">
-    <shape android:shape="rectangle">
-      <solid android:color="#fff0f0f0"/>
-    </shape>
-  </item>
-  <item android:bottom="4.0dip">
-    <shape android:shape="rectangle">
-      <stroke
-          android:color="#ff999999"
-          android:width="1.0px"/>
-      <solid android:color="#fff9f9f9"/>
-    </shape>
-  </item>
-  <item
-      android:bottom="4.0dip"
-      android:drawable="@drawable/imagebutton_background"/>
-  <item>
-    <shape>
-      <padding
-          android:bottom="8.0dip"
-          android:left="4.0dip"
-          android:right="4.0dip"
-          android:top="4.0dip"/>
-      <solid android:color="@android:color/transparent"/>
-    </shape>
-  </item>
+    <item>
+        <shape>
+            <padding
+                android:bottom="8.0dip"
+                android:left="8.0dip"
+                android:right="8.0dip"
+                android:top="8.0dip" />
+            <solid android:color="@android:color/transparent" />
+        </shape>
+    </item>
+    <item
+        android:left="1.0px"
+        android:right="1.0px">
+        <shape android:shape="rectangle">
+            <solid android:color="#fff0f0f0" />
+        </shape>
+    </item>
+    <item android:bottom="4.0dip">
+        <shape android:shape="rectangle">
+            <stroke
+                android:width="1.0px"
+                android:color="#ff999999" />
+            <solid android:color="#fff9f9f9" />
+        </shape>
+    </item>
+    <item
+        android:bottom="4.0dip"
+        android:drawable="@drawable/imagebutton_background" />
+    <item>
+        <shape>
+            <padding
+                android:bottom="8.0dip"
+                android:left="4.0dip"
+                android:right="4.0dip"
+                android:top="4.0dip" />
+            <solid android:color="@android:color/transparent" />
+        </shape>
+    </item>
 </layer-list>

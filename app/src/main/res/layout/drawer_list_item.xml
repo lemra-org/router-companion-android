@@ -30,5 +30,4 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:textAppearance="?android:attr/textAppearanceListItemSmall"
-    android:textColor="#fff"
-    />
+    android:textColor="#fff" />

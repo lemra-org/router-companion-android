@@ -24,47 +24,42 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="org.rm3l.router_companion.tiles.syslog.ViewSyslogActivity"
-    >
+    tools:context="org.rm3l.router_companion.tiles.syslog.ViewSyslogActivity">
 
-  <android.support.v7.widget.Toolbar
-      android:id="@+id/tile_status_syslog_full_view_toolbar"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:background="?attr/colorPrimary"
-      android:minHeight="?attr/actionBarSize"
-      />
-
-  <android.support.v4.widget.SwipeRefreshLayout
-      android:id="@+id/swipeRefreshLayout"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      >
-
-    <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
-        android:id="@+id/tile_status_syslog_full_recyclerview"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tile_status_syslog_full_view_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="10dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/material_drawer_dark_selected"
-        android:scrollbars="vertical"
-        />
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize" />
 
-    <TextView
-        android:id="@+id/empty_view"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="No Data"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textIsSelectable="true"
-        />
+        android:layout_height="match_parent">
 
-  </android.support.v4.widget.SwipeRefreshLayout>
+        <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
+            android:id="@+id/tile_status_syslog_full_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/material_drawer_dark_selected"
+            android:scrollbars="vertical" />
+
+        <TextView
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="No Data"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textIsSelectable="true" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

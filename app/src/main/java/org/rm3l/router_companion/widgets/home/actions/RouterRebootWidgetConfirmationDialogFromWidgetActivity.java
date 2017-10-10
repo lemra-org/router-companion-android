@@ -23,70 +23,80 @@ import org.rm3l.router_companion.widgets.ConfirmDialogAsActivity;
  * Created by rm3l on 21/04/15.
  */
 public class RouterRebootWidgetConfirmationDialogFromWidgetActivity
-    extends ConfirmDialogAsActivity {
+        extends ConfirmDialogAsActivity {
 
-  private Router mRouter;
+    private Router mRouter;
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    final Intent intent = getIntent();
+        final Intent intent = getIntent();
 
-    final String routerUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+        final String routerUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
 
-    if (routerUuid == null
-        || (mRouter = RouterManagementActivity.getDao(this).getRouter(routerUuid)) == null) {
-      Toast.makeText(this, "Unknown Router. May have been removed. Please reconfigure the widget!",
-          Toast.LENGTH_SHORT).show();
-      finish();
+        if (routerUuid == null
+                || (mRouter = RouterManagementActivity.getDao(this).getRouter(routerUuid)) == null) {
+            Toast.makeText(this, "Unknown Router. May have been removed. Please reconfigure the widget!",
+                    Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
-  }
 
-  @Override protected View.OnClickListener getYesButtonOnClickListener() {
-    final Handler handler = new Handler(Looper.getMainLooper());
+    @Override
+    protected View.OnClickListener getNoButtonOnClickListener() {
+        return null;
+    }
 
-    return new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        handler.post(new Runnable() {
-          @Override public void run() {
-            Toast.makeText(RouterRebootWidgetConfirmationDialogFromWidgetActivity.this,
-                String.format("Rebooting router '%s' (%s) ...", mRouter.getName(),
-                    mRouter.getRemoteIpAddress()), Toast.LENGTH_SHORT).show();
-          }
-        });
+    @Override
+    protected View.OnClickListener getYesButtonOnClickListener() {
+        final Handler handler = new Handler(Looper.getMainLooper());
 
-        ActionManager.runTasks(new RebootRouterAction(mRouter,
-            RouterRebootWidgetConfirmationDialogFromWidgetActivity.this,
-            new RouterActionListener() {
-              @Override public void onRouterActionSuccess(@NonNull final RouterAction routerAction,
-                  @NonNull final Router router, Object returnData) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 handler.post(new Runnable() {
-                  @Override public void run() {
-                    Toast.makeText(RouterRebootWidgetConfirmationDialogFromWidgetActivity.this,
-                        String.format("Action '%s' executed successfully on '%s'.",
-                            routerAction.toString(), router.getRemoteIpAddress()),
-                        Toast.LENGTH_SHORT).show();
-                  }
+                    @Override
+                    public void run() {
+                        Toast.makeText(RouterRebootWidgetConfirmationDialogFromWidgetActivity.this,
+                                String.format("Rebooting router '%s' (%s) ...", mRouter.getName(),
+                                        mRouter.getRemoteIpAddress()), Toast.LENGTH_SHORT).show();
+                    }
                 });
-              }
 
-              @Override public void onRouterActionFailure(@NonNull final RouterAction routerAction,
-                  @NonNull final Router router, @Nullable final Exception exception) {
-                handler.post(new Runnable() {
-                  @Override public void run() {
-                    Toast.makeText(RouterRebootWidgetConfirmationDialogFromWidgetActivity.this,
-                        String.format("Error on action '%s': %s", routerAction.toString(),
-                            Utils.handleException(exception).first), Toast.LENGTH_SHORT).show();
-                  }
-                });
-              }
-            }, RouterRebootWidgetConfirmationDialogFromWidgetActivity.this.getSharedPreferences(
-            RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)));
-      }
-    };
-  }
+                ActionManager.runTasks(new RebootRouterAction(mRouter,
+                        RouterRebootWidgetConfirmationDialogFromWidgetActivity.this,
+                        new RouterActionListener() {
+                            @Override
+                            public void onRouterActionFailure(@NonNull final RouterAction routerAction,
+                                    @NonNull final Router router, @Nullable final Exception exception) {
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(RouterRebootWidgetConfirmationDialogFromWidgetActivity.this,
+                                                String.format("Error on action '%s': %s", routerAction.toString(),
+                                                        Utils.handleException(exception).first), Toast.LENGTH_SHORT)
+                                                .show();
+                                    }
+                                });
+                            }
 
-  @Override protected View.OnClickListener getNoButtonOnClickListener() {
-    return null;
-  }
+                            @Override
+                            public void onRouterActionSuccess(@NonNull final RouterAction routerAction,
+                                    @NonNull final Router router, Object returnData) {
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(RouterRebootWidgetConfirmationDialogFromWidgetActivity.this,
+                                                String.format("Action '%s' executed successfully on '%s'.",
+                                                        routerAction.toString(), router.getRemoteIpAddress()),
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        }, RouterRebootWidgetConfirmationDialogFromWidgetActivity.this.getSharedPreferences(
+                        RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)));
+            }
+        };
+    }
 }

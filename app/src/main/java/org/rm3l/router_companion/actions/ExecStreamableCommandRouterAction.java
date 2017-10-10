@@ -32,50 +32,59 @@ import org.rm3l.router_companion.utils.SSHUtils;
 
 public class ExecStreamableCommandRouterAction extends AbstractRouterAction<Void> {
 
-  @NonNull private final Context mContext;
-  @NonNull private final String mCmd;
+    @NonNull
+    private final String mCmd;
 
-  protected ExecStreamableCommandRouterAction(Router router,
-      @NonNull final RouterAction routerAction, @NonNull Context context,
-      @Nullable RouterStreamActionListener listener,
-      @NonNull final SharedPreferences globalSharedPreferences, @NonNull final String cmd) {
-    super(router, listener, routerAction, globalSharedPreferences);
-    this.mContext = context;
-    this.mCmd = cmd;
-  }
+    @NonNull
+    private final Context mContext;
 
-  public ExecStreamableCommandRouterAction(Router router, @NonNull Context context,
-      @Nullable RouterStreamActionListener listener,
-      @NonNull final SharedPreferences globalSharedPreferences, @NonNull final String cmd) {
-    this(router, RouterAction.CMD_SHELL, context, listener, globalSharedPreferences, cmd);
-  }
-
-  @Nullable @Override protected ActionLog getActionLog() {
-    return new ActionLog().setActionName(routerAction.toString()).setActionData(this.mCmd);
-  }
-
-  @Nullable @Override protected Context getContext() {
-    return mContext;
-  }
-
-  @NonNull @Override protected final RouterActionResult<Void> doActionInBackground() {
-    Exception exception = null;
-    try {
-      if (isCanceled()) {
-        throw new InterruptedException();
-      }
-      final int exitStatus =
-          SSHUtils.execStreamableCommand(mContext, router, globalSharedPreferences, routerAction,
-              (RouterStreamActionListener) listener, Strings.nullToEmpty(mCmd).replace("\n", ";"));
-
-      if (exitStatus != 0) {
-        throw new IllegalStateException("Command execution status: " + exitStatus);
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-      exception = e;
+    protected ExecStreamableCommandRouterAction(Router router,
+            @NonNull final RouterAction routerAction, @NonNull Context context,
+            @Nullable RouterStreamActionListener listener,
+            @NonNull final SharedPreferences globalSharedPreferences, @NonNull final String cmd) {
+        super(router, listener, routerAction, globalSharedPreferences);
+        this.mContext = context;
+        this.mCmd = cmd;
     }
 
-    return new RouterActionResult<>(null, exception);
-  }
+    public ExecStreamableCommandRouterAction(Router router, @NonNull Context context,
+            @Nullable RouterStreamActionListener listener,
+            @NonNull final SharedPreferences globalSharedPreferences, @NonNull final String cmd) {
+        this(router, RouterAction.CMD_SHELL, context, listener, globalSharedPreferences, cmd);
+    }
+
+    @NonNull
+    @Override
+    protected final RouterActionResult<Void> doActionInBackground() {
+        Exception exception = null;
+        try {
+            if (isCanceled()) {
+                throw new InterruptedException();
+            }
+            final int exitStatus =
+                    SSHUtils.execStreamableCommand(mContext, router, globalSharedPreferences, routerAction,
+                            (RouterStreamActionListener) listener, Strings.nullToEmpty(mCmd).replace("\n", ";"));
+
+            if (exitStatus != 0) {
+                throw new IllegalStateException("Command execution status: " + exitStatus);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            exception = e;
+        }
+
+        return new RouterActionResult<>(null, exception);
+    }
+
+    @Nullable
+    @Override
+    protected ActionLog getActionLog() {
+        return new ActionLog().setActionName(routerAction.toString()).setActionData(this.mCmd);
+    }
+
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
+    }
 }

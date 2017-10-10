@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -22,6 +21,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/text1"
+    style="@style/TabIndicator"
     android:layout_width="wrap_content"
     android:layout_height="48dp"
     android:background="?android:selectableItemBackground"
@@ -32,6 +32,4 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:textAllCaps="true"
     android:textColor="@color/tab_text_color"
     android:textSize="@dimen/text_size_small"
-    android:textStyle="@integer/font_textStyle_medium"
-    style="@style/TabIndicator"
-    />
+    android:textStyle="@integer/font_textStyle_medium" />

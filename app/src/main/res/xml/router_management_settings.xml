@@ -21,181 +21,181 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <!-- General -->
-  <PreferenceCategory
-      android:key="general"
-      android:title="General">
+    <!-- General -->
+    <PreferenceCategory
+        android:key="general"
+        android:title="General">
 
-    <!-- Theming -->
-    <org.rm3l.router_companion.widgets.LongListPreference
-        android:defaultValue="30"
-        android:entries="@array/pref_theme_titles"
-        android:entryValues="@array/pref_theme_values"
-        android:icon="@drawable/ic_action_image_palette"
-        android:key="theming"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_theme"/>
+        <!-- Theming -->
+        <org.rm3l.router_companion.widgets.LongListPreference
+            android:defaultValue="30"
+            android:entries="@array/pref_theme_titles"
+            android:entryValues="@array/pref_theme_values"
+            android:icon="@drawable/ic_action_image_palette"
+            android:key="theming"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_theme" />
 
-    <!-- Storage Location -->
-    <!--<ListPreference-->
-    <!--android:title="Storage Location"-->
-    <!--android:key="storage.location"-->
-    <!--android:defaultValue="internal"-->
-    <!--android:entries="@array/storage_location_array"-->
-    <!--android:entryValues="@array/storage_location_values" />-->
+        <!-- Storage Location -->
+        <!--<ListPreference-->
+        <!--android:title="Storage Location"-->
+        <!--android:key="storage.location"-->
+        <!--android:defaultValue="internal"-->
+        <!--android:entries="@array/storage_location_array"-->
+        <!--android:entryValues="@array/storage_location_values" />-->
 
-  </PreferenceCategory>
+    </PreferenceCategory>
 
-  <!-- Security -->
-  <PreferenceCategory
-      android:key="security"
-      android:title="Security">
+    <!-- Security -->
+    <PreferenceCategory
+        android:key="security"
+        android:title="Security">
 
-    <!-- PIN Lock -->
-    <Preference
-        android:icon="@drawable/ic_action_action_lock"
-        android:key="pref_pin_lock"
-        android:persistent="false"
-        android:summary="@string/pin_lock_summary"
-        android:title="@string/pin_lock_title"/>
+        <!-- PIN Lock -->
+        <Preference
+            android:icon="@drawable/ic_action_action_lock"
+            android:key="pref_pin_lock"
+            android:persistent="false"
+            android:summary="@string/pin_lock_summary"
+            android:title="@string/pin_lock_title" />
 
-    <org.rm3l.router_companion.widgets.MySwitchPreference
-        android:defaultValue="true"
-        android:icon="@drawable/ic_action_action_extension"
-        android:key="third_party.integration"
-        android:summaryOff="@string/pref_3rd_party_integration_disabled"
-        android:summaryOn="@string/pref_3rd_party_integration_enabled"
-        android:title="@string/pref_3rd_party_integration_title"/>
+        <org.rm3l.router_companion.widgets.MySwitchPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_action_action_extension"
+            android:key="third_party.integration"
+            android:summaryOff="@string/pref_3rd_party_integration_disabled"
+            android:summaryOn="@string/pref_3rd_party_integration_enabled"
+            android:title="@string/pref_3rd_party_integration_title" />
 
-  </PreferenceCategory>
+    </PreferenceCategory>
 
-  <PreferenceCategory
-      android:key="data_usage_ctrl"
-      android:title="Data Usage Control">
+    <PreferenceCategory
+        android:key="data_usage_ctrl"
+        android:title="Data Usage Control">
 
-    <org.rm3l.router_companion.widgets.LongListPreference
-        android:defaultValue="444"
-        android:entries="@array/data_usage_titles"
-        android:entryValues="@array/data_usage_values"
-        android:icon="@drawable/ic_action_action_settings_ethernet"
-        android:key="data_usage_network"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="Sync Data"/>
+        <org.rm3l.router_companion.widgets.LongListPreference
+            android:defaultValue="444"
+            android:entries="@array/data_usage_titles"
+            android:entryValues="@array/data_usage_values"
+            android:icon="@drawable/ic_action_action_settings_ethernet"
+            android:key="data_usage_network"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="Sync Data" />
 
-    <!--<CheckBoxPreference-->
-    <!--android:defaultValue="true"-->
-    <!--android:key="data.sync.backup"-->
-    <!--android:summaryOff="Disabled. Enable to have your data (router records and settings)-->
-    <!--securely and seamlessly saved/restored to/from Android's Backup Service."-->
-    <!--android:summaryOn="Enabled. Your data (router records and settings)-->
-    <!--will be securely and seamlessly saved/restored to/from Android's Backup Service.-->
-    <!--Note that this relies upon the global Data Backup setting, available in the-->
-    <!--Android system's privacy settings. Refer to Google's Privacy Policy for more information."-->
-    <!--android:title="Backup my data" />-->
+        <!--<CheckBoxPreference-->
+        <!--android:defaultValue="true"-->
+        <!--android:key="data.sync.backup"-->
+        <!--android:summaryOff="Disabled. Enable to have your data (router records and settings)-->
+        <!--securely and seamlessly saved/restored to/from Android's Backup Service."-->
+        <!--android:summaryOn="Enabled. Your data (router records and settings)-->
+        <!--will be securely and seamlessly saved/restored to/from Android's Backup Service.-->
+        <!--Note that this relies upon the global Data Backup setting, available in the-->
+        <!--Android system's privacy settings. Refer to Google's Privacy Policy for more information."-->
+        <!--android:title="Backup my data" />-->
 
-    <!--<CheckBoxPreference-->
-    <!--android:defaultValue="true"-->
-    <!--android:enabled="true"-->
-    <!--android:key="alwaysCheckConnection"-->
-    <!--android:summary="Always check actual connection prior to adding or updating an entry"-->
-    <!--android:title="Connection Check" />-->
+        <!--<CheckBoxPreference-->
+        <!--android:defaultValue="true"-->
+        <!--android:enabled="true"-->
+        <!--android:key="alwaysCheckConnection"-->
+        <!--android:summary="Always check actual connection prior to adding or updating an entry"-->
+        <!--android:title="Connection Check" />-->
 
-  </PreferenceCategory>
+    </PreferenceCategory>
 
-  <!-- Notifications -->
-  <PreferenceCategory
-      android:key="@string/pref_header_notifications"
-      android:title="Notifications">
+    <!-- Notifications -->
+    <PreferenceCategory
+        android:key="@string/pref_header_notifications"
+        android:title="Notifications">
 
-    <org.rm3l.router_companion.widgets.MySwitchPreference
-        android:defaultValue="true"
-        android:disableDependentsState="false"
-        android:icon="@drawable/ic_action_notification_sync"
-        android:key="notifications.background.service.enable"
-        android:summaryOff="Disabled. You will need to open the app to get notifications. Notifications can be managed in each router settings."
-        android:summaryOn="Enabled. You may get notifications even if you are not using the app. Notifications can be managed in each router settings."
-        android:title="Background Service"/>
+        <org.rm3l.router_companion.widgets.MySwitchPreference
+            android:defaultValue="true"
+            android:disableDependentsState="false"
+            android:icon="@drawable/ic_action_notification_sync"
+            android:key="notifications.background.service.enable"
+            android:summaryOff="Disabled. You will need to open the app to get notifications. Notifications can be managed in each router settings."
+            android:summaryOn="Enabled. You may get notifications even if you are not using the app. Notifications can be managed in each router settings."
+            android:title="Background Service" />
 
-    <org.rm3l.router_companion.widgets.LongListPreference
-        android:defaultValue="360"
-        android:dependency="notifications.background.service.enable"
-        android:entries="@array/pref_notifications_sync_frequency_titles"
-        android:entryValues="@array/pref_notifications_sync_frequency_values"
-        android:icon="@drawable/ic_action_navigation_refresh"
-        android:key="notifications.syncIntervalMinutes"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="Background Service Frequency"/>
+        <org.rm3l.router_companion.widgets.LongListPreference
+            android:defaultValue="360"
+            android:dependency="notifications.background.service.enable"
+            android:entries="@array/pref_notifications_sync_frequency_titles"
+            android:entryValues="@array/pref_notifications_sync_frequency_values"
+            android:icon="@drawable/ic_action_navigation_refresh"
+            android:key="notifications.syncIntervalMinutes"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="Background Service Frequency" />
 
-    <org.rm3l.router_companion.widgets.MyMultiSelectListPreference
-        android:defaultValue="@array/notificationsChoice_values"
-        android:dialogTitle="Select Notifications"
-        android:entries="@array/notificationsChoice"
-        android:entryValues="@array/notificationsChoice_values"
-        android:icon="@drawable/ic_action_social_notifications"
-        android:key="notifications.choice"
-        android:summary="Select Notifications you would like to receive"
-        android:title="Notifications you are interested in"/>
+        <org.rm3l.router_companion.widgets.MyMultiSelectListPreference
+            android:defaultValue="@array/notificationsChoice_values"
+            android:dialogTitle="Select Notifications"
+            android:entries="@array/notificationsChoice"
+            android:entryValues="@array/notificationsChoice_values"
+            android:icon="@drawable/ic_action_social_notifications"
+            android:key="notifications.choice"
+            android:summary="Select Notifications you would like to receive"
+            android:title="Notifications you are interested in" />
 
-    <!-- Should be general settings -->
-    <RingtonePreference
-        android:defaultValue="content://settings/system/notification_sound"
-        android:icon="@drawable/ic_action_av_volume_down"
-        android:key="notifications.sound"
-        android:ringtoneType="notification"
-        android:showDefault="true"
-        android:showSilent="true"
-        android:title="Notification Sound"/>
+        <!-- Should be general settings -->
+        <RingtonePreference
+            android:defaultValue="content://settings/system/notification_sound"
+            android:icon="@drawable/ic_action_av_volume_down"
+            android:key="notifications.sound"
+            android:ringtoneType="notification"
+            android:showDefault="true"
+            android:showSilent="true"
+            android:title="Notification Sound" />
 
-    <org.rm3l.router_companion.widgets.MySwitchPreference
-        android:defaultValue="true"
-        android:icon="@drawable/ic_action_notification_vibration"
-        android:key="notifications.vibrate"
-        android:summaryOff="Disabled."
-        android:summaryOn="Enabled."
-        android:title="Vibrate"/>
+        <org.rm3l.router_companion.widgets.MySwitchPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_action_notification_vibration"
+            android:key="notifications.vibrate"
+            android:summaryOff="Disabled."
+            android:summaryOn="Enabled."
+            android:title="Vibrate" />
 
-  </PreferenceCategory>
+    </PreferenceCategory>
 
-  <PreferenceCategory android:title="Error Reporting">
+    <PreferenceCategory android:title="Error Reporting">
 
-    <!--<CheckBoxPreference-->
-    <!--android:defaultValue="false"-->
-    <!--android:key="debug.mode"-->
-    <!--android:summaryOff="Off"-->
-    <!--android:summaryOn="On"-->
-    <!--android:title="Debug Mode" />-->
+        <!--<CheckBoxPreference-->
+        <!--android:defaultValue="false"-->
+        <!--android:key="debug.mode"-->
+        <!--android:summaryOff="Off"-->
+        <!--android:summaryOn="On"-->
+        <!--android:title="Debug Mode" />-->
 
-    <org.rm3l.router_companion.widgets.MySwitchPreference
-        android:defaultValue="true"
-        android:icon="@drawable/ic_action_action_bug_report"
-        android:key="acra.enable"
-        android:summaryOff="@string/pref_acra_disabled"
-        android:summaryOn="@string/pref_acra_enabled"
-        android:title="@string/pref_enable_acra"/>
+        <org.rm3l.router_companion.widgets.MySwitchPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_action_action_bug_report"
+            android:key="acra.enable"
+            android:summaryOff="@string/pref_acra_disabled"
+            android:summaryOn="@string/pref_acra_enabled"
+            android:title="@string/pref_enable_acra" />
 
-    <!--<CheckBoxPreference-->
-    <!--android:defaultValue="false"-->
-    <!--android:key="acra.syslog.enable"-->
-    <!--android:summaryOff="@string/pref_acra_syslog_disabled"-->
-    <!--android:summaryOn="@string/pref_acra_syslog_enabled"-->
-    <!--android:title="@string/pref_acra_syslog" />-->
+        <!--<CheckBoxPreference-->
+        <!--android:defaultValue="false"-->
+        <!--android:key="acra.syslog.enable"-->
+        <!--android:summaryOff="@string/pref_acra_syslog_disabled"-->
+        <!--android:summaryOn="@string/pref_acra_syslog_enabled"-->
+        <!--android:title="@string/pref_acra_syslog" />-->
 
-    <!--<CheckBoxPreference-->
-    <!--android:defaultValue="true"-->
-    <!--android:key="acra.deviceid.enable"-->
-    <!--android:summaryOff="@string/pref_acra_deviceid_disabled"-->
-    <!--android:summaryOn="@string/pref_acra_deviceid_enabled"-->
-    <!--android:title="@string/pref_acra_deviceid" />-->
+        <!--<CheckBoxPreference-->
+        <!--android:defaultValue="true"-->
+        <!--android:key="acra.deviceid.enable"-->
+        <!--android:summaryOff="@string/pref_acra_deviceid_disabled"-->
+        <!--android:summaryOn="@string/pref_acra_deviceid_enabled"-->
+        <!--android:title="@string/pref_acra_deviceid" />-->
 
-    <EditTextPreference
-        android:icon="@drawable/ic_action_communication_email"
-        android:key="acra.user.email"
-        android:summary="@string/pref_acra_user_email_summary"
-        android:title="@string/pref_acra_user_email"/>
+        <EditTextPreference
+            android:icon="@drawable/ic_action_communication_email"
+            android:key="acra.user.email"
+            android:summary="@string/pref_acra_user_email_summary"
+            android:title="@string/pref_acra_user_email" />
 
-  </PreferenceCategory>
+    </PreferenceCategory>
 
 </PreferenceScreen>

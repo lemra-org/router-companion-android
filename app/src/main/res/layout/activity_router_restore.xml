@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -25,70 +24,62 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
-  <com.google.android.gms.ads.AdView
-      android:id="@+id/activity_router_restore_adView"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center_horizontal"
-      android:layout_marginBottom="5dp"
-      android:layout_marginTop="5dp"
-      android:visibility="gone"
-      ads:adSize="BANNER"
-      ads:adUnitId="@string/banner_ad_unit_id_router_restore_dialog"
-      />
-
-  <LinearLayout
-      android:id="@+id/router_restore_notification_viewgroup"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="vertical"
-      />
-
-  <ScrollView
-      android:id="@+id/router_restore_scrollview"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:scrollbars="vertical"
-      >
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/activity_router_restore_adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:visibility="gone"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id_router_restore_dialog" />
 
     <LinearLayout
+        android:id="@+id/router_restore_notification_viewgroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical" />
 
-      <!-- Backup File -->
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="4dp"
-          android:layout_marginStart="4dp"
-          android:layout_marginTop="@dimen/activity_vertical_margin"
-          android:text="Backup File"
-          />
+    <ScrollView
+        android:id="@+id/router_restore_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical">
 
-      <Button
-          android:id="@+id/router_restore_backup_select_button"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="4dp"
-          android:layout_marginLeft="4dp"
-          android:layout_marginRight="4dp"
-          android:hint="Select Backup File to restore"
-          />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-      <TextView
-          android:id="@+id/router_restore_backup_path"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:visibility="gone"
-          />
+            <!-- Backup File -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="Backup File" />
 
-    </LinearLayout>
+            <Button
+                android:id="@+id/router_restore_backup_select_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:hint="Select Backup File to restore" />
 
-  </ScrollView>
+            <TextView
+                android:id="@+id/router_restore_backup_path"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>

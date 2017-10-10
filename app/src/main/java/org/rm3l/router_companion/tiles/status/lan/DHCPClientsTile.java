@@ -34,19 +34,23 @@ import org.rm3l.router_companion.tiles.status.wireless.WirelessClientsTile;
  */
 public class DHCPClientsTile extends WirelessClientsTile {
 
-  private static final String LOG_TAG = DHCPClientsTile.class.getSimpleName();
+    private static final String LOG_TAG = DHCPClientsTile.class.getSimpleName();
 
-  public DHCPClientsTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
-      Router router) {
-    super(parentFragment, arguments, router);
-  }
+    public DHCPClientsTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
+            Router router) {
+        super(parentFragment, arguments, router);
+    }
 
-  @Nullable @Override protected String getLogTag() {
-    return LOG_TAG;
-  }
+    @Nullable
+    @Override
+    protected String getLogTag() {
+        return LOG_TAG;
+    }
 
-  @Nullable @Override protected OnClickIntent getOnclickIntent() {
-    //TODO
-    return null;
-  }
+    @Nullable
+    @Override
+    protected OnClickIntent getOnclickIntent() {
+        //TODO
+        return null;
+    }
 }

@@ -21,21 +21,21 @@ SOFTWARE.
 -->
 
 <resources>
-  <string name="define_maoni_doorbell" translatable="false"/>
-  <!-- Author section -->
-  <string name="library_maoni_doorbell_author" translatable="false">Armel Soro</string>
-  <string name="library_maoni_doorbell_authorWebsite" translatable="false">https://www.rm3l.org</string>
-  <!-- Library section -->
-  <string name="library_maoni_doorbell_libraryName" translatable="false">maoni-doorbell</string>
-  <string name="library_maoni_doorbell_libraryDescription" translatable="false">Maoni is a lightweight library for integrating a way to collect user feedback from within Android apps. It allows to plug in any callback for manipulating user feedback collected. maoni-doorbell is a callback that sends feedbacks to Doorbell.io</string>
-  <string name="library_maoni_doorbell_libraryWebsite" translatable="false">https://github.com/rm3l/maoni-doorbell</string>
-  <string name="library_maoni_doorbell_libraryVersion" translatable="false">2.4.0</string>
-  <!-- OpenSource section -->
-  <string name="library_maoni_doorbell_isOpenSource" translatable="false">true</string>
-  <string name="library_maoni_doorbell_repositoryLink" translatable="false">https://github.com/rm3l/maoni-doorbell</string>
-  <!-- ClassPath for autoDetect section -->
-  <!--<string translatable="false" name="library_maoni_doorbell_classPath">com.facebook.maoni</string>-->
-  <!-- License section -->
-  <string name="library_maoni_doorbell_licenseId" translatable="false">mit</string>
-  <!-- Custom variables section -->
+    <string name="define_maoni_doorbell" translatable="false" />
+    <!-- Author section -->
+    <string name="library_maoni_doorbell_author" translatable="false">Armel Soro</string>
+    <string name="library_maoni_doorbell_authorWebsite" translatable="false">https://www.rm3l.org</string>
+    <!-- Library section -->
+    <string name="library_maoni_doorbell_libraryName" translatable="false">maoni-doorbell</string>
+    <string name="library_maoni_doorbell_libraryDescription" translatable="false">Maoni is a lightweight library for integrating a way to collect user feedback from within Android apps. It allows to plug in any callback for manipulating user feedback collected. maoni-doorbell is a callback that sends feedbacks to Doorbell.io</string>
+    <string name="library_maoni_doorbell_libraryWebsite" translatable="false">https://github.com/rm3l/maoni-doorbell</string>
+    <string name="library_maoni_doorbell_libraryVersion" translatable="false">2.4.0</string>
+    <!-- OpenSource section -->
+    <string name="library_maoni_doorbell_isOpenSource" translatable="false">true</string>
+    <string name="library_maoni_doorbell_repositoryLink" translatable="false">https://github.com/rm3l/maoni-doorbell</string>
+    <!-- ClassPath for autoDetect section -->
+    <!--<string translatable="false" name="library_maoni_doorbell_classPath">com.facebook.maoni</string>-->
+    <!-- License section -->
+    <string name="library_maoni_doorbell_licenseId" translatable="false">mit</string>
+    <!-- Custom variables section -->
 </resources>

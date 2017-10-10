@@ -34,11 +34,13 @@ import org.rm3l.router_companion.tiles.status.router.openwrt.StatusRouterStateTi
 
 public class StatusRouterFragmentOpenWrt extends StatusRouterFragment {
 
-  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return Arrays.<DDWRTTile>asList(
-        new StatusRouterStateTileOpenWrt(this, savedInstanceState, this.router),
-        new StatusRouterCPUTile(this, savedInstanceState, this.router),
-        new StatusRouterMemoryTile(this, savedInstanceState, this.router),
-        new StatusRouterSpaceUsageTileOpenWrt(this, savedInstanceState, this.router));
-  }
+    @Nullable
+    @Override
+    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+        return Arrays.<DDWRTTile>asList(
+                new StatusRouterStateTileOpenWrt(this, savedInstanceState, this.router),
+                new StatusRouterCPUTile(this, savedInstanceState, this.router),
+                new StatusRouterMemoryTile(this, savedInstanceState, this.router),
+                new StatusRouterSpaceUsageTileOpenWrt(this, savedInstanceState, this.router));
+    }
 }

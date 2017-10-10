@@ -15,9 +15,11 @@ import org.rm3l.router_companion.tiles.dashboard.system.UptimeTile;
  */
 public class OverviewFragment extends AbstractBaseFragment {
 
-  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return Arrays.<DDWRTTile>asList(new UptimeTile(this, savedInstanceState, this.router),
-        new WANTotalTrafficOverviewTile(this, savedInstanceState, this.router),
-        new NetworkTopologyMapTile(this, savedInstanceState, this.router));
-  }
+    @Nullable
+    @Override
+    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+        return Arrays.<DDWRTTile>asList(new UptimeTile(this, savedInstanceState, this.router),
+                new WANTotalTrafficOverviewTile(this, savedInstanceState, this.router),
+                new NetworkTopologyMapTile(this, savedInstanceState, this.router));
+    }
 }

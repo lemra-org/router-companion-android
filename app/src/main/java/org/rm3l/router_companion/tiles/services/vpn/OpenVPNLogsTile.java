@@ -40,117 +40,125 @@ import org.rm3l.router_companion.utils.SSHUtils;
 
 public class OpenVPNLogsTile extends StatusSyslogTile {
 
-  public static final String OPENVPN = "openvpn";
-  public static final String FULL_LOGS_RETRIEVAL_CMD =
-      "cat /tmp/var/log/messages | grep -i -E \"" + OPENVPN + "\"";
+    public static final String OPENVPN = "openvpn";
 
-  public OpenVPNLogsTile(@NonNull Fragment parentFragment, @Nullable ViewGroup parentViewGroup,
-      @NonNull Bundle arguments, Router router) {
-    super(parentFragment, parentViewGroup, arguments, "OpenVPN Logs", false, router, OPENVPN);
-  }
+    public static final String FULL_LOGS_RETRIEVAL_CMD =
+            "cat /tmp/var/log/messages | grep -i -E \"" + OPENVPN + "\"";
 
-  @Override protected String getTitle() {
-    return "OpenVPN Logs";
-  }
+    public OpenVPNLogsTile(@NonNull Fragment parentFragment, @Nullable ViewGroup parentViewGroup,
+            @NonNull Bundle arguments, Router router) {
+        super(parentFragment, parentViewGroup, arguments, "OpenVPN Logs", false, router, OPENVPN);
+    }
 
-  @Override protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
-    return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
+    @NonNull
+    @Override
+    protected CharSequence getFullLogsRetrievalCommand() {
+        return FULL_LOGS_RETRIEVAL_CMD;
+    }
 
-      @Nullable @Override public NVRAMInfo loadInBackground() {
-        try {
-          Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
-              + OpenVPNLogsTile.class
-              + ": routerInfo="
-              + mRouter
-              + " / nbRunsLoader="
-              + nbRunsLoader);
+    @Override
+    protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
+        return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 
-          if (mRefreshing.getAndSet(true)) {
-            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
-          }
-          nbRunsLoader++;
-
-          updateProgressBarViewSeparator(0);
-
-          mLastSync = System.currentTimeMillis();
-
-          final NVRAMInfo nvramInfo = new NVRAMInfo();
-          NVRAMInfo nvramInfoTmp = null;
-          String[] logs = null;
-          String logsStr = "";
-          int openvpnclMgmtPort = -1;
-          try {
-            updateProgressBarViewSeparator(10);
-            //Find OpenVPN Management Port
-            final String[] openvpnclConf =
-                SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
-                    "cat /tmp/openvpncl/openvpn.conf | grep \"management \" 2>/dev/null");
-            if (openvpnclConf != null && openvpnclConf.length > 0) {
-              final String managementLine = openvpnclConf[0];
-              if (managementLine != null) {
-                final List<String> list = Splitter.on(" ").splitToList(managementLine);
-                if (list != null && list.size() >= 3) {
-                  try {
-                    openvpnclMgmtPort = Integer.parseInt(list.get(2));
-                  } catch (final NumberFormatException nfe) {
-                    nfe.printStackTrace();
-                    //No Worries
-                  }
-                }
-              }
-            }
-          } finally {
-            try {
-              updateProgressBarViewSeparator(45);
-              //Telnet on Management Port to retrieve latest logs
-              if (openvpnclMgmtPort > 0) {
-                logs = SSHUtils.execCommandOverTelnet(mParentFragmentActivity, mRouter,
-                    mGlobalPreferences, openvpnclMgmtPort, String.format("log %s", MAX_LOG_LINES));
-                if (logs != null) {
-                  logsStr = LOGS_JOINER.join(logs);
-                }
-              }
-            } finally {
-              try {
-                updateProgressBarViewSeparator(70);
-                nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                    mGlobalPreferences, NVRAMInfo.Companion.getSYSLOGD_ENABLE());
-              } finally {
-
-                if (nvramInfoTmp != null) {
-                  nvramInfo.putAll(nvramInfoTmp);
-                }
-
+            @Nullable
+            @Override
+            public NVRAMInfo loadInBackground() {
                 try {
-                  updateProgressBarViewSeparator(80);
-                  //Get last log lines
-                  logs = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
-                      mGlobalPreferences,
-                      String.format("tail -n %d /tmp/var/log/messages %s", MAX_LOG_LINES,
-                          " | grep -i -E \"" + OPENVPN + "\""));
-                } finally {
-                  if (logs != null) {
-                    final String logsToSet = logsStr + "\n" + LOGS_JOINER.join(logs);
-                    if (!"\n".equals(logsToSet)) {
-                      nvramInfo.setProperty(NVRAMInfo.Companion.getSYSLOG(), logsToSet);
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+                            + OpenVPNLogsTile.class
+                            + ": routerInfo="
+                            + mRouter
+                            + " / nbRunsLoader="
+                            + nbRunsLoader);
+
+                    if (mRefreshing.getAndSet(true)) {
+                        return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
-                  }
+                    nbRunsLoader++;
+
+                    updateProgressBarViewSeparator(0);
+
+                    mLastSync = System.currentTimeMillis();
+
+                    final NVRAMInfo nvramInfo = new NVRAMInfo();
+                    NVRAMInfo nvramInfoTmp = null;
+                    String[] logs = null;
+                    String logsStr = "";
+                    int openvpnclMgmtPort = -1;
+                    try {
+                        updateProgressBarViewSeparator(10);
+                        //Find OpenVPN Management Port
+                        final String[] openvpnclConf =
+                                SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
+                                        "cat /tmp/openvpncl/openvpn.conf | grep \"management \" 2>/dev/null");
+                        if (openvpnclConf != null && openvpnclConf.length > 0) {
+                            final String managementLine = openvpnclConf[0];
+                            if (managementLine != null) {
+                                final List<String> list = Splitter.on(" ").splitToList(managementLine);
+                                if (list != null && list.size() >= 3) {
+                                    try {
+                                        openvpnclMgmtPort = Integer.parseInt(list.get(2));
+                                    } catch (final NumberFormatException nfe) {
+                                        nfe.printStackTrace();
+                                        //No Worries
+                                    }
+                                }
+                            }
+                        }
+                    } finally {
+                        try {
+                            updateProgressBarViewSeparator(45);
+                            //Telnet on Management Port to retrieve latest logs
+                            if (openvpnclMgmtPort > 0) {
+                                logs = SSHUtils.execCommandOverTelnet(mParentFragmentActivity, mRouter,
+                                        mGlobalPreferences, openvpnclMgmtPort,
+                                        String.format("log %s", MAX_LOG_LINES));
+                                if (logs != null) {
+                                    logsStr = LOGS_JOINER.join(logs);
+                                }
+                            }
+                        } finally {
+                            try {
+                                updateProgressBarViewSeparator(70);
+                                nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
+                                        mGlobalPreferences, NVRAMInfo.Companion.getSYSLOGD_ENABLE());
+                            } finally {
+
+                                if (nvramInfoTmp != null) {
+                                    nvramInfo.putAll(nvramInfoTmp);
+                                }
+
+                                try {
+                                    updateProgressBarViewSeparator(80);
+                                    //Get last log lines
+                                    logs = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
+                                            mGlobalPreferences,
+                                            String.format("tail -n %d /tmp/var/log/messages %s", MAX_LOG_LINES,
+                                                    " | grep -i -E \"" + OPENVPN + "\""));
+                                } finally {
+                                    if (logs != null) {
+                                        final String logsToSet = logsStr + "\n" + LOGS_JOINER.join(logs);
+                                        if (!"\n".equals(logsToSet)) {
+                                            nvramInfo.setProperty(NVRAMInfo.Companion.getSYSLOG(), logsToSet);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    updateProgressBarViewSeparator(90);
+
+                    return nvramInfo;
+                } catch (@NonNull final Exception e) {
+                    e.printStackTrace();
+                    return new NVRAMInfo().setException(e);
                 }
-              }
             }
-          }
-          updateProgressBarViewSeparator(90);
+        };
+    }
 
-          return nvramInfo;
-        } catch (@NonNull final Exception e) {
-          e.printStackTrace();
-          return new NVRAMInfo().setException(e);
-        }
-      }
-    };
-  }
-
-  @NonNull @Override protected CharSequence getFullLogsRetrievalCommand() {
-    return FULL_LOGS_RETRIEVAL_CMD;
-  }
+    @Override
+    protected String getTitle() {
+        return "OpenVPN Logs";
+    }
 }

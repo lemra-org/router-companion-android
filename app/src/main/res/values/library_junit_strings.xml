@@ -21,21 +21,21 @@ SOFTWARE.
 -->
 
 <resources>
-  <string name="define_junit" translatable="false"/>
-  <!-- Author section -->
-  <string name="library_junit_author" translatable="false">JUnit</string>
-  <string name="library_junit_authorWebsite" translatable="false">http://junit.org/junit4/</string>
-  <!-- Library section -->
-  <string name="library_junit_libraryName" translatable="false">JUnit</string>
-  <string name="library_junit_libraryDescription" translatable="false">A programmer-oriented testing framework for Java.</string>
-  <string name="library_junit_libraryWebsite" translatable="false">http://junit.org/junit4/</string>
-  <string name="library_junit_libraryVersion" translatable="false">4.12</string>
-  <!-- OpenSource section -->
-  <string name="library_junit_isOpenSource" translatable="false">true</string>
-  <string name="library_junit_repositoryLink" translatable="false">https://github.com/junit-team/junit4</string>
-  <!-- ClassPath for autoDetect section -->
-  <!--<string translatable="false" name="library_junit_classPath">com.facebook.junit</string>-->
-  <!-- License section -->
-  <string name="library_junit_licenseId" translatable="false">epl_1_0</string>
-  <!-- Custom variables section -->
+    <string name="define_junit" translatable="false" />
+    <!-- Author section -->
+    <string name="library_junit_author" translatable="false">JUnit</string>
+    <string name="library_junit_authorWebsite" translatable="false">http://junit.org/junit4/</string>
+    <!-- Library section -->
+    <string name="library_junit_libraryName" translatable="false">JUnit</string>
+    <string name="library_junit_libraryDescription" translatable="false">A programmer-oriented testing framework for Java.</string>
+    <string name="library_junit_libraryWebsite" translatable="false">http://junit.org/junit4/</string>
+    <string name="library_junit_libraryVersion" translatable="false">4.12</string>
+    <!-- OpenSource section -->
+    <string name="library_junit_isOpenSource" translatable="false">true</string>
+    <string name="library_junit_repositoryLink" translatable="false">https://github.com/junit-team/junit4</string>
+    <!-- ClassPath for autoDetect section -->
+    <!--<string translatable="false" name="library_junit_classPath">com.facebook.junit</string>-->
+    <!-- License section -->
+    <string name="library_junit_licenseId" translatable="false">epl_1_0</string>
+    <!-- Custom variables section -->
 </resources>

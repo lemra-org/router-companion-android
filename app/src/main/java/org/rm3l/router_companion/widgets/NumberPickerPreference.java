@@ -14,77 +14,86 @@ import org.rm3l.ddwrt.R;
  */
 public class NumberPickerPreference extends DialogPreference {
 
-  private static int DEFAULT_VAL = 0;
+    private static int DEFAULT_VAL = 0;
 
-  private NumberPicker mNumberPicker;
-  private int mPickerMinVal;
-  private int mPickerMaxVal;
-  private int mCurrentValue;
-  private String mDescription;
+    private int mCurrentValue;
 
-  public NumberPickerPreference(Context context, AttributeSet attrs) {
-    super(context, attrs);
-    setDialogLayoutResource(R.layout.number_picker_dialog);
-    parseCustomAttrs(attrs);
-  }
+    private String mDescription;
 
-  private void parseCustomAttrs(AttributeSet attrs) {
-    final TypedArray array = getContext().getTheme()
-        .obtainStyledAttributes(attrs, R.styleable.NumberPickerPreference, 0, 0);
-    try {
-      mDescription = array.getString(R.styleable.NumberPickerPreference_description);
-      mPickerMinVal = array.getInteger(R.styleable.NumberPickerPreference_min, 0);
-      mPickerMaxVal = array.getInteger(R.styleable.NumberPickerPreference_max, 10);
-    } finally {
-      array.recycle();
+    private NumberPicker mNumberPicker;
+
+    private int mPickerMaxVal;
+
+    private int mPickerMinVal;
+
+    public NumberPickerPreference(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        setDialogLayoutResource(R.layout.number_picker_dialog);
+        parseCustomAttrs(attrs);
     }
-  }
 
-  @Override protected void onBindDialogView(View view) {
-    super.onBindDialogView(view);
-    this.mNumberPicker = (NumberPicker) view.findViewById(R.id.number_picker);
-    mNumberPicker.setMaxValue(mPickerMaxVal);
-    mNumberPicker.setMinValue(mPickerMinVal);
-    mNumberPicker.setValue(mCurrentValue);
-    // do not allow wrap, otherwise input a value smaller than minVal will result in bug
-    mNumberPicker.setWrapSelectorWheel(true);
-
-    ((TextView) view.findViewById(R.id.number_picker_desc)).setText(mDescription);
-  }
-
-  @Override protected void onDialogClosed(boolean positiveResult) {
-    // When the user selects "OK", persist the new value
-    if (positiveResult) {
-      // clear focus on mNumberPicker so that getValue returns the updated input value
-      mNumberPicker.clearFocus();
-      mCurrentValue = mNumberPicker.getValue();
-      persistInt(mCurrentValue);
+    public String getMDescription() {
+        return this.mDescription;
     }
-  }
 
-  @Override protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
-    if (restorePersistedValue) {
-      this.mCurrentValue = getPersistedInt(DEFAULT_VAL);
-    } else {
-      this.mCurrentValue = (Integer) defaultValue;
-      persistInt(mCurrentValue);
+    @Override
+    protected String getPersistedString(String defaultReturnValue) {
+        if (getSharedPreferences().contains(getKey())) {
+            final int val = getPersistedInt(DEFAULT_VAL);
+            return String.valueOf(val);
+        } else {
+            return defaultReturnValue;
+        }
     }
-  }
 
-  @Override protected Object onGetDefaultValue(TypedArray a, int index) {
-    return a.getInt(index, DEFAULT_VAL);
-  }
+    @Override
+    protected void onBindDialogView(View view) {
+        super.onBindDialogView(view);
+        this.mNumberPicker = (NumberPicker) view.findViewById(R.id.number_picker);
+        mNumberPicker.setMaxValue(mPickerMaxVal);
+        mNumberPicker.setMinValue(mPickerMinVal);
+        mNumberPicker.setValue(mCurrentValue);
+        // do not allow wrap, otherwise input a value smaller than minVal will result in bug
+        mNumberPicker.setWrapSelectorWheel(true);
 
-  @Override protected String getPersistedString(String defaultReturnValue) {
-    if (getSharedPreferences().contains(getKey())) {
-      final int val = getPersistedInt(DEFAULT_VAL);
-      return String.valueOf(val);
-    } else {
-      return defaultReturnValue;
+        ((TextView) view.findViewById(R.id.number_picker_desc)).setText(mDescription);
     }
-  }
 
-  public String getMDescription() {
-    return this.mDescription;
-  }
+    @Override
+    protected void onDialogClosed(boolean positiveResult) {
+        // When the user selects "OK", persist the new value
+        if (positiveResult) {
+            // clear focus on mNumberPicker so that getValue returns the updated input value
+            mNumberPicker.clearFocus();
+            mCurrentValue = mNumberPicker.getValue();
+            persistInt(mCurrentValue);
+        }
+    }
+
+    @Override
+    protected Object onGetDefaultValue(TypedArray a, int index) {
+        return a.getInt(index, DEFAULT_VAL);
+    }
+
+    @Override
+    protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
+        if (restorePersistedValue) {
+            this.mCurrentValue = getPersistedInt(DEFAULT_VAL);
+        } else {
+            this.mCurrentValue = (Integer) defaultValue;
+            persistInt(mCurrentValue);
+        }
+    }
+
+    private void parseCustomAttrs(AttributeSet attrs) {
+        final TypedArray array = getContext().getTheme()
+                .obtainStyledAttributes(attrs, R.styleable.NumberPickerPreference, 0, 0);
+        try {
+            mDescription = array.getString(R.styleable.NumberPickerPreference_description);
+            mPickerMinVal = array.getInteger(R.styleable.NumberPickerPreference_min, 0);
+            mPickerMaxVal = array.getInteger(R.styleable.NumberPickerPreference_max, 10);
+        } finally {
+            array.recycle();
+        }
+    }
 }

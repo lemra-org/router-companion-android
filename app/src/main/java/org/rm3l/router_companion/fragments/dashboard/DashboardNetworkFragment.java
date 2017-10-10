@@ -14,9 +14,11 @@ import org.rm3l.router_companion.tiles.dashboard.network.PublicIPGeoTile;
  */
 public class DashboardNetworkFragment extends AbstractBaseFragment {
 
-  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return Arrays.<DDWRTTile>asList(
-        new NetworkTopologyMapTile(this, savedInstanceState, this.router),
-        new PublicIPGeoTile(this, savedInstanceState, this.router));
-  }
+    @Nullable
+    @Override
+    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+        return Arrays.<DDWRTTile>asList(
+                new NetworkTopologyMapTile(this, savedInstanceState, this.router),
+                new PublicIPGeoTile(this, savedInstanceState, this.router));
+    }
 }

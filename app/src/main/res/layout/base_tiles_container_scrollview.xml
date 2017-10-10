@@ -24,53 +24,47 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fillViewport="true"
-    android:scrollbars="vertical"
-    >
-
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginEnd="@dimen/main_activity_horizontal_margin"
-      android:layout_marginLeft="@dimen/main_activity_horizontal_margin"
-      android:layout_marginRight="@dimen/main_activity_horizontal_margin"
-      android:layout_marginStart="@dimen/main_activity_horizontal_margin"
-      android:layout_marginTop="@dimen/main_activity_horizontal_margin"
-      android:orientation="vertical"
-      >
+    android:scrollbars="vertical">
 
     <LinearLayout
-        android:id="@+id/tiles_container_scrollview_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:orientation="vertical"
-        />
+        android:layout_marginEnd="@dimen/main_activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/main_activity_horizontal_margin"
+        android:layout_marginRight="@dimen/main_activity_horizontal_margin"
+        android:layout_marginStart="@dimen/main_activity_horizontal_margin"
+        android:layout_marginTop="@dimen/main_activity_horizontal_margin"
+        android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/tiles_container_scrollview_layout_no_anim"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        />
+        <LinearLayout
+            android:id="@+id/tiles_container_scrollview_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:orientation="vertical" />
 
-    <LinearLayout
-        android:id="@+id/tiles_container_scrollview_layout_dynamic_items"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:orientation="vertical"
-        android:visibility="gone"
-        />
+        <LinearLayout
+            android:id="@+id/tiles_container_scrollview_layout_no_anim"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone" />
 
-    <LinearLayout
-        android:id="@+id/tiles_container_scrollview_layout_dynamic_items_no_anim"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        />
+        <LinearLayout
+            android:id="@+id/tiles_container_scrollview_layout_dynamic_items"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:orientation="vertical"
+            android:visibility="gone" />
 
-  </LinearLayout>
+        <LinearLayout
+            android:id="@+id/tiles_container_scrollview_layout_dynamic_items_no_anim"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone" />
+
+    </LinearLayout>
 
 </ScrollView>

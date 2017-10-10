@@ -33,103 +33,103 @@ import org.rm3l.router_companion.utils.kotlin.invisible
 import org.rm3l.router_companion.utils.kotlin.show
 
 class AvocarrotNativeAdTile(parentFragment: Fragment, arguments: Bundle, router: Router?)
-  : DDWRTTile<Unit>(parentFragment, arguments, router, R.layout.tile_native_ad, null) {
+    : DDWRTTile<Unit>(parentFragment, arguments, router, R.layout.tile_native_ad, null) {
 
-  private val loader: AsyncTaskLoader<Unit>
+    private val loader: AsyncTaskLoader<Unit>
 
-  init {
-    loader = object: AsyncTaskLoader<Unit>(mParentFragmentActivity as Context?) {
-      override fun loadInBackground() {}
+    init {
+        loader = object : AsyncTaskLoader<Unit>(mParentFragmentActivity as Context?) {
+            override fun loadInBackground() {}
+        }
     }
-  }
 
-  override fun getTileHeaderViewId() = R.id.tile_native_ad_hdr
-  override fun getTileTitleViewId() = R.id.tile_native_ad_headline
-  override fun getLoader(id: Int, args: Bundle) = loader
-  override fun getLogTag() = LOG_TAG
-  override fun getOnclickIntent() = null
-  override fun isAdTile() = true
+    override fun getTileHeaderViewId() = R.id.tile_native_ad_hdr
+    override fun getTileTitleViewId() = R.id.tile_native_ad_headline
+    override fun getLoader(id: Int, args: Bundle) = loader
+    override fun getLogTag() = LOG_TAG
+    override fun getOnclickIntent() = null
+    override fun isAdTile() = true
 
-  override fun onLoadFinished(loader: Loader<Unit>, data: Unit) {
-    Avocarrot.build(mParentFragmentActivity,
-        NativeAssetsAd.Configuration.Builder()
-            .setApiKey(RouterCompanionAppConstants.AVOCARROT_APIKEY)
-            .setAdUnitId(RouterCompanionAppConstants.AVOCARROT_LIST_PLACEMENT_KEY)
-            .setSandbox(BuildConfig.DEBUG)
-            .setLogLevel(if (BuildConfig.DEBUG) DEBUG else WARN)
-            .setCallback(object : NativeAssetsAdCallback() {
-              override fun onAdError(error: AdError?) {
-                try {
-                  super.onAdError(error)
-                  ReportingUtils.reportException(null,
-                      AdUtils.AdFailedToShowEvent("Avocarrot: " + (error?.toString() ?: "")))
-                  //Fallback to AdMob Banner Tile
-                  val adView = layout.find<AdView>(R.id.admob_banner)
-                  adView.visibility = View.VISIBLE
-                  layout.find<View>(R.id.tile_native_ad_container).hide()
-                  AdUtils.buildAndDisplayAdViewIfNeeded(mParentFragmentActivity, adView)
-                } finally {
-                  doneWithLoaderInstance(this@AvocarrotNativeAdTile, loader)
-                }
-              }
+    override fun onLoadFinished(loader: Loader<Unit>, data: Unit) {
+        Avocarrot.build(mParentFragmentActivity,
+                NativeAssetsAd.Configuration.Builder()
+                        .setApiKey(RouterCompanionAppConstants.AVOCARROT_APIKEY)
+                        .setAdUnitId(RouterCompanionAppConstants.AVOCARROT_LIST_PLACEMENT_KEY)
+                        .setSandbox(BuildConfig.DEBUG)
+                        .setLogLevel(if (BuildConfig.DEBUG) DEBUG else WARN)
+                        .setCallback(object : NativeAssetsAdCallback() {
+                            override fun onAdError(error: AdError?) {
+                                try {
+                                    super.onAdError(error)
+                                    ReportingUtils.reportException(null,
+                                            AdUtils.AdFailedToShowEvent("Avocarrot: " + (error?.toString() ?: "")))
+                                    //Fallback to AdMob Banner Tile
+                                    val adView = layout.find<AdView>(R.id.admob_banner)
+                                    adView.visibility = View.VISIBLE
+                                    layout.find<View>(R.id.tile_native_ad_container).hide()
+                                    AdUtils.buildAndDisplayAdViewIfNeeded(mParentFragmentActivity, adView)
+                                } finally {
+                                    doneWithLoaderInstance(this@AvocarrotNativeAdTile, loader)
+                                }
+                            }
 
-              override fun onAdLoaded(nativeAssetsAd: NativeAssetsAd?, ads: MutableList<NativeAssets>?) {
-                super.onAdLoaded(nativeAssetsAd, ads)
-                if (ads == null || ads.isEmpty()) {
-                  this.onAdError(AdError.GENERIC)
-                  return
-                }
+                            override fun onAdLoaded(nativeAssetsAd: NativeAssetsAd?, ads: MutableList<NativeAssets>?) {
+                                super.onAdLoaded(nativeAssetsAd, ads)
+                                if (ads == null || ads.isEmpty()) {
+                                    this.onAdError(AdError.GENERIC)
+                                    return
+                                }
 
-                try {
-                  val avocarrotContainerLayout = layout.find<View>(R.id.tile_native_ad_container)
-                  avocarrotContainerLayout.show()
-                  layout.find<View>(R.id.admob_banner).hide()
+                                try {
+                                    val avocarrotContainerLayout = layout.find<View>(R.id.tile_native_ad_container)
+                                    avocarrotContainerLayout.show()
+                                    layout.find<View>(R.id.admob_banner).hide()
 
-                  val ad = ads[0]
+                                    val ad = ads[0]
 
-                  /* Get References to the UI Components that will draw the Native Ad */
-                  val title = layout.find<TextView>(R.id.tile_native_ad_headline)
-                  val description = layout.find<TextView>(R.id.tile_native_ad_description)
-                  val imageIconView = layout.find<ImageView>(R.id.tile_native_ad_image_view)
-                  val ratingImageView = layout.find<ImageView>(R.id.tile_native_ad_rating_image_view)
-                  val button = layout.find<Button>(R.id.tile_native_ad_button)
+                                    /* Get References to the UI Components that will draw the Native Ad */
+                                    val title = layout.find<TextView>(R.id.tile_native_ad_headline)
+                                    val description = layout.find<TextView>(R.id.tile_native_ad_description)
+                                    val imageIconView = layout.find<ImageView>(R.id.tile_native_ad_image_view)
+                                    val ratingImageView = layout.find<ImageView>(R.id.tile_native_ad_rating_image_view)
+                                    val button = layout.find<Button>(R.id.tile_native_ad_button)
 
-                  title.text = ad.title
-                  button.text = ad.callToAction
-                  description.text = ad.text
-                  Utils.downloadImageFromUrl(mParentFragmentActivity, ad.ratingImageUrl,
-                      ratingImageView, null, null,
-                      object : Callback {
-                        override fun onSuccess() {}
+                                    title.text = ad.title
+                                    button.text = ad.callToAction
+                                    description.text = ad.text
+                                    Utils.downloadImageFromUrl(mParentFragmentActivity, ad.ratingImageUrl,
+                                            ratingImageView, null, null,
+                                            object : Callback {
+                                                override fun onSuccess() {}
 
-                        override fun onError() {
-                          mParentFragmentActivity.runOnUiThread {
-                            ratingImageView.invisible()
-                          }
-                        }
-                      })
+                                                override fun onError() {
+                                                    mParentFragmentActivity.runOnUiThread {
+                                                        ratingImageView.invisible()
+                                                    }
+                                                }
+                                            })
 
-                  val adLayout =
-                   AdLayout.BuilderWithView(avocarrotContainerLayout)
-                      .setTitle(title)
-                      .setText(description)
-                      .setCallToAction(button)
-                      .setIcon(imageIconView)
+                                    val adLayout =
+                                            AdLayout.BuilderWithView(avocarrotContainerLayout)
+                                                    .setTitle(title)
+                                                    .setText(description)
+                                                    .setCallToAction(button)
+                                                    .setIcon(imageIconView)
 //                      .setMediaContainer(mediaContainer)
 //                      .setAdChoices(adChoices)
-                      .addClickableView(title)
-                      .addClickableView(button)
-                      .build()
-                nativeAssetsAd?.bindView(adLayout, ad)
-                } finally {
-                  doneWithLoaderInstance(this@AvocarrotNativeAdTile, loader)
-                }
-              }
-            }))
-        .loadAd()
-  }
+                                                    .addClickableView(title)
+                                                    .addClickableView(button)
+                                                    .build()
+                                    nativeAssetsAd?.bindView(adLayout, ad)
+                                } finally {
+                                    doneWithLoaderInstance(this@AvocarrotNativeAdTile, loader)
+                                }
+                            }
+                        }))
+                .loadAd()
+    }
 
-  companion object {
-    private val LOG_TAG = AvocarrotNativeAdTile::class.java.simpleName
-  }
+    companion object {
+        private val LOG_TAG = AvocarrotNativeAdTile::class.java.simpleName
+    }
 }

@@ -5,55 +5,58 @@ package org.rm3l.router_companion.actions.activity;
  */
 public class PingRTT {
 
-  private float min;
-  private float max;
-  private float avg;
-  private float stddev;
+    private float avg;
 
-  private float packetLoss;
+    private float max;
 
-  public float getMin() {
-    return min;
-  }
+    private float min;
 
-  public PingRTT setMin(float min) {
-    this.min = min;
-    return this;
-  }
+    private float packetLoss;
 
-  public float getMax() {
-    return max;
-  }
+    private float stddev;
 
-  public PingRTT setMax(float max) {
-    this.max = max;
-    return this;
-  }
+    public float getAvg() {
+        return avg;
+    }
 
-  public float getAvg() {
-    return avg;
-  }
+    public PingRTT setAvg(float avg) {
+        this.avg = avg;
+        return this;
+    }
 
-  public PingRTT setAvg(float avg) {
-    this.avg = avg;
-    return this;
-  }
+    public float getMax() {
+        return max;
+    }
 
-  public float getStddev() {
-    return stddev;
-  }
+    public PingRTT setMax(float max) {
+        this.max = max;
+        return this;
+    }
 
-  public PingRTT setStddev(float stddev) {
-    this.stddev = stddev;
-    return this;
-  }
+    public float getMin() {
+        return min;
+    }
 
-  public float getPacketLoss() {
-    return packetLoss;
-  }
+    public PingRTT setMin(float min) {
+        this.min = min;
+        return this;
+    }
 
-  public PingRTT setPacketLoss(float packetLoss) {
-    this.packetLoss = packetLoss;
-    return this;
-  }
+    public float getPacketLoss() {
+        return packetLoss;
+    }
+
+    public PingRTT setPacketLoss(float packetLoss) {
+        this.packetLoss = packetLoss;
+        return this;
+    }
+
+    public float getStddev() {
+        return stddev;
+    }
+
+    public PingRTT setStddev(float stddev) {
+        this.stddev = stddev;
+        return this;
+    }
 }

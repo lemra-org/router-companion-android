@@ -35,12 +35,15 @@ import org.rm3l.router_companion.tiles.admin.commands.AdminCommandsTile;
  */
 public class AdminCommandsFragment extends AbstractBaseFragment {
 
-  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return Arrays.<DDWRTTile>asList(new AdminCommandsTile(this, savedInstanceState, this.router));
-  }
+    @Nullable
+    @Override
+    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+        return Arrays.<DDWRTTile>asList(new AdminCommandsTile(this, savedInstanceState, this.router));
+    }
 
-  @Override protected boolean isSwipeRefreshLayoutEnabled() {
-    //Disabled, as swipe refresh actually does not make sense in this kind of fragment
-    return false;
-  }
+    @Override
+    protected boolean isSwipeRefreshLayoutEnabled() {
+        //Disabled, as swipe refresh actually does not make sense in this kind of fragment
+        return false;
+    }
 }

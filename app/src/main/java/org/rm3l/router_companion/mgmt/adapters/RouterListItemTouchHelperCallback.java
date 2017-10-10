@@ -10,12 +10,13 @@ import org.rm3l.router_companion.widgets.RecyclerViewEmptySupport;
 
 public class RouterListItemTouchHelperCallback extends SimpleItemTouchHelperCallback {
 
-  public RouterListItemTouchHelperCallback(RecyclerViewEmptySupport recyclerView,
-      ItemTouchHelperAdapter mAdapter) {
-    super(recyclerView, mAdapter);
-  }
+    public RouterListItemTouchHelperCallback(RecyclerViewEmptySupport recyclerView,
+            ItemTouchHelperAdapter mAdapter) {
+        super(recyclerView, mAdapter);
+    }
 
-  @Override public boolean isItemViewSwipeEnabled() {
-    return true;
-  }
+    @Override
+    public boolean isItemViewSwipeEnabled() {
+        return true;
+    }
 }

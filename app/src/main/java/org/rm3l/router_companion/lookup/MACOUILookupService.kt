@@ -12,8 +12,8 @@ import retrofit2.http.Path
  */
 interface MACOUILookupService {
 
-  @Headers("Content-Type: application/json",
-      "User-Agent: ${BuildConfig.APPLICATION_ID} v ${BuildConfig.VERSION_NAME}")
-  @GET("{mac}")
-  fun lookupMACAddress(@Path("mac") mac: String): Call<MACOUIVendor>
+    @Headers("Content-Type: application/json",
+            "User-Agent: ${BuildConfig.APPLICATION_ID} v ${BuildConfig.VERSION_NAME}")
+    @GET("{mac}")
+    fun lookupMACAddress(@Path("mac") mac: String): Call<MACOUIVendor>
 }

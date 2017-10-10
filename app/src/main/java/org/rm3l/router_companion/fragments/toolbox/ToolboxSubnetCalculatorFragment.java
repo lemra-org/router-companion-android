@@ -30,7 +30,10 @@ import org.rm3l.router_companion.tiles.DDWRTTile;
  * TODO To include this utility n a future release
  */
 public class ToolboxSubnetCalculatorFragment extends AbstractToolboxFragment {
-  @Nullable @Override protected List<DDWRTTile> doGetTiles(@Nullable Bundle savedInstanceState) {
-    return null;
-  }
+
+    @Nullable
+    @Override
+    protected List<DDWRTTile> doGetTiles(@Nullable Bundle savedInstanceState) {
+        return null;
+    }
 }

@@ -17,74 +17,87 @@ import org.rm3l.router_companion.utils.SSHUtils;
  */
 public class UploadAndExecuteScriptRouterAction extends AbstractRouterAction<String[]> {
 
-  private static final String REMOTE_DEST_FILE_FORMAT = "/tmp/.%s";
+    private static final String REMOTE_DEST_FILE_FORMAT = "/tmp/.%s";
 
-  private static final String LOG_TAG = UploadAndExecuteScriptRouterAction.class.getSimpleName();
+    private static final String LOG_TAG = UploadAndExecuteScriptRouterAction.class.getSimpleName();
 
-  @NonNull private final Context mContext;
-  @NonNull private final String mFileAbsolutePath;
-  @NonNull private final String mRemoteFileAbsolutePath;
+    @Nullable
+    private final String mAdditionalArguments;
 
-  @Nullable private final String mAdditionalArguments;
+    @NonNull
+    private final Context mContext;
 
-  private String[] mResult;
+    @NonNull
+    private final String mFileAbsolutePath;
 
-  public UploadAndExecuteScriptRouterAction(Router router, @NonNull Context context,
-      @Nullable RouterActionListener listener,
-      @NonNull final SharedPreferences globalSharedPreferences,
-      @NonNull final String fileAbsolutePath, @Nullable final String additionalArguments) {
-    super(router, listener, RouterAction.EXEC_FROM_FILE, globalSharedPreferences);
-    this.mContext = context;
-    this.mFileAbsolutePath = fileAbsolutePath;
-    this.mRemoteFileAbsolutePath =
-        String.format(REMOTE_DEST_FILE_FORMAT, UUID.randomUUID().toString());
-    this.mAdditionalArguments = additionalArguments;
-  }
+    @NonNull
+    private final String mRemoteFileAbsolutePath;
 
-  @Override protected ActionLog getActionLog() {
-    return super.getActionLog()
-        .setActionData(
-            String.format("- Local file: %s\n" + "- Remote file: %s\n" + "- Additional args: %s",
-                mFileAbsolutePath, mRemoteFileAbsolutePath, mAdditionalArguments));
-  }
+    private String[] mResult;
 
-  @Nullable @Override protected Context getContext() {
-    return mContext;
-  }
-
-  @NonNull @Override protected RouterActionResult<String[]> doActionInBackground() {
-
-    Exception exception = null;
-    try {
-      Crashlytics.log(Log.INFO, LOG_TAG,
-          String.format("File upload: [%s] => [%s]", mFileAbsolutePath, mRemoteFileAbsolutePath));
-
-      if (!SSHUtils.scpTo(mContext, router, globalSharedPreferences, mFileAbsolutePath,
-          mRemoteFileAbsolutePath)) {
-        throw new IllegalStateException("Failed to upload script to the router");
-      }
-
-      mResult = SSHUtils.getManualProperty(mContext, router, globalSharedPreferences,
-          "chmod 700 " + mRemoteFileAbsolutePath,
-          mRemoteFileAbsolutePath + " " + Strings.nullToEmpty(mAdditionalArguments));
-    } catch (Exception e) {
-      e.printStackTrace();
-      exception = e;
-    } finally {
-      //Delete file uploaded right away
-      try {
-        SSHUtils.getManualProperty(mContext, router, globalSharedPreferences,
-            "rm -rf " + mRemoteFileAbsolutePath);
-      } catch (Exception e) {
-        e.printStackTrace();
-        exception = e;
-      }
+    public UploadAndExecuteScriptRouterAction(Router router, @NonNull Context context,
+            @Nullable RouterActionListener listener,
+            @NonNull final SharedPreferences globalSharedPreferences,
+            @NonNull final String fileAbsolutePath, @Nullable final String additionalArguments) {
+        super(router, listener, RouterAction.EXEC_FROM_FILE, globalSharedPreferences);
+        this.mContext = context;
+        this.mFileAbsolutePath = fileAbsolutePath;
+        this.mRemoteFileAbsolutePath =
+                String.format(REMOTE_DEST_FILE_FORMAT, UUID.randomUUID().toString());
+        this.mAdditionalArguments = additionalArguments;
     }
 
-    return new RouterActionResult<>(mResult, exception);
-  }
+    @NonNull
+    @Override
+    protected RouterActionResult<String[]> doActionInBackground() {
 
-  @Nullable @Override protected String[] getDataToReturnOnSuccess() {
-    return mResult;
-  }
+        Exception exception = null;
+        try {
+            Crashlytics.log(Log.INFO, LOG_TAG,
+                    String.format("File upload: [%s] => [%s]", mFileAbsolutePath, mRemoteFileAbsolutePath));
+
+            if (!SSHUtils.scpTo(mContext, router, globalSharedPreferences, mFileAbsolutePath,
+                    mRemoteFileAbsolutePath)) {
+                throw new IllegalStateException("Failed to upload script to the router");
+            }
+
+            mResult = SSHUtils.getManualProperty(mContext, router, globalSharedPreferences,
+                    "chmod 700 " + mRemoteFileAbsolutePath,
+                    mRemoteFileAbsolutePath + " " + Strings.nullToEmpty(mAdditionalArguments));
+        } catch (Exception e) {
+            e.printStackTrace();
+            exception = e;
+        } finally {
+            //Delete file uploaded right away
+            try {
+                SSHUtils.getManualProperty(mContext, router, globalSharedPreferences,
+                        "rm -rf " + mRemoteFileAbsolutePath);
+            } catch (Exception e) {
+                e.printStackTrace();
+                exception = e;
+            }
+        }
+
+        return new RouterActionResult<>(mResult, exception);
+    }
+
+    @Override
+    protected ActionLog getActionLog() {
+        return super.getActionLog()
+                .setActionData(
+                        String.format("- Local file: %s\n" + "- Remote file: %s\n" + "- Additional args: %s",
+                                mFileAbsolutePath, mRemoteFileAbsolutePath, mAdditionalArguments));
+    }
+
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
+    }
+
+    @Nullable
+    @Override
+    protected String[] getDataToReturnOnSuccess() {
+        return mResult;
+    }
 }

@@ -35,29 +35,31 @@ import org.rm3l.router_companion.tiles.syslog.StatusSyslogTile;
  */
 public class StatusSyslogFragment extends AbstractBaseFragment {
 
-  private List<DDWRTTile> tiles = null;
+    private List<DDWRTTile> tiles = null;
 
-  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    if (tiles == null) {
-      tiles = Arrays.<DDWRTTile>asList(
-          new StatusSyslogTile(this, mLayout, savedInstanceState, null, true, this.router, null));
+    @Nullable
+    @Override
+    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+        if (tiles == null) {
+            tiles = Arrays.<DDWRTTile>asList(
+                    new StatusSyslogTile(this, mLayout, savedInstanceState, null, true, this.router, null));
+        }
+        return tiles;
     }
-    return tiles;
-  }
 
-  //    @NonNull
-  //    protected int getRootViewType() {
-  //        return RootViewType_LINEAR_LAYOUT;
-  //    }
+    //    @NonNull
+    //    protected int getRootViewType() {
+    //        return RootViewType_LINEAR_LAYOUT;
+    //    }
 
-  //    @Override
-  //    protected boolean canChildScrollUp() {
-  //        final List<DDWRTTile> tiles = this.getTiles(null);
-  //        if (tiles == null || tiles.isEmpty()) {
-  //            return false;
-  //        }
-  //        final DDWRTTile tile = tiles.get(0);
-  //        return (tile instanceof StatusSyslogTile &&
-  //                ((StatusSyslogTile) tile).canChildScrollUp());
-  //    }
+    //    @Override
+    //    protected boolean canChildScrollUp() {
+    //        final List<DDWRTTile> tiles = this.getTiles(null);
+    //        if (tiles == null || tiles.isEmpty()) {
+    //            return false;
+    //        }
+    //        final DDWRTTile tile = tiles.get(0);
+    //        return (tile instanceof StatusSyslogTile &&
+    //                ((StatusSyslogTile) tile).canChildScrollUp());
+    //    }
 }

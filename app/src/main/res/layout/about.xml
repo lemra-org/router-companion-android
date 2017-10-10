@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -24,74 +23,70 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:scrollbars="none"
-    >
+    android:scrollbars="none">
 
-  <LinearLayout
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:orientation="vertical"
-      >
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
 
-    <TableLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:stretchColumns="*"
-        >
-
-      <TableRow>
-        <ImageView
+        <TableLayout
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:contentDescription="@string/app_name"
-            android:src="@mipmap/ic_launcher_ddwrt_companion"
-            />
-        <TextView
-            android:id="@+id/info_text"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:textIsSelectable="true"
-            />
-      </TableRow>
-
-      <TableRow>
-        <TextView
-            android:id="@+id/contributors"
-            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"
-            android:layout_span="2"
-            android:textIsSelectable="true"
-            android:textSize="13sp"
-            />
-      </TableRow>
+            android:stretchColumns="*">
 
-      <TableRow>
-        <TextView
-            android:id="@+id/legal_text"
-            android:layout_width="fill_parent"
+            <TableRow>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/app_name"
+                    android:src="@mipmap/ic_launcher_ddwrt_companion" />
+
+                <TextView
+                    android:id="@+id/info_text"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textIsSelectable="true" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/contributors"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dip"
+                    android:layout_span="2"
+                    android:textIsSelectable="true"
+                    android:textSize="13sp" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/legal_text"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dip"
+                    android:layout_span="2"
+                    android:textColor="#cccccc"
+                    android:textIsSelectable="true"
+                    android:textSize="12sp"
+                    android:textStyle="italic" />
+            </TableRow>
+
+        </TableLayout>
+
+        <Button
+            android:id="@+id/oss_licenses"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"
-            android:layout_span="2"
-            android:textColor="#cccccc"
-            android:textIsSelectable="true"
-            android:textSize="12sp"
-            android:textStyle="italic"
-            />
-      </TableRow>
+            android:text="Open Source Licenses" />
 
-    </TableLayout>
-
-    <Button
-        android:id="@+id/oss_licenses"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Open Source Licenses"
-        />
-
-  </LinearLayout>
+    </LinearLayout>
 
 </ScrollView>

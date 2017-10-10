@@ -21,6 +21,12 @@
  */
 package org.rm3l.router_companion.tiles.services.wol;
 
+import static android.widget.TextView.BufferType.EDITABLE;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
+import static org.rm3l.router_companion.tiles.services.wol.WakeOnLanDaemonTile.WOL_DAEMON_NVRAMINFO;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -55,262 +61,267 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.Utils;
 
-import static android.widget.TextView.BufferType.EDITABLE;
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED;
-import static org.rm3l.router_companion.tiles.services.wol.WakeOnLanDaemonTile.WOL_DAEMON_NVRAMINFO;
-
 public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
 
-  public static final String WOL_DAEMON_HOSTNAMES_PREF_KEY = \"fake-key\";
-  private static final String TAG = EditWOLDaemonSettingsActivity.class.getSimpleName();
+    public static final String WOL_DAEMON_HOSTNAMES_PREF_KEY = \"fake-key\";
 
-  private NVRAMInfo mNvramInfo;
-  private String mRouterUuid;
-  private SharedPreferences sharedPreferences;
+    private static final String TAG = EditWOLDaemonSettingsActivity.class.getSimpleName();
 
-  private Toolbar mToolbar;
+    private NVRAMInfo mNvramInfo;
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    final Intent intent = getIntent();
-    mNvramInfo = (NVRAMInfo) intent.getSerializableExtra(WOL_DAEMON_NVRAMINFO);
+    private String mRouterUuid;
 
-    if (mNvramInfo == null) {
-      Toast.makeText(this, "Could not load WOL Daemon settings", Toast.LENGTH_SHORT).show();
-      finish();
-      return;
-    }
+    private Toolbar mToolbar;
 
-    mRouterUuid = intent.getStringExtra(ROUTER_SELECTED);
-    if (isNullOrEmpty(mRouterUuid)) {
-      Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT)
-          .show();
-      finish();
-      return;
-    }
+    private SharedPreferences sharedPreferences;
 
-    final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(this);
-    final Router router;
-    if ((router = dao.getRouter(mRouterUuid)) == null) {
-      Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT)
-          .show();
-      finish();
-      return;
-    }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        final Intent intent = getIntent();
+        mNvramInfo = (NVRAMInfo) intent.getSerializableExtra(WOL_DAEMON_NVRAMINFO);
 
-    ColorUtils.Companion.setAppTheme(this, router.getRouterFirmware(), false);
-
-    final boolean themeLight = ColorUtils.Companion.isThemeLight(this);
-    //        if (themeLight) {
-    //            //Light
-    //            setTheme(R.style.AppThemeLight);
-    ////            getWindow().getDecorView()
-    ////                    .setBackgroundColor(ContextCompat.getColor(this,
-    ////                            android.R.color.white));
-    //        } else {
-    //            //Default is Dark
-    //            setTheme(R.style.AppThemeDark);
-    //        }
-
-    setContentView(R.layout.activity_wol_daemon_settings);
-
-    mToolbar = (Toolbar) findViewById(R.id.wol_daemon_settings_toolbar);
-    if (mToolbar != null) {
-      mToolbar.setTitle("Automatic WOL Settings");
-      mToolbar.setSubtitle(
-          String.format("%s (%s:%d)", router.getDisplayName(), router.getRemoteIpAddress(),
-              router.getRemotePort()));
-      mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
-      mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
-      mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
-      mToolbar.setSubtitleTextColor(ContextCompat.getColor(this, R.color.white));
-      setSupportActionBar(mToolbar);
-    }
-
-    final ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null) {
-      actionBar.setDisplayHomeAsUpEnabled(true);
-      actionBar.setHomeButtonEnabled(true);
-    }
-
-    //Preferences saved globally, to be shared across different routers
-    sharedPreferences = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-
-    final EditText secureOnPasswordEditText =
-        (EditText) findViewById(R.id.wol_daemon_settings_secure_on_password);
-    ((CheckBox) findViewById(
-        R.id.wol_daemon_settings_secure_on_password_show_checkbox)).setOnCheckedChangeListener(
-        new CompoundButton.OnCheckedChangeListener() {
-          @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if (!isChecked) {
-              secureOnPasswordEditText.setInputType(
-                  InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-            } else {
-              secureOnPasswordEditText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-            }
-            secureOnPasswordEditText.setSelection(secureOnPasswordEditText.length());
-          }
-        });
-
-    fillForm();
-  }
-
-  private void fillForm() {
-    //Fill form with data loaded
-    ((CheckBox) findViewById(R.id.wol_daemon_settings_status_flag)).setChecked(
-        "1".equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_ENABLE())));
-
-    ((EditText) findViewById(R.id.wol_daemon_settings_interval)).setText(
-        mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_INTERVAL()), EDITABLE);
-
-    final AutoCompleteTextView hostnameAutoComplete =
-        (AutoCompleteTextView) findViewById(R.id.wol_daemon_settings_hostname);
-    final Set<String> hostnames =
-        sharedPreferences.getStringSet(WOL_DAEMON_HOSTNAMES_PREF_KEY, new HashSet<String>());
-    //noinspection ConstantConditions
-    hostnameAutoComplete.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
-        hostnames.toArray(new String[hostnames.size()])));
-    hostnameAutoComplete.setText(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_HOSTNAME()), EDITABLE);
-
-    ((EditText) findViewById(R.id.wol_daemon_settings_secure_on_password)).setText(
-        mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_PASSWD()), EDITABLE);
-
-    //noinspection ConstantConditions
-    ((EditText) findViewById(R.id.wol_daemon_settings_mac_addresses)).setText(Joiner.on("\n")
-            .skipNulls()
-            .join(Splitter.on(" ")
-                .omitEmptyStrings()
-                .split(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_MACS(), RouterCompanionAppConstants.EMPTY_STRING))),
-        EDITABLE);
-  }
-
-  @Override public void finish() {
-    final Intent data = new Intent();
-
-    //Resulting intent: NVRAM Info edited with user info
-    data.putExtra(ROUTER_SELECTED, mRouterUuid);
-
-    final NVRAMInfo nvramVarsToUpdate = new NVRAMInfo();
-    //Compare each variable
-
-    boolean applyNewPrefs = false;
-
-    if (sharedPreferences == null) {
-      setResult(RESULT_CANCELED, data);
-      super.finish();
-      return;
-    }
-
-    final SharedPreferences.Editor editor = sharedPreferences.edit();
-
-    final String isWolDaemonOn =
-        ((CheckBox) findViewById(R.id.wol_daemon_settings_status_flag)).isChecked() ? "1" : "0";
-    if (!isWolDaemonOn.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_ENABLE()))) {
-      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getWOL_ENABLE(), isWolDaemonOn);
-    }
-
-    final String hostname =
-        ((EditText) findViewById(R.id.wol_daemon_settings_hostname)).getText().toString();
-    if (!hostname.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_HOSTNAME()))) {
-      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getWOL_HOSTNAME(), hostname);
-      if (!isNullOrEmpty(hostname)) {
-        final Set<String> mSharedPreferencesStringSet = new HashSet<>(
-            sharedPreferences.getStringSet(WOL_DAEMON_HOSTNAMES_PREF_KEY, new HashSet<String>()));
-        if (!mSharedPreferencesStringSet.contains(hostname)) {
-          mSharedPreferencesStringSet.add(hostname);
-          editor.putStringSet(WOL_DAEMON_HOSTNAMES_PREF_KEY, mSharedPreferencesStringSet);
-          applyNewPrefs = true;
+        if (mNvramInfo == null) {
+            Toast.makeText(this, "Could not load WOL Daemon settings", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
         }
-      }
+
+        mRouterUuid = intent.getStringExtra(ROUTER_SELECTED);
+        if (isNullOrEmpty(mRouterUuid)) {
+            Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT)
+                    .show();
+            finish();
+            return;
+        }
+
+        final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(this);
+        final Router router;
+        if ((router = dao.getRouter(mRouterUuid)) == null) {
+            Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT)
+                    .show();
+            finish();
+            return;
+        }
+
+        ColorUtils.Companion.setAppTheme(this, router.getRouterFirmware(), false);
+
+        final boolean themeLight = ColorUtils.Companion.isThemeLight(this);
+        //        if (themeLight) {
+        //            //Light
+        //            setTheme(R.style.AppThemeLight);
+        ////            getWindow().getDecorView()
+        ////                    .setBackgroundColor(ContextCompat.getColor(this,
+        ////                            android.R.color.white));
+        //        } else {
+        //            //Default is Dark
+        //            setTheme(R.style.AppThemeDark);
+        //        }
+
+        setContentView(R.layout.activity_wol_daemon_settings);
+
+        mToolbar = (Toolbar) findViewById(R.id.wol_daemon_settings_toolbar);
+        if (mToolbar != null) {
+            mToolbar.setTitle("Automatic WOL Settings");
+            mToolbar.setSubtitle(
+                    String.format("%s (%s:%d)", router.getDisplayName(), router.getRemoteIpAddress(),
+                            router.getRemotePort()));
+            mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
+            mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
+            mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+            mToolbar.setSubtitleTextColor(ContextCompat.getColor(this, R.color.white));
+            setSupportActionBar(mToolbar);
+        }
+
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+        }
+
+        //Preferences saved globally, to be shared across different routers
+        sharedPreferences = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+
+        final EditText secureOnPasswordEditText =
+                (EditText) findViewById(R.id.wol_daemon_settings_secure_on_password);
+        ((CheckBox) findViewById(
+                R.id.wol_daemon_settings_secure_on_password_show_checkbox)).setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (!isChecked) {
+                            secureOnPasswordEditText.setInputType(
+                                    InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        } else {
+                            secureOnPasswordEditText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                        }
+                        secureOnPasswordEditText.setSelection(secureOnPasswordEditText.length());
+                    }
+                });
+
+        fillForm();
     }
 
-    final String interval =
-        ((EditText) findViewById(R.id.wol_daemon_settings_interval)).getText().toString();
-    if (!interval.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_INTERVAL()))) {
-      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getWOL_INTERVAL(), interval);
-    }
+    @Override
+    public void finish() {
+        final Intent data = new Intent();
 
-    final String secureOnPassword =
-        ((EditText) findViewById(R.id.wol_daemon_settings_secure_on_password)).getText().toString();
-    if (!secureOnPassword.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_PASSWD()))) {
-      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getWOL_PASSWD(), secureOnPassword);
-    }
+        //Resulting intent: NVRAM Info edited with user info
+        data.putExtra(ROUTER_SELECTED, mRouterUuid);
 
-    final String macAddresses =
-        ((EditText) findViewById(R.id.wol_daemon_settings_mac_addresses)).getText()
-            .toString()
-            .replaceAll("\n", " ");
-    if (!macAddresses.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_MACS()))) {
-      nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getWOL_MACS(), macAddresses);
-    }
+        final NVRAMInfo nvramVarsToUpdate = new NVRAMInfo();
+        //Compare each variable
 
-    if (applyNewPrefs) {
-      editor.apply();
-    }
+        boolean applyNewPrefs = false;
 
-    Crashlytics.log(Log.DEBUG, TAG, "vars that have changed: " + nvramVarsToUpdate);
+        if (sharedPreferences == null) {
+            setResult(RESULT_CANCELED, data);
+            super.finish();
+            return;
+        }
 
-    //Set extra
-    data.putExtra(WOL_DAEMON_NVRAMINFO, nvramVarsToUpdate);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
 
-    if (!nvramVarsToUpdate.isEmpty()) {
-      //Something changed - prompt confirmation dialog
-      new AlertDialog.Builder(this).setIcon(R.drawable.ic_action_alert_warning)
-          .setMessage("Some settings have been updated. Do you want to save them?\n"
-              + "If you choose to apply the new settings, your router will be rebooted, "
-              + "and you might have to wait some time before connection is re-established.")
-          .setCancelable(true)
-          .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
-            @Override public void onClick(final DialogInterface dialogInterface, final int i) {
-              setResult(RESULT_OK, data);
-              EditWOLDaemonSettingsActivity.super.finish();
+        final String isWolDaemonOn =
+                ((CheckBox) findViewById(R.id.wol_daemon_settings_status_flag)).isChecked() ? "1" : "0";
+        if (!isWolDaemonOn.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_ENABLE()))) {
+            nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getWOL_ENABLE(), isWolDaemonOn);
+        }
+
+        final String hostname =
+                ((EditText) findViewById(R.id.wol_daemon_settings_hostname)).getText().toString();
+        if (!hostname.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_HOSTNAME()))) {
+            nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getWOL_HOSTNAME(), hostname);
+            if (!isNullOrEmpty(hostname)) {
+                final Set<String> mSharedPreferencesStringSet = new HashSet<>(
+                        sharedPreferences.getStringSet(WOL_DAEMON_HOSTNAMES_PREF_KEY, new HashSet<String>()));
+                if (!mSharedPreferencesStringSet.contains(hostname)) {
+                    mSharedPreferencesStringSet.add(hostname);
+                    editor.putStringSet(WOL_DAEMON_HOSTNAMES_PREF_KEY, mSharedPreferencesStringSet);
+                    applyNewPrefs = true;
+                }
             }
-          })
-          .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override public void onClick(DialogInterface dialogInterface, int i) {
-              //Cancelled - nothing more to do!
-              setResult(RESULT_CANCELED, data);
-              EditWOLDaemonSettingsActivity.super.finish();
-            }
-          })
-          .create()
-          .show();
-    } else {
-      setResult(RESULT_CANCELED, data);
-      super.finish();
+        }
+
+        final String interval =
+                ((EditText) findViewById(R.id.wol_daemon_settings_interval)).getText().toString();
+        if (!interval.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_INTERVAL()))) {
+            nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getWOL_INTERVAL(), interval);
+        }
+
+        final String secureOnPassword =
+                ((EditText) findViewById(R.id.wol_daemon_settings_secure_on_password)).getText().toString();
+        if (!secureOnPassword.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_PASSWD()))) {
+            nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getWOL_PASSWD(), secureOnPassword);
+        }
+
+        final String macAddresses =
+                ((EditText) findViewById(R.id.wol_daemon_settings_mac_addresses)).getText()
+                        .toString()
+                        .replaceAll("\n", " ");
+        if (!macAddresses.equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_MACS()))) {
+            nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getWOL_MACS(), macAddresses);
+        }
+
+        if (applyNewPrefs) {
+            editor.apply();
+        }
+
+        Crashlytics.log(Log.DEBUG, TAG, "vars that have changed: " + nvramVarsToUpdate);
+
+        //Set extra
+        data.putExtra(WOL_DAEMON_NVRAMINFO, nvramVarsToUpdate);
+
+        if (!nvramVarsToUpdate.isEmpty()) {
+            //Something changed - prompt confirmation dialog
+            new AlertDialog.Builder(this).setIcon(R.drawable.ic_action_alert_warning)
+                    .setMessage("Some settings have been updated. Do you want to save them?\n"
+                            + "If you choose to apply the new settings, your router will be rebooted, "
+                            + "and you might have to wait some time before connection is re-established.")
+                    .setCancelable(true)
+                    .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(final DialogInterface dialogInterface, final int i) {
+                            setResult(RESULT_OK, data);
+                            EditWOLDaemonSettingsActivity.super.finish();
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //Cancelled - nothing more to do!
+                            setResult(RESULT_CANCELED, data);
+                            EditWOLDaemonSettingsActivity.super.finish();
+                        }
+                    })
+                    .create()
+                    .show();
+        } else {
+            setResult(RESULT_CANCELED, data);
+            super.finish();
+        }
     }
-  }
 
-  @Override public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.menu_activity_edit_wol_daemon_settings, menu);
-    return super.onCreateOptionsMenu(menu);
-  }
-
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        onBackPressed();
-        return true;
-
-      case R.id.action_feedback:
-        Utils.openFeedbackForm(this, mRouterUuid);
-        //                final Intent intent = new Intent(EditWOLDaemonSettingsActivity.this, FeedbackActivity.class);
-        //                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
-        //                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
-        //                ViewGroupUtils.exportViewToFile(EditWOLDaemonSettingsActivity.this,
-        //                        getWindow().getDecorView(), screenshotFile);
-        //                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
-        //                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
-        //                startActivity(intent);
-        ////                Utils.buildFeedbackDialog(this, true);
-        return true;
-
-      default:
-        break;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_activity_edit_wol_daemon_settings, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
-    return super.onOptionsItemSelected(item);
-  }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+
+            case R.id.action_feedback:
+                Utils.openFeedbackForm(this, mRouterUuid);
+                //                final Intent intent = new Intent(EditWOLDaemonSettingsActivity.this, FeedbackActivity.class);
+                //                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
+                //                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
+                //                ViewGroupUtils.exportViewToFile(EditWOLDaemonSettingsActivity.this,
+                //                        getWindow().getDecorView(), screenshotFile);
+                //                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+                //                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
+                //                startActivity(intent);
+                ////                Utils.buildFeedbackDialog(this, true);
+                return true;
+
+            default:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void fillForm() {
+        //Fill form with data loaded
+        ((CheckBox) findViewById(R.id.wol_daemon_settings_status_flag)).setChecked(
+                "1".equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_ENABLE())));
+
+        ((EditText) findViewById(R.id.wol_daemon_settings_interval)).setText(
+                mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_INTERVAL()), EDITABLE);
+
+        final AutoCompleteTextView hostnameAutoComplete =
+                (AutoCompleteTextView) findViewById(R.id.wol_daemon_settings_hostname);
+        final Set<String> hostnames =
+                sharedPreferences.getStringSet(WOL_DAEMON_HOSTNAMES_PREF_KEY, new HashSet<String>());
+        //noinspection ConstantConditions
+        hostnameAutoComplete.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
+                hostnames.toArray(new String[hostnames.size()])));
+        hostnameAutoComplete.setText(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_HOSTNAME()), EDITABLE);
+
+        ((EditText) findViewById(R.id.wol_daemon_settings_secure_on_password)).setText(
+                mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_PASSWD()), EDITABLE);
+
+        //noinspection ConstantConditions
+        ((EditText) findViewById(R.id.wol_daemon_settings_mac_addresses)).setText(Joiner.on("\n")
+                        .skipNulls()
+                        .join(Splitter.on(" ")
+                                .omitEmptyStrings()
+                                .split(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_MACS(),
+                                        RouterCompanionAppConstants.EMPTY_STRING))),
+                EDITABLE);
+    }
 }

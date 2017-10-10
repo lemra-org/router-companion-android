@@ -13,75 +13,73 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
-  compileSdkVersion android_sdk
-  buildToolsVersion buildTools_version
+    compileSdkVersion android_sdk
+    buildToolsVersion buildTools_version
 
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_7
-    targetCompatibility JavaVersion.VERSION_1_7
-  }
-
-  defaultConfig {
-    minSdkVersion 14
-    targetSdkVersion android_sdk
-
-    // Enabling multidex support.
-    //        multiDexEnabled true
-    // Fetch the version according to git latest tag and "how far are we from last tag"
-    (versionCode, versionName) = rootProject.getVersionCodeAndName("default")
-    printf("\n-------- VERSION DATA for '$project.name' --------" +
-        "\n" +
-        "- CODE: " +
-        versionCode +
-        "\n" +
-        "- NAME: " +
-        versionName +
-        "\n----------------------------\n")
-  }
-
-
-  //Those files, from Apache Commons lib cause build errors
-  packagingOptions {
-    exclude 'META-INF/LICENSE.txt'
-    exclude 'META-INF/NOTICE.txt'
-  }
-  lintOptions {
-    abortOnError false
-    disable 'TypographyEllipsis'
-  }
-
-
-  buildTypes {
-    release {
-      minifyEnabled false
-      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 
-    debug {
-      minifyEnabled true
-      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-      zipAlignEnabled true
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion android_sdk
+
+        // Enabling multidex support.
+        //        multiDexEnabled true
+        // Fetch the version according to git latest tag and "how far are we from last tag"
+        (versionCode, versionName) = rootProject.getVersionCodeAndName("default")
+        printf("\n-------- VERSION DATA for '$project.name' --------" +
+                "\n" +
+                "- CODE: " +
+                versionCode +
+                "\n" +
+                "- NAME: " +
+                versionName +
+                "\n----------------------------\n")
     }
-  }
-  buildToolsVersion '26.0.2'
+
+    //Those files, from Apache Commons lib cause build errors
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+    lintOptions {
+        abortOnError false
+        disable 'TypographyEllipsis'
+    }
+
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            zipAlignEnabled true
+        }
+    }
+    buildToolsVersion '26.0.2'
 }
-
 
 //Automate the way version name is built for each flavor
 android.productFlavors.each {
-  flavor ->
-    def (versionCode, versionName) = rootProject.getVersionCodeAndName(flavor.name)
-    flavor.versionCode = versionCode
-    flavor.versionName = versionName
+    flavor ->
+        def (versionCode, versionName) = rootProject.getVersionCodeAndName(flavor.name)
+        flavor.versionCode = versionCode
+        flavor.versionName = versionName
 }
 
 
 dependencies {
-  implementation fileTree(dir: 'libs', include: ['*.jar'])
-  testImplementation 'junit:junit:4.12'
-  implementation "com.android.support:appcompat-v7:$support_version"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    implementation "com.android.support:appcompat-v7:$support_version"
 
-  //Push
-  //    compile 'com.google.firebase:firebase-messaging:9.4.0'
-  //    compile 'com.pusher:pusher-java-client:1.0.0'
+    //Push
+    //    compile 'com.google.firebase:firebase-messaging:9.4.0'
+    //    compile 'com.pusher:pusher-java-client:1.0.0'
 }

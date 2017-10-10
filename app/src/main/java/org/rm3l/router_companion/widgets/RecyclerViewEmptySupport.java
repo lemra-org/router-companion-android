@@ -14,95 +14,103 @@ import com.crashlytics.android.Crashlytics;
  */
 public class RecyclerViewEmptySupport extends RecyclerView {
 
-  private static final String TAG = RecyclerViewEmptySupport.class.getSimpleName();
+    private static final String TAG = RecyclerViewEmptySupport.class.getSimpleName();
 
-  @Nullable View emptyView;
-  @NonNull private final AdapterDataObserver observer = new AdapterDataObserver() {
-    @Override public void onChanged() {
-      Crashlytics.log(Log.DEBUG, TAG, "onChanged");
-      super.onChanged();
-      checkIfEmpty();
+    @Nullable
+    View emptyView;
+
+    @NonNull
+    private final AdapterDataObserver observer = new AdapterDataObserver() {
+        @Override
+        public void onChanged() {
+            Crashlytics.log(Log.DEBUG, TAG, "onChanged");
+            super.onChanged();
+            checkIfEmpty();
+        }
+
+        @Override
+        public void onItemRangeInserted(int positionStart, int itemCount) {
+            Crashlytics.log(Log.DEBUG, TAG,
+                    "onItemRangeInserted(" + positionStart + ", " + itemCount + ")");
+            super.onItemRangeInserted(positionStart, itemCount);
+            checkIfEmpty();
+        }
+
+        @Override
+        public void onItemRangeRemoved(int positionStart, int itemCount) {
+            Crashlytics.log(Log.DEBUG, TAG,
+                    "onItemRangeInserted(" + positionStart + ", " + itemCount + ")");
+            super.onItemRangeRemoved(positionStart, itemCount);
+            checkIfEmpty();
+        }
+    };
+
+    public RecyclerViewEmptySupport(Context context) {
+        super(context);
     }
 
-    @Override public void onItemRangeInserted(int positionStart, int itemCount) {
-      Crashlytics.log(Log.DEBUG, TAG,
-          "onItemRangeInserted(" + positionStart + ", " + itemCount + ")");
-      super.onItemRangeInserted(positionStart, itemCount);
-      checkIfEmpty();
+    public RecyclerViewEmptySupport(Context context, AttributeSet attrs) {
+        super(context, attrs);
     }
 
-    @Override public void onItemRangeRemoved(int positionStart, int itemCount) {
-      Crashlytics.log(Log.DEBUG, TAG,
-          "onItemRangeInserted(" + positionStart + ", " + itemCount + ")");
-      super.onItemRangeRemoved(positionStart, itemCount);
-      checkIfEmpty();
-    }
-  };
-
-  public RecyclerViewEmptySupport(Context context) {
-    super(context);
-  }
-
-  public RecyclerViewEmptySupport(Context context, AttributeSet attrs) {
-    super(context, attrs);
-  }
-
-  public RecyclerViewEmptySupport(Context context, AttributeSet attrs, int defStyle) {
-    super(context, attrs, defStyle);
-  }
-
-  @Override public void setAdapter(@Nullable Adapter adapter) {
-    final Adapter oldAdapter = getAdapter();
-    if (oldAdapter != null) {
-      oldAdapter.unregisterAdapterDataObserver(observer);
+    public RecyclerViewEmptySupport(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
     }
 
-    if (adapter != null) {
-      adapter.registerAdapterDataObserver(observer);
-    }
-    super.setAdapter(adapter);
-    checkIfEmpty();
-  }
+    @Override
+    public void setAdapter(@Nullable Adapter adapter) {
+        final Adapter oldAdapter = getAdapter();
+        if (oldAdapter != null) {
+            oldAdapter.unregisterAdapterDataObserver(observer);
+        }
 
-  @Override public void swapAdapter(Adapter adapter, boolean removeAndRecycleExistingViews) {
-    final Adapter oldAdapter = getAdapter();
-    if (oldAdapter != null) {
-      oldAdapter.unregisterAdapterDataObserver(observer);
-    }
-
-    if (adapter != null) {
-      adapter.registerAdapterDataObserver(observer);
-    }
-    super.swapAdapter(adapter, removeAndRecycleExistingViews);
-    checkIfEmpty();
-  }
-
-  /**
-   * Indicates the view to be shown when the adapter for this object is empty
-   *
-   * @param emptyView the empty view
-   */
-  public void setEmptyView(@Nullable View emptyView) {
-    if (this.emptyView != null) {
-      this.emptyView.setVisibility(GONE);
+        if (adapter != null) {
+            adapter.registerAdapterDataObserver(observer);
+        }
+        super.setAdapter(adapter);
+        checkIfEmpty();
     }
 
-    this.emptyView = emptyView;
-    checkIfEmpty();
-  }
+    /**
+     * Indicates the view to be shown when the adapter for this object is empty
+     *
+     * @param emptyView the empty view
+     */
+    public void setEmptyView(@Nullable View emptyView) {
+        if (this.emptyView != null) {
+            this.emptyView.setVisibility(GONE);
+        }
 
-  /**
-   * Check adapter item count and toggle visibility of empty view if the adapter is empty
-   */
-  private void checkIfEmpty() {
-    if (emptyView == null || getAdapter() == null) {
-      return;
+        this.emptyView = emptyView;
+        checkIfEmpty();
     }
 
-    if (getAdapter().getItemCount() > 0) {
-      emptyView.setVisibility(GONE);
-    } else {
-      emptyView.setVisibility(VISIBLE);
+    @Override
+    public void swapAdapter(Adapter adapter, boolean removeAndRecycleExistingViews) {
+        final Adapter oldAdapter = getAdapter();
+        if (oldAdapter != null) {
+            oldAdapter.unregisterAdapterDataObserver(observer);
+        }
+
+        if (adapter != null) {
+            adapter.registerAdapterDataObserver(observer);
+        }
+        super.swapAdapter(adapter, removeAndRecycleExistingViews);
+        checkIfEmpty();
     }
-  }
+
+    /**
+     * Check adapter item count and toggle visibility of empty view if the adapter is empty
+     */
+    private void checkIfEmpty() {
+        if (emptyView == null || getAdapter() == null) {
+            return;
+        }
+
+        if (getAdapter().getItemCount() > 0) {
+            emptyView.setVisibility(GONE);
+        } else {
+            emptyView.setVisibility(VISIBLE);
+        }
+    }
 }

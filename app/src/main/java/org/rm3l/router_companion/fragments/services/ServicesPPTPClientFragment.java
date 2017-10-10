@@ -13,8 +13,10 @@ import org.rm3l.router_companion.tiles.services.vpn.client.PPTPClientTile;
  */
 public class ServicesPPTPClientFragment extends AbstractBaseFragment {
 
-  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return Collections.<DDWRTTile>singletonList(
-        new PPTPClientTile(this, savedInstanceState, this.router));
-  }
+    @Nullable
+    @Override
+    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+        return Collections.<DDWRTTile>singletonList(
+                new PPTPClientTile(this, savedInstanceState, this.router));
+    }
 }

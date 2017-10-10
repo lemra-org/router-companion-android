@@ -2,21 +2,21 @@
 
 
 <resources>
-  <string name="define_osmdroid" translatable="false"/>
-  <!-- Author section -->
-  <string name="library_osmdroid_author" translatable="false">osmdroid</string>
-  <string name="library_osmdroid_authorWebsite" translatable="false">http://osmdroid.github.io/osmdroid/</string>
-  <!-- Library section -->
-  <string name="library_osmdroid_libraryName" translatable="false">osmdroid</string>
-  <string name="library_osmdroid_libraryDescription" translatable="false">OpenStreetMap-Tools for Android</string>
-  <string name="library_osmdroid_libraryWebsite" translatable="false">http://osmdroid.github.io/osmdroid/</string>
-  <string name="library_osmdroid_libraryVersion" translatable="false">5.6.5</string>
-  <!-- OpenSource section -->
-  <string name="library_osmdroid_isOpenSource" translatable="false">true</string>
-  <string name="library_osmdroid_repositoryLink" translatable="false">https://github.com/osmdroid/osmdroid</string>
-  <!-- ClassPath for autoDetect section -->
-  <!--<string translatable="false" name="library_osmdroid_classPath">com.facebook.osmdroid</string>-->
-  <!-- License section -->
-  <string name="library_osmdroid_licenseId" translatable="false">apache_2_0</string>
-  <!-- Custom variables section -->
+    <string name="define_osmdroid" translatable="false" />
+    <!-- Author section -->
+    <string name="library_osmdroid_author" translatable="false">osmdroid</string>
+    <string name="library_osmdroid_authorWebsite" translatable="false">http://osmdroid.github.io/osmdroid/</string>
+    <!-- Library section -->
+    <string name="library_osmdroid_libraryName" translatable="false">osmdroid</string>
+    <string name="library_osmdroid_libraryDescription" translatable="false">OpenStreetMap-Tools for Android</string>
+    <string name="library_osmdroid_libraryWebsite" translatable="false">http://osmdroid.github.io/osmdroid/</string>
+    <string name="library_osmdroid_libraryVersion" translatable="false">5.6.5</string>
+    <!-- OpenSource section -->
+    <string name="library_osmdroid_isOpenSource" translatable="false">true</string>
+    <string name="library_osmdroid_repositoryLink" translatable="false">https://github.com/osmdroid/osmdroid</string>
+    <!-- ClassPath for autoDetect section -->
+    <!--<string translatable="false" name="library_osmdroid_classPath">com.facebook.osmdroid</string>-->
+    <!-- License section -->
+    <string name="library_osmdroid_licenseId" translatable="false">apache_2_0</string>
+    <!-- Custom variables section -->
 </resources>

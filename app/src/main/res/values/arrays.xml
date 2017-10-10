@@ -1,226 +1,226 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <string-array name="donation_google_catalog_values">
-    <item>1 Euro</item>
-    <item>2 Euros</item>
-    <item>3 Euros</item>
-    <item>5 Euros</item>
-    <item>8 Euros</item>
-    <item>13 Euros</item>
-    <item>21 Euros</item>
-    <item>34 Euros</item>
-    <item>55 Euros</item>
-    <item>89 Euros</item>
-  </string-array>
+    <string-array name="donation_google_catalog_values">
+        <item>1 Euro</item>
+        <item>2 Euros</item>
+        <item>3 Euros</item>
+        <item>5 Euros</item>
+        <item>8 Euros</item>
+        <item>13 Euros</item>
+        <item>21 Euros</item>
+        <item>34 Euros</item>
+        <item>55 Euros</item>
+        <item>89 Euros</item>
+    </string-array>
 
-  <string-array name="navigation_drawer_items_array_item1_items">
-    <item>Overview</item>
-    <item>Status</item>
-    <item>Wireless</item>
-    <item>Clients</item>
-    <item>Monitoring</item>
-  </string-array>
+    <string-array name="navigation_drawer_items_array_item1_items">
+        <item>Overview</item>
+        <item>Status</item>
+        <item>Wireless</item>
+        <item>Clients</item>
+        <item>Monitoring</item>
+    </string-array>
 
-  <string-array name="navigation_drawer_items_array_item2_items">
-    <item>OpenVPN</item>
-    <item>PPTP VPN</item>
-    <item>Wake On LAN</item>
-  </string-array>
+    <string-array name="navigation_drawer_items_array_item2_items">
+        <item>OpenVPN</item>
+        <item>PPTP VPN</item>
+        <item>Wake On LAN</item>
+    </string-array>
 
 
-  <string-array name="navigation_drawer_items_array_item3_items">
-    <item>Commands</item>
-    <item>NVRAM</item>
-  </string-array>
+    <string-array name="navigation_drawer_items_array_item3_items">
+        <item>Commands</item>
+        <item>NVRAM</item>
+    </string-array>
 
-  <string-array name="navigation_drawer_items_array_item4_items">
-    <item>Network</item>
-    <!--<item>System</item>-->
-  </string-array>
+    <string-array name="navigation_drawer_items_array_item4_items">
+        <item>Network</item>
+        <!--<item>System</item>-->
+    </string-array>
 
-  <string-array name="navigation_drawer_items_array">
-    <item>Status</item>
-    <!--NOT NEEDED ANYMORE <item>Setup</item>-->
-    <!--<item>Wireless</item>-->
-    <item>Services</item>
-    <!--<item>Security</item>-->
-    <!--<item>Access</item>-->
-    <!--<item>NAT &amp; QoS</item>-->
-    <item>Admin Area</item>
-    <item>Toolbox</item>
-  </string-array>
+    <string-array name="navigation_drawer_items_array">
+        <item>Status</item>
+        <!--NOT NEEDED ANYMORE <item>Setup</item>-->
+        <!--<item>Wireless</item>-->
+        <item>Services</item>
+        <!--<item>Security</item>-->
+        <!--<item>Access</item>-->
+        <!--<item>NAT &amp; QoS</item>-->
+        <item>Admin Area</item>
+        <item>Toolbox</item>
+    </string-array>
 
-  <string-array name="router_connection_protocols_array">
-    <item>SSH</item>
-    <!--<item>HTTPS</item>-->
-  </string-array>
+    <string-array name="router_connection_protocols_array">
+        <item>SSH</item>
+        <!--<item>HTTPS</item>-->
+    </string-array>
 
-  <!-- TODO Other items disabled for now, until we get the right implementation for OpenWrt
-  (and provide an external no-launcher app plugin for it) -->
-  <string-array name="router_firmwares_array">
-    <item>-Auto-detect-</item>
-    <item>DD-WRT</item>
-    <!--KEEP COMMENTED <item>OpenWrt (Beta)</item>-->
-    <item>Tomato (Experimental)</item>
-  </string-array>
+    <!-- TODO Other items disabled for now, until we get the right implementation for OpenWrt
+    (and provide an external no-launcher app plugin for it) -->
+    <string-array name="router_firmwares_array">
+        <item>-Auto-detect-</item>
+        <item>DD-WRT</item>
+        <!--KEEP COMMENTED <item>OpenWrt (Beta)</item>-->
+        <item>Tomato (Experimental)</item>
+    </string-array>
 
-  <string-array name="router_firmwares_array_values">
-    <item>auto</item>
-    <item>DDWRT</item>
-    <!--KEEP COMMENTED  <item>OPENWRT</item>-->
-    <item>TOMATO</item>
-  </string-array>
+    <string-array name="router_firmwares_array_values">
+        <item>auto</item>
+        <item>DDWRT</item>
+        <!--KEEP COMMENTED  <item>OPENWRT</item>-->
+        <item>TOMATO</item>
+    </string-array>
 
-  <string-array name="openvpn_client_settings_tunnel_device_array">
-    <item>TUN</item>
-    <item>TAP</item>
-  </string-array>
-  <string-array name="openvpn_client_settings_tunnel_device_array_values">
-    <item>tun</item>
-    <item>tap</item>
-  </string-array>
+    <string-array name="openvpn_client_settings_tunnel_device_array">
+        <item>TUN</item>
+        <item>TAP</item>
+    </string-array>
+    <string-array name="openvpn_client_settings_tunnel_device_array_values">
+        <item>tun</item>
+        <item>tap</item>
+    </string-array>
 
-  <string-array name="openvpn_client_settings_tunnel_protocol_array">
-    <item>UDP</item>
-    <item>TCP</item>
-  </string-array>
-  <string-array name="openvpn_client_settings_tunnel_protocol_array_values">
-    <item>udp</item>
-    <item>tcp-client</item>
-  </string-array>
+    <string-array name="openvpn_client_settings_tunnel_protocol_array">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
+    <string-array name="openvpn_client_settings_tunnel_protocol_array_values">
+        <item>udp</item>
+        <item>tcp-client</item>
+    </string-array>
 
-  <string-array name="openvpn_client_settings_encryption_cipher_array_values">
-    <item>aes-512-cbc</item>
-    <item>aes-256-cbc</item>
-    <item>aes-192-cbc</item>
-    <item>aes-128-cbc</item>
-    <item>bf-cbc</item>
-    <item>none</item>
-  </string-array>
-  <string-array name="openvpn_client_settings_encryption_cipher_array">
-    <item>AES-512 CBC</item>
-    <item>AES-256 CBC</item>
-    <item>AES-192 CBC</item>
-    <item>AES-128 CBC</item>
-    <item>Blowfish CBC</item>
-    <item>None</item>
-  </string-array>
+    <string-array name="openvpn_client_settings_encryption_cipher_array_values">
+        <item>aes-512-cbc</item>
+        <item>aes-256-cbc</item>
+        <item>aes-192-cbc</item>
+        <item>aes-128-cbc</item>
+        <item>bf-cbc</item>
+        <item>none</item>
+    </string-array>
+    <string-array name="openvpn_client_settings_encryption_cipher_array">
+        <item>AES-512 CBC</item>
+        <item>AES-256 CBC</item>
+        <item>AES-192 CBC</item>
+        <item>AES-128 CBC</item>
+        <item>Blowfish CBC</item>
+        <item>None</item>
+    </string-array>
 
-  <string-array name="openvpn_client_settings_hash_algorithm_array">
-    <item>SHA512</item>
-    <item>SHA256</item>
-    <item>SHA1</item>
-    <item>MD5</item>
-    <item>MD4</item>
-    <item>None</item>
-  </string-array>
-  <string-array name="openvpn_client_settings_hash_algorithm_array_values">
-    <item>sha512</item>
-    <item>sha256</item>
-    <item>sha1</item>
-    <item>md5</item>
-    <item>md4</item>
-    <item>none</item>
-  </string-array>
+    <string-array name="openvpn_client_settings_hash_algorithm_array">
+        <item>SHA512</item>
+        <item>SHA256</item>
+        <item>SHA1</item>
+        <item>MD5</item>
+        <item>MD4</item>
+        <item>None</item>
+    </string-array>
+    <string-array name="openvpn_client_settings_hash_algorithm_array_values">
+        <item>sha512</item>
+        <item>sha256</item>
+        <item>sha1</item>
+        <item>md5</item>
+        <item>md4</item>
+        <item>none</item>
+    </string-array>
 
-  <string-array name="openvpn_client_settings_tls_cipher_array">
-    <item>TLS-DHE-RSA-WITH-AES-256-GCM-SHA384</item>
-    <item>TLS-DHE-RSA-WITH-AES-256-CBC-SHA256</item>
-    <item>TLS-DHE-RSA-WITH-AES-128-CBC-SHA</item>
-    <item>TLS-RSA-WITH-AES-256-GCM-SHA384</item>
-    <item>TLS-RSA-WITH-AES-256-CBC-SHA256</item>
-    <item>TLS-RSA-WITH-AES-128-CBC-SHA</item>
-    <item>TLS–RSA-WITH-RC4-128-MD5</item>
-    <item>None</item>
-  </string-array>
-  <string-array name="openvpn_client_settings_tls_cipher_array_values">
-    <item>TLS-DHE-RSA-WITH-AES-256-GCM-SHA384</item>
-    <item>TLS-DHE-RSA-WITH-AES-256-CBC-SHA256</item>
-    <item>TLS-DHE-RSA-WITH-AES-128-CBC-SHA</item>
-    <item>TLS-RSA-WITH-AES-256-GCM-SHA384</item>
-    <item>TLS-RSA-WITH-AES-256-CBC-SHA256</item>
-    <item>TLS-RSA-WITH-AES-128-CBC-SHA</item>
-    <item>TLS-RSA-WITH-RC4-128-MD5</item>
-    <item>0</item>
-  </string-array>
+    <string-array name="openvpn_client_settings_tls_cipher_array">
+        <item>TLS-DHE-RSA-WITH-AES-256-GCM-SHA384</item>
+        <item>TLS-DHE-RSA-WITH-AES-256-CBC-SHA256</item>
+        <item>TLS-DHE-RSA-WITH-AES-128-CBC-SHA</item>
+        <item>TLS-RSA-WITH-AES-256-GCM-SHA384</item>
+        <item>TLS-RSA-WITH-AES-256-CBC-SHA256</item>
+        <item>TLS-RSA-WITH-AES-128-CBC-SHA</item>
+        <item>TLS–RSA-WITH-RC4-128-MD5</item>
+        <item>None</item>
+    </string-array>
+    <string-array name="openvpn_client_settings_tls_cipher_array_values">
+        <item>TLS-DHE-RSA-WITH-AES-256-GCM-SHA384</item>
+        <item>TLS-DHE-RSA-WITH-AES-256-CBC-SHA256</item>
+        <item>TLS-DHE-RSA-WITH-AES-128-CBC-SHA</item>
+        <item>TLS-RSA-WITH-AES-256-GCM-SHA384</item>
+        <item>TLS-RSA-WITH-AES-256-CBC-SHA256</item>
+        <item>TLS-RSA-WITH-AES-128-CBC-SHA</item>
+        <item>TLS-RSA-WITH-RC4-128-MD5</item>
+        <item>0</item>
+    </string-array>
 
-  <string-array name="openvpn_client_settings_lzo_compression_array">
-    <item>Yes</item>
-    <item>Adaptive</item>
-    <item>No</item>
-    <item>Disabled</item>
-  </string-array>
-  <string-array name="openvpn_client_settings_lzo_compression_array_values">
-    <item>yes</item>
-    <item>adaptive</item>
-    <item>no</item>
-    <item>off</item>
-  </string-array>
+    <string-array name="openvpn_client_settings_lzo_compression_array">
+        <item>Yes</item>
+        <item>Adaptive</item>
+        <item>No</item>
+        <item>Disabled</item>
+    </string-array>
+    <string-array name="openvpn_client_settings_lzo_compression_array_values">
+        <item>yes</item>
+        <item>adaptive</item>
+        <item>no</item>
+        <item>off</item>
+    </string-array>
 
-  <!-- Wireless Security -->
-  <string-array name="wireless_security_settings_security_mode_array">
-    <item>Disabled</item>
-    <item>WPA Personal</item>
-    <item>WPA Enterprise</item>
-    <item>WPA2 Personal</item>
-    <item>WPA2 Enterprise</item>
-    <item>WPA2 Personal Mixed</item>
-    <item>WPA2 Enterprise Mixed</item>
-    <item>RADIUS</item>
-    <item>WEP</item>
-  </string-array>
-  <string-array name="wireless_security_settings_security_mode_array_values">
-    <item>disabled</item>
-    <item>psk</item>
-    <item>wpa</item>
-    <item>psk2</item>
-    <item>wpa2</item>
-    <item>psk psk2</item>
-    <item>wpa wpa2</item>
-    <item>radius</item>
-    <item>wep</item>
-  </string-array>
+    <!-- Wireless Security -->
+    <string-array name="wireless_security_settings_security_mode_array">
+        <item>Disabled</item>
+        <item>WPA Personal</item>
+        <item>WPA Enterprise</item>
+        <item>WPA2 Personal</item>
+        <item>WPA2 Enterprise</item>
+        <item>WPA2 Personal Mixed</item>
+        <item>WPA2 Enterprise Mixed</item>
+        <item>RADIUS</item>
+        <item>WEP</item>
+    </string-array>
+    <string-array name="wireless_security_settings_security_mode_array_values">
+        <item>disabled</item>
+        <item>psk</item>
+        <item>wpa</item>
+        <item>psk2</item>
+        <item>wpa2</item>
+        <item>psk psk2</item>
+        <item>wpa wpa2</item>
+        <item>radius</item>
+        <item>wep</item>
+    </string-array>
 
-  <string-array name="wireless_security_settings_wpa_personal_wpa_algorithms_array">
-    <item>TKIP</item>
-    <item>AES</item>
-    <item>TKIP+AES</item>
-  </string-array>
-  <string-array name="wireless_security_settings_wpa_personal_wpa_algorithms_array_values">
-    <item>tkip</item>
-    <item>aes</item>
-    <item>tkip+aes</item>
-  </string-array>
+    <string-array name="wireless_security_settings_wpa_personal_wpa_algorithms_array">
+        <item>TKIP</item>
+        <item>AES</item>
+        <item>TKIP+AES</item>
+    </string-array>
+    <string-array name="wireless_security_settings_wpa_personal_wpa_algorithms_array_values">
+        <item>tkip</item>
+        <item>aes</item>
+        <item>tkip+aes</item>
+    </string-array>
 
-  <string-array name="wireless_security_settings_radius_mac_format_array">
-    <item>aabbcc-ddeeff</item>
-    <item>aabbccddeeff</item>
-    <item>aa:bb:cc:dd:ee:ff</item>
-    <item>aa-bb-cc-dd-ee-ff</item>
-  </string-array>
-  <string-array name="wireless_security_settings_radius_mac_format_array_values">
-    <item>0</item>
-    <item>1</item>
-    <item>2</item>
-    <item>3</item>
-  </string-array>
+    <string-array name="wireless_security_settings_radius_mac_format_array">
+        <item>aabbcc-ddeeff</item>
+        <item>aabbccddeeff</item>
+        <item>aa:bb:cc:dd:ee:ff</item>
+        <item>aa-bb-cc-dd-ee-ff</item>
+    </string-array>
+    <string-array name="wireless_security_settings_radius_mac_format_array_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
 
-  <string-array name="wireless_security_settings_wep_encryption_array">
-    <item>64 bits 10 hex digits</item>
-    <item>128 bits 26 hex digits</item>
-  </string-array>
-  <string-array name="wireless_security_settings_wep_encryption_array_values">
-    <item>64</item>
-    <item>128</item>
-  </string-array>
+    <string-array name="wireless_security_settings_wep_encryption_array">
+        <item>64 bits 10 hex digits</item>
+        <item>128 bits 26 hex digits</item>
+    </string-array>
+    <string-array name="wireless_security_settings_wep_encryption_array_values">
+        <item>64</item>
+        <item>128</item>
+    </string-array>
 
-  <array name="autosize_text_sizes">
-    <item>10sp</item>
-    <item>12sp</item>
-    <item>20sp</item>
-    <item>40sp</item>
-    <item>100sp</item>
-  </array>
+    <array name="autosize_text_sizes">
+        <item>10sp</item>
+        <item>12sp</item>
+        <item>20sp</item>
+        <item>40sp</item>
+        <item>100sp</item>
+    </array>
 
 </resources>

@@ -30,33 +30,38 @@ import org.rm3l.router_companion.utils.SSHUtils;
 
 public class ClearARPCacheRouterAction extends AbstractRouterAction<Void> {
 
-  @NonNull private final Context mContext;
+    @NonNull
+    private final Context mContext;
 
-  public ClearARPCacheRouterAction(Router router, @NonNull Context context,
-      @Nullable RouterActionListener listener,
-      @NonNull final SharedPreferences globalSharedPreferences) {
-    super(router, listener, RouterAction.CLEAR_ARP_CACHE, globalSharedPreferences);
-    this.mContext = context;
-  }
-
-  @Nullable @Override protected Context getContext() {
-    return mContext;
-  }
-
-  @NonNull @Override protected RouterActionResult<Void> doActionInBackground() {
-
-    Exception exception = null;
-    try {
-      final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router,
-          "/usr/sbin/ip -s -s neigh flush all");
-      if (exitStatus != 0) {
-        throw new IllegalStateException();
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-      exception = e;
+    public ClearARPCacheRouterAction(Router router, @NonNull Context context,
+            @Nullable RouterActionListener listener,
+            @NonNull final SharedPreferences globalSharedPreferences) {
+        super(router, listener, RouterAction.CLEAR_ARP_CACHE, globalSharedPreferences);
+        this.mContext = context;
     }
 
-    return new RouterActionResult<>(null, exception);
-  }
+    @NonNull
+    @Override
+    protected RouterActionResult<Void> doActionInBackground() {
+
+        Exception exception = null;
+        try {
+            final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router,
+                    "/usr/sbin/ip -s -s neigh flush all");
+            if (exitStatus != 0) {
+                throw new IllegalStateException();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            exception = e;
+        }
+
+        return new RouterActionResult<>(null, exception);
+    }
+
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
+    }
 }

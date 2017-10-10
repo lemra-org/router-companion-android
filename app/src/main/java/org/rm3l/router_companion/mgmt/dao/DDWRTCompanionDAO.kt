@@ -29,62 +29,62 @@ import org.rm3l.router_companion.resources.conn.Router
 
 interface DDWRTCompanionDAO {
 
-  fun destroy()
+    fun destroy()
 
-  fun insertRouter(router: Router): Router?
+    fun insertRouter(router: Router): Router?
 
-  fun updateRouter(router: Router): Router?
+    fun updateRouter(router: Router): Router?
 
-  fun deleteRouter(uuid: String)
+    fun deleteRouter(uuid: String)
 
-  val allRouters: List<Router>
+    val allRouters: List<Router>
 
-  val allRoutersIncludingArchived: List<Router>
+    val allRoutersIncludingArchived: List<Router>
 
-  fun getRouter(uuid: String): Router?
+    fun getRouter(uuid: String): Router?
 
-  fun getRouter(id: Int): Router?
+    fun getRouter(id: Int): Router?
 
-  fun getRoutersByName(name: String): Collection<Router>
+    fun getRoutersByName(name: String): Collection<Router>
 
-  fun insertWANTrafficData(vararg trafficData: WANTrafficData): Long?
+    fun insertWANTrafficData(vararg trafficData: WANTrafficData): Long?
 
-  fun isWANTrafficDataPresent(router: String, date: String): Boolean
+    fun isWANTrafficDataPresent(router: String, date: String): Boolean
 
-  fun getWANTrafficDataByRouterByDate(router: String,
-      date: String): List<WANTrafficData>
+    fun getWANTrafficDataByRouterByDate(router: String,
+                                        date: String): List<WANTrafficData>
 
-  fun getWANTrafficDataByRouterBetweenDates(router: String,
-      dateLower: String, dateHigher: String): List<WANTrafficData>
+    fun getWANTrafficDataByRouterBetweenDates(router: String,
+                                              dateLower: String, dateHigher: String): List<WANTrafficData>
 
-  fun deleteWANTrafficDataByRouter(router: String)
+    fun deleteWANTrafficDataByRouter(router: String)
 
-  fun insertSpeedTestResult(speedTestResult: SpeedTestResult): Long?
+    fun insertSpeedTestResult(speedTestResult: SpeedTestResult): Long?
 
-  fun getSpeedTestResultsByRouter(router: String): List<SpeedTestResult>
+    fun getSpeedTestResultsByRouter(router: String): List<SpeedTestResult>
 
-  fun deleteSpeedTestResultByRouterById(router: String, id: Long)
+    fun deleteSpeedTestResultByRouterById(router: String, id: Long)
 
-  fun deleteAllSpeedTestResultsByRouter(router: String)
+    fun deleteAllSpeedTestResultsByRouter(router: String)
 
-  /**
-   * Audit log of all actions performed via the Plugin
-   */
-  fun recordAction(actionLog: ActionLog): Long?
+    /**
+     * Audit log of all actions performed via the Plugin
+     */
+    fun recordAction(actionLog: ActionLog): Long?
 
-  fun getActionsByOrigin(origin: String): Collection<ActionLog>
+    fun getActionsByOrigin(origin: String): Collection<ActionLog>
 
-  fun getActionsByRouterByOrigin(routerUuid: String, origin: String): Collection<ActionLog>
+    fun getActionsByRouterByOrigin(routerUuid: String, origin: String): Collection<ActionLog>
 
-  fun getActionsByOrigin(origin: String, predicate: String, groupBy: String,
-      having: String, orderBy: String): Collection<ActionLog>
+    fun getActionsByOrigin(origin: String, predicate: String, groupBy: String,
+                           having: String, orderBy: String): Collection<ActionLog>
 
-  fun getActionsByRouterByOrigin(routerUuid: String, origin: String,
-      predicate: String, groupBy: String, having: String, orderBy: String): Collection<ActionLog>
+    fun getActionsByRouterByOrigin(routerUuid: String, origin: String,
+                                   predicate: String, groupBy: String, having: String, orderBy: String): Collection<ActionLog>
 
-  fun clearActionsLogByOrigin(origin: String)
+    fun clearActionsLogByOrigin(origin: String)
 
-  fun clearActionsLogByRouterByOrigin(routerUuid: String, origin: String)
+    fun clearActionsLogByRouterByOrigin(routerUuid: String, origin: String)
 
-  fun clearActionsLogs()
+    fun clearActionsLogs()
 }

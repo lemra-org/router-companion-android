@@ -32,19 +32,26 @@ import java.util.Comparator;
  */
 public class ReverseNaturalOrderSortingStrategy extends SortingStrategy {
 
-  @NonNull @Override public String getDisplayName() {
-    return "Reverse Natural Ordering";
-  }
+    @NonNull
+    @Override
+    public String getDisplayName() {
+        return "Reverse Natural Ordering";
+    }
 
-  @NonNull @Override public String getShortDescription() {
-    return "Reverse Alphabetical";
-  }
+    @NonNull
+    @Override
+    public String getShortDescription() {
+        return "Reverse Alphabetical";
+    }
 
-  @Nullable @Override protected Comparator<String> getComparator() {
-    return Collections.reverseOrder();
-  }
+    @Override
+    protected boolean doCompare() {
+        return true;
+    }
 
-  @Override protected boolean doCompare() {
-    return true;
-  }
+    @Nullable
+    @Override
+    protected Comparator<String> getComparator() {
+        return Collections.reverseOrder();
+    }
 }

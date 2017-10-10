@@ -12,27 +12,27 @@ import com.google.common.cache.CacheBuilder;
  */
 public class FontUtils {
 
-  private static final Cache<String, Typeface> FONTS_CACHE =
-      CacheBuilder.newBuilder().maximumSize(5).weakValues().build();
+    public enum FontType {
+        TTF(".ttf"), OTF(".otf");
 
-  public static Typeface getTypeface(@NonNull final Context context, @NonNull final String fontName,
-      @Nullable final FontType fontType) {
-    Typeface typeface = FONTS_CACHE.getIfPresent(fontName);
-    if (typeface == null) {
-      typeface = Typeface.createFromAsset(context.getAssets(),
-          "fonts/" + fontName + (fontType == null ? "" : fontType.extension));
-      FONTS_CACHE.put(fontName, typeface);
+        private final String extension;
+
+        FontType(String extension) {
+            this.extension = extension;
+        }
     }
-    return typeface;
-  }
 
-  public enum FontType {
-    TTF(".ttf"), OTF(".otf");
+    private static final Cache<String, Typeface> FONTS_CACHE =
+            CacheBuilder.newBuilder().maximumSize(5).weakValues().build();
 
-    private final String extension;
-
-    FontType(String extension) {
-      this.extension = extension;
+    public static Typeface getTypeface(@NonNull final Context context, @NonNull final String fontName,
+            @Nullable final FontType fontType) {
+        Typeface typeface = FONTS_CACHE.getIfPresent(fontName);
+        if (typeface == null) {
+            typeface = Typeface.createFromAsset(context.getAssets(),
+                    "fonts/" + fontName + (fontType == null ? "" : fontType.extension));
+            FONTS_CACHE.put(fontName, typeface);
+        }
+        return typeface;
     }
-  }
 }

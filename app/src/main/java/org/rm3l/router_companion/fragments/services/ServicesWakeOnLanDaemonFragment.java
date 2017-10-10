@@ -13,7 +13,9 @@ import org.rm3l.router_companion.tiles.services.wol.WakeOnLanDaemonTile;
  */
 public class ServicesWakeOnLanDaemonFragment extends AbstractBaseFragment {
 
-  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return Arrays.<DDWRTTile>asList(new WakeOnLanDaemonTile(this, savedInstanceState, this.router));
-  }
+    @Nullable
+    @Override
+    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+        return Arrays.<DDWRTTile>asList(new WakeOnLanDaemonTile(this, savedInstanceState, this.router));
+    }
 }

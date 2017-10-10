@@ -4,9 +4,9 @@
     android:shape="oval"
     android:useLevel="true">
 
-  <size
-      android:height="6dip"
-      android:width="6dip"/>
+    <size
+        android:width="6dip"
+        android:height="6dip" />
 
-  <solid android:color="@color/LightGrey"/>
+    <solid android:color="@color/LightGrey" />
 </shape>

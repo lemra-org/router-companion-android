@@ -25,197 +25,182 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
-  <LinearLayout
-      android:id="@+id/tile_status_bandwidth_ifaces_hdr"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:paddingTop="4.0dip"
-      >
+    <LinearLayout
+        android:id="@+id/tile_status_bandwidth_ifaces_hdr"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="4.0dip">
 
-    <TextView
-        android:id="@+id/tile_status_bandwidth_ifaces_title"
+        <TextView
+            android:id="@+id/tile_status_bandwidth_ifaces_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/interfaces"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textIsSelectable="true"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/tile_progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="start"
+        android:layout_marginBottom="8.0dip"
+        android:layout_marginTop="8.0dip"
+        android:indeterminate="false"
+        android:indeterminateOnly="false" />
+
+    <!-- Error message placeholder -->
+    <TextView
+        android:id="@+id/tile_status_bandwidth_ifaces_error"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:ellipsize="end"
+        android:gravity="center"
         android:maxLines="1"
-        android:text="@string/interfaces"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/error_placeholder"
+        android:textColor="@color/ddwrt_purple"
         android:textIsSelectable="true"
         android:textStyle="bold"
-        />
+        android:visibility="gone" />
 
-  </LinearLayout>
+    <GridLayout
+        android:id="@+id/tile_status_bandwidth_ifaces_togglebutton_container"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="2"
+        android:visibility="gone">
 
-  <ProgressBar
-      android:id="@+id/tile_progress_bar"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginBottom="8.0dip"
-      android:layout_marginTop="8.0dip"
-      android:indeterminate="false"
-      android:indeterminateOnly="false"
-      style="?android:attr/progressBarStyleHorizontal"
-      />
+        <!-- LAN -->
+        <TextView
+            android:id="@+id/tile_status_bandwidth_ifaces_lan_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8.0dip"
+            android:layout_marginRight="8.0dip"
+            android:text="@string/bw_lan"
+            android:textStyle="bold" />
 
-  <!-- Error message placeholder -->
-  <TextView
-      android:id="@+id/tile_status_bandwidth_ifaces_error"
-      android:layout_width="300dp"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:ellipsize="end"
-      android:gravity="center"
-      android:maxLines="1"
-      android:text="@string/error_placeholder"
-      android:textColor="@color/ddwrt_purple"
-      android:textIsSelectable="true"
-      android:textStyle="bold"
-      android:visibility="gone"
-      />
+        <TextView
+            android:id="@+id/tile_status_bandwidth_ifaces_lan"
+            android:layout_width="0dip"
+            android:layout_gravity="fill_horizontal"
+            android:text="@string/loading"
+            android:textIsSelectable="true" />
 
-  <GridLayout
-      android:id="@+id/tile_status_bandwidth_ifaces_togglebutton_container"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:columnCount="2"
-      android:visibility="gone"
-      >
+        <!-- Wireless -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8.0dip"
+            android:layout_marginRight="8.0dip"
+            android:text="@string/bw_wireless"
+            android:textStyle="bold" />
 
-    <!-- LAN -->
+        <TextView
+            android:id="@+id/tile_status_bandwidth_ifaces_wireless"
+            android:layout_width="0dip"
+            android:layout_gravity="fill_horizontal"
+            android:layout_marginBottom="5dp"
+            android:textIsSelectable="true" />
+
+        <!-- Radio -->
+        <TextView
+            android:id="@+id/tile_status_bandwidth_ifaces_wireless_radio_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8.0dip"
+            android:layout_marginRight="8.0dip"
+            android:text="Radio"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/tile_status_bandwidth_ifaces_wireless_radio_togglebutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginBottom="5dp"
+            android:checked="true"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textOff="OFF"
+            android:textOn="ON"
+            android:visibility="gone" />
+
+        <!-- WAN -->
+        <TextView
+            android:id="@+id/tile_status_bandwidth_ifaces_wan_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8.0dip"
+            android:layout_marginRight="8.0dip"
+            android:text="@string/bw_wan"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tile_status_bandwidth_ifaces_wan"
+            android:layout_marginEnd="8.0dip"
+            android:layout_marginRight="8.0dip"
+            android:text="@string/loading"
+            android:textIsSelectable="true" />
+
+    </GridLayout>
+
     <TextView
-        android:id="@+id/tile_status_bandwidth_ifaces_lan_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8.0dip"
-        android:layout_marginRight="8.0dip"
-        android:text="@string/bw_lan"
-        android:textStyle="bold"
-        />
+        android:layout_marginBottom="@dimen/net_traffic_multi_text_size"
+        android:visibility="invisible" />
+
     <TextView
-        android:id="@+id/tile_status_bandwidth_ifaces_lan"
-        android:layout_width="0dip"
-        android:layout_gravity="fill_horizontal"
-        android:text="@string/loading"
+        android:id="@+id/tile_status_bandwidth_ifaces_loading_view_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
         android:textIsSelectable="true"
-        />
+        android:textStyle="italic" />
 
-    <!-- Wireless -->
-    <TextView
-        android:layout_width="wrap_content"
+    <ProgressBar
+        android:id="@+id/tile_status_bandwidth_ifaces_loading_view"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8.0dip"
-        android:layout_marginRight="8.0dip"
-        android:text="@string/bw_wireless"
-        android:textStyle="bold"
-        />
-    <TextView
-        android:id="@+id/tile_status_bandwidth_ifaces_wireless"
-        android:layout_width="0dip"
-        android:layout_gravity="fill_horizontal"
-        android:layout_marginBottom="5dp"
-        android:textIsSelectable="true"
-        />
+        android:layout_gravity="center"
+        android:indeterminate="false"
+        android:indeterminateOnly="false"
+        android:maxHeight="35dip"
+        android:minHeight="35dip" />
 
-    <!-- Radio -->
-    <TextView
-        android:id="@+id/tile_status_bandwidth_ifaces_wireless_radio_title"
+    <GridLayout
+        android:id="@+id/tile_status_bandwidth_ifaces_list_container"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="0.74"
+        android:columnCount="2"
+        android:orientation="vertical"
+        android:visibility="gone" />
+
+    <com.github.curioustechizen.ago.RelativeTimeTextView
+        android:id="@+id/tile_last_sync"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8.0dip"
-        android:layout_marginRight="8.0dip"
-        android:text="Radio"
-        android:textStyle="bold"
-        android:visibility="gone"
-        />
-    <android.support.v7.widget.SwitchCompat
-        android:id="@+id/tile_status_bandwidth_ifaces_wireless_radio_togglebutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:layout_marginBottom="5dp"
-        android:checked="true"
+        android:layout_gravity="end|bottom"
+        android:layout_marginTop="5dp"
+        android:ellipsize="end"
+        android:gravity="end"
+        android:maxLines="1"
+        android:text="Last sync: "
         android:textAppearance="?android:textAppearanceSmall"
-        android:textOff="OFF"
-        android:textOn="ON"
-        android:visibility="gone"
-        />
-
-    <!-- WAN -->
-    <TextView
-        android:id="@+id/tile_status_bandwidth_ifaces_wan_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8.0dip"
-        android:layout_marginRight="8.0dip"
-        android:text="@string/bw_wan"
-        android:textStyle="bold"
-        />
-    <TextView
-        android:id="@+id/tile_status_bandwidth_ifaces_wan"
-        android:layout_marginEnd="8.0dip"
-        android:layout_marginRight="8.0dip"
-        android:text="@string/loading"
         android:textIsSelectable="true"
-        />
-
-  </GridLayout>
-
-  <TextView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginBottom="@dimen/net_traffic_multi_text_size"
-      android:visibility="invisible"
-      />
-
-  <TextView
-      android:id="@+id/tile_status_bandwidth_ifaces_loading_view_desc"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center_horizontal"
-      android:gravity="center_horizontal"
-      android:textIsSelectable="true"
-      android:textStyle="italic"
-      />
-
-  <ProgressBar
-      android:id="@+id/tile_status_bandwidth_ifaces_loading_view"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:indeterminate="false"
-      android:indeterminateOnly="false"
-      android:maxHeight="35dip"
-      android:minHeight="35dip"
-      style="?android:attr/progressBarStyleHorizontal"
-      />
-
-  <GridLayout
-      android:id="@+id/tile_status_bandwidth_ifaces_list_container"
-      android:layout_width="wrap_content"
-      android:layout_height="0dp"
-      android:layout_weight="0.74"
-      android:columnCount="2"
-      android:orientation="vertical"
-      android:visibility="gone"
-      />
-
-  <com.github.curioustechizen.ago.RelativeTimeTextView
-      android:id="@+id/tile_last_sync"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="end|bottom"
-      android:layout_marginTop="5dp"
-      android:ellipsize="end"
-      android:gravity="end"
-      android:maxLines="1"
-      android:text="Last sync: "
-      android:textAppearance="?android:textAppearanceSmall"
-      android:textIsSelectable="true"
-      android:textStyle="italic"
-      />
+        android:textStyle="italic" />
 
 </LinearLayout>

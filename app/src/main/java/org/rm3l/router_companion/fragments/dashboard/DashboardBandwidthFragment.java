@@ -13,8 +13,10 @@ import org.rm3l.router_companion.tiles.dashboard.bandwidth.WANTotalTrafficOvervi
  */
 public class DashboardBandwidthFragment extends AbstractBaseFragment {
 
-  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return Arrays.<DDWRTTile>asList(
-        new WANTotalTrafficOverviewTile(this, savedInstanceState, this.router));
-  }
+    @Nullable
+    @Override
+    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+        return Arrays.<DDWRTTile>asList(
+                new WANTotalTrafficOverviewTile(this, savedInstanceState, this.router));
+    }
 }

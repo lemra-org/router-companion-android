@@ -18,105 +18,110 @@ import org.rm3l.router_companion.utils.ColorUtils;
  */
 public class LineView extends ImageView {
 
-  private static final String LOG_TAG = LineView.class.getSimpleName();
+    private static final String LOG_TAG = LineView.class.getSimpleName();
 
-  private Paint mPaint;
-  private float startX;
-  private float startY;
-  private float stopX;
-  private float stopY;
+    private Paint mPaint;
 
-  public LineView(Context context) {
-    super(context);
-    initPaint(context);
-  }
+    private float startX;
 
-  public LineView(Context context, AttributeSet attrs) {
-    super(context, attrs);
-    initPaint(context);
-  }
+    private float startY;
 
-  public LineView(Context context, AttributeSet attrs, int defStyleAttr) {
-    super(context, attrs, defStyleAttr);
-    initPaint(context);
-  }
+    private float stopX;
 
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-  public LineView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-    super(context, attrs, defStyleAttr, defStyleRes);
-    initPaint(context);
-  }
+    private float stopY;
 
-  private void initPaint(Context context) {
-    mPaint = new Paint();
-    final boolean themeLight = ColorUtils.Companion.isThemeLight(context);
-    if (themeLight) {
-      mPaint.setColor(Color.BLACK);
-    } else {
-      mPaint.setColor(Color.WHITE);
+    public LineView(Context context) {
+        super(context);
+        initPaint(context);
     }
-    mPaint.setAntiAlias(true);
-    mPaint.setDither(true);
-    mPaint.setStrokeWidth(10);
-    mPaint.setShadowLayer(4, 2, 2, 0x80000000);
-  }
 
-  public Paint getPaint() {
-    return mPaint;
-  }
+    public LineView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initPaint(context);
+    }
 
-  public LineView setPaint(Paint mPaint) {
-    this.mPaint = mPaint;
-    return this;
-  }
+    public LineView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        initPaint(context);
+    }
 
-  public float getStartX() {
-    return startX;
-  }
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public LineView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        initPaint(context);
+    }
 
-  public LineView setStartX(float startX) {
-    this.startX = startX;
-    return this;
-  }
+    public Paint getPaint() {
+        return mPaint;
+    }
 
-  public float getStartY() {
-    return startY;
-  }
+    public LineView setPaint(Paint mPaint) {
+        this.mPaint = mPaint;
+        return this;
+    }
 
-  public LineView setStartY(float startY) {
-    this.startY = startY;
-    return this;
-  }
+    public float getStartX() {
+        return startX;
+    }
 
-  public float getStopX() {
-    return stopX;
-  }
+    public LineView setStartX(float startX) {
+        this.startX = startX;
+        return this;
+    }
 
-  public LineView setStopX(float stopX) {
-    this.stopX = stopX;
-    return this;
-  }
+    public float getStartY() {
+        return startY;
+    }
 
-  public float getStopY() {
-    return stopY;
-  }
+    public LineView setStartY(float startY) {
+        this.startY = startY;
+        return this;
+    }
 
-  public LineView setStopY(float stopY) {
-    this.stopY = stopY;
-    return this;
-  }
+    public float getStopX() {
+        return stopX;
+    }
 
-  @Override protected void onDraw(@NonNull Canvas canvas) {
-    Crashlytics.log(Log.DEBUG, LOG_TAG, "onDraw: (startX, startY, stopX, stopY) = ("
-        + startX
-        + ", "
-        + startY
-        + ", "
-        + stopX
-        + ", "
-        + stopY
-        + ")");
-    canvas.drawLine(startX, startY, stopX, stopY, mPaint);
-    mPaint.setShadowLayer(0, 0, 0, 0);
-  }
+    public LineView setStopX(float stopX) {
+        this.stopX = stopX;
+        return this;
+    }
+
+    public float getStopY() {
+        return stopY;
+    }
+
+    public LineView setStopY(float stopY) {
+        this.stopY = stopY;
+        return this;
+    }
+
+    @Override
+    protected void onDraw(@NonNull Canvas canvas) {
+        Crashlytics.log(Log.DEBUG, LOG_TAG, "onDraw: (startX, startY, stopX, stopY) = ("
+                + startX
+                + ", "
+                + startY
+                + ", "
+                + stopX
+                + ", "
+                + stopY
+                + ")");
+        canvas.drawLine(startX, startY, stopX, stopY, mPaint);
+        mPaint.setShadowLayer(0, 0, 0, 0);
+    }
+
+    private void initPaint(Context context) {
+        mPaint = new Paint();
+        final boolean themeLight = ColorUtils.Companion.isThemeLight(context);
+        if (themeLight) {
+            mPaint.setColor(Color.BLACK);
+        } else {
+            mPaint.setColor(Color.WHITE);
+        }
+        mPaint.setAntiAlias(true);
+        mPaint.setDither(true);
+        mPaint.setStrokeWidth(10);
+        mPaint.setShadowLayer(4, 2, 2, 0x80000000);
+    }
 }

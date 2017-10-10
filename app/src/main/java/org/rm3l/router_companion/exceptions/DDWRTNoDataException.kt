@@ -28,11 +28,11 @@ package org.rm3l.router_companion.exceptions
  * @author [Armel S.](mailto:apps+ddwrt@rm3l.org)
  */
 open class DDWRTNoDataException : DDWRTCompanionException {
-  constructor()
+    constructor()
 
-  constructor(detailMessage: String?) : super(detailMessage)
+    constructor(detailMessage: String?) : super(detailMessage)
 
-  constructor(detailMessage: String?, throwable: Throwable?) : super(detailMessage, throwable)
+    constructor(detailMessage: String?, throwable: Throwable?) : super(detailMessage, throwable)
 
-  constructor(throwable: Throwable?) : super(throwable)
+    constructor(throwable: Throwable?) : super(throwable)
 }

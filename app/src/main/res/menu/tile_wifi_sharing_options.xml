@@ -22,11 +22,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-  <item
-      android:id="@+id/action_feedback"
-      android:alphabeticShortcut="f"
-      android:orderInCategory="2"
-      android:title="@string/send_feedback"
-      app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_feedback"
+        android:alphabeticShortcut="f"
+        android:orderInCategory="2"
+        android:title="@string/send_feedback"
+        app:showAsAction="never" />
 
 </menu>

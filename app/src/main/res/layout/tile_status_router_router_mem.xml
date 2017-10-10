@@ -25,474 +25,457 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
-    android:orientation="vertical"
-    >
-
-  <LinearLayout
-      android:id="@+id/tile_status_router_router_mem_hdr"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:paddingTop="4.0dip"
-      >
-
-    <TextView
-        android:id="@+id/tile_status_router_router_mem_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:text="@string/memory"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textIsSelectable="true"
-        android:textStyle="bold"
-        />
-
-  </LinearLayout>
-
-  <ProgressBar
-      android:id="@+id/tile_progress_bar"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginBottom="8.0dip"
-      android:layout_marginTop="8.0dip"
-      android:indeterminate="false"
-      android:indeterminateOnly="false"
-      style="?android:attr/progressBarStyleHorizontal"
-      />
-
-  <!-- Error message placeholder -->
-  <TextView
-      android:id="@+id/tile_status_router_router_mem_error"
-      android:layout_width="300dp"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:ellipsize="end"
-      android:gravity="center"
-      android:maxLines="1"
-      android:text="@string/error_placeholder"
-      android:textColor="@color/ddwrt_purple"
-      android:textIsSelectable="true"
-      android:textStyle="bold"
-      android:visibility="gone"
-      />
-
-  <TextView
-      android:id="@+id/tile_status_router_router_mem_note"
-      android:layout_width="300dp"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:ellipsize="end"
-      android:gravity="center"
-      android:maxLines="1"
-      android:text="Tap anywhere in this tile to show more info"
-      android:textAppearance="?android:textAppearanceSmall"
-      android:textStyle="italic"
-      />
-
-  <RelativeLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      >
+    android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/tile_status_router_router_mem_content"
-        android:layout_width="match_parent"
+        android:id="@+id/tile_status_router_router_mem_hdr"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        android:orientation="vertical"
-        >
+        android:paddingTop="4.0dip">
 
-      <!-- Total Available -->
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="10dp"
-          android:text="Total Available"
-          android:textStyle="bold"
-          />
-      <TextView
-          android:id="@+id/tile_status_router_router_mem_total_available"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="start"
-          android:ellipsize="end"
-          android:gravity="start"
-          android:maxLines="1"
-          android:text="@string/loading"
-          android:textIsSelectable="true"
-          />
-
-      <!-- Free -->
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="10dp"
-          android:text="@string/router_mem_free"
-          android:textStyle="bold"
-          />
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="horizontal"
-          >
         <TextView
-            android:id="@+id/tile_status_router_router_mem_free"
+            android:id="@+id/tile_status_router_router_mem_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_weight="1"
             android:ellipsize="end"
-            android:gravity="start"
             android:maxLines="1"
-            android:text="@string/loading"
+            android:text="@string/memory"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textIsSelectable="true"
-            />
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_weight="1"
-            >
-          <ProgressBar
-              android:id="@+id/tile_status_router_router_mem_free_usage"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:indeterminate="false"
-              android:indeterminateOnly="false"
-              android:max="100"
-              android:progress="0"
-              android:scaleY="4.0"
-              style="?android:attr/progressBarStyleHorizontal"
-              />
-          <TextView
-              android:id="@+id/tile_status_router_router_mem_free_usage_text"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_gravity="center"
-              android:text="-"
-              android:textAppearance="?android:textAppearanceSmall"
-              android:textColor="@color/win8_teal"
-              android:textIsSelectable="true"
-              />
-        </FrameLayout>
-
-      </LinearLayout>
-
-      <!-- Used -->
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="10dp"
-          android:text="@string/router_mem_used"
-          android:textStyle="bold"
-          />
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="horizontal"
-          >
-        <TextView
-            android:id="@+id/tile_status_router_router_mem_used"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:gravity="start"
-            android:maxLines="1"
-            android:text="@string/loading"
-            android:textIsSelectable="true"
-            />
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_weight="1"
-            >
-          <ProgressBar
-              android:id="@+id/tile_status_router_router_mem_used_usage"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:indeterminate="false"
-              android:indeterminateOnly="false"
-              android:max="100"
-              android:progress="0"
-              android:scaleY="4.0"
-              style="?android:attr/progressBarStyleHorizontal"
-              />
-          <TextView
-              android:id="@+id/tile_status_router_router_mem_used_usage_text"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_gravity="center"
-              android:text="-"
-              android:textAppearance="?android:textAppearanceSmall"
-              android:textColor="@color/win8_teal"
-              android:textIsSelectable="true"
-              />
-        </FrameLayout>
-
-      </LinearLayout>
-
-      <!-- Buffers -->
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="10dp"
-          android:text="Buffers"
-          android:textStyle="bold"
-          />
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="horizontal"
-          >
-        <TextView
-            android:id="@+id/tile_status_router_router_mem_buffers"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:gravity="start"
-            android:maxLines="1"
-            android:text="@string/loading"
-            android:textIsSelectable="true"
-            />
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_weight="1"
-            >
-          <ProgressBar
-              android:id="@+id/tile_status_router_router_mem_buffers_usage"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:indeterminate="false"
-              android:indeterminateOnly="false"
-              android:max="100"
-              android:progress="0"
-              android:scaleY="4.0"
-              style="?android:attr/progressBarStyleHorizontal"
-              />
-          <TextView
-              android:id="@+id/tile_status_router_router_mem_buffers_usage_text"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_gravity="center"
-              android:text="-"
-              android:textAppearance="?android:textAppearanceSmall"
-              android:textColor="@color/win8_teal"
-              android:textIsSelectable="true"
-              />
-        </FrameLayout>
-
-      </LinearLayout>
-
-      <!-- Cached -->
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="10dp"
-          android:text="Cached"
-          android:textStyle="bold"
-          />
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="horizontal"
-          >
-        <TextView
-            android:id="@+id/tile_status_router_router_mem_cached"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:gravity="start"
-            android:maxLines="1"
-            android:text="@string/loading"
-            android:textIsSelectable="true"
-            />
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_weight="1"
-            >
-          <ProgressBar
-              android:id="@+id/tile_status_router_router_mem_cached_usage"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:indeterminate="false"
-              android:indeterminateOnly="false"
-              android:max="100"
-              android:progress="0"
-              android:scaleY="4.0"
-              style="?android:attr/progressBarStyleHorizontal"
-              />
-          <TextView
-              android:id="@+id/tile_status_router_router_mem_cached_usage_text"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_gravity="center"
-              android:text="-"
-              android:textAppearance="?android:textAppearanceSmall"
-              android:textColor="@color/win8_teal"
-              android:textIsSelectable="true"
-              />
-        </FrameLayout>
-
-      </LinearLayout>
-
-      <!-- Active -->
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="10dp"
-          android:text="Active"
-          android:textStyle="bold"
-          />
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="horizontal"
-          >
-        <TextView
-            android:id="@+id/tile_status_router_router_mem_active"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:gravity="start"
-            android:maxLines="1"
-            android:text="@string/loading"
-            android:textIsSelectable="true"
-            />
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_weight="1"
-            >
-          <ProgressBar
-              android:id="@+id/tile_status_router_router_mem_active_usage"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:indeterminate="false"
-              android:indeterminateOnly="false"
-              android:max="100"
-              android:progress="0"
-              android:scaleY="4.0"
-              style="?android:attr/progressBarStyleHorizontal"
-              />
-          <TextView
-              android:id="@+id/tile_status_router_router_mem_active_usage_text"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_gravity="center"
-              android:text="-"
-              android:textAppearance="?android:textAppearanceSmall"
-              android:textColor="@color/win8_teal"
-              android:textIsSelectable="true"
-              />
-        </FrameLayout>
-
-      </LinearLayout>
-
-      <!-- Inactive -->
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="10dp"
-          android:text="Inactive"
-          android:textStyle="bold"
-          />
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="horizontal"
-          >
-        <TextView
-            android:id="@+id/tile_status_router_router_mem_inactive"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:gravity="start"
-            android:maxLines="1"
-            android:text="@string/loading"
-            android:textIsSelectable="true"
-            />
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_weight="1"
-            >
-          <ProgressBar
-              android:id="@+id/tile_status_router_router_mem_inactive_usage"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:indeterminate="false"
-              android:indeterminateOnly="false"
-              android:max="100"
-              android:progress="0"
-              android:scaleY="4.0"
-              style="?android:attr/progressBarStyleHorizontal"
-              />
-          <TextView
-              android:id="@+id/tile_status_router_router_mem_inactive_usage_text"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_gravity="center"
-              android:text="-"
-              android:textAppearance="?android:textAppearanceSmall"
-              android:textColor="@color/white"
-              android:textIsSelectable="true"
-              />
-        </FrameLayout>
-
-      </LinearLayout>
+            android:textStyle="bold" />
 
     </LinearLayout>
 
     <ProgressBar
-        android:id="@+id/tile_status_router_router_mem_loading_view"
-        android:layout_width="wrap_content"
+        android:id="@+id/tile_progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        />
+        android:layout_marginBottom="8.0dip"
+        android:layout_marginTop="8.0dip"
+        android:indeterminate="false"
+        android:indeterminateOnly="false" />
 
-    <com.github.curioustechizen.ago.RelativeTimeTextView
-        android:id="@+id/tile_last_sync"
-        android:layout_width="wrap_content"
+    <!-- Error message placeholder -->
+    <TextView
+        android:id="@+id/tile_status_router_router_mem_error"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/tile_status_router_router_mem_content"
-        android:layout_marginTop="15dp"
+        android:layout_gravity="center"
         android:ellipsize="end"
-        android:gravity="end"
+        android:gravity="center"
         android:maxLines="1"
-        android:text="Last sync: "
-        android:textAppearance="?android:textAppearanceSmall"
+        android:text="@string/error_placeholder"
+        android:textColor="@color/ddwrt_purple"
         android:textIsSelectable="true"
-        android:textStyle="italic"
-        />
+        android:textStyle="bold"
+        android:visibility="gone" />
 
-  </RelativeLayout>
+    <TextView
+        android:id="@+id/tile_status_router_router_mem_note"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="Tap anywhere in this tile to show more info"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textStyle="italic" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/tile_status_router_router_mem_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:orientation="vertical">
+
+            <!-- Total Available -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Total Available"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tile_status_router_router_mem_total_available"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:maxLines="1"
+                android:text="@string/loading"
+                android:textIsSelectable="true" />
+
+            <!-- Free -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/router_mem_free"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tile_status_router_router_mem_free"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:maxLines="1"
+                    android:text="@string/loading"
+                    android:textIsSelectable="true" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1">
+
+                    <ProgressBar
+                        android:id="@+id/tile_status_router_router_mem_free_usage"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:indeterminate="false"
+                        android:indeterminateOnly="false"
+                        android:max="100"
+                        android:progress="0"
+                        android:scaleY="4.0" />
+
+                    <TextView
+                        android:id="@+id/tile_status_router_router_mem_free_usage_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="-"
+                        android:textAppearance="?android:textAppearanceSmall"
+                        android:textColor="@color/win8_teal"
+                        android:textIsSelectable="true" />
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <!-- Used -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/router_mem_used"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tile_status_router_router_mem_used"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:maxLines="1"
+                    android:text="@string/loading"
+                    android:textIsSelectable="true" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1">
+
+                    <ProgressBar
+                        android:id="@+id/tile_status_router_router_mem_used_usage"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:indeterminate="false"
+                        android:indeterminateOnly="false"
+                        android:max="100"
+                        android:progress="0"
+                        android:scaleY="4.0" />
+
+                    <TextView
+                        android:id="@+id/tile_status_router_router_mem_used_usage_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="-"
+                        android:textAppearance="?android:textAppearanceSmall"
+                        android:textColor="@color/win8_teal"
+                        android:textIsSelectable="true" />
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <!-- Buffers -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Buffers"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tile_status_router_router_mem_buffers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:maxLines="1"
+                    android:text="@string/loading"
+                    android:textIsSelectable="true" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1">
+
+                    <ProgressBar
+                        android:id="@+id/tile_status_router_router_mem_buffers_usage"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:indeterminate="false"
+                        android:indeterminateOnly="false"
+                        android:max="100"
+                        android:progress="0"
+                        android:scaleY="4.0" />
+
+                    <TextView
+                        android:id="@+id/tile_status_router_router_mem_buffers_usage_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="-"
+                        android:textAppearance="?android:textAppearanceSmall"
+                        android:textColor="@color/win8_teal"
+                        android:textIsSelectable="true" />
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <!-- Cached -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Cached"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tile_status_router_router_mem_cached"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:maxLines="1"
+                    android:text="@string/loading"
+                    android:textIsSelectable="true" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1">
+
+                    <ProgressBar
+                        android:id="@+id/tile_status_router_router_mem_cached_usage"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:indeterminate="false"
+                        android:indeterminateOnly="false"
+                        android:max="100"
+                        android:progress="0"
+                        android:scaleY="4.0" />
+
+                    <TextView
+                        android:id="@+id/tile_status_router_router_mem_cached_usage_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="-"
+                        android:textAppearance="?android:textAppearanceSmall"
+                        android:textColor="@color/win8_teal"
+                        android:textIsSelectable="true" />
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <!-- Active -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Active"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tile_status_router_router_mem_active"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:maxLines="1"
+                    android:text="@string/loading"
+                    android:textIsSelectable="true" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1">
+
+                    <ProgressBar
+                        android:id="@+id/tile_status_router_router_mem_active_usage"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:indeterminate="false"
+                        android:indeterminateOnly="false"
+                        android:max="100"
+                        android:progress="0"
+                        android:scaleY="4.0" />
+
+                    <TextView
+                        android:id="@+id/tile_status_router_router_mem_active_usage_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="-"
+                        android:textAppearance="?android:textAppearanceSmall"
+                        android:textColor="@color/win8_teal"
+                        android:textIsSelectable="true" />
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <!-- Inactive -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Inactive"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tile_status_router_router_mem_inactive"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:maxLines="1"
+                    android:text="@string/loading"
+                    android:textIsSelectable="true" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1">
+
+                    <ProgressBar
+                        android:id="@+id/tile_status_router_router_mem_inactive_usage"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:indeterminate="false"
+                        android:indeterminateOnly="false"
+                        android:max="100"
+                        android:progress="0"
+                        android:scaleY="4.0" />
+
+                    <TextView
+                        android:id="@+id/tile_status_router_router_mem_inactive_usage_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="-"
+                        android:textAppearance="?android:textAppearanceSmall"
+                        android:textColor="@color/white"
+                        android:textIsSelectable="true" />
+                </FrameLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/tile_status_router_router_mem_loading_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+        <com.github.curioustechizen.ago.RelativeTimeTextView
+            android:id="@+id/tile_last_sync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/tile_status_router_router_mem_content"
+            android:layout_marginTop="15dp"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:maxLines="1"
+            android:text="Last sync: "
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textIsSelectable="true"
+            android:textStyle="italic" />
+
+    </RelativeLayout>
 
 </LinearLayout>

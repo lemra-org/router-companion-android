@@ -22,8 +22,8 @@
 
 package org.rm3l.router_companion.resources
 
-import java.io.Serializable
 import org.rm3l.router_companion.resources.conn.Router
+import java.io.Serializable
 
 /**
  * Abstract Router Data type, encapsulating the actual data and an exception, if any
@@ -34,69 +34,69 @@ import org.rm3l.router_companion.resources.conn.Router
 </T> */
 abstract class RouterData<T> : Serializable {
 
-  private var router: Router? = null
+    private var router: Router? = null
 
-  /**
-   * The data wrapped
-   */
-  private var data: T? = null
+    /**
+     * The data wrapped
+     */
+    private var data: T? = null
 
-  /**
-   * The exception wrapped
-   */
-  private var exception: Exception? = null
+    /**
+     * The exception wrapped
+     */
+    private var exception: Exception? = null
 
-  /**
-   * @return the data wrapped
-   */
-  fun getData(): T? {
-    return data
-  }
+    /**
+     * @return the data wrapped
+     */
+    fun getData(): T? {
+        return data
+    }
 
-  /**
-   * Set the data
+    /**
+     * Set the data
 
-   * @param data the data to set
-   * *
-   * @return this object
-   */
-  fun setData(data: T): RouterData<T> {
-    this.data = data
-    return this
-  }
+     * @param data the data to set
+     * *
+     * @return this object
+     */
+    fun setData(data: T): RouterData<T> {
+        this.data = data
+        return this
+    }
 
-  /**
-   * @return the exception
-   */
-  fun getException(): Exception? {
-    return exception
-  }
+    /**
+     * @return the exception
+     */
+    fun getException(): Exception? {
+        return exception
+    }
 
-  /**
-   * Set the exception
+    /**
+     * Set the exception
 
-   * @param exception the exception to set
-   * *
-   * @return this object
-   */
-  open fun setException(exception: Exception?): RouterData<T> {
-    this.exception = exception
-    return this
-  }
+     * @param exception the exception to set
+     * *
+     * @return this object
+     */
+    open fun setException(exception: Exception?): RouterData<T> {
+        this.exception = exception
+        return this
+    }
 
-  fun getRouter(): Router? {
-    return router
-  }
+    fun getRouter(): Router? {
+        return router
+    }
 
-  fun setRouter(router: Router?): RouterData<T> {
-    this.router = router
-    return this
-  }
+    fun setRouter(router: Router?): RouterData<T> {
+        this.router = router
+        return this
+    }
 
-  /**
-   * @return the string representation
-   */
-  override fun toString(): String {
-    return "${this.javaClass.simpleName} data=$data, exception=$exception}"
-  }
+    /**
+     * @return the string representation
+     */
+    override fun toString(): String {
+        return "${this.javaClass.simpleName} data=$data, exception=$exception}"
+    }
 }

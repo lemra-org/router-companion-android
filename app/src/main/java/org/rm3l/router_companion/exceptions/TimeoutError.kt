@@ -8,7 +8,7 @@ import java.io.IOException
 
 class TimeoutError : IOException {
 
-  constructor() : super()
+    constructor() : super()
 
-  constructor(cause: Throwable) : super(cause)
+    constructor(cause: Throwable) : super(cause)
 }

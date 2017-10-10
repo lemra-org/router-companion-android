@@ -25,63 +25,56 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="org.rm3l.router_companion.tiles.status.wan.WANMonthlyTrafficActivity"
-    >
+    tools:context="org.rm3l.router_companion.tiles.status.wan.WANMonthlyTrafficActivity">
 
-  <android.support.v7.widget.Toolbar
-      android:id="@+id/tile_status_wan_monthly_traffic_chart_view_toolbar"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:background="?attr/colorPrimary"
-      android:minHeight="?attr/actionBarSize"
-      />
-
-  <com.google.android.gms.ads.AdView
-      android:id="@+id/tile_status_wan_monthly_traffic_chart_view_adView"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center_horizontal"
-      android:layout_marginBottom="5dp"
-      android:layout_marginTop="5dp"
-      android:visibility="gone"
-      ads:adSize="BANNER"
-      ads:adUnitId="@string/banner_ad_unit_id_wan_monthly_traffic_chart"
-      />
-
-  <RelativeLayout
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      >
-
-    <LinearLayout
-        android:id="@+id/tile_status_wan_monthly_traffic_chart_placeholder"
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tile_status_wan_monthly_traffic_chart_view_toolbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        />
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize" />
 
-    <ProgressBar
-        android:id="@+id/tile_status_wan_monthly_traffic_chart_loading_view"
-        android:layout_width="wrap_content"
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/tile_status_wan_monthly_traffic_chart_view_adView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
         android:visibility="gone"
-        />
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id_wan_monthly_traffic_chart" />
 
-    <TextView
-        android:id="@+id/tile_status_wan_monthly_traffic_chart_error"
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="@string/internal_error_please_try_again"
-        android:textAppearance="?android:textAppearanceLarge"
-        android:textColor="@color/ddwrt_purple"
-        android:textIsSelectable="true"
-        android:visibility="gone"
-        />
+        android:layout_height="wrap_content">
 
-  </RelativeLayout>
+        <LinearLayout
+            android:id="@+id/tile_status_wan_monthly_traffic_chart_placeholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/tile_status_wan_monthly_traffic_chart_loading_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tile_status_wan_monthly_traffic_chart_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/internal_error_please_try_again"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:textColor="@color/ddwrt_purple"
+            android:textIsSelectable="true"
+            android:visibility="gone" />
+
+    </RelativeLayout>
 
 </LinearLayout>

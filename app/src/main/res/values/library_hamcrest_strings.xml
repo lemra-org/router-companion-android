@@ -21,21 +21,21 @@ SOFTWARE.
 -->
 
 <resources>
-  <string name="define_hamcrest" translatable="false"/>
-  <!-- Author section -->
-  <string name="library_hamcrest_author" translatable="false">Hamcrest</string>
-  <string name="library_hamcrest_authorWebsite" translatable="false">http://hamcrest.org/</string>
-  <!-- Library section -->
-  <string name="library_hamcrest_libraryName" translatable="false">Hamcrest</string>
-  <string name="library_hamcrest_libraryDescription" translatable="false">Matchers that can be combined to create flexible expressions of intent.</string>
-  <string name="library_hamcrest_libraryWebsite" translatable="false">http://hamcrest.org/JavaHamcrest/</string>
-  <string name="library_hamcrest_libraryVersion" translatable="false">1.4-atlassian-1</string>
-  <!-- OpenSource section -->
-  <string name="library_hamcrest_isOpenSource" translatable="false">true</string>
-  <string name="library_hamcrest_repositoryLink" translatable="false">https://github.com/hamcrest/JavaHamcrest</string>
-  <!-- ClassPath for autoDetect section -->
-  <!--<string translatable="false" name="library_hamcrest_classPath">com.facebook.hamcrest</string>-->
-  <!-- License section -->
-  <string name="library_hamcrest_licenseId" translatable="false">bsd_3</string>
-  <!-- Custom variables section -->
+    <string name="define_hamcrest" translatable="false" />
+    <!-- Author section -->
+    <string name="library_hamcrest_author" translatable="false">Hamcrest</string>
+    <string name="library_hamcrest_authorWebsite" translatable="false">http://hamcrest.org/</string>
+    <!-- Library section -->
+    <string name="library_hamcrest_libraryName" translatable="false">Hamcrest</string>
+    <string name="library_hamcrest_libraryDescription" translatable="false">Matchers that can be combined to create flexible expressions of intent.</string>
+    <string name="library_hamcrest_libraryWebsite" translatable="false">http://hamcrest.org/JavaHamcrest/</string>
+    <string name="library_hamcrest_libraryVersion" translatable="false">1.4-atlassian-1</string>
+    <!-- OpenSource section -->
+    <string name="library_hamcrest_isOpenSource" translatable="false">true</string>
+    <string name="library_hamcrest_repositoryLink" translatable="false">https://github.com/hamcrest/JavaHamcrest</string>
+    <!-- ClassPath for autoDetect section -->
+    <!--<string translatable="false" name="library_hamcrest_classPath">com.facebook.hamcrest</string>-->
+    <!-- License section -->
+    <string name="library_hamcrest_licenseId" translatable="false">bsd_3</string>
+    <!-- Custom variables section -->
 </resources>

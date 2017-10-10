@@ -6,11 +6,11 @@ package org.rm3l.router_companion.exceptions
 
 class UnknownRouterFirmwareException : DDWRTCompanionException {
 
-  constructor() : super() 
+    constructor() : super()
 
-  constructor(detailMessage: String?) : super(detailMessage) 
+    constructor(detailMessage: String?) : super(detailMessage)
 
-  constructor(detailMessage: String?, throwable: Throwable?) : super(detailMessage, throwable)
+    constructor(detailMessage: String?, throwable: Throwable?) : super(detailMessage, throwable)
 
-  constructor(throwable: Throwable?) : super(throwable) 
+    constructor(throwable: Throwable?) : super(throwable)
 }

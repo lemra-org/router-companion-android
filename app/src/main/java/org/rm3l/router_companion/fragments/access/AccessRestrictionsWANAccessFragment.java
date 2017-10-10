@@ -37,28 +37,31 @@ import org.rm3l.router_companion.tiles.admin.accessrestrictions.AccessRestrictio
  */
 public class AccessRestrictionsWANAccessFragment extends AbstractBaseFragment {
 
-  private List<DDWRTTile> tiles = null;
+    private List<DDWRTTile> tiles = null;
 
-  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    if (tiles == null) {
-      tiles = Collections.<DDWRTTile>singletonList(
-          new AccessRestrictionsWANAccessTile(this, savedInstanceState, this.router));
+    @NonNull
+    protected int getRootViewType() {
+        return RootViewType_LINEAR_LAYOUT;
     }
-    return tiles;
-  }
 
-  @NonNull protected int getRootViewType() {
-    return RootViewType_LINEAR_LAYOUT;
-  }
-  //
-  //    @Override
-  //    protected boolean canChildScrollUp() {
-  //        final List<DDWRTTile> tiles = this.getTiles(null);
-  //        if (tiles == null || tiles.isEmpty()) {
-  //            return false;
-  //        }
-  //        final DDWRTTile tile = tiles.get(0);
-  //        return (tile instanceof AccessRestrictionsWANAccessTile &&
-  //                ((AccessRestrictionsWANAccessTile) tile).canChildScrollUp());
-  //    }
+    @Nullable
+    @Override
+    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+        if (tiles == null) {
+            tiles = Collections.<DDWRTTile>singletonList(
+                    new AccessRestrictionsWANAccessTile(this, savedInstanceState, this.router));
+        }
+        return tiles;
+    }
+    //
+    //    @Override
+    //    protected boolean canChildScrollUp() {
+    //        final List<DDWRTTile> tiles = this.getTiles(null);
+    //        if (tiles == null || tiles.isEmpty()) {
+    //            return false;
+    //        }
+    //        final DDWRTTile tile = tiles.get(0);
+    //        return (tile instanceof AccessRestrictionsWANAccessTile &&
+    //                ((AccessRestrictionsWANAccessTile) tile).canChildScrollUp());
+    //    }
 }

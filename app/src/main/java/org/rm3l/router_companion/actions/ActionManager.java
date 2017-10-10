@@ -8,29 +8,29 @@ import org.rm3l.router_companion.multithreading.MultiThreadingManager;
  */
 public final class ActionManager {
 
-  private ActionManager() {
-  }
-
-  public static void runTasks(final AbstractRouterAction... tasks) {
-    final Executor actionExecutor = MultiThreadingManager.getActionExecutor();
-    if (tasks != null) {
-      for (final AbstractRouterAction task : tasks) {
-        if (task == null) {
-          continue;
+    public static void cancelTasks(final AbstractRouterAction... tasks) {
+        if (tasks != null) {
+            for (final AbstractRouterAction task : tasks) {
+                if (task == null) {
+                    continue;
+                }
+                task.cancel();
+            }
         }
-        actionExecutor.execute(task);
-      }
     }
-  }
 
-  public static void cancelTasks(final AbstractRouterAction... tasks) {
-    if (tasks != null) {
-      for (final AbstractRouterAction task : tasks) {
-        if (task == null) {
-          continue;
+    public static void runTasks(final AbstractRouterAction... tasks) {
+        final Executor actionExecutor = MultiThreadingManager.getActionExecutor();
+        if (tasks != null) {
+            for (final AbstractRouterAction task : tasks) {
+                if (task == null) {
+                    continue;
+                }
+                actionExecutor.execute(task);
+            }
         }
-        task.cancel();
-      }
     }
-  }
+
+    private ActionManager() {
+    }
 }

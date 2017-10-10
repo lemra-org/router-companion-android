@@ -26,369 +26,338 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".ui.activity.action.ActionEditActivity"
-    >
+    tools:context=".ui.activity.action.ActionEditActivity">
 
-  <android.support.v7.widget.Toolbar
-      android:id="@+id/toolbar"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:background="?attr/colorPrimary"
-      android:minHeight="?attr/actionBarSize"
-      />
-
-  <!-- Error message placeholder -->
-  <TextView
-      android:id="@+id/error_placeholder"
-      android:layout_width="300dp"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:ellipsize="end"
-      android:gravity="center"
-      android:text="Error"
-      android:textColor="@color/ddwrt_purple"
-      android:textIsSelectable="true"
-      android:textStyle="bold"
-      android:visibility="gone"
-      />
-
-  <ScrollView
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:layout_margin="10dp"
-      >
-
-    <RelativeLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize" />
 
-      <ProgressBar
-          android:id="@+id/loading_view"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_centerInParent="true"
-          android:indeterminate="false"
-          />
+    <!-- Error message placeholder -->
+    <TextView
+        android:id="@+id/error_placeholder"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:text="Error"
+        android:textColor="@color/ddwrt_purple"
+        android:textIsSelectable="true"
+        android:textStyle="bold"
+        android:visibility="gone" />
 
-      <LinearLayout
-          android:id="@+id/main_content_view"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="vertical"
-          android:visibility="gone"
-          >
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="App PIN Code"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textStyle="bold"
-            />
-        <View
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?android:attr/listDivider"
-            android:minHeight="1dp"
-            />
-        <!-- PIN Code-->
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/pin_code_input_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="5dp"
-            >
-          <android.support.design.widget.TextInputEditText
-              android:id="@+id/pin_code"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:hint="PIN Code as set in DD-WRT Companion app, if any"
-              android:imeOptions="flagNoExtractUi"
-              android:inputType="textPassword"
-              android:maxLines="1"
-              android:selectAllOnFocus="true"
-              />
-        </android.support.design.widget.TextInputLayout>
-        <CheckBox
-            android:id="@+id/pin_code_show_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:text="Show PIN Code"
-            />
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="Select Router"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textStyle="bold"
-            />
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?android:attr/listDivider"
-            android:minHeight="1dp"
-            />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="This requires that you have DD-WRT Companion app installed and the relevant router already registered within DD-WRT Companion."
-            />
-
-        <Spinner
-            android:id="@+id/select_router_dropdown"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:imeOptions="flagNoExtractUi"
-            />
-
-        <EditText
-            android:id="@+id/selected_router_variable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="6dip"
-            android:layout_marginRight="6dip"
-            android:drawableBottom="@color/win8_teal"
-            android:gravity="top|start"
-            android:hint="Router Name Tasker Variable"
-            android:imeOptions="actionSend"
-            android:inputType="text"
-            android:lines="1"
-            android:padding="8dp"
-            android:visibility="gone"
-            />
-
-        <TextView
-            android:id="@+id/selected_router_uuid"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            />
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="Select Command"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textStyle="bold"
-            />
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?android:attr/listDivider"
-            android:minHeight="1dp"
-            />
-        <!-- TODO Add some comment here -->
-
-        <Spinner
-            android:id="@+id/select_command_dropdown"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:imeOptions="flagNoExtractUi"
-            />
-
-        <TextView
-            android:id="@+id/selected_command"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="3"
-            >
-
-          <RelativeLayout
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_weight="2"
-              >
+            <ProgressBar
+                android:id="@+id/loading_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:indeterminate="false" />
 
             <LinearLayout
+                android:id="@+id/main_content_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                >
+                android:visibility="gone">
 
-              <Button
-                  android:id="@+id/custom_cmd_file_selection_button"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_marginBottom="4dp"
-                  android:layout_marginLeft="4dp"
-                  android:layout_marginRight="4dp"
-                  android:hint="Select script file"
-                  android:visibility="gone"
-                  />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:text="App PIN Code"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
 
-              <TextView
-                  android:id="@+id/custom_cmd_file_error_msg"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_marginBottom="4dp"
-                  android:layout_marginLeft="4dp"
-                  android:layout_marginRight="4dp"
-                  android:textColor="@color/win8_red"
-                  android:visibility="gone"
-                  />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?android:attr/listDivider"
+                    android:minHeight="1dp" />
+                <!-- PIN Code-->
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/pin_code_input_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="5dp">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/pin_code"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="PIN Code as set in DD-WRT Companion app, if any"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="textPassword"
+                        android:maxLines="1"
+                        android:selectAllOnFocus="true" />
+                </android.support.design.widget.TextInputLayout>
+
+                <CheckBox
+                    android:id="@+id/pin_code_show_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="Show PIN Code" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:text="Select Router"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?android:attr/listDivider"
+                    android:minHeight="1dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="This requires that you have DD-WRT Companion app installed and the relevant router already registered within DD-WRT Companion." />
+
+                <Spinner
+                    android:id="@+id/select_router_dropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:imeOptions="flagNoExtractUi" />
+
+                <EditText
+                    android:id="@+id/selected_router_variable"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dip"
+                    android:layout_marginRight="6dip"
+                    android:drawableBottom="@color/win8_teal"
+                    android:gravity="top|start"
+                    android:hint="Router Name Tasker Variable"
+                    android:imeOptions="actionSend"
+                    android:inputType="text"
+                    android:lines="1"
+                    android:padding="8dp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/selected_router_uuid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:text="Select Command"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?android:attr/listDivider"
+                    android:minHeight="1dp" />
+                <!-- TODO Add some comment here -->
+
+                <Spinner
+                    android:id="@+id/select_command_dropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:imeOptions="flagNoExtractUi" />
+
+                <TextView
+                    android:id="@+id/selected_command"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <Button
+                                android:id="@+id/custom_cmd_file_selection_button"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="4dp"
+                                android:layout_marginLeft="4dp"
+                                android:layout_marginRight="4dp"
+                                android:hint="Select script file"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/custom_cmd_file_error_msg"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="4dp"
+                                android:layout_marginLeft="4dp"
+                                android:layout_marginRight="4dp"
+                                android:textColor="@color/win8_red"
+                                android:visibility="gone" />
+
+                        </LinearLayout>
+
+                        <EditText
+                            android:id="@+id/custom_cmd_file_variable_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="6dip"
+                            android:layout_marginRight="6dip"
+                            android:drawableBottom="@color/win8_teal"
+                            android:gravity="top|start"
+                            android:hint="Router Name Tasker Variable"
+                            android:imeOptions="actionSend"
+                            android:inputType="text"
+                            android:lines="1"
+                            android:padding="8dp"
+                            android:visibility="gone" />
+
+                    </RelativeLayout>
+
+                    <CheckBox
+                        android:id="@+id/custom_cmd_file_selection_is_variable"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="6dip"
+                        android:layout_marginRight="6dip"
+                        android:layout_weight="1"
+                        android:checked="false"
+                        android:text="Variable"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/custom_cmd_file_path"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+
+                <EditText
+                    android:id="@+id/command_configuration_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dip"
+                    android:layout_marginRight="6dip"
+                    android:drawableBottom="@color/win8_teal"
+                    android:gravity="top|start"
+                    android:hint="Configure your command here"
+                    android:imeOptions="actionSend"
+                    android:inputType="textMultiLine"
+                    android:lines="7"
+                    android:padding="8dp"
+                    android:scrollbars="vertical"
+                    android:visibility="gone" />
+
+                <EditText
+                    android:id="@+id/command_configuration_input_param"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dip"
+                    android:layout_marginRight="6dip"
+                    android:drawableBottom="@color/win8_teal"
+                    android:gravity="top|start"
+                    android:hint="Parameter, if any"
+                    android:imeOptions="actionSend"
+                    android:inputType="textMultiLine"
+                    android:lines="2"
+                    android:padding="8dp"
+                    android:scrollbars="vertical"
+                    android:visibility="gone" />
+
+                <CheckBox
+                    android:id="@+id/command_configuration_input_param_variable"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dip"
+                    android:layout_marginRight="6dip"
+                    android:checked="false"
+                    android:text="Variable"
+                    android:visibility="gone" />
+
+                <CheckBox
+                    android:id="@+id/command_configuration_input_variable"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dip"
+                    android:layout_marginRight="6dip"
+                    android:checked="false"
+                    android:text="Variable" />
+
+                <!-- Hidden for now, as it is not possible to get a result from DeepLink Dispatch-->
+
+                <CheckBox
+                    android:id="@+id/return_output_variable_checkbox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dip"
+                    android:layout_marginRight="6dip"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:checked="false"
+                    android:text="Return Output, if possible"
+                    android:visibility="gone" />
+
+                <EditText
+                    android:id="@+id/return_output_variable"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dip"
+                    android:layout_marginRight="6dip"
+                    android:layout_marginTop="8dip"
+                    android:drawableBottom="@color/win8_teal"
+                    android:gravity="top|start"
+                    android:hint="Tasker Variable for Command Output"
+                    android:imeOptions="actionSend"
+                    android:inputType="text"
+                    android:lines="1"
+                    android:padding="8dp"
+                    android:visibility="gone" />
+
 
             </LinearLayout>
 
-            <EditText
-                android:id="@+id/custom_cmd_file_variable_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="6dip"
-                android:layout_marginRight="6dip"
-                android:drawableBottom="@color/win8_teal"
-                android:gravity="top|start"
-                android:hint="Router Name Tasker Variable"
-                android:imeOptions="actionSend"
-                android:inputType="text"
-                android:lines="1"
-                android:padding="8dp"
-                android:visibility="gone"
-                />
+        </RelativeLayout>
 
-          </RelativeLayout>
-
-          <CheckBox
-              android:id="@+id/custom_cmd_file_selection_is_variable"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginLeft="6dip"
-              android:layout_marginRight="6dip"
-              android:layout_weight="1"
-              android:checked="false"
-              android:text="Variable"
-              android:visibility="gone"
-              />
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/custom_cmd_file_path"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            />
-
-
-        <EditText
-            android:id="@+id/command_configuration_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="6dip"
-            android:layout_marginRight="6dip"
-            android:drawableBottom="@color/win8_teal"
-            android:gravity="top|start"
-            android:hint="Configure your command here"
-            android:imeOptions="actionSend"
-            android:inputType="textMultiLine"
-            android:lines="7"
-            android:padding="8dp"
-            android:scrollbars="vertical"
-            android:visibility="gone"
-            />
-
-        <EditText
-            android:id="@+id/command_configuration_input_param"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="6dip"
-            android:layout_marginRight="6dip"
-            android:drawableBottom="@color/win8_teal"
-            android:gravity="top|start"
-            android:hint="Parameter, if any"
-            android:imeOptions="actionSend"
-            android:inputType="textMultiLine"
-            android:lines="2"
-            android:padding="8dp"
-            android:scrollbars="vertical"
-            android:visibility="gone"
-            />
-
-        <CheckBox
-            android:id="@+id/command_configuration_input_param_variable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="6dip"
-            android:layout_marginRight="6dip"
-            android:checked="false"
-            android:text="Variable"
-            android:visibility="gone"
-            />
-
-        <CheckBox
-            android:id="@+id/command_configuration_input_variable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="6dip"
-            android:layout_marginRight="6dip"
-            android:checked="false"
-            android:text="Variable"
-            />
-
-        <!-- Hidden for now, as it is not possible to get a result from DeepLink Dispatch-->
-
-        <CheckBox
-            android:id="@+id/return_output_variable_checkbox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="6dip"
-            android:layout_marginRight="6dip"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:checked="false"
-            android:text="Return Output, if possible"
-            android:visibility="gone"
-            />
-
-        <EditText
-            android:id="@+id/return_output_variable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="6dip"
-            android:layout_marginRight="6dip"
-            android:layout_marginTop="8dip"
-            android:drawableBottom="@color/win8_teal"
-            android:gravity="top|start"
-            android:hint="Tasker Variable for Command Output"
-            android:imeOptions="actionSend"
-            android:inputType="text"
-            android:lines="1"
-            android:padding="8dp"
-            android:visibility="gone"
-            />
-
-
-      </LinearLayout>
-
-    </RelativeLayout>
-
-  </ScrollView>
+    </ScrollView>
 
 </LinearLayout>

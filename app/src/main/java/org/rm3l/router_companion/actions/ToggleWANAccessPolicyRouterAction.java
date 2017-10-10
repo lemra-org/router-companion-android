@@ -16,41 +16,38 @@ import org.rm3l.router_companion.utils.SSHUtils;
  */
 public class ToggleWANAccessPolicyRouterAction extends AbstractRouterAction<Void> {
 
-  public static final int DISABLE = 0;
-  public static final int ENABLE_1 = 1;
-  public static final int ENABLE_2 = 2;
+    public static final int DISABLE = 0;
 
-  @NonNull private final Context mContext;
+    public static final int ENABLE_1 = 1;
 
-  @NonNull private final WANAccessPolicy mWanAccessPolicy;
-  private final int mEnableStatus;
+    public static final int ENABLE_2 = 2;
 
-  public ToggleWANAccessPolicyRouterAction(Router router, @NonNull Context context,
-      @Nullable RouterActionListener listener, @NonNull SharedPreferences globalSharedPreferences,
-      @NonNull WANAccessPolicy wanAccessPolicy, int enableStatus) {
-    super(router, listener, enableStatus == 0 ? RouterAction.DISABLE_WAN_ACCESS_POLICY
-        : RouterAction.ENABLE_WAN_ACCESS_POLICY, globalSharedPreferences);
-    this.mContext = context;
-    this.mWanAccessPolicy = wanAccessPolicy;
-    this.mEnableStatus = enableStatus;
-  }
+    @NonNull
+    private final Context mContext;
 
-  @Override protected ActionLog getActionLog() {
-    return super.getActionLog()
-        .setActionData(
-            String.format("- Policy Name: %s\n" + "- Status: %d", mWanAccessPolicy, mEnableStatus));
-  }
+    private final int mEnableStatus;
 
-  @Nullable @Override protected Context getContext() {
-    return mContext;
-  }
+    @NonNull
+    private final WANAccessPolicy mWanAccessPolicy;
 
-  @NonNull @Override protected RouterActionResult<Void> doActionInBackground() {
-    Exception exception = null;
-    try {
-      if (mWanAccessPolicy.getNumber() <= 0) {
-        throw new IllegalArgumentException();
-      }
+    public ToggleWANAccessPolicyRouterAction(Router router, @NonNull Context context,
+            @Nullable RouterActionListener listener, @NonNull SharedPreferences globalSharedPreferences,
+            @NonNull WANAccessPolicy wanAccessPolicy, int enableStatus) {
+        super(router, listener, enableStatus == 0 ? RouterAction.DISABLE_WAN_ACCESS_POLICY
+                : RouterAction.ENABLE_WAN_ACCESS_POLICY, globalSharedPreferences);
+        this.mContext = context;
+        this.mWanAccessPolicy = wanAccessPolicy;
+        this.mEnableStatus = enableStatus;
+    }
+
+    @NonNull
+    @Override
+    protected RouterActionResult<Void> doActionInBackground() {
+        Exception exception = null;
+        try {
+            if (mWanAccessPolicy.getNumber() <= 0) {
+                throw new IllegalArgumentException();
+            }
 
             /*
             - Enabled / Filter: $STAT:2$NAME:myPolicy1StatusEnableFilter$DENY:0$$
@@ -58,23 +55,36 @@ public class ToggleWANAccessPolicyRouterAction extends AbstractRouterAction<Void
             - Disabled / Deny: $STAT:0$NAME:myPolicy1StatusDisableDeny$DENY:1$$
             - Disabled / Filter : $STAT:0$NAME:myPolicy1StatusDisableFilter$DENY:0$$
              */
-      final String filterRuleValue =
-          String.format(Locale.US, "\\$STAT:%d\\$NAME:%s\\$DENY:%d\\$\\$", mEnableStatus,
-              Strings.nullToEmpty(mWanAccessPolicy.getName()),
-              WANAccessPolicy.Companion.getDENY().equals(mWanAccessPolicy.getDenyOrFilter()) ? 1 : 0);
+            final String filterRuleValue =
+                    String.format(Locale.US, "\\$STAT:%d\\$NAME:%s\\$DENY:%d\\$\\$", mEnableStatus,
+                            Strings.nullToEmpty(mWanAccessPolicy.getName()),
+                            WANAccessPolicy.Companion.getDENY().equals(mWanAccessPolicy.getDenyOrFilter()) ? 1 : 0);
 
-      final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router,
-          String.format(Locale.US, "/usr/sbin/nvram set filter_rule%d=\"%s\""
-              + " && /sbin/stopservice firewall"
-              + " && /sbin/startservice firewall", mWanAccessPolicy.getNumber(), filterRuleValue));
-      if (exitStatus != 0) {
-        throw new IllegalStateException();
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-      exception = e;
+            final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router,
+                    String.format(Locale.US, "/usr/sbin/nvram set filter_rule%d=\"%s\""
+                            + " && /sbin/stopservice firewall"
+                            + " && /sbin/startservice firewall", mWanAccessPolicy.getNumber(), filterRuleValue));
+            if (exitStatus != 0) {
+                throw new IllegalStateException();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            exception = e;
+        }
+
+        return new RouterActionResult<>(null, exception);
     }
 
-    return new RouterActionResult<>(null, exception);
-  }
+    @Override
+    protected ActionLog getActionLog() {
+        return super.getActionLog()
+                .setActionData(
+                        String.format("- Policy Name: %s\n" + "- Status: %d", mWanAccessPolicy, mEnableStatus));
+    }
+
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
+    }
 }

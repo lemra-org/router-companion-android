@@ -23,27 +23,27 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-  <item
-      android:id="@+id/tile_wan_config_dhcp"
-      android:icon="@drawable/ic_action_action_backup"
-      android:orderInCategory="1"
-      android:title="DHCP"
-      app:showAsAction="ifRoom">
+    <item
+        android:id="@+id/tile_wan_config_dhcp"
+        android:icon="@drawable/ic_action_action_backup"
+        android:orderInCategory="1"
+        android:title="DHCP"
+        app:showAsAction="ifRoom">
 
-    <menu>
-      <item
-          android:id="@+id/tile_wan_config_dhcp_release"
-          android:orderInCategory="1"
-          android:title="DHCP Release"
-          app:showAsAction="ifRoom"/>
+        <menu>
+            <item
+                android:id="@+id/tile_wan_config_dhcp_release"
+                android:orderInCategory="1"
+                android:title="DHCP Release"
+                app:showAsAction="ifRoom" />
 
-      <item
-          android:id="@+id/tile_wan_config_dhcp_renew"
-          android:orderInCategory="2"
-          android:title="DHCP Renew"
-          app:showAsAction="ifRoom"/>
-    </menu>
+            <item
+                android:id="@+id/tile_wan_config_dhcp_renew"
+                android:orderInCategory="2"
+                android:title="DHCP Renew"
+                app:showAsAction="ifRoom" />
+        </menu>
 
-  </item>
+    </item>
 
 </menu>

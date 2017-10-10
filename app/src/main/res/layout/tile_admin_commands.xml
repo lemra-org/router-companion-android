@@ -25,162 +25,146 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
-    android:orientation="horizontal"
-    >
+    android:orientation="horizontal">
 
-  <LinearLayout
-      android:layout_width="0dp"
-      android:layout_height="wrap_content"
-      android:layout_weight="0.74"
-      android:orientation="vertical"
-      >
-
-    <RelativeLayout
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingTop="4.0dip"
-        >
+        android:layout_weight="0.74"
+        android:orientation="vertical">
 
-      <TextView
-          android:id="@+id/tile_admin_commands_title"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_alignParentLeft="true"
-          android:layout_alignParentStart="true"
-          android:ellipsize="end"
-          android:maxLines="1"
-          android:text="@string/command_shell"
-          android:textAppearance="?android:attr/textAppearanceMedium"
-          android:textStyle="bold"
-          />
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="4.0dip">
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/tile_admin_commands_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/command_shell"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold" />
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1.0dip"
-        android:layout_marginBottom="8.0dip"
-        android:layout_marginTop="8.0dip"
-        android:background="#ffcccccc"
-        />
+        </RelativeLayout>
 
-    <!-- Error message placeholder -->
-    <TextView
-        android:id="@+id/tile_admin_commands_error"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:maxLines="1"
-        android:text="@string/error_placeholder"
-        android:textColor="@color/ddwrt_purple"
-        android:textIsSelectable="true"
-        android:textStyle="bold"
-        android:visibility="gone"
-        />
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1.0dip"
+            android:layout_marginBottom="8.0dip"
+            android:layout_marginTop="8.0dip"
+            android:background="#ffcccccc" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="bottom"
-        android:textIsSelectable="true"
-
-        android:visibility="invisible"
-        />
-
-    <EditText
-        android:id="@+id/tile_admin_commands_edittext"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawableBottom="@color/win8_teal"
-        android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
-        android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
-        android:gravity="top|start"
-        android:hint="@string/commands_edit_text_hint"
-        android:imeOptions="actionSend"
-        android:inputType="textMultiLine"
-        android:lines="7"
-        android:padding="8dp"
-        android:scrollbars="vertical"
-        />
-
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="1.0dip"
-        android:weightSum="1"
-        >
-
-      <Button
-          android:id="@+id/tile_admin_commands_cancel_button"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_alignParentLeft="true"
-          android:layout_alignParentStart="true"
-          android:enabled="false"
-          android:text="@string/cancel"
-          />
-
-      <Button
-          android:id="@+id/tile_admin_commands_submit_button"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_alignParentEnd="true"
-          android:layout_alignParentRight="true"
-          android:text="@string/submit"
-          />
-
-    </RelativeLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="bottom"
-        android:textIsSelectable="true"
-
-        android:visibility="invisible"
-        />
-
-    <ScrollView
-        android:id="@+id/tile_admin_commands_content_scrollview"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:fillViewport="true"
-        android:scrollbars="vertical|horizontal"
-        >
-
-      <RelativeLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:background="@color/black"
-          >
+        <!-- Error message placeholder -->
+        <TextView
+            android:id="@+id/tile_admin_commands_error"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/error_placeholder"
+            android:textColor="@color/ddwrt_purple"
+            android:textIsSelectable="true"
+            android:textStyle="bold"
+            android:visibility="gone" />
 
         <TextView
-            android:id="@+id/tile_admin_commands_content"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:gravity="bottom"
-            android:maxLength="9000"
-            android:maxLines="200"
-            android:textColor="@color/white"
-
-            android:textIsSelectable="true"
-            />
-
-        <ProgressBar
-            android:id="@+id/tile_toolbox_ping_abstract_loading_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:progressDrawable="@color/white"
-            android:visibility="gone"
-            />
+            android:gravity="bottom"
+            android:textIsSelectable="true"
 
-      </RelativeLayout>
+            android:visibility="invisible" />
 
-    </ScrollView>
+        <EditText
+            android:id="@+id/tile_admin_commands_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableBottom="@color/win8_teal"
+            android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
+            android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
+            android:gravity="top|start"
+            android:hint="@string/commands_edit_text_hint"
+            android:imeOptions="actionSend"
+            android:inputType="textMultiLine"
+            android:lines="7"
+            android:padding="8dp"
+            android:scrollbars="vertical" />
 
-  </LinearLayout>
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="1.0dip"
+            android:weightSum="1">
+
+            <Button
+                android:id="@+id/tile_admin_commands_cancel_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:enabled="false"
+                android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/tile_admin_commands_submit_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:text="@string/submit" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:textIsSelectable="true"
+
+            android:visibility="invisible" />
+
+        <ScrollView
+            android:id="@+id/tile_admin_commands_content_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:fillViewport="true"
+            android:scrollbars="vertical|horizontal">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/black">
+
+                <TextView
+                    android:id="@+id/tile_admin_commands_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="fill_parent"
+                    android:gravity="bottom"
+                    android:maxLength="9000"
+                    android:maxLines="200"
+                    android:textColor="@color/white"
+
+                    android:textIsSelectable="true" />
+
+                <ProgressBar
+                    android:id="@+id/tile_toolbox_ping_abstract_loading_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:progressDrawable="@color/white"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
 
 </LinearLayout>

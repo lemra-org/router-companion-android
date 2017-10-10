@@ -31,8 +31,10 @@ import org.rm3l.router_companion.tiles.admin.nvram.AdminNVRAMTile;
 
 public class AdminNVRAMFragmentOpenWrt extends AdminNVRAMFragment {
 
-  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    //TODO
-    return Arrays.<DDWRTTile>asList(new AdminNVRAMTile(this, savedInstanceState, this.router));
-  }
+    @Nullable
+    @Override
+    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+        //TODO
+        return Arrays.<DDWRTTile>asList(new AdminNVRAMTile(this, savedInstanceState, this.router));
+    }
 }

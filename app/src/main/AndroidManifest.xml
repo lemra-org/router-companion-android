@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -24,588 +23,590 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:tools="http://schemas.android.com/tools"
     package="org.rm3l.ddwrt">
 
-  <uses-sdk
-      android:minSdkVersion="15"
-      tools:overrideLibrary="com.readystatesoftware.chuck, com.facebook.stetho, cn.nekocode.resinspector"/>
+    <uses-sdk
+        android:minSdkVersion="15"
+        tools:overrideLibrary="com.readystatesoftware.chuck, com.facebook.stetho, cn.nekocode.resinspector" />
 
-  <!-- "Normal Permission" -->
-  <!-- To connect to the router, and donation providers such as Flattr, as well as Feedback Server -->
-  <uses-permission android:name="android.permission.INTERNET"/>
-  <!--
-       This permission is actually no longer needed, as the PlayStore version is paying (to support the project),
-      and the F-Droid version will not feature Google In-App Billng
-    -->
-  <!-- <uses-permission android:name="com.android.vending.BILLING" /> -->
-
-
-  <!-- To get DhcpInfo, so as to default forms with the current gateway -->
-  <!-- "Normal Permission" -->
-  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-  <!-- "Normal Permission" -->
-  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-
-  <!-- /!\ "Dangerous Permission" -->
-  <!-- Saving router usage DB and sharing -->
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-  <!--
-  Any app that declares the WRITE_EXTERNAL_STORAGE permission is
-  implicitly granted the READ_EXTERNAL_STORAGE permission.
-    -->
-  <!-- <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/> -->
+    <!-- "Normal Permission" -->
+    <!-- To connect to the router, and donation providers such as Flattr, as well as Feedback Server -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!--
+         This permission is actually no longer needed, as the PlayStore version is paying (to support the project),
+        and the F-Droid version will not feature Google In-App Billng
+      -->
+    <!-- <uses-permission android:name="com.android.vending.BILLING" /> -->
 
 
-  <!-- "Normal Permission" -->
-  <!-- For background service notifications -->
-  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-  <!-- "Normal Permission" -->
-  <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <!-- To get DhcpInfo, so as to default forms with the current gateway -->
+    <!-- "Normal Permission" -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- "Normal Permission" -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
-  <!-- Protection level: normal -->
-  <!-- Required up to Android 4.2 / 4.3 -->
-  <uses-permission
-      android:name="android.permission.VIBRATE"
-      android:maxSdkVersion="18"/>
-
-  <!-- For Samsung SDK -->
-  <uses-permission android:name="com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY"/>
-  <uses-permission android:name="com.samsung.wmanager.ENABLE_NOTIFICATION"/>
-
-  <!-- Protection level: normal -->
-  <!-- This is to create/update home screen shortcuts to routers -->
-  <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
-  <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT"/>
-
-  <!-- <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/> -->
+    <!-- /!\ "Dangerous Permission" -->
+    <!-- Saving router usage DB and sharing -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!--
+    Any app that declares the WRITE_EXTERNAL_STORAGE permission is
+    implicitly granted the READ_EXTERNAL_STORAGE permission.
+      -->
+    <!-- <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/> -->
 
 
-  <!-- Protection level: ??? -->
-  <!-- To write NFC tag (for WiFi networks), or 'Touch to connect' feature -->
-  <uses-permission android:name="android.permission.NFC"/>
-  <!-- NFC is an option here. The app still functions if NFC isn't present -->
-  <!-- <uses-feature android:name="android.hardware.nfc" android:required="false" /> -->
+    <!-- "Normal Permission" -->
+    <!-- For background service notifications -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- "Normal Permission" -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-  <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <!-- Protection level: normal -->
+    <!-- Required up to Android 4.2 / 4.3 -->
+    <uses-permission
+        android:name="android.permission.VIBRATE"
+        android:maxSdkVersion="18" />
 
-  <!--
-  This is a situation where we want a dependency but
-  not the permissions that the dependency wants.
-  Some of those permissions come from Google Play Services dependency. They
-  are not necessary for the app itself, but are added by the Manifest Merger. So remove them.
-    -->
-  <uses-permission
-      android:name="android.permission.READ_PHONE_STATE"
-      tools:node="remove"/>
-  <uses-permission
-      android:name="android.permission.ACCESS_COARSE_LOCATION"
-      tools:node="remove"/>
-  <uses-permission
-      android:name="android.permission.ACCESS_FINE_LOCATION"
-      tools:node="remove"/>
-  <uses-permission
-      android:name="android.permission.GET_ACCOUNTS"
-      tools:node="remove"/>
-  <uses-permission
-      android:name="android.permission.USE_CREDENTIALS"
-      tools:node="remove"/>
-  <uses-permission
-      android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"
-      tools:node="remove"/>
-  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!-- For Samsung SDK -->
+    <uses-permission android:name="com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY" />
+    <uses-permission android:name="com.samsung.wmanager.ENABLE_NOTIFICATION" />
 
-  <application
-      android:name="org.rm3l.router_companion.RouterCompanionApplication"
-      android:appCategory="productivity"
-      android:allowBackup="true"
-      android:backupAgent="org.rm3l.router_companion.backup.DDWRTCompanionBackupAgent"
-      android:fullBackupContent="true"
-      android:fullBackupOnly="true"
-      android:hardwareAccelerated="true"
-      android:icon="@mipmap/ic_launcher_ddwrt_companion"
-      android:label="@string/app_name"
-      android:theme="@style/AppThemeDark"
-      tools:replace="android:theme,android:icon"
-      tools:ignore="UnusedAttribute">
-    <meta-data
-        android:name="com.google.android.backup.api_key"
-        android:value="AEdPqrEAAAAIex8fLj0PcvM6dwNd7Je9mgYuzCTRw4IZq5_jBQ"/>
-    <!-- This meta-data tag is required to use Google Play Services. -->
-    <meta-data
-        android:name="com.google.android.gms.version"
-        android:value="@integer/google_play_services_version"/>
+    <!-- Protection level: normal -->
+    <!-- This is to create/update home screen shortcuts to routers -->
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+    <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
 
-    <!-- FIXME Change this for the free app to 'org.rm3l.ddwrt.free.fileprovider' -->
-    <provider
-        android:name="android.support.v4.content.FileProvider"
-        android:authorities="org.rm3l.ddwrt.fileprovider"
-        android:exported="false"
-        android:grantUriPermissions="true">
-      <meta-data
-          android:name="android.support.FILE_PROVIDER_PATHS"
-          android:resource="@xml/file_paths"/>
-    </provider>
+    <!-- <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/> -->
 
-    <!--<receiver android:name="org.rm3l.router_companion.mgmt.BootReceiver">-->
-      <!--<intent-filter>-->
+
+    <!-- Protection level: ??? -->
+    <!-- To write NFC tag (for WiFi networks), or 'Touch to connect' feature -->
+    <uses-permission android:name="android.permission.NFC" />
+    <!-- NFC is an option here. The app still functions if NFC isn't present -->
+    <!-- <uses-feature android:name="android.hardware.nfc" android:required="false" /> -->
+
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+
+    <!--
+    This is a situation where we want a dependency but
+    not the permissions that the dependency wants.
+    Some of those permissions come from Google Play Services dependency. They
+    are not necessary for the app itself, but are added by the Manifest Merger. So remove them.
+      -->
+    <uses-permission
+        android:name="android.permission.READ_PHONE_STATE"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.ACCESS_COARSE_LOCATION"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.GET_ACCOUNTS"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.USE_CREDENTIALS"
+        tools:node="remove" />
+    <uses-permission
+        android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"
+        tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:name="org.rm3l.router_companion.RouterCompanionApplication"
+        android:allowBackup="true"
+        android:appCategory="productivity"
+        android:backupAgent="org.rm3l.router_companion.backup.DDWRTCompanionBackupAgent"
+        android:fullBackupContent="true"
+        android:fullBackupOnly="true"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher_ddwrt_companion"
+        android:label="@string/app_name"
+        android:theme="@style/AppThemeDark"
+        tools:ignore="UnusedAttribute"
+        tools:replace="android:theme,android:icon">
+        <meta-data
+            android:name="com.google.android.backup.api_key"
+            android:value="AEdPqrEAAAAIex8fLj0PcvM6dwNd7Je9mgYuzCTRw4IZq5_jBQ" />
+        <!-- This meta-data tag is required to use Google Play Services. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <!-- FIXME Change this for the free app to 'org.rm3l.ddwrt.free.fileprovider' -->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="org.rm3l.ddwrt.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!--<receiver android:name="org.rm3l.router_companion.mgmt.BootReceiver">-->
+        <!--<intent-filter>-->
         <!--<action android:name="android.intent.action.BOOT_COMPLETED"/>-->
-      <!--</intent-filter>-->
-    <!--</receiver>-->
+        <!--</intent-filter>-->
+        <!--</receiver>-->
 
-    <!--<service-->
+        <!--<service-->
         <!--android:name="org.rm3l.router_companion.service.BackgroundService"-->
         <!--android:exported="false"/>-->
 
-    <activity
-        android:name="org.rm3l.router_companion.SplashActivity"
-        android:theme="@style/SplashTheme">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN"/>
+        <activity
+            android:name="org.rm3l.router_companion.SplashActivity"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-        <category android:name="android.intent.category.LAUNCHER"/>
-      </intent-filter>
-      <!-- App Shortcuts -->
-      <meta-data
-          android:name="android.app.shortcuts"
-          android:resource="@xml/shortcuts"/>
-    </activity>
-    <activity
-        android:name="org.rm3l.router_companion.mgmt.RouterManagementActivity"
-        android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-        android:label="@string/app_name"
-        android:launchMode="singleTop"
-        android:windowSoftInputMode="adjustResize">
-      <intent-filter>
-        <action android:name="android.intent.action.APP_ERROR"/>
-        <!-- <action android:name="android.intent.action.MAIN" /> -->
-        <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-        <action android:name="android.intent.action.SEARCH"/>
-      </intent-filter>
-      <intent-filter>
-        <action android:name="org.rm3l.ddwrt.OPEN_ADD_ROUTER_WIZARD"/>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!-- App Shortcuts -->
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity>
+        <activity
+            android:name="org.rm3l.router_companion.mgmt.RouterManagementActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.APP_ERROR" />
+                <!-- <action android:name="android.intent.action.MAIN" /> -->
+                <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="org.rm3l.ddwrt.OPEN_ADD_ROUTER_WIZARD" />
 
-        <category android:name="android.intent.category.DEFAULT"/>
-      </intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
 
-      <meta-data
-          android:name="android.app.searchable"
-          android:resource="@xml/searchable"/>
-    </activity>
-    <activity
-        android:name="org.rm3l.router_companion.main.DDWRTMainActivity"
-        android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-        android:label="@string/app_name"
-        android:launchMode="standard"
-        android:parentActivityName="org.rm3l.router_companion.mgmt.RouterManagementActivity"
-        android:windowSoftInputMode="adjustResize">
-      <intent-filter>
-        <action android:name="android.intent.action.APP_ERROR"/>
-      </intent-filter>
-      <intent-filter>
-        <action android:name="android.intent.action.VIEW"/>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+        <activity
+            android:name="org.rm3l.router_companion.main.DDWRTMainActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:label="@string/app_name"
+            android:launchMode="standard"
+            android:parentActivityName="org.rm3l.router_companion.mgmt.RouterManagementActivity"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.APP_ERROR" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
-        <category android:name="android.intent.category.DEFAULT"/>
-        <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-        <data android:scheme="http"/>
-        <data android:scheme="https"/>
-        <data android:host="ddwrt-companion.rm3l.org"/>
-        <data android:pathPrefix="/routers"/>
-      </intent-filter>
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="ddwrt-companion.rm3l.org" />
+                <data android:pathPrefix="/routers" />
+            </intent-filter>
 
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="org.rm3l.router_companion.mgmt.RouterManagementActivity"/>
-    </activity>
-    <activity
-        android:name="org.rm3l.router_companion.help.HelpActivity"
-        android:excludeFromRecents="true"
-        android:label="@string/help"
-        android:launchMode="singleInstance"
-        android:windowSoftInputMode="adjustResize"/>
-    <activity
-        android:name="org.rm3l.router_companion.help.ChangelogActivity"
-        android:excludeFromRecents="true"
-        android:label="@string/what_s_new"
-        android:launchMode="singleInstance"
-        android:windowSoftInputMode="adjustResize"/>
-    <activity
-        android:name="org.rm3l.router_companion.donate.DonateActivity"
-        android:excludeFromRecents="true"
-        android:label="@string/support_app"
-        android:launchMode="singleInstance"
-        android:windowSoftInputMode="adjustResize"/>
-    <!-- <activity -->
-    <!-- android:name="org.acra.CrashReportDialog" -->
-    <!-- android:excludeFromRecents="true" -->
-    <!-- android:finishOnTaskLaunch="true" -->
-    <!-- android:windowSoftInputMode="adjustResize" /> -->
-    <activity
-        android:name="org.rm3l.router_companion.tiles.status.wan.WANMonthlyTrafficActivity"
-        android:label="WAN Monthly Traffic"
-        android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
-        android:screenOrientation="landscape"
-        android:windowSoftInputMode="adjustResize">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="org.rm3l.router_companion.main.DDWRTMainActivity"/>
-    </activity>
-    <activity
-        android:name="org.rm3l.router_companion.settings.RouterSettingsActivity"
-        android:label="@string/title_activity_router_settings"
-        android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
-        android:windowSoftInputMode="adjustResize">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="org.rm3l.router_companion.main.DDWRTMainActivity"/>
-    </activity>
-    <!-- Deprecated -->
-    <!-- <activity -->
-    <!-- android:name=".tiles.status.wireless.WirelessIfaceQrCodeActivity" -->
-    <!-- android:label="@string/wifi_qr_code" -->
-    <!-- android:parentActivityName=".main.DDWRTMainActivity" -->
-    <!-- android:windowSoftInputMode="adjustResize" > -->
-    <!-- <meta-data -->
-    <!-- android:name="android.support.PARENT_ACTIVITY" -->
-    <!-- android:value=".main.DDWRTMainActivity" /> -->
-    <!-- </activity> -->
-    <activity
-        android:name="org.rm3l.router_companion.tiles.status.wireless.share.WifiSharingActivity"
-        android:label="@string/wifi_sharing"
-        android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
-        android:windowSoftInputMode="adjustResize">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="org.rm3l.router_companion.main.DDWRTMainActivity"/>
-    </activity>
-    <activity
-        android:name="org.rm3l.router_companion.settings.RouterManagementSettingsActivity"
-        android:label="@string/title_activity_router_settings"
-        android:parentActivityName="org.rm3l.router_companion.mgmt.RouterManagementActivity"
-        android:windowSoftInputMode="adjustResize">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="org.rm3l.router_companion.mgmt.RouterManagementActivity"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.router_companion.mgmt.RouterManagementActivity" />
+        </activity>
+        <activity
+            android:name="org.rm3l.router_companion.help.HelpActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/help"
+            android:launchMode="singleInstance"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="org.rm3l.router_companion.help.ChangelogActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/what_s_new"
+            android:launchMode="singleInstance"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="org.rm3l.router_companion.donate.DonateActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/support_app"
+            android:launchMode="singleInstance"
+            android:windowSoftInputMode="adjustResize" />
+        <!-- <activity -->
+        <!-- android:name="org.acra.CrashReportDialog" -->
+        <!-- android:excludeFromRecents="true" -->
+        <!-- android:finishOnTaskLaunch="true" -->
+        <!-- android:windowSoftInputMode="adjustResize" /> -->
+        <activity
+            android:name="org.rm3l.router_companion.tiles.status.wan.WANMonthlyTrafficActivity"
+            android:label="WAN Monthly Traffic"
+            android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.router_companion.main.DDWRTMainActivity" />
+        </activity>
+        <activity
+            android:name="org.rm3l.router_companion.settings.RouterSettingsActivity"
+            android:label="@string/title_activity_router_settings"
+            android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.router_companion.main.DDWRTMainActivity" />
+        </activity>
+        <!-- Deprecated -->
+        <!-- <activity -->
+        <!-- android:name=".tiles.status.wireless.WirelessIfaceQrCodeActivity" -->
+        <!-- android:label="@string/wifi_qr_code" -->
+        <!-- android:parentActivityName=".main.DDWRTMainActivity" -->
+        <!-- android:windowSoftInputMode="adjustResize" > -->
+        <!-- <meta-data -->
+        <!-- android:name="android.support.PARENT_ACTIVITY" -->
+        <!-- android:value=".main.DDWRTMainActivity" /> -->
+        <!-- </activity> -->
+        <activity
+            android:name="org.rm3l.router_companion.tiles.status.wireless.share.WifiSharingActivity"
+            android:label="@string/wifi_sharing"
+            android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.router_companion.main.DDWRTMainActivity" />
+        </activity>
+        <activity
+            android:name="org.rm3l.router_companion.settings.RouterManagementSettingsActivity"
+            android:label="@string/title_activity_router_settings"
+            android:parentActivityName="org.rm3l.router_companion.mgmt.RouterManagementActivity"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.router_companion.mgmt.RouterManagementActivity" />
 
-      <intent-filter>
-        <action android:name="android.intent.action.MANAGE_NETWORK_USAGE"/>
+            <intent-filter>
+                <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
 
-        <category android:name="android.intent.category.DEFAULT"/>
-      </intent-filter>
-    </activity>
-    <activity
-        android:name="org.rm3l.router_companion.settings.PinLockPreferenceActivity"
-        android:label="@string/title_activity_pin_lock_settings"
-        android:parentActivityName="org.rm3l.router_companion.settings.RouterManagementSettingsActivity"
-        android:windowSoftInputMode="adjustResize">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="org.rm3l.router_companion.settings.RouterManagementSettingsActivity"/>
-    </activity>
-    <activity
-        android:name="org.rm3l.router_companion.tiles.services.vpn.client.EditOpenVPNClientSettingsActivity"
-        android:configChanges="orientation|screenSize"
-        android:label="@string/title_openvpncl_settings"
-        android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
-        android:windowSoftInputMode="adjustResize">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="org.rm3l.router_companion.main.DDWRTMainActivity"/>
-    </activity>
-    <activity
-        android:name="org.rm3l.router_companion.tiles.status.router.RouterCpuInfoActivity"
-        android:label="@string/title_cpuinfo"
-        android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
-        android:windowSoftInputMode="stateHidden">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="org.rm3l.router_companion.main.DDWRTMainActivity"/>
-    </activity>
-    <activity
-        android:name="org.rm3l.router_companion.tiles.status.router.RouterMemInfoActivity"
-        android:label="@string/title_meminfo"
-        android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
-        android:windowSoftInputMode="stateHidden">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="org.rm3l.router_companion.main.DDWRTMainActivity"/>
-    </activity>
-    <activity
-        android:name="org.rm3l.router_companion.tiles.status.wireless.ActiveIPConnectionsDetailActivity"
-        android:label="@string/title_ip_connections"
-        android:launchMode="standard"
-        android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
-        android:windowSoftInputMode="stateHidden">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="org.rm3l.router_companion.main.DDWRTMainActivity"/>
-      <meta-data
-          android:name="android.app.searchable"
-          android:resource="@xml/searchable"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="org.rm3l.router_companion.settings.PinLockPreferenceActivity"
+            android:label="@string/title_activity_pin_lock_settings"
+            android:parentActivityName="org.rm3l.router_companion.settings.RouterManagementSettingsActivity"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.router_companion.settings.RouterManagementSettingsActivity" />
+        </activity>
+        <activity
+            android:name="org.rm3l.router_companion.tiles.services.vpn.client.EditOpenVPNClientSettingsActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_openvpncl_settings"
+            android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.router_companion.main.DDWRTMainActivity" />
+        </activity>
+        <activity
+            android:name="org.rm3l.router_companion.tiles.status.router.RouterCpuInfoActivity"
+            android:label="@string/title_cpuinfo"
+            android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
+            android:windowSoftInputMode="stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.router_companion.main.DDWRTMainActivity" />
+        </activity>
+        <activity
+            android:name="org.rm3l.router_companion.tiles.status.router.RouterMemInfoActivity"
+            android:label="@string/title_meminfo"
+            android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
+            android:windowSoftInputMode="stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.router_companion.main.DDWRTMainActivity" />
+        </activity>
+        <activity
+            android:name="org.rm3l.router_companion.tiles.status.wireless.ActiveIPConnectionsDetailActivity"
+            android:label="@string/title_ip_connections"
+            android:launchMode="standard"
+            android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
+            android:windowSoftInputMode="stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.router_companion.main.DDWRTMainActivity" />
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
 
-      <intent-filter>
-        <action android:name="android.intent.action.SEARCH"/>
-      </intent-filter>
-    </activity>
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+        </activity>
 
-    <!-- Actions Widget -->
-    <receiver
-        android:name="org.rm3l.router_companion.widgets.home.actions.RouterActionsWidgetProvider"
-        android:icon="@drawable/actions_widget"
-        android:label="DD-WRT: Router Actions">
-      <intent-filter>
-        <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
-        <action android:name="org.rm3l.ddwrt.widgets.home.actions.ACTION_REBOOT_ROUTER"/>
-      </intent-filter>
+        <!-- Actions Widget -->
+        <receiver
+            android:name="org.rm3l.router_companion.widgets.home.actions.RouterActionsWidgetProvider"
+            android:icon="@drawable/actions_widget"
+            android:label="DD-WRT: Router Actions">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="org.rm3l.ddwrt.widgets.home.actions.ACTION_REBOOT_ROUTER" />
+            </intent-filter>
 
-      <meta-data
-          android:name="android.appwidget.provider"
-          android:resource="@xml/actionswidget_info"/>
-    </receiver>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/actionswidget_info" />
+        </receiver>
 
-    <activity
-        android:name="org.rm3l.router_companion.widgets.home.actions.RouterActionsWidgetConfigureActivity"
-        android:configChanges="orientation|screenSize">
-      <intent-filter>
-        <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
-      </intent-filter>
-    </activity>
+        <activity
+            android:name="org.rm3l.router_companion.widgets.home.actions.RouterActionsWidgetConfigureActivity"
+            android:configChanges="orientation|screenSize">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
 
-    <!-- WOL Widget -->
-    <receiver
-        android:name="org.rm3l.router_companion.widgets.home.wol.WOLWidgetProvider"
-        android:icon="@drawable/wol_widget"
-        android:label="DD-WRT: Wake on LAN">
-      <intent-filter>
-        <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
-        <action android:name="org.rm3l.ddwrt.widgets.home.wol.ACTION_WAKE_HOST"/>
-        <action android:name="org.rm3l.ddwrt.widgets.home.wol.ACTION_REFRESH"/>
-      </intent-filter>
+        <!-- WOL Widget -->
+        <receiver
+            android:name="org.rm3l.router_companion.widgets.home.wol.WOLWidgetProvider"
+            android:icon="@drawable/wol_widget"
+            android:label="DD-WRT: Wake on LAN">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="org.rm3l.ddwrt.widgets.home.wol.ACTION_WAKE_HOST" />
+                <action android:name="org.rm3l.ddwrt.widgets.home.wol.ACTION_REFRESH" />
+            </intent-filter>
 
-      <meta-data
-          android:name="android.appwidget.provider"
-          android:resource="@xml/wolwidget_info"/>
-    </receiver>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/wolwidget_info" />
+        </receiver>
 
-    <activity
-        android:name="org.rm3l.router_companion.widgets.home.wol.WOLWidgetConfigureActivity"
-        android:configChanges="orientation|screenSize">
-      <intent-filter>
-        <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
-      </intent-filter>
-    </activity>
-    <!-- The service serving the RemoteViews to the collection widget -->
-    <service
-        android:name="org.rm3l.router_companion.widgets.home.wol.WOLWidgetService"
-        android:exported="false"
-        android:permission="android.permission.BIND_REMOTEVIEWS"/>
+        <activity
+            android:name="org.rm3l.router_companion.widgets.home.wol.WOLWidgetConfigureActivity"
+            android:configChanges="orientation|screenSize">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+        <!-- The service serving the RemoteViews to the collection widget -->
+        <service
+            android:name="org.rm3l.router_companion.widgets.home.wol.WOLWidgetService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-    <!-- TODO Connected Hosts Widget -->
-    <!-- <receiver -->
-    <!-- android:name=".widgets.home.clients.ConnectedHostsWidgetProvider" -->
-    <!-- android:label="DD-WRT: Clients" -->
-    <!-- android:icon="@drawable/wol_widget"> -->
-    <!-- <intent-filter> -->
-    <!-- <action android:name="android.appwidget.action.APPWIDGET_UPDATE" /> -->
-    <!-- <action android:name="org.rm3l.ddwrt.widgets.home.clients.ACTION_DISABLE_WAN_ACCESS" /> -->
-    <!-- <action android:name="org.rm3l.ddwrt.widgets.home.clients.ACTION_ENABLE_WAN_ACCESS" /> -->
-    <!-- </intent-filter> -->
-
-
-    <!-- <meta-data -->
-    <!-- android:name="android.appwidget.provider" -->
-    <!-- android:resource="@xml/wolwidget_info" /> -->
-    <!-- </receiver> -->
-    <!-- <activity android:name=".widgets.home.clients.ConnectedHostsWidgetConfigureActivity" > -->
-    <!-- <intent-filter> -->
-    <!-- <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" /> -->
-    <!-- </intent-filter> -->
-    <!-- </activity> -->
-    <!-- &lt;!&ndash; The service serving the RemoteViews to the collection widget &ndash;&gt; -->
-    <!-- <service -->
-    <!-- android:name=".widgets.home.clients.ConnectedHostsWidgetService" -->
-    <!-- android:permission="android.permission.BIND_REMOTEVIEWS" -->
-    <!-- android:exported="false" /> -->
+        <!-- TODO Connected Hosts Widget -->
+        <!-- <receiver -->
+        <!-- android:name=".widgets.home.clients.ConnectedHostsWidgetProvider" -->
+        <!-- android:label="DD-WRT: Clients" -->
+        <!-- android:icon="@drawable/wol_widget"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.appwidget.action.APPWIDGET_UPDATE" /> -->
+        <!-- <action android:name="org.rm3l.ddwrt.widgets.home.clients.ACTION_DISABLE_WAN_ACCESS" /> -->
+        <!-- <action android:name="org.rm3l.ddwrt.widgets.home.clients.ACTION_ENABLE_WAN_ACCESS" /> -->
+        <!-- </intent-filter> -->
 
 
-    <!-- Include the AdActivity configChanges and theme. -->
-    <activity
-        android:name="com.google.android.gms.ads.AdActivity"
-        android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-        android:theme="@android:style/Theme.Translucent"/>
-    <activity
-        android:name="org.rm3l.router_companion.tiles.services.wol.EditWOLDaemonSettingsActivity"
-        android:configChanges="orientation|screenSize"
-        android:label="@string/title_auto_wol_settings"
-        android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
-        android:windowSoftInputMode="adjustResize">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="org.rm3l.router_companion.main.DDWRTMainActivity"/>
-    </activity>
-    <activity
-        android:name="org.rm3l.router_companion.widgets.UpgradeDialogAsActivity"
-        android:excludeFromRecents="true"
-        android:finishOnCloseSystemDialogs="true"
-        android:label="@string/title_activity_dialog_as"
-        android:theme="@style/Theme.AppCompat.Dialog"
-        android:windowSoftInputMode="adjustResize"/>
-    <activity
-        android:name="org.rm3l.router_companion.widgets.home.actions.RouterRebootWidgetConfirmationDialogFromWidgetActivity"
-        android:excludeFromRecents="true"
-        android:label="@string/title_activity_dialog_as"
-        android:theme="@style/Theme.AppCompat.Dialog"
-        android:windowSoftInputMode="adjustResize"/>
-    <activity
-        android:name="org.rm3l.router_companion.widgets.home.wol.RouterWolWidgetConfirmationDialogFromWidgetActivity"
-        android:excludeFromRecents="true"
-        android:finishOnCloseSystemDialogs="true"
-        android:label="@string/title_activity_dialog_as"
-        android:theme="@style/Theme.AppCompat.Dialog"
-        android:windowSoftInputMode="adjustResize"/>
-    <activity
-        android:name="org.rm3l.router_companion.tiles.status.wireless.EditWirelessSecuritySettingsActivity"
-        android:configChanges="orientation|screenSize"
-        android:label="Wireless Security Settings"
-        android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
-        android:windowSoftInputMode="adjustResize">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="org.rm3l.router_companion.main.DDWRTMainActivity"/>
-    </activity>
-    <activity
-        android:name="org.rm3l.router_companion.actions.ManageRouterAliasesActivity"
-        android:configChanges="orientation|screenSize"
-        android:label="Manage Router Aliases"
-        android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
-        android:windowSoftInputMode="adjustResize">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="org.rm3l.router_companion.main.DDWRTMainActivity"/>
-    </activity>
-    <activity
-        android:name="org.rm3l.router_companion.actions.activity.SpeedTestActivity"
-        android:configChanges="orientation|screenSize"
-        android:label="Speed Test"
-        android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
-        android:windowSoftInputMode="adjustResize">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="org.rm3l.router_companion.main.DDWRTMainActivity"/>
-    </activity>
-    <activity
-        android:name="org.rm3l.router_companion.settings.RouterSpeedTestSettingsActivity"
-        android:label="@string/speed_test_router_settings"
-        android:parentActivityName="org.rm3l.router_companion.actions.activity.SpeedTestActivity"
-        android:windowSoftInputMode="adjustResize">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="org.rm3l.router_companion.actions.activity.SpeedTestActivity"/>
-    </activity>
-    <activity
-        android:name="org.rm3l.router_companion.tiles.dashboard.network.IPGeoActivity"
-        android:configChanges="orientation|screenSize"
-        android:label="Speed Test"
-        android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
-        android:windowSoftInputMode="adjustResize">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="org.rm3l.router_companion.main.DDWRTMainActivity"/>
-    </activity>
-    <activity
-        android:name="org.rm3l.router_companion.deeplinks.DeepLinkActivity"
-        android:theme="@android:style/Theme.NoDisplay">
-      <intent-filter>
-        <action android:name="android.intent.action.VIEW"/>
-        <category android:name="android.intent.category.DEFAULT"/>
-        <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="ddwrt"/>
-        <data android:scheme="dd-wrt"/>
-      </intent-filter>
-    </activity>
-    <activity
-        android:name="org.rm3l.router_companion.deeplinks.RouterActionsDeepLinkActivity"
-        android:theme="@android:style/Theme.NoDisplay"/>
-    <activity
-        android:name="org.rm3l.router_companion.actions.activity.OpenWebManagementPageActivity"
-        android:excludeFromRecents="true"
-        android:label="Web Interface"
-        android:launchMode="singleInstance"
-        android:windowSoftInputMode="adjustResize"/>
-    <activity
-        android:name="org.rm3l.router_companion.mgmt.register.ManageRouterFragmentActivity"
-        android:configChanges="orientation|screenSize"
-        android:label="Add Router"
-        android:parentActivityName="org.rm3l.router_companion.mgmt.RouterManagementActivity"
-        android:windowSoftInputMode="stateHidden|adjustResize">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="org.rm3l.router_companion.mgmt.RouterManagementActivity"/>
-    </activity>
-    <activity
-        android:name="org.rm3l.router_companion.welcome.GettingStartedActivity"
-        android:theme="@style/WelcomeScreenTheme"/>
-    <activity
-        android:name="org.wordpress.passcodelock.PasscodeUnlockActivity"
-        android:theme="@style/AppTheme"
-        android:windowSoftInputMode="stateHidden"/>
-    <activity
-        android:name="org.wordpress.passcodelock.PasscodeManagePasswordActivity"
-        android:theme="@style/AppTheme"
-        android:windowSoftInputMode="stateHidden"/>
-    <activity
-        android:name="org.rm3l.router_companion.tiles.syslog.ViewSyslogActivity"
-        android:label="View Syslog"
-        android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
-        android:windowSoftInputMode="stateHidden">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="org.rm3l.router_companion.main.DDWRTMainActivity"/>
-    </activity>
+        <!-- <meta-data -->
+        <!-- android:name="android.appwidget.provider" -->
+        <!-- android:resource="@xml/wolwidget_info" /> -->
+        <!-- </receiver> -->
+        <!-- <activity android:name=".widgets.home.clients.ConnectedHostsWidgetConfigureActivity" > -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" /> -->
+        <!-- </intent-filter> -->
+        <!-- </activity> -->
+        <!-- &lt;!&ndash; The service serving the RemoteViews to the collection widget &ndash;&gt; -->
+        <!-- <service -->
+        <!-- android:name=".widgets.home.clients.ConnectedHostsWidgetService" -->
+        <!-- android:permission="android.permission.BIND_REMOTEVIEWS" -->
+        <!-- android:exported="false" /> -->
 
-    <receiver android:name="org.rm3l.router_companion.feedback.SendFeedbackBroadcastReceiver"/>
 
-    <service
-        android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
-        android:enabled="true"/>
-    <service android:name="org.rm3l.router_companion.service.RouterCompanionServiceImpl">
-      <intent-filter>
+        <!-- Include the AdActivity configChanges and theme. -->
+        <activity
+            android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:theme="@android:style/Theme.Translucent" />
+        <activity
+            android:name="org.rm3l.router_companion.tiles.services.wol.EditWOLDaemonSettingsActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_auto_wol_settings"
+            android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.router_companion.main.DDWRTMainActivity" />
+        </activity>
+        <activity
+            android:name="org.rm3l.router_companion.widgets.UpgradeDialogAsActivity"
+            android:excludeFromRecents="true"
+            android:finishOnCloseSystemDialogs="true"
+            android:label="@string/title_activity_dialog_as"
+            android:theme="@style/Theme.AppCompat.Dialog"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="org.rm3l.router_companion.widgets.home.actions.RouterRebootWidgetConfirmationDialogFromWidgetActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/title_activity_dialog_as"
+            android:theme="@style/Theme.AppCompat.Dialog"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="org.rm3l.router_companion.widgets.home.wol.RouterWolWidgetConfirmationDialogFromWidgetActivity"
+            android:excludeFromRecents="true"
+            android:finishOnCloseSystemDialogs="true"
+            android:label="@string/title_activity_dialog_as"
+            android:theme="@style/Theme.AppCompat.Dialog"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="org.rm3l.router_companion.tiles.status.wireless.EditWirelessSecuritySettingsActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="Wireless Security Settings"
+            android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.router_companion.main.DDWRTMainActivity" />
+        </activity>
+        <activity
+            android:name="org.rm3l.router_companion.actions.ManageRouterAliasesActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="Manage Router Aliases"
+            android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.router_companion.main.DDWRTMainActivity" />
+        </activity>
+        <activity
+            android:name="org.rm3l.router_companion.actions.activity.SpeedTestActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="Speed Test"
+            android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.router_companion.main.DDWRTMainActivity" />
+        </activity>
+        <activity
+            android:name="org.rm3l.router_companion.settings.RouterSpeedTestSettingsActivity"
+            android:label="@string/speed_test_router_settings"
+            android:parentActivityName="org.rm3l.router_companion.actions.activity.SpeedTestActivity"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.router_companion.actions.activity.SpeedTestActivity" />
+        </activity>
+        <activity
+            android:name="org.rm3l.router_companion.tiles.dashboard.network.IPGeoActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="Speed Test"
+            android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.router_companion.main.DDWRTMainActivity" />
+        </activity>
+        <activity
+            android:name="org.rm3l.router_companion.deeplinks.DeepLinkActivity"
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
-        <!-- Filter to communicate with the tasker plugin only -->
-        <action android:name="org.rm3l.router_companion.IDDWRTCompanionService"/>
-      </intent-filter>
-    </service>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-    <!-- Firebase (FCM) -->
-    <!--<service android:name="org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseMessagingService">-->
+                <data android:scheme="ddwrt" />
+                <data android:scheme="dd-wrt" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="org.rm3l.router_companion.deeplinks.RouterActionsDeepLinkActivity"
+            android:theme="@android:style/Theme.NoDisplay" />
+        <activity
+            android:name="org.rm3l.router_companion.actions.activity.OpenWebManagementPageActivity"
+            android:excludeFromRecents="true"
+            android:label="Web Interface"
+            android:launchMode="singleInstance"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="org.rm3l.router_companion.mgmt.register.ManageRouterFragmentActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="Add Router"
+            android:parentActivityName="org.rm3l.router_companion.mgmt.RouterManagementActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.router_companion.mgmt.RouterManagementActivity" />
+        </activity>
+        <activity
+            android:name="org.rm3l.router_companion.welcome.GettingStartedActivity"
+            android:theme="@style/WelcomeScreenTheme" />
+        <activity
+            android:name="org.wordpress.passcodelock.PasscodeUnlockActivity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name="org.wordpress.passcodelock.PasscodeManagePasswordActivity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name="org.rm3l.router_companion.tiles.syslog.ViewSyslogActivity"
+            android:label="View Syslog"
+            android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
+            android:windowSoftInputMode="stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.router_companion.main.DDWRTMainActivity" />
+        </activity>
 
-      <!--&lt;!&ndash; message handling beyond receiving notifications on apps in the background &ndash;&gt;-->
-      <!--<intent-filter>-->
+        <receiver android:name="org.rm3l.router_companion.feedback.SendFeedbackBroadcastReceiver" />
+
+        <service
+            android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
+            android:enabled="true" />
+        <service android:name="org.rm3l.router_companion.service.RouterCompanionServiceImpl">
+            <intent-filter>
+
+                <!-- Filter to communicate with the tasker plugin only -->
+                <action android:name="org.rm3l.router_companion.IDDWRTCompanionService" />
+            </intent-filter>
+        </service>
+
+        <!-- Firebase (FCM) -->
+        <!--<service android:name="org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseMessagingService">-->
+
+        <!--&lt;!&ndash; message handling beyond receiving notifications on apps in the background &ndash;&gt;-->
+        <!--<intent-filter>-->
         <!--<action android:name="com.google.firebase.MESSAGING_EVENT"/>-->
-      <!--</intent-filter>-->
-    <!--</service>-->
-    <!--<service android:name="org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseInstanceIDService">-->
+        <!--</intent-filter>-->
+        <!--</service>-->
+        <!--<service android:name="org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseInstanceIDService">-->
 
-      <!--&lt;!&ndash; handle the creation, rotation, and updating of registration tokens &ndash;&gt;-->
-      <!--<intent-filter>-->
+        <!--&lt;!&ndash; handle the creation, rotation, and updating of registration tokens &ndash;&gt;-->
+        <!--<intent-filter>-->
         <!--<action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>-->
-      <!--</intent-filter>-->
-    <!--</service>-->
+        <!--</intent-filter>-->
+        <!--</service>-->
 
-    <meta-data
-        android:name="io.fabric.ApiKey"
-        android:value="bf40a9722838d1959a1a770881926ee96e4b94f1"/>
-    <meta-data
-        android:name="preloaded_fonts"
-        android:resource="@array/preloaded_fonts"/>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="bf40a9722838d1959a1a770881926ee96e4b94f1" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
-    <activity
-        android:name="org.rm3l.router_companion.tiles.admin.accessrestrictions.AddOrEditWANAccessPolicyActivity"
-        android:label="@string/title_activity_add_or_edit_wanaccess_policy"
-        android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
-        android:theme="@style/AppThemeDark">
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value="org.rm3l.router_companion.main.DDWRTMainActivity"/>
-    </activity>
-  </application>
+        <activity
+            android:name="org.rm3l.router_companion.tiles.admin.accessrestrictions.AddOrEditWANAccessPolicyActivity"
+            android:label="@string/title_activity_add_or_edit_wanaccess_policy"
+            android:parentActivityName="org.rm3l.router_companion.main.DDWRTMainActivity"
+            android:theme="@style/AppThemeDark">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.router_companion.main.DDWRTMainActivity" />
+        </activity>
+    </application>
 
 </manifest>

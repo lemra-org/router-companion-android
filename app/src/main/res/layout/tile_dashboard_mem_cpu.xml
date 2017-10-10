@@ -26,114 +26,104 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
-    android:orientation="horizontal"
-    >
+    android:orientation="horizontal">
 
-  <LinearLayout
-      android:layout_width="0dp"
-      android:layout_height="wrap_content"
-      android:layout_weight="0.74"
-      android:orientation="vertical"
-      >
-
-    <TextView
-        android:id="@+id/tile_dashboard_mem_cpu_title"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:text="CPU &amp; Memory Usage"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textStyle="bold"
-        />
+        android:layout_weight="0.74"
+        android:orientation="vertical">
 
-    <ProgressBar
-        android:id="@+id/tile_progress_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8.0dip"
-        android:layout_marginTop="8.0dip"
-        android:indeterminate="false"
-        android:indeterminateOnly="false"
-        style="?android:attr/progressBarStyleHorizontal"
-        />
+        <TextView
+            android:id="@+id/tile_dashboard_mem_cpu_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="CPU &amp; Memory Usage"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
 
-    <!-- Error message placeholder -->
-    <TextView
-        android:id="@+id/tile_dashboard_mem_cpu_error"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:maxLines="1"
-        android:text="@string/error_placeholder"
-        android:textColor="@color/ddwrt_purple"
-        android:textIsSelectable="true"
-        android:textStyle="bold"
-        android:visibility="gone"
-        />
+        <ProgressBar
+            android:id="@+id/tile_progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8.0dip"
+            android:layout_marginTop="8.0dip"
+            android:indeterminate="false"
+            android:indeterminateOnly="false" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="160dp"
-        >
+        <!-- Error message placeholder -->
+        <TextView
+            android:id="@+id/tile_dashboard_mem_cpu_error"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/error_placeholder"
+            android:textColor="@color/ddwrt_purple"
+            android:textIsSelectable="true"
+            android:textStyle="bold"
+            android:visibility="gone" />
 
-      <com.github.lzyzsd.circleprogress.ArcProgress
-          android:id="@+id/tile_dashboard_mem_cpu_cpu_arcprogress"
-          android:layout_width="100dp"
-          android:layout_height="100dp"
-          android:layout_alignParentLeft="true"
-          android:layout_alignParentStart="true"
-          android:background="@android:color/transparent"
-          custom:arc_bottom_text="CPU"
-          custom:arc_finished_color="@color/arcprogress_finished"
-          custom:arc_max="100"
-          custom:arc_progress="0"
-          custom:arc_unfinished_color="@color/arcprogress_unfinished"
-          />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="160dp">
 
-      <com.github.lzyzsd.circleprogress.ArcProgress
-          android:id="@+id/tile_dashboard_mem_cpu_mem_arcprogress"
-          android:layout_width="100dp"
-          android:layout_height="100dp"
-          android:layout_alignParentEnd="true"
-          android:layout_alignParentRight="true"
-          android:background="@android:color/transparent"
-          custom:arc_bottom_text="MEM"
-          custom:arc_finished_color="@color/arcprogress_finished"
-          custom:arc_max="100"
-          custom:arc_progress="0"
-          custom:arc_unfinished_color="@color/arcprogress_unfinished"
-          />
+            <com.github.lzyzsd.circleprogress.ArcProgress
+                android:id="@+id/tile_dashboard_mem_cpu_cpu_arcprogress"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:background="@android:color/transparent"
+                custom:arc_bottom_text="CPU"
+                custom:arc_finished_color="@color/arcprogress_finished"
+                custom:arc_max="100"
+                custom:arc_progress="0"
+                custom:arc_unfinished_color="@color/arcprogress_unfinished" />
 
-      <ProgressBar
-          android:id="@+id/tile_dashboard_mem_cpu_loading_view"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_centerInParent="true"
-          android:indeterminate="false"
-          />
+            <com.github.lzyzsd.circleprogress.ArcProgress
+                android:id="@+id/tile_dashboard_mem_cpu_mem_arcprogress"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:background="@android:color/transparent"
+                custom:arc_bottom_text="MEM"
+                custom:arc_finished_color="@color/arcprogress_finished"
+                custom:arc_max="100"
+                custom:arc_progress="0"
+                custom:arc_unfinished_color="@color/arcprogress_unfinished" />
 
-      <com.github.curioustechizen.ago.RelativeTimeTextView
-          android:id="@+id/tile_last_sync"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_alignParentBottom="true"
-          android:layout_alignParentEnd="true"
-          android:layout_alignParentRight="true"
-          android:layout_marginTop="5dp"
-          android:ellipsize="end"
-          android:gravity="end"
-          android:text="Last sync: "
-          android:textAppearance="?android:textAppearanceSmall"
-          android:textIsSelectable="true"
+            <ProgressBar
+                android:id="@+id/tile_dashboard_mem_cpu_loading_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:indeterminate="false" />
 
-          android:textStyle="italic"
-          />
+            <com.github.curioustechizen.ago.RelativeTimeTextView
+                android:id="@+id/tile_last_sync"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="5dp"
+                android:ellipsize="end"
+                android:gravity="end"
+                android:text="Last sync: "
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textIsSelectable="true"
 
-    </RelativeLayout>
+                android:textStyle="italic" />
+
+        </RelativeLayout>
 
 
-  </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

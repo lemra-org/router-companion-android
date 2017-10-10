@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -25,169 +24,153 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="org.rm3l.router_companion.tiles.services.wol.EditWOLDaemonSettingsActivity"
-    >
+    tools:context="org.rm3l.router_companion.tiles.services.wol.EditWOLDaemonSettingsActivity">
 
-  <android.support.v7.widget.Toolbar
-      android:id="@+id/wol_daemon_settings_toolbar"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:background="?attr/colorPrimary"
-      android:minHeight="?attr/actionBarSize"
-      />
-
-  <LinearLayout
-      android:id="@+id/wol_daemon_settings_viewgroup"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="vertical"
-      />
-
-  <ScrollView
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:scrollbars="none"
-      >
-
-    <LinearLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/wol_daemon_settings_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize" />
 
-      <!-- Start OpenVPN Client Name -->
-      <CheckBox
-          android:id="@+id/wol_daemon_settings_status_flag"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="4dp"
-          android:layout_marginStart="4dp"
-          android:layout_marginTop="@dimen/activity_vertical_margin"
-          android:text="Enable WOL Daemon"
-          />
+    <LinearLayout
+        android:id="@+id/wol_daemon_settings_viewgroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
 
-      <LinearLayout
-          android:id="@+id/wol_daemon_settings_if_enabled"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="vertical"
-          >
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
 
-        <!-- Interval -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="Interval (in seconds)"
-            />
-
-        <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
-            android:id="@+id/wol_daemon_settings_interval"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:ems="10"
-            android:hint="(Default: 86400, Range: 1 - 86400)"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="numberSigned"
-            android:maxLines="1"
-            android:text="86400"
-            />
+            android:orientation="vertical">
 
-        <!-- Hostname -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="Hostname"
-            />
+            <!-- Start OpenVPN Client Name -->
+            <CheckBox
+                android:id="@+id/wol_daemon_settings_status_flag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="Enable WOL Daemon" />
 
-        <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
-            android:id="@+id/wol_daemon_settings_hostname"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:hint="Hostname"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="text"
-            android:maxLines="1"
-            />
+            <LinearLayout
+                android:id="@+id/wol_daemon_settings_if_enabled"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <!-- SecureOn Password -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="SecureOn Password"
-            />
+                <!-- Interval -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:text="Interval (in seconds)" />
 
-        <EditText
-            android:id="@+id/wol_daemon_settings_secure_on_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="1dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:hint="SecureOn Password"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="textPassword"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            />
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
+                    android:id="@+id/wol_daemon_settings_interval"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ems="10"
+                    android:hint="(Default: 86400, Range: 1 - 86400)"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="numberSigned"
+                    android:maxLines="1"
+                    android:text="86400" />
 
-        <CheckBox
-            android:id="@+id/wol_daemon_settings_secure_on_password_show_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:checked="false"
-            android:text="Show"
-            />
+                <!-- Hostname -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:text="Hostname" />
 
-        <!-- MAC Adrdesses -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="MAC Addresses"
-            />
+                <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
+                    android:id="@+id/wol_daemon_settings_hostname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:hint="Hostname"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="text"
+                    android:maxLines="1" />
 
-        <EditText
-            android:id="@+id/wol_daemon_settings_mac_addresses"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableBottom="@color/win8_teal"
-            android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
-            android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
-            android:gravity="top|start"
-            android:hint="MAC Addresses"
-            android:imeOptions="actionDone"
-            android:inputType="textMultiLine"
-            android:lines="7"
-            android:padding="8dp"
-            android:scrollbars="vertical"
-            android:selectAllOnFocus="true"
-            />
+                <!-- SecureOn Password -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:text="SecureOn Password" />
+
+                <EditText
+                    android:id="@+id/wol_daemon_settings_secure_on_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:hint="SecureOn Password"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:selectAllOnFocus="true" />
+
+                <CheckBox
+                    android:id="@+id/wol_daemon_settings_secure_on_password_show_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:checked="false"
+                    android:text="Show" />
+
+                <!-- MAC Adrdesses -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:text="MAC Addresses" />
+
+                <EditText
+                    android:id="@+id/wol_daemon_settings_mac_addresses"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableBottom="@color/win8_teal"
+                    android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
+                    android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
+                    android:gravity="top|start"
+                    android:hint="MAC Addresses"
+                    android:imeOptions="actionDone"
+                    android:inputType="textMultiLine"
+                    android:lines="7"
+                    android:padding="8dp"
+                    android:scrollbars="vertical"
+                    android:selectAllOnFocus="true" />
 
 
-      </LinearLayout>
+            </LinearLayout>
 
-    </LinearLayout>
+        </LinearLayout>
 
-  </ScrollView>
+    </ScrollView>
 
 </LinearLayout>

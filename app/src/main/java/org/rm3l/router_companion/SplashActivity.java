@@ -10,11 +10,12 @@ import org.rm3l.router_companion.mgmt.RouterManagementActivity;
  */
 public class SplashActivity extends AppCompatActivity {
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    final Intent intent = new Intent(this, RouterManagementActivity.class);
-    startActivity(intent);
-    finish();
-  }
+        final Intent intent = new Intent(this, RouterManagementActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }

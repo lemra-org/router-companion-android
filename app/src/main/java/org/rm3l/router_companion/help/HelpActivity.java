@@ -10,15 +10,19 @@ import org.rm3l.router_companion.web.WebActivity;
  */
 public class HelpActivity extends WebActivity {
 
-  @Override protected CharSequence getTitleStr() {
-    return null;
-  }
+    @NonNull
+    @Override
+    public String getUrl() {
+        return RouterCompanionAppConstants.REMOTE_HELP_WEBSITE;
+    }
 
-  @Override protected int getTitleResId() {
-    return R.string.help;
-  }
+    @Override
+    protected int getTitleResId() {
+        return R.string.help;
+    }
 
-  @NonNull @Override public String getUrl() {
-    return RouterCompanionAppConstants.REMOTE_HELP_WEBSITE;
-  }
+    @Override
+    protected CharSequence getTitleStr() {
+        return null;
+    }
 }

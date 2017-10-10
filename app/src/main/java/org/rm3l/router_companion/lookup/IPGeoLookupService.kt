@@ -13,9 +13,9 @@ import retrofit2.http.Path
  */
 interface IPGeoLookupService {
 
-  @Retry
-  @Headers("Content-Type: application/json",
-      "User-Agent: ${BuildConfig.APPLICATION_ID} v ${BuildConfig.VERSION_NAME}")
-  @GET("{ipOrHost}.json")
-  fun lookupIP(@Path("ipOrHost") ipOrHost: String): Call<IPWhoisInfo>
+    @Retry
+    @Headers("Content-Type: application/json",
+            "User-Agent: ${BuildConfig.APPLICATION_ID} v ${BuildConfig.VERSION_NAME}")
+    @GET("{ipOrHost}.json")
+    fun lookupIP(@Path("ipOrHost") ipOrHost: String): Call<IPWhoisInfo>
 }

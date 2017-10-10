@@ -8,5 +8,6 @@ import org.codepond.wizardroid.Wizard;
  */
 public interface WizardStepVerifiable {
 
-  @Nullable Boolean validateStep(@Nullable final Wizard wizard);
+    @Nullable
+    Boolean validateStep(@Nullable final Wizard wizard);
 }

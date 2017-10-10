@@ -28,86 +28,92 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public final class NetworkUtils {
 
-  public static final String TAG = NetworkUtils.class.getSimpleName();
-  private static OkHttpClient HTTP_CLIENT_INSTANCE = null;
-  private static final LoadingCache<String, Retrofit> RETROFIT_CACHE = CacheBuilder.newBuilder()
-      .maximumSize(5)
-      .removalListener(new RemovalListener<String, Retrofit>() {
-        @Override
-        public void onRemoval(@NonNull RemovalNotification<String, Retrofit> notification) {
-          Crashlytics.log(Log.DEBUG, TAG,
-              "onRemoval(" + notification.getKey() + ") - cause: " + notification.getCause());
-        }
-      })
-      .build(new CacheLoader<String, Retrofit>() {
-        @Override public Retrofit load(@Nullable String baseUrl) throws Exception {
-          if (TextUtils.isEmpty(baseUrl)) {
-            throw new IllegalArgumentException();
-          }
-          try {
-            return new Retrofit.Builder().baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(getHttpClientInstance())
-                .build();
-          } catch (final Exception e) {
-            throw new IllegalStateException(e);
-          }
-        }
-      });
+    public static final String TAG = NetworkUtils.class.getSimpleName();
 
-  private NetworkUtils() {
-  }
+    private static OkHttpClient HTTP_CLIENT_INSTANCE = null;
 
-  public static OkHttpClient getHttpClientInstance() {
-    if (HTTP_CLIENT_INSTANCE == null) {
-      final OkHttpClient.Builder builder = new OkHttpClient.Builder();
-      final Activity currentActivity = RouterCompanionTaskerPluginApplication.getCurrentActivity();
-      if (currentActivity != null) {
-        builder.addInterceptor(new ChuckInterceptor(currentActivity));
-      }
-      builder.readTimeout(10, TimeUnit.SECONDS);
-      builder.connectTimeout(10, TimeUnit.SECONDS);
-
-      if (BuildConfig.DEBUG) {
-        final HttpLoggingInterceptor interceptor =
-            new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-              @Override public void log(String message) {
-                Crashlytics.log(Log.DEBUG, TAG, message);
-              }
+    private static final LoadingCache<String, Retrofit> RETROFIT_CACHE = CacheBuilder.newBuilder()
+            .maximumSize(5)
+            .removalListener(new RemovalListener<String, Retrofit>() {
+                @Override
+                public void onRemoval(@NonNull RemovalNotification<String, Retrofit> notification) {
+                    Crashlytics.log(Log.DEBUG, TAG,
+                            "onRemoval(" + notification.getKey() + ") - cause: " + notification.getCause());
+                }
+            })
+            .build(new CacheLoader<String, Retrofit>() {
+                @Override
+                public Retrofit load(@Nullable String baseUrl) throws Exception {
+                    if (TextUtils.isEmpty(baseUrl)) {
+                        throw new IllegalArgumentException();
+                    }
+                    try {
+                        return new Retrofit.Builder().baseUrl(baseUrl)
+                                .addConverterFactory(GsonConverterFactory.create())
+                                .client(getHttpClientInstance())
+                                .build();
+                    } catch (final Exception e) {
+                        throw new IllegalStateException(e);
+                    }
+                }
             });
-        interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
-        builder.addInterceptor(interceptor);
 
-        //Stetho
-        builder.addNetworkInterceptor(new StethoInterceptor());
-      }
-      HTTP_CLIENT_INSTANCE = builder.build();
+    @SuppressLint("DefaultLocale")
+    public static void checkResponseSuccessful(@NonNull final Response<?> response) {
+        if (!response.isSuccessful()) {
+            final int code = response.code();
+            final Object body = response.body();
+            final String errorMsg = String.format("[%d] : %s", code, body);
+            if (code >= 400 && code < 500) {
+                throw new IllegalArgumentException(errorMsg);
+            }
+            if (code >= 500) {
+                throw new IllegalStateException(errorMsg);
+            }
+            throw new RuntimeException(errorMsg);
+        }
     }
-    return HTTP_CLIENT_INSTANCE;
-  }
 
-  @NonNull public static Retrofit getRetrofitInstance(@NonNull final String endpointBaseUrl) {
-    return RETROFIT_CACHE.getUnchecked(endpointBaseUrl);
-  }
-
-  @NonNull public static <T> T createApiService(@NonNull final String endpointBaseUrl,
-      @NonNull final Class<T> serviceType) {
-    return getRetrofitInstance(endpointBaseUrl).create(serviceType);
-  }
-
-  @SuppressLint("DefaultLocale")
-  public static void checkResponseSuccessful(@NonNull final Response<?> response) {
-    if (!response.isSuccessful()) {
-      final int code = response.code();
-      final Object body = response.body();
-      final String errorMsg = String.format("[%d] : %s", code, body);
-      if (code >= 400 && code < 500) {
-        throw new IllegalArgumentException(errorMsg);
-      }
-      if (code >= 500) {
-        throw new IllegalStateException(errorMsg);
-      }
-      throw new RuntimeException(errorMsg);
+    @NonNull
+    public static <T> T createApiService(@NonNull final String endpointBaseUrl,
+            @NonNull final Class<T> serviceType) {
+        return getRetrofitInstance(endpointBaseUrl).create(serviceType);
     }
-  }
+
+    public static OkHttpClient getHttpClientInstance() {
+        if (HTTP_CLIENT_INSTANCE == null) {
+            final OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            final Activity currentActivity = RouterCompanionTaskerPluginApplication.getCurrentActivity();
+            if (currentActivity != null) {
+                builder.addInterceptor(new ChuckInterceptor(currentActivity));
+            }
+            builder.readTimeout(10, TimeUnit.SECONDS);
+            builder.connectTimeout(10, TimeUnit.SECONDS);
+
+            if (BuildConfig.DEBUG) {
+                final HttpLoggingInterceptor interceptor =
+                        new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+                            @Override
+                            public void log(String message) {
+                                Crashlytics.log(Log.DEBUG, TAG, message);
+                            }
+                        });
+                interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+                builder.addInterceptor(interceptor);
+
+                //Stetho
+                builder.addNetworkInterceptor(new StethoInterceptor());
+            }
+            HTTP_CLIENT_INSTANCE = builder.build();
+        }
+        return HTTP_CLIENT_INSTANCE;
+    }
+
+    @NonNull
+    public static Retrofit getRetrofitInstance(@NonNull final String endpointBaseUrl) {
+        return RETROFIT_CACHE.getUnchecked(endpointBaseUrl);
+    }
+
+    private NetworkUtils() {
+    }
 }

@@ -25,218 +25,198 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
-    android:orientation="horizontal"
-    >
+    android:orientation="horizontal">
 
-  <LinearLayout
-      android:layout_width="0dp"
-      android:layout_height="wrap_content"
-      android:layout_weight="0.74"
-      android:orientation="vertical"
-      >
-
-    <RelativeLayout
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingTop="4.0dip"
-        >
+        android:layout_weight="0.74"
+        android:orientation="vertical">
 
-      <TextView
-          android:id="@+id/tile_toolbox_abstract_title"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_alignParentLeft="true"
-          android:layout_alignParentStart="true"
-          android:ellipsize="end"
-          android:maxLines="1"
-          android:text="@string/ping"
-          android:textAppearance="?android:attr/textAppearanceMedium"
-          android:textStyle="bold"
-          />
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="4.0dip">
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/tile_toolbox_abstract_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/ping"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold" />
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1.0dip"
-        android:layout_marginBottom="8.0dip"
-        android:layout_marginTop="8.0dip"
-        android:background="#ffcccccc"
-        />
+        </RelativeLayout>
 
-    <!-- Command description -->
-    <TextView
-        android:id="@+id/tile_toolbox_abstract_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:maxLines="3"
-        android:textIsSelectable="true"
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1.0dip"
+            android:layout_marginBottom="8.0dip"
+            android:layout_marginTop="8.0dip"
+            android:background="#ffcccccc" />
 
-        android:textSize="12sp"
-        android:textStyle="italic"
-        android:visibility="gone"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="bottom"
-
-        android:visibility="invisible"
-        />
-
-    <!-- Error message placeholder -->
-    <TextView
-        android:id="@+id/tile_toolbox_abstract_error"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:maxLines="1"
-        android:text="@string/error_placeholder"
-        android:textColor="@color/ddwrt_purple"
-        android:textIsSelectable="true"
-        android:textStyle="bold"
-        android:visibility="gone"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="bottom"
-        android:textIsSelectable="true"
-
-        android:visibility="invisible"
-        />
-
-    <!-- Filter -->
-    <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
-        android:id="@+id/tile_toolbox_abstract_edittext"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawableBottom="@color/win8_teal"
-        android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
-        android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
-        android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
-        android:drawableStart="@drawable/abs__ic_search_api_holo_light"
-        android:hint="@string/ping_edit_text_hint"
-        android:imeOptions="actionSearch"
-        android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
-        android:maxLines="1"
-        />
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/tile_toolbox_abstract_ping_packets_inputlayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:visibility="gone"
-        >
-      <android.support.design.widget.TextInputEditText
-          android:id="@+id/tile_toolbox_abstract_ping_packets"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="4dp"
-          android:ems="10"
-          android:hint="Packets count"
-          android:imeOptions="flagNoExtractUi"
-          android:inputType="numberSigned"
-          android:maxLines="1"
-          android:selectAllOnFocus="true"
-          android:text="5"
-          />
-    </android.support.design.widget.TextInputLayout>
-
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="1.0dip"
-        android:weightSum="1"
-        >
-
-      <Button
-          android:id="@+id/tile_toolbox_abstract_cancel_button"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_alignParentLeft="true"
-          android:layout_alignParentStart="true"
-          android:enabled="false"
-          android:text="@string/cancel"
-          />
-
-      <!-- For tiles that need to geolocate an IP address -->
-      <Button
-          android:id="@+id/tile_toolbox_abstract_geolocate_button"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_centerInParent="true"
-          android:enabled="true"
-          android:text="Geolocate IP"
-          android:visibility="gone"
-          />
-
-      <Button
-          android:id="@+id/tile_toolbox_abstract_submit_button"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_alignParentEnd="true"
-          android:layout_alignParentRight="true"
-          android:text="@string/submit"
-          />
-
-    </RelativeLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="bottom"
-
-        android:visibility="invisible"
-        />
-
-    <ScrollView
-        android:id="@+id/tile_toolbox_abstract_content_scrollview"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:fillViewport="true"
-        android:scrollbars="vertical|horizontal"
-        >
-
-      <RelativeLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:background="@color/black"
-          >
-
+        <!-- Command description -->
         <TextView
-            android:id="@+id/tile_toolbox_abstract_content"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:gravity="bottom"
-            android:maxLength="9000"
-            android:maxLines="200"
-            android:textColor="@color/white"
-
-            android:textIsSelectable="true"
-            />
-
-        <ProgressBar
-            android:id="@+id/tile_toolbox_ping_abstract_loading_view"
+            android:id="@+id/tile_toolbox_abstract_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:progressDrawable="@color/white"
-            android:visibility="gone"
-            />
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="3"
+            android:textIsSelectable="true"
 
-      </RelativeLayout>
+            android:textSize="12sp"
+            android:textStyle="italic"
+            android:visibility="gone" />
 
-    </ScrollView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
 
-  </LinearLayout>
+            android:visibility="invisible" />
+
+        <!-- Error message placeholder -->
+        <TextView
+            android:id="@+id/tile_toolbox_abstract_error"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/error_placeholder"
+            android:textColor="@color/ddwrt_purple"
+            android:textIsSelectable="true"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:textIsSelectable="true"
+
+            android:visibility="invisible" />
+
+        <!-- Filter -->
+        <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
+            android:id="@+id/tile_toolbox_abstract_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableBottom="@color/win8_teal"
+            android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
+            android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
+            android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
+            android:drawableStart="@drawable/abs__ic_search_api_holo_light"
+            android:hint="@string/ping_edit_text_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
+            android:maxLines="1" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tile_toolbox_abstract_ping_packets_inputlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:visibility="gone">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/tile_toolbox_abstract_ping_packets"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:ems="10"
+                android:hint="Packets count"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="numberSigned"
+                android:maxLines="1"
+                android:selectAllOnFocus="true"
+                android:text="5" />
+        </android.support.design.widget.TextInputLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="1.0dip"
+            android:weightSum="1">
+
+            <Button
+                android:id="@+id/tile_toolbox_abstract_cancel_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:enabled="false"
+                android:text="@string/cancel" />
+
+            <!-- For tiles that need to geolocate an IP address -->
+            <Button
+                android:id="@+id/tile_toolbox_abstract_geolocate_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:enabled="true"
+                android:text="Geolocate IP"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/tile_toolbox_abstract_submit_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:text="@string/submit" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+
+            android:visibility="invisible" />
+
+        <ScrollView
+            android:id="@+id/tile_toolbox_abstract_content_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:fillViewport="true"
+            android:scrollbars="vertical|horizontal">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/black">
+
+                <TextView
+                    android:id="@+id/tile_toolbox_abstract_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="fill_parent"
+                    android:gravity="bottom"
+                    android:maxLength="9000"
+                    android:maxLines="200"
+                    android:textColor="@color/white"
+
+                    android:textIsSelectable="true" />
+
+                <ProgressBar
+                    android:id="@+id/tile_toolbox_ping_abstract_loading_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:progressDrawable="@color/white"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
 
 </LinearLayout>

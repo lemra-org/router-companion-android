@@ -2,44 +2,24 @@
 
 
 <resources>
-  <string name="define_support_appcompat_v7" translatable="false"/>
-  <!-- Author section -->
-  <string name="library_support_appcompat_v7_author" translatable="false">AOSP</string>
-  <string name="library_support_appcompat_v7_authorWebsite" translatable="false">https://source.android.com/</string>
-  <!-- Library section -->
-  <string name="library_support_appcompat_v7_libraryName" translatable="false">Android v7 AppCompat Library</string>
-  <string name="library_support_appcompat_v7_libraryDescription" translatable="false">This library adds support for the Action Bar user interface design pattern. This library includes support for material design user interface implementations.</string>
-  <string name="library_support_appcompat_v7_libraryWebsite" translatable="false">https://developer.android.com/topic/libraries/support-library/packages.html#v7-appcompat</string>
-  <string name="library_support_appcompat_v7_libraryVersion" translatable="false">26.0.2</string>
-  <!-- OpenSource section -->
-  <string name="library_support_appcompat_v7_isOpenSource" translatable="false">true</string>
-  <string name="library_support_appcompat_v7_repositoryLink" translatable="false"/>
-  <!-- ClassPath for autoDetect section -->
-  <!--<string translatable="false" name="library_support_appcompat_v7_classPath">com.facebook.support_appcompat_v7</string>-->
-  <!-- License section -->
-  <string name="library_support_appcompat_v7_licenseId" translatable="false">apache_2_0</string>
-  <!-- Custom variables section -->
+    <string name="define_support_appcompat_v7" translatable="false" />
+    <!-- Author section -->
+    <string name="library_support_appcompat_v7_author" translatable="false">AOSP</string>
+    <string name="library_support_appcompat_v7_authorWebsite" translatable="false">https://source.android.com/</string>
+    <!-- Library section -->
+    <string name="library_support_appcompat_v7_libraryName" translatable="false">Android v7 AppCompat Library</string>
+    <string name="library_support_appcompat_v7_libraryDescription" translatable="false">This library adds support for the Action Bar user interface design pattern. This library includes support for material design user interface implementations.</string>
+    <string name="library_support_appcompat_v7_libraryWebsite" translatable="false">https://developer.android.com/topic/libraries/support-library/packages.html#v7-appcompat</string>
+    <string name="library_support_appcompat_v7_libraryVersion" translatable="false">26.0.2</string>
+    <!-- OpenSource section -->
+    <string name="library_support_appcompat_v7_isOpenSource" translatable="false">true</string>
+    <string name="library_support_appcompat_v7_repositoryLink" translatable="false" />
+    <!-- ClassPath for autoDetect section -->
+    <!--<string translatable="false" name="library_support_appcompat_v7_classPath">com.facebook.support_appcompat_v7</string>-->
+    <!-- License section -->
+    <string name="library_support_appcompat_v7_licenseId" translatable="false">apache_2_0</string>
+    <!-- Custom variables section -->
 </resources>
 
 
-<!--<resources>-->
-  <!--<string name="define_int_support_appcompat_v7">year;owner</string>-->
-  <!--&lt;!&ndash; Author section &ndash;&gt;-->
-  <!--<string name="library_support_appcompat_v7_author">AOSP</string>-->
-  <!--<string name="library_support_appcompat_v7_authorWebsite">https://source.android.com/</string>-->
-  <!--&lt;!&ndash; Library section &ndash;&gt;-->
-  <!--<string name="library_support_appcompat_v7_libraryName">Support Annotations</string>-->
-  <!--<string name="library_support_appcompat_v7_libraryDescription">The Annotation package provides APIs to support adding annotation metadata to your apps.</string>-->
-  <!--<string name="library_support_appcompat_v7_libraryWebsite"></string>-->
-  <!--<string name="library_support_appcompat_v7_libraryVersion">26.0.2</string>-->
-  <!--&lt;!&ndash; OpenSource section &ndash;&gt;-->
-  <!--<string name="library_support_appcompat_v7_isOpenSource">true</string>-->
-  <!--<string name="library_support_appcompat_v7_repositoryLink"/>-->
-  <!--&lt;!&ndash; ClassPath for autoDetect section &ndash;&gt;-->
-  <!--&lt;!&ndash;<string name="library_support_appcompat_v7_classPath">android.support.annotation.NonNull</string>&ndash;&gt;-->
-  <!--&lt;!&ndash; License section &ndash;&gt;-->
-  <!--<string name="library_support_appcompat_v7_licenseId">apache_2_0</string>-->
-  <!--&lt;!&ndash; Custom variables section &ndash;&gt;-->
-  <!--<string name="library_support_appcompat_v7_owner">The Android Open Source Project</string>-->
-  <!--<string name="library_support_appcompat_v7_year">2011</string>-->
-<!--</resources>-->
+    <!--<resources>--><!--<string name="define_int_support_appcompat_v7">year;owner</string>--><!--&lt;!&ndash; Author section &ndash;&gt;--><!--<string name="library_support_appcompat_v7_author">AOSP</string>--><!--<string name="library_support_appcompat_v7_authorWebsite">https://source.android.com/</string>--><!--&lt;!&ndash; Library section &ndash;&gt;--><!--<string name="library_support_appcompat_v7_libraryName">Support Annotations</string>--><!--<string name="library_support_appcompat_v7_libraryDescription">The Annotation package provides APIs to support adding annotation metadata to your apps.</string>--><!--<string name="library_support_appcompat_v7_libraryWebsite"></string>--><!--<string name="library_support_appcompat_v7_libraryVersion">26.0.2</string>--><!--&lt;!&ndash; OpenSource section &ndash;&gt;--><!--<string name="library_support_appcompat_v7_isOpenSource">true</string>--><!--<string name="library_support_appcompat_v7_repositoryLink"/>--><!--&lt;!&ndash; ClassPath for autoDetect section &ndash;&gt;--><!--&lt;!&ndash;<string name="library_support_appcompat_v7_classPath">android.support.annotation.NonNull</string>&ndash;&gt;--><!--&lt;!&ndash; License section &ndash;&gt;--><!--<string name="library_support_appcompat_v7_licenseId">apache_2_0</string>--><!--&lt;!&ndash; Custom variables section &ndash;&gt;--><!--<string name="library_support_appcompat_v7_owner">The Android Open Source Project</string>--><!--<string name="library_support_appcompat_v7_year">2011</string>--><!--</resources>-->

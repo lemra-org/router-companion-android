@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources translatable="false">
 
-  <string name="define_license_epl_1_0"/>
-  <string name="license_epl_1_0_licenseName">Eclipse Public License - v 1.0</string>
-  <string name="license_epl_1_0_licenseWebsite">http://www.gnu.org/licenses/lgpl-3.0.en.html</string>
-  <string name="license_epl_1_0_licenseShortDescription">
+    <string name="define_license_epl_1_0" />
+    <string name="license_epl_1_0_licenseName">Eclipse Public License - v 1.0</string>
+    <string name="license_epl_1_0_licenseWebsite">http://www.gnu.org/licenses/lgpl-3.0.en.html</string>
+    <string name="license_epl_1_0_licenseShortDescription">
         <![CDATA[
 Eclipse Public License - v 1.0<br/>
 <br/>
@@ -53,7 +53,7 @@ Everyone is permitted to copy and distribute copies of this Agreement, but in or
 This Agreement is governed by the laws of the State of New York and the intellectual property laws of the United States of America. No party to this Agreement will bring a legal action under this Agreement more than one year after the cause of action arose. Each party waives its rights to a jury trial in any resulting litigation.<br/>
         ]]>
     </string>
-  <string name="license_epl_1_0_licenseDescription">
+    <string name="license_epl_1_0_licenseDescription">
         <![CDATA[
 Eclipse Public License - v 1.0<br/>
 <br/>

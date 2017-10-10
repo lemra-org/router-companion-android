@@ -22,9 +22,10 @@
 
 package org.rm3l.router_companion.tiles.status.wireless;
 
+import static com.google.common.base.Strings.nullToEmpty;
+
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -41,9 +42,6 @@ import android.widget.CompoundButton;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import com.crashlytics.android.Crashlytics;
-import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
-import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
-import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -65,501 +63,543 @@ import org.rm3l.router_companion.tiles.status.bandwidth.IfacesTile;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
-
-import static com.google.common.base.Strings.nullToEmpty;
+import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 
 public class WirelessIfacesTile extends IfacesTile {
 
-  public static final String WL_RADIO = "WL_RADIO";
-  public static final String WL_NO_OUTPUT = "WL_NO_OUTPUT";
-  private static final String TAG = WirelessIfacesTile.class.getSimpleName();
-  private final AtomicBoolean viewsBuilt = new AtomicBoolean(true);
-  @NonNull private List<WirelessIfaceTile> mWirelessIfaceTiles = new ArrayList<>();
-  private AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
-  private AsyncTaskLoader<NVRAMInfo> mLoader;
+    private class ManageWirelessRadioToggle implements View.OnClickListener {
 
-  public WirelessIfacesTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
-      Router router) {
-    super(parentFragment, arguments, router);
-  }
+        private boolean enable;
 
-  @Override protected String getLogTag() {
-    return TAG;
-  }
+        @Override
+        public void onClick(View view) {
 
-  @Override protected Loader<NVRAMInfo> getLoader(final int id, final Bundle args) {
+            isToggleStateActionRunning.set(true);
 
-    mLoader = new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
-
-      @Nullable @Override public NVRAMInfo loadInBackground() {
-
-        final NVRAMInfo nvramInfo = WirelessIfacesTile.super.doLoadInBackground();
-
-        try {
-          if (nvramInfo != null) {
-            final String[] wlRadioOutput =
-                SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
-                    //On = 0x0000 and off = 0x0001
-                    "/usr/sbin/wl radio 2>/dev/null || /usr/sbin/wl_atheros radio 2>/dev/null");
-            if (wlRadioOutput != null) {
-              nvramInfo.setProperty(WL_RADIO,
-                  (wlRadioOutput.length > 0) ? ("0x0000".equals(wlRadioOutput[0]) ? "1" : "0")
-                      : WL_NO_OUTPUT);
-            }
-          }
-        } catch (Exception e) {
-          Utils.reportException(null, e);
-          e.printStackTrace();
-        }
-
-        //Also set details
-        mWirelessIfaceTiles.clear();
-
-        updateProgressBarViewSeparator(25);
-        mParentFragmentActivity.runOnUiThread(new Runnable() {
-          @Override public void run() {
-            //                        mProgressBar.setVisibility(View.VISIBLE);
-            //                        mProgressBarDesc.setVisibility(View.VISIBLE);
-            mProgressBar.setProgress(25);
-            mProgressBarDesc.setText("Retrieving list of wireless ifaces...");
-          }
-        });
-
-        final Collection<WirelessIfaceTile> wirelessIfaceTiles =
-            StatusWirelessFragment.getWirelessIfaceTiles(args, mParentFragmentActivity,
-                mParentFragment, mRouter);
-
-        if (wirelessIfaceTiles != null) {
-          mWirelessIfaceTiles = new ArrayList<>(wirelessIfaceTiles);
-
-          final int size = wirelessIfaceTiles.size();
-
-          updateProgressBarViewSeparator(57);
-          mParentFragmentActivity.runOnUiThread(new Runnable() {
-            @Override public void run() {
-              mProgressBar.setProgress(57);
-              mProgressBarDesc.setText(
-                  String.format("Retrieved %d wireless ifaces. Now loading their details...",
-                      size));
-            }
-          });
-          int i = 0;
-          boolean allViewsBuilt = true;
-          for (final WirelessIfaceTile mWirelessIfaceTile : mWirelessIfaceTiles) {
-            if (mWirelessIfaceTile == null) {
-              continue;
-            }
-            final AsyncTaskLoader<NVRAMInfo> mWirelessIfaceTileLoader =
-                (AsyncTaskLoader<NVRAMInfo>) mWirelessIfaceTile.getLoader(id, args);
-            if (mWirelessIfaceTileLoader == null) {
-              continue;
+            if (!(view instanceof CompoundButton)) {
+                Utils.reportException(null, new IllegalStateException(
+                        "ManageWirelessRadioToggle#onClick: " + "view is NOT an instance of CompoundButton!"));
+                isToggleStateActionRunning.set(false);
+                return;
             }
 
-            final int j = (++i);
+            final CompoundButton compoundButton = (CompoundButton) view;
 
             mParentFragmentActivity.runOnUiThread(new Runnable() {
-              @Override public void run() {
-                mProgressBarDesc.setText(
-                    String.format("Retrieving details about iface %s (%d/%d)...",
-                        mWirelessIfaceTile.getIface(), j, size));
-              }
+                @Override
+                public void run() {
+                    compoundButton.setEnabled(false);
+                }
             });
 
-            Crashlytics.log(Log.DEBUG, TAG,
-                "Building view for iface " + mWirelessIfaceTile.getIface());
-            try {
-              new android.os.AsyncTask<Void, Void, NVRAMInfo>() {
+            this.enable = compoundButton.isChecked();
 
-                @Override protected NVRAMInfo doInBackground(Void... params) {
-                  return mWirelessIfaceTileLoader.loadInBackground();
-                }
-
-                @Override protected void onPostExecute(NVRAMInfo result) {
-                  super.onPostExecute(result);
-                  if (result == null) {
-                    return;
-                  }
-                  mWirelessIfaceTile.buildView(result);
-                }
-              }.execute();
-
-              //                            mParentFragmentActivity.runOnUiThread(new Runnable() {
-              //                                @Override
-              //                                public void run() {
-              //                                    mWirelessIfaceTile.buildView(
-              //                                            mWirelessIfaceTileLoader.loadInBackground());
-              //                                }
-              //                            });
-              allViewsBuilt &= true;
-            } catch (final Exception e) {
-              Utils.reportException(null, e);
-              e.printStackTrace();
-              allViewsBuilt = false;
-              //No worries
-            }
-          }
-
-          updateProgressBarViewSeparator(95);
-          mParentFragmentActivity.runOnUiThread(new Runnable() {
-            @Override public void run() {
-              mProgressBar.setProgress(95);
-              mProgressBarDesc.setText("Now building final view...");
-            }
-          });
-
-          viewsBuilt.set(allViewsBuilt);
-        }
-
-        return nvramInfo;
-      }
-    };
-    return mLoader;
-  }
-
-  @Override
-  public void onLoadFinished(@NonNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
-    try {
-      //Hide Non-wireless lines
-      final int[] viewsToHide = new int[] {
-          R.id.tile_status_bandwidth_ifaces_lan_title, R.id.tile_status_bandwidth_ifaces_lan,
-          R.id.tile_status_bandwidth_ifaces_wan, R.id.tile_status_bandwidth_ifaces_wan_title
-      };
-      for (final int viewToHide : viewsToHide) {
-        this.layout.findViewById(viewToHide).setVisibility(View.GONE);
-      }
-
-      //Show Radio
-      final int[] viewsToShow = new int[] {
-          R.id.tile_status_bandwidth_ifaces_wireless_radio_title,
-          R.id.tile_status_bandwidth_ifaces_wireless_radio_togglebutton
-      };
-      for (final int viewToShow : viewsToShow) {
-        this.layout.findViewById(viewToShow).setVisibility(View.VISIBLE);
-      }
-
-      mProgressBar.setProgress(97);
-      mProgressBarDesc.setText("Generating views...");
-
-      mProgressBar.setVisibility(View.GONE);
-      mProgressBarDesc.setVisibility(View.GONE);
-
-      final GridLayout container =
-          (GridLayout) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_list_container);
-      container.setVisibility(View.VISIBLE);
-
-      //Now add each wireless iface tile
-
-      container.removeAllViews();
-
-      final Resources resources = mParentFragmentActivity.getResources();
-      container.setBackgroundColor(
-          ContextCompat.getColor(mParentFragmentActivity, android.R.color.transparent));
-
-      final boolean isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
-
-      Exception preliminaryCheckException = null;
-      if (data == null) {
-        //noinspection ThrowableInstanceNeverThrown
-        preliminaryCheckException = new DDWRTNoDataException("No Data!");
-      } else //noinspection ThrowableResultOfMethodCallIgnored
-        if (data.getException() == null) {
-          final String wlRadioEnabled = data.getProperty(WL_RADIO);
-
-          if (wlRadioEnabled == null || !Arrays.asList(WL_NO_OUTPUT, "0", "1")
-              .contains(wlRadioEnabled)) {
-            //noinspection ThrowableInstanceNeverThrown
-            preliminaryCheckException = new DDWRTNoDataException("Unknown state");
-          }
-        }
-
-      final SwitchCompat enableRadioButton = (SwitchCompat) this.layout.findViewById(
-          R.id.tile_status_bandwidth_ifaces_wireless_radio_togglebutton);
-      enableRadioButton.setVisibility(View.VISIBLE);
-
-      final boolean makeToogleEnabled =
-          (data != null && data.getData() != null && data.getData().containsKey(WL_RADIO));
-
-      if (!isToggleStateActionRunning.get()) {
-        if (makeToogleEnabled) {
-          if ("1".equals(data.getProperty(WL_RADIO))) {
-            //Enabled
-            enableRadioButton.setChecked(true);
-          } else {
-            //Disabled
-            enableRadioButton.setChecked(false);
-          }
-          enableRadioButton.setEnabled(true);
-        } else {
-          enableRadioButton.setChecked(false);
-          enableRadioButton.setEnabled(false);
-        }
-
-        enableRadioButton.setOnClickListener(new ManageWirelessRadioToggle());
-      }
-
-      if (data != null && data.getData() != null) {
-        final View enableRadioTitle =
-            layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless_radio_title);
-
-        if (WL_NO_OUTPUT.equals(data.getProperty(WL_RADIO))) {
-          enableRadioButton.setVisibility(View.GONE);
-          enableRadioTitle.setVisibility(View.GONE);
-        } else {
-          enableRadioButton.setVisibility(View.VISIBLE);
-          enableRadioTitle.setVisibility(View.VISIBLE);
-        }
-      }
-
-      if (preliminaryCheckException != null) {
-        data = new NVRAMInfo().setException(preliminaryCheckException);
-      }
-
-      Collections.sort(mWirelessIfaceTiles, new Comparator<WirelessIfaceTile>() {
-        @Override public int compare(WirelessIfaceTile tile0, WirelessIfaceTile tile1) {
-          if (tile0 == tile1) {
-            return 0;
-          }
-          if (tile0 == null) {
-            return 1;
-          }
-          if (tile1 == null) {
-            return -1;
-          }
-          final String tile0Iface = tile0.getIface();
-          final String tile1Iface = tile1.getIface();
-          return nullToEmpty(tile0Iface).compareToIgnoreCase(nullToEmpty(tile1Iface));
-        }
-      });
-
-      int i = 0;
-      for (final WirelessIfaceTile tile : mWirelessIfaceTiles) {
-        if (tile == null) {
-          continue;
-        }
-        final ViewGroup tileViewGroupLayout = tile.getViewGroupLayout();
-        if (tileViewGroupLayout instanceof CardView) {
-
-          final CardView cardView = (CardView) tileViewGroupLayout;
-
-          //Create Options Menu
-          final ImageButton tileMenu =
-              (ImageButton) cardView.findViewById(R.id.tile_status_wireless_iface_menu);
-
-          if (!isThemeLight) {
-            //Set menu background to white
-            tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
-          }
-
-          //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
-          cardView.setPreventCornerOverlap(true);
-          //Add padding in API v21+ as well to have the same measurements with previous versions.
-          cardView.setUseCompatPadding(true);
-
-          //Highlight CardView
-          //                cardView.setCardElevation(10f);
-
-          if (isThemeLight) {
-            //Light
-            cardView.setCardBackgroundColor(
-                ContextCompat.getColor(mParentFragmentActivity, R.color.cardview_light_background));
-          } else {
-            //Default is Dark
-            cardView.setCardBackgroundColor(
-                ContextCompat.getColor(mParentFragmentActivity, R.color.cardview_dark_background));
-          }
-        }
-        if (tileViewGroupLayout != null) {
-          container.addView(tileViewGroupLayout, i++);
-        }
-      }
-
-      super.onLoadFinished(loader, data);
-    } finally {
-      mRefreshing.set(false);
-    }
-  }
-
-  @Nullable @Override protected OnClickIntent getOnclickIntent() {
-    return super.getOnclickIntent();
-  }
-
-  private class ManageWirelessRadioToggle implements View.OnClickListener {
-
-    private boolean enable;
-
-    @Override public void onClick(View view) {
-
-      isToggleStateActionRunning.set(true);
-
-      if (!(view instanceof CompoundButton)) {
-        Utils.reportException(null, new IllegalStateException(
-            "ManageWirelessRadioToggle#onClick: " + "view is NOT an instance of CompoundButton!"));
-        isToggleStateActionRunning.set(false);
-        return;
-      }
-
-      final CompoundButton compoundButton = (CompoundButton) view;
-
-      mParentFragmentActivity.runOnUiThread(new Runnable() {
-        @Override public void run() {
-          compoundButton.setEnabled(false);
-        }
-      });
-
-      this.enable = compoundButton.isChecked();
-
-      if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-        Utils.displayUpgradeMessage(mParentFragmentActivity, "Toggle Wireless Radio");
-        isToggleStateActionRunning.set(false);
-        mParentFragmentActivity.runOnUiThread(new Runnable() {
-          @Override public void run() {
-            compoundButton.setChecked(!enable);
-            compoundButton.setEnabled(true);
-          }
-        });
-        return;
-      }
-
-      SnackbarUtils.buildSnackbar(mParentFragmentActivity,
-          String.format("Wireless Radio will be %s on '%s' (%s).", enable ? "enabled" : "disabled",
-              mRouter.getDisplayName(), mRouter.getRemoteIpAddress()), "CANCEL",
-          Snackbar.LENGTH_LONG, new SnackbarCallback() {
-            @Override public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
+            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                Utils.displayUpgradeMessage(mParentFragmentActivity, "Toggle Wireless Radio");
+                isToggleStateActionRunning.set(false);
+                mParentFragmentActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        compoundButton.setChecked(!enable);
+                        compoundButton.setEnabled(true);
+                    }
+                });
+                return;
             }
 
-            @Override public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
-                throws Exception {
-              cancel();
-            }
-
-            @Override public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                throws Exception {
-              cancel();
-            }
-
-            @Override public void onDismissEventTimeout(int event, @Nullable Bundle token)
-                throws Exception {
-              Utils.displayMessage(mParentFragmentActivity,
-                  String.format("%s Wireless Radio...", enable ? "Enabling" : "Disabling"),
-                  Style.INFO);
-
-              ActionManager.runTasks(
-                  new ToggleWirelessRadioRouterAction(mRouter, mParentFragmentActivity,
-                      new RouterActionListener() {
+            SnackbarUtils.buildSnackbar(mParentFragmentActivity,
+                    String.format("Wireless Radio will be %s on '%s' (%s).", enable ? "enabled" : "disabled",
+                            mRouter.getDisplayName(), mRouter.getRemoteIpAddress()), "CANCEL",
+                    Snackbar.LENGTH_LONG, new SnackbarCallback() {
                         @Override
-                        public void onRouterActionSuccess(@NonNull RouterAction routerAction,
-                            @NonNull final Router router, Object returnData) {
-                          mParentFragmentActivity.runOnUiThread(new Runnable() {
-                            @Override public void run() {
+                        public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+                                throws Exception {
+                            cancel();
+                        }
 
-                              try {
-                                compoundButton.setChecked(enable);
-                                Utils.displayMessage(mParentFragmentActivity, String.format(
-                                    "Wireless Radio %s successfully on host '%s' (%s). ",
-                                    enable ? "enabled" : "disabled", router.getDisplayName(),
-                                    router.getRemoteIpAddress()), Style.CONFIRM);
-                              } finally {
-                                compoundButton.setEnabled(true);
-                                isToggleStateActionRunning.set(false);
-                                if (mLoader != null) {
-                                  //Reload everything right away
-                                  doneWithLoaderInstance(WirelessIfacesTile.this, mLoader, 1l);
+                        @Override
+                        public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+                                throws Exception {
+                            cancel();
+                        }
+
+                        @Override
+                        public void onDismissEventManual(int event, @Nullable Bundle bundle)
+                                throws Exception {
+                            cancel();
+                        }
+
+                        @Override
+                        public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
+                                throws Exception {
+                            cancel();
+                        }
+
+                        @Override
+                        public void onDismissEventTimeout(int event, @Nullable Bundle token)
+                                throws Exception {
+                            Utils.displayMessage(mParentFragmentActivity,
+                                    String.format("%s Wireless Radio...", enable ? "Enabling" : "Disabling"),
+                                    Style.INFO);
+
+                            ActionManager.runTasks(
+                                    new ToggleWirelessRadioRouterAction(mRouter, mParentFragmentActivity,
+                                            new RouterActionListener() {
+                                                @Override
+                                                public void onRouterActionFailure(@NonNull RouterAction routerAction,
+                                                        @NonNull final Router router,
+                                                        @Nullable final Exception exception) {
+                                                    mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            try {
+                                                                compoundButton.setChecked(!enable);
+                                                                Utils.displayMessage(mParentFragmentActivity,
+                                                                        String.format(
+                                                                                "Error while trying to %s Wireless Radio on '%s' (%s): %s",
+                                                                                enable ? "enable" : "disable",
+                                                                                router.getDisplayName(),
+                                                                                router.getRemoteIpAddress(),
+                                                                                Utils.handleException(
+                                                                                        exception).first),
+                                                                        Style.ALERT);
+                                                            } finally {
+                                                                compoundButton.setEnabled(true);
+                                                                isToggleStateActionRunning.set(false);
+                                                            }
+                                                        }
+                                                    });
+                                                }
+
+                                                @Override
+                                                public void onRouterActionSuccess(@NonNull RouterAction routerAction,
+                                                        @NonNull final Router router, Object returnData) {
+                                                    mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+
+                                                            try {
+                                                                compoundButton.setChecked(enable);
+                                                                Utils.displayMessage(mParentFragmentActivity,
+                                                                        String.format(
+                                                                                "Wireless Radio %s successfully on host '%s' (%s). ",
+                                                                                enable ? "enabled" : "disabled",
+                                                                                router.getDisplayName(),
+                                                                                router.getRemoteIpAddress()),
+                                                                        Style.CONFIRM);
+                                                            } finally {
+                                                                compoundButton.setEnabled(true);
+                                                                isToggleStateActionRunning.set(false);
+                                                                if (mLoader != null) {
+                                                                    //Reload everything right away
+                                                                    doneWithLoaderInstance(WirelessIfacesTile.this,
+                                                                            mLoader, 1l);
+                                                                }
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                            }, mGlobalPreferences, enable));
+                        }
+
+                        @Override
+                        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+                        }
+
+                        private void cancel() {
+                            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        compoundButton.setChecked(!enable);
+                                        compoundButton.setEnabled(true);
+                                    } finally {
+                                        isToggleStateActionRunning.set(false);
+                                    }
                                 }
-                              }
-                            }
-                          });
+                            });
                         }
+                    }, new Bundle(), true);
 
-                        @Override
-                        public void onRouterActionFailure(@NonNull RouterAction routerAction,
-                            @NonNull final Router router, @Nullable final Exception exception) {
-                          mParentFragmentActivity.runOnUiThread(new Runnable() {
-                            @Override public void run() {
-                              try {
-                                compoundButton.setChecked(!enable);
-                                Utils.displayMessage(mParentFragmentActivity, String.format(
-                                    "Error while trying to %s Wireless Radio on '%s' (%s): %s",
-                                    enable ? "enable" : "disable", router.getDisplayName(),
-                                    router.getRemoteIpAddress(),
-                                    Utils.handleException(exception).first), Style.ALERT);
-                              } finally {
-                                compoundButton.setEnabled(true);
-                                isToggleStateActionRunning.set(false);
-                              }
-                            }
-                          });
-                        }
-                      }, mGlobalPreferences, enable));
-            }
-
-            @Override public void onDismissEventManual(int event, @Nullable Bundle bundle)
-                throws Exception {
-              cancel();
-            }
-
-            @Override public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-                throws Exception {
-              cancel();
-            }
-
-            private void cancel() {
-              mParentFragmentActivity.runOnUiThread(new Runnable() {
-                @Override public void run() {
-                  try {
-                    compoundButton.setChecked(!enable);
-                    compoundButton.setEnabled(true);
-                  } finally {
-                    isToggleStateActionRunning.set(false);
-                  }
-                }
-              });
-            }
-          }, new Bundle(), true);
-
-      //new UndoBarController.UndoBar(mParentFragmentActivity).message(
-      //    String.format("Wireless Radio will be %s on '%s' (%s).", enable ? "enabled" : "disabled",
-      //        mRouter.getDisplayName(), mRouter.getRemoteIpAddress()))
-      //    .listener(new UndoBarController.AdvancedUndoListener() {
-      //                @Override public void onHide(@Nullable Parcelable parcelable) {
-      //                }
-      //
-      //                @Override public void onClear(@NonNull Parcelable[] parcelables) {
-      //                  mParentFragmentActivity.runOnUiThread(new Runnable() {
-      //                    @Override public void run() {
-      //                      try {
-      //                        compoundButton.setChecked(!enable);
-      //                        compoundButton.setEnabled(true);
-      //                      } finally {
-      //                        isToggleStateActionRunning.set(false);
-      //                      }
-      //                    }
-      //                  });
-      //                }
-      //
-      //                @Override public void onUndo(@Nullable Parcelable parcelable) {
-      //                  mParentFragmentActivity.runOnUiThread(new Runnable() {
-      //                    @Override public void run() {
-      //                      try {
-      //                        compoundButton.setChecked(!enable);
-      //                        compoundButton.setEnabled(true);
-      //                      } finally {
-      //                        isToggleStateActionRunning.set(false);
-      //                      }
-      //                    }
-      //                  });
-      //                }
-      //              }
-      //
-      //    )
-      //    .
-      //
-      //        token(new Bundle()
-      //
-      //        )
-      //    .
-      //
-      //        show();
+            //new UndoBarController.UndoBar(mParentFragmentActivity).message(
+            //    String.format("Wireless Radio will be %s on '%s' (%s).", enable ? "enabled" : "disabled",
+            //        mRouter.getDisplayName(), mRouter.getRemoteIpAddress()))
+            //    .listener(new UndoBarController.AdvancedUndoListener() {
+            //                @Override public void onHide(@Nullable Parcelable parcelable) {
+            //                }
+            //
+            //                @Override public void onClear(@NonNull Parcelable[] parcelables) {
+            //                  mParentFragmentActivity.runOnUiThread(new Runnable() {
+            //                    @Override public void run() {
+            //                      try {
+            //                        compoundButton.setChecked(!enable);
+            //                        compoundButton.setEnabled(true);
+            //                      } finally {
+            //                        isToggleStateActionRunning.set(false);
+            //                      }
+            //                    }
+            //                  });
+            //                }
+            //
+            //                @Override public void onUndo(@Nullable Parcelable parcelable) {
+            //                  mParentFragmentActivity.runOnUiThread(new Runnable() {
+            //                    @Override public void run() {
+            //                      try {
+            //                        compoundButton.setChecked(!enable);
+            //                        compoundButton.setEnabled(true);
+            //                      } finally {
+            //                        isToggleStateActionRunning.set(false);
+            //                      }
+            //                    }
+            //                  });
+            //                }
+            //              }
+            //
+            //    )
+            //    .
+            //
+            //        token(new Bundle()
+            //
+            //        )
+            //    .
+            //
+            //        show();
+        }
     }
-  }
+
+    public static final String WL_RADIO = "WL_RADIO";
+
+    public static final String WL_NO_OUTPUT = "WL_NO_OUTPUT";
+
+    private static final String TAG = WirelessIfacesTile.class.getSimpleName();
+
+    private AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
+
+    private AsyncTaskLoader<NVRAMInfo> mLoader;
+
+    @NonNull
+    private List<WirelessIfaceTile> mWirelessIfaceTiles = new ArrayList<>();
+
+    private final AtomicBoolean viewsBuilt = new AtomicBoolean(true);
+
+    public WirelessIfacesTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
+            Router router) {
+        super(parentFragment, arguments, router);
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
+        try {
+            //Hide Non-wireless lines
+            final int[] viewsToHide = new int[]{
+                    R.id.tile_status_bandwidth_ifaces_lan_title, R.id.tile_status_bandwidth_ifaces_lan,
+                    R.id.tile_status_bandwidth_ifaces_wan, R.id.tile_status_bandwidth_ifaces_wan_title
+            };
+            for (final int viewToHide : viewsToHide) {
+                this.layout.findViewById(viewToHide).setVisibility(View.GONE);
+            }
+
+            //Show Radio
+            final int[] viewsToShow = new int[]{
+                    R.id.tile_status_bandwidth_ifaces_wireless_radio_title,
+                    R.id.tile_status_bandwidth_ifaces_wireless_radio_togglebutton
+            };
+            for (final int viewToShow : viewsToShow) {
+                this.layout.findViewById(viewToShow).setVisibility(View.VISIBLE);
+            }
+
+            mProgressBar.setProgress(97);
+            mProgressBarDesc.setText("Generating views...");
+
+            mProgressBar.setVisibility(View.GONE);
+            mProgressBarDesc.setVisibility(View.GONE);
+
+            final GridLayout container =
+                    (GridLayout) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_list_container);
+            container.setVisibility(View.VISIBLE);
+
+            //Now add each wireless iface tile
+
+            container.removeAllViews();
+
+            final Resources resources = mParentFragmentActivity.getResources();
+            container.setBackgroundColor(
+                    ContextCompat.getColor(mParentFragmentActivity, android.R.color.transparent));
+
+            final boolean isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
+
+            Exception preliminaryCheckException = null;
+            if (data == null) {
+                //noinspection ThrowableInstanceNeverThrown
+                preliminaryCheckException = new DDWRTNoDataException("No Data!");
+            } else //noinspection ThrowableResultOfMethodCallIgnored
+                if (data.getException() == null) {
+                    final String wlRadioEnabled = data.getProperty(WL_RADIO);
+
+                    if (wlRadioEnabled == null || !Arrays.asList(WL_NO_OUTPUT, "0", "1")
+                            .contains(wlRadioEnabled)) {
+                        //noinspection ThrowableInstanceNeverThrown
+                        preliminaryCheckException = new DDWRTNoDataException("Unknown state");
+                    }
+                }
+
+            final SwitchCompat enableRadioButton = (SwitchCompat) this.layout.findViewById(
+                    R.id.tile_status_bandwidth_ifaces_wireless_radio_togglebutton);
+            enableRadioButton.setVisibility(View.VISIBLE);
+
+            final boolean makeToogleEnabled =
+                    (data != null && data.getData() != null && data.getData().containsKey(WL_RADIO));
+
+            if (!isToggleStateActionRunning.get()) {
+                if (makeToogleEnabled) {
+                    if ("1".equals(data.getProperty(WL_RADIO))) {
+                        //Enabled
+                        enableRadioButton.setChecked(true);
+                    } else {
+                        //Disabled
+                        enableRadioButton.setChecked(false);
+                    }
+                    enableRadioButton.setEnabled(true);
+                } else {
+                    enableRadioButton.setChecked(false);
+                    enableRadioButton.setEnabled(false);
+                }
+
+                enableRadioButton.setOnClickListener(new ManageWirelessRadioToggle());
+            }
+
+            if (data != null && data.getData() != null) {
+                final View enableRadioTitle =
+                        layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless_radio_title);
+
+                if (WL_NO_OUTPUT.equals(data.getProperty(WL_RADIO))) {
+                    enableRadioButton.setVisibility(View.GONE);
+                    enableRadioTitle.setVisibility(View.GONE);
+                } else {
+                    enableRadioButton.setVisibility(View.VISIBLE);
+                    enableRadioTitle.setVisibility(View.VISIBLE);
+                }
+            }
+
+            if (preliminaryCheckException != null) {
+                data = new NVRAMInfo().setException(preliminaryCheckException);
+            }
+
+            Collections.sort(mWirelessIfaceTiles, new Comparator<WirelessIfaceTile>() {
+                @Override
+                public int compare(WirelessIfaceTile tile0, WirelessIfaceTile tile1) {
+                    if (tile0 == tile1) {
+                        return 0;
+                    }
+                    if (tile0 == null) {
+                        return 1;
+                    }
+                    if (tile1 == null) {
+                        return -1;
+                    }
+                    final String tile0Iface = tile0.getIface();
+                    final String tile1Iface = tile1.getIface();
+                    return nullToEmpty(tile0Iface).compareToIgnoreCase(nullToEmpty(tile1Iface));
+                }
+            });
+
+            int i = 0;
+            for (final WirelessIfaceTile tile : mWirelessIfaceTiles) {
+                if (tile == null) {
+                    continue;
+                }
+                final ViewGroup tileViewGroupLayout = tile.getViewGroupLayout();
+                if (tileViewGroupLayout instanceof CardView) {
+
+                    final CardView cardView = (CardView) tileViewGroupLayout;
+
+                    //Create Options Menu
+                    final ImageButton tileMenu =
+                            (ImageButton) cardView.findViewById(R.id.tile_status_wireless_iface_menu);
+
+                    if (!isThemeLight) {
+                        //Set menu background to white
+                        tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+                    }
+
+                    //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
+                    cardView.setPreventCornerOverlap(true);
+                    //Add padding in API v21+ as well to have the same measurements with previous versions.
+                    cardView.setUseCompatPadding(true);
+
+                    //Highlight CardView
+                    //                cardView.setCardElevation(10f);
+
+                    if (isThemeLight) {
+                        //Light
+                        cardView.setCardBackgroundColor(
+                                ContextCompat.getColor(mParentFragmentActivity, R.color.cardview_light_background));
+                    } else {
+                        //Default is Dark
+                        cardView.setCardBackgroundColor(
+                                ContextCompat.getColor(mParentFragmentActivity, R.color.cardview_dark_background));
+                    }
+                }
+                if (tileViewGroupLayout != null) {
+                    container.addView(tileViewGroupLayout, i++);
+                }
+            }
+
+            super.onLoadFinished(loader, data);
+        } finally {
+            mRefreshing.set(false);
+        }
+    }
+
+    @Override
+    protected Loader<NVRAMInfo> getLoader(final int id, final Bundle args) {
+
+        mLoader = new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
+
+            @Nullable
+            @Override
+            public NVRAMInfo loadInBackground() {
+
+                final NVRAMInfo nvramInfo = WirelessIfacesTile.super.doLoadInBackground();
+
+                try {
+                    if (nvramInfo != null) {
+                        final String[] wlRadioOutput =
+                                SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
+                                        //On = 0x0000 and off = 0x0001
+                                        "/usr/sbin/wl radio 2>/dev/null || /usr/sbin/wl_atheros radio 2>/dev/null");
+                        if (wlRadioOutput != null) {
+                            nvramInfo.setProperty(WL_RADIO,
+                                    (wlRadioOutput.length > 0) ? ("0x0000".equals(wlRadioOutput[0]) ? "1" : "0")
+                                            : WL_NO_OUTPUT);
+                        }
+                    }
+                } catch (Exception e) {
+                    Utils.reportException(null, e);
+                    e.printStackTrace();
+                }
+
+                //Also set details
+                mWirelessIfaceTiles.clear();
+
+                updateProgressBarViewSeparator(25);
+                mParentFragmentActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //                        mProgressBar.setVisibility(View.VISIBLE);
+                        //                        mProgressBarDesc.setVisibility(View.VISIBLE);
+                        mProgressBar.setProgress(25);
+                        mProgressBarDesc.setText("Retrieving list of wireless ifaces...");
+                    }
+                });
+
+                final Collection<WirelessIfaceTile> wirelessIfaceTiles =
+                        StatusWirelessFragment.getWirelessIfaceTiles(args, mParentFragmentActivity,
+                                mParentFragment, mRouter);
+
+                if (wirelessIfaceTiles != null) {
+                    mWirelessIfaceTiles = new ArrayList<>(wirelessIfaceTiles);
+
+                    final int size = wirelessIfaceTiles.size();
+
+                    updateProgressBarViewSeparator(57);
+                    mParentFragmentActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setProgress(57);
+                            mProgressBarDesc.setText(
+                                    String.format("Retrieved %d wireless ifaces. Now loading their details...",
+                                            size));
+                        }
+                    });
+                    int i = 0;
+                    boolean allViewsBuilt = true;
+                    for (final WirelessIfaceTile mWirelessIfaceTile : mWirelessIfaceTiles) {
+                        if (mWirelessIfaceTile == null) {
+                            continue;
+                        }
+                        final AsyncTaskLoader<NVRAMInfo> mWirelessIfaceTileLoader =
+                                (AsyncTaskLoader<NVRAMInfo>) mWirelessIfaceTile.getLoader(id, args);
+                        if (mWirelessIfaceTileLoader == null) {
+                            continue;
+                        }
+
+                        final int j = (++i);
+
+                        mParentFragmentActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mProgressBarDesc.setText(
+                                        String.format("Retrieving details about iface %s (%d/%d)...",
+                                                mWirelessIfaceTile.getIface(), j, size));
+                            }
+                        });
+
+                        Crashlytics.log(Log.DEBUG, TAG,
+                                "Building view for iface " + mWirelessIfaceTile.getIface());
+                        try {
+                            new android.os.AsyncTask<Void, Void, NVRAMInfo>() {
+
+                                @Override
+                                protected NVRAMInfo doInBackground(Void... params) {
+                                    return mWirelessIfaceTileLoader.loadInBackground();
+                                }
+
+                                @Override
+                                protected void onPostExecute(NVRAMInfo result) {
+                                    super.onPostExecute(result);
+                                    if (result == null) {
+                                        return;
+                                    }
+                                    mWirelessIfaceTile.buildView(result);
+                                }
+                            }.execute();
+
+                            //                            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                            //                                @Override
+                            //                                public void run() {
+                            //                                    mWirelessIfaceTile.buildView(
+                            //                                            mWirelessIfaceTileLoader.loadInBackground());
+                            //                                }
+                            //                            });
+                            allViewsBuilt &= true;
+                        } catch (final Exception e) {
+                            Utils.reportException(null, e);
+                            e.printStackTrace();
+                            allViewsBuilt = false;
+                            //No worries
+                        }
+                    }
+
+                    updateProgressBarViewSeparator(95);
+                    mParentFragmentActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setProgress(95);
+                            mProgressBarDesc.setText("Now building final view...");
+                        }
+                    });
+
+                    viewsBuilt.set(allViewsBuilt);
+                }
+
+                return nvramInfo;
+            }
+        };
+        return mLoader;
+    }
+
+    @Override
+    protected String getLogTag() {
+        return TAG;
+    }
+
+    @Nullable
+    @Override
+    protected OnClickIntent getOnclickIntent() {
+        return super.getOnclickIntent();
+    }
 }

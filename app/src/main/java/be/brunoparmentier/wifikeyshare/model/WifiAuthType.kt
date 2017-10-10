@@ -19,16 +19,16 @@
 package be.brunoparmentier.wifikeyshare.model
 
 enum class WifiAuthType constructor(private val printableName: String) {
-  OPEN("Open"),
-  WEP("WEP"),
-  WPA_PSK("WPA PSK"),
-  WPA_EAP("WPA EAP"),
-  WPA2_EAP("WPA2 EAP"),
-  WPA2_PSK("WPA2 PSK"),
-  NONE("Open"),
-  WPA("WPA");
+    OPEN("Open"),
+    WEP("WEP"),
+    WPA_PSK("WPA PSK"),
+    WPA_EAP("WPA EAP"),
+    WPA2_EAP("WPA2 EAP"),
+    WPA2_PSK("WPA2 PSK"),
+    NONE("Open"),
+    WPA("WPA");
 
-  override fun toString(): String {
-    return printableName
-  }
+    override fun toString(): String {
+        return printableName
+    }
 }

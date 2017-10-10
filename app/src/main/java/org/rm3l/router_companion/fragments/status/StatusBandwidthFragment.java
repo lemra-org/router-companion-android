@@ -37,8 +37,10 @@ import org.rm3l.router_companion.tiles.status.bandwidth.IfacesTile;
  */
 public class StatusBandwidthFragment extends AbstractBaseFragment<Collection<DDWRTTile>> {
 
-  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return Arrays.<DDWRTTile>asList(new IfacesTile(this, savedInstanceState, router),
-        new IfacesBandwidthMonitoringTile(this, savedInstanceState, router));
-  }
+    @Nullable
+    @Override
+    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+        return Arrays.<DDWRTTile>asList(new IfacesTile(this, savedInstanceState, router),
+                new IfacesBandwidthMonitoringTile(this, savedInstanceState, router));
+    }
 }

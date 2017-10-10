@@ -29,20 +29,29 @@ import java.util.Comparator;
 /**
  * Natural order sort
  */
-@SuppressWarnings("unused") public class NaturalOrderSortingStrategy extends SortingStrategy {
-  @NonNull @Override public String getDisplayName() {
-    return "Natural Ordering";
-  }
+@SuppressWarnings("unused")
+public class NaturalOrderSortingStrategy extends SortingStrategy {
 
-  @NonNull @Override public String getShortDescription() {
-    return "Alphabetical";
-  }
+    @NonNull
+    @Override
+    public String getDisplayName() {
+        return "Natural Ordering";
+    }
 
-  @Nullable @Override protected Comparator<String> getComparator() {
-    return null;
-  }
+    @NonNull
+    @Override
+    public String getShortDescription() {
+        return "Alphabetical";
+    }
 
-  @Override protected boolean doCompare() {
-    return true;
-  }
+    @Override
+    protected boolean doCompare() {
+        return true;
+    }
+
+    @Nullable
+    @Override
+    protected Comparator<String> getComparator() {
+        return null;
+    }
 }

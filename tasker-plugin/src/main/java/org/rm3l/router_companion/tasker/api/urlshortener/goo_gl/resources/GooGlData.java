@@ -5,58 +5,58 @@ package org.rm3l.router_companion.tasker.api.urlshortener.goo_gl.resources;
  */
 public class GooGlData {
 
-  private String kind;
+    private String created;
 
-  private String id;
+    private String id;
 
-  private String longUrl;
+    private String kind;
 
-  private String status;
+    private String longUrl;
 
-  private String created;
+    private String status;
 
-  public String getKind() {
-    return kind;
-  }
+    public String getCreated() {
+        return created;
+    }
 
-  public GooGlData setKind(String kind) {
-    this.kind = kind;
-    return this;
-  }
+    public GooGlData setCreated(String created) {
+        this.created = created;
+        return this;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public GooGlData setId(String id) {
-    this.id = id;
-    return this;
-  }
+    public GooGlData setId(String id) {
+        this.id = id;
+        return this;
+    }
 
-  public String getLongUrl() {
-    return longUrl;
-  }
+    public String getKind() {
+        return kind;
+    }
 
-  public GooGlData setLongUrl(String longUrl) {
-    this.longUrl = longUrl;
-    return this;
-  }
+    public GooGlData setKind(String kind) {
+        this.kind = kind;
+        return this;
+    }
 
-  public String getStatus() {
-    return status;
-  }
+    public String getLongUrl() {
+        return longUrl;
+    }
 
-  public GooGlData setStatus(String status) {
-    this.status = status;
-    return this;
-  }
+    public GooGlData setLongUrl(String longUrl) {
+        this.longUrl = longUrl;
+        return this;
+    }
 
-  public String getCreated() {
-    return created;
-  }
+    public String getStatus() {
+        return status;
+    }
 
-  public GooGlData setCreated(String created) {
-    this.created = created;
-    return this;
-  }
+    public GooGlData setStatus(String status) {
+        this.status = status;
+        return this;
+    }
 }

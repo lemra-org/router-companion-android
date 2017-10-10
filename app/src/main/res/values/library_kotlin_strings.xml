@@ -21,21 +21,21 @@ SOFTWARE.
 -->
 
 <resources>
-  <string name="define_kotlin" translatable="false"/>
-  <!-- Author section -->
-  <string name="library_kotlin_author" translatable="false">JetBrains</string>
-  <string name="library_kotlin_authorWebsite" translatable="false">https://www.jetbrains.com/</string>
-  <!-- Library section -->
-  <string name="library_kotlin_libraryName" translatable="false">Kotlin</string>
-  <string name="library_kotlin_libraryDescription" translatable="false">Programming language for JVM &amp; Android</string>
-  <string name="library_kotlin_libraryWebsite" translatable="false">https://kotlinlang.org/</string>
-  <string name="library_kotlin_libraryVersion" translatable="false">1.1.4-3</string>
-  <!-- OpenSource section -->
-  <string name="library_kotlin_isOpenSource" translatable="false">true</string>
-  <string name="library_kotlin_repositoryLink" translatable="false">https://github.com/JetBrains/kotlin</string>
-  <!-- ClassPath for autoDetect section -->
-  <!--<string translatable="false" name="library_kotlin_classPath">com.facebook.kotlin</string>-->
-  <!-- License section -->
-  <string name="library_kotlin_licenseId" translatable="false">apache_2_0</string>
-  <!-- Custom variables section -->
+    <string name="define_kotlin" translatable="false" />
+    <!-- Author section -->
+    <string name="library_kotlin_author" translatable="false">JetBrains</string>
+    <string name="library_kotlin_authorWebsite" translatable="false">https://www.jetbrains.com/</string>
+    <!-- Library section -->
+    <string name="library_kotlin_libraryName" translatable="false">Kotlin</string>
+    <string name="library_kotlin_libraryDescription" translatable="false">Programming language for JVM &amp; Android</string>
+    <string name="library_kotlin_libraryWebsite" translatable="false">https://kotlinlang.org/</string>
+    <string name="library_kotlin_libraryVersion" translatable="false">1.1.4-3</string>
+    <!-- OpenSource section -->
+    <string name="library_kotlin_isOpenSource" translatable="false">true</string>
+    <string name="library_kotlin_repositoryLink" translatable="false">https://github.com/JetBrains/kotlin</string>
+    <!-- ClassPath for autoDetect section -->
+    <!--<string translatable="false" name="library_kotlin_classPath">com.facebook.kotlin</string>-->
+    <!-- License section -->
+    <string name="library_kotlin_licenseId" translatable="false">apache_2_0</string>
+    <!-- Custom variables section -->
 </resources>

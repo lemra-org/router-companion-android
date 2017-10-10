@@ -22,89 +22,94 @@ import org.rm3l.router_companion.utils.AdUtils;
  */
 public class RestoreWANMonthlyTrafficFromBackupAction extends AbstractRouterAction<Void> {
 
-  private final Context mContext;
-  private final InputStream mBackupFileInputStream;
+    public static class AgreementToRestoreWANTraffDataFromBackup extends DDWRTCompanionException {
 
-  public RestoreWANMonthlyTrafficFromBackupAction(Router router, @NonNull Context context,
-      @Nullable RouterActionListener listener,
-      @NonNull final SharedPreferences globalSharedPreferences,
-      @NonNull final InputStream backupFileInputStream) {
-    super(router, listener, RouterAction.RESTORE, globalSharedPreferences);
-    this.mContext = context;
-    this.mBackupFileInputStream = backupFileInputStream;
-  }
+        private final Date mClickDate;
 
-  @Nullable @Override protected Context getContext() {
-    return mContext;
-  }
+        private final String mDeviceId;
 
-  @NonNull @Override protected RouterActionResult<Void> doActionInBackground() {
-    Exception exception = null;
-    File tempFile = null;
-    try {
-      tempFile = File.createTempFile("ttraffbak_to_restore_" + router.getUuid(), ".bin",
-          mContext.getCacheDir());
-
-      Files.write(ByteStreams.toByteArray(mBackupFileInputStream), tempFile);
-      //FileUtils.copyInputStreamToFile(mBackupFileInputStream, tempFile);
-
-      final List<String> fileLines = Files.readLines(tempFile, RouterCompanionAppConstants.CHARSET);
-      final NVRAMInfo linesToNVRAM = new NVRAMInfo();
-
-      final Splitter splitter = Splitter.on("=").omitEmptyStrings();
-      for (final String fileLine : fileLines) {
-        if (fileLine == null || fileLine.isEmpty()) {
-          continue;
+        public AgreementToRestoreWANTraffDataFromBackup(@NonNull Context context) {
+            mClickDate = new Date();
+            mDeviceId = AdUtils.getDeviceIdForAdMob(context);
         }
-        if (!fileLine.startsWith("traff-")) {
-          continue;
+
+        public Date getClickDate() {
+            return mClickDate;
         }
-        final List<String> stringList = splitter.splitToList(fileLine);
-        if (stringList.size() < 2) {
-          continue;
+
+        public String getDeviceId() {
+            return mDeviceId;
         }
-        linesToNVRAM.setProperty(stringList.get(0), stringList.get(1));
-      }
-
-      final RouterActionResult<Void> setNvramActionResult =
-          SetNVRAMVariablesAction.getRouterActionResult(mContext, globalSharedPreferences, router,
-              linesToNVRAM, false, null);
-
-      if (setNvramActionResult == null) {
-        throw new IllegalStateException("Failed to execute action");
-      }
-
-      exception = setNvramActionResult.getException();
-    } catch (Exception e) {
-      e.printStackTrace();
-      exception = e;
-    } finally {
-      if (tempFile != null) {
-        //noinspection ResultOfMethodCallIgnored
-        tempFile.delete();
-      }
     }
 
-    return new RouterActionResult<>(null, exception);
-  }
+    private final InputStream mBackupFileInputStream;
 
-  public static class AgreementToRestoreWANTraffDataFromBackup extends DDWRTCompanionException {
+    private final Context mContext;
 
-    private final Date mClickDate;
-
-    private final String mDeviceId;
-
-    public AgreementToRestoreWANTraffDataFromBackup(@NonNull Context context) {
-      mClickDate = new Date();
-      mDeviceId = AdUtils.getDeviceIdForAdMob(context);
+    public RestoreWANMonthlyTrafficFromBackupAction(Router router, @NonNull Context context,
+            @Nullable RouterActionListener listener,
+            @NonNull final SharedPreferences globalSharedPreferences,
+            @NonNull final InputStream backupFileInputStream) {
+        super(router, listener, RouterAction.RESTORE, globalSharedPreferences);
+        this.mContext = context;
+        this.mBackupFileInputStream = backupFileInputStream;
     }
 
-    public Date getClickDate() {
-      return mClickDate;
+    @NonNull
+    @Override
+    protected RouterActionResult<Void> doActionInBackground() {
+        Exception exception = null;
+        File tempFile = null;
+        try {
+            tempFile = File.createTempFile("ttraffbak_to_restore_" + router.getUuid(), ".bin",
+                    mContext.getCacheDir());
+
+            Files.write(ByteStreams.toByteArray(mBackupFileInputStream), tempFile);
+            //FileUtils.copyInputStreamToFile(mBackupFileInputStream, tempFile);
+
+            final List<String> fileLines = Files.readLines(tempFile, RouterCompanionAppConstants.CHARSET);
+            final NVRAMInfo linesToNVRAM = new NVRAMInfo();
+
+            final Splitter splitter = Splitter.on("=").omitEmptyStrings();
+            for (final String fileLine : fileLines) {
+                if (fileLine == null || fileLine.isEmpty()) {
+                    continue;
+                }
+                if (!fileLine.startsWith("traff-")) {
+                    continue;
+                }
+                final List<String> stringList = splitter.splitToList(fileLine);
+                if (stringList.size() < 2) {
+                    continue;
+                }
+                linesToNVRAM.setProperty(stringList.get(0), stringList.get(1));
+            }
+
+            final RouterActionResult<Void> setNvramActionResult =
+                    SetNVRAMVariablesAction.getRouterActionResult(mContext, globalSharedPreferences, router,
+                            linesToNVRAM, false, null);
+
+            if (setNvramActionResult == null) {
+                throw new IllegalStateException("Failed to execute action");
+            }
+
+            exception = setNvramActionResult.getException();
+        } catch (Exception e) {
+            e.printStackTrace();
+            exception = e;
+        } finally {
+            if (tempFile != null) {
+                //noinspection ResultOfMethodCallIgnored
+                tempFile.delete();
+            }
+        }
+
+        return new RouterActionResult<>(null, exception);
     }
 
-    public String getDeviceId() {
-      return mDeviceId;
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
     }
-  }
 }

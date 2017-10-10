@@ -22,53 +22,61 @@ import org.rm3l.router_companion.widgets.wizard.WizardStepVerifiable;
  */
 public class ManageRouterWizard extends MaterialWizard {
 
-  private int action;
+    private int action;
 
-  /**
-   * Note that initially MaterialWizard inherits from {@link android.support.v4.app.Fragment} and
-   * therefore you must have an empty constructor
-   */
-  public ManageRouterWizard() {
-    super();
-  }
-
-  public int getAction() {
-    return action;
-  }
-
-  public ManageRouterWizard setAction(int action) {
-    this.action = action;
-    return this;
-  }
-
-  @NonNull @Override protected String getWizardTitle() {
-    switch (action) {
-      case RouterWizardAction.EDIT:
-        return "Edit Router";
-      default:
-        return "Register a Router";
+    /**
+     * Note that initially MaterialWizard inherits from {@link android.support.v4.app.Fragment} and
+     * therefore you must have an empty constructor
+     */
+    public ManageRouterWizard() {
+        super();
     }
-  }
 
-  @Nullable @Override protected String getFirstStepWizardSubTitle() {
-    return BasicDetailsStep.getTitle();
-  }
-
-  @SuppressWarnings("unchecked") @Nullable @Override
-  protected <T extends WizardStep & WizardStepVerifiable> List<Class<T>> getStepClasses() {
-    return Arrays.asList((Class<T>) BasicDetailsStep.class,
-        (Class<T>) RouterConnectionDetailsStep.class, (Class<T>) LocalSSIDLookupStep.class,
-        (Class<T>) ReviewStep.class);
-  }
-
-  @Nullable @Override protected Intent getActivityIntentToReturnUponClose() {
-    final Intent intent = new Intent();
-    final String wizardRouter = getContext().getSharedPreferences(
-        RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-        .getString(ManageRouterWizard.class.getSimpleName(), null);
-    if (wizardRouter != null && !wizardRouter.isEmpty()) {
-      intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, wizardRouter);
+    public int getAction() {
+        return action;
     }
-    return intent;
-  }
+
+    public ManageRouterWizard setAction(int action) {
+        this.action = action;
+        return this;
+    }
+
+    @Nullable
+    @Override
+    protected Intent getActivityIntentToReturnUponClose() {
+        final Intent intent = new Intent();
+        final String wizardRouter = getContext().getSharedPreferences(
+                RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                .getString(ManageRouterWizard.class.getSimpleName(), null);
+        if (wizardRouter != null && !wizardRouter.isEmpty()) {
+            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, wizardRouter);
+        }
+        return intent;
+    }
+
+    @Nullable
+    @Override
+    protected String getFirstStepWizardSubTitle() {
+        return BasicDetailsStep.getTitle();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Nullable
+    @Override
+    protected <T extends WizardStep & WizardStepVerifiable> List<Class<T>> getStepClasses() {
+        return Arrays.asList((Class<T>) BasicDetailsStep.class,
+                (Class<T>) RouterConnectionDetailsStep.class, (Class<T>) LocalSSIDLookupStep.class,
+                (Class<T>) ReviewStep.class);
+    }
+
+    @NonNull
+    @Override
+    protected String getWizardTitle() {
+        switch (action) {
+            case RouterWizardAction.EDIT:
+                return "Edit Router";
+            default:
+                return "Register a Router";
+        }
+    }
 }

@@ -3,36 +3,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
-  <LinearLayout
-      android:id="@+id/password_layout"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="vertical"
-      android:padding="8dip"
-      >
-
-    <TextView
-        android:id="@+id/password_label"
+    <LinearLayout
+        android:id="@+id/password_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dip"
-        style="?android:attr/textAppearanceSmall"
-        />
+        android:orientation="vertical"
+        android:padding="8dip">
 
-  </LinearLayout>
+        <TextView
+            android:id="@+id/password_label"
+            style="?android:attr/textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dip" />
+
+    </LinearLayout>
 
 
-  <ProgressBar
-      android:id="@+id/progress_bar"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center_vertical|center_horizontal"
-      android:padding="8dip"
-      android:visibility="gone"
-      style="@android:style/Widget.ProgressBar.Large"
-      />
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="@android:style/Widget.ProgressBar.Large"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:padding="8dip"
+        android:visibility="gone" />
 
 </LinearLayout>

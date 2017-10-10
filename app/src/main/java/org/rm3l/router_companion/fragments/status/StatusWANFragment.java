@@ -36,8 +36,10 @@ import org.rm3l.router_companion.tiles.status.wan.WANTrafficTile;
  */
 public class StatusWANFragment extends AbstractBaseFragment {
 
-  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return Arrays.<DDWRTTile>asList(new WANConfigTile(this, savedInstanceState, this.router),
-        new WANTrafficTile(this, savedInstanceState, this.router));
-  }
+    @Nullable
+    @Override
+    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+        return Arrays.<DDWRTTile>asList(new WANConfigTile(this, savedInstanceState, this.router),
+                new WANTrafficTile(this, savedInstanceState, this.router));
+    }
 }

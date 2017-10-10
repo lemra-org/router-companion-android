@@ -24,14 +24,14 @@ package org.rm3l.router_companion.resources.conn.openwrt
 import org.rm3l.router_companion.resources.conn.NVRAMInfo
 
 class UCIInfo : NVRAMInfo() {
-  companion object {
+    companion object {
 
-    val NETWORK_WAN_IPADDR = "network.wan.ipaddr"
+        val NETWORK_WAN_IPADDR = "network.wan.ipaddr"
 
-    val NETWORK_WAN_NETMASK = "network.wan.netmask"
-    val NETWORK_WAN_GATEWAY = "network.wan.gateway"
-    val NETWORK_WAN_DNS = "network.wan.dns"
-    val NETWORK_WAN_CONNECT_TIME = "network.wan.connect_time"
-    val NETWORK_WAN_DEVICE = "network.wan.device"
-  }
+        val NETWORK_WAN_NETMASK = "network.wan.netmask"
+        val NETWORK_WAN_GATEWAY = "network.wan.gateway"
+        val NETWORK_WAN_DNS = "network.wan.dns"
+        val NETWORK_WAN_CONNECT_TIME = "network.wan.connect_time"
+        val NETWORK_WAN_DEVICE = "network.wan.device"
+    }
 }

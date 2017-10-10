@@ -23,114 +23,103 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
     android:baselineAligned="false"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
-  <RelativeLayout
-      android:id="@+id/tile_public_ip_geo_title_hdr"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:paddingTop="4.0dip"
-      >
-
-    <TextView
-        android:id="@+id/tile_public_ip_geo_title"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/tile_public_ip_geo_title_hdr"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:text="Public IP Geolocation"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textStyle="bold"
-        />
+        android:paddingTop="4.0dip">
 
-    <ImageButton
-        android:id="@+id/tile_public_ip_geo_title_zoom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:background="@android:color/transparent"
-        android:contentDescription="Zoom"
-        android:src="@drawable/ic_zoom_out_map_black_24dp"
-        />
+        <TextView
+            android:id="@+id/tile_public_ip_geo_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Public IP Geolocation"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
 
-  </RelativeLayout>
+        <ImageButton
+            android:id="@+id/tile_public_ip_geo_title_zoom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/transparent"
+            android:contentDescription="Zoom"
+            android:src="@drawable/ic_zoom_out_map_black_24dp" />
 
-  <ProgressBar
-      android:id="@+id/tile_progress_bar"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginBottom="8.0dip"
-      android:layout_marginTop="8.0dip"
-      android:indeterminate="false"
-      android:indeterminateOnly="false"
-      style="?android:attr/progressBarStyleHorizontal"
-      />
-
-  <!-- Error message placeholder -->
-  <TextView
-      android:id="@+id/tile_public_ip_geo_error"
-      android:layout_width="300dp"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:layout_marginBottom="10dp"
-      android:ellipsize="end"
-      android:gravity="center"
-      android:text="@string/error_placeholder"
-      android:textColor="@color/ddwrt_purple"
-      android:textIsSelectable="true"
-      android:textStyle="bold"
-      android:visibility="gone"
-      />
-
-  <RelativeLayout
-      android:layout_width="match_parent"
-      android:layout_height="160dp"
-      >
-
-    <LinearLayout
-        android:id="@+id/tile_public_ip_geo_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
-
-      <org.osmdroid.views.MapView
-          android:id="@+id/tile_public_ip_geo_map"
-          android:layout_width="fill_parent"
-          android:layout_height="fill_parent"
-          />
-
-    </LinearLayout>
+    </RelativeLayout>
 
     <ProgressBar
-        android:id="@+id/tile_public_ip_geo_loading_view"
-        android:layout_width="wrap_content"
+        android:id="@+id/tile_progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_marginBottom="8.0dip"
+        android:layout_marginTop="8.0dip"
         android:indeterminate="false"
-        />
+        android:indeterminateOnly="false" />
 
-    <com.github.curioustechizen.ago.RelativeTimeTextView
-        android:id="@+id/tile_last_sync"
-        android:layout_width="wrap_content"
+    <!-- Error message placeholder -->
+    <TextView
+        android:id="@+id/tile_public_ip_geo_error"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="5dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
         android:ellipsize="end"
-        android:gravity="end"
-        android:text="Last sync: "
-        android:textAppearance="?android:textAppearanceSmall"
+        android:gravity="center"
+        android:text="@string/error_placeholder"
+        android:textColor="@color/ddwrt_purple"
         android:textIsSelectable="true"
+        android:textStyle="bold"
+        android:visibility="gone" />
 
-        android:textStyle="italic"
-        />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="160dp">
 
-  </RelativeLayout>
+        <LinearLayout
+            android:id="@+id/tile_public_ip_geo_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <org.osmdroid.views.MapView
+                android:id="@+id/tile_public_ip_geo_map"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/tile_public_ip_geo_loading_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:indeterminate="false" />
+
+        <com.github.curioustechizen.ago.RelativeTimeTextView
+            android:id="@+id/tile_last_sync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="5dp"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:text="Last sync: "
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textIsSelectable="true"
+
+            android:textStyle="italic" />
+
+    </RelativeLayout>
 
 </LinearLayout>

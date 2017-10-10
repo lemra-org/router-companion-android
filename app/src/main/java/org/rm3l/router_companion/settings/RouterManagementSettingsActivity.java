@@ -21,17 +21,6 @@
  */
 package org.rm3l.router_companion.settings;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.support.annotation.NonNull;
-import com.airbnb.deeplinkdispatch.DeepLink;
-import org.rm3l.ddwrt.BuildConfig;
-import org.rm3l.ddwrt.R;
-import org.rm3l.router_companion.RouterCompanionAppConstants;
-
 import static org.rm3l.router_companion.RouterCompanionAppConstants.ACRA_ENABLE;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.ACRA_USER_EMAIL;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DATA_USAGE_NETWORK_PREF;
@@ -44,77 +33,95 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.SECURITY_PIN
 import static org.rm3l.router_companion.RouterCompanionAppConstants.SECURITY_THIRD_PARTY_INTEGRATION;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.THEMING_PREF;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceFragment;
+import android.support.annotation.NonNull;
+import com.airbnb.deeplinkdispatch.DeepLink;
+import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.R;
+import org.rm3l.router_companion.RouterCompanionAppConstants;
+
 @DeepLink({
-    "dd-wrt://settings", "ddwrt://settings"
-}) public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActivity {
+        "dd-wrt://settings", "ddwrt://settings"
+})
+public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActivity {
 
-  @Override public SharedPreferences getSharedPreferences(String name, int mode) {
-    return super.getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-        mode);
-  }
+    public static class RouterManagementSettingsFragment extends PreferenceFragment {
 
-  @NonNull @Override protected PreferenceFragment getPreferenceFragment() {
-    return new RouterManagementSettingsFragment();
-  }
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
 
-  @Override public void finish() {
-    final Intent data = new Intent();
-    setResult(RESULT_OK, data);
+            // Load the preferences from an XML resource
+            addPreferencesFromResource(R.xml.router_management_settings);
 
-    super.finish();
-  }
-
-  public static class RouterManagementSettingsFragment extends PreferenceFragment {
-
-    @Override public void onCreate(Bundle savedInstanceState) {
-      super.onCreate(savedInstanceState);
-
-      // Load the preferences from an XML resource
-      addPreferencesFromResource(R.xml.router_management_settings);
-
-      // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-      // to their values. When their values change, their summaries are
-      // updated to reflect the new value, per the Android Design
-      // guidelines.
-      //            bindPreferenceSummaryToValue(findPreference(ALWAYS_CHECK_CONNECTION_PREF_KEY));
-      final Preference themingPreference = findPreference(THEMING_PREF);
-      if (BuildConfig.WITH_ADS) {
-        themingPreference.setTitle("Theme (Upgrade to switch)");
-        //                themingPreference.setSummary("Upgrade to switch app theme");
-        themingPreference.setEnabled(false);
-      } else {
-        themingPreference.setTitle("Theme");
-        themingPreference.setEnabled(true);
-      }
-
-      bindPreferenceSummaryToValue(themingPreference);
-
-      findPreference(SECURITY_PIN_LOCK_PREF).setOnPreferenceClickListener(
-          new Preference.OnPreferenceClickListener() {
-            @Override public boolean onPreferenceClick(Preference preference) {
-              startActivity(new Intent(getActivity(), PinLockPreferenceActivity.class));
-              return true;
+            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
+            // to their values. When their values change, their summaries are
+            // updated to reflect the new value, per the Android Design
+            // guidelines.
+            //            bindPreferenceSummaryToValue(findPreference(ALWAYS_CHECK_CONNECTION_PREF_KEY));
+            final Preference themingPreference = findPreference(THEMING_PREF);
+            if (BuildConfig.WITH_ADS) {
+                themingPreference.setTitle("Theme (Upgrade to switch)");
+                //                themingPreference.setSummary("Upgrade to switch app theme");
+                themingPreference.setEnabled(false);
+            } else {
+                themingPreference.setTitle("Theme");
+                themingPreference.setEnabled(true);
             }
-          });
 
-      bindPreferenceSummaryToValue(findPreference(SECURITY_THIRD_PARTY_INTEGRATION));
+            bindPreferenceSummaryToValue(themingPreference);
 
-      bindPreferenceSummaryToValue(findPreference(DATA_USAGE_NETWORK_PREF));
-      //            bindPreferenceSummaryToValue(findPreference(DATA_SYNC_BACKUP_PREF));
+            findPreference(SECURITY_PIN_LOCK_PREF).setOnPreferenceClickListener(
+                    new Preference.OnPreferenceClickListener() {
+                        @Override
+                        public boolean onPreferenceClick(Preference preference) {
+                            startActivity(new Intent(getActivity(), PinLockPreferenceActivity.class));
+                            return true;
+                        }
+                    });
 
-      //            bindPreferenceSummaryToValue(findPreference(STORAGE_LOCATION_PREF));
+            bindPreferenceSummaryToValue(findPreference(SECURITY_THIRD_PARTY_INTEGRATION));
 
-      bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SOUND));
-      bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_VIBRATE));
-      bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_BG_SERVICE_ENABLE));
-      bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF));
-      bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_CHOICE_PREF));
+            bindPreferenceSummaryToValue(findPreference(DATA_USAGE_NETWORK_PREF));
+            //            bindPreferenceSummaryToValue(findPreference(DATA_SYNC_BACKUP_PREF));
 
-      bindPreferenceSummaryToValue(findPreference(ACRA_ENABLE));
-      //            bindPreferenceSummaryToValue(findPreference(DEBUG_MODE));
-      //            bindPreferenceSummaryToValue(findPreference("acra.syslog.enable"));
-      //            bindPreferenceSummaryToValue(findPreference(ACRA_DEVICEID_ENABLE));
-      bindPreferenceSummaryToValue(findPreference(ACRA_USER_EMAIL));
+            //            bindPreferenceSummaryToValue(findPreference(STORAGE_LOCATION_PREF));
+
+            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SOUND));
+            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_VIBRATE));
+            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_BG_SERVICE_ENABLE));
+            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF));
+            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_CHOICE_PREF));
+
+            bindPreferenceSummaryToValue(findPreference(ACRA_ENABLE));
+            //            bindPreferenceSummaryToValue(findPreference(DEBUG_MODE));
+            //            bindPreferenceSummaryToValue(findPreference("acra.syslog.enable"));
+            //            bindPreferenceSummaryToValue(findPreference(ACRA_DEVICEID_ENABLE));
+            bindPreferenceSummaryToValue(findPreference(ACRA_USER_EMAIL));
+        }
     }
-  }
+
+    @Override
+    public void finish() {
+        final Intent data = new Intent();
+        setResult(RESULT_OK, data);
+
+        super.finish();
+    }
+
+    @Override
+    public SharedPreferences getSharedPreferences(String name, int mode) {
+        return super.getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                mode);
+    }
+
+    @NonNull
+    @Override
+    protected PreferenceFragment getPreferenceFragment() {
+        return new RouterManagementSettingsFragment();
+    }
 }

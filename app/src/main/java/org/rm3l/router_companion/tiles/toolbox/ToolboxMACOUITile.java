@@ -11,39 +11,48 @@ import org.rm3l.router_companion.resources.conn.Router;
 
 public class ToolboxMACOUITile extends AbstractToolboxTile {
 
-  public ToolboxMACOUITile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
-      @Nullable Router router) {
-    super(parentFragment, arguments, router);
-  }
+    public ToolboxMACOUITile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
+            @Nullable Router router) {
+        super(parentFragment, arguments, router);
+    }
 
-  @Nullable @Override protected Integer getInfoText() {
-    return R.string.oui_lookup_info;
-  }
+    @Override
+    @Nullable
+    protected CharSequence checkInputAnReturnErrorMessage(@NonNull final String inputText) {
+        //Accept all inputs
+        return null;
+    }
 
-  @Override protected int getEditTextHint() {
-    return R.string.oui_lookup_edit_text_hint;
-  }
+    @Override
+    protected int getEditTextHint() {
+        return R.string.oui_lookup_edit_text_hint;
+    }
 
-  @Override protected int getSubmitButtonText() {
-    return R.string.toolbox_oui_lookup_submit;
-  }
+    @Nullable
+    @Override
+    protected Integer getInfoText() {
+        return R.string.oui_lookup_info;
+    }
 
-  @Override protected int getTileTitle() {
-    return R.string.oui_lookup;
-  }
+    @NonNull
+    @Override
+    protected AbstractRouterAction<?> getRouterAction(String textToFind) {
+        return new MACOUILookupAction(mRouter, mParentFragmentActivity, mRouterActionListener,
+                mGlobalPreferences, textToFind);
+    }
 
-  @Override @Nullable
-  protected CharSequence checkInputAnReturnErrorMessage(@NonNull final String inputText) {
-    //Accept all inputs
-    return null;
-  }
+    @Override
+    protected int getSubmitButtonText() {
+        return R.string.toolbox_oui_lookup_submit;
+    }
 
-  @NonNull @Override protected AbstractRouterAction<?> getRouterAction(String textToFind) {
-    return new MACOUILookupAction(mRouter, mParentFragmentActivity, mRouterActionListener,
-        mGlobalPreferences, textToFind);
-  }
+    @Override
+    protected int getTileTitle() {
+        return R.string.oui_lookup;
+    }
 
-  @Override protected boolean isGeoLocateButtonEnabled() {
-    return false;
-  }
+    @Override
+    protected boolean isGeoLocateButtonEnabled() {
+        return false;
+    }
 }

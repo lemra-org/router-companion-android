@@ -2,21 +2,21 @@
 
 
 <resources>
-  <string name="define_wizardroid" translatable="false"/>
-  <!-- Author section -->
-  <string name="library_wizardroid_author" translatable="false">Nimrod Dayan</string>
-  <string name="library_wizardroid_authorWebsite" translatable="false">https://medium.com/@nimroddayan/</string>
-  <!-- Library section -->
-  <string name="library_wizardroid_libraryName" translatable="false">WizarDroid</string>
-  <string name="library_wizardroid_libraryDescription" translatable="false">WizarDroid is a lightweight Android library that addresses a feature that Android is surprisingly missing, Wizards. It is built on top of Android\'s ViewPager to enable slide animation and touch functionality.</string>
-  <string name="library_wizardroid_libraryWebsite" translatable="false">http://nimrodda.github.io/WizarDroid/</string>
-  <string name="library_wizardroid_libraryVersion" translatable="false">1.3.1</string>
-  <!-- OpenSource section -->
-  <string name="library_wizardroid_isOpenSource" translatable="false">true</string>
-  <string name="library_wizardroid_repositoryLink" translatable="false">https://github.com/Nimrodda/WizarDroid</string>
-  <!-- ClassPath for autoDetect section -->
-  <!--<string translatable="false" name="library_wizardroid_classPath">com.facebook.wizardroid</string>-->
-  <!-- License section -->
-  <string name="library_wizardroid_licenseId" translatable="false">mit</string>
-  <!-- Custom variables section -->
+    <string name="define_wizardroid" translatable="false" />
+    <!-- Author section -->
+    <string name="library_wizardroid_author" translatable="false">Nimrod Dayan</string>
+    <string name="library_wizardroid_authorWebsite" translatable="false">https://medium.com/@nimroddayan/</string>
+    <!-- Library section -->
+    <string name="library_wizardroid_libraryName" translatable="false">WizarDroid</string>
+    <string name="library_wizardroid_libraryDescription" translatable="false">WizarDroid is a lightweight Android library that addresses a feature that Android is surprisingly missing, Wizards. It is built on top of Android\'s ViewPager to enable slide animation and touch functionality.</string>
+    <string name="library_wizardroid_libraryWebsite" translatable="false">http://nimrodda.github.io/WizarDroid/</string>
+    <string name="library_wizardroid_libraryVersion" translatable="false">1.3.1</string>
+    <!-- OpenSource section -->
+    <string name="library_wizardroid_isOpenSource" translatable="false">true</string>
+    <string name="library_wizardroid_repositoryLink" translatable="false">https://github.com/Nimrodda/WizarDroid</string>
+    <!-- ClassPath for autoDetect section -->
+    <!--<string translatable="false" name="library_wizardroid_classPath">com.facebook.wizardroid</string>-->
+    <!-- License section -->
+    <string name="library_wizardroid_licenseId" translatable="false">mit</string>
+    <!-- Custom variables section -->
 </resources>

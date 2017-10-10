@@ -18,71 +18,84 @@ import org.rm3l.router_companion.utils.Utils;
  */
 public class BackupRouterAction extends AbstractRouterAction<String> {
 
-  private static final String BACKUP_FILENAME_SUFFIX =
-      ".DDWRTCompanion" + UUID.randomUUID() + "_nvrambak.bin";
-  @NonNull private final Context mContext;
-  private final String mRemoteBackupFilename = "/tmp/" + BACKUP_FILENAME_SUFFIX;
-  private File mLocalBackupFilePath = null;
-  private Date mBackupDate = null;
+    private static final String BACKUP_FILENAME_SUFFIX =
+            ".DDWRTCompanion" + UUID.randomUUID() + "_nvrambak.bin";
 
-  public BackupRouterAction(Router router, @NonNull Context context,
-      @Nullable RouterActionListener listener,
-      @NonNull final SharedPreferences globalSharedPreferences) {
-    super(router, listener, RouterAction.BACKUP, globalSharedPreferences);
-    this.mContext = context;
-  }
+    private Date mBackupDate = null;
 
-  @Nullable @Override protected ActionLog getActionLog() {
-    return new ActionLog().setActionName(routerAction.toString())
-        .setActionData(mLocalBackupFilePath != null ? ("Local Backup file: "
-            + mLocalBackupFilePath.getAbsolutePath()) : "");
-  }
+    @NonNull
+    private final Context mContext;
 
-  @Nullable @Override protected Context getContext() {
-    return mContext;
-  }
+    private File mLocalBackupFilePath = null;
 
-  @NonNull @Override protected RouterActionResult<String> doActionInBackground() {
-    Exception exception = null;
-    try {
-      mBackupDate = new Date();
+    private final String mRemoteBackupFilename = "/tmp/" + BACKUP_FILENAME_SUFFIX;
 
-      final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router,
-          String.format("/usr/sbin/nvram backup %s", mRemoteBackupFilename));
-
-      if (exitStatus != 0) {
-        throw new IllegalStateException("Router rejected the backup command.");
-      }
-
-      //Copy remote file locally and finish by dropping it!
-      final String escapedFileName =
-          Utils.getEscapedFileName("nvrambak_" + router.getUuid() + "__" + mBackupDate) + "__.bin";
-
-      //Write to app data storage on internal storage
-      mLocalBackupFilePath = new File(mContext.getCacheDir(), escapedFileName);
-
-      if (!SSHUtils.scpFrom(mContext, router, globalSharedPreferences, mRemoteBackupFilename,
-          mLocalBackupFilePath.getAbsolutePath(), true)) {
-        throw new IllegalStateException("Backup operation succeeded, "
-            + "but could not copy the resulting file on this device. Please try again later.");
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-      exception = e;
-    } finally {
-      try {
-        SSHUtils.runCommands(mContext, globalSharedPreferences, router,
-            String.format("/bin/rm -rf %s", mRemoteBackupFilename));
-      } catch (final Exception e) {
-        ReportingUtils.reportException(mContext, e);
-        //No worries
-      }
+    public BackupRouterAction(Router router, @NonNull Context context,
+            @Nullable RouterActionListener listener,
+            @NonNull final SharedPreferences globalSharedPreferences) {
+        super(router, listener, RouterAction.BACKUP, globalSharedPreferences);
+        this.mContext = context;
     }
 
-    return new RouterActionResult<>(null, exception);
-  }
+    @NonNull
+    @Override
+    protected RouterActionResult<String> doActionInBackground() {
+        Exception exception = null;
+        try {
+            mBackupDate = new Date();
 
-  @Nullable @Override protected Object getDataToReturnOnSuccess() {
-    return new Object[] { mBackupDate, mLocalBackupFilePath };
-  }
+            final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router,
+                    String.format("/usr/sbin/nvram backup %s", mRemoteBackupFilename));
+
+            if (exitStatus != 0) {
+                throw new IllegalStateException("Router rejected the backup command.");
+            }
+
+            //Copy remote file locally and finish by dropping it!
+            final String escapedFileName =
+                    Utils.getEscapedFileName("nvrambak_" + router.getUuid() + "__" + mBackupDate) + "__.bin";
+
+            //Write to app data storage on internal storage
+            mLocalBackupFilePath = new File(mContext.getCacheDir(), escapedFileName);
+
+            if (!SSHUtils.scpFrom(mContext, router, globalSharedPreferences, mRemoteBackupFilename,
+                    mLocalBackupFilePath.getAbsolutePath(), true)) {
+                throw new IllegalStateException("Backup operation succeeded, "
+                        + "but could not copy the resulting file on this device. Please try again later.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            exception = e;
+        } finally {
+            try {
+                SSHUtils.runCommands(mContext, globalSharedPreferences, router,
+                        String.format("/bin/rm -rf %s", mRemoteBackupFilename));
+            } catch (final Exception e) {
+                ReportingUtils.reportException(mContext, e);
+                //No worries
+            }
+        }
+
+        return new RouterActionResult<>(null, exception);
+    }
+
+    @Nullable
+    @Override
+    protected ActionLog getActionLog() {
+        return new ActionLog().setActionName(routerAction.toString())
+                .setActionData(mLocalBackupFilePath != null ? ("Local Backup file: "
+                        + mLocalBackupFilePath.getAbsolutePath()) : "");
+    }
+
+    @Nullable
+    @Override
+    protected Context getContext() {
+        return mContext;
+    }
+
+    @Nullable
+    @Override
+    protected Object getDataToReturnOnSuccess() {
+        return new Object[]{mBackupDate, mLocalBackupFilePath};
+    }
 }

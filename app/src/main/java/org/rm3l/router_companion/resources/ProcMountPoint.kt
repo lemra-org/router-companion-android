@@ -31,98 +31,98 @@ import java.util.ArrayList
  */
 class ProcMountPoint {
 
-  /*
-    The 1st column specifies the device that is mounted.
-    The 2nd column reveals the mount point.
-    The 3rd column tells the file-system type.
-    The 4th column tells you if it is mounted read-only (ro) or read-write (rw).
-    The 5th and 6th columns are dummy values designed to match the format used in /etc/mtab.
-     */
+    /*
+      The 1st column specifies the device that is mounted.
+      The 2nd column reveals the mount point.
+      The 3rd column tells the file-system type.
+      The 4th column tells you if it is mounted read-only (ro) or read-write (rw).
+      The 5th and 6th columns are dummy values designed to match the format used in /etc/mtab.
+       */
 
-  private val permissions = ArrayList<String?>()
+    private val permissions = ArrayList<String?>()
 
-  private val otherAttributes = ArrayList<String?>()
+    private val otherAttributes = ArrayList<String?>()
 
-  private var deviceType: String? = null
+    private var deviceType: String? = null
 
-  private var mountPoint: String? = null
+    private var mountPoint: String? = null
 
-  private var fsType: String? = null
+    private var fsType: String? = null
 
-  fun getDeviceType(): String? {
-    return deviceType
-  }
-
-  fun setDeviceType(deviceType: String?): ProcMountPoint {
-    this.deviceType = deviceType
-    return this
-  }
-
-  fun getMountPoint(): String? {
-    return mountPoint
-  }
-
-  fun setMountPoint(mountPoint: String?): ProcMountPoint {
-    this.mountPoint = mountPoint
-    return this
-  }
-
-  fun getFsType(): String? {
-    return fsType
-  }
-
-  fun setFsType(fsType: String?): ProcMountPoint {
-    this.fsType = fsType
-    return this
-  }
-
-  fun addPermission(perm: String?): ProcMountPoint {
-    this.permissions.add(perm)
-    return this
-  }
-
-  fun getPermissions(): List<String?> {
-    return permissions
-  }
-
-  fun getOtherAttributes(): List<String?> {
-    return otherAttributes
-  }
-
-  fun addOtherAttr(attr: String): ProcMountPoint {
-    this.otherAttributes.add(attr)
-    return this
-  }
-
-  override fun toString(): String {
-    return "ProcMountPoint{deviceType='$deviceType', mountPoint='$mountPoint', fsType='$fsType', permissions=$permissions, otherAttributes=$otherAttributes}"
-  }
-
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (other == null || javaClass != other.javaClass) return false
-
-    val that = other as ProcMountPoint?
-
-    if (if (deviceType != null) deviceType != that!!.deviceType else that!!.deviceType != null) {
-      return false
+    fun getDeviceType(): String? {
+        return deviceType
     }
-    if (if (fsType != null) fsType != that.fsType else that.fsType != null) return false
-    if (if (mountPoint != null) mountPoint != that.mountPoint else that.mountPoint != null) {
-      return false
+
+    fun setDeviceType(deviceType: String?): ProcMountPoint {
+        this.deviceType = deviceType
+        return this
     }
-    if (otherAttributes != that.otherAttributes) return false
-    if (permissions != that.permissions) return false
 
-    return true
-  }
+    fun getMountPoint(): String? {
+        return mountPoint
+    }
 
-  override fun hashCode(): Int {
-    var result = if (deviceType != null) deviceType!!.hashCode() else 0
-    result = 31 * result + if (mountPoint != null) mountPoint!!.hashCode() else 0
-    result = 31 * result + if (fsType != null) fsType!!.hashCode() else 0
-    result = 31 * result + permissions.hashCode()
-    result = 31 * result + otherAttributes.hashCode()
-    return result
-  }
+    fun setMountPoint(mountPoint: String?): ProcMountPoint {
+        this.mountPoint = mountPoint
+        return this
+    }
+
+    fun getFsType(): String? {
+        return fsType
+    }
+
+    fun setFsType(fsType: String?): ProcMountPoint {
+        this.fsType = fsType
+        return this
+    }
+
+    fun addPermission(perm: String?): ProcMountPoint {
+        this.permissions.add(perm)
+        return this
+    }
+
+    fun getPermissions(): List<String?> {
+        return permissions
+    }
+
+    fun getOtherAttributes(): List<String?> {
+        return otherAttributes
+    }
+
+    fun addOtherAttr(attr: String): ProcMountPoint {
+        this.otherAttributes.add(attr)
+        return this
+    }
+
+    override fun toString(): String {
+        return "ProcMountPoint{deviceType='$deviceType', mountPoint='$mountPoint', fsType='$fsType', permissions=$permissions, otherAttributes=$otherAttributes}"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+
+        val that = other as ProcMountPoint?
+
+        if (if (deviceType != null) deviceType != that!!.deviceType else that!!.deviceType != null) {
+            return false
+        }
+        if (if (fsType != null) fsType != that.fsType else that.fsType != null) return false
+        if (if (mountPoint != null) mountPoint != that.mountPoint else that.mountPoint != null) {
+            return false
+        }
+        if (otherAttributes != that.otherAttributes) return false
+        if (permissions != that.permissions) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = if (deviceType != null) deviceType!!.hashCode() else 0
+        result = 31 * result + if (mountPoint != null) mountPoint!!.hashCode() else 0
+        result = 31 * result + if (fsType != null) fsType!!.hashCode() else 0
+        result = 31 * result + permissions.hashCode()
+        result = 31 * result + otherAttributes.hashCode()
+        return result
+    }
 }

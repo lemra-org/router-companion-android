@@ -2,21 +2,21 @@
 
 
 <resources>
-  <string name="define_welcome" translatable="false"/>
-  <!-- Author section -->
-  <string name="library_welcome_author" translatable="false">Stephen Tuso</string>
-  <string name="library_welcome_authorWebsite" translatable="false">https://github.com/stephentuso</string>
-  <!-- Library section -->
-  <string name="library_welcome_libraryName" translatable="false">Welcome</string>
-  <string name="library_welcome_libraryDescription" translatable="false">An easy to use and customizable welcome screen for Android apps.</string>
-  <string name="library_welcome_libraryWebsite" translatable="false">http://stephentuso.com/welcome-android/</string>
-  <string name="library_welcome_libraryVersion" translatable="false">0.7.3</string>
-  <!-- OpenSource section -->
-  <string name="library_welcome_isOpenSource" translatable="false">true</string>
-  <string name="library_welcome_repositoryLink" translatable="false">https://github.com/stephentuso/welcome-android</string>
-  <!-- ClassPath for autoDetect section -->
-  <!--<string translatable="false" name="library_welcome_classPath">com.facebook.slidinguppanel</string>-->
-  <!-- License section -->
-  <string name="library_welcome_licenseId" translatable="false">apache_2_0</string>
-  <!-- Custom variables section -->
+    <string name="define_welcome" translatable="false" />
+    <!-- Author section -->
+    <string name="library_welcome_author" translatable="false">Stephen Tuso</string>
+    <string name="library_welcome_authorWebsite" translatable="false">https://github.com/stephentuso</string>
+    <!-- Library section -->
+    <string name="library_welcome_libraryName" translatable="false">Welcome</string>
+    <string name="library_welcome_libraryDescription" translatable="false">An easy to use and customizable welcome screen for Android apps.</string>
+    <string name="library_welcome_libraryWebsite" translatable="false">http://stephentuso.com/welcome-android/</string>
+    <string name="library_welcome_libraryVersion" translatable="false">0.7.3</string>
+    <!-- OpenSource section -->
+    <string name="library_welcome_isOpenSource" translatable="false">true</string>
+    <string name="library_welcome_repositoryLink" translatable="false">https://github.com/stephentuso/welcome-android</string>
+    <!-- ClassPath for autoDetect section -->
+    <!--<string translatable="false" name="library_welcome_classPath">com.facebook.slidinguppanel</string>-->
+    <!-- License section -->
+    <string name="library_welcome_licenseId" translatable="false">apache_2_0</string>
+    <!-- Custom variables section -->
 </resources>

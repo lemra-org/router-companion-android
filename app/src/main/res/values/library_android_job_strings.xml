@@ -21,21 +21,21 @@ SOFTWARE.
 -->
 
 <resources>
-  <string name="define_android_job" translatable="false"/>
-  <!-- Author section -->
-  <string name="library_android_job_author" translatable="false">Evernote</string>
-  <string name="library_android_job_authorWebsite" translatable="false">evernote.com</string>
-  <!-- Library section -->
-  <string name="library_android_job_libraryName" translatable="false">Android-Job</string>
-  <string name="library_android_job_libraryDescription" translatable="false">Android library to handle jobs in the background.</string>
-  <string name="library_android_job_libraryWebsite" translatable="false">http://evernote.github.io/android-job/</string>
-  <string name="library_android_job_libraryVersion" translatable="false">1.2.0</string>
-  <!-- OpenSource section -->
-  <string name="library_android_job_isOpenSource" translatable="false">true</string>
-  <string name="library_android_job_repositoryLink" translatable="false">https://github.com/evernote/android-job</string>
-  <!-- ClassPath for autoDetect section -->
-  <!--<string translatable="false" name="library_android_job_classPath">com.facebook.android_job</string>-->
-  <!-- License section -->
-  <string name="library_android_job_licenseId" translatable="false">apache_2_0</string>
-  <!-- Custom variables section -->
+    <string name="define_android_job" translatable="false" />
+    <!-- Author section -->
+    <string name="library_android_job_author" translatable="false">Evernote</string>
+    <string name="library_android_job_authorWebsite" translatable="false">evernote.com</string>
+    <!-- Library section -->
+    <string name="library_android_job_libraryName" translatable="false">Android-Job</string>
+    <string name="library_android_job_libraryDescription" translatable="false">Android library to handle jobs in the background.</string>
+    <string name="library_android_job_libraryWebsite" translatable="false">http://evernote.github.io/android-job/</string>
+    <string name="library_android_job_libraryVersion" translatable="false">1.2.0</string>
+    <!-- OpenSource section -->
+    <string name="library_android_job_isOpenSource" translatable="false">true</string>
+    <string name="library_android_job_repositoryLink" translatable="false">https://github.com/evernote/android-job</string>
+    <!-- ClassPath for autoDetect section -->
+    <!--<string translatable="false" name="library_android_job_classPath">com.facebook.android_job</string>-->
+    <!-- License section -->
+    <string name="library_android_job_licenseId" translatable="false">apache_2_0</string>
+    <!-- Custom variables section -->
 </resources>

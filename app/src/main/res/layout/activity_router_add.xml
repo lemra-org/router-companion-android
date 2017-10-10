@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -26,503 +25,467 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
-  <com.google.android.gms.ads.AdView
-      android:id="@+id/activity_router_add_adView"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center_horizontal"
-      android:layout_marginBottom="5dp"
-      android:layout_marginTop="5dp"
-      android:visibility="gone"
-      ads:adSize="BANNER"
-      ads:adUnitId="@string/banner_ad_unit_id_router_add_dialog"
-      />
-
-  <LinearLayout
-      android:id="@+id/router_add_notification_viewgroup"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="vertical"
-      />
-
-  <!-- Link to Instructions -->
-  <!--<TextView-->
-  <!--android:id="@+id/router_add_ddwrt_instructions"-->
-  <!--android:layout_width="match_parent"-->
-  <!--android:layout_height="wrap_content"-->
-  <!--android:autoLink="web"-->
-  <!--android:text="@string/router_add_dialog_msg"-->
-  <!--android:visibility="gone" />-->
-
-  <TextView
-      android:id="@+id/router_add_ddwrt_instructions"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:autoLink="web"
-      android:text="@string/router_add_dialog_msg"
-      android:textIsSelectable="true"
-      />
-
-  <TextView
-      android:id="@+id/router_add_openwrt_instructions"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:autoLink="web"
-      android:text="@string/router_add_dialog_msg_openwrt"
-      android:textIsSelectable="true"
-      android:visibility="gone"
-      />
-
-  <TextView
-      android:id="@+id/router_add_ddwrt_instructions_ads"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:autoLink="web"
-      android:text="@string/router_add_dialog_msg_ads"
-      android:textIsSelectable="true"
-      android:visibility="gone"
-      />
-
-  <TextView
-      android:id="@+id/router_add_openwrt_instructions_ads"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:autoLink="web"
-      android:text="@string/router_add_dialog_msg_openwrt_ads"
-      android:textIsSelectable="true"
-      android:visibility="gone"
-      />
-
-  <ScrollView
-      android:id="@+id/router_add_scrollview"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:scrollbars="vertical"
-      >
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/activity_router_add_adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:visibility="gone"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id_router_add_dialog" />
 
     <LinearLayout
+        android:id="@+id/router_add_notification_viewgroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:weightSum="1"
-        >
+        android:orientation="vertical" />
 
-      <!-- UUID -->
-      <TextView
-          android:id="@+id/router_add_uuid"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:visibility="gone"
-          />
+    <!-- Link to Instructions -->
+    <!--<TextView-->
+    <!--android:id="@+id/router_add_ddwrt_instructions"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:autoLink="web"-->
+    <!--android:text="@string/router_add_dialog_msg"-->
+    <!--android:visibility="gone" />-->
 
-      <!-- Router Name -->
-      <!--<TextView-->
-      <!--android:layout_width="wrap_content"-->
-      <!--android:layout_height="wrap_content"-->
-      <!--android:layout_marginLeft="4dp"-->
-      <!--android:layout_marginStart="4dp"-->
-      <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
-      <!--android:text="Router Name" />-->
+    <TextView
+        android:id="@+id/router_add_ddwrt_instructions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoLink="web"
+        android:text="@string/router_add_dialog_msg"
+        android:textIsSelectable="true" />
 
-      <android.support.design.widget.TextInputLayout
-          android:id="@+id/router_add_name_input_layout"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="4dp"
-          android:layout_marginStart="4dp"
-          android:layout_marginTop="@dimen/activity_vertical_margin"
-          >
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/router_add_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:hint="Router Name, e.g., 'Living Room Router'"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="text"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            />
-      </android.support.design.widget.TextInputLayout>
+    <TextView
+        android:id="@+id/router_add_openwrt_instructions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoLink="web"
+        android:text="@string/router_add_dialog_msg_openwrt"
+        android:textIsSelectable="true"
+        android:visibility="gone" />
 
-      <!-- IP / DNS -->
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="4dp"
-          android:layout_marginStart="4dp"
-          android:layout_marginTop="@dimen/activity_vertical_margin"
-          android:text="Router IP Address or DNS name"
-          />
+    <TextView
+        android:id="@+id/router_add_ddwrt_instructions_ads"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoLink="web"
+        android:text="@string/router_add_dialog_msg_ads"
+        android:textIsSelectable="true"
+        android:visibility="gone" />
 
-      <TextView
-          android:id="@+id/router_add_ip_demo_text"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="4dp"
-          android:layout_marginStart="4dp"
-          android:text="Enter '%PACKAGE_NAME%' for a demo"
-          android:textAppearance="?android:textAppearanceSmall"
-          android:textStyle="italic"
-          />
+    <TextView
+        android:id="@+id/router_add_openwrt_instructions_ads"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoLink="web"
+        android:text="@string/router_add_dialog_msg_openwrt_ads"
+        android:textIsSelectable="true"
+        android:visibility="gone" />
 
-      <android.support.design.widget.TextInputLayout
-          android:id="@+id/router_add_ip_input_layout"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="4dp"
-          android:layout_marginStart="4dp"
-          android:layout_marginTop="@dimen/activity_vertical_margin"
-          >
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/router_add_ip"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:hint="e.g., 192.168.1.254 or myrouter.dns.com"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="text"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            />
-      </android.support.design.widget.TextInputLayout>
-
-      <!-- Firmware -->
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="4dp"
-          android:layout_marginStart="4dp"
-          android:layout_marginTop="@dimen/activity_vertical_margin"
-          android:text="Router Firmware"
-          />
-
-      <Spinner
-          android:id="@+id/router_add_firmware"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center_horizontal"
-          android:entries="@array/router_firmwares_array"
-          android:entryValues="@array/router_firmwares_array_values"
-          android:imeOptions="flagNoExtractUi"
-          android:prompt="@string/router_firmware_select"
-          />
-
-      <!-- Connection Protocol -->
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="4dp"
-          android:layout_marginStart="4dp"
-          android:layout_marginTop="@dimen/activity_vertical_margin"
-          android:text="Connection Protocol"
-          />
-
-      <Spinner
-          android:id="@+id/router_add_proto"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center_horizontal"
-          android:entries="@array/router_connection_protocols_array"
-          android:imeOptions="flagNoExtractUi"
-          android:prompt="@string/router_connection_proto_select"
-          />
-
-      <!-- SSH Port -->
-      <!--<TextView-->
-      <!--android:layout_width="wrap_content"-->
-      <!--android:layout_height="wrap_content"-->
-      <!--android:layout_marginLeft="4dp"-->
-      <!--android:layout_marginStart="4dp"-->
-      <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
-      <!--android:text="SSH Port" />-->
-
-      <android.support.design.widget.TextInputLayout
-          android:id="@+id/router_add_port_input_layout"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="4dp"
-          android:layout_marginStart="4dp"
-          android:layout_marginTop="@dimen/activity_vertical_margin"
-          >
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/router_add_port"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:ems="10"
-            android:hint="@string/router_add_port"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="numberSigned"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            android:text="@string/router_add_default_ssh_port"
-            />
-      </android.support.design.widget.TextInputLayout>
-
-      <!-- Login -->
-      <!--<TextView-->
-      <!--android:layout_width="wrap_content"-->
-      <!--android:layout_height="wrap_content"-->
-      <!--android:layout_marginLeft="4dp"-->
-      <!--android:layout_marginStart="4dp"-->
-      <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
-      <!--android:maxLines="1"-->
-      <!--android:text="Login" />-->
-
-      <android.support.design.widget.TextInputLayout
-          android:id="@+id/router_add_username_input_layout"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="4dp"
-          android:layout_marginStart="4dp"
-          android:layout_marginTop="@dimen/activity_vertical_margin"
-          >
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/router_add_username"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:hint="SSH Login"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="text"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            android:text="root"
-            />
-      </android.support.design.widget.TextInputLayout>
-
-      <!-- SSH Authentication Method selection -->
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="4dp"
-          android:layout_marginStart="4dp"
-          android:layout_marginTop="@dimen/activity_vertical_margin"
-          android:text="SSH Authentication Method"
-          />
-
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="4dp"
-          android:layout_marginStart="4dp"
-          android:orientation="vertical"
-          >
-
-        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/router_add_ssh_auth_method"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
-          <RadioButton
-              android:id="@+id/router_add_ssh_auth_method_none"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="None"
-              />
-          <RadioButton
-              android:id="@+id/router_add_ssh_auth_method_password"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:checked="true"
-              android:text="Password"
-              />
-
-          <RadioButton
-              android:id="@+id/router_add_ssh_auth_method_privkey"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="Private key"
-              />
-        </RadioGroup>
-
-        <!-- Private key -->
-        <TextView
-            android:id="@+id/router_add_privkey_hdr"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="Private key (in OpenSSH format)"
-            android:visibility="gone"
-            />
-        <Button
-            android:id="@+id/router_add_privkey"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:hint="@string/router_add_path_to_privkey"
-            android:visibility="gone"
-            />
-        <TextView
-            android:id="@+id/router_add_privkey_path"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            />
-
-        <!-- Password-->
-        <TextView
-            android:id="@+id/router_add_password_hdr"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="Password"
-            />
-
-        <EditText
-            android:id="@+id/router_add_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:hint="e.g., 'default' (may be empty)"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="textPassword"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            />
-
-        <CheckBox
-            android:id="@+id/router_add_password_show_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:checked="false"
-            android:text="Show Password"
-            />
-
-      </LinearLayout>
-
-      <!-- Advanced Options (to display or not) -->
-      <TextView
-          android:id="@+id/router_add_advanced_options_button"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginEnd="4dp"
-          android:layout_marginLeft="4dp"
-          android:layout_marginRight="4dp"
-          android:layout_marginStart="4dp"
-          android:layout_marginTop="@dimen/activity_vertical_margin"
-          android:background="@color/accent_material_light"
-          android:clickable="false"
-          android:drawableLeft="@drawable/ic_action_hardware_keyboard_arrow_right"
-          android:text="Advanced Options"
-          style="@android:style/Widget.Button"
-          />
-
-      <LinearLayout
-          android:id="@+id/router_add_advanced_options"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center"
-          android:layout_marginBottom="15dp"
-          android:layout_marginEnd="5dp"
-          android:layout_marginLeft="10dp"
-          android:layout_marginRight="5dp"
-          android:layout_marginStart="10dp"
-          android:background="@drawable/border"
-          android:orientation="vertical"
-          android:visibility="gone"
-          >
-
-        <CheckBox
-            android:id="@+id/router_add_local_ssid_lookup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginTop="4dp"
-            android:text="Use local SSID Lookup"
-            />
+    <ScrollView
+        android:id="@+id/router_add_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal"
-            >
+            android:orientation="vertical"
+            android:weightSum="1">
 
-          <LinearLayout
-              android:id="@+id/router_add_local_ssid_container"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_weight="9"
-              android:orientation="vertical"
-              />
+            <!-- UUID -->
+            <TextView
+                android:id="@+id/router_add_uuid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
-          <android.support.design.widget.FloatingActionButton
-              android:id="@+id/router_add_local_ssid_button"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_margin="@dimen/fab_compat_margin"
-              android:layout_weight="1"
-              android:clickable="true"
-              android:contentDescription="Add local SSID"
-              android:src="@android:drawable/ic_input_add"
-              android:tint="@android:color/white"
-              android:visibility="gone"
-              app:elevation="6dp"
-              app:layout_anchorGravity="bottom|right|end"
-              app:pressedTranslationZ="12dp"
-              />
+            <!-- Router Name -->
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="4dp"-->
+            <!--android:layout_marginStart="4dp"-->
+            <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
+            <!--android:text="Router Name" />-->
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/router_add_name_input_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/router_add_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:hint="Router Name, e.g., 'Living Room Router'"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:selectAllOnFocus="true" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- IP / DNS -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="Router IP Address or DNS name" />
+
+            <TextView
+                android:id="@+id/router_add_ip_demo_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:text="Enter '%PACKAGE_NAME%' for a demo"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textStyle="italic" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/router_add_ip_input_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/router_add_ip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:hint="e.g., 192.168.1.254 or myrouter.dns.com"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:selectAllOnFocus="true" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- Firmware -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="Router Firmware" />
+
+            <Spinner
+                android:id="@+id/router_add_firmware"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:entries="@array/router_firmwares_array"
+                android:entryValues="@array/router_firmwares_array_values"
+                android:imeOptions="flagNoExtractUi"
+                android:prompt="@string/router_firmware_select" />
+
+            <!-- Connection Protocol -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="Connection Protocol" />
+
+            <Spinner
+                android:id="@+id/router_add_proto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:entries="@array/router_connection_protocols_array"
+                android:imeOptions="flagNoExtractUi"
+                android:prompt="@string/router_connection_proto_select" />
+
+            <!-- SSH Port -->
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="4dp"-->
+            <!--android:layout_marginStart="4dp"-->
+            <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
+            <!--android:text="SSH Port" />-->
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/router_add_port_input_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/router_add_port"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:ems="10"
+                    android:hint="@string/router_add_port"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="numberSigned"
+                    android:maxLines="1"
+                    android:selectAllOnFocus="true"
+                    android:text="@string/router_add_default_ssh_port" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- Login -->
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="4dp"-->
+            <!--android:layout_marginStart="4dp"-->
+            <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
+            <!--android:maxLines="1"-->
+            <!--android:text="Login" />-->
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/router_add_username_input_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/router_add_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:hint="SSH Login"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:selectAllOnFocus="true"
+                    android:text="root" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- SSH Authentication Method selection -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="SSH Authentication Method" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:orientation="vertical">
+
+                <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/router_add_ssh_auth_method"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/router_add_ssh_auth_method_none"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="None" />
+
+                    <RadioButton
+                        android:id="@+id/router_add_ssh_auth_method_password"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="Password" />
+
+                    <RadioButton
+                        android:id="@+id/router_add_ssh_auth_method_privkey"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Private key" />
+                </RadioGroup>
+
+                <!-- Private key -->
+                <TextView
+                    android:id="@+id/router_add_privkey_hdr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:text="Private key (in OpenSSH format)"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/router_add_privkey"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:hint="@string/router_add_path_to_privkey"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/router_add_privkey_path"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <!-- Password-->
+                <TextView
+                    android:id="@+id/router_add_password_hdr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Password" />
+
+                <EditText
+                    android:id="@+id/router_add_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:hint="e.g., 'default' (may be empty)"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:selectAllOnFocus="true" />
+
+                <CheckBox
+                    android:id="@+id/router_add_password_show_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:checked="false"
+                    android:text="Show Password" />
+
+            </LinearLayout>
+
+            <!-- Advanced Options (to display or not) -->
+            <TextView
+                android:id="@+id/router_add_advanced_options_button"
+                style="@android:style/Widget.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:background="@color/accent_material_light"
+                android:clickable="false"
+                android:drawableLeft="@drawable/ic_action_hardware_keyboard_arrow_right"
+                android:text="Advanced Options" />
+
+            <LinearLayout
+                android:id="@+id/router_add_advanced_options"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="15dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/border"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <CheckBox
+                    android:id="@+id/router_add_local_ssid_lookup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginTop="4dp"
+                    android:text="Use local SSID Lookup" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginTop="4dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/router_add_local_ssid_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="9"
+                        android:orientation="vertical" />
+
+                    <android.support.design.widget.FloatingActionButton
+                        android:id="@+id/router_add_local_ssid_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/fab_compat_margin"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:contentDescription="Add local SSID"
+                        android:src="@android:drawable/ic_input_add"
+                        android:tint="@android:color/white"
+                        android:visibility="gone"
+                        app:elevation="6dp"
+                        app:layout_anchorGravity="bottom|right|end"
+                        app:pressedTranslationZ="12dp" />
+
+                </LinearLayout>
+
+                <!-- Hidden - not really relevant -->
+                <CheckBox
+                    android:id="@+id/router_add_fallback_to_primary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:text="Fallback to primary IP/DNS if needed"
+                    android:visibility="gone" />
+
+                <!-- Hidden for now - does not seem to work -->
+                <CheckBox
+                    android:id="@+id/router_add_is_strict_host_key_checking"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/router_add_strict_host_key_checking"
+                    android:visibility="gone" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <!-- Hidden - not really relevant -->
-        <CheckBox
-            android:id="@+id/router_add_fallback_to_primary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:text="Fallback to primary IP/DNS if needed"
-            android:visibility="gone"
-            />
-
-        <!-- Hidden for now - does not seem to work -->
-        <CheckBox
-            android:id="@+id/router_add_is_strict_host_key_checking"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/router_add_strict_host_key_checking"
-            android:visibility="gone"
-            />
-
-      </LinearLayout>
-
-    </LinearLayout>
-
-  </ScrollView>
+    </ScrollView>
 
 </LinearLayout>

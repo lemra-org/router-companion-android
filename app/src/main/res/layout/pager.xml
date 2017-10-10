@@ -24,23 +24,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
-  <com.android.common.view.SlidingTabLayout
-      android:id="@+id/tabs"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:background="?attr/colorPrimary"
-      />
+    <com.android.common.view.SlidingTabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary" />
 
-  <android.support.v4.view.ViewPager
-      android:id="@+id/viewPager"
-      android:layout_width="match_parent"
-      android:layout_height="0px"
-      android:layout_weight="1"
-      android:background="?android:attr/selectableItemBackground"
-      tools:context=".DDWRTMainActivity"
-      />
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1"
+        android:background="?android:attr/selectableItemBackground"
+        tools:context=".DDWRTMainActivity" />
 
 </LinearLayout>

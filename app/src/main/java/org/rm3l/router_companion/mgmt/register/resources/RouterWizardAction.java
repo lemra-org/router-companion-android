@@ -8,32 +8,35 @@ import com.google.gson.GsonBuilder;
  */
 public class RouterWizardAction {
 
-  public static final String ROUTER_WIZARD_ACTION = "ROUTER_WIZARD_ACTION";
+    public static final String ROUTER_WIZARD_ACTION = "ROUTER_WIZARD_ACTION";
 
-  public static final int ADD = 10;
-  public static final int EDIT = 11;
-  public static final int COPY = 12;
+    public static final int ADD = 10;
 
-  public static final GsonBuilder GSON_BUILDER = new GsonBuilder();
+    public static final int EDIT = 11;
 
-  private String routerUuid;
-  private Integer action;
+    public static final int COPY = 12;
 
-  public String getRouterUuid() {
-    return routerUuid;
-  }
+    public static final GsonBuilder GSON_BUILDER = new GsonBuilder();
 
-  public RouterWizardAction setRouterUuid(String routerUuid) {
-    this.routerUuid = routerUuid;
-    return this;
-  }
+    private Integer action;
 
-  public int getAction() {
-    return action != null ? action : TextUtils.isEmpty(routerUuid) ? ADD : EDIT;
-  }
+    private String routerUuid;
 
-  public RouterWizardAction setAction(Integer action) {
-    this.action = action;
-    return this;
-  }
+    public int getAction() {
+        return action != null ? action : TextUtils.isEmpty(routerUuid) ? ADD : EDIT;
+    }
+
+    public RouterWizardAction setAction(Integer action) {
+        this.action = action;
+        return this;
+    }
+
+    public String getRouterUuid() {
+        return routerUuid;
+    }
+
+    public RouterWizardAction setRouterUuid(String routerUuid) {
+        this.routerUuid = routerUuid;
+        return this;
+    }
 }

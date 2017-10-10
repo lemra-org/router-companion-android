@@ -16,24 +16,31 @@ import retrofit2.http.Query;
  */
 public interface DoorbellService {
 
-  @Headers({
-      "Content-Type: application/json",
-      "User-Agent: " + BuildConfig.APPLICATION_ID + " v" + BuildConfig.VERSION_NAME
-  }) @POST("applications/{id}/open") Call<ResponseBody> openApplication(
-      @Path("id") final int applicationId, @Query("key") final String key);
+    @Headers({
+            "Content-Type: application/json",
+            "User-Agent: " + BuildConfig.APPLICATION_ID + " v" + BuildConfig.VERSION_NAME
+    })
+    @POST("applications/{id}/open")
+    Call<ResponseBody> openApplication(
+            @Path("id") final int applicationId, @Query("key") final String key);
 
-  @Headers({
-      "Content-Type: application/json",
-      "User-Agent: " + BuildConfig.APPLICATION_ID + " v" + BuildConfig.VERSION_NAME
-  }) @POST("applications/{id}/submit") Call<ResponseBody> submitFeedbackForm(
-      @Path("id") final int applicationId, @Query("key") final String key,
-      @Query("email") final String email, @Query("message") final String message,
-      @Query("name") final String userName, @Query("properties") final String propertiesJson,
-      @Query("attachments[]") final String[] attachments);
+    @Headers({
+            "Content-Type: application/json",
+            "User-Agent: " + BuildConfig.APPLICATION_ID + " v" + BuildConfig.VERSION_NAME
+    })
+    @POST("applications/{id}/submit")
+    Call<ResponseBody> submitFeedbackForm(
+            @Path("id") final int applicationId, @Query("key") final String key,
+            @Query("email") final String email, @Query("message") final String message,
+            @Query("name") final String userName, @Query("properties") final String propertiesJson,
+            @Query("attachments[]") final String[] attachments);
 
-  @Headers({
-      "User-Agent: " + BuildConfig.APPLICATION_ID + " v" + BuildConfig.VERSION_NAME
-  }) @Multipart @POST("applications/{id}/upload") Call<String[]> upload(
-      @Path("id") final int applicationId, @Query("key") final String key,
-      @Part("files[]\"; filename=\"screenshot.png\" ") final RequestBody filename);
+    @Headers({
+            "User-Agent: " + BuildConfig.APPLICATION_ID + " v" + BuildConfig.VERSION_NAME
+    })
+    @Multipart
+    @POST("applications/{id}/upload")
+    Call<String[]> upload(
+            @Path("id") final int applicationId, @Query("key") final String key,
+            @Part("files[]\"; filename=\"screenshot.png\" ") final RequestBody filename);
 }

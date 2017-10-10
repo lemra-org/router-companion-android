@@ -9,20 +9,23 @@ import org.rm3l.router_companion.tiles.status.wireless.filter.ClientsFilterVisit
 
 public class ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl implements ClientsFilterVisitor {
 
-  private boolean mShowOnlyWanAccessDisabledHosts;
+    private boolean mShowOnlyWanAccessDisabledHosts;
 
-  public ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(
-      boolean showOnlyWanAccessDisabledHosts) {
-    this.mShowOnlyWanAccessDisabledHosts = showOnlyWanAccessDisabledHosts;
-  }
+    public ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(
+            boolean showOnlyWanAccessDisabledHosts) {
+        this.mShowOnlyWanAccessDisabledHosts = showOnlyWanAccessDisabledHosts;
+    }
 
-  @NonNull @Override public Set<Device> visit(@NonNull Set<Device> devices) {
-    return Sets.filter(devices, new Predicate<Device>() {
-      @Override public boolean apply(Device device) {
+    @NonNull
+    @Override
+    public Set<Device> visit(@NonNull Set<Device> devices) {
+        return Sets.filter(devices, new Predicate<Device>() {
+            @Override
+            public boolean apply(Device device) {
 
-        return (!mShowOnlyWanAccessDisabledHosts || (device.getWanAccessState()
-            == Device.WANAccessState.WAN_ACCESS_DISABLED));
-      }
-    });
-  }
+                return (!mShowOnlyWanAccessDisabledHosts || (device.getWanAccessState()
+                        == Device.WANAccessState.WAN_ACCESS_DISABLED));
+            }
+        });
+    }
 }

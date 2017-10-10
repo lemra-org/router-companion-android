@@ -11,25 +11,25 @@ import org.rm3l.router_companion.utils.Utils
  */
 class RouterModelUpdaterServiceTask(ctx: Context) : AbstractBackgroundServiceTask(ctx) {
 
-  @Throws(Exception::class)
-  override fun runBackgroundServiceTask(router: Router) {
+    @Throws(Exception::class)
+    override fun runBackgroundServiceTask(router: Router) {
 
-    val routerPreferences = mCtx.getSharedPreferences(router.templateUuidOrUuid, Context.MODE_PRIVATE) ?: return
+        val routerPreferences = mCtx.getSharedPreferences(router.templateUuidOrUuid, Context.MODE_PRIVATE) ?: return
 
-    val nvramInfo = SSHUtils.getNVRamInfoFromRouter(mCtx, router, globalPreferences,
-        NVRAMInfo.MODEL) ?: return
+        val nvramInfo = SSHUtils.getNVRamInfoFromRouter(mCtx, router, globalPreferences,
+                NVRAMInfo.MODEL) ?: return
 
-    val routerModel = nvramInfo.getProperty(NVRAMInfo.MODEL, DEFAULT_VALUE)
+        val routerModel = nvramInfo.getProperty(NVRAMInfo.MODEL, DEFAULT_VALUE)
 
-    val routerModelFromPrefs = routerPreferences.getString(NVRAMInfo.MODEL, DEFAULT_VALUE)
+        val routerModelFromPrefs = routerPreferences.getString(NVRAMInfo.MODEL, DEFAULT_VALUE)
 
-    if (!(DEFAULT_VALUE == routerModel || routerModelFromPrefs == routerModel)) {
-      routerPreferences.edit().putString(NVRAMInfo.MODEL, routerModel).apply()
-      Utils.requestBackup(mCtx)
+        if (!(DEFAULT_VALUE == routerModel || routerModelFromPrefs == routerModel)) {
+            routerPreferences.edit().putString(NVRAMInfo.MODEL, routerModel).apply()
+            Utils.requestBackup(mCtx)
+        }
     }
-  }
 
-  companion object {
-    val DEFAULT_VALUE = "-"
-  }
+    companion object {
+        val DEFAULT_VALUE = "-"
+    }
 }

@@ -5,18 +5,18 @@ package org.rm3l.router_companion.tasker.exception;
  */
 public class DDWRTCompanionTaskerException extends RuntimeException {
 
-  public DDWRTCompanionTaskerException() {
-  }
+    public DDWRTCompanionTaskerException() {
+    }
 
-  public DDWRTCompanionTaskerException(String message) {
-    super(message);
-  }
+    public DDWRTCompanionTaskerException(String message) {
+        super(message);
+    }
 
-  public DDWRTCompanionTaskerException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public DDWRTCompanionTaskerException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-  public DDWRTCompanionTaskerException(Throwable cause) {
-    super(cause);
-  }
+    public DDWRTCompanionTaskerException(Throwable cause) {
+        super(cause);
+    }
 }

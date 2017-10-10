@@ -20,37 +20,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="20dp"
-    >
+    android:layout_margin="20dp">
 
-  <LinearLayout
-      android:id="@+id/tiles_container_linearlayout"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:orientation="vertical"
-      android:visibility="gone"
-      />
+    <LinearLayout
+        android:id="@+id/tiles_container_linearlayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone" />
 
-  <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
-      android:id="@+id/tiles_container_recyclerview"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:scrollbars="vertical"
-      />
+    <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
+        android:id="@+id/tiles_container_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
 
-  <TextView
-      android:id="@+id/empty_view"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:layout_gravity="center"
-      android:gravity="center"
-      android:text="No tiles."
-      android:textAppearance="?android:attr/textAppearanceMedium"
-      android:textIsSelectable="true"
-      />
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="No tiles."
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textIsSelectable="true" />
 
 </RelativeLayout>

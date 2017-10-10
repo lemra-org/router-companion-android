@@ -33,10 +33,12 @@ import org.rm3l.router_companion.tiles.status.wan.openwrt.WANTrafficTileOpenWrt;
 
 public class StatusWANFragmentOpenWrt extends StatusWANFragment {
 
-  //TODO
-  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return Arrays.<DDWRTTile>asList(new WANConfigTileOpenWrt(this, savedInstanceState, this.router),
-        new WANTrafficTileOpenWrt(this, savedInstanceState, this.router),
-        new WANMonthlyTrafficTile(this, savedInstanceState, this.router));
-  }
+    //TODO
+    @Nullable
+    @Override
+    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+        return Arrays.<DDWRTTile>asList(new WANConfigTileOpenWrt(this, savedInstanceState, this.router),
+                new WANTrafficTileOpenWrt(this, savedInstanceState, this.router),
+                new WANMonthlyTrafficTile(this, savedInstanceState, this.router));
+    }
 }

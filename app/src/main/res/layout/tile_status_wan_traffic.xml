@@ -25,149 +25,137 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
-  <LinearLayout
-      android:id="@+id/tile_status_wan_traffic_hdr"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:paddingTop="4.0dip"
-      >
-
-    <TextView
-        android:id="@+id/tile_status_wan_traffic_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:text="@string/wan_traffic_total_traffic"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textIsSelectable="true"
-        android:textStyle="bold"
-        />
-
-  </LinearLayout>
-
-  <ProgressBar
-      android:id="@+id/tile_progress_bar"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginBottom="8.0dip"
-      android:layout_marginTop="8.0dip"
-      android:indeterminate="false"
-      android:indeterminateOnly="false"
-      style="?android:attr/progressBarStyleHorizontal"
-      />
-
-  <!-- Error message placeholder -->
-  <TextView
-      android:id="@+id/tile_status_wan_traffic_error"
-      android:layout_width="300dp"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:ellipsize="end"
-      android:gravity="center"
-      android:maxLines="1"
-      android:text="@string/error_placeholder"
-      android:textColor="@color/ddwrt_purple"
-      android:textIsSelectable="true"
-      android:textStyle="bold"
-      android:visibility="gone"
-      />
-
-  <RelativeLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      >
-
-    <GridLayout
-        android:id="@+id/tile_status_wan_traffic_gridLayout"
+    <LinearLayout
+        android:id="@+id/tile_status_wan_traffic_hdr"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:columnCount="2"
-        android:visibility="gone"
-        >
+        android:paddingTop="4.0dip">
 
-      <!-- Ingress -->
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginEnd="8.0dip"
-          android:layout_marginRight="8.0dip"
-          android:text="@string/wan_traffic_wan_iface"
-          android:textStyle="bold"
-          />
-      <TextView
-          android:id="@+id/tile_status_wan_traffic_iface"
-          android:layout_width="0dip"
-          android:layout_gravity="fill_horizontal"
-          android:text="@string/loading"
-          android:textIsSelectable="true"
-          />
+        <TextView
+            android:id="@+id/tile_status_wan_traffic_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/wan_traffic_total_traffic"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textIsSelectable="true"
+            android:textStyle="bold" />
 
-      <!-- Ingress -->
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginEnd="8.0dip"
-          android:layout_marginRight="8.0dip"
-          android:text="@string/wan_config_ingress_mbytes"
-          android:textStyle="bold"
-          />
-      <TextView
-          android:id="@+id/tile_status_wan_traffic_ingress"
-          android:layout_width="0dip"
-          android:layout_gravity="fill_horizontal"
-          android:text="@string/loading"
-          android:textIsSelectable="true"
-          />
-
-      <!-- Egress -->
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginEnd="8.0dip"
-          android:layout_marginRight="8.0dip"
-          android:text="@string/wan_traffic_egress_mbytes"
-          android:textStyle="bold"
-          />
-      <TextView
-          android:id="@+id/tile_status_wan_traffic_egress"
-          android:layout_width="0dip"
-          android:layout_gravity="fill_horizontal"
-          android:text="@string/loading"
-          android:textIsSelectable="true"
-          />
-
-    </GridLayout>
+    </LinearLayout>
 
     <ProgressBar
-        android:id="@+id/tile_status_wan_traffic_loading_view"
-        android:layout_width="wrap_content"
+        android:id="@+id/tile_progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        />
+        android:layout_marginBottom="8.0dip"
+        android:layout_marginTop="8.0dip"
+        android:indeterminate="false"
+        android:indeterminateOnly="false" />
 
-    <com.github.curioustechizen.ago.RelativeTimeTextView
-        android:id="@+id/tile_last_sync"
-        android:layout_width="wrap_content"
+    <!-- Error message placeholder -->
+    <TextView
+        android:id="@+id/tile_status_wan_traffic_error"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/tile_status_wan_traffic_gridLayout"
-        android:layout_marginTop="5dp"
+        android:layout_gravity="center"
         android:ellipsize="end"
-        android:gravity="end"
+        android:gravity="center"
         android:maxLines="1"
-        android:text="@string/last_sync"
-        android:textAppearance="?android:textAppearanceSmall"
+        android:text="@string/error_placeholder"
+        android:textColor="@color/ddwrt_purple"
         android:textIsSelectable="true"
-        android:textStyle="italic"
-        />
+        android:textStyle="bold"
+        android:visibility="gone" />
 
-  </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <GridLayout
+            android:id="@+id/tile_status_wan_traffic_gridLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:visibility="gone">
+
+            <!-- Ingress -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text="@string/wan_traffic_wan_iface"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tile_status_wan_traffic_iface"
+                android:layout_width="0dip"
+                android:layout_gravity="fill_horizontal"
+                android:text="@string/loading"
+                android:textIsSelectable="true" />
+
+            <!-- Ingress -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text="@string/wan_config_ingress_mbytes"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tile_status_wan_traffic_ingress"
+                android:layout_width="0dip"
+                android:layout_gravity="fill_horizontal"
+                android:text="@string/loading"
+                android:textIsSelectable="true" />
+
+            <!-- Egress -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text="@string/wan_traffic_egress_mbytes"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tile_status_wan_traffic_egress"
+                android:layout_width="0dip"
+                android:layout_gravity="fill_horizontal"
+                android:text="@string/loading"
+                android:textIsSelectable="true" />
+
+        </GridLayout>
+
+        <ProgressBar
+            android:id="@+id/tile_status_wan_traffic_loading_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+        <com.github.curioustechizen.ago.RelativeTimeTextView
+            android:id="@+id/tile_last_sync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/tile_status_wan_traffic_gridLayout"
+            android:layout_marginTop="5dp"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:maxLines="1"
+            android:text="@string/last_sync"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textIsSelectable="true"
+            android:textStyle="italic" />
+
+    </RelativeLayout>
 
 </LinearLayout>

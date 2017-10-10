@@ -42,101 +42,107 @@ import org.rm3l.router_companion.utils.ColorUtils;
  */
 public class DonateActivity extends FragmentActivity {
 
-  /**
-   * Google
-   */
-  private static final String GOOGLE_PUBKEY = \"fake-key\";
-      "xxx";
-  private static final String[] GOOGLE_CATALOG = new String[] {
-      "ntpsync.donation.1", "ntpsync.donation.2", "ntpsync.donation.3", "ntpsync.donation.5",
-      "ntpsync.donation.8", "ntpsync.donation.13", "ntpsync.donation.21", "ntpsync.donation.34",
-      "ntpsync.donation.55", "ntpsync.donation.89"
-  };
+    /**
+     * Google
+     */
+    private static final String GOOGLE_PUBKEY = \"fake-key\";
+            "xxx";
 
-  /**
-   * PayPal
-   */
-  private static final String PAYPAL_USER = "armel.soro@gmail.com";
-  private static final String PAYPAL_CURRENCY_CODE = "EUR";
+    private static final String[] GOOGLE_CATALOG = new String[]{
+            "ntpsync.donation.1", "ntpsync.donation.2", "ntpsync.donation.3", "ntpsync.donation.5",
+            "ntpsync.donation.8", "ntpsync.donation.13", "ntpsync.donation.21", "ntpsync.donation.34",
+            "ntpsync.donation.55", "ntpsync.donation.89"
+    };
 
-  /**
-   * Flattr
-   */
-  private static final String FLATTR_PROJECT_URL = "https://github.com/rm3l/ddwrt-companion";
-  // FLATTR_URL without http:// !
-  private static final String FLATTR_URL = "flattr.com/thing/320749440571624a971910e970a638d7";
+    /**
+     * PayPal
+     */
+    private static final String PAYPAL_USER = "armel.soro@gmail.com";
 
-  /**
-   * Bitcoin
-   */
-  private static final String BITCOIN_ADDRESS = "3NuYX1cWymrCNdMEF11fzyj2dcYvH4zniR";
+    private static final String PAYPAL_CURRENCY_CODE = "EUR";
 
-  private static final String DONATIONS_FRAGMENT = "donationsFragment";
+    /**
+     * Flattr
+     */
+    private static final String FLATTR_PROJECT_URL = "https://github.com/rm3l/ddwrt-companion";
 
-  /**
-   * Called when the activity is first created.
-   */
-  @Override public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+    // FLATTR_URL without http:// !
+    private static final String FLATTR_URL = "flattr.com/thing/320749440571624a971910e970a638d7";
 
-    ColorUtils.Companion.setAppTheme(this, null, false);
+    /**
+     * Bitcoin
+     */
+    private static final String BITCOIN_ADDRESS = "3NuYX1cWymrCNdMEF11fzyj2dcYvH4zniR";
 
-    //        if (ColorUtils.isThemeLight(this)) {
-    //            //Light
-    //            setTheme(R.style.AppThemeLight);
-    ////            getWindow().getDecorView()
-    ////                    .setBackgroundColor(ContextCompat.getColor(this,
-    ////                            android.R.color.white));
-    //        } else {
-    //            //Default is Dark
-    //            setTheme(R.style.AppThemeDark);
-    //        }
+    private static final String DONATIONS_FRAGMENT = "donationsFragment";
 
-    setContentView(R.layout.donations_activity);
+    /**
+     * Called when the activity is first created.
+     */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-    //        final DonationsFragment donationsFragment;
+        ColorUtils.Companion.setAppTheme(this, null, false);
 
-    if (BuildConfig.DONATIONS_GOOGLE) {
-      //Activate Google Play In-App Billing solely
-      //            donationsFragment = DonationsFragment.newInstance(BuildConfig.DEBUG, true, GOOGLE_PUBKEY, GOOGLE_CATALOG,
-      //                    getResources().getStringArray(R.array.donation_google_catalog_values), false, null, null,
-      //                    null, false, null, null, false, null);
-    } else {
-      //            donationsFragment = DonationsFragment.newInstance(BuildConfig.DEBUG, false, null, null, null, true, PAYPAL_USER,
-      //                    PAYPAL_CURRENCY_CODE, getString(R.string.donation_paypal_item), true, FLATTR_PROJECT_URL, FLATTR_URL, true, BITCOIN_ADDRESS);
+        //        if (ColorUtils.isThemeLight(this)) {
+        //            //Light
+        //            setTheme(R.style.AppThemeLight);
+        ////            getWindow().getDecorView()
+        ////                    .setBackgroundColor(ContextCompat.getColor(this,
+        ////                            android.R.color.white));
+        //        } else {
+        //            //Default is Dark
+        //            setTheme(R.style.AppThemeDark);
+        //        }
+
+        setContentView(R.layout.donations_activity);
+
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        //        final DonationsFragment donationsFragment;
+
+        if (BuildConfig.DONATIONS_GOOGLE) {
+            //Activate Google Play In-App Billing solely
+            //            donationsFragment = DonationsFragment.newInstance(BuildConfig.DEBUG, true, GOOGLE_PUBKEY, GOOGLE_CATALOG,
+            //                    getResources().getStringArray(R.array.donation_google_catalog_values), false, null, null,
+            //                    null, false, null, null, false, null);
+        } else {
+            //            donationsFragment = DonationsFragment.newInstance(BuildConfig.DEBUG, false, null, null, null, true, PAYPAL_USER,
+            //                    PAYPAL_CURRENCY_CODE, getString(R.string.donation_paypal_item), true, FLATTR_PROJECT_URL, FLATTR_URL, true, BITCOIN_ADDRESS);
+        }
+
+        //        ft.replace(R.id.donations_activity_container, donationsFragment, DONATIONS_FRAGMENT);
+        ft.commit();
     }
 
-    //        ft.replace(R.id.donations_activity_container, donationsFragment, DONATIONS_FRAGMENT);
-    ft.commit();
-  }
+    /**
+     * Needed for Google Play In-app Billing. It uses startIntentSenderForResult(). The result is not
+     * propagated to
+     * the Fragment like in startActivityForResult(). Thus we need to propagate manually to our
+     * Fragment.
+     *
+     * @param requestCode the request code
+     * @param resultCode  the result code
+     * @param data        the data we got in return
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-  /**
-   * Needed for Google Play In-app Billing. It uses startIntentSenderForResult(). The result is not
-   * propagated to
-   * the Fragment like in startActivityForResult(). Thus we need to propagate manually to our
-   * Fragment.
-   *
-   * @param requestCode the request code
-   * @param resultCode the result code
-   * @param data the data we got in return
-   */
-  @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-
-    final FragmentManager fragmentManager = getSupportFragmentManager();
-    final Fragment fragment = fragmentManager.findFragmentByTag(DONATIONS_FRAGMENT);
-    if (fragment != null) {
-      fragment.onActivityResult(requestCode, resultCode, data);
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        final Fragment fragment = fragmentManager.findFragmentByTag(DONATIONS_FRAGMENT);
+        if (fragment != null) {
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
-  }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        onBackPressed();
-        return true;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
-    return super.onOptionsItemSelected(item);
-  }
 }

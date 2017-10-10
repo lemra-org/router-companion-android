@@ -25,58 +25,58 @@ import com.google.common.collect.FluentIterable
 import com.google.common.collect.Sets
 
 class ClientDevices {
-  private val devices = Sets.newHashSet<Device>()
+    private val devices = Sets.newHashSet<Device>()
 
-  private var exception: Exception? = null
+    private var exception: Exception? = null
 
-  private var activeClientsNum: Int = 0
-  private var activeDhcpLeasesNum: Int = 0
-  var activeIPConnections: Int = 0
+    private var activeClientsNum: Int = 0
+    private var activeDhcpLeasesNum: Int = 0
+    var activeIPConnections: Int = 0
 
-  fun getActiveClientsNum(): Int {
-    return activeClientsNum
-  }
+    fun getActiveClientsNum(): Int {
+        return activeClientsNum
+    }
 
-  fun setActiveClientsNum(activeClientsNum: Int): ClientDevices {
-    this.activeClientsNum = activeClientsNum
-    return this
-  }
+    fun setActiveClientsNum(activeClientsNum: Int): ClientDevices {
+        this.activeClientsNum = activeClientsNum
+        return this
+    }
 
-  fun getActiveDhcpLeasesNum(): Int {
-    return activeDhcpLeasesNum
-  }
+    fun getActiveDhcpLeasesNum(): Int {
+        return activeDhcpLeasesNum
+    }
 
-  fun setActiveDhcpLeasesNum(activeDhcpLeasesNum: Int): ClientDevices {
-    this.activeDhcpLeasesNum = activeDhcpLeasesNum
-    return this
-  }
+    fun setActiveDhcpLeasesNum(activeDhcpLeasesNum: Int): ClientDevices {
+        this.activeDhcpLeasesNum = activeDhcpLeasesNum
+        return this
+    }
 
-  fun getDevices(): Set<Device> {
-    return devices
-  }
+    fun getDevices(): Set<Device> {
+        return devices
+    }
 
-  val devicesCount: Int
-    get() = devices.size
+    val devicesCount: Int
+        get() = devices.size
 
-  fun getDevices(max: Int): Set<Device> {
-    return FluentIterable.from(devices).limit(max).toSet()
-  }
+    fun getDevices(max: Int): Set<Device> {
+        return FluentIterable.from(devices).limit(max).toSet()
+    }
 
-  fun addDevice(device: Device): ClientDevices {
-    this.devices.add(device)
-    return this
-  }
+    fun addDevice(device: Device): ClientDevices {
+        this.devices.add(device)
+        return this
+    }
 
-  fun getException(): Exception? {
-    return exception
-  }
+    fun getException(): Exception? {
+        return exception
+    }
 
-  fun setException(exception: Exception): ClientDevices {
-    this.exception = exception
-    return this
-  }
+    fun setException(exception: Exception): ClientDevices {
+        this.exception = exception
+        return this
+    }
 
-  override fun toString(): String {
-    return "Devices{devices=$devices, exception=$exception}"
-  }
+    override fun toString(): String {
+        return "Devices{devices=$devices, exception=$exception}"
+    }
 }

@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-<string name="define_jsch" translatable="false"/>
-<!-- Author section -->
-<string name="library_jsch_author" translatable="false">JCraft, Inc.</string>
-<string name="library_jsch_authorWebsite" translatable="false">http://www.jcraft.com</string>
-<!-- Library section -->
-<string name="library_jsch_libraryName" translatable="false">JSch</string>
-<string name="library_jsch_libraryDescription" translatable="false">JSch is a pure Java implementation of SSH2. JSch allows you to connect to an sshd server and use port forwarding, X11 forwarding, file transfer, etc., and you can integrate its functionality into your own Java programs.</string>
-<string name="library_jsch_libraryWebsite" translatable="false">http://www.jcraft.com/jsch/</string>
-<string name="library_jsch_libraryVersion" translatable="false">0.1.51</string>
-<!-- OpenSource section -->
-<string name="library_jsch_isOpenSource" translatable="false">true</string>
-<string name="library_jsch_repositoryLink" translatable="false">https://sourceforge.net/projects/jsch/</string>
-<!-- ClassPath for autoDetect section -->
-<!--<string translatable="false" name="library_jsch_classPath">com.facebook.jsch</string>-->
-<!-- License section -->
-  <string name="library_jsch_licenseVersion">BSD-style License</string>
-  <string name="library_jsch_licenseLink">http://www.jcraft.com/jsch/LICENSE.txt</string>
-  <string name="library_jsch_licenseContent">
+    <string name="define_jsch" translatable="false" />
+    <!-- Author section -->
+    <string name="library_jsch_author" translatable="false">JCraft, Inc.</string>
+    <string name="library_jsch_authorWebsite" translatable="false">http://www.jcraft.com</string>
+    <!-- Library section -->
+    <string name="library_jsch_libraryName" translatable="false">JSch</string>
+    <string name="library_jsch_libraryDescription" translatable="false">JSch is a pure Java implementation of SSH2. JSch allows you to connect to an sshd server and use port forwarding, X11 forwarding, file transfer, etc., and you can integrate its functionality into your own Java programs.</string>
+    <string name="library_jsch_libraryWebsite" translatable="false">http://www.jcraft.com/jsch/</string>
+    <string name="library_jsch_libraryVersion" translatable="false">0.1.51</string>
+    <!-- OpenSource section -->
+    <string name="library_jsch_isOpenSource" translatable="false">true</string>
+    <string name="library_jsch_repositoryLink" translatable="false">https://sourceforge.net/projects/jsch/</string>
+    <!-- ClassPath for autoDetect section -->
+    <!--<string translatable="false" name="library_jsch_classPath">com.facebook.jsch</string>-->
+    <!-- License section -->
+    <string name="library_jsch_licenseVersion">BSD-style License</string>
+    <string name="library_jsch_licenseLink">http://www.jcraft.com/jsch/LICENSE.txt</string>
+    <string name="library_jsch_licenseContent">
     <![CDATA[
 Copyright &#169; 2002-2015 Atsuhiko Yamanaka, JCraft,Inc. <br/>
 All rights reserved.<br/>
@@ -48,5 +48,5 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,<br/
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.<br/>
         ]]>
   </string>
-<!-- Custom variables section -->
+    <!-- Custom variables section -->
 </resources>

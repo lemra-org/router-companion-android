@@ -24,13 +24,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".DDWRTManagementActivity">
-  <item
-      android:id="@+id/action_example"
-      android:title="@string/action_example"
-      app:showAsAction="withText|ifRoom"/>
-  <item
-      android:id="@+id/action_settings"
-      android:orderInCategory="100"
-      android:title="@string/action_settings"
-      app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_example"
+        android:title="@string/action_example"
+        app:showAsAction="withText|ifRoom" />
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
 </menu>

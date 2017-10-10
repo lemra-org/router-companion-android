@@ -14,15 +14,15 @@ import retrofit2.http.Query
  */
 interface GooGlService {
 
-  @Headers("Content-Type: application/json",
-      "User-Agent: ${BuildConfig.APPLICATION_ID} v ${BuildConfig.VERSION_NAME}")
-  @POST("url")
-  fun shortenLongUrl(@Query("key") key: String,
-      @Body body: GooGlData): Call<GooGlData>
+    @Headers("Content-Type: application/json",
+            "User-Agent: ${BuildConfig.APPLICATION_ID} v ${BuildConfig.VERSION_NAME}")
+    @POST("url")
+    fun shortenLongUrl(@Query("key") key: String,
+                       @Body body: GooGlData): Call<GooGlData>
 
-  @Headers("Content-Type: application/json",
-      "User-Agent: ${BuildConfig.APPLICATION_ID} v ${BuildConfig.VERSION_NAME}")
-  @GET("url")
-  fun expandShortUrl(@Query("key") key: String,
-      @Query("shortUrl") shortUrl: String): Call<GooGlData>
+    @Headers("Content-Type: application/json",
+            "User-Agent: ${BuildConfig.APPLICATION_ID} v ${BuildConfig.VERSION_NAME}")
+    @GET("url")
+    fun expandShortUrl(@Query("key") key: String,
+                       @Query("shortUrl") shortUrl: String): Call<GooGlData>
 }

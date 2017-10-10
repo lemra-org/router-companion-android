@@ -29,13 +29,13 @@ import org.rm3l.router_companion.resources.conn.Router;
 
 public class ArpPingFromRouterAction extends ExecStreamableCommandRouterAction {
 
-  private static final int MAX_ARPING_PACKETS_TO_SEND = 5;
+    private static final int MAX_ARPING_PACKETS_TO_SEND = 5;
 
-  public ArpPingFromRouterAction(Router router, @NonNull Context context,
-      @Nullable RouterStreamActionListener listener,
-      @NonNull final SharedPreferences globalSharedPreferences, @NonNull final String hostToPing) {
-    super(router, RouterAction.ARPING, context, listener, globalSharedPreferences, String.format(
-        "for ifname in `/sbin/ifconfig | grep -i 'HWaddr' | awk '{print $1}'`; do "
-            + "arping -c %s -I ${ifname} %s; done", MAX_ARPING_PACKETS_TO_SEND, hostToPing));
-  }
+    public ArpPingFromRouterAction(Router router, @NonNull Context context,
+            @Nullable RouterStreamActionListener listener,
+            @NonNull final SharedPreferences globalSharedPreferences, @NonNull final String hostToPing) {
+        super(router, RouterAction.ARPING, context, listener, globalSharedPreferences, String.format(
+                "for ifname in `/sbin/ifconfig | grep -i 'HWaddr' | awk '{print $1}'`; do "
+                        + "arping -c %s -I ${ifname} %s; done", MAX_ARPING_PACKETS_TO_SEND, hostToPing));
+    }
 }

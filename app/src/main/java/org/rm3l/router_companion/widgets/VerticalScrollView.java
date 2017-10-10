@@ -31,29 +31,34 @@ import android.view.View;
 import android.widget.ScrollView;
 import com.crashlytics.android.Crashlytics;
 
-@Deprecated public class VerticalScrollView extends ScrollView {
+@Deprecated
+public class VerticalScrollView extends ScrollView {
 
-  private static final String LOG_TAG = VerticalScrollView.class.getSimpleName();
-  View.OnTouchListener mGestureListener;
-  private GestureDetector mGestureDetector;
+    // Return false if we're scrolling in the x direction
+    class YScrollDetector extends GestureDetector.SimpleOnGestureListener {
 
-  public VerticalScrollView(Context context, AttributeSet attrs) {
-    super(context, attrs);
-    mGestureDetector = new GestureDetector(context, new YScrollDetector());
-    setFadingEdgeLength(0);
-  }
-
-  @Override public boolean onInterceptTouchEvent(MotionEvent ev) {
-    Crashlytics.log(Log.DEBUG, LOG_TAG, "VerticalScrollView#onInterceptTouchEvent");
-    return super.onInterceptTouchEvent(ev) && mGestureDetector.onTouchEvent(ev);
-  }
-
-  // Return false if we're scrolling in the x direction
-  class YScrollDetector extends GestureDetector.SimpleOnGestureListener {
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-      Crashlytics.log(Log.DEBUG, LOG_TAG, "VerticalScrollView.YScrollDetector#onScroll");
-      return Math.abs(distanceY) > Math.abs(distanceX);
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "VerticalScrollView.YScrollDetector#onScroll");
+            return Math.abs(distanceY) > Math.abs(distanceX);
+        }
     }
-  }
+
+    private static final String LOG_TAG = VerticalScrollView.class.getSimpleName();
+
+    View.OnTouchListener mGestureListener;
+
+    private GestureDetector mGestureDetector;
+
+    public VerticalScrollView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        mGestureDetector = new GestureDetector(context, new YScrollDetector());
+        setFadingEdgeLength(0);
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        Crashlytics.log(Log.DEBUG, LOG_TAG, "VerticalScrollView#onInterceptTouchEvent");
+        return super.onInterceptTouchEvent(ev) && mGestureDetector.onTouchEvent(ev);
+    }
 }

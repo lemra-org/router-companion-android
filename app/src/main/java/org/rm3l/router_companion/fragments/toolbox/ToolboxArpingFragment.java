@@ -29,7 +29,10 @@ import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.toolbox.ToolboxArpingTile;
 
 public class ToolboxArpingFragment extends AbstractToolboxFragment {
-  @Nullable @Override protected List<DDWRTTile> doGetTiles(@Nullable Bundle savedInstanceState) {
-    return Arrays.<DDWRTTile>asList(new ToolboxArpingTile(this, savedInstanceState, this.router));
-  }
+
+    @Nullable
+    @Override
+    protected List<DDWRTTile> doGetTiles(@Nullable Bundle savedInstanceState) {
+        return Arrays.<DDWRTTile>asList(new ToolboxArpingTile(this, savedInstanceState, this.router));
+    }
 }

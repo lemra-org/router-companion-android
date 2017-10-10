@@ -33,7 +33,9 @@ import org.rm3l.router_companion.tiles.DDWRTTile;
  */
 public class WirelessBasicFragmentAbstract extends AbstractBaseFragment {
 
-  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return null;
-  }
+    @Nullable
+    @Override
+    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+        return null;
+    }
 }

@@ -2,21 +2,21 @@
 
 
 <resources>
-  <string name="define_chuck" translatable="false"/>
-  <!-- Author section -->
-  <string name="library_chuck_author" translatable="false">Jeff Gilfelt</string>
-  <string name="library_chuck_authorWebsite" translatable="false">https://github.com/jgilfelt</string>
-  <!-- Library section -->
-  <string name="library_chuck_libraryName" translatable="false">Chuck</string>
-  <string name="library_chuck_libraryDescription" translatable="false">Chuck is a simple in-app HTTP inspector for Android OkHttp clients. Chuck intercepts and persists all HTTP requests and responses inside your application, and provides a UI for inspecting their content.</string>
-  <string name="library_chuck_libraryWebsite" translatable="false">https://github.com/jgilfelt/chuck</string>
-  <string name="library_chuck_libraryVersion" translatable="false">1.0.4</string>
-  <!-- OpenSource section -->
-  <string name="library_chuck_isOpenSource" translatable="false">true</string>
-  <string name="library_chuck_repositoryLink" translatable="false">https://github.com/jgilfelt/chuck</string>
-  <!-- ClassPath for autoDetect section -->
-  <!--<string translatable="false" name="library_chuck_classPath">com.facebook.discreetapprate</string>-->
-  <!-- License section -->
-  <string name="library_chuck_licenseId" translatable="false">apache_2_0</string>
-  <!-- Custom variables section -->
+    <string name="define_chuck" translatable="false" />
+    <!-- Author section -->
+    <string name="library_chuck_author" translatable="false">Jeff Gilfelt</string>
+    <string name="library_chuck_authorWebsite" translatable="false">https://github.com/jgilfelt</string>
+    <!-- Library section -->
+    <string name="library_chuck_libraryName" translatable="false">Chuck</string>
+    <string name="library_chuck_libraryDescription" translatable="false">Chuck is a simple in-app HTTP inspector for Android OkHttp clients. Chuck intercepts and persists all HTTP requests and responses inside your application, and provides a UI for inspecting their content.</string>
+    <string name="library_chuck_libraryWebsite" translatable="false">https://github.com/jgilfelt/chuck</string>
+    <string name="library_chuck_libraryVersion" translatable="false">1.0.4</string>
+    <!-- OpenSource section -->
+    <string name="library_chuck_isOpenSource" translatable="false">true</string>
+    <string name="library_chuck_repositoryLink" translatable="false">https://github.com/jgilfelt/chuck</string>
+    <!-- ClassPath for autoDetect section -->
+    <!--<string translatable="false" name="library_chuck_classPath">com.facebook.discreetapprate</string>-->
+    <!-- License section -->
+    <string name="library_chuck_licenseId" translatable="false">apache_2_0</string>
+    <!-- Custom variables section -->
 </resources>

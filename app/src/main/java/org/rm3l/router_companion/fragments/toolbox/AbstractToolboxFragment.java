@@ -12,28 +12,33 @@ import org.rm3l.router_companion.tiles.toolbox.AbstractToolboxTile;
  */
 public abstract class AbstractToolboxFragment extends AbstractBaseFragment {
 
-  @Nullable protected List<DDWRTTile> tiles = null;
+    @Nullable
+    protected List<DDWRTTile> tiles = null;
 
-  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    if (tiles == null) {
-      tiles = doGetTiles(savedInstanceState);
+    @Override
+    protected boolean canChildScrollUp() {
+        final List<DDWRTTile> tiles = this.getTiles(null);
+        if (tiles == null || tiles.isEmpty()) {
+            return false;
+        }
+        final DDWRTTile tile = tiles.get(0);
+        return (tile instanceof AbstractToolboxTile && ((AbstractToolboxTile) tile).canChildScrollUp());
     }
-    return tiles;
-  }
 
-  @Override protected boolean isSwipeRefreshLayoutEnabled() {
-    //Disabled, as swipe refresh actually does not make sense in this kind of fragment
-    return false;
-  }
+    protected abstract List<DDWRTTile> doGetTiles(@Nullable Bundle savedInstanceState);
 
-  @Override protected boolean canChildScrollUp() {
-    final List<DDWRTTile> tiles = this.getTiles(null);
-    if (tiles == null || tiles.isEmpty()) {
-      return false;
+    @Nullable
+    @Override
+    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+        if (tiles == null) {
+            tiles = doGetTiles(savedInstanceState);
+        }
+        return tiles;
     }
-    final DDWRTTile tile = tiles.get(0);
-    return (tile instanceof AbstractToolboxTile && ((AbstractToolboxTile) tile).canChildScrollUp());
-  }
 
-  protected abstract List<DDWRTTile> doGetTiles(@Nullable Bundle savedInstanceState);
+    @Override
+    protected boolean isSwipeRefreshLayoutEnabled() {
+        //Disabled, as swipe refresh actually does not make sense in this kind of fragment
+        return false;
+    }
 }

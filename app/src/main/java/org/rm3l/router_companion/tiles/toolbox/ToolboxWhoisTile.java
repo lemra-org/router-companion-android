@@ -32,29 +32,36 @@ import org.rm3l.router_companion.resources.conn.Router;
 
 public class ToolboxWhoisTile extends AbstractToolboxTile {
 
-  public ToolboxWhoisTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
-      @Nullable Router router) {
-    super(parentFragment, arguments, router);
-  }
+    public ToolboxWhoisTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
+            @Nullable Router router) {
+        super(parentFragment, arguments, router);
+    }
 
-  @Nullable @Override protected Integer getInfoText() {
-    return R.string.whois_info;
-  }
+    @Override
+    protected int getEditTextHint() {
+        return R.string.host_edit_text_hint;
+    }
 
-  @Override protected int getEditTextHint() {
-    return R.string.host_edit_text_hint;
-  }
+    @Nullable
+    @Override
+    protected Integer getInfoText() {
+        return R.string.whois_info;
+    }
 
-  @Override protected int getSubmitButtonText() {
-    return R.string.toolbox_whois;
-  }
+    @NonNull
+    @Override
+    protected AbstractRouterAction<?> getRouterAction(String textToFind) {
+        return new WhoisFromLocalDeviceAction(mRouter, mParentFragmentActivity, mRouterActionListener,
+                mGlobalPreferences, textToFind);
+    }
 
-  @Override protected int getTileTitle() {
-    return R.string.whois;
-  }
+    @Override
+    protected int getSubmitButtonText() {
+        return R.string.toolbox_whois;
+    }
 
-  @NonNull @Override protected AbstractRouterAction<?> getRouterAction(String textToFind) {
-    return new WhoisFromLocalDeviceAction(mRouter, mParentFragmentActivity, mRouterActionListener,
-        mGlobalPreferences, textToFind);
-  }
+    @Override
+    protected int getTileTitle() {
+        return R.string.whois;
+    }
 }

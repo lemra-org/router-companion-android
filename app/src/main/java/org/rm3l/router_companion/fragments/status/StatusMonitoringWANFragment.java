@@ -36,8 +36,10 @@ import org.rm3l.router_companion.tiles.status.wan.WANTrafficTile;
  */
 public class StatusMonitoringWANFragment extends AbstractBaseFragment {
 
-  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return Arrays.<DDWRTTile>asList(new WANTrafficTile(this, savedInstanceState, this.router),
-        new WANMonthlyTrafficTile(this, savedInstanceState, this.router));
-  }
+    @Nullable
+    @Override
+    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+        return Arrays.<DDWRTTile>asList(new WANTrafficTile(this, savedInstanceState, this.router),
+                new WANMonthlyTrafficTile(this, savedInstanceState, this.router));
+    }
 }

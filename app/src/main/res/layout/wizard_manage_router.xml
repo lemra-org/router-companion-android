@@ -3,13 +3,12 @@
     android:id="@+id/wizard_add_router_fragment_container"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
-  <!--<fragment-->
-  <!--android:id="@+id/wizard_add_router_fragment"-->
-  <!--android:layout_width="match_parent"-->
-  <!--android:layout_height="wrap_content"-->
-  <!--android:name="org.rm3l.ddwrt.mgmt.register.ManageRouterWizardard" />-->
+    <!--<fragment-->
+    <!--android:id="@+id/wizard_add_router_fragment"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:name="org.rm3l.ddwrt.mgmt.register.ManageRouterWizardard" />-->
 
 </RelativeLayout>

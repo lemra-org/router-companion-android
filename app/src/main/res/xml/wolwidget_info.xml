@@ -8,4 +8,4 @@
     android:previewImage="@drawable/wol_widget_preview"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800"
-    android:widgetCategory="keyguard|home_screen"/>
+    android:widgetCategory="keyguard|home_screen" />

@@ -22,38 +22,38 @@ data class ProcNetDevTransmit
  * @param tXPackets
  */
 (
-    /**
-     * Transmited
-     */
-    /**
-     * @return the tX_Bytes
-     */
-    val txBytes: Long,
-    /**
-     * @return the tX_Packets
-     */
-    val txPackets: Int,
-    /**
-     * @return the tX_Erros
-     */
-    val txErrors: Int,
-    /**
-     * @return the tX_Dropped
-     */
-    val txDropped: Int,
-    /**
-     * @return the tX_Fifo
-     */
-    val txFifo: Int,
-    /**
-     * @return the tX_Collisions
-     */
-    val txCollisions: Int,
-    /**
-     * @return the tX_CarrierErrors
-     */
-    val txCarrierErrors: Int,
-    /**
-     * @return the tX_Compressed
-     */
-    val txCompressed: Int)
+        /**
+         * Transmited
+         */
+        /**
+         * @return the tX_Bytes
+         */
+        val txBytes: Long,
+        /**
+         * @return the tX_Packets
+         */
+        val txPackets: Int,
+        /**
+         * @return the tX_Erros
+         */
+        val txErrors: Int,
+        /**
+         * @return the tX_Dropped
+         */
+        val txDropped: Int,
+        /**
+         * @return the tX_Fifo
+         */
+        val txFifo: Int,
+        /**
+         * @return the tX_Collisions
+         */
+        val txCollisions: Int,
+        /**
+         * @return the tX_CarrierErrors
+         */
+        val txCarrierErrors: Int,
+        /**
+         * @return the tX_Compressed
+         */
+        val txCompressed: Int)

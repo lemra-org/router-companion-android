@@ -8,19 +8,20 @@ import org.rm3l.router_companion.job.firmware_update.FirmwareUpdateCheckerJob;
 
 public class RouterCompanionJobCreator implements JobCreator {
 
-  private final Context mContext;
+    private final Context mContext;
 
-  public RouterCompanionJobCreator(Context context) {
-    this.mContext = context;
-  }
-
-  @Override public Job create(@NonNull String tag) {
-    final Job job;
-    if (FirmwareUpdateCheckerJob.TAG.equals(tag)) {
-      job = new FirmwareUpdateCheckerJob(this.mContext);
-    } else {
-      job = null;
+    public RouterCompanionJobCreator(Context context) {
+        this.mContext = context;
     }
-    return job;
-  }
+
+    @Override
+    public Job create(@NonNull String tag) {
+        final Job job;
+        if (FirmwareUpdateCheckerJob.TAG.equals(tag)) {
+            job = new FirmwareUpdateCheckerJob(this.mContext);
+        } else {
+            job = null;
+        }
+        return job;
+    }
 }

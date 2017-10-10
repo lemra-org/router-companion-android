@@ -16,25 +16,25 @@ import retrofit2.http.Query
  */
 interface DoorbellService {
 
-  @Headers("Content-Type: application/json",
-      "User-Agent: ${BuildConfig.APPLICATION_ID} v ${BuildConfig.VERSION_NAME}")
-  @POST("applications/{id}/open")
-  fun openApplication(
-      @Path("id") applicationId: Int, @Query("key") key: String): Call<ResponseBody>
+    @Headers("Content-Type: application/json",
+            "User-Agent: ${BuildConfig.APPLICATION_ID} v ${BuildConfig.VERSION_NAME}")
+    @POST("applications/{id}/open")
+    fun openApplication(
+            @Path("id") applicationId: Int, @Query("key") key: String): Call<ResponseBody>
 
-  @Headers("Content-Type: application/json",
-      "User-Agent: ${BuildConfig.APPLICATION_ID} v ${BuildConfig.VERSION_NAME}")
-  @POST("applications/{id}/submit")
-  fun submitFeedbackForm(
-      @Path("id") applicationId: Int, @Query("key") key: String,
-      @Query("email") email: String, @Query("message") message: String,
-      @Query("name") userName: String, @Query("properties") propertiesJson: String,
-      @Query("attachments[]") attachments: Array<String>): Call<ResponseBody>
+    @Headers("Content-Type: application/json",
+            "User-Agent: ${BuildConfig.APPLICATION_ID} v ${BuildConfig.VERSION_NAME}")
+    @POST("applications/{id}/submit")
+    fun submitFeedbackForm(
+            @Path("id") applicationId: Int, @Query("key") key: String,
+            @Query("email") email: String, @Query("message") message: String,
+            @Query("name") userName: String, @Query("properties") propertiesJson: String,
+            @Query("attachments[]") attachments: Array<String>): Call<ResponseBody>
 
-  @Headers("User-Agent: ${BuildConfig.APPLICATION_ID} v ${BuildConfig.VERSION_NAME}")
-  @Multipart
-  @POST("applications/{id}/upload")
-  fun upload(
-      @Path("id") applicationId: Int, @Query("key") key: String,
-      @Part("files[]\"; filename=\"screenshot.png\" ") filename: RequestBody): Call<Array<String>>
+    @Headers("User-Agent: ${BuildConfig.APPLICATION_ID} v ${BuildConfig.VERSION_NAME}")
+    @Multipart
+    @POST("applications/{id}/upload")
+    fun upload(
+            @Path("id") applicationId: Int, @Query("key") key: String,
+            @Part("files[]\"; filename=\"screenshot.png\" ") filename: RequestBody): Call<Array<String>>
 }

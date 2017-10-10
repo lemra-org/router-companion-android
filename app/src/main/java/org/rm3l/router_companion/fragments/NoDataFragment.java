@@ -32,7 +32,10 @@ import org.rm3l.router_companion.tiles.DDWRTTile;
  * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
 public class NoDataFragment extends AbstractBaseFragment {
-  @Nullable @Override protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return null;
-  }
+
+    @Nullable
+    @Override
+    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+        return null;
+    }
 }

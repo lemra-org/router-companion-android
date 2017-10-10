@@ -3,184 +3,170 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
-
-  <FrameLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      >
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/activity_feedback_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        />
-
-    <!-- This initially-hidden ImageView will hold the expanded/zoomed version of
-         the images above. Without transformations applied, it takes up the entire
-         screen. To achieve the "zoom" animation, this view's bounds are animated
-         from the bounds of the thumbnail button above, to its final laid-out
-         bounds.
-     -->
-    <ImageView
-        android:id="@+id/activity_feedback_include_screenshot_and_logs_content_screenshot_expanded"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:adjustViewBounds="true"
-        android:background="@color/transparent_semi"
-        android:contentDescription="Screenshot"
-        android:padding="15dp"
-        android:visibility="gone"
-        />
-
-  </FrameLayout>
-
-  <ScrollView
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:scrollbars="vertical"
-      >
+    android:orientation="vertical">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_vertical_margin"
-        android:layout_marginRight="@dimen/activity_vertical_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:orientation="vertical"
-        >
+        android:layout_height="wrap_content">
 
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="vertical"
-          >
-
-        <TextView
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/activity_feedback_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:text="@string/feedback_dialog_text"
-            />
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/activity_feedback_email_input_layout"
+        <!-- This initially-hidden ImageView will hold the expanded/zoomed version of
+             the images above. Without transformations applied, it takes up the entire
+             screen. To achieve the "zoom" animation, this view's bounds are animated
+             from the bounds of the thumbnail button above, to its final laid-out
+             bounds.
+         -->
+        <ImageView
+            android:id="@+id/activity_feedback_include_screenshot_and_logs_content_screenshot_expanded"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            >
-          <android.support.design.widget.TextInputEditText
-              android:id="@+id/activity_feedback_email"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:hint="Your email address"
-              android:imeOptions="flagNoExtractUi"
-              android:inputType="textEmailAddress"
-              android:maxLines="1"
-              />
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/activity_feedback_content_input_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            >
-          <android.support.design.widget.TextInputEditText
-              android:id="@+id/activity_feedback_content"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:hint="Write your feedback here."
-              android:inputType="textCapSentences|textMultiLine"
-              android:isScrollContainer="true"
-              android:minLines="5"
-              />
-        </android.support.design.widget.TextInputLayout>
-
-        <LinearLayout
-            android:id="@+id/activity_feedback_router_information"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:orientation="vertical"
-            >
-          <TextView
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:text="Router Information"
-              />
-          <EditText
-              android:id="@+id/activity_feedback_router_information_content"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:hint="If you are reporting a bug, please specify (unless auto-detected) your Router model and DD-WRT Build Number."
-              android:inputType="textCapSentences|textMultiLine"
-              android:isScrollContainer="true"
-              android:minLines="10"
-              />
-        </LinearLayout>
-
-        <CheckBox
-            android:id="@+id/activity_feedback_include_screenshot_and_logs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:checked="true"
-            android:text="Include screenshot and logs"
-            />
-        <LinearLayout
-            android:id="@+id/activity_feedback_include_screenshot_and_logs_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_marginEnd="15dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginStart="15dp"
-            android:orientation="horizontal"
-            android:weightSum="4"
-            >
-
-          <LinearLayout
-              android:layout_width="150dp"
-              android:layout_height="200dp"
-              android:layout_weight="1"
-              android:orientation="vertical"
-              >
-            <ImageButton
-                android:id="@+id/activity_feedback_include_screenshot_and_logs_content_screenshot"
-                android:layout_width="100dp"
-                android:layout_height="165dp"
-                android:contentDescription="Screenshot"
-                android:scaleType="centerCrop"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Touch to preview"
-                />
-          </LinearLayout>
-
-          <TextView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginLeft="10dp"
-              android:layout_marginStart="10dp"
-              android:layout_weight="3"
-              android:text="The screenshot allows us to have more contextual information about your feedback, and will never ever be shared with third parties."
-              android:textAppearance="?android:textAppearanceSmall"
-              />
-
-        </LinearLayout>
-
-      </LinearLayout>
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:background="@color/transparent_semi"
+            android:contentDescription="Screenshot"
+            android:padding="15dp"
+            android:visibility="gone" />
 
     </FrameLayout>
 
-  </ScrollView>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:text="@string/feedback_dialog_text" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/activity_feedback_email_input_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/activity_feedback_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Your email address"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/activity_feedback_content_input_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/activity_feedback_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Write your feedback here."
+                        android:inputType="textCapSentences|textMultiLine"
+                        android:isScrollContainer="true"
+                        android:minLines="5" />
+                </android.support.design.widget.TextInputLayout>
+
+                <LinearLayout
+                    android:id="@+id/activity_feedback_router_information"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Router Information" />
+
+                    <EditText
+                        android:id="@+id/activity_feedback_router_information_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="If you are reporting a bug, please specify (unless auto-detected) your Router model and DD-WRT Build Number."
+                        android:inputType="textCapSentences|textMultiLine"
+                        android:isScrollContainer="true"
+                        android:minLines="10" />
+                </LinearLayout>
+
+                <CheckBox
+                    android:id="@+id/activity_feedback_include_screenshot_and_logs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:checked="true"
+                    android:text="Include screenshot and logs" />
+
+                <LinearLayout
+                    android:id="@+id/activity_feedback_include_screenshot_and_logs_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginStart="15dp"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <LinearLayout
+                        android:layout_width="150dp"
+                        android:layout_height="200dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <ImageButton
+                            android:id="@+id/activity_feedback_include_screenshot_and_logs_content_screenshot"
+                            android:layout_width="100dp"
+                            android:layout_height="165dp"
+                            android:contentDescription="Screenshot"
+                            android:scaleType="centerCrop" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Touch to preview" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="3"
+                        android:text="The screenshot allows us to have more contextual information about your feedback, and will never ever be shared with third parties."
+                        android:textAppearance="?android:textAppearanceSmall" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+    </ScrollView>
 
 </LinearLayout>

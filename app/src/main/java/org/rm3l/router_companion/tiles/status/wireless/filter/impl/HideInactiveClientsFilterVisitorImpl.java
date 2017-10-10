@@ -30,25 +30,28 @@ import org.rm3l.router_companion.tiles.status.wireless.filter.ClientsFilterVisit
 
 public class HideInactiveClientsFilterVisitorImpl implements ClientsFilterVisitor {
 
-  private final boolean hideInactive;
+    private final boolean hideInactive;
 
-  public HideInactiveClientsFilterVisitorImpl(final boolean hideInactive) {
-    this.hideInactive = hideInactive;
-  }
+    public HideInactiveClientsFilterVisitorImpl(final boolean hideInactive) {
+        this.hideInactive = hideInactive;
+    }
 
-  @NonNull @Override public Set<Device> visit(@NonNull Set<Device> devices) {
-    return Sets.filter(devices, new Predicate<Device>() {
-      @Override public boolean apply(Device device) {
-        if (!hideInactive) {
-          return true;
-        } else {
-          if (device.isActive()) {
-            return true;
-          }
-        }
+    @NonNull
+    @Override
+    public Set<Device> visit(@NonNull Set<Device> devices) {
+        return Sets.filter(devices, new Predicate<Device>() {
+            @Override
+            public boolean apply(Device device) {
+                if (!hideInactive) {
+                    return true;
+                } else {
+                    if (device.isActive()) {
+                        return true;
+                    }
+                }
 
-        return false;
-      }
-    });
-  }
+                return false;
+            }
+        });
+    }
 }

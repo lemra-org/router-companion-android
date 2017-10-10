@@ -29,34 +29,34 @@ import android.support.annotation.Nullable;
 
 public final class AndroidHelper {
 
-  private AndroidHelper() {
-  }
+    // A method to find height of the status bar
+    public static Integer getStatusBarHeight(@Nullable final Context ctx) {
+        if (ctx == null) {
+            return null;
+        }
+        int result = 0;
 
-  public static boolean isAppInstalled(Context context, String packageName) {
-    try {
-      context.getPackageManager().getApplicationInfo(packageName, 0);
-      return true;
-    } catch (PackageManager.NameNotFoundException e) {
-      return false;
+        final Resources resources = ctx.getResources();
+        final int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = resources.getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
-  }
 
-  // A method to find height of the status bar
-  public static Integer getStatusBarHeight(@Nullable final Context ctx) {
-    if (ctx == null) {
-      return null;
+    public static boolean isAppInstalled(Context context, String packageName) {
+        try {
+            context.getPackageManager().getApplicationInfo(packageName, 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
-    int result = 0;
 
-    final Resources resources = ctx.getResources();
-    final int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
-    if (resourceId > 0) {
-      result = resources.getDimensionPixelSize(resourceId);
+    public static boolean isAtLeastMarshmallow() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }
-    return result;
-  }
 
-  public static boolean isAtLeastMarshmallow() {
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
-  }
+    private AndroidHelper() {
+    }
 }

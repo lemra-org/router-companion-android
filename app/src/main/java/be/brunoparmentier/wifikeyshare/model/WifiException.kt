@@ -20,12 +20,14 @@ package be.brunoparmentier.wifikeyshare.model
 
 class WifiException(val errorCode: Int) : Exception() {
 
-  companion object {
-    @JvmField val WEP_KEY_LENGTH_ERROR: Int = 0x0001
-    @JvmField val WPA_KEY_LENGTH_ERROR: Int = 0x0002
-  }
+    companion object {
+        @JvmField
+        val WEP_KEY_LENGTH_ERROR: Int = 0x0001
+        @JvmField
+        val WPA_KEY_LENGTH_ERROR: Int = 0x0002
+    }
 
-  override fun toString(): String {
-    return Integer.toString(errorCode)
-  }
+    override fun toString(): String {
+        return Integer.toString(errorCode)
+    }
 }

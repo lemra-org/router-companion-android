@@ -1,151 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/widget_margin"
-    >
-
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:background="#bbDEDFDE"
-      android:orientation="vertical"
-      >
+    android:layout_margin="@dimen/widget_margin">
 
     <LinearLayout
-        android:id="@+id/widgetLayoutMain"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#aaDEDFDE"
-        android:orientation="horizontal"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        >
+        android:layout_height="match_parent"
+        android:background="#bbDEDFDE"
+        android:orientation="vertical">
 
-      <ImageView
-          android:id="@+id/wol_widget_Logo"
-          android:layout_width="64dp"
-          android:layout_height="64dp"
-          android:layout_gravity="center_vertical"
-          android:contentDescription="Logo"
-          android:src="@mipmap/ic_launcher_ddwrt_companion"
-          />
-
-
-      <LinearLayout
-          android:id="@+id/widgetTopBar"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_weight="1"
-          android:orientation="vertical"
-          android:paddingBottom="4dp"
-          android:paddingLeft="8dp"
-          android:paddingTop="4dp"
-          >
-
-        <!-- Widget Title -->
-        <TextView
+        <LinearLayout
+            android:id="@+id/widgetLayoutMain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:scrollHorizontally="true"
-            android:text="Wake On LAN"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#4B4B4D"
-            android:textStyle="bold"
-            />
+            android:background="#aaDEDFDE"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
 
-        <!-- Router Name -->
+            <ImageView
+                android:id="@+id/wol_widget_Logo"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="Logo"
+                android:src="@mipmap/ic_launcher_ddwrt_companion" />
+
+
+            <LinearLayout
+                android:id="@+id/widgetTopBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingBottom="4dp"
+                android:paddingLeft="8dp"
+                android:paddingTop="4dp">
+
+                <!-- Widget Title -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:text="Wake On LAN"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#4B4B4D"
+                    android:textStyle="bold" />
+
+                <!-- Router Name -->
+                <TextView
+                    android:id="@+id/wol_widget_router_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:text="Name: -"
+                    android:textColor="#4B4B4D" />
+
+                <!-- Router IP or Hostname -->
+                <TextView
+                    android:id="@+id/wol_widget_router_ip_or_dns"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:text="IP: -"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="#4B4B4D" />
+
+            </LinearLayout>
+
+            <!-- Buttons -->
+            <ImageButton
+                android:id="@+id/wol_widget_launch_action"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginTop="8dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="Open"
+                android:src="@drawable/ic_open_in_new_black_24dp" />
+
+            <ImageButton
+                android:id="@+id/wol_widget_refresh"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="8dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="Refresh"
+                android:src="@drawable/ic_refresh_black_24dp" />
+
+            <ImageButton
+                android:id="@+id/wol_widget_wake_all_action"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="8dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="Wake All"
+                android:src="@drawable/ic_alarm_on_black_24dp" />
+
+
+        </LinearLayout>
+
         <TextView
-            android:id="@+id/wol_widget_router_name"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#aaa" />
+
+        <ListView
+            android:id="@+id/wol_widget_hosts_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/wol_widget_hosts_list_empty_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:scrollHorizontally="true"
-            android:text="Name: -"
-            android:textColor="#4B4B4D"
-            />
-
-        <!-- Router IP or Hostname -->
-        <TextView
-            android:id="@+id/wol_widget_router_ip_or_dns"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:scrollHorizontally="true"
-            android:text="IP: -"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#4B4B4D"
-            />
-
-      </LinearLayout>
-
-      <!-- Buttons -->
-      <ImageButton
-          android:id="@+id/wol_widget_launch_action"
-          android:layout_width="45dp"
-          android:layout_height="45dp"
-          android:layout_marginTop="8dp"
-          android:background="?android:attr/selectableItemBackground"
-          android:contentDescription="Open"
-          android:src="@drawable/ic_open_in_new_black_24dp"
-          />
-
-      <ImageButton
-          android:id="@+id/wol_widget_refresh"
-          android:layout_width="45dp"
-          android:layout_height="45dp"
-          android:layout_marginLeft="1dp"
-          android:layout_marginStart="1dp"
-          android:layout_marginTop="8dp"
-          android:background="?android:attr/selectableItemBackground"
-          android:contentDescription="Refresh"
-          android:src="@drawable/ic_refresh_black_24dp"
-          />
-
-      <ImageButton
-          android:id="@+id/wol_widget_wake_all_action"
-          android:layout_width="45dp"
-          android:layout_height="45dp"
-          android:layout_marginLeft="1dp"
-          android:layout_marginStart="1dp"
-          android:layout_marginTop="8dp"
-          android:background="?android:attr/selectableItemBackground"
-          android:contentDescription="Wake All"
-          android:src="@drawable/ic_alarm_on_black_24dp"
-          />
-
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:text="No host found or an error occurred."
+            android:textSize="15sp"
+            android:textStyle="italic" />
 
     </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#aaa"
-        />
-
-    <ListView
-        android:id="@+id/wol_widget_hosts_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
-
-    <TextView
-        android:id="@+id/wol_widget_hosts_list_empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="5dp"
-        android:gravity="center"
-        android:text="No host found or an error occurred."
-        android:textSize="15sp"
-        android:textStyle="italic"
-        />
-
-  </LinearLayout>
 
 </FrameLayout>

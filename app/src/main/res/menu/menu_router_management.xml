@@ -25,167 +25,167 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="org.rm3l.router_companion.mgmt.RouterManagementActivity">
 
-  <item
-      android:id="@+id/router_list_actionbar_add"
-      android:alphabeticShortcut="a"
-      android:icon="@drawable/ic_plus_white_24dp"
-      android:orderInCategory="1"
-      android:title="@string/router_add_new"
-      app:showAsAction="collapseActionView|ifRoom"/>
+    <item
+        android:id="@+id/router_list_actionbar_add"
+        android:alphabeticShortcut="a"
+        android:icon="@drawable/ic_plus_white_24dp"
+        android:orderInCategory="1"
+        android:title="@string/router_add_new"
+        app:showAsAction="collapseActionView|ifRoom" />
 
-  <!-- Search, should appear as action button -->
-  <item
-      android:id="@+id/router_list_refresh_search"
-      android:alphabeticShortcut="l"
-      android:icon="@drawable/ic_search_white_24dp"
-      android:orderInCategory="2"
-      android:title="@string/action_search"
-      app:actionViewClass="android.support.v7.widget.SearchView"
-      app:showAsAction="collapseActionView|ifRoom"/>
+    <!-- Search, should appear as action button -->
+    <item
+        android:id="@+id/router_list_refresh_search"
+        android:alphabeticShortcut="l"
+        android:icon="@drawable/ic_search_white_24dp"
+        android:orderInCategory="2"
+        android:title="@string/action_search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="collapseActionView|ifRoom" />
 
-  <item
-      android:id="@+id/router_list_refresh"
-      android:alphabeticShortcut="r"
-      android:icon="@drawable/ic_refresh_white_24dp"
-      android:orderInCategory="3"
-      android:title="@string/menuitem_refresh"
-      app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/router_list_refresh"
+        android:alphabeticShortcut="r"
+        android:icon="@drawable/ic_refresh_white_24dp"
+        android:orderInCategory="3"
+        android:title="@string/menuitem_refresh"
+        app:showAsAction="ifRoom" />
 
-  <item
-      android:id="@+id/router_list_actions"
-      android:alphabeticShortcut="A"
-      android:orderInCategory="4"
-      android:title="@string/menuitem_actions"
-      app:showAsAction="never">
-    <menu>
-      <item
-          android:id="@+id/router_list_actions_reboot_routers"
-          android:alphabeticShortcut="R"
-          android:orderInCategory="1"
-          android:title="@string/menuitem_actions_reboot_all"
-          app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/router_list_actions"
+        android:alphabeticShortcut="A"
+        android:orderInCategory="4"
+        android:title="@string/menuitem_actions"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/router_list_actions_reboot_routers"
+                android:alphabeticShortcut="R"
+                android:orderInCategory="1"
+                android:title="@string/menuitem_actions_reboot_all"
+                app:showAsAction="ifRoom" />
 
-      <!-- TODO Hidden for now-->
-      <item
-          android:id="@+id/router_list_actions_restore_factory_defaults"
-          android:alphabeticShortcut="D"
-          android:orderInCategory="2"
-          android:title="@string/menuitem_actions_restore_factory_defaults"
-          android:visible="false"
-          app:showAsAction="ifRoom"/>
+            <!-- TODO Hidden for now-->
+            <item
+                android:id="@+id/router_list_actions_restore_factory_defaults"
+                android:alphabeticShortcut="D"
+                android:orderInCategory="2"
+                android:title="@string/menuitem_actions_restore_factory_defaults"
+                android:visible="false"
+                app:showAsAction="ifRoom" />
 
-      <!-- TODO Hidden for now -->
-      <item
-          android:id="@+id/router_list_actions_firmwares_upgrade"
-          android:alphabeticShortcut="U"
-          android:enabled="false"
-          android:orderInCategory="3"
-          android:title="@string/menuitem_actions_upgrade_firmware"
-          android:visible="false"
-          app:showAsAction="ifRoom"/>
-    </menu>
-  </item>
-
-
-  <item
-      android:id="@+id/router_list_settings"
-      android:alphabeticShortcut="s"
-      android:orderInCategory="5"
-      android:title="@string/menuitem_settings"
-      app:showAsAction="never"/>
-
-  <!-- Seems redundant with the Feedback menu item -->
-  <item
-      android:id="@+id/router_list_take_bug_report"
-      android:orderInCategory="6"
-      android:title="Take Bug Report"
-      android:visible="false"
-      app:showAsAction="never"/>
-
-  <item
-      android:id="@+id/router_list_donate"
-      android:alphabeticShortcut="d"
-      android:orderInCategory="8"
-      android:title="@string/menuitem_donate"
-      app:showAsAction="never"/>
-
-  <item
-      android:id="@+id/help"
-      android:alphabeticShortcut="H"
-      android:orderInCategory="9"
-      android:title="@string/help"
-      app:showAsAction="never"/>
-
-  <item
-      android:id="@+id/changelog"
-      android:orderInCategory="10"
-      android:title="@string/what_s_new"
-      app:showAsAction="never"/>
+            <!-- TODO Hidden for now -->
+            <item
+                android:id="@+id/router_list_actions_firmwares_upgrade"
+                android:alphabeticShortcut="U"
+                android:enabled="false"
+                android:orderInCategory="3"
+                android:title="@string/menuitem_actions_upgrade_firmware"
+                android:visible="false"
+                app:showAsAction="ifRoom" />
+        </menu>
+    </item>
 
 
-  <item
-      android:id="@+id/router_list_feedback"
-      android:alphabeticShortcut="f"
-      android:orderInCategory="11"
-      android:title="@string/send_feedback"
-      app:showAsAction="never"/>
+    <item
+        android:id="@+id/router_list_settings"
+        android:alphabeticShortcut="s"
+        android:orderInCategory="5"
+        android:title="@string/menuitem_settings"
+        app:showAsAction="never" />
 
-  <item
-      android:id="@+id/router_list_about"
-      android:alphabeticShortcut="a"
-      android:orderInCategory="12"
-      android:title="@string/menuitem_about"
-      app:showAsAction="never"/>
+    <!-- Seems redundant with the Feedback menu item -->
+    <item
+        android:id="@+id/router_list_take_bug_report"
+        android:orderInCategory="6"
+        android:title="Take Bug Report"
+        android:visible="false"
+        app:showAsAction="never" />
 
-  <item
-      android:id="@+id/router_list_remove_ads"
-      android:orderInCategory="13"
-      android:title="@string/remove_ads"
-      android:visible="false"
-      app:showAsAction="never"/>
+    <item
+        android:id="@+id/router_list_donate"
+        android:alphabeticShortcut="d"
+        android:orderInCategory="8"
+        android:title="@string/menuitem_donate"
+        app:showAsAction="never" />
 
-  <!-- Just debug -->
-  <item
-      android:id="@+id/debug_only"
-      android:orderInCategory="80"
-      android:title="-- DEBUG (TEST) --"
-      android:visible="false"
-      app:showAsAction="never">
-    <menu>
-      <item
-          android:id="@+id/debug_open_chuck"
-          android:title="Open Chuck (HTTP Inspector)"
-          app:showAsAction="never"/>
-      <item
-          android:id="@+id/debug_open_sharedprefs"
-          android:title="Shared Preferences"
-          app:showAsAction="never"
-          android:visible="false"/>
-      <item
-          android:id="@+id/debug_resourceinspector"
-          android:checkable="true"
-          android:title="Toggle ResourceInspector"
-          app:showAsAction="never"/>
-      <item
-          android:id="@+id/debug_leakcanary"
-          android:checkable="true"
-          android:title="Toggle LeakCanary"
-          app:showAsAction="never"/>
-      <item
-          android:id="@+id/debug_welcome_screen"
-          android:title="Force show welcome screen"
-          app:showAsAction="never"/>
-      <item
-          android:id="@+id/debug_restore_deleted_routers"
-          android:title="Restore deleted routers"
-          app:showAsAction="never"/>
-    </menu>
-  </item>
+    <item
+        android:id="@+id/help"
+        android:alphabeticShortcut="H"
+        android:orderInCategory="9"
+        android:title="@string/help"
+        app:showAsAction="never" />
 
-  <item
-      android:id="@+id/exit"
-      android:orderInCategory="100"
-      android:title="@string/exit"
-      app:showAsAction="never"/>
+    <item
+        android:id="@+id/changelog"
+        android:orderInCategory="10"
+        android:title="@string/what_s_new"
+        app:showAsAction="never" />
+
+
+    <item
+        android:id="@+id/router_list_feedback"
+        android:alphabeticShortcut="f"
+        android:orderInCategory="11"
+        android:title="@string/send_feedback"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/router_list_about"
+        android:alphabeticShortcut="a"
+        android:orderInCategory="12"
+        android:title="@string/menuitem_about"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/router_list_remove_ads"
+        android:orderInCategory="13"
+        android:title="@string/remove_ads"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <!-- Just debug -->
+    <item
+        android:id="@+id/debug_only"
+        android:orderInCategory="80"
+        android:title="-- DEBUG (TEST) --"
+        android:visible="false"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/debug_open_chuck"
+                android:title="Open Chuck (HTTP Inspector)"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/debug_open_sharedprefs"
+                android:title="Shared Preferences"
+                android:visible="false"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/debug_resourceinspector"
+                android:checkable="true"
+                android:title="Toggle ResourceInspector"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/debug_leakcanary"
+                android:checkable="true"
+                android:title="Toggle LeakCanary"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/debug_welcome_screen"
+                android:title="Force show welcome screen"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/debug_restore_deleted_routers"
+                android:title="Restore deleted routers"
+                app:showAsAction="never" />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/exit"
+        android:orderInCategory="100"
+        android:title="@string/exit"
+        app:showAsAction="never" />
 
 </menu>

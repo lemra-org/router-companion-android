@@ -8,13 +8,13 @@ import android.support.annotation.NonNull;
 
 public final class ExceptionUtils {
 
-  public static Throwable getRootCause(@NonNull final Throwable throwable) {
-    Throwable cause;
-    Throwable result = throwable;
-    while(null != (cause = result.getCause())  && (result != cause) ) {
-      result = cause;
+    public static Throwable getRootCause(@NonNull final Throwable throwable) {
+        Throwable cause;
+        Throwable result = throwable;
+        while (null != (cause = result.getCause()) && (result != cause)) {
+            result = cause;
+        }
+        return result;
     }
-    return result;
-  }
 
 }

@@ -30,18 +30,21 @@ import org.rm3l.router_companion.tiles.status.wireless.filter.ClientsFilterVisit
 
 public class ShowOnlyWirelessClientsFilterVisitorImpl implements ClientsFilterVisitor {
 
-  private boolean mShowOnlyWirelessClients;
+    private boolean mShowOnlyWirelessClients;
 
-  public ShowOnlyWirelessClientsFilterVisitorImpl(boolean showOnlyWirelessClients) {
-    this.mShowOnlyWirelessClients = showOnlyWirelessClients;
-  }
+    public ShowOnlyWirelessClientsFilterVisitorImpl(boolean showOnlyWirelessClients) {
+        this.mShowOnlyWirelessClients = showOnlyWirelessClients;
+    }
 
-  @NonNull @Override public Set<Device> visit(@NonNull Set<Device> devices) {
-    return Sets.filter(devices, new Predicate<Device>() {
-      @Override public boolean apply(Device device) {
+    @NonNull
+    @Override
+    public Set<Device> visit(@NonNull Set<Device> devices) {
+        return Sets.filter(devices, new Predicate<Device>() {
+            @Override
+            public boolean apply(Device device) {
 
-        return (!mShowOnlyWirelessClients || (device.getWirelessConnectionInfo() == null));
-      }
-    });
-  }
+                return (!mShowOnlyWirelessClients || (device.getWirelessConnectionInfo() == null));
+            }
+        });
+    }
 }

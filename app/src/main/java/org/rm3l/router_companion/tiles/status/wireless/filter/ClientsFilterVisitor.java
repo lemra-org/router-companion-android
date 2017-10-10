@@ -27,5 +27,6 @@ import org.rm3l.router_companion.resources.Device;
 
 public interface ClientsFilterVisitor {
 
-  @NonNull Set<Device> visit(@NonNull final Set<Device> devices);
+    @NonNull
+    Set<Device> visit(@NonNull final Set<Device> devices);
 }

@@ -22,42 +22,42 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-  <group
-      android:id="@+id/tile_status_syslog_view_selection"
-      android:checkableBehavior="single"
-      android:orderInCategory="1">
-    <item
-        android:id="@+id/tile_status_syslog_view_last25"
-        android:checkable="true"
-        android:orderInCategory="1"
-        android:title="Last 25 Lines"
-        app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/tile_status_syslog_view_last50"
-        android:checkable="true"
-        android:orderInCategory="2"
-        android:title="Last 50 Lines"
-        app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/tile_status_syslog_view_last100"
-        android:checkable="true"
-        android:orderInCategory="3"
-        android:title="Last 100 Lines"
-        app:showAsAction="ifRoom"/>
-  </group>
+    <group
+        android:id="@+id/tile_status_syslog_view_selection"
+        android:checkableBehavior="single"
+        android:orderInCategory="1">
+        <item
+            android:id="@+id/tile_status_syslog_view_last25"
+            android:checkable="true"
+            android:orderInCategory="1"
+            android:title="Last 25 Lines"
+            app:showAsAction="ifRoom" />
+        <item
+            android:id="@+id/tile_status_syslog_view_last50"
+            android:checkable="true"
+            android:orderInCategory="2"
+            android:title="Last 50 Lines"
+            app:showAsAction="ifRoom" />
+        <item
+            android:id="@+id/tile_status_syslog_view_last100"
+            android:checkable="true"
+            android:orderInCategory="3"
+            android:title="Last 100 Lines"
+            app:showAsAction="ifRoom" />
+    </group>
 
-  <!-- View All -->
-  <item
-      android:id="@+id/tile_status_syslog_view_all"
-      android:orderInCategory="4"
-      android:title="View All"
-      app:showAsAction="ifRoom"/>
+    <!-- View All -->
+    <item
+        android:id="@+id/tile_status_syslog_view_all"
+        android:orderInCategory="4"
+        android:title="View All"
+        app:showAsAction="ifRoom" />
 
-  <!-- Share -->
-  <item
-      android:id="@+id/tile_status_syslog_view_share"
-      android:orderInCategory="6"
-      android:title="Share"
-      app:showAsAction="ifRoom"/>
+    <!-- Share -->
+    <item
+        android:id="@+id/tile_status_syslog_view_share"
+        android:orderInCategory="6"
+        android:title="Share"
+        app:showAsAction="ifRoom" />
 
 </menu>

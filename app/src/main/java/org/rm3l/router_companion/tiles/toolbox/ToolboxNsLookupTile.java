@@ -32,29 +32,36 @@ import org.rm3l.router_companion.resources.conn.Router;
 
 public class ToolboxNsLookupTile extends AbstractToolboxTile {
 
-  public ToolboxNsLookupTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
-      @Nullable Router router) {
-    super(parentFragment, arguments, router);
-  }
+    public ToolboxNsLookupTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
+            @Nullable Router router) {
+        super(parentFragment, arguments, router);
+    }
 
-  @Nullable @Override protected Integer getInfoText() {
-    return R.string.nslookup_info;
-  }
+    @Override
+    protected int getEditTextHint() {
+        return R.string.nslookup_edit_text_hint;
+    }
 
-  @Override protected int getEditTextHint() {
-    return R.string.nslookup_edit_text_hint;
-  }
+    @Nullable
+    @Override
+    protected Integer getInfoText() {
+        return R.string.nslookup_info;
+    }
 
-  @Override protected int getTileTitle() {
-    return R.string.nslookup;
-  }
+    @NonNull
+    @Override
+    protected AbstractRouterAction getRouterAction(String textToFind) {
+        return new NsLookupFromRouterAction(mRouter, mParentFragmentActivity, mRouterActionListener,
+                mGlobalPreferences, textToFind);
+    }
 
-  @NonNull @Override protected AbstractRouterAction getRouterAction(String textToFind) {
-    return new NsLookupFromRouterAction(mRouter, mParentFragmentActivity, mRouterActionListener,
-        mGlobalPreferences, textToFind);
-  }
+    @Override
+    protected int getSubmitButtonText() {
+        return R.string.toolbox_nslookup;
+    }
 
-  @Override protected int getSubmitButtonText() {
-    return R.string.toolbox_nslookup;
-  }
+    @Override
+    protected int getTileTitle() {
+        return R.string.nslookup;
+    }
 }

@@ -17,46 +17,59 @@ import org.rm3l.router_companion.utils.AdUtils;
  */
 public class BannerAdTile extends DDWRTTile<Void> {
 
-  public BannerAdTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
-      @Nullable Router router) {
-    super(parentFragment, arguments, router, R.layout.tile_adview, null);
-  }
+    public BannerAdTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
+            @Nullable Router router) {
+        super(parentFragment, arguments, router, R.layout.tile_adview, null);
+    }
 
-  @Override public int getTileHeaderViewId() {
-    return -1;
-  }
+    @Override
+    @Nullable
+    public Integer getTileBackgroundColor() {
+        return ContextCompat.getColor(mParentFragmentActivity, android.R.color.transparent);
+    }
 
-  @Override public int getTileTitleViewId() {
-    return -1;
-  }
+    @Override
+    public int getTileHeaderViewId() {
+        return -1;
+    }
 
-  @Override @Nullable public Integer getTileBackgroundColor() {
-    return ContextCompat.getColor(mParentFragmentActivity, android.R.color.transparent);
-  }
+    @Override
+    public int getTileTitleViewId() {
+        return -1;
+    }
 
-  @Override public boolean isAdTile() {
-    return true;
-  }
+    @Override
+    public boolean isAdTile() {
+        return true;
+    }
 
-  @Nullable @Override protected Loader<Void> getLoader(int id, Bundle args) {
-    return new AsyncTaskLoader<Void>(mParentFragmentActivity) {
-      @Override public Void loadInBackground() {
-        //Nothing to do
+    @Override
+    public void onLoadFinished(Loader<Void> loader, Void data) {
+        AdUtils.buildAndDisplayAdViewIfNeeded(mParentFragmentActivity,
+                (AdView) layout.findViewById(R.id.router_main_activity_tile_adView));
+    }
+
+    @Nullable
+    @Override
+    protected Loader<Void> getLoader(int id, Bundle args) {
+        return new AsyncTaskLoader<Void>(mParentFragmentActivity) {
+            @Override
+            public Void loadInBackground() {
+                //Nothing to do
+                return null;
+            }
+        };
+    }
+
+    @Nullable
+    @Override
+    protected String getLogTag() {
         return null;
-      }
-    };
-  }
+    }
 
-  @Nullable @Override protected String getLogTag() {
-    return null;
-  }
-
-  @Nullable @Override protected OnClickIntent getOnclickIntent() {
-    return null;
-  }
-
-  @Override public void onLoadFinished(Loader<Void> loader, Void data) {
-    AdUtils.buildAndDisplayAdViewIfNeeded(mParentFragmentActivity,
-        (AdView) layout.findViewById(R.id.router_main_activity_tile_adView));
-  }
+    @Nullable
+    @Override
+    protected OnClickIntent getOnclickIntent() {
+        return null;
+    }
 }

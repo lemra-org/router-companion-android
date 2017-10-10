@@ -31,48 +31,58 @@ import org.rm3l.router_companion.resources.Device;
 
 public class NetworkTrafficView extends TextView {
 
-  public static final String NO_DATA = "-";
-  public static final String PER_SEC = "/s";
-  private static final int KILOBIT = 1000;
-  private static final int KILOBYTE = 1024;
-  private static DecimalFormat decimalFormat = new DecimalFormat("##0.#");
+    public static final String NO_DATA = "-";
 
-  static {
-    decimalFormat.setMaximumIntegerDigits(3);
-    decimalFormat.setMaximumFractionDigits(1);
-  }
+    public static final String PER_SEC = "/s";
 
-  private final boolean mIsThemeLight;
-  private final String mRouterUuid;
-  private final Context mContext;
-  private final Device mDevice;
-  private int KB = KILOBIT;
-  private int MB = KB * KB;
-  private int GB = MB * KB;
+    private static final int KILOBIT = 1000;
 
-  public NetworkTrafficView(final Context context, final boolean isThemeLight,
-      final String routerUuid, Device device) {
-    super(context);
-    this.mContext = context;
-    this.mIsThemeLight = isThemeLight;
-    this.mRouterUuid = routerUuid;
-    this.mDevice = device;
-  }
+    private static final int KILOBYTE = 1024;
 
-  public void setRxAndTxBytes(final long rxBytes, final long txBytes) {
-    setTextSize(TypedValue.COMPLEX_UNIT_PX, (float) mContext.getResources()
-        .getDimensionPixelSize(R.dimen.net_traffic_single_text_size));
-    String dataToShow = (txBytes < 0l ? NO_DATA
-        : org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(txBytes) + PER_SEC);
-    dataToShow += ("\n" + (rxBytes < 0l ? NO_DATA
-        : org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(rxBytes) + PER_SEC));
-    super.setText(dataToShow);
-    updateTrafficDrawable();
-  }
+    private static DecimalFormat decimalFormat = new DecimalFormat("##0.#");
 
-  private void updateTrafficDrawable() {
-    setCompoundDrawablesWithIntrinsicBounds(0, 0,
-        mIsThemeLight ? R.drawable.stat_sys_network_traffic_updown_light
-            : R.drawable.stat_sys_network_traffic_updown, 0);
-  }
+    private int KB = KILOBIT;
+
+    private int MB = KB * KB;
+
+    private int GB = MB * KB;
+
+    private final Context mContext;
+
+    private final Device mDevice;
+
+    private final boolean mIsThemeLight;
+
+    private final String mRouterUuid;
+
+    public NetworkTrafficView(final Context context, final boolean isThemeLight,
+            final String routerUuid, Device device) {
+        super(context);
+        this.mContext = context;
+        this.mIsThemeLight = isThemeLight;
+        this.mRouterUuid = routerUuid;
+        this.mDevice = device;
+    }
+
+    public void setRxAndTxBytes(final long rxBytes, final long txBytes) {
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, (float) mContext.getResources()
+                .getDimensionPixelSize(R.dimen.net_traffic_single_text_size));
+        String dataToShow = (txBytes < 0l ? NO_DATA
+                : org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(txBytes) + PER_SEC);
+        dataToShow += ("\n" + (rxBytes < 0l ? NO_DATA
+                : org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(rxBytes) + PER_SEC));
+        super.setText(dataToShow);
+        updateTrafficDrawable();
+    }
+
+    private void updateTrafficDrawable() {
+        setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                mIsThemeLight ? R.drawable.stat_sys_network_traffic_updown_light
+                        : R.drawable.stat_sys_network_traffic_updown, 0);
+    }
+
+    static {
+        decimalFormat.setMaximumIntegerDigits(3);
+        decimalFormat.setMaximumFractionDigits(1);
+    }
 }

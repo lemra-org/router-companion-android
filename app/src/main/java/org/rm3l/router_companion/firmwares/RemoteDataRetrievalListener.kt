@@ -6,10 +6,10 @@ package org.rm3l.router_companion.firmwares
 
 interface RemoteDataRetrievalListener {
 
-  /**
-   * @param progress between 0 and 100
-   */
-  fun onProgressUpdate(progress: Int)
+    /**
+     * @param progress between 0 and 100
+     */
+    fun onProgressUpdate(progress: Int)
 
-  fun doRegardlessOfStatus()
+    fun doRegardlessOfStatus()
 }

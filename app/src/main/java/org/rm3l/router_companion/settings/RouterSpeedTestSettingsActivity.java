@@ -21,6 +21,10 @@
  */
 package org.rm3l.router_companion.settings;
 
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_SERVER;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
@@ -29,10 +33,6 @@ import android.support.annotation.NonNull;
 import com.airbnb.deeplinkdispatch.DeepLink;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
-
-import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS;
-import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB;
-import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_SERVER;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -47,46 +47,53 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED
  */
 
 @DeepLink({
-    "dd-wrt://routers/{routerUuid}/speedtest/settings",
-    "ddwrt://routers/{routerUuid}/speedtest/settings"
-}) public class RouterSpeedTestSettingsActivity extends AbstractRouterSettingsActivity {
+        "dd-wrt://routers/{routerUuid}/speedtest/settings",
+        "ddwrt://routers/{routerUuid}/speedtest/settings"
+})
+public class RouterSpeedTestSettingsActivity extends AbstractRouterSettingsActivity {
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    final Intent intent = getIntent();
-    if (intent.getBooleanExtra(DeepLink.IS_DEEP_LINK, false)) {
-      //Deep link
-      final Bundle parameters = intent.getExtras();
+    public static class RouterSpeedTestSettingsFragment extends PreferenceFragment {
 
-      final String routerUuid = parameters.getString("routerUuid");
-      intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            // Load the preferences from an XML resource
+            addPreferencesFromResource(R.xml.router_speed_test_settings);
+
+            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
+            // to their values. When their values change, their summaries are
+            // updated to reflect the new value, per the Android Design
+            // guidelines.
+            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_SERVER));
+            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB));
+            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS));
+            //            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION));
+        }
     }
-    super.onCreate(savedInstanceState);
-  }
 
-  @NonNull @Override protected String getToolbarTitle() {
-    return "Speed Test Settings";
-  }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        final Intent intent = getIntent();
+        if (intent.getBooleanExtra(DeepLink.IS_DEEP_LINK, false)) {
+            //Deep link
+            final Bundle parameters = intent.getExtras();
 
-  @NonNull @Override protected PreferenceFragment getPreferenceFragment() {
-    return new RouterSpeedTestSettingsFragment();
-  }
-
-  public static class RouterSpeedTestSettingsFragment extends PreferenceFragment {
-
-    @Override public void onCreate(Bundle savedInstanceState) {
-      super.onCreate(savedInstanceState);
-
-      // Load the preferences from an XML resource
-      addPreferencesFromResource(R.xml.router_speed_test_settings);
-
-      // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-      // to their values. When their values change, their summaries are
-      // updated to reflect the new value, per the Android Design
-      // guidelines.
-      bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_SERVER));
-      bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB));
-      bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS));
-      //            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION));
+            final String routerUuid = parameters.getString("routerUuid");
+            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
+        }
+        super.onCreate(savedInstanceState);
     }
-  }
+
+    @NonNull
+    @Override
+    protected PreferenceFragment getPreferenceFragment() {
+        return new RouterSpeedTestSettingsFragment();
+    }
+
+    @NonNull
+    @Override
+    protected String getToolbarTitle() {
+        return "Speed Test Settings";
+    }
 }

@@ -21,21 +21,21 @@ SOFTWARE.
 -->
 
 <resources>
-  <string name="define_achartengine" translatable="false"/>
-  <!-- Author section -->
-  <string name="library_achartengine_author" translatable="false">The 4ViewSoft Company</string>
-  <string name="library_achartengine_authorWebsite" translatable="false">http://www.4viewsoft.com</string>
-  <!-- Library section -->
-  <string name="library_achartengine_libraryName" translatable="false">AChartEngine</string>
-  <string name="library_achartengine_libraryDescription" translatable="false">This is a charting software library for Android applications. Mobile phones, tablets and other gadgets running Android will probably benefit of this charting library.</string>
-  <string name="library_achartengine_libraryWebsite" translatable="false">http://www.achartengine.org/</string>
-  <string name="library_achartengine_libraryVersion" translatable="false">1.2.0</string>
-  <!-- OpenSource section -->
-  <string name="library_achartengine_isOpenSource" translatable="false">true</string>
-  <string name="library_achartengine_repositoryLink" translatable="false">https://github.com/ddanny/achartengine</string>
-  <!-- ClassPath for autoDetect section -->
-  <!--<string translatable="false" name="library_achartengine_classPath">com.facebook.achartengine</string>-->
-  <!-- License section -->
-  <string name="library_achartengine_licenseId" translatable="false">apache_2_0</string>
-  <!-- Custom variables section -->
+    <string name="define_achartengine" translatable="false" />
+    <!-- Author section -->
+    <string name="library_achartengine_author" translatable="false">The 4ViewSoft Company</string>
+    <string name="library_achartengine_authorWebsite" translatable="false">http://www.4viewsoft.com</string>
+    <!-- Library section -->
+    <string name="library_achartengine_libraryName" translatable="false">AChartEngine</string>
+    <string name="library_achartengine_libraryDescription" translatable="false">This is a charting software library for Android applications. Mobile phones, tablets and other gadgets running Android will probably benefit of this charting library.</string>
+    <string name="library_achartengine_libraryWebsite" translatable="false">http://www.achartengine.org/</string>
+    <string name="library_achartengine_libraryVersion" translatable="false">1.2.0</string>
+    <!-- OpenSource section -->
+    <string name="library_achartengine_isOpenSource" translatable="false">true</string>
+    <string name="library_achartengine_repositoryLink" translatable="false">https://github.com/ddanny/achartengine</string>
+    <!-- ClassPath for autoDetect section -->
+    <!--<string translatable="false" name="library_achartengine_classPath">com.facebook.achartengine</string>-->
+    <!-- License section -->
+    <string name="library_achartengine_licenseId" translatable="false">apache_2_0</string>
+    <!-- Custom variables section -->
 </resources>

@@ -22,6 +22,11 @@
 
 package org.rm3l.router_companion;
 
+import static com.facebook.stetho.Stetho.newInitializerBuilder;
+import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.router_companion.utils.Utils.isFirstLaunch;
+
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
@@ -40,8 +45,6 @@ import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 import com.evernote.android.job.JobManager;
 import com.facebook.stetho.Stetho;
-//import com.facebook.stetho.dumpapp.DumperPlugin;
-//import com.facebook.stetho.inspector.protocol.ChromeDevtoolsDomain;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.leakcanary.LeakCanary;
@@ -69,10 +72,8 @@ import org.rm3l.router_companion.utils.notifications.NotificationHelperKt;
 import org.rm3l.router_companion.welcome.GettingStartedActivity;
 import org.wordpress.passcodelock.AppLockManager;
 
-import static com.facebook.stetho.Stetho.newInitializerBuilder;
-import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
-import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.router_companion.utils.Utils.isFirstLaunch;
+//import com.facebook.stetho.dumpapp.DumperPlugin;
+//import com.facebook.stetho.inspector.protocol.ChromeDevtoolsDomain;
 
 /**
  * App Main Entry point.
@@ -80,215 +81,236 @@ import static org.rm3l.router_companion.utils.Utils.isFirstLaunch;
  * analysis.
  */
 public class RouterCompanionApplication extends Application
-    implements Application.ActivityLifecycleCallbacks {
+        implements Application.ActivityLifecycleCallbacks {
 
-  public static final String DEBUG_LEAKCANARY_PREF_KEY = \"fake-key\";
-  private static boolean isDebugResourceInspectorEnabled = false;
-  public static final String DEBUG_RESOURCE_INSPECTOR_PREF_KEY = \"fake-key\";
-  private static final String TAG = RouterCompanionApplication.class.getSimpleName();
-  private static final List<String> GOOGLE_INSTALLER_PACKAGE_NAMES =
-      Arrays.asList("com.android.vending", "com.google.android.feedback");
-  private static final List<String> AMAZON_INSTALLER_PACKAGE_NAMES =
-      Collections.singletonList("com.amazon.venezia");
-  private static final List<String> FDROID_INSTALLER_PACKAGE_NAMES =
-      Collections.singletonList("org.fdroid.fdroid.installer");
-  @Nullable private static WeakReference<Activity> mCurrentActivity;
+    public static final String DEBUG_LEAKCANARY_PREF_KEY = \"fake-key\";
 
-  @Nullable public static Activity getCurrentActivity() {
-    return mCurrentActivity != null ? mCurrentActivity.get() : null;
-  }
+    private static boolean isDebugResourceInspectorEnabled = false;
 
-  public static boolean isDebugResourceInspectorEnabled() {
-    return isDebugResourceInspectorEnabled;
-  }
+    public static final String DEBUG_RESOURCE_INSPECTOR_PREF_KEY = \"fake-key\";
 
-  @Override public void onCreate() {
-    super.onCreate();
+    private static final String TAG = RouterCompanionApplication.class.getSimpleName();
 
-    final SharedPreferences appPreferences =
-        getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE);
+    private static final List<String> GOOGLE_INSTALLER_PACKAGE_NAMES =
+            Arrays.asList("com.android.vending", "com.google.android.feedback");
 
-    // Set up Crashlytics, disabled for debug builds
-    final Crashlytics crashlyticsKit = new Crashlytics.Builder()
-        .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
-        .build();
-    Fabric.with(this, crashlyticsKit);
-    Crashlytics.setBool("DEBUG", BuildConfig.DEBUG);
-    Crashlytics.setBool("WITH_ADS", BuildConfig.WITH_ADS);
+    private static final List<String> AMAZON_INSTALLER_PACKAGE_NAMES =
+            Collections.singletonList("com.amazon.venezia");
 
-    final String acraEmailAddr =
-        appPreferences.getString(RouterCompanionAppConstants.ACRA_USER_EMAIL, null);
-    Crashlytics.setUserEmail(acraEmailAddr);
+    private static final List<String> FDROID_INSTALLER_PACKAGE_NAMES =
+            Collections.singletonList("org.fdroid.fdroid.installer");
 
-    JobManager.create(this).addJobCreator(new RouterCompanionJobCreator(this));
+    @Nullable
+    private static WeakReference<Activity> mCurrentActivity;
 
-    isDebugResourceInspectorEnabled = appPreferences.getBoolean(DEBUG_RESOURCE_INSPECTOR_PREF_KEY, false);
+    @Nullable
+    public static Activity getCurrentActivity() {
+        return mCurrentActivity != null ? mCurrentActivity.get() : null;
+    }
 
-    //        if (BuildConfig.DEBUG) {
-    //            //Enable Strict Mode in DEBUG mode
-    //            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-    //                    .detectAll()
-    //                    .detectDiskReads()
-    //                    .detectDiskWrites()
-    //                    .detectNetwork()
-    //                    // alternatively .detectAll() for all detectable problems
-    //                    .penaltyLog()
-    //                    .penaltyDeath()
-    //                    .build());
-    //            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-    //                    .detectLeakedSqlLiteObjects()
-    //                    .detectLeakedClosableObjects()
-    //                    // alternatively .detectAll() for all detectable problems
-    //                    .penaltyLog()
-    //                    .penaltyDeath()
-    //                    .build());
-    //        }
+    public static boolean isDebugResourceInspectorEnabled() {
+        return isDebugResourceInspectorEnabled;
+    }
 
-    registerActivityLifecycleCallbacks(this);
+    @Override
+    public void onCreate() {
+        super.onCreate();
 
-    AppLockManager.getInstance().enableDefaultAppLockIfAvailable(this);
-    if (AppLockManager.getInstance().isAppLockFeatureEnabled()) {
+        final SharedPreferences appPreferences =
+                getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE);
+
+        // Set up Crashlytics, disabled for debug builds
+        final Crashlytics crashlyticsKit = new Crashlytics.Builder()
+                .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+                .build();
+        Fabric.with(this, crashlyticsKit);
+        Crashlytics.setBool("DEBUG", BuildConfig.DEBUG);
+        Crashlytics.setBool("WITH_ADS", BuildConfig.WITH_ADS);
+
+        final String acraEmailAddr =
+                appPreferences.getString(RouterCompanionAppConstants.ACRA_USER_EMAIL, null);
+        Crashlytics.setUserEmail(acraEmailAddr);
+
+        JobManager.create(this).addJobCreator(new RouterCompanionJobCreator(this));
+
+        isDebugResourceInspectorEnabled = appPreferences.getBoolean(DEBUG_RESOURCE_INSPECTOR_PREF_KEY, false);
+
+        //        if (BuildConfig.DEBUG) {
+        //            //Enable Strict Mode in DEBUG mode
+        //            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+        //                    .detectAll()
+        //                    .detectDiskReads()
+        //                    .detectDiskWrites()
+        //                    .detectNetwork()
+        //                    // alternatively .detectAll() for all detectable problems
+        //                    .penaltyLog()
+        //                    .penaltyDeath()
+        //                    .build());
+        //            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+        //                    .detectLeakedSqlLiteObjects()
+        //                    .detectLeakedClosableObjects()
+        //                    // alternatively .detectAll() for all detectable problems
+        //                    .penaltyLog()
+        //                    .penaltyDeath()
+        //                    .build());
+        //        }
+
+        registerActivityLifecycleCallbacks(this);
+
+        AppLockManager.getInstance().enableDefaultAppLockIfAvailable(this);
+        if (AppLockManager.getInstance().isAppLockFeatureEnabled()) {
             /* Disable lockscreen for some activities if needed */
-      AppLockManager.getInstance().getAppLock().setExemptActivities(new String[] {
-          SplashActivity.class.getCanonicalName(), GettingStartedActivity.class.getCanonicalName(),
-          DeepLinkActivity.class.getCanonicalName(),
-          DeepLinkActivity.class.getCanonicalName(),
-          RouterActionsDeepLinkActivity.class.getCanonicalName()
-      });
-    }
-
-    if (BuildConfig.DEBUG) {
-      //Stetho.initializeWithDefaults(this);
-      Stetho.initialize(
-          newInitializerBuilder(this)
-              .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-              .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
-              .build());
-    }
-
-    if (BuildConfig.DEBUG && appPreferences.getBoolean(DEBUG_LEAKCANARY_PREF_KEY, false)) {
-      Log.d(TAG, "--> Start w/ LeakCanary...");
-      LeakCanary.install(this);
-    } else {
-      if (BuildConfig.DEBUG) {
-        Log.d(TAG, "--> Start w/o LeakCanary...");
-      }
-    }
-
-    final IntentFilter intentFilter = new IntentFilter(DeepLinkHandler.ACTION);
-    LocalBroadcastManager.getInstance(this).registerReceiver(new DeepLinkReceiver(), intentFilter);
-
-    if (!DDWRTCompanionSqliteDAOImpl.isInitialized()) {
-      DDWRTCompanionSqliteDAOImpl.initialize(getApplicationContext());
-    }
-
-    //initialize and create the image loader logic (for MaterialDrawer, used throughout the app)
-    DrawerImageLoader.init(new AbstractDrawerImageLoader() {
-      @Override public void set(ImageView imageView, Uri uri, Drawable placeholder) {
-        if (imageView != null) {
-          Picasso.with(imageView.getContext()).load(uri).placeholder(placeholder).into(imageView);
+            AppLockManager.getInstance().getAppLock().setExemptActivities(new String[]{
+                    SplashActivity.class.getCanonicalName(), GettingStartedActivity.class.getCanonicalName(),
+                    DeepLinkActivity.class.getCanonicalName(),
+                    DeepLinkActivity.class.getCanonicalName(),
+                    RouterActionsDeepLinkActivity.class.getCanonicalName()
+            });
         }
-      }
 
-      @Override public void cancel(ImageView imageView) {
-        if (imageView != null) {
-          Picasso.with(imageView.getContext()).cancelRequest(imageView);
+        if (BuildConfig.DEBUG) {
+            //Stetho.initializeWithDefaults(this);
+            Stetho.initialize(
+                    newInitializerBuilder(this)
+                            .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+                            .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+                            .build());
         }
-      }
 
-      @Override public Drawable placeholder(Context ctx) {
-        if (ctx == null) {
-          return null;
+        if (BuildConfig.DEBUG && appPreferences.getBoolean(DEBUG_LEAKCANARY_PREF_KEY, false)) {
+            Log.d(TAG, "--> Start w/ LeakCanary...");
+            LeakCanary.install(this);
+        } else {
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "--> Start w/o LeakCanary...");
+            }
         }
-        return ContextCompat.getDrawable(ctx, R.drawable.router);
-      }
-    });
 
-    //We must initialize Fabric prior to calling this
-    if (isFirstLaunch(this)) {
-      final String appOriginInstallerPackageName = Utils.getAppOriginInstallerPackageName(this);
-      //Report specific exception: this is to help me analyze whom this app is used by, and provide better device support!
+        final IntentFilter intentFilter = new IntentFilter(DeepLinkHandler.ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(new DeepLinkReceiver(), intentFilter);
 
-      final Map<String, Object> eventMap = new HashMap<>();
-      final String lastKnownVersionStr =
-          appPreferences.getString(RouterCompanionAppConstants.LAST_KNOWN_VERSION, null);
-      eventMap.put("PREVIOUS_VERSION", lastKnownVersionStr != null ? lastKnownVersionStr : "???");
-      eventMap.put("UPDATE", lastKnownVersionStr != null);
-      eventMap.put("FLAVOR", FLAVOR);
-      eventMap.put("INSTALLER", appOriginInstallerPackageName);
-      eventMap.put("VERSION_CODE", BuildConfig.VERSION_CODE);
-      eventMap.put("VERSION_NAME", BuildConfig.VERSION_NAME);
-      eventMap.put("DEBUG", BuildConfig.DEBUG);
-      eventMap.put("WITH_ADS", BuildConfig.WITH_ADS);
-      ReportingUtils.reportEvent(ReportingUtils.EVENT_FIRST_LAUNCH, eventMap);
+        if (!DDWRTCompanionSqliteDAOImpl.isInitialized()) {
+            DDWRTCompanionSqliteDAOImpl.initialize(getApplicationContext());
+        }
+
+        //initialize and create the image loader logic (for MaterialDrawer, used throughout the app)
+        DrawerImageLoader.init(new AbstractDrawerImageLoader() {
+            @Override
+            public void cancel(ImageView imageView) {
+                if (imageView != null) {
+                    Picasso.with(imageView.getContext()).cancelRequest(imageView);
+                }
+            }
+
+            @Override
+            public Drawable placeholder(Context ctx) {
+                if (ctx == null) {
+                    return null;
+                }
+                return ContextCompat.getDrawable(ctx, R.drawable.router);
+            }
+
+            @Override
+            public void set(ImageView imageView, Uri uri, Drawable placeholder) {
+                if (imageView != null) {
+                    Picasso.with(imageView.getContext()).load(uri).placeholder(placeholder).into(imageView);
+                }
+            }
+        });
+
+        //We must initialize Fabric prior to calling this
+        if (isFirstLaunch(this)) {
+            final String appOriginInstallerPackageName = Utils.getAppOriginInstallerPackageName(this);
+            //Report specific exception: this is to help me analyze whom this app is used by, and provide better device support!
+
+            final Map<String, Object> eventMap = new HashMap<>();
+            final String lastKnownVersionStr =
+                    appPreferences.getString(RouterCompanionAppConstants.LAST_KNOWN_VERSION, null);
+            eventMap.put("PREVIOUS_VERSION", lastKnownVersionStr != null ? lastKnownVersionStr : "???");
+            eventMap.put("UPDATE", lastKnownVersionStr != null);
+            eventMap.put("FLAVOR", FLAVOR);
+            eventMap.put("INSTALLER", appOriginInstallerPackageName);
+            eventMap.put("VERSION_CODE", BuildConfig.VERSION_CODE);
+            eventMap.put("VERSION_NAME", BuildConfig.VERSION_NAME);
+            eventMap.put("DEBUG", BuildConfig.DEBUG);
+            eventMap.put("WITH_ADS", BuildConfig.WITH_ADS);
+            ReportingUtils.reportEvent(ReportingUtils.EVENT_FIRST_LAUNCH, eventMap);
+        }
+
+        ColorUtils.Companion.setAppTheme(this, null, false);
+        //        if (ColorUtils.isThemeLight(getApplicationContext())) {
+        //            //Light
+        //            setTheme(R.style.AppThemeLight);
+        //        } else {
+        //            //Default is Dark
+        //            setTheme(R.style.AppThemeDark);
+        //        }
+
+        org.osmdroid.config.Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
+
+        //General Notification Channel
+        NotificationHelperKt.createOrUpdateNotificationChannels(this);
+
+        //Daily jobs
+        BackgroundService.schedule();
+        FirmwareUpdateCheckerJob.schedule();
     }
 
-    ColorUtils.Companion.setAppTheme(this, null, false);
-    //        if (ColorUtils.isThemeLight(getApplicationContext())) {
-    //            //Light
-    //            setTheme(R.style.AppThemeLight);
-    //        } else {
-    //            //Default is Dark
-    //            setTheme(R.style.AppThemeDark);
-    //        }
-
-    org.osmdroid.config.Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
-
-    //General Notification Channel
-    NotificationHelperKt.createOrUpdateNotificationChannels(this);
-
-    //Daily jobs
-    BackgroundService.schedule();
-    FirmwareUpdateCheckerJob.schedule();
-  }
-
-  @Override public void onTerminate() {
-    super.onTerminate();
-    unregisterActivityLifecycleCallbacks(this);
-  }
-
-  @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-    Crashlytics.log(Log.DEBUG, TAG, "onActivityCreated: " + activity.getClass().getCanonicalName());
-    mCurrentActivity = new WeakReference<>(activity);
-  }
-
-  @Override public void onActivityStarted(Activity activity) {
-    Crashlytics.log(Log.DEBUG, TAG, "onActivityStarted: " + activity.getClass().getCanonicalName());
-    mCurrentActivity = new WeakReference<>(activity);
-  }
-
-  @Override public void onActivityResumed(Activity activity) {
-    Crashlytics.log(Log.DEBUG, TAG, "onActivityResumed: " + activity.getClass().getCanonicalName());
-    mCurrentActivity = new WeakReference<>(activity);
-  }
-
-  @Override public void onActivityPaused(Activity activity) {
-    Crashlytics.log(Log.DEBUG, TAG, "onActivityPaused: " + activity.getClass().getCanonicalName());
-    if (mCurrentActivity != null) {
-      mCurrentActivity.clear();
+    @Override
+    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+        Crashlytics.log(Log.DEBUG, TAG, "onActivityCreated: " + activity.getClass().getCanonicalName());
+        mCurrentActivity = new WeakReference<>(activity);
     }
-  }
 
-  @Override public void onActivityStopped(Activity activity) {
-    Crashlytics.log(Log.DEBUG, TAG, "onActivityStopped: " + activity.getClass().getCanonicalName());
-    if (mCurrentActivity != null) {
-      mCurrentActivity.clear();
+    @Override
+    public void onActivityDestroyed(Activity activity) {
+        Crashlytics.log(Log.DEBUG, TAG,
+                "onActivityDestroyed: " + activity.getClass().getCanonicalName());
+        if (mCurrentActivity != null) {
+            mCurrentActivity.clear();
+        }
     }
-  }
 
-  @Override public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-    Crashlytics.log(Log.DEBUG, TAG,
-        "onActivitySaveInstanceState: " + activity.getClass().getCanonicalName());
-    if (mCurrentActivity != null) {
-      mCurrentActivity.clear();
+    @Override
+    public void onActivityPaused(Activity activity) {
+        Crashlytics.log(Log.DEBUG, TAG, "onActivityPaused: " + activity.getClass().getCanonicalName());
+        if (mCurrentActivity != null) {
+            mCurrentActivity.clear();
+        }
     }
-  }
 
-  @Override public void onActivityDestroyed(Activity activity) {
-    Crashlytics.log(Log.DEBUG, TAG,
-        "onActivityDestroyed: " + activity.getClass().getCanonicalName());
-    if (mCurrentActivity != null) {
-      mCurrentActivity.clear();
+    @Override
+    public void onActivityResumed(Activity activity) {
+        Crashlytics.log(Log.DEBUG, TAG, "onActivityResumed: " + activity.getClass().getCanonicalName());
+        mCurrentActivity = new WeakReference<>(activity);
     }
-  }
+
+    @Override
+    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+        Crashlytics.log(Log.DEBUG, TAG,
+                "onActivitySaveInstanceState: " + activity.getClass().getCanonicalName());
+        if (mCurrentActivity != null) {
+            mCurrentActivity.clear();
+        }
+    }
+
+    @Override
+    public void onActivityStarted(Activity activity) {
+        Crashlytics.log(Log.DEBUG, TAG, "onActivityStarted: " + activity.getClass().getCanonicalName());
+        mCurrentActivity = new WeakReference<>(activity);
+    }
+
+    @Override
+    public void onActivityStopped(Activity activity) {
+        Crashlytics.log(Log.DEBUG, TAG, "onActivityStopped: " + activity.getClass().getCanonicalName());
+        if (mCurrentActivity != null) {
+            mCurrentActivity.clear();
+        }
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        unregisterActivityLifecycleCallbacks(this);
+    }
 }
