@@ -1318,8 +1318,15 @@ public class Router implements Serializable {
         return routerFirmware;
     }
 
-    public void setRouterFirmware(@Nullable RouterFirmware routerFirmware) {
-        this.routerFirmware = routerFirmware;
+    public void setRouterFirmware(@Nullable String routerFirmwareStr) {
+        if (isNullOrEmpty(routerFirmwareStr)) {
+            return;
+        }
+        try {
+            setRouterFirmware(RouterFirmware.valueOf(routerFirmwareStr));
+        } catch (final Exception e) {
+            ReportingUtils.reportException(null, e);
+        }
     }
 
     @Nullable
@@ -1535,15 +1542,8 @@ public class Router implements Serializable {
         return this;
     }
 
-    public void setRouterFirmware(@Nullable String routerFirmwareStr) {
-        if (isNullOrEmpty(routerFirmwareStr)) {
-            return;
-        }
-        try {
-            setRouterFirmware(RouterFirmware.valueOf(routerFirmwareStr));
-        } catch (final Exception e) {
-            ReportingUtils.reportException(null, e);
-        }
+    public void setRouterFirmware(@Nullable RouterFirmware routerFirmware) {
+        this.routerFirmware = routerFirmware;
     }
 
     public void setUseLocalSSIDLookup(@NonNull final Context ctx, final boolean value) {
