@@ -1107,12 +1107,28 @@ public class Router implements Serializable {
         return (archived ? 1 : 0);
     }
 
+    @SuppressLint("DefaultLocale")
     @NonNull
     public String getCanonicalHumanReadableName() {
-        if (Utils.isDemoRouter(this)) {
-            return ("(DEMO) " + getDisplayName());
+        return getCanonicalHumanReadableName(this);
+    }
+
+    @SuppressLint("DefaultLocale")
+    @NonNull
+    public static String getCanonicalHumanReadableName(@NonNull final Router router) {
+        return getCanonicalHumanReadableName(router.getDisplayName(),
+                router.getRemoteIpAddress(),
+                router.getRemotePort());
+    }
+
+    @SuppressLint("DefaultLocale")
+    @NonNull
+    public static String getCanonicalHumanReadableName(@Nullable final String displayName,
+            @Nullable final String routerReachableAddr, final int port) {
+        if (Utils.isDemoRouter(routerReachableAddr)) {
+            return ("(DEMO) " + displayName);
         }
-        return String.format("%s (%s:%d)", getDisplayName(), getRemoteIpAddress(), getRemotePort());
+        return String.format("%s (%s:%d)", displayName, routerReachableAddr, port);
     }
 
     @NonNull

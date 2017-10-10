@@ -604,5 +604,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="title_activity_add_or_edit_wanaccess_policy">Manage WAN Access Policy</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="router_icon">Select Router Icon</string>
+    <string name="icon_preview">Icon Preview</string>
 
 </resources>

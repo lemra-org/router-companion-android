@@ -166,6 +166,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/router_add_icon_custom_preview"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/icon_preview"/>
+            </RelativeLayout>
         </LinearLayout>
 
     </LinearLayout>

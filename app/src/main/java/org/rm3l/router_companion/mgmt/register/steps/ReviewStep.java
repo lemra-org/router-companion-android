@@ -8,6 +8,7 @@ import static org.rm3l.router_companion.utils.Utils.isDemoRouter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,11 +26,13 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.gson.Gson;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -250,21 +254,19 @@ public class ReviewStep extends MaterialWizardStep {
 
     private Router router;
 
+    private View routerCustomIconContainer;
+
+    private String routerCustomIconPath;
+
+    private TextView routerCustomIconPathView;
+
+    private ImageView routerCustomIconPreview;
+
     private String routerFirmware;
 
     private TextView routerFirmwareView;
 
-    private String routerIconButtonHint;
-
-    private TextView routerIconButtonHintView;
-
-    private String routerIconContent;
-
     private String routerIconMethod;
-
-    private TextView routerIconMethodHidden;
-
-    private TextView routerIconMethodView;
 
     private String routerIpOrDns;
 
@@ -331,10 +333,10 @@ public class ReviewStep extends MaterialWizardStep {
         passwordView = v.findViewById(R.id.wizard_add_router_review_ssh_auth_method_password_value);
         useLocalSSIDLookupView =
                 v.findViewById(R.id.wizard_add_router_review_use_local_ssid_lookup_yes_no);
-        routerIconMethodView = v.findViewById(R.id.wizard_add_router_review_router_icon_method);
-        routerIconMethodHidden = v.findViewById(R.id.wizard_add_router_review_router_icon_method_hidden);
-        routerIconButtonHintView =
-                v.findViewById(R.id.wizard_add_router_review_router_icon_custom_path);
+        routerCustomIconPathView =
+                v.findViewById(R.id.wizard_add_router_review_router_custom_icon_path_hidden);
+        routerCustomIconContainer = v.findViewById(R.id.wizard_add_router_review_router_custom_icon_container);
+        routerCustomIconPreview = v.findViewById(R.id.wizard_add_router_review_router_icon_custom_preview);
 
         final CheckBox showPasswordCheckBox =
                 v.findViewById(R.id.wizard_add_router_review_password_show_checkbox);
@@ -352,7 +354,7 @@ public class ReviewStep extends MaterialWizardStep {
         });
 
         authMethodView.setVisibility(View.VISIBLE);
-        routerIconMethodView.setVisibility(View.VISIBLE);
+        routerCustomIconContainer.setVisibility(View.GONE);
 
         authMethodHidden.addTextChangedListener(new TextWatcher() {
             @Override
@@ -429,41 +431,17 @@ public class ReviewStep extends MaterialWizardStep {
             }
         });
 
-        routerIconMethodHidden.addTextChangedListener(new TextWatcher() {
+        routerCustomIconPathView.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
                 final String valueString = s.toString();
-                try {
-                    final TextView routerIconHdrView =
-                            v.findViewById(R.id.wizard_add_router_review_router_icon_custom_hdr);
-                    switch (Integer.parseInt(valueString)) {
-                        case Router.RouterIcon_Auto: {
-                            authMethodView.setText("-Auto-guess-");
-                            routerIconHdrView.setVisibility(View.GONE);
-                            privkeyButtonHintView.setText(null);
-                            privkeyButtonHintView.setVisibility(View.GONE);
-                            passwordView.setText(password);
-                            passwordView.setVisibility(View.VISIBLE);
-                            showPasswordCheckBox.setVisibility(View.VISIBLE);
-                        }
-                        break;
-                        case Router.RouterIcon_Custom: {
-                            authMethodView.setText("Custom");
-                            routerIconHdrView.setVisibility(View.VISIBLE);
-                            routerIconButtonHintView.setText(routerIconButtonHint);
-                            routerIconButtonHintView.setVisibility(View.VISIBLE);
-                        }
-                        break;
-                        default: {
-                            authMethodView.setText("None");
-                            routerIconHdrView.setVisibility(View.GONE);
-                            routerIconButtonHintView.setText(null);
-                            routerIconButtonHintView.setVisibility(View.GONE);
-                        }
-                        break;
-                    }
-                } catch (final NumberFormatException nfe) {
-                    nfe.printStackTrace();
+                if (TextUtils.isEmpty(valueString)) {
+                    //Nothing => hide container
+                    routerCustomIconPreview.setImageURI(null);
+                    routerCustomIconContainer.setVisibility(View.GONE);
+                } else {
+                    routerCustomIconPreview.setImageURI(Uri.fromFile(new File(valueString)));
+                    routerCustomIconContainer.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -579,10 +557,8 @@ public class ReviewStep extends MaterialWizardStep {
                 authMethodHidden.setText(authMethod);
             }
 
-            routerIconButtonHintView.setText(isNullOrEmpty(routerIconButtonHint) ? "-" : routerIconButtonHint);
-            Crashlytics.log(Log.DEBUG, TAG, "routerIconMethod: [" + routerIconMethod + "]");
-            if (routerIconMethod != null) {
-                routerIconMethodHidden.setText(routerIconMethod);
+            if (!TextUtils.isEmpty(routerCustomIconPath)) {
+                routerCustomIconPathView.setText(routerCustomIconPath);
             }
 
             if (Utils.isDemoRouter(routerIpOrDns)) {
@@ -609,12 +585,14 @@ public class ReviewStep extends MaterialWizardStep {
             router.setUuid(UUID.randomUUID().toString());
         }
         router.setName(routerName);
-        try {
-            router.setIconMethod(Integer.parseInt(routerIconMethod));
-        } catch (final Exception e) {
-            e.printStackTrace();
+        if (TextUtils.isEmpty(routerCustomIconPath)) {
+            router.setIconMethod(Router.RouterIcon_Auto);
+            router.setIconPath(null);
+        } else {
+            router.setIconMethod(Router.RouterIcon_Custom);
+            router.setIconPath(routerCustomIconPath);
         }
-        router.setIconPath(routerIconContent);
+
         router.setRemoteIpAddress(routerIpOrDns);
         router.setRemotePort(port != null ? Integer.parseInt(port) : 22);
         router.setRouterConnectionProtocol(
@@ -764,13 +742,8 @@ public class ReviewStep extends MaterialWizardStep {
             }
         }
 
-        final Object customIconButtonHintObj = wizardContext.get("customIconButtonHint");
-        routerIconButtonHint = customIconButtonHintObj != null ? customIconButtonHintObj.toString() : null;
-
-        final Object customIconContentObj = wizardContext.get("customIconPath");
-        if (customIconContentObj != null) {
-            routerIconButtonHint = customIconContentObj.toString();
-        }
+        final Object customIconPathObj = wizardContext.get("customIconPath");
+        routerCustomIconPath = customIconPathObj != null ? customIconPathObj.toString() : null;
 
         final Object routerIconMethodObj = wizardContext.get("routerIconMethod");
         Crashlytics.log(Log.DEBUG, TAG, "routerIconMethodObj: " + routerIconMethodObj);

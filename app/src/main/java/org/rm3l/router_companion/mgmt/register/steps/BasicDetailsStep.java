@@ -27,12 +27,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.UUID;
 import org.codepond.wizardroid.Wizard;
 import org.codepond.wizardroid.persistence.ContextVariable;
 import org.rm3l.ddwrt.BuildConfig;
@@ -72,6 +78,8 @@ public class BasicDetailsStep extends MaterialWizardStep {
 
     private TextView customIconPathView;
 
+    private ImageView customIconPreview;
+
     private DDWRTCompanionDAO dao;
 
     private RadioGroup iconMethodRg;
@@ -101,6 +109,8 @@ public class BasicDetailsStep extends MaterialWizardStep {
 
     private Router routerSelected = null;
 
+    private String randomNameForCustomIcon;
+
     /**
      * Tell WizarDroid that these are context variables.
      * These values will be automatically bound to any field annotated with {@link ContextVariable}.
@@ -124,6 +134,8 @@ public class BasicDetailsStep extends MaterialWizardStep {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+
+        randomNameForCustomIcon = (UUID.randomUUID().toString() + ".router_icon");
 
         final Context context = getContext();
         this.dao = RouterManagementActivity.getDao(context);
@@ -194,6 +206,27 @@ public class BasicDetailsStep extends MaterialWizardStep {
         customIconErrorMsgView = rootView.findViewById(R.id.router_add_icon_custom_error_msg);
         customIconButtonView = rootView.findViewById(R.id.router_add_icon_custom_fileselector_btn);
         customIconPathView = rootView.findViewById(R.id.router_add_icon_custom_path);
+        customIconPreview = rootView.findViewById(R.id.router_add_icon_custom_preview);
+
+        customIconPathView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(final Editable s) {
+                if (TextUtils.isEmpty(s)) {
+                    customIconPreview.setImageURI(null);
+                } else {
+                    customIconPreview.setImageURI(Uri.fromFile(
+                            new File(customIconPathView.getText().toString())));
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
+            }
+
+            @Override
+            public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
+            }
+        });
 
         customIconErrorMsgView.addTextChangedListener(new TextWatcher() {
             @Override
@@ -226,11 +259,18 @@ public class BasicDetailsStep extends MaterialWizardStep {
                             case R.id.router_add_icon_auto:
                                 customIconPathView.setText(null);
                                 customIconErrorMsgView.setText(null);
+                                customIconPreview.setImageURI(null);
                                 customIconContainer.setVisibility(View.GONE);
                                 break;
                             case R.id.router_add_icon_custom:
                                 customIconButtonView.setHint(getString(R.string.router_icon));
                                 customIconContainer.setVisibility(View.VISIBLE);
+                                if (!TextUtils.isEmpty(customIconPathView.getText())) {
+                                    customIconPreview.setImageURI(Uri.fromFile(
+                                            new File(customIconPathView.getText().toString())));
+                                } else {
+                                    customIconPreview.setImageURI(null);
+                                }
                                 break;
                             default:
                                 break;
@@ -257,7 +297,7 @@ public class BasicDetailsStep extends MaterialWizardStep {
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
 
                 // search for all documents available via installed storage providers
-                intent.setType("*/*");
+                intent.setType("image/*");
 
                 BasicDetailsStep.this.startActivityForResult(intent, FILE_SELECTOR_REQUEST_CODE);
             }
@@ -318,11 +358,11 @@ public class BasicDetailsStep extends MaterialWizardStep {
                         return;
                     }
 
-          /*
-           * Get the column indexes of the data in the Cursor,
-           * move to the first row in the Cursor, get the data,
-           * and display it.
-           */
+                  /*
+                   * Get the column indexes of the data in the Cursor,
+                   * move to the first row in the Cursor, get the data,
+                   * and display it.
+                   */
                     final int nameIndex = uriCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
                     final int sizeIndex = uriCursor.getColumnIndex(OpenableColumns.SIZE);
 
@@ -348,14 +388,43 @@ public class BasicDetailsStep extends MaterialWizardStep {
                     }
 
                     //Set file actual content in hidden field
+                    InputStream inputStream = null;
+                    OutputStream outputStream = null;
                     try {
-                        customIconPathView.setText(
-                                new String(ByteStreams.toByteArray(contentResolver.openInputStream(uri))));
+                        inputStream = contentResolver.openInputStream(uri);
+                        if (inputStream == null) {
+                            Crashlytics.logException(new IllegalStateException("inputStream==NULL"));
+                            throw new IllegalStateException("Couldn't read file");
+                        }
+                        final File internalDir = BasicDetailsStep.this.getContext().getFilesDir();
+                        final File pathToCustomIcon = new File(internalDir, randomNameForCustomIcon);
+                        outputStream = new FileOutputStream(pathToCustomIcon, false);
+                        ByteStreams.copy(inputStream, outputStream);
+                        outputStream.flush();
+
+                        customIconPathView.setText(pathToCustomIcon.getAbsolutePath());
                         customIconErrorMsgView.setText(null);
                     } catch (final Exception e) {
                         e.printStackTrace();
                         customIconErrorMsgView.setText("Error: " + e.getMessage());
                         customIconButtonView.setHint(fileSelectorOriginalHint);
+                    } finally {
+                        if (inputStream != null) {
+                            try {
+                                inputStream.close();
+                            } catch (final Exception e) {
+                                //No worries
+                                Crashlytics.logException(e);
+                            }
+                        }
+                        if (outputStream != null) {
+                            try {
+                                outputStream.close();
+                            } catch (final Exception e) {
+                                //No worries
+                                Crashlytics.logException(e);
+                            }
+                        }
                     }
                 } finally {
                     if (uriCursor != null) {
