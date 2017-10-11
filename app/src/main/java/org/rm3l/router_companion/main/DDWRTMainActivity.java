@@ -472,25 +472,17 @@ public class DDWRTMainActivity extends AppCompatActivity
                                 .withName(routerFromAll.getDisplayName())
                                 .withEmail(
                                         routerFromAll.getRemoteIpAddress() + ":" + routerFromAll.getRemotePort());
-                final String routerModel = Router.getRouterModel(this, routerFromAll);
-                Crashlytics.log(Log.DEBUG, TAG, "routerModel: " + routerModel);
-                if (!(isNullOrEmpty(routerModel) || "-".equalsIgnoreCase(routerModel))) {
-                    if (Utils.isDemoRouter(routerFromAll)) {
-                        profileDrawerItem.withIcon(R.drawable.demo_router);
-                    } else {
-                        final String routerModelNormalized = routerModel.toLowerCase().replaceAll("\\s+", "");
-                        try {
-                            final String url =
-                                    String.format("%s/%s/%s", RouterCompanionAppConstants.IMAGE_CDN_URL_PREFIX,
-                                            Joiner.on(",").skipNulls().join(opts),
-                                            URLEncoder.encode(routerModelNormalized, Charsets.UTF_8.name()));
-                            profileDrawerItem.withIcon(url);
-                        } catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
-                            ReportingUtils.reportException(DDWRTMainActivity.this, e);
-                        }
-                    }
+                Uri routerAvatarUrl = null;
+                try {
+                    routerAvatarUrl = Router.getRouterAvatarUrl(DDWRTMainActivity.this, routerFromAll, opts);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                    ReportingUtils.reportException(DDWRTMainActivity.this, e);
+                }
+                if (routerAvatarUrl != null) {
+                    profileDrawerItem.withIcon(routerAvatarUrl);
                 } else {
+                    //default
                     profileDrawerItem.withIcon(
                             Utils.isDemoRouter(routerFromAll) ? R.drawable.demo_router : R.drawable.router);
                 }
