@@ -473,18 +473,20 @@ public class DDWRTMainActivity extends AppCompatActivity
                                 .withEmail(
                                         routerFromAll.getRemoteIpAddress() + ":" + routerFromAll.getRemotePort());
                 Uri routerAvatarUrl = null;
-                try {
-                    routerAvatarUrl = Router.getRouterAvatarUrl(DDWRTMainActivity.this, routerFromAll, opts);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                    ReportingUtils.reportException(DDWRTMainActivity.this, e);
+                final boolean isDemoEntry = Utils.isDemoRouter(routerFromAll);
+                if (!isDemoEntry) {
+                    try {
+                        routerAvatarUrl = Router.getRouterAvatarUrl(DDWRTMainActivity.this, routerFromAll, opts);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                        ReportingUtils.reportException(DDWRTMainActivity.this, e);
+                    }
                 }
                 if (routerAvatarUrl != null) {
                     profileDrawerItem.withIcon(routerAvatarUrl);
                 } else {
                     //default
-                    profileDrawerItem.withIcon(
-                            Utils.isDemoRouter(routerFromAll) ? R.drawable.demo_router : R.drawable.router);
+                    profileDrawerItem.withIcon(isDemoEntry ? R.drawable.demo_router : R.drawable.router);
                 }
 
                 iProfiles[i++] = profileDrawerItem;
