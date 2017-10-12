@@ -5,6 +5,7 @@ import android.net.ConnectivityManager
 import android.util.Log
 import com.crashlytics.android.Crashlytics
 import com.evernote.android.job.DailyJob
+import com.evernote.android.job.Job
 import com.evernote.android.job.JobManager
 import com.evernote.android.job.JobRequest
 import org.rm3l.ddwrt.BuildConfig
@@ -23,19 +24,41 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by rm3l on 05/07/15.
  */
-class BackgroundService(context: Context?) : DailyJob(), RouterCompanionJob {
+class BackgroundService: DailyJob(), RouterCompanionJob {
 
-    private val globalPreferences = context?.getSharedPreferences(
-            RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-            Context.MODE_PRIVATE)
-    private val dao = RouterManagementActivity.getDao(context)
+    companion object {
+        @JvmField
+        val TAG = BackgroundService::class.java.simpleName!!
 
-    override fun onRunDailyJob(params: Params?): DailyJobResult {
-        try {
+        @JvmStatic
+        fun schedule() {
+            if (!JobManager.instance().getAllJobRequestsForTag(TAG).isEmpty()) {
+                // job already scheduled, nothing to do => cancel
+                Crashlytics.log(Log.DEBUG, TAG, "job $TAG already scheduled => nothing to do!")
+//                JobManager.instance().cancelAllForTag(TAG)
+                return
+            }
+            val builder = JobRequest.Builder(TAG)
+                    .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
+                    .setRequiresBatteryNotLow(true)
+            // run job between 6am and 5am
+            DailyJob.schedule(builder,
+                    TimeUnit.HOURS.toMillis(6),
+                    TimeUnit.HOURS.toMillis(5))
+        }
+
+        @JvmStatic
+        fun handleJob(context: Context, params: Params?) {
+            val dao = RouterManagementActivity.getDao(context)
+            val globalPreferences = context.getSharedPreferences(
+                    RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                    Context.MODE_PRIVATE)
+
             // check the global background data setting
             globalPreferences?.edit()
                     ?.putLong(RouterCompanionAppConstants.BG_SERVICE_LAST_HANDLE, System.currentTimeMillis())
                     ?.apply()
+            Utils.requestBackup(context)
 
             val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             if (cm.activeNetworkInfo != null) {
@@ -79,35 +102,39 @@ class BackgroundService(context: Context?) : DailyJob(), RouterCompanionJob {
                             backgroundServiceTask.runBackgroundServiceTask(router)
                         } catch (e: Exception) {
                             Crashlytics.logException(e)
-                            //No worries
                         }
                     }
                 }
             }
+        }
+    }
+
+    override fun isOneShotJob() = false
+
+    override fun onRunDailyJob(params: Params?): DailyJobResult {
+        try {
+            handleJob(context, params)
         } catch (e: Exception) {
             //No worries
             Crashlytics.logException(e)
-        } finally {
-            Utils.requestBackup(context)
         }
         return DailyJobResult.SUCCESS
     }
+}
+
+class BackgroundServiceOneShotJob: Job(), RouterCompanionJob {
 
     companion object {
-        @JvmField
-        val TAG = BackgroundService::class.java.simpleName!!
+        val TAG = BackgroundServiceOneShotJob::class.java.simpleName!!
+    }
 
-        @JvmStatic
-        fun schedule() {
-            if (!JobManager.instance().getAllJobRequestsForTag(TAG).isEmpty()) {
-                // job already scheduled, nothing to do
-                return
-            }
-            val builder = JobRequest.Builder(TAG)
-                    .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
-                    .setRequiresBatteryNotLow(true)
-            // run job between 6am and 5am
-            DailyJob.schedule(builder, TimeUnit.HOURS.toMillis(6), TimeUnit.HOURS.toMillis(5))
+    override fun onRunJob(params: Params?): Result {
+        return try {
+            BackgroundService.handleJob(context, params)
+            Result.SUCCESS
+        } catch (e: Exception) {
+            Result.FAILURE
         }
     }
+
 }

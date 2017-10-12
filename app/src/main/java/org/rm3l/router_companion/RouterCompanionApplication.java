@@ -35,6 +35,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -43,7 +44,9 @@ import android.widget.ImageView;
 import com.airbnb.deeplinkdispatch.DeepLinkHandler;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
+import com.evernote.android.job.JobConfig;
 import com.evernote.android.job.JobManager;
+import com.evernote.android.job.util.JobLogger;
 import com.facebook.stetho.Stetho;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
@@ -131,7 +134,18 @@ public class RouterCompanionApplication extends Application
                 appPreferences.getString(RouterCompanionAppConstants.ACRA_USER_EMAIL, null);
         Crashlytics.setUserEmail(acraEmailAddr);
 
-        JobManager.create(this).addJobCreator(new RouterCompanionJobCreator(this));
+        JobConfig.addLogger(new JobLogger() {
+            @Override
+            public void log(final int priority, @NonNull final String tag, @NonNull final String message,
+                    @Nullable final Throwable t) {
+                if (t == null) {
+                    Crashlytics.log(priority, tag, message);
+                } else {
+                    Crashlytics.logException(t);
+                }
+            }
+        });
+        JobManager.create(this).addJobCreator(new RouterCompanionJobCreator());
 
         isDebugResourceInspectorEnabled = appPreferences.getBoolean(DEBUG_RESOURCE_INSPECTOR_PREF_KEY, false);
 

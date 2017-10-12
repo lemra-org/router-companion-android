@@ -34,11 +34,13 @@ import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_RESOURC
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ShortcutInfo;
@@ -89,6 +91,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -99,6 +102,7 @@ import org.rm3l.router_companion.actions.RouterAction;
 import org.rm3l.router_companion.actions.RouterActionListener;
 import org.rm3l.router_companion.help.ChangelogActivity;
 import org.rm3l.router_companion.help.HelpActivity;
+import org.rm3l.router_companion.job.RouterCompanionJobCreator;
 import org.rm3l.router_companion.main.DDWRTMainActivity;
 import org.rm3l.router_companion.mgmt.adapters.RouterListItemTouchHelperCallback;
 import org.rm3l.router_companion.mgmt.adapters.RouterListRecycleViewAdapter;
@@ -968,6 +972,29 @@ public class RouterManagementActivity extends AppCompatActivity
                     Crashlytics.log(Log.WARN, LOG_TAG,
                             "[DEBUG] 'Restore deleted routers' menu option should not be visible...");
                 }
+                return true;
+
+            case R.id.debug_run_jobs_right_away: {
+                if (BuildConfig.DEBUG) {
+                    final List<String> jobTags = RouterCompanionJobCreator.getOneShotJobTags();
+                    if (jobTags.isEmpty()) {
+                        Toast.makeText(this, "Jobs Tags set is empty", Toast.LENGTH_SHORT).show();
+                    } else {
+                        new AlertDialog.Builder(this)
+                                .setTitle("Select Job to trigger")
+                                .setItems(jobTags.toArray(new String[jobTags.size()]), new OnClickListener() {
+                                    @Override
+                                    public void onClick(final DialogInterface dialog, final int which) {
+                                        RouterCompanionJobCreator.runJobImmediately(jobTags.get(which));
+                                    }
+                                })
+                                .show();
+                    }
+                } else {
+                    Crashlytics.log(Log.WARN, LOG_TAG,
+                            "[DEBUG] 'Run Jobs right away' menu option should not be visible...");
+                }
+            }
                 return true;
 
             case R.id.router_list_actionbar_add:

@@ -18,6 +18,7 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.crashlytics.android.Crashlytics
 import com.evernote.android.job.DailyJob
+import com.evernote.android.job.Job
 import com.evernote.android.job.JobManager
 import com.evernote.android.job.JobRequest
 import needle.UiRelatedTask
@@ -42,19 +43,15 @@ import org.rm3l.router_companion.resources.conn.Router
 import org.rm3l.router_companion.tiles.status.router.StatusRouterStateTile
 import org.rm3l.router_companion.utils.NetworkUtils
 import org.rm3l.router_companion.utils.Utils
+import org.rm3l.router_companion.utils.notifications.NOTIFICATION_GROUP_GENERAL_UPDATES
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils
 import java.util.concurrent.TimeUnit
 
 const val LAST_RELEASE_CHECKED = "lastReleaseChecked"
+const val MANUAL_REQUEST = "MANUAL_REQUEST"
 
-class FirmwareUpdateCheckerJob(context: Context?) : DailyJob(), RouterCompanionJob {
-
-    private val routerDao = RouterManagementActivity.getDao(context)
-    private val mGlobalPreferences = context?.getSharedPreferences(
-            RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-    private val mGooGlService = NetworkUtils.createApiService(context,
-            RouterCompanionAppConstants.URL_SHORTENER_API_BASE_URL, GooGlService::class.java)
+class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
 
     companion object {
         @JvmField
@@ -69,14 +66,18 @@ class FirmwareUpdateCheckerJob(context: Context?) : DailyJob(), RouterCompanionJ
             }
 
             if (!JobManager.instance().getAllJobRequestsForTag(TAG).isEmpty()) {
-                // job already scheduled, nothing to do
-                return
+                // job already scheduled, nothing to do => cancel
+                Crashlytics.log(Log.DEBUG, TAG, "job $TAG already scheduled => nothing to do!")
+//                JobManager.instance().cancelAllForTag(TAG)
+//                return
             }
             val builder = JobRequest.Builder(TAG)
                     .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
                     .setRequiresCharging(true)
             // run job between 9am and 9pm
-            DailyJob.schedule(builder, TimeUnit.HOURS.toMillis(9), TimeUnit.HOURS.toMillis(21))
+            DailyJob.schedule(builder,
+                    TimeUnit.HOURS.toMillis(9),
+                    TimeUnit.HOURS.toMillis(21))
         }
 
         @JvmStatic
@@ -153,7 +154,7 @@ class FirmwareUpdateCheckerJob(context: Context?) : DailyJob(), RouterCompanionJ
                                         ContextCompat.getColor(activity, R.color.win8_blue),
                                         "A new ${routerFirmware?.officialName ?: ""} Build (${mNewerRelease!!.version}) is available for '${router.canonicalHumanReadableName}'",
                                         Color.WHITE,
-                                        "View", //TODO Reconsider once we have an auto-upgrade firmware feature
+                                        "View", //TODO Reconsider once we have an auto-upgrade firmware feature. Add link to perform the upgrade right away
                                         Color.YELLOW,
                                         Snackbar.LENGTH_LONG,
                                         object : SnackbarCallback {
@@ -190,23 +191,28 @@ class FirmwareUpdateCheckerJob(context: Context?) : DailyJob(), RouterCompanionJ
                         }
                     })
         }
-    }
 
-    override fun onRunDailyJob(params: Params?): DailyJobResult {
-        try {
+        @JvmStatic
+        fun handleJob(context: Context, params: Params?): Boolean {
+            val routerDao = RouterManagementActivity.getDao(context)
+            val globalPreferences = context.getSharedPreferences(
+                    RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+            val gooGlService = NetworkUtils.createApiService(context,
+                    RouterCompanionAppConstants.URL_SHORTENER_API_BASE_URL, GooGlService::class.java)
+
             //First check if user is interested in getting updates
-            val notificationChoices =
-                    this.mGlobalPreferences?.getStringSet(NOTIFICATIONS_CHOICE_PREF, emptySet())
+            val notificationChoices = globalPreferences?.getStringSet(NOTIFICATIONS_CHOICE_PREF, emptySet())
             if (notificationChoices?.contains(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES) != true) {
                 Crashlytics.log(Log.DEBUG, TAG, "Not interested at this time in Firmware Build Updates!")
                 //Check next day
-                return DailyJobResult.SUCCESS
+                return true
             }
 
             //Now keep only routers for which the user has accepted notifications
+            val forceCheck = params?.extras?.getBoolean(MANUAL_REQUEST, false)
             val releaseAndGooGlLinksMap: MutableMap<String, String?> = mutableMapOf()
             routerDao.allRouters
-                    .filter { it.getPreferences(context)?.getBoolean(NOTIFICATIONS_ENABLE, false) == true }
+                    .filter { it.getPreferences(context)?.getBoolean(NOTIFICATIONS_ENABLE, true) == true }
                     .map { router ->
                         val mapped = router to try {
                             val nvramInfo = RouterFirmwareConnectorManager.getConnector(router)
@@ -228,13 +234,17 @@ class FirmwareUpdateCheckerJob(context: Context?) : DailyJob(), RouterCompanionJ
                         val release = routerAndNewestReleaseUpdatePair.second
                         val routerPreferences = router.getPreferences(context)
                         val newReleaseVersion = release!!.version
-                        val toProcess = routerPreferences?.getString(LAST_RELEASE_CHECKED,
-                                "")!! != newReleaseVersion
-                        if (toProcess) {
-                            routerPreferences.edit().putString(LAST_RELEASE_CHECKED, newReleaseVersion).apply()
-                            Utils.requestBackup(context)
+                        if (forceCheck == true) {
+                            true
+                        } else {
+                            val toProcess = routerPreferences?.getString(LAST_RELEASE_CHECKED,
+                                    "")!! != newReleaseVersion
+                            if (toProcess) {
+                                routerPreferences.edit().putString(LAST_RELEASE_CHECKED, newReleaseVersion).apply()
+                                Utils.requestBackup(context)
+                            }
+                            toProcess
                         }
-                        toProcess
                     }
                     .forEach { routerAndNewestReleaseUpdatePair ->
                         try {
@@ -249,7 +259,7 @@ class FirmwareUpdateCheckerJob(context: Context?) : DailyJob(), RouterCompanionJ
                                         try {
                                             val gooGlData = GooGlData()
                                             gooGlData.longUrl = newReleaseDLLink
-                                            val response = mGooGlService.shortenLongUrl(GOOGLE_API_KEY,
+                                            val response = gooGlService.shortenLongUrl(GOOGLE_API_KEY,
                                                     gooGlData).execute()
                                             NetworkUtils.checkResponseSuccessful(response)
                                             newReleaseDLLink = response.body()!!.id
@@ -279,9 +289,8 @@ class FirmwareUpdateCheckerJob(context: Context?) : DailyJob(), RouterCompanionJ
 
                             //        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                             val notificationBuilder = NotificationCompat.Builder(context,
-                                    Router.RouterFirmware.DDWRT.name)
-                                    .setGroup(
-                                            org.rm3l.router_companion.utils.notifications.NOTIFICATION_GROUP_GENERAL_UPDATES)
+                                    "$NOTIFICATION_GROUP_GENERAL_UPDATES-${Router.RouterFirmware.DDWRT.name}")
+                                    .setGroup(NOTIFICATION_GROUP_GENERAL_UPDATES)
                                     .setLargeIcon(largeIcon)
                                     .setSmallIcon(R.mipmap.ic_launcher_ddwrt_companion)
                                     .setContentTitle(
@@ -290,15 +299,15 @@ class FirmwareUpdateCheckerJob(context: Context?) : DailyJob(), RouterCompanionJ
                                     .setAutoCancel(true)
 
                             //Notification sound, if required
-                            val ringtoneUri = mGlobalPreferences?.getString(
+                            val ringtoneUri = globalPreferences?.getString(
                                     RouterCompanionAppConstants.NOTIFICATIONS_SOUND, null)
                             if (ringtoneUri != null) {
                                 notificationBuilder.setSound(Uri.parse(ringtoneUri),
                                         AudioManager.STREAM_NOTIFICATION)
                             }
 
-                            if (mGlobalPreferences?.getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_VIBRATE,
-                                    true) == false) {
+                            if (!globalPreferences.getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_VIBRATE,
+                                    true)) {
                                 notificationBuilder.setDefaults(Notification.DEFAULT_LIGHTS)
                                         .setVibrate(RouterCompanionAppConstants.NO_VIBRATION_PATTERN)
                                 //                    if (ringtoneUri != null) {
@@ -319,10 +328,39 @@ class FirmwareUpdateCheckerJob(context: Context?) : DailyJob(), RouterCompanionJ
                             Crashlytics.logException(e)
                         }
                     }
+            return true
+        }
+    }
+
+    override fun isOneShotJob() = false
+
+    override fun onRunDailyJob(params: Params?): DailyJobResult {
+        try {
+            if (!handleJob(context, params)) {
+                return DailyJobResult.CANCEL
+            }
         } catch (e: Exception) {
             Crashlytics.logException(e)
         }
         return DailyJobResult.SUCCESS
+    }
+
+}
+
+class FirmwareUpdateCheckerOneShotJob : Job(), RouterCompanionJob {
+
+    companion object {
+        val TAG = FirmwareUpdateCheckerOneShotJob::class.java.simpleName!!
+    }
+
+    override fun onRunJob(params: Params?): Result {
+        return try {
+            params?.extras?.putBoolean(MANUAL_REQUEST, true)
+            if (FirmwareUpdateCheckerJob.handleJob(context, params)) Result.SUCCESS else Result.FAILURE
+        } catch (e: Exception) {
+            Crashlytics.logException(e)
+            Result.FAILURE
+        }
     }
 
 }
