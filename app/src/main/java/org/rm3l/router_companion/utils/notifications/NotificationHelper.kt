@@ -10,6 +10,7 @@ import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.mgmt.RouterManagementActivity
 import org.rm3l.router_companion.resources.conn.Router
 import org.rm3l.router_companion.resources.conn.Router.RouterFirmware
+import org.rm3l.router_companion.resources.conn.Router.RouterFirmware.DEMO
 import org.rm3l.router_companion.resources.conn.Router.RouterFirmware.DDWRT
 import org.rm3l.router_companion.resources.conn.Router.RouterFirmware.TOMATO
 
@@ -61,7 +62,7 @@ fun Context.createGeneralNotificationChannelGroup() {
         val generalChannels = RouterFirmware.values()
                 .filter {
                     when (it) {
-                        DDWRT, TOMATO -> true
+                        DDWRT, TOMATO, DEMO -> true
                         else -> false //TODO not supported for now
                     }
                 }
