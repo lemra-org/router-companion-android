@@ -294,7 +294,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                     .setLargeIcon(largeIcon)
                                     .setSmallIcon(R.mipmap.ic_launcher_ddwrt_companion)
                                     .setContentTitle(
-                                            "A new ${router.routerFirmware!!.displayName} is available for ${router.canonicalHumanReadableName}")
+                                            "A new ${router.routerFirmware!!.displayName} Build is available for ${router.canonicalHumanReadableName}")
                                     .setContentText(newReleaseVersion)
                                     .setAutoCancel(true)
 
