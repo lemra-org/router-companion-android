@@ -289,7 +289,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
 
                             //        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                             val notificationBuilder = NotificationCompat.Builder(context,
-                                    "$NOTIFICATION_GROUP_GENERAL_UPDATES-${Router.RouterFirmware.DDWRT.name}")
+                                    "$NOTIFICATION_GROUP_GENERAL_UPDATES-${router.routerFirmware!!.name}")
                                     .setGroup(NOTIFICATION_GROUP_GENERAL_UPDATES)
                                     .setLargeIcon(largeIcon)
                                     .setSmallIcon(R.mipmap.ic_launcher_ddwrt_companion)
