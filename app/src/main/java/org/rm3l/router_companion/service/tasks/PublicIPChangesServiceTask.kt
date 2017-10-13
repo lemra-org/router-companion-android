@@ -5,7 +5,9 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.media.AudioManager
 import android.net.Uri
 import android.support.v4.app.NotificationCompat
@@ -17,6 +19,9 @@ import android.util.Patterns
 import com.crashlytics.android.Crashlytics
 import com.google.common.base.Objects
 import com.google.common.base.Strings.isNullOrEmpty
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.Picasso.LoadedFrom
+import com.squareup.picasso.Target
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.RouterCompanionAppConstants
 import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager
@@ -119,138 +124,140 @@ class PublicIPChangesServiceTask(ctx: Context) : AbstractBackgroundServiceTask(c
             if (!(Objects.equal(wanPublicIp, wanPublicIpFromPrefs) && Objects.equal(wanIp,
                     wanIpFromPrefs))) {
 
+                //Save last value into preferences and display notification
                 val editor = routerPreferences.edit()
-                try {
-                    //Save last value into preferences and display notification
-                    editor
-                            .putString(LAST_PUBLIC_IP, e(wanPublicIp))
-                            .putString(LAST_WAN_IP, e(wanIp))
+                editor.putString(LAST_PUBLIC_IP, e(wanPublicIp)).putString(LAST_WAN_IP, e(wanIp))
 
-                    //Also retrieve notification ID or set one
-                    // Sets an ID for the notification, so it can be updated
-                    var notifyID = routerPreferences.getInt(LAST_PUBLIC_IP_PREF_PREFIX + router.id, -1)
-                    if (notifyID == -1) {
-                        try {
-                            notifyID = 1 + Integer.parseInt(router.id.toString() + "00" + router.id)
-                            editor.putInt(LAST_PUBLIC_IP_PREF_PREFIX + router.id, notifyID)
-                        } catch (e: Exception) {
-                            ReportingUtils.reportException(null, e)
-                            return
-                        }
-
+                //Also retrieve notification ID or set one
+                // Sets an ID for the notification, so it can be updated
+                var notifyID = routerPreferences.getInt(LAST_PUBLIC_IP_PREF_PREFIX + router.id, -1)
+                if (notifyID == -1) {
+                    try {
+                        notifyID = 1 + Integer.parseInt(router.id.toString() + "00" + router.id)
+                        editor.putInt(LAST_PUBLIC_IP_PREF_PREFIX + router.id, notifyID)
+                    } catch (e: Exception) {
+                        ReportingUtils.reportException(null, e)
+                        return
                     }
 
-                    //Now display notification
-                    val notificationsEnabled = routerPreferences.getBoolean(
-                            RouterCompanionAppConstants.NOTIFICATIONS_ENABLE, true)
+                }
 
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "NOTIFICATIONS_ENABLE=" + notificationsEnabled)
+                //Now display notification
+                val notificationsEnabled = routerPreferences.getBoolean(
+                        RouterCompanionAppConstants.NOTIFICATIONS_ENABLE, true)
 
-                    val mNotificationManager = mCtx.getSystemService(
-                            Context.NOTIFICATION_SERVICE) as NotificationManager
+                Crashlytics.log(Log.DEBUG, LOG_TAG, "NOTIFICATIONS_ENABLE=" + notificationsEnabled)
 
-                    if (!notificationsEnabled) {
-                        mNotificationManager.cancel(notifyID)
-                    } else {
+                val mNotificationManager = mCtx.getSystemService(
+                        Context.NOTIFICATION_SERVICE) as NotificationManager
 
-                        val wanPublicIpNullOrEmpty = isNullOrEmpty(wanPublicIp)
-                        val wanIpNullOrEmpty = isNullOrEmpty(wanIp)
-                        if (!(wanPublicIpNullOrEmpty && wanIpNullOrEmpty)) {
+                if (!notificationsEnabled) {
+                    mNotificationManager.cancel(notifyID)
+                } else {
 
-                            val largeIcon = BitmapFactory.decodeResource(mCtx.resources,
-                                    R.mipmap.ic_launcher_ddwrt_companion)
-
-                            val resultIntent = Intent(mCtx, DDWRTMainActivity::class.java)
-                            resultIntent.putExtra(ROUTER_SELECTED, router.uuid)
-                            resultIntent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED,
-                                    1) //Open right on the Public IP status
-                            // Because clicking the notification opens a new ("special") activity, there's
-                            // no need to create an artificial back stack.
-                            val resultPendingIntent = PendingIntent.getActivity(mCtx, 0, resultIntent,
-                                    PendingIntent.FLAG_UPDATE_CURRENT)
-
-                            val mRouterName = router.name
-                            val mRouterNameNullOrEmpty = isNullOrEmpty(mRouterName)
-                            var summaryText = ""
-                            if (!mRouterNameNullOrEmpty) {
-                                summaryText = mRouterName!! + " ("
-                            }
-                            summaryText += router.remoteIpAddress
-                            if (!mRouterNameNullOrEmpty) {
-                                summaryText += ")"
-                            }
-
-                            val mBuilder = NotificationCompat.Builder(mCtx, router.notificationChannelId)
-                                    .setGroup(router.uuid)
-                                    .setSmallIcon(R.drawable.ic_stat_ip)
-                                    .setLargeIcon(largeIcon)
-                                    .setAutoCancel(true)
-                                    .setGroup(PublicIPChangesServiceTask::class.java.simpleName)
-                                    .setGroupSummary(true)
-                                    .setContentIntent(resultPendingIntent)
-                                    .setContentTitle("New IP Address")
-
-                            //Notification sound, if required
-                            val sharedPreferences = mCtx.getSharedPreferences(
-                                    RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                            val ringtoneUri = sharedPreferences.getString(
-                                    RouterCompanionAppConstants.NOTIFICATIONS_SOUND, null)
-                            if (ringtoneUri != null) {
-                                mBuilder.setSound(Uri.parse(ringtoneUri), AudioManager.STREAM_NOTIFICATION)
-                            }
-                            if (!sharedPreferences.getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_VIBRATE,
-                                    true)) {
-                                mBuilder.setDefaults(Notification.DEFAULT_LIGHTS)
-                                        .setVibrate(RouterCompanionAppConstants.NO_VIBRATION_PATTERN)
-                                //                    if (ringtoneUri != null) {
-                                //                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
-                                //                    } else {
-                                //                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS);
-                                //                    }
-                            }
-
-                            val isFirstTimeForNotification = routerPreferences.getBoolean(
-                                    IS_FIRST_TIME_PREF_PREFIX + notifyID, true)
-
-                            val bigContentTitle = if (isFirstTimeForNotification) "New IP Address" else "IP Address change"
-
-                            val inboxStyle = NotificationCompat.InboxStyle().setSummaryText(summaryText)
-                                    .setBigContentTitle(bigContentTitle)
-
-                            //Public IP Address
-                            val publicIpLine = String.format("Public IP   %s",
-                                    if (wanPublicIpNullOrEmpty) "-" else wanPublicIp)
-                            val publicIpSpannable = SpannableString(publicIpLine)
-                            publicIpSpannable.setSpan(StyleSpan(android.graphics.Typeface.BOLD), 0,
-                                    "Public IP".length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            inboxStyle.addLine(publicIpSpannable)
-
-                            //WAN IP Address
-                            val wanIpLine = String.format("WAN IP   %s", if (wanIpNullOrEmpty) "-" else wanIp)
-                            val wanIpSpannable = SpannableString(wanIpLine)
-                            wanIpSpannable.setSpan(StyleSpan(android.graphics.Typeface.BOLD), 0,
-                                    "WAN IP".length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            inboxStyle.addLine(wanIpSpannable)
-
-                            mBuilder.setContentText(summaryText)
-
-                            // Moves the expanded layout object into the notification object.
-                            mBuilder.setStyle(inboxStyle)
-
-                            // Because the ID remains unchanged, the existing notification is
-                            // updated.
-                            val notification = mBuilder.build()
-                            mNotificationManager.notify(notifyID, notification)
-                            updateNotificationIconWithRouterAvatar(mCtx, router, notifyID, notification)
-
-                            editor.putBoolean(IS_FIRST_TIME_PREF_PREFIX + notifyID, false)
-                        }
+                    val wanPublicIpNullOrEmpty = isNullOrEmpty(wanPublicIp)
+                    val wanIpNullOrEmpty = isNullOrEmpty(wanIp)
+                    if (!(wanPublicIpNullOrEmpty && wanIpNullOrEmpty)) {
+                        val largeIcon = Router.loadRouterAvatarUrlSync(mCtx, router, Router.mAvatarDownloadOpts)
+                        doNotify(mCtx, router, largeIcon?:BitmapFactory.decodeResource(mCtx.resources,
+                                R.mipmap.ic_launcher_ddwrt_companion), notifyID, wanPublicIp, wanIp)
+                        editor.putBoolean(IS_FIRST_TIME_PREF_PREFIX + notifyID, false).apply()
+                        Utils.requestBackup(mCtx)
                     }
-                } finally {
-                    editor.apply()
-                    Utils.requestBackup(mCtx)
                 }
             }
+        }
+
+        private fun doNotify(mCtx: Context, router: Router, largeIcon: Bitmap, notifyID: Int,
+                             wanPublicIp: String? = null, wanIp: String? = null) {
+            val resultIntent = Intent(mCtx, DDWRTMainActivity::class.java)
+            resultIntent.putExtra(ROUTER_SELECTED, router.uuid)
+            resultIntent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED,
+                    1) //Open right on the Public IP status
+            // Because clicking the notification opens a new ("special") activity, there's
+            // no need to create an artificial back stack.
+            val resultPendingIntent = PendingIntent.getActivity(mCtx, 0, resultIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT)
+
+            val mRouterName = router.name
+            val mRouterNameNullOrEmpty = isNullOrEmpty(mRouterName)
+            var summaryText = ""
+            if (!mRouterNameNullOrEmpty) {
+                summaryText = mRouterName!! + " ("
+            }
+            summaryText += router.remoteIpAddress
+            if (!mRouterNameNullOrEmpty) {
+                summaryText += ")"
+            }
+
+            val mBuilder = NotificationCompat.Builder(mCtx, router.notificationChannelId)
+                    .setGroup(router.uuid)
+                    .setSmallIcon(R.drawable.ic_stat_ip)
+                    .setLargeIcon(largeIcon)
+                    .setAutoCancel(true)
+                    .setGroup(PublicIPChangesServiceTask::class.java.simpleName)
+                    .setGroupSummary(true)
+                    .setContentIntent(resultPendingIntent)
+                    .setContentTitle("New IP Address")
+
+            //Notification sound, if required
+            val sharedPreferences = mCtx.getSharedPreferences(
+                    RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+            val ringtoneUri = sharedPreferences.getString(
+                    RouterCompanionAppConstants.NOTIFICATIONS_SOUND, null)
+            if (ringtoneUri != null) {
+                mBuilder.setSound(Uri.parse(ringtoneUri), AudioManager.STREAM_NOTIFICATION)
+            }
+            if (!sharedPreferences.getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_VIBRATE,
+                    true)) {
+                mBuilder.setDefaults(Notification.DEFAULT_LIGHTS)
+                        .setVibrate(RouterCompanionAppConstants.NO_VIBRATION_PATTERN)
+                //                    if (ringtoneUri != null) {
+                //                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
+                //                    } else {
+                //                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS);
+                //                    }
+            }
+
+            val routerPreferences = mCtx.getSharedPreferences(router.templateUuidOrUuid, Context.MODE_PRIVATE)
+
+            val isFirstTimeForNotification = routerPreferences.getBoolean(
+                    IS_FIRST_TIME_PREF_PREFIX + notifyID, true)
+
+            val bigContentTitle = if (isFirstTimeForNotification) "New IP Address" else "IP Address change"
+
+            val inboxStyle = NotificationCompat.InboxStyle().setSummaryText(summaryText)
+                    .setBigContentTitle(bigContentTitle)
+
+            //Public IP Address
+            val wanPublicIpNullOrEmpty = isNullOrEmpty(wanPublicIp)
+            val wanIpNullOrEmpty = isNullOrEmpty(wanIp)
+            val publicIpLine = String.format("Public IP   %s",
+                    if (wanPublicIpNullOrEmpty) "-" else wanPublicIp)
+            val publicIpSpannable = SpannableString(publicIpLine)
+            publicIpSpannable.setSpan(StyleSpan(android.graphics.Typeface.BOLD), 0,
+                    "Public IP".length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            inboxStyle.addLine(publicIpSpannable)
+
+            //WAN IP Address
+            val wanIpLine = String.format("WAN IP   %s", if (wanIpNullOrEmpty) "-" else wanIp)
+            val wanIpSpannable = SpannableString(wanIpLine)
+            wanIpSpannable.setSpan(StyleSpan(android.graphics.Typeface.BOLD), 0,
+                    "WAN IP".length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            inboxStyle.addLine(wanIpSpannable)
+
+            mBuilder.setContentText(summaryText)
+
+            // Moves the expanded layout object into the notification object.
+            mBuilder.setStyle(inboxStyle)
+
+            // Because the ID remains unchanged, the existing notification is
+            // updated.
+            val mNotificationManager = mCtx.getSystemService(
+                    Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notification = mBuilder.build()
+            mNotificationManager.notify(notifyID, notification)
+            updateNotificationIconWithRouterAvatar(mCtx, router, notifyID, notification)
         }
     }
 }

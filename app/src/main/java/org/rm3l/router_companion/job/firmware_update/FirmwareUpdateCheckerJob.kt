@@ -7,8 +7,10 @@ import android.app.PendingIntent
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
@@ -21,6 +23,9 @@ import com.evernote.android.job.DailyJob
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobManager
 import com.evernote.android.job.JobRequest
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.Picasso.LoadedFrom
+import com.squareup.picasso.Target
 import needle.UiRelatedTask
 import org.rm3l.ddwrt.BuildConfig
 import org.rm3l.ddwrt.R
@@ -270,65 +275,79 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                     }
                             ) ?: newReleaseDownloadLink
 
-                            // pending implicit intent to view url
-                            val resultIntent = Intent(Intent.ACTION_VIEW)
-                            resultIntent.data = Uri.parse(downloadLink)
-
-                            val pendingIntent = PendingIntent.getActivity(context,
-                                    router.id /* Request code */, resultIntent,
-                                    PendingIntent.FLAG_ONE_SHOT)
-
                             //        Intent intent = new Intent(this, RouterManagementActivity.class);
                             //        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             //        PendingIntent pendingIntent = PendingIntent.getActivity(this,
                             //                FCM_NOTIFICATION_ID /* Request code */, intent,
                             //                PendingIntent.FLAG_ONE_SHOT);
 
-                            val largeIcon = BitmapFactory.decodeResource(context.resources,
-                                    R.mipmap.ic_launcher_ddwrt_companion)
+                            val largeIcon = Router.loadRouterAvatarUrlSync(context, router, Router.mAvatarDownloadOpts)
+                            doNotify(context, router, largeIcon?:BitmapFactory.decodeResource(context.resources,
+                                    R.mipmap.ic_launcher_ddwrt_companion), downloadLink, newReleaseVersion)
 
-                            //        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                            val notificationBuilder = NotificationCompat.Builder(context,
-                                    "$NOTIFICATION_GROUP_GENERAL_UPDATES-${router.routerFirmware!!.name}")
-                                    .setGroup(NOTIFICATION_GROUP_GENERAL_UPDATES)
-                                    .setLargeIcon(largeIcon)
-                                    .setSmallIcon(R.mipmap.ic_launcher_ddwrt_companion)
-                                    .setContentTitle(
-                                            "A new ${router.routerFirmware!!.officialName} Build is available for '${router.canonicalHumanReadableName}'")
-                                    .setContentText(newReleaseVersion)
-                                    .setAutoCancel(true)
-
-                            //Notification sound, if required
-                            val ringtoneUri = globalPreferences?.getString(
-                                    RouterCompanionAppConstants.NOTIFICATIONS_SOUND, null)
-                            if (ringtoneUri != null) {
-                                notificationBuilder.setSound(Uri.parse(ringtoneUri),
-                                        AudioManager.STREAM_NOTIFICATION)
-                            }
-
-                            if (!globalPreferences.getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_VIBRATE,
-                                    true)) {
-                                notificationBuilder.setDefaults(Notification.DEFAULT_LIGHTS)
-                                        .setVibrate(RouterCompanionAppConstants.NO_VIBRATION_PATTERN)
-                                //                    if (ringtoneUri != null) {
-                                //                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
-                                //                    } else {
-                                //                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS);
-                                //                    }
-                            }
-                            notificationBuilder.setContentIntent(pendingIntent)
-
-                            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE)
-                                    as NotificationManager
-
-                            notificationManager.notify(router.id + 99999 /* ID of notification */,
-                                    notificationBuilder.build())
                         } catch (e: Exception) {
                             //No worries - go on with the next
                             Crashlytics.logException(e)
                         }
                     }
             return true
+        }
+
+        private fun doNotify(context: Context, router: Router, largeIcon: Bitmap,
+                             downloadLink: String, newReleaseVersion: String?) {
+
+            if (newReleaseVersion.isNullOrBlank()) {
+                Crashlytics.log(Log.WARN, TAG, "newReleaseVersion is NULL or blank - skipping notification.")
+                return
+            }
+
+            // pending implicit intent to view url
+            val resultIntent = Intent(Intent.ACTION_VIEW)
+            resultIntent.data = Uri.parse(downloadLink)
+
+            val pendingIntent = PendingIntent.getActivity(context,
+                    router.id /* Request code */, resultIntent,
+                    PendingIntent.FLAG_ONE_SHOT)
+
+            //        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            val notificationBuilder = NotificationCompat.Builder(context,
+                    "$NOTIFICATION_GROUP_GENERAL_UPDATES-${router.routerFirmware!!.name}")
+                    .setGroup(NOTIFICATION_GROUP_GENERAL_UPDATES)
+                    .setLargeIcon(largeIcon)
+                    .setSmallIcon(R.mipmap.ic_launcher_ddwrt_companion)
+                    .setContentTitle(
+                            "A new ${router.routerFirmware!!.officialName} Build is available for '${router.canonicalHumanReadableName}'")
+                    .setContentText(newReleaseVersion)
+                    .setAutoCancel(true)
+
+            val globalPreferences = context.getSharedPreferences(
+                    RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+
+            //Notification sound, if required
+            val ringtoneUri = globalPreferences.getString(
+                    RouterCompanionAppConstants.NOTIFICATIONS_SOUND, null)
+            if (ringtoneUri != null) {
+                notificationBuilder.setSound(Uri.parse(ringtoneUri),
+                        AudioManager.STREAM_NOTIFICATION)
+            }
+
+            if (!globalPreferences.getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_VIBRATE,
+                    true)) {
+                notificationBuilder.setDefaults(Notification.DEFAULT_LIGHTS)
+                        .setVibrate(RouterCompanionAppConstants.NO_VIBRATION_PATTERN)
+                //                    if (ringtoneUri != null) {
+                //                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
+                //                    } else {
+                //                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS);
+                //                    }
+            }
+            notificationBuilder.setContentIntent(pendingIntent)
+
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE)
+                    as NotificationManager
+
+            notificationManager.notify(router.id + 99999 /* ID of notification */,
+                    notificationBuilder.build())
         }
     }
 

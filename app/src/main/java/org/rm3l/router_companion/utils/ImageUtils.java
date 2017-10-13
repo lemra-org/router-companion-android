@@ -5,9 +5,12 @@ import static org.rm3l.router_companion.utils.Utils.reportException;
 
 import android.app.Activity;
 import android.app.Notification;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -161,6 +164,28 @@ public final class ImageUtils {
             e.printStackTrace();
             reportException(null, new DownloadImageException(e));
         }
+    }
+
+    /**
+     * get uri to drawable or any other resource type if u wish
+     *
+     * @param context    - context
+     * @param drawableId - drawable res id
+     * @return - uri
+     */
+    @Nullable
+    public static Uri drawableToUri(@Nullable Context context,
+            @DrawableRes final int drawableId) {
+        if (context == null) {
+            return null;
+        }
+        final Resources resources = context.getResources();
+        return Uri.parse(
+                String.format("%s://%s/%s/%s",
+                        ContentResolver.SCHEME_ANDROID_RESOURCE,
+                        resources.getResourcePackageName(drawableId),
+                        resources.getResourceTypeName(drawableId),
+                        resources.getResourceEntryName(drawableId)));
     }
 
     @Nullable

@@ -78,6 +78,7 @@ import com.jcraft.jsch.Session;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -681,12 +682,28 @@ public class Router implements Serializable {
     }
 
     @Nullable
+    public static Bitmap loadRouterAvatarUrlSync(
+            @Nullable final Context context,
+            @Nullable final Router router,
+            @Nullable final String[] opts) throws IOException {
+        final Uri routerAvatarUrl = Router.getRouterAvatarUrl(context, router, opts);
+        if (routerAvatarUrl == null) {
+            return null;
+        }
+        return Picasso.with(context).load(routerAvatarUrl).get();
+    }
+
+    @Nullable
     public static Uri getRouterAvatarUrl(
             @Nullable final Context context,
             @Nullable final Router router,
             @Nullable final String[] opts) throws UnsupportedEncodingException {
         if (router == null) {
             return null;
+        }
+        if (Utils.isDemoRouter(router)) {
+            //Demo router
+            return ImageUtils.drawableToUri(context, R.drawable.demo_router);
         }
         if (router.getIconMethod() == RouterIcon_Custom && !TextUtils.isEmpty(router.getIconPath())) {
             return Uri.fromFile(new File(router.getIconPath()));

@@ -5,7 +5,9 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.media.AudioManager
 import android.net.Uri
 import android.support.v4.app.NotificationCompat
@@ -23,6 +25,9 @@ import com.google.common.collect.ComparisonChain
 import com.google.common.collect.FluentIterable
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Maps
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.Picasso.LoadedFrom
+import com.squareup.picasso.Target
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.RouterCompanionAppConstants
 import org.rm3l.router_companion.main.DDWRTMainActivity
@@ -358,154 +363,161 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
             } else {
 
                 if (updateNotification) {
-
-                    val largeIcon = BitmapFactory.decodeResource(mCtx.resources,
-                            R.mipmap.ic_launcher_ddwrt_companion)
-
-                    val resultIntent = Intent(mCtx, DDWRTMainActivity::class.java)
-                    resultIntent.putExtra(ROUTER_SELECTED, router.uuid)
-                    resultIntent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED,
-                            4) //Open right on Clients Section
-                    // Because clicking the notification opens a new ("special") activity, there's
-                    // no need to create an artificial back stack.
-                    val resultPendingIntent = PendingIntent.getActivity(mCtx, 0, resultIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT)
-
-                    val mRouterName = router.name
-                    val mRouterNameNullOrEmpty = isNullOrEmpty(mRouterName)
-                    var summaryText = ""
-                    if (!mRouterNameNullOrEmpty) {
-                        summaryText = mRouterName!! + " ("
-                    }
-                    summaryText += router.remoteIpAddress
-                    if (!mRouterNameNullOrEmpty) {
-                        summaryText += ")"
-                    }
-
-                    val mBuilder = NotificationCompat.Builder(mCtx, router.notificationChannelId)
-                            .setGroup(router.uuid)
-                            .setSmallIcon(
-                                    R.drawable.ic_connected_hosts_notification)
-                            .setLargeIcon(largeIcon)
-                            .setAutoCancel(true)
-                            .setGroup(WirelessClientsTile::class.java.simpleName)
-                            .setGroupSummary(true)
-                            .setContentIntent(resultPendingIntent)
-                    //                                .setDefaults(Notification.DEFAULT_ALL);
-
-                    //Notification sound, if required
-                    val sharedPreferences = mCtx.getSharedPreferences(
-                            RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                            Context.MODE_PRIVATE)
-                    val ringtoneUri = sharedPreferences.getString(
-                            RouterCompanionAppConstants.NOTIFICATIONS_SOUND, null)
-                    if (ringtoneUri != null) {
-                        mBuilder.setSound(Uri.parse(ringtoneUri), AudioManager.STREAM_NOTIFICATION)
-                    }
-
-                    if (!sharedPreferences.getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_VIBRATE,
-                            true)) {
-                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS)
-                                .setVibrate(RouterCompanionAppConstants.NO_VIBRATION_PATTERN)
-                        //                    if (ringtoneUri != null) {
-                        //                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
-                        //                    } else {
-                        //                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS);
-                        //                    }
-                    }
-
-                    val inboxStyle = NotificationCompat.InboxStyle().setSummaryText(summaryText)
-
-                    val newDevicesTitle = String.format("%d connected host%s", sizeFiltered,
-                            if (sizeFiltered > 1) "s" else "")
-
-                    mBuilder.setContentTitle(newDevicesTitle)
-
-                    inboxStyle.setBigContentTitle(newDevicesTitle)
-
-                    if (sizeFiltered == 1) {
-                        //Only one device
-                        val device = devicesCollFiltered.iterator().next()
-                        val deviceAliasOrSystemName = device.aliasOrSystemName
-
-                        //                                mBuilder.setContentTitle(deviceNameToDisplay);
-
-                        //                                inboxStyle.setBigContentTitle(deviceNameToDisplay);
-                        //Name
-                        if (!isNullOrEmpty(deviceAliasOrSystemName)) {
-                            val nameLine = String.format("Name   %s", deviceAliasOrSystemName)
-                            val nameSpannable = SpannableString(nameLine)
-                            nameSpannable.setSpan(StyleSpan(android.graphics.Typeface.BOLD), 0, "Name".length,
-                                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            inboxStyle.addLine(nameSpannable)
-                        }
-
-                        //IP Address
-                        val ipLine = String.format("IP   %s", device.ipAddress)
-                        val ipSpannable = SpannableString(ipLine)
-                        ipSpannable.setSpan(StyleSpan(android.graphics.Typeface.BOLD), 0, "IP".length,
-                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                        inboxStyle.addLine(ipSpannable)
-
-                        //MAC Address
-                        val macLine = String.format("MAC   %s", device.macAddress)
-                        val macSpannable = SpannableString(macLine)
-                        macSpannable.setSpan(StyleSpan(android.graphics.Typeface.BOLD), 0, "MAC".length,
-                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                        inboxStyle.addLine(macSpannable)
-
-                        val macouiVendorDetails = device.macouiVendorDetails
-                        if (macouiVendorDetails != null) {
-                            //NIC Manufacturer
-                            val ouiLine = String.format("NIC Man.   %s",
-                                    Strings.nullToEmpty(macouiVendorDetails.company))
-                            val ouiSpannable = SpannableString(ouiLine)
-                            ouiSpannable.setSpan(StyleSpan(android.graphics.Typeface.BOLD), 0,
-                                    "NIC Man.".length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            inboxStyle.addLine(ouiSpannable)
-                        }
-
-                        mBuilder.setContentText(summaryText)
-                    } else {
-
-                        for (device in devicesCollFiltered) {
-                            val macouiVendorDetails = device.macouiVendorDetails
-                            val deviceAliasOrSystemName = device.aliasOrSystemName
-                            val deviceNameToDisplay = if (isNullOrEmpty(deviceAliasOrSystemName))
-                                device.macAddress
-                            else
-                                deviceAliasOrSystemName
-                            val line = String.format("%s   %s%s%s", deviceNameToDisplay, device.ipAddress,
-                                    if (isNullOrEmpty(deviceAliasOrSystemName))
-                                        ""
-                                    else
-                                        String.format(" | %s", device.macAddress),
-                                    if (macouiVendorDetails != null && !Strings.isNullOrEmpty(
-                                            macouiVendorDetails.company))
-                                        String.format(" (%s)",
-                                                macouiVendorDetails.company)
-                                    else
-                                        "")
-                            val sb = SpannableString(line)
-                            sb.setSpan(StyleSpan(android.graphics.Typeface.BOLD), 0,
-                                    deviceNameToDisplay.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            inboxStyle.addLine(sb)
-                        }
-
-                        mBuilder.setContentText(summaryText)
-                        mBuilder.setNumber(sizeFiltered)
-                    }
-
-                    // Moves the expanded layout object into the notification object.
-                    mBuilder.setStyle(inboxStyle)
-
-                    // Because the ID remains unchanged, the existing notification is
-                    // updated.
-                    val notification = mBuilder.build()
-                    mNotificationManager.notify(notifyID, notification)
-                    updateNotificationIconWithRouterAvatar(mCtx, router, notifyID, notification)
+                    val largeIcon = Router.loadRouterAvatarUrlSync(mCtx, router, Router.mAvatarDownloadOpts)
+                    doNotify(mCtx, router, largeIcon?:BitmapFactory.decodeResource(mCtx.resources,
+                            R.mipmap.ic_launcher_ddwrt_companion), sizeFiltered, devicesCollFiltered)
                 }
             }
+        }
+
+        private fun doNotify(mCtx: Context, router: Router, largeIcon: Bitmap,
+                             sizeFiltered: Int,
+                             devicesCollFiltered: Collection<Device>) {
+            val resultIntent = Intent(mCtx, DDWRTMainActivity::class.java)
+            resultIntent.putExtra(ROUTER_SELECTED, router.uuid)
+            resultIntent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED,
+                    4) //Open right on Clients Section
+            // Because clicking the notification opens a new ("special") activity, there's
+            // no need to create an artificial back stack.
+            val resultPendingIntent = PendingIntent.getActivity(mCtx, 0, resultIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT)
+
+            val mRouterName = router.name
+            val mRouterNameNullOrEmpty = isNullOrEmpty(mRouterName)
+            var summaryText = ""
+            if (!mRouterNameNullOrEmpty) {
+                summaryText = mRouterName!! + " ("
+            }
+            summaryText += router.remoteIpAddress
+            if (!mRouterNameNullOrEmpty) {
+                summaryText += ")"
+            }
+
+            val mBuilder = NotificationCompat.Builder(mCtx, router.notificationChannelId)
+                    .setGroup(router.uuid)
+                    .setSmallIcon(R.drawable.ic_connected_hosts_notification)
+                    .setLargeIcon(largeIcon)
+                    .setAutoCancel(true)
+//                    .setGroup(WirelessClientsTile::class.java.simpleName)
+                    .setGroupSummary(true)
+                    .setContentIntent(resultPendingIntent)
+            //                                .setDefaults(Notification.DEFAULT_ALL);
+
+            //Notification sound, if required
+            val sharedPreferences = mCtx.getSharedPreferences(
+                    RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                    Context.MODE_PRIVATE)
+            val ringtoneUri = sharedPreferences.getString(
+                    RouterCompanionAppConstants.NOTIFICATIONS_SOUND, null)
+            if (ringtoneUri != null) {
+                mBuilder.setSound(Uri.parse(ringtoneUri), AudioManager.STREAM_NOTIFICATION)
+            }
+
+            if (!sharedPreferences.getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_VIBRATE,
+                    true)) {
+                mBuilder.setDefaults(Notification.DEFAULT_LIGHTS)
+                        .setVibrate(RouterCompanionAppConstants.NO_VIBRATION_PATTERN)
+                //                    if (ringtoneUri != null) {
+                //                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
+                //                    } else {
+                //                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS);
+                //                    }
+            }
+
+            val inboxStyle = NotificationCompat.InboxStyle().setSummaryText(summaryText)
+
+            val newDevicesTitle = String.format("%d connected host%s", sizeFiltered,
+                    if (sizeFiltered > 1) "s" else "")
+
+            mBuilder.setContentTitle(newDevicesTitle)
+
+            inboxStyle.setBigContentTitle(newDevicesTitle)
+
+            if (sizeFiltered == 1) {
+                //Only one device
+                val device = devicesCollFiltered.iterator().next()
+                val deviceAliasOrSystemName = device.aliasOrSystemName
+
+                //                                mBuilder.setContentTitle(deviceNameToDisplay);
+
+                //                                inboxStyle.setBigContentTitle(deviceNameToDisplay);
+                //Name
+                if (!isNullOrEmpty(deviceAliasOrSystemName)) {
+                    val nameLine = String.format("Name   %s", deviceAliasOrSystemName)
+                    val nameSpannable = SpannableString(nameLine)
+                    nameSpannable.setSpan(StyleSpan(android.graphics.Typeface.BOLD), 0, "Name".length,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    inboxStyle.addLine(nameSpannable)
+                }
+
+                //IP Address
+                val ipLine = String.format("IP   %s", device.ipAddress)
+                val ipSpannable = SpannableString(ipLine)
+                ipSpannable.setSpan(StyleSpan(android.graphics.Typeface.BOLD), 0, "IP".length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                inboxStyle.addLine(ipSpannable)
+
+                //MAC Address
+                val macLine = String.format("MAC   %s", device.macAddress)
+                val macSpannable = SpannableString(macLine)
+                macSpannable.setSpan(StyleSpan(android.graphics.Typeface.BOLD), 0, "MAC".length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                inboxStyle.addLine(macSpannable)
+
+                val macouiVendorDetails = device.macouiVendorDetails
+                if (macouiVendorDetails != null) {
+                    //NIC Manufacturer
+                    val ouiLine = String.format("NIC Man.   %s",
+                            Strings.nullToEmpty(macouiVendorDetails.company))
+                    val ouiSpannable = SpannableString(ouiLine)
+                    ouiSpannable.setSpan(StyleSpan(android.graphics.Typeface.BOLD), 0,
+                            "NIC Man.".length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    inboxStyle.addLine(ouiSpannable)
+                }
+
+                mBuilder.setContentText(summaryText)
+            } else {
+
+                for (device in devicesCollFiltered) {
+                    val macouiVendorDetails = device.macouiVendorDetails
+                    val deviceAliasOrSystemName = device.aliasOrSystemName
+                    val deviceNameToDisplay = if (isNullOrEmpty(deviceAliasOrSystemName))
+                        device.macAddress
+                    else
+                        deviceAliasOrSystemName
+                    val line = String.format("%s   %s%s%s", deviceNameToDisplay, device.ipAddress,
+                            if (isNullOrEmpty(deviceAliasOrSystemName))
+                                ""
+                            else
+                                String.format(" | %s", device.macAddress),
+                            if (macouiVendorDetails != null && !Strings.isNullOrEmpty(
+                                    macouiVendorDetails.company))
+                                String.format(" (%s)",
+                                        macouiVendorDetails.company)
+                            else
+                                "")
+                    val sb = SpannableString(line)
+                    sb.setSpan(StyleSpan(android.graphics.Typeface.BOLD), 0,
+                            deviceNameToDisplay.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    inboxStyle.addLine(sb)
+                }
+
+                mBuilder.setContentText(summaryText)
+                mBuilder.setNumber(sizeFiltered)
+            }
+
+            // Moves the expanded layout object into the notification object.
+            mBuilder.setStyle(inboxStyle)
+
+            // Because the ID remains unchanged, the existing notification is
+            // updated.
+            val mNotificationManager = mCtx.getSystemService(
+                    Context.NOTIFICATION_SERVICE) as NotificationManager
+            // Sets an ID for the notification, so it can be updated
+            val notifyID = router.id
+            val notification = mBuilder.build()
+            mNotificationManager.notify(notifyID, notification)
+            updateNotificationIconWithRouterAvatar(mCtx, router, notifyID, notification)
         }
     }
 }
