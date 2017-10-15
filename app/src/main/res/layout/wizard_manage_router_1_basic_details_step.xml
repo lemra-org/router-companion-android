@@ -108,77 +108,85 @@
             android:prompt="@string/router_firmware_select" />
 
         <!-- #254 : Custom icon -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="Router Icon" />
-
-        <RadioGroup
-            android:id="@+id/router_add_icon_method"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/router_add_icon_auto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="Try to guess" />
-
-            <RadioButton
-                android:id="@+id/router_add_icon_custom"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Custom icon" />
-        </RadioGroup>
-
         <LinearLayout
-            android:id="@+id/router_add_icon_custom_container"
+            android:id="@+id/router_add_icon_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone">
-
-            <Button
-                android:id="@+id/router_add_icon_custom_fileselector_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:hint="Select Router Icon" />
+            android:layout_marginTop="@dimen/activity_vertical_margin">
 
             <TextView
-                android:id="@+id/router_add_icon_custom_error_msg"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
                 android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:textColor="@color/win8_red" />
+                android:layout_marginStart="4dp"
+                android:text="Router Icon" />
 
-            <TextView
-                android:id="@+id/router_add_icon_custom_path"
+            <RadioGroup
+                android:id="@+id/router_add_icon_method"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/router_add_icon_auto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Try to guess" />
+
+                <RadioButton
+                    android:id="@+id/router_add_icon_custom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Custom icon" />
+            </RadioGroup>
+
+            <LinearLayout
+                android:id="@+id/router_add_icon_custom_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone" />
+                android:orientation="vertical"
+                android:visibility="gone">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:layout_centerHorizontal="true"
-                    android:id="@+id/router_add_icon_custom_preview"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/icon_preview"/>
-            </RelativeLayout>
+                <Button
+                    android:id="@+id/router_add_icon_custom_fileselector_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:hint="Select Router Icon" />
+
+                <TextView
+                    android:id="@+id/router_add_icon_custom_error_msg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:textColor="@color/win8_red" />
+
+                <TextView
+                    android:id="@+id/router_add_icon_custom_path"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_centerHorizontal="true"
+                        android:id="@+id/router_add_icon_custom_preview"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_gravity="center_horizontal"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/icon_preview"/>
+                </RelativeLayout>
+            </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>

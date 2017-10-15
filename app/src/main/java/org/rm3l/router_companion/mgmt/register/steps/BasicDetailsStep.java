@@ -162,6 +162,24 @@ public class BasicDetailsStep extends MaterialWizardStep {
         routerIpOrDnsEt = rootView.findViewById(R.id.router_add_ip);
         routerIpTil = rootView.findViewById(R.id.router_add_ip_input_layout);
 
+        final View addIconContainerView = rootView.findViewById(R.id.router_add_icon_container);
+        routerIpOrDnsEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {}
+            @Override
+            public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {}
+
+            @Override
+            public void afterTextChanged(final Editable s) {
+                if (s != null && BuildConfig.APPLICATION_ID.equals(s.toString())) {
+                    //Hide icon customization feature for the Demo router
+                    addIconContainerView.setVisibility(View.INVISIBLE);
+                } else {
+                    addIconContainerView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
         final TextView demoText = rootView.findViewById(R.id.router_add_ip_demo_text);
         demoText.setText(
                 demoText.getText().toString().replace("%PACKAGE_NAME%", BuildConfig.APPLICATION_ID));
