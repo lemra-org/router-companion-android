@@ -551,13 +551,11 @@ public class RouterListRecycleViewAdapter
         holder.routerUuid.setText(routerAt.getUuid());
         final String routerAtName = routerAt.getName();
         final String routerNameDisplayed = (Strings.isNullOrEmpty(routerAtName) ? EMPTY : routerAtName);
-        if (Strings.isNullOrEmpty(routerAtName)) {
-            //Italic
-            holder.routerName.setText(EMPTY);
-            //            holder.routerName.setTypeface(null, Typeface.ITALIC);
-        } else {
-            holder.routerName.setText(routerAtName);
-        }
+        holder.routerName.setText(routerNameDisplayed);
+//        if (Strings.isNullOrEmpty(routerAtName)) {
+//            //Italic
+//            //            holder.routerName.setTypeface(null, Typeface.ITALIC);
+//        }
         final String remoteIpAddress = routerAt.getRemoteIpAddress();
         final boolean isDemoRouter = Utils.isDemoRouter(remoteIpAddress);
 
