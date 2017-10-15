@@ -178,7 +178,7 @@ public class ReviewStep extends MaterialWizardStep {
                                     + "This might be the cause of this error. \n"
                                     + "Make sure you can manually SSH into the router from a computer, "
                                     + "using the same credentials you provided to the app. \n"
-                                    + "If the error persists, we recommend you upgrade or downgrade "
+                                    + "If the error still persists, we recommend you upgrade or downgrade "
                                     + "your router to a build "
                                     + "with a working SSH server, then try again.\n\n"
                                     + "Please reach out to us at apps@rm3l.org for assistance.", true, true).show();
@@ -512,18 +512,15 @@ public class ReviewStep extends MaterialWizardStep {
         if (routerSelected != null
                 && action != RouterWizardAction.ADD
                 && action != RouterWizardAction.COPY) {
+            router.setOrderIndex(routerSelected.getOrderIndex());
             dbRouter = this.dao.updateRouter(router);
-            if (dbRouter != null) {
-                NotificationHelperKt.createNotificationChannelGroup(dbRouter, context);
-            }
         } else {
             //This is a new router to add
             dbRouter = this.dao.insertRouter(router);
-            if (dbRouter != null) {
-                NotificationHelperKt.createNotificationChannelGroup(dbRouter, context);
-            }
         }
         if (dbRouter != null) {
+            //Create or update notification channel groups
+            NotificationHelperKt.createNotificationChannelGroup(dbRouter, context);
             context.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
                     .edit()
                     .putString(ManageRouterWizard.class.getSimpleName(), dbRouter.getUuid())
