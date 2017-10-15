@@ -180,7 +180,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
                 //Router Name
                 final TextView routerNameView =
-                        (TextView) this.layout.findViewById(R.id.tile_network_map_router_name);
+                        this.layout.findViewById(R.id.tile_network_map_router_name);
                 final String routerName = data.getProperty(NVRAMInfo.Companion.getROUTER_NAME());
                 final boolean routerNameNull = (routerName == null);
                 String routerNameToSet = routerName;
@@ -189,7 +189,8 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                 }
                 routerNameView.setTypeface(null,
                         isNullOrEmpty(routerNameToSet) ? Typeface.ITALIC : Typeface.NORMAL);
-                routerNameView.setText(isNullOrEmpty(routerNameToSet) ? "(empty)" : routerNameToSet);
+                routerNameView.setText(isNullOrEmpty(routerNameToSet) ? "(empty)" :
+                        Utils.truncateText(routerNameToSet, 30));
 
                 //WAN IP
                 final TextView wanIpView =
