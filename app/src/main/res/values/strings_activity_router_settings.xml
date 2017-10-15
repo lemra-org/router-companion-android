@@ -199,7 +199,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string-array name="notificationsChoice">
         <item>Connected Hosts</item>
         <item>WAN IP Updates</item>
-        <item>DD-WRT Build Updates</item>
+        <item>Firmware Updates</item>
     </string-array>
     <string-array name="notificationsChoice_values">
         <item>ConnectedHostsServiceTask</item>

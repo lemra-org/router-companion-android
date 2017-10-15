@@ -118,16 +118,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:summaryOn="Enabled. You may get notifications even if you are not using the app. Notifications can be managed in each router settings."
             android:title="Background Service" />
 
-        <org.rm3l.router_companion.widgets.LongListPreference
-            android:defaultValue="360"
-            android:dependency="notifications.background.service.enable"
-            android:entries="@array/pref_notifications_sync_frequency_titles"
-            android:entryValues="@array/pref_notifications_sync_frequency_values"
-            android:icon="@drawable/ic_action_navigation_refresh"
-            android:key="notifications.syncIntervalMinutes"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="Background Service Frequency" />
+        <!--<org.rm3l.router_companion.widgets.LongListPreference-->
+            <!--android:defaultValue="360"-->
+            <!--android:dependency="notifications.background.service.enable"-->
+            <!--android:entries="@array/pref_notifications_sync_frequency_titles"-->
+            <!--android:entryValues="@array/pref_notifications_sync_frequency_values"-->
+            <!--android:icon="@drawable/ic_action_navigation_refresh"-->
+            <!--android:key="notifications.syncIntervalMinutes"-->
+            <!--android:negativeButtonText="@null"-->
+            <!--android:positiveButtonText="@null"-->
+            <!--android:title="Background Service Frequency" />-->
 
         <org.rm3l.router_companion.widgets.MyMultiSelectListPreference
             android:defaultValue="@array/notificationsChoice_values"

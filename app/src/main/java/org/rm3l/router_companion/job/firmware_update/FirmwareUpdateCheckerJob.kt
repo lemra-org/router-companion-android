@@ -51,6 +51,7 @@ import org.rm3l.router_companion.utils.Utils
 import org.rm3l.router_companion.utils.notifications.NOTIFICATION_GROUP_GENERAL_UPDATES
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 const val LAST_RELEASE_CHECKED = "lastReleaseChecked"
@@ -71,10 +72,9 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
             }
 
             if (!JobManager.instance().getAllJobRequestsForTag(TAG).isEmpty()) {
-                // job already scheduled, nothing to do => cancel
+                // job already scheduled, nothing to do
                 Crashlytics.log(Log.DEBUG, TAG, "job $TAG already scheduled => nothing to do!")
-//                JobManager.instance().cancelAllForTag(TAG)
-//                return
+                return
             }
             val builder = JobRequest.Builder(TAG)
                     .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
@@ -356,7 +356,8 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
     override fun onRunDailyJob(params: Params?): DailyJobResult {
         try {
             if (!handleJob(context, params)) {
-                return DailyJobResult.CANCEL
+                Crashlytics.log(Log.WARN, TAG,
+                        "Today (${Date()}) execution did not succeed => hopefully it will succeeed tomorrow...")
             }
         } catch (e: Exception) {
             Crashlytics.logException(e)

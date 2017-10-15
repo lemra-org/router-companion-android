@@ -33,9 +33,8 @@ class BackgroundService: DailyJob(), RouterCompanionJob {
         @JvmStatic
         fun schedule() {
             if (!JobManager.instance().getAllJobRequestsForTag(TAG).isEmpty()) {
-                // job already scheduled, nothing to do => cancel
+                // job already scheduled, nothing to do
                 Crashlytics.log(Log.DEBUG, TAG, "job $TAG already scheduled => nothing to do!")
-//                JobManager.instance().cancelAllForTag(TAG)
                 return
             }
             val builder = JobRequest.Builder(TAG)
@@ -113,7 +112,13 @@ class BackgroundService: DailyJob(), RouterCompanionJob {
 
     override fun onRunDailyJob(params: Params?): DailyJobResult {
         try {
-            handleJob(context, params)
+            if (context.getSharedPreferences(
+                    RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                    .getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_BG_SERVICE_ENABLE, false)) {
+                handleJob(context, params)
+            } else {
+                Crashlytics.log(Log.DEBUG, TAG, "Background Service disabled (user choice)");
+            }
         } catch (e: Exception) {
             //No worries
             Crashlytics.logException(e)
