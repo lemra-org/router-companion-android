@@ -6,6 +6,7 @@ import static org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SEL
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -103,7 +104,7 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo> {
             Exception exception = data.getException();
 
             final TextView errorPlaceHolderView =
-                    (TextView) this.layout.findViewById(R.id.tile_dashboard_mem_cpu_error);
+                    this.layout.findViewById(R.id.tile_dashboard_mem_cpu_error);
 
             if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
@@ -111,26 +112,21 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo> {
                     errorPlaceHolderView.setVisibility(View.GONE);
                 }
 
-                if (isThemeLight) {
-                    //Text: blue
-                    //Finished stroke color: white
-                    //Unfinished stroke color: white
-                    final int finishedStrokeColor =
-                            ContextCompat.getColor(mParentFragmentActivity, R.color.arcprogress_unfinished);
-                    mMemArcProgress.setFinishedStrokeColor(finishedStrokeColor);
-                    mCpuArcProgress.setFinishedStrokeColor(finishedStrokeColor);
-                    final int unfinishedStrokeColor =
-                            ContextCompat.getColor(mParentFragmentActivity, R.color.arcprogress_finished);
-                    mMemArcProgress.setUnfinishedStrokeColor(unfinishedStrokeColor);
-                    mCpuArcProgress.setUnfinishedStrokeColor(unfinishedStrokeColor);
-                } else {
-                    //Text: white
-                    //Finished stroke color: white
-                    //Unfinished stroke color: blue
-                    final int textColor = ContextCompat.getColor(mParentFragmentActivity, R.color.white);
-                    mMemArcProgress.setTextColor(textColor);
-                    mCpuArcProgress.setTextColor(textColor);
+                Integer arcProgressFinishedColor = null;
+                if (mRouter != null) {
+                    final Integer primaryColor = ColorUtils.Companion.getPrimaryColor(mRouter.getRouterFirmware());
+                    if (primaryColor != null) {
+                        arcProgressFinishedColor = ContextCompat.getColor(mParentFragmentActivity, primaryColor);
+                    }
                 }
+                if (arcProgressFinishedColor != null) {
+                    mMemArcProgress.setFinishedStrokeColor(arcProgressFinishedColor);
+                    mCpuArcProgress.setFinishedStrokeColor(arcProgressFinishedColor);
+                }
+                final int textColor = ContextCompat.getColor(mParentFragmentActivity,
+                        isThemeLight ? R.color.black : R.color.white);
+                mMemArcProgress.setTextColor(textColor);
+                mCpuArcProgress.setTextColor(textColor);
 
                 //Red
                 final int red = ContextCompat.getColor(mParentFragmentActivity, R.color.win8_red);

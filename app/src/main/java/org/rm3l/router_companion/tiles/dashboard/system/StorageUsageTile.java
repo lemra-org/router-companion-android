@@ -123,29 +123,23 @@ public class StorageUsageTile extends DDWRTTile<NVRAMInfo> {
                     errorPlaceHolderView.setVisibility(View.GONE);
                 }
 
-                if (isThemeLight) {
-                    //Text: blue
-                    //Finished stroke color: white
-                    //Unfinished stroke color: white
-                    final int finishedStrokeColor =
-                            ContextCompat.getColor(mParentFragmentActivity, R.color.arcprogress_unfinished);
-                    final int unfinishedStrokeColor =
-                            ContextCompat.getColor(mParentFragmentActivity, R.color.arcprogress_finished);
-                    mNVRAMArcProgress.setFinishedStrokeColor(finishedStrokeColor);
-                    mNVRAMArcProgress.setUnfinishedStrokeColor(unfinishedStrokeColor);
-                    mJFFS2ArcProgress.setFinishedStrokeColor(finishedStrokeColor);
-                    mJFFS2ArcProgress.setUnfinishedStrokeColor(unfinishedStrokeColor);
-                    mCIFSArcProgress.setFinishedStrokeColor(finishedStrokeColor);
-                    mCIFSArcProgress.setUnfinishedStrokeColor(unfinishedStrokeColor);
-                } else {
-                    //Text: white
-                    //Finished stroke color: white
-                    //Unfinished stroke color: blue
-                    final int textColor = ContextCompat.getColor(mParentFragmentActivity, R.color.white);
-                    mNVRAMArcProgress.setTextColor(textColor);
-                    mJFFS2ArcProgress.setTextColor(textColor);
-                    mCIFSArcProgress.setTextColor(textColor);
+                Integer arcProgressFinishedColor = null;
+                if (mRouter != null) {
+                    final Integer primaryColor = ColorUtils.Companion.getPrimaryColor(mRouter.getRouterFirmware());
+                    if (primaryColor != null) {
+                        arcProgressFinishedColor = ContextCompat.getColor(mParentFragmentActivity, primaryColor);
+                    }
                 }
+                if (arcProgressFinishedColor != null) {
+                    mNVRAMArcProgress.setFinishedStrokeColor(arcProgressFinishedColor);
+                    mCIFSArcProgress.setUnfinishedStrokeColor(arcProgressFinishedColor);
+                    mJFFS2ArcProgress.setFinishedStrokeColor(arcProgressFinishedColor);
+                }
+                final int textColor = ContextCompat.getColor(mParentFragmentActivity,
+                        isThemeLight ? R.color.black : R.color.white);
+                mNVRAMArcProgress.setTextColor(textColor);
+                mCIFSArcProgress.setTextColor(textColor);
+                mJFFS2ArcProgress.setTextColor(textColor);
 
                 try {
                     final String nvramUsedStr = data.getProperty(NVRAMInfo.Companion.getNVRAM_USED_PERCENT());
