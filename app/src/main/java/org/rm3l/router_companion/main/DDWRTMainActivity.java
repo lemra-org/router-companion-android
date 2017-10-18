@@ -174,7 +174,7 @@ import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 
 /**
- * Main Android Activity
+ * Main Router Activity
  * <p/>
  */
 @DeepLink({
@@ -333,7 +333,9 @@ public class DDWRTMainActivity extends AppCompatActivity
         if (intent.getBooleanExtra(DeepLink.IS_DEEP_LINK, false)) {
             //Deep link
             final Bundle parameters = intent.getExtras();
-            uuid = parameters.getString("routerUuid");
+            if (parameters != null) {
+                uuid = parameters.getString("routerUuid");
+            }
         } else {
             //            final String action = intent.getAction();
             //            final String data = intent.getDataString();
@@ -2227,6 +2229,10 @@ public class DDWRTMainActivity extends AppCompatActivity
 
     private void setUpViewPager() {
         mViewPager = findViewById(R.id.tabanim_viewpager);
+        final Integer statusBarColor = ColorUtils.Companion.getStatusBarColor(mRouter.getRouterFirmware());
+        if (statusBarColor != null) {
+            mViewPager.setBackgroundColor(ContextCompat.getColor(this, statusBarColor));
+        }
         mTabLayout = findViewById(R.id.tabanim_tabs);
         mTabLayout.setSelectedTabIndicatorColor(
                 ColorUtils.Companion.getColor(DDWRTMainActivity.class.getCanonicalName()));

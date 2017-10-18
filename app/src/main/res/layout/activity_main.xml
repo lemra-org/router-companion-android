@@ -25,7 +25,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".main.DDWRTMainActivity">
+    tools:context="org.rm3l.router_companion.main.DDWRTMainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
