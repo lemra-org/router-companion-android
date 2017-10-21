@@ -558,18 +558,8 @@ public class Router implements Serializable {
 
     public static void doFetchAndSetRouterAvatarInImageView(final Context context,
             final Router mRouter, final ImageView routerImageView) {
-        final String routerModelStr = getRouterModel(context, mRouter);
-
-        if (Strings.isNullOrEmpty(routerModelStr) || Utils.isDemoRouter(mRouter)) {
-            routerImageView.setImageResource(
-                    Utils.isDemoRouter(mRouter) ? R.drawable.demo_router : R.drawable.router);
-        } else {
-            //final String[] opts = new String[] {"w_65","h_45", "e_sharpen"};
-
-            //Download image in the background
-            Utils.downloadImageForRouter(context, mRouter, routerImageView, null, null,
-                    R.drawable.router, mAvatarDownloadOpts);
-        }
+        Utils.downloadImageForRouter(context, mRouter, routerImageView, null, null,
+                R.drawable.router, mAvatarDownloadOpts);
     }
 
     @NonNull
@@ -798,6 +788,8 @@ public class Router implements Serializable {
             this.privKey = \"fake-key\";
             this.strictHostKeyChecking = router.strictHostKeyChecking;
             this.routerFirmware = router.routerFirmware;
+            this.iconMethod = router.iconMethod;
+            this.iconPath = router.iconPath;
         } else {
             this.templateUuid = null;
         }
