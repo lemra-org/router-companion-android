@@ -2229,10 +2229,10 @@ public class DDWRTMainActivity extends AppCompatActivity
 
     private void setUpViewPager() {
         mViewPager = findViewById(R.id.tabanim_viewpager);
-        final Integer statusBarColor = ColorUtils.Companion.getStatusBarColor(mRouter.getRouterFirmware());
-        if (statusBarColor != null) {
-            mViewPager.setBackgroundColor(ContextCompat.getColor(this, statusBarColor));
-        }
+//        final Integer statusBarColor = ColorUtils.Companion.getStatusBarColor(mRouter.getRouterFirmware());
+//        if (statusBarColor != null) {
+//            mViewPager.setBackgroundColor(ContextCompat.getColor(this, statusBarColor));
+//        }
         mTabLayout = findViewById(R.id.tabanim_tabs);
         mTabLayout.setSelectedTabIndicatorColor(
                 ColorUtils.Companion.getColor(DDWRTMainActivity.class.getCanonicalName()));
