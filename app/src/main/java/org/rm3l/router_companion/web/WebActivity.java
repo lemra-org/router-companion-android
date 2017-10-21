@@ -94,8 +94,8 @@ public abstract class WebActivity extends AppCompatActivity
 
         mToolbar = findViewById(R.id.web_toolbar);
         if (mToolbar != null) {
-            final int titleResId = this.getTitleResId();
-            if (titleResId > 0) {
+            final Integer titleResId = this.getTitleResId();
+            if (titleResId != null) {
                 mToolbar.setTitle(titleResId);
             } else {
                 mToolbar.setTitle(this.getTitleStr());
@@ -125,7 +125,7 @@ public abstract class WebActivity extends AppCompatActivity
 
         final WebSettings webSettings = mWebview.getSettings();
         //FIXME Review
-        webSettings.setJavaScriptEnabled(true);
+        webSettings.setJavaScriptEnabled(this.isJavascriptEnabled());
         webSettings.setDomStorageEnabled(true);
         webSettings.setSupportZoom(true);
         webSettings.setBuiltInZoomControls(true);
@@ -173,6 +173,8 @@ public abstract class WebActivity extends AppCompatActivity
             //            mSwipeRefreshLayout.setEnabled(false);
         }
     }
+
+    protected abstract boolean isJavascriptEnabled();
 
     @Override
     public void finish() {
@@ -254,7 +256,7 @@ public abstract class WebActivity extends AppCompatActivity
         return null;
     }
 
-    protected abstract int getTitleResId();
+    protected abstract Integer getTitleResId();
 
     protected abstract CharSequence getTitleStr();
 

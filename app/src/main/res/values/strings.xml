@@ -608,5 +608,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="nb_active_clients"># Active Clients</string>
     <string name="nb_active_dhcp_leases"># Active DHCP Leases</string>
     <string name="internet_wan">\n Internet (WAN)</string>
+    <string name="check_for_firmware_updates">Check for firmware updates</string>
+    <string name="open_web_interface">Open Web Interface</string>
+    <string name="open_ssh_console">Open SSH Console</string>
+    <string name="speed_test">Speed Test</string>
+    <string name="utilities">Utilities</string>
+    <string name="manage_aliases">Manage Aliases</string>
+    <string name="restore">Restore</string>
+    <string name="backup">Backup</string>
+    <string name="backup_restore">Backup / Restore</string>
+    <string name="restart_httpd">Restart HTTPd</string>
+    <string name="stop_httpd">Stop HTTPd</string>
+    <string name="start_httpd">Start HTTPd</string>
+    <string name="httpd_web_server">HTTPd (Web Server)</string>
+    <string name="clear_dns_cache">Clear DNS Cache</string>
+    <string name="clear_arp_cache">Clear ARP Cache</string>
+    <string name="actions">Actions</string>
+    <string name="take_bug_report">Take Bug Report</string>
 
 </resources>

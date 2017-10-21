@@ -163,8 +163,8 @@ class ColorUtils private constructor() {
         }
 
         @ColorRes
-        fun getActualColorRes(routerFirmware: RouterFirmware?,
-                              themeSuffix: String?): Int? {
+        private fun getActualColorRes(routerFirmware: RouterFirmware?,
+                                      themeSuffix: String?): Int? {
 
             val useDefaultStyle = routerFirmware == null
                     || RouterFirmware.AUTO == routerFirmware
@@ -173,15 +173,15 @@ class ColorUtils private constructor() {
                 //What to return here? => default behavior
                 return null
             } else {
-                try {
-                    return Utils.getResId(
+                return try {
+                    Utils.getResId(
                             String.format("%s_%s",
                                     routerFirmware!!.name.toLowerCase(),
                                     Strings.nullToEmpty(themeSuffix)),
                             R.color::class.java)
                 } catch (e: Exception) {
                     Crashlytics.logException(e)
-                    return null
+                    null
                 }
 
             }

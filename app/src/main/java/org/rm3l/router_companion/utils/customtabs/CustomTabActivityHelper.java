@@ -19,6 +19,7 @@ import java.util.List;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.feedback.SendFeedbackBroadcastReceiver;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
+import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.ColorUtils;
 
 /**
@@ -73,8 +74,17 @@ public class CustomTabActivityHelper {
         builder.setShowTitle(true);
         // Changes the background color for the omnibox. colorInt is an int
         // that specifies a Color.
+        Integer toolbarColor = null;
+        if (routerUuid != null) {
+            final Router router = RouterManagementActivity.getDao(context).getRouter(routerUuid);
+            if (router != null) {
+                toolbarColor = ColorUtils.Companion.getPrimaryColor(router.getRouterFirmware());
+            }
+        }
         builder.setToolbarColor(ContextCompat.getColor(context,
-                ColorUtils.Companion.isThemeLight(context) ? R.color.lightTheme_primary : R.color.darkTheme_primary));
+                toolbarColor != null ? toolbarColor :
+                        ColorUtils.Companion.isThemeLight(context) ?
+                                R.color.lightTheme_primary : R.color.darkTheme_primary));
 
         builder.setStartAnimations(context, R.anim.slide_in_right, R.anim.slide_out_left);
         builder.setExitAnimations(context, android.R.anim.slide_in_left,

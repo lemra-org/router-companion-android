@@ -33,7 +33,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <menu>
 
             <item
-                android:title="Actions"
+                android:title="@string/actions"
                 app:showAsAction="ifRoom">
 
                 <menu>
@@ -50,7 +50,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:id="@+id/action_ddwrt_actions_clear_arp_cache"
                         android:checkable="false"
                         android:checked="false"
-                        android:title="Clear ARP Cache"
+                        android:title="@string/clear_arp_cache"
                         app:showAsAction="never" />
 
                     <!-- Clear DNS Cache -->
@@ -59,13 +59,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:id="@+id/action_ddwrt_actions_clear_dns_cache"
                         android:checkable="false"
                         android:checked="false"
-                        android:title="Clear DNS Cache"
+                        android:title="@string/clear_dns_cache"
                         app:showAsAction="never" />
 
                     <item
                         android:checkable="false"
                         android:checked="false"
-                        android:title="HTTPd (Web Server)"
+                        android:title="@string/httpd_web_server"
                         app:showAsAction="ifRoom">
                         <menu>
                             <!-- Start httpd -->
@@ -73,21 +73,21 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:id="@+id/action_ddwrt_actions_httpd_start"
                                 android:checkable="false"
                                 android:checked="false"
-                                android:title="Start HTTPd"
+                                android:title="@string/start_httpd"
                                 app:showAsAction="never" />
                             <!-- Stop httpd -->
                             <item
                                 android:id="@+id/action_ddwrt_actions_httpd_stop"
                                 android:checkable="false"
                                 android:checked="false"
-                                android:title="Stop HTTPd"
+                                android:title="@string/stop_httpd"
                                 app:showAsAction="never" />
                             <!-- Restart httpd -->
                             <item
                                 android:id="@+id/action_ddwrt_actions_httpd_restart"
                                 android:checkable="false"
                                 android:checked="false"
-                                android:title="Restart HTTPd"
+                                android:title="@string/restart_httpd"
                                 app:showAsAction="never" />
 
                         </menu>
@@ -95,19 +95,19 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                     <item
                         android:id="@+id/action_ddwrt_actions_backup_restore_router"
-                        android:title="Backup / Restore"
+                        android:title="@string/backup_restore"
                         app:showAsAction="ifRoom">
 
                         <menu>
                             <item
                                 android:id="@+id/action_ddwrt_actions_backup_restore_router_backup"
                                 android:alphabeticShortcut="R"
-                                android:title="Backup"
+                                android:title="@string/backup"
                                 app:showAsAction="ifRoom" />
                             <item
                                 android:id="@+id/action_ddwrt_actions_backup_restore_router_restore"
                                 android:alphabeticShortcut="R"
-                                android:title="Restore"
+                                android:title="@string/restore"
                                 app:showAsAction="ifRoom" />
                         </menu>
                     </item>
@@ -137,13 +137,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:id="@+id/action_ddwrt_actions_manage_aliases"
                 android:checkable="false"
                 android:checked="false"
-                android:title="Manage Aliases"
+                android:title="@string/manage_aliases"
                 app:showAsAction="ifRoom" />
 
             <item
                 android:checkable="false"
                 android:checked="false"
-                android:title="Utilities"
+                android:title="@string/utilities"
                 app:showAsAction="ifRoom">
 
                 <menu>
@@ -152,12 +152,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:id="@+id/action_ddwrt_actions_speedtest"
                         android:checkable="false"
                         android:checked="false"
-                        android:title="Speed Test"
+                        android:title="@string/speed_test"
                         app:showAsAction="never" />
 
                     <item
                         android:id="@+id/action_ddwrt_actions_ssh_router"
-                        android:title="Open SSH Console"
+                        android:title="@string/open_ssh_console"
                         app:showAsAction="ifRoom" />
 
                     <!-- TODO Store http port (or WAN port) in router preferences. If available, pick it from there. Otherwise, ask user to provide the right port.
@@ -166,7 +166,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <item
                         android:id="@+id/action_ddwrt_actions_open_webinterface"
                         android:alphabeticShortcut="W"
-                        android:title="Open Web Interface"
+                        android:title="@string/open_web_interface"
                         android:visible="true"
                         app:showAsAction="ifRoom" />
 
@@ -178,12 +178,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 </menu>
             </item>
 
-            <!-- Check for updates -->
+            <!-- Check for FW updates -->
             <item
-                android:id="@+id/action_ddwrt_check_for_updates"
+                android:id="@+id/action_check_for_firmware_updates"
                 android:checkable="false"
                 android:checked="false"
-                android:title="Check for updates"
+                android:title="@string/check_for_firmware_updates"
                 app:showAsAction="ifRoom" />
 
         </menu>
@@ -205,7 +205,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!-- Seems redundant with the send_feedback menu item-->
     <item
         android:id="@+id/action_take_bug_report"
-        android:title="Take Bug Report"
+        android:title="@string/take_bug_report"
         android:visible="false"
         app:showAsAction="never" />
 
@@ -223,7 +223,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <item
         android:id="@+id/changelog"
-        android:title="What's new"
+        android:title="@string/what_s_new"
         app:showAsAction="never" />
 
 

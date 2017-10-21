@@ -1112,7 +1112,7 @@ public class DDWRTMainActivity extends AppCompatActivity
         final RouterFirmware routerFirmware = mRouter.getRouterFirmware();
 
         //Check for updates (only for DD-WRT at this time)
-        final MenuItem checkForUpdatesMenuItem = menu.findItem(R.id.action_ddwrt_check_for_updates);
+        final MenuItem checkForUpdatesMenuItem = menu.findItem(R.id.action_check_for_firmware_updates);
         if (checkForUpdatesMenuItem != null) {
             //TODO Only supported for DD-WRT for now
             final boolean enabled = (routerFirmware != null &&
@@ -1428,7 +1428,7 @@ public class DDWRTMainActivity extends AppCompatActivity
             }
             return true;
 
-            case R.id.action_ddwrt_check_for_updates:
+            case R.id.action_check_for_firmware_updates:
                 FirmwareUpdateCheckerJob.manualCheckForFirmwareUpdate(this, mGooGlService, mRouter);
                 return true;
 

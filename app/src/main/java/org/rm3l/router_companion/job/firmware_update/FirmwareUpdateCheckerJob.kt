@@ -18,6 +18,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
+import android.widget.Toast
 import com.crashlytics.android.Crashlytics
 import com.evernote.android.job.DailyJob
 import com.evernote.android.job.Job
@@ -34,6 +35,7 @@ import org.rm3l.router_companion.RouterCompanionAppConstants.CLOUD_MESSAGING_TOP
 import org.rm3l.router_companion.RouterCompanionAppConstants.GOOGLE_API_KEY
 import org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_CHOICE_PREF
 import org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_ENABLE
+import org.rm3l.router_companion.actions.activity.OpenWebManagementPageActivity
 import org.rm3l.router_companion.api.urlshortener.goo_gl.GooGlService
 import org.rm3l.router_companion.api.urlshortener.goo_gl.resources.GooGlData
 import org.rm3l.router_companion.common.utils.ExceptionUtils
@@ -41,16 +43,21 @@ import org.rm3l.router_companion.firmwares.FirmwareRelease
 import org.rm3l.router_companion.firmwares.NoNewFirmwareUpdate
 import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager
 import org.rm3l.router_companion.job.RouterCompanionJob
+import org.rm3l.router_companion.main.DDWRTMainActivity.SAVE_ROUTER_SELECTED
 import org.rm3l.router_companion.mgmt.RouterManagementActivity
+import org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED
+import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO
 import org.rm3l.router_companion.multithreading.MultiThreadingManager
 import org.rm3l.router_companion.resources.conn.NVRAMInfo
 import org.rm3l.router_companion.resources.conn.Router
 import org.rm3l.router_companion.tiles.status.router.StatusRouterStateTile
 import org.rm3l.router_companion.utils.NetworkUtils
 import org.rm3l.router_companion.utils.Utils
+import org.rm3l.router_companion.utils.customtabs.CustomTabActivityHelper
 import org.rm3l.router_companion.utils.notifications.NOTIFICATION_GROUP_GENERAL_UPDATES
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils
+import org.rm3l.router_companion.web.WebActivity
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -146,7 +153,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                             if (exception != null) {
                                 when (exception) {
                                     is NoNewFirmwareUpdate -> Utils.displayMessage(activity,
-                                            "Your router (${router.canonicalHumanReadableName}) is up to date.",
+                                            "Your router (${router.canonicalHumanReadableName}) is up-to-date.",
                                             SnackbarUtils.Style.CONFIRM)
                                     else -> Utils.displayMessage(activity,
                                             "Could not check for update: ${ExceptionUtils.getRootCause(exception).message}",
@@ -173,7 +180,23 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
 
                                             @Throws(Exception::class)
                                             override fun onDismissEventActionClick(event: Int, bundle: Bundle?) {
-                                                activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(result.first)))
+                                                if (result.first == null) {
+                                                    Toast.makeText(activity, "Internal Error - please try again later",
+                                                            Toast.LENGTH_SHORT).show()
+                                                    Crashlytics.logException(FirmwareUpdateFoundButWithNoUrlException("Firmware update: no URL"))
+                                                } else {
+                                                    val url = result.first!!
+                                                    CustomTabActivityHelper.openCustomTab(activity,
+                                                            null, url, router.uuid, null,
+                                                            { activity, _ ->
+                                                                //Otherwise, default to a classic WebView implementation
+                                                                val intent = Intent(activity,
+                                                                        FirmwareReleaseDownloadPageActivity::class.java)
+                                                                intent.putExtra(ROUTER_SELECTED, router.uuid)
+                                                                intent.putExtra(FirmwareReleaseDownloadPageActivity.RELEASE_URL, url)
+                                                                activity.startActivity(intent)
+                                                    }, false)
+                                                }
                                             }
 
                                             @Throws(Exception::class)
@@ -383,4 +406,53 @@ class FirmwareUpdateCheckerOneShotJob : Job(), RouterCompanionJob {
         }
     }
 
+}
+
+class FirmwareUpdateFoundButWithNoUrlException(message: String?, throwable: Throwable? = null):
+        RuntimeException(message, throwable)
+
+class FirmwareReleaseDownloadPageActivity: WebActivity() {
+
+    private var mDao: DDWRTCompanionDAO? = null
+    private var mUrl: String? = null
+    private var mRouter: Router? = null
+
+    companion object {
+        const val RELEASE = "RELEASE"
+        const val RELEASE_URL = "RELEASE_URL"
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mDao = RouterManagementActivity.getDao(this)
+        var uuid: String? = intent.getStringExtra(ROUTER_SELECTED)
+        if (uuid == null) {
+            if (savedInstanceState != null) {
+                uuid = savedInstanceState.getString(SAVE_ROUTER_SELECTED)
+            }
+        }
+        this.mRouter = mDao?.getRouter(uuid!!)
+        if (this.mRouter == null) {
+            Toast.makeText(this, "No router set or router no longer exists", Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
+
+        if (intent.hasExtra(RELEASE_URL)) {
+            mUrl = intent.getStringExtra(RELEASE_URL)
+        }
+
+        mToolbar.subtitle = Router.getCanonicalHumanReadableNameWithEffectiveInfo(this, this.mRouter, false)
+
+    }
+
+    override fun isJavascriptEnabled() = false
+
+    override fun getUrl(): String {
+        return this.mUrl?:""
+    }
+
+    override fun getTitleResId() = null
+
+    override fun getTitleStr() = "Firmware Release"
 }

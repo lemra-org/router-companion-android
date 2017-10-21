@@ -10,6 +10,11 @@ import org.rm3l.router_companion.web.WebActivity;
  */
 public class HelpActivity extends WebActivity {
 
+    @Override
+    protected boolean isJavascriptEnabled() {
+        return true;
+    }
+
     @NonNull
     @Override
     public String getUrl() {
@@ -17,7 +22,7 @@ public class HelpActivity extends WebActivity {
     }
 
     @Override
-    protected int getTitleResId() {
+    protected Integer getTitleResId() {
         return R.string.help;
     }
 

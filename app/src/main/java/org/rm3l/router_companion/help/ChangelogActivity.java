@@ -41,6 +41,11 @@ public class ChangelogActivity extends WebActivity {
         }
     }
 
+    @Override
+    protected boolean isJavascriptEnabled() {
+        return true;
+    }
+
     @NonNull
     @Override
     public String getUrl() {
@@ -48,7 +53,7 @@ public class ChangelogActivity extends WebActivity {
     }
 
     @Override
-    protected int getTitleResId() {
+    protected Integer getTitleResId() {
         return R.string.what_s_new;
     }
 

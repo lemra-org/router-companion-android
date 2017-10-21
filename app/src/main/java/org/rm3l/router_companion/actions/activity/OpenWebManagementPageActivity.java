@@ -290,6 +290,11 @@ public class OpenWebManagementPageActivity extends WebActivity {
     }
 
     @Override
+    protected boolean isJavascriptEnabled() {
+        return true;
+    }
+
+    @Override
     protected void onPause() {
         if (mWebManagementLoaderTask != null) {
             mWebManagementLoaderTask.cancel();
@@ -333,8 +338,8 @@ public class OpenWebManagementPageActivity extends WebActivity {
     }
 
     @Override
-    protected int getTitleResId() {
-        return 0;
+    protected Integer getTitleResId() {
+        return null;
     }
 
     @Override
