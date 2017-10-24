@@ -885,25 +885,19 @@ public class SpeedTestActivity extends AppCompatActivity
 
         final String[] maxFileSizeValuesStrArr =
                 getResources().getStringArray(R.array.routerSpeedTestMaxFileSize_values);
-        if (maxFileSizeValuesStrArr == null) {
-            mPossibleFileSizes = new Long[]{100L};
-            Utils.reportException(this,
-                    new SpeedTestException("R.array.routerSpeedTestMaxFileSize_values is NULL"));
-        } else {
-            mPossibleFileSizes = new Long[maxFileSizeValuesStrArr.length];
-            int i = 0;
-            try {
-                for (final String maxFileSizeValuesStr : maxFileSizeValuesStrArr) {
-                    mPossibleFileSizes[i++] = Long.parseLong(maxFileSizeValuesStr);
-                }
-            } catch (final NumberFormatException nfe) {
-                nfe.printStackTrace();
-                Utils.reportException(this, nfe);
-                Toast.makeText(this, "Internal error - thanks for reporting the issue.", Toast.LENGTH_SHORT)
-                        .show();
-                finish();
-                return;
+        mPossibleFileSizes = new Long[maxFileSizeValuesStrArr.length];
+        int i = 0;
+        try {
+            for (final String maxFileSizeValuesStr : maxFileSizeValuesStrArr) {
+                mPossibleFileSizes[i++] = Long.parseLong(maxFileSizeValuesStr);
             }
+        } catch (final NumberFormatException nfe) {
+            nfe.printStackTrace();
+            Utils.reportException(this, nfe);
+            Toast.makeText(this, "Internal error - thanks for reporting the issue.", Toast.LENGTH_SHORT)
+                    .show();
+            finish();
+            return;
         }
         if (mPossibleFileSizes.length == 0) {
             mPossibleFileSizes = new Long[]{100L};
@@ -1459,14 +1453,6 @@ public class SpeedTestActivity extends AppCompatActivity
 
             case R.id.action_feedback:
                 Utils.openFeedbackForm(this, mOriginalRouter);
-                //                final Intent intent = new Intent(SpeedTestActivity.this, FeedbackActivity.class);
-                //                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mOriginalRouter.getUuid());
-                //                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
-                //                ViewGroupUtils.exportViewToFile(SpeedTestActivity.this, getWindow().getDecorView(), screenshotFile);
-                //                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
-                //                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
-                //                startActivity(intent);
-                ////                Utils.buildFeedbackDialog(this, true);
                 return true;
 
             case R.id.router_speedtest_refresh:
@@ -1829,41 +1815,6 @@ public class SpeedTestActivity extends AppCompatActivity
     }
 
     static {
-        /*
-            Public Access for S3 requires the following bucket policy:
-
-            {
-              "Version": "2012-10-17",
-              "Statement": [
-                {
-                  "Sid":"AddPerm",
-                  "Effect":"Allow",
-                  "Principal": "*",
-                  "Action":["s3:GetObject"],
-                  "Resource":["arn:aws:s3:::speed-test--frankfurt/*"]
-                }
-              ]
-            }
-         */
-
-        //        SERVERS.put("DE", PING_SERVER, "s3.eu-central-1.amazonaws.com");
-        //        SERVERS.put("DE", HTTP_DL_URL, "http://speed-test--frankfurt.s3-website.eu-central-1.amazonaws.com");
-        //
-        //        SERVERS.put("US", PING_SERVER, "s3-us-west-1.amazonaws.com");
-        //        SERVERS.put("US", HTTP_DL_URL, "http://speed-test--northern-california.s3-website-us-west-1.amazonaws.com");
-        //
-        //        SERVERS.put("BR", PING_SERVER, "s3-sa-east-1.amazonaws.com");
-        //        SERVERS.put("BR", HTTP_DL_URL, "http://speed-test--sao-paulo.s3-website-sa-east-1.amazonaws.com");
-        //
-        //        SERVERS.put("KR", PING_SERVER, "s3.ap-northeast-2.amazonaws.com");
-        //        SERVERS.put("KR", HTTP_DL_URL, "http://speed-test--seoul.s3-website.ap-northeast-2.amazonaws.com");
-        //
-        //        SERVERS.put("JP", PING_SERVER, "s3-ap-northeast-1.amazonaws.com");
-        //        SERVERS.put("JP", HTTP_DL_URL, "http://speed-test--tokyo.s3-website-ap-northeast-1.amazonaws.com");
-        //
-        //        SERVERS.put("AU", PING_SERVER, "s3-ap-southeast-2.amazonaws.com");
-        //        SERVERS.put("AU", HTTP_DL_URL, "http://speed-test--sydney.s3-website-ap-southeast-2.amazonaws.com");
-
         SERVERS.put("NL", PING_SERVER, "speedtest.ams01.softlayer.com");
         SERVERS.put("NL", HTTP_DL_URL, "http://speedtest.ams01.softlayer.com/downloads/test%s.zip");
 
