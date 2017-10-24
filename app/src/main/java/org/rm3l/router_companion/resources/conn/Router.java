@@ -790,6 +790,7 @@ public class Router implements Serializable {
             this.routerFirmware = router.routerFirmware;
             this.iconMethod = router.iconMethod;
             this.iconPath = router.iconPath;
+            this.setRouterModel(Router.getRouterModel(ctx, router));
         } else {
             this.templateUuid = null;
         }
