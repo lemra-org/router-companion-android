@@ -137,8 +137,8 @@ public class SpeedTestResultRecyclerViewAdapter
                 isThemeLight ? R.drawable.ic_file_download_black_24dp
                         : R.drawable.ic_file_download_white_24dp, 0, 0);
         final String wanDlByteCountDisplaySize =
-                (org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(
-                        speedTestResult.getWanDl().longValue()) + PER_SEC);
+                (SpeedTestActivity.toHumanReadableSize(activity, mRouter, speedTestResult.getWanDl().longValue())
+                        + PER_SEC);
         final String wanDl = wanDlByteCountDisplaySize.replaceAll(" ", "\n");
         wanDlView.setText(wanDl);
 
@@ -147,8 +147,8 @@ public class SpeedTestResultRecyclerViewAdapter
                 isThemeLight ? R.drawable.ic_file_upload_black_24dp : R.drawable.ic_file_upload_white_24dp,
                 0, 0);
         final String wanUlByteCountToDisplaySize =
-                (org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(
-                        speedTestResult.getWanUl().longValue()) + PER_SEC);
+                (SpeedTestActivity.toHumanReadableSize(activity, mRouter, speedTestResult.getWanUl().longValue())
+                        + PER_SEC);
         final String wanUl = wanUlByteCountToDisplaySize.replaceAll(" ", "\n");
         wanUlView.setText(wanUl);
 

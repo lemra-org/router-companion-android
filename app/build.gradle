@@ -538,6 +538,8 @@ dependencies {
     testImplementation "com.github.nekocode.ResourceInspector:resinspector-no-op:0.5.3"
 
     implementation 'com.evernote:android-job:1.2.0'
+
+    implementation 'com.jakewharton.byteunits:byteunits:0.9.1'
 }
 
 play {

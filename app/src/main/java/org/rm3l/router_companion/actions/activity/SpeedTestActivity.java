@@ -9,12 +9,16 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED
 import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB_DEFAULT;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_MEASUREMENT_UNIT;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_SERVER;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_SERVER_AUTO;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_SERVER_RANDOM;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.UNIT_BIT;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.UNIT_BYTE;
 import static org.rm3l.router_companion.utils.Utils.fromHtml;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -67,6 +71,8 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import com.google.common.io.Files;
+import com.jakewharton.byteunits.BinaryByteUnit;
+import com.jakewharton.byteunits.BitUnit;
 import com.squareup.picasso.Callback;
 import java.io.File;
 import java.io.IOException;
@@ -105,9 +111,6 @@ import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import org.rm3l.router_companion.widgets.RecyclerViewEmptySupport;
 
-/**
- * Created by rm3l on 20/12/15.
- */
 public class SpeedTestActivity extends AppCompatActivity
         implements SwipeRefreshLayout.OnRefreshListener, SnackbarCallback {
 
@@ -314,7 +317,7 @@ public class SpeedTestActivity extends AppCompatActivity
 
                     final String remoteFileName = Long.toString(possibleFileSize);
 
-                    final String completeServerUrl =
+                    @SuppressLint("DefaultLocale") final String completeServerUrl =
                             String.format("%s?_=%d", String.format(wanDLSpeedUrlToFormat, remoteFileName),
                                     System.currentTimeMillis());
 
@@ -608,8 +611,7 @@ public class SpeedTestActivity extends AppCompatActivity
                     wanDlTextView.setVisibility(View.VISIBLE);
                     if (speedTestResult != null && speedTestResult.getWanDl() != null) {
                         wanDlTextView.setText(String.format("%s%s",
-                                org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(
-                                        speedTestResult.getWanDl().longValue()), PER_SEC));
+                                toHumanReadableSize(speedTestResult.getWanDl().longValue()), PER_SEC));
                     } else {
                         wanDlTextView.setText("-");
                     }
@@ -634,8 +636,7 @@ public class SpeedTestActivity extends AppCompatActivity
                     //                    wanUlTextView.setVisibility(View.VISIBLE);
                     if (speedTestResult != null && speedTestResult.getWanUl() != null) {
                         wanUlTextView.setText(String.format("%s%s",
-                                org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(
-                                        speedTestResult.getWanUl().longValue()), PER_SEC));
+                                toHumanReadableSize(speedTestResult.getWanUl().longValue()), PER_SEC));
                     } else {
                         wanUlTextView.setText("-");
                     }
@@ -739,7 +740,7 @@ public class SpeedTestActivity extends AppCompatActivity
         }
     }
 
-    public static final String PER_SEC = "/s";
+    public static final String PER_SEC = "ps";
 
     public static final String NET_LATENCY = "net_latency";
 
@@ -766,6 +767,7 @@ public class SpeedTestActivity extends AppCompatActivity
     public static final String PING_SERVER = "PING_SERVER";
 
     public static final String HTTP_DL_URL = "HTTP_DL_URL";
+
     public static final String HTTP_UL_URL = "HTTP_UL_URL";
 
     private static final String LOG_TAG = SpeedTestActivity.class.getSimpleName();
@@ -1400,8 +1402,7 @@ public class SpeedTestActivity extends AppCompatActivity
                                         getServerLocationDisplayFromCountryCode(
                                                 speedTestResult.getServerCountryCode()),
                                         wanPing.floatValue(), wanPing.floatValue(), wanDl.floatValue(),
-                                        org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(
-                                                wanDl.longValue()), PER_SEC);
+                                        toHumanReadableSize(wanDl.longValue()), PER_SEC);
 
                         csvTextOutput.add(speedTestLine);
                         Files.append(speedTestLine + "\n", mFileToShare, CHARSET);
@@ -1683,6 +1684,26 @@ public class SpeedTestActivity extends AppCompatActivity
         if (mShareActionProvider != null) {
             mShareActionProvider.setShareIntent(shareIntent);
         }
+    }
+
+    @NonNull
+    private String toHumanReadableSize(final long bytes) {
+        return toHumanReadableSize(mRouterPreferences, bytes);
+    }
+
+    @NonNull
+    public static String toHumanReadableSize(@NonNull final Context context, @NonNull  final Router router, final long bytes) {
+        return toHumanReadableSize(router.getPreferences(context), bytes);
+    }
+
+    @NonNull
+    public static String toHumanReadableSize(@Nullable  final SharedPreferences routerPreferences, final long bytes) {
+        if (routerPreferences == null) {
+            return "";
+        }
+        return UNIT_BIT.equals(routerPreferences.getString(ROUTER_SPEED_TEST_MEASUREMENT_UNIT, UNIT_BYTE)) ?
+                BitUnit.format(bytes * 8L) :
+                BinaryByteUnit.format(bytes);
     }
 
     private void updateToolbarTitleAndSubTitle() {

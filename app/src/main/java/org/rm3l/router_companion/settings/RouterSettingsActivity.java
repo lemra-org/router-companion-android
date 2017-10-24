@@ -27,6 +27,7 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATION
 import static org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_ENABLE;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_MEASUREMENT_UNIT;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_SERVER;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.SORTING_STRATEGY_PREF;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE;
@@ -88,8 +89,10 @@ public class RouterSettingsActivity extends AbstractRouterSettingsActivity {
             bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_SERVER));
             bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB));
             bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS));
-            bindPreferenceSummaryToValue(findPreference(VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE));
+            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_MEASUREMENT_UNIT));
             //            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION));
+
+            bindPreferenceSummaryToValue(findPreference(VPN_PPTP_TOGGLES_MUTUALLY_EXCLUSIVE));
         }
     }
 

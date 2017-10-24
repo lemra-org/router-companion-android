@@ -21,6 +21,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <PreferenceCategory android:layout="@layout/router_speed_test_settings_intro"/>
+
     <ListPreference
         android:defaultValue="_random_"
         android:entries="@array/speedtest_servers_titles"
@@ -56,5 +58,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!--android:summaryOff="Disabled. Link from this device to the router will not be tested. WAN Link (from Router to Internet) is always tested."-->
     <!--android:summaryOn="Link from this device to the router will be tested, besides WAN Link (from Router to Internet)."-->
     <!--android:title="Test device to router connection" />-->
+
+    <ListPreference
+        android:defaultValue="B"
+        android:entries="@array/speedtest_units"
+        android:entryValues="@array/speedtest_units_values"
+        android:key="routerSpeedTestUnit"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="Measurement Unit" />
 
 </PreferenceScreen>

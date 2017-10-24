@@ -250,6 +250,8 @@ public final class RouterCompanionAppConstants {
     public static final String ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS =
             "routerSpeedTestDurationThresholdSeconds";
 
+    public static final String ROUTER_SPEED_TEST_MEASUREMENT_UNIT = "routerSpeedTestUnit";
+
     public static final String ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT = "8";
 
     public static final String ROUTER_SPEED_TEST_SERVER_AUTO = "_auto_";
@@ -311,6 +313,10 @@ public final class RouterCompanionAppConstants {
             "https://www.googleapis.com/urlshortener/v1/";
 
     public static final String GOOGLE_API_KEY = \"fake-api-key\";
+
+    public static final String UNIT_BYTE = "B";
+
+    public static final String UNIT_BIT = "b";
 
     public static int MB = 1024 * 1024;
 

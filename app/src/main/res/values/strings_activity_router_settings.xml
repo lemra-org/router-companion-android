@@ -122,9 +122,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!--</string-array>-->
 
     <string-array name="routerSpeedTestMaxFileSize_titles">
-        <item>10 MB</item>
-        <item>100 MB</item>
-        <item>500 MB</item>
+        <item>10 MB (80 Mb)</item>
+        <item>100 MB (800 Mb)</item>
+        <item>500 MB (4 Gb)</item>
     </string-array>
     <string-array name="routerSpeedTestMaxFileSize_values">
         <item>10</item>
@@ -279,6 +279,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item>JP</item>
         <item>CA-TOR</item>
         <item>US-WDC</item>
+    </string-array>
+
+    <string-array name="speedtest_units">
+        <item>Bits</item>
+        <item>Bytes</item>
+    </string-array>
+    <string-array name="speedtest_units_values">
+        <item>b</item>
+        <item>B</item>
     </string-array>
 
 </resources>
