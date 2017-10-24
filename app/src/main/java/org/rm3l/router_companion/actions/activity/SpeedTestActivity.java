@@ -206,6 +206,7 @@ public class SpeedTestActivity extends AppCompatActivity
                 String wanSpeedUrlToFormat = null;
 
                 pingServerCountry = serverSetting;
+                PingRTT wanLatencyResults = null;
                 if (ROUTER_SPEED_TEST_SERVER_AUTO.equals(serverSetting)) {
                     // Iterate over each server to determine the closest one,
                     // in terms of ping latency
@@ -248,6 +249,7 @@ public class SpeedTestActivity extends AppCompatActivity
                             minLatency = avg;
                             server = pingServer;
                             serverCountry = country;
+                            wanLatencyResults = pingRTT;
                         }
                     }
                     pingServerCountry = serverCountry;
@@ -279,7 +281,9 @@ public class SpeedTestActivity extends AppCompatActivity
 
                 //2- Now measure ping latency
                 publishProgress(MEASURE_PING_LATENCY);
-                final PingRTT wanLatencyResults = runPing(server);
+                if (wanLatencyResults == null) {
+                    wanLatencyResults = runPing(server);
+                }
                 speedTestResult.setWanPingRTT(wanLatencyResults);
                 publishProgress(PING_LATENCY_MEASURED);
 
@@ -1700,7 +1704,7 @@ public class SpeedTestActivity extends AppCompatActivity
                 final String randomCountryCode =
                         Lists.newArrayList(rowKeySet).get(RANDOM.nextInt(rowKeySet.size()));
                 if (ROUTER_SPEED_TEST_SERVER_RANDOM.equals(randomCountryCode)) {
-                    //Should not happen, but hey, ou never know!
+                    //Should not happen, but hey, you never know!
                     return "Frankfurt (Germany)";
                 }
                 return getServerLocationDisplayFromCountryCode(randomCountryCode);
@@ -1815,6 +1819,7 @@ public class SpeedTestActivity extends AppCompatActivity
     }
 
     static {
+        //TODO Those are just SoftLayer servers, but we may want to consider a much more exhaustive list: http://www.speedtest.net/speedtest-servers.php
         SERVERS.put("NL", PING_SERVER, "speedtest.ams01.softlayer.com");
         SERVERS.put("NL", HTTP_DL_URL, "http://speedtest.ams01.softlayer.com/downloads/test%s.zip");
 
