@@ -124,7 +124,6 @@ public abstract class WebActivity extends AppCompatActivity
         mWebview = findViewById(R.id.web_webview);
 
         final WebSettings webSettings = mWebview.getSettings();
-        //FIXME Review
         webSettings.setJavaScriptEnabled(this.isJavascriptEnabled());
         webSettings.setDomStorageEnabled(true);
         webSettings.setSupportZoom(true);
