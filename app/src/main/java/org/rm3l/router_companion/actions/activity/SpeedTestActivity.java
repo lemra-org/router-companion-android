@@ -203,7 +203,8 @@ public class SpeedTestActivity extends AppCompatActivity
                 final String serverSetting =
                         mRouterPreferences.getString(ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_RANDOM);
 
-                String wanSpeedUrlToFormat = null;
+                String wanDLSpeedUrlToFormat = null;
+                String wanULSpeedUrlToFormat = null;
 
                 pingServerCountry = serverSetting;
                 PingRTT wanLatencyResults = null;
@@ -221,7 +222,8 @@ public class SpeedTestActivity extends AppCompatActivity
                         final String country = entry.getKey();
                         final Map<String, String> value = entry.getValue();
                         final String pingServer = value.get(PING_SERVER);
-                        wanSpeedUrlToFormat = value.get(HTTP_DL_URL);
+                        wanDLSpeedUrlToFormat = value.get(HTTP_DL_URL);
+                        wanULSpeedUrlToFormat = value.get(HTTP_UL_URL);
                         if (isNullOrEmpty(pingServer)) {
                             continue;
                         }
@@ -270,10 +272,11 @@ public class SpeedTestActivity extends AppCompatActivity
                     }
                     refreshSpeedTestParameters(pingServerCountry);
                     server = SERVERS.get(pingServerCountry, PING_SERVER);
-                    wanSpeedUrlToFormat = SERVERS.get(pingServerCountry, HTTP_DL_URL);
+                    wanDLSpeedUrlToFormat = SERVERS.get(pingServerCountry, HTTP_DL_URL);
+                    wanULSpeedUrlToFormat = SERVERS.get(pingServerCountry, HTTP_UL_URL);
                 }
 
-                if (isNullOrEmpty(server) || isNullOrEmpty(wanSpeedUrlToFormat)) {
+                if (isNullOrEmpty(server) || isNullOrEmpty(wanDLSpeedUrlToFormat)) {
                     throw new SpeedTestException("Invalid server");
                 }
 
@@ -312,7 +315,7 @@ public class SpeedTestActivity extends AppCompatActivity
                     final String remoteFileName = Long.toString(possibleFileSize);
 
                     final String completeServerUrl =
-                            String.format("%s?_=%d", String.format(wanSpeedUrlToFormat, remoteFileName),
+                            String.format("%s?_=%d", String.format(wanDLSpeedUrlToFormat, remoteFileName),
                                     System.currentTimeMillis());
 
                     pg += 3;
@@ -763,6 +766,7 @@ public class SpeedTestActivity extends AppCompatActivity
     public static final String PING_SERVER = "PING_SERVER";
 
     public static final String HTTP_DL_URL = "HTTP_DL_URL";
+    public static final String HTTP_UL_URL = "HTTP_UL_URL";
 
     private static final String LOG_TAG = SpeedTestActivity.class.getSimpleName();
 
