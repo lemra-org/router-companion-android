@@ -21,6 +21,8 @@
  */
 package org.rm3l.router_companion.settings;
 
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_AUTO_MEASUREMENTS;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SCHEDULE;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_MEASUREMENT_UNIT;
@@ -28,12 +30,15 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import com.airbnb.deeplinkdispatch.DeepLink;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
+import org.rm3l.router_companion.widgets.MySwitchPreference;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -71,6 +76,26 @@ public class RouterSpeedTestSettingsActivity extends AbstractRouterSettingsActiv
             bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS));
             //            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION));
             bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_MEASUREMENT_UNIT));
+            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS));
+            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SCHEDULE));
+
+            final MySwitchPreference autoMeasurementsSettings = (MySwitchPreference) findPreference(
+                    ROUTER_SPEED_TEST_AUTO_MEASUREMENTS);
+            final Preference autoMeasurementsScheduleSetting = findPreference(
+                    ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SCHEDULE);
+            if (BuildConfig.WITH_ADS) {
+                autoMeasurementsSettings.setTitle("Automatic measurements (Upgrade to switch)");
+                autoMeasurementsSettings.setChecked(false);
+                autoMeasurementsSettings.setEnabled(false);
+                autoMeasurementsScheduleSetting.setTitle("Schedule (Upgrade to switch)");
+                autoMeasurementsScheduleSetting.setEnabled(false);
+            } else {
+                autoMeasurementsSettings.setTitle("Automatic measurements");
+                autoMeasurementsSettings.setChecked(true);
+                autoMeasurementsSettings.setEnabled(true);
+                autoMeasurementsScheduleSetting.setTitle("Schedule");
+                autoMeasurementsScheduleSetting.setEnabled(true);
+            }
         }
     }
 

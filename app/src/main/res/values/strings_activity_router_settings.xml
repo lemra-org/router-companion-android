@@ -290,4 +290,25 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item>B</item>
     </string-array>
 
+    <string-array name="speedtest_auto_schedule">
+        <item>Every hour</item>
+        <item>Every 3 hours</item>
+        <item>Every 6 hours</item>
+        <item>Every 12 hours</item>
+        <item>Daily</item>
+        <item>Every 2 days</item>
+        <item>Every week</item>
+        <item>Monthly</item>
+    </string-array>
+    <string-array name="speedtest_auto_schedule_values">
+        <item>1H</item>
+        <item>3H</item>
+        <item>6H</item>
+        <item>12H</item>
+        <item>1D</item>
+        <item>2D</item>
+        <item>1W</item>
+        <item>1M</item>
+    </string-array>
+
 </resources>

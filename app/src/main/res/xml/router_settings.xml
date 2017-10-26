@@ -157,6 +157,25 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:positiveButtonText="@null"
             android:title="Measurement Unit" />
 
+        <org.rm3l.router_companion.widgets.MySwitchPreference
+            android:defaultValue="false"
+            android:disableDependentsState="false"
+            android:icon="@drawable/ic_action_notification_sync"
+            android:key="routerSpeedTestAutoMeasurements"
+            android:summaryOff="Disabled."
+            android:summaryOn="Enabled."
+            android:title="Automatic measurements" />
+        <ListPreference
+            android:icon="@drawable/ic_action_navigation_refresh"
+            android:dependency="routerSpeedTestAuto"
+            android:defaultValue="1D"
+            android:entries="@array/speedtest_auto_schedule"
+            android:entryValues="@array/speedtest_auto_schedule_values"
+            android:key="routerSpeedTestAutoMeasurementsSchedule"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="Schedule" />
+
     </PreferenceCategory>
 
     <!-- Notifications -->

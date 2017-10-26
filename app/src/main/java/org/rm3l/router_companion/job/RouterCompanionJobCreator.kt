@@ -5,6 +5,9 @@ import com.evernote.android.job.JobCreator
 import com.evernote.android.job.JobRequest
 import org.rm3l.router_companion.job.firmware_update.FirmwareUpdateCheckerJob
 import org.rm3l.router_companion.job.firmware_update.FirmwareUpdateCheckerOneShotJob
+import org.rm3l.router_companion.job.speedtest.RouterSpeedTestRunnerDailyJob
+import org.rm3l.router_companion.job.speedtest.RouterSpeedTestRunnerOneShotJob
+import org.rm3l.router_companion.job.speedtest.RouterSpeedTestRunnerPeriodicJob
 import org.rm3l.router_companion.service.BackgroundService
 import org.rm3l.router_companion.service.BackgroundServiceOneShotJob
 
@@ -20,7 +23,10 @@ class RouterCompanionJobCreator : JobCreator {
                 FirmwareUpdateCheckerJob.TAG to FirmwareUpdateCheckerJob(),
                 FirmwareUpdateCheckerOneShotJob.TAG to FirmwareUpdateCheckerOneShotJob(),
                 BackgroundService.TAG to BackgroundService(),
-                BackgroundServiceOneShotJob.TAG to BackgroundServiceOneShotJob()
+                BackgroundServiceOneShotJob.TAG to BackgroundServiceOneShotJob(),
+                RouterSpeedTestRunnerDailyJob.TAG to RouterSpeedTestRunnerDailyJob(),
+                RouterSpeedTestRunnerPeriodicJob.TAG to RouterSpeedTestRunnerPeriodicJob(),
+                RouterSpeedTestRunnerOneShotJob.TAG to RouterSpeedTestRunnerOneShotJob()
         )
 
         @JvmStatic

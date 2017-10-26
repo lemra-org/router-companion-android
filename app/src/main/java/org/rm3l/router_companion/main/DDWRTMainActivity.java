@@ -30,6 +30,8 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHAR
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_THEME;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.MAX_ROUTERS_FREE_VERSION;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_AUTO_MEASUREMENTS;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SCHEDULE;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.SORTING_STRATEGY_PREF;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.THEMING_PREF;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.TILE_REFRESH_SECONDS;
@@ -150,6 +152,7 @@ import org.rm3l.router_companion.fragments.PageSlidingTabStripFragment;
 import org.rm3l.router_companion.help.ChangelogActivity;
 import org.rm3l.router_companion.help.HelpActivity;
 import org.rm3l.router_companion.job.firmware_update.FirmwareUpdateCheckerJob;
+import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.RouterMgmtDialogListener;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
@@ -293,6 +296,10 @@ public class DDWRTMainActivity extends AppCompatActivity
     @NonNull
     private SharedPreferences mPreferences;
 
+    private boolean mPreviousSettingAutoMeasurements;
+
+    private String mPreviousSettingAutoMeasurementsSchedule;
+
     @NonNull
     private Router mRouter;
 
@@ -428,6 +435,11 @@ public class DDWRTMainActivity extends AppCompatActivity
         this.mGlobalPreferences =
                 this.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
 
+        this.mPreviousSettingAutoMeasurements = mPreferences
+                .getBoolean(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS, false);
+        this.mPreviousSettingAutoMeasurementsSchedule = mPreferences
+                .getString(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SCHEDULE, RouterSpeedTestAutoRunnerJob.DAILY);
+
         //Load from Shared Preferences
         this.mCurrentSortingStrategy = mPreferences.getString(SORTING_STRATEGY_PREF, "");
         this.mCurrentSyncInterval = mPreferences.getLong(AUTO_REFRESH_INTERVAL_SECONDS_PREF, -10l);
@@ -435,13 +447,6 @@ public class DDWRTMainActivity extends AppCompatActivity
 
         mIsThemeLight = ColorUtils.Companion.isThemeLight(this);
         ColorUtils.Companion.setAppTheme(this, mRouter.getRouterFirmware(), true);
-        //        if (mIsThemeLight) {
-        //            //Light
-        //            setTheme(R.style.AppThemeLight_StatusBarTransparent);
-        //        } else {
-        //            //Default is Dark
-        //            setTheme(R.style.AppThemeDark_StatusBarTransparent);
-        //        }
 
         // Inherit theme for router - this is for SettingsActivity,
         // because we are overriding the getSharedPreferences() method
@@ -921,6 +926,23 @@ public class DDWRTMainActivity extends AppCompatActivity
         } catch (final Exception e) {
             Utils.reportException(this, e);
             e.printStackTrace();
+        }
+        //Speed tests Auto-measurements
+        final boolean currentSettingAutoMeasurements = mPreferences
+                .getBoolean(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS, false);
+        final String currentSettingAutoMeasurementsSchedule = mPreferences
+                .getString(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SCHEDULE, RouterSpeedTestAutoRunnerJob.DAILY);
+        if (mPreviousSettingAutoMeasurements != currentSettingAutoMeasurements ||
+                !currentSettingAutoMeasurementsSchedule.equals(mPreviousSettingAutoMeasurementsSchedule)) {
+            if (mPreviousSettingAutoMeasurements != currentSettingAutoMeasurements) {
+                this.mPreviousSettingAutoMeasurements = currentSettingAutoMeasurements;
+            }
+            if (!currentSettingAutoMeasurementsSchedule.equals(mPreviousSettingAutoMeasurementsSchedule)) {
+                this.mPreviousSettingAutoMeasurementsSchedule = currentSettingAutoMeasurementsSchedule;
+            }
+            RouterSpeedTestAutoRunnerJob.schedule(this.mRouterUuid,
+                    this.mPreviousSettingAutoMeasurements,
+                    this.mPreviousSettingAutoMeasurementsSchedule);
         }
     }
 

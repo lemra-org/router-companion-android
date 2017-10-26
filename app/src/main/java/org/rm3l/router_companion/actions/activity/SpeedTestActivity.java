@@ -5,6 +5,8 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.CHARSET;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_AUTO_MEASUREMENTS;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SCHEDULE;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB;
@@ -15,6 +17,7 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED
 import static org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_SERVER_RANDOM;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.UNIT_BIT;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.UNIT_BYTE;
+import static org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.runPing;
 import static org.rm3l.router_companion.utils.Utils.fromHtml;
 
 import android.Manifest;
@@ -69,12 +72,10 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import com.google.common.io.Files;
-import com.jakewharton.byteunits.BinaryByteUnit;
 import com.jakewharton.byteunits.BitUnit;
 import com.jakewharton.byteunits.DecimalByteUnit;
 import com.squareup.picasso.Callback;
@@ -97,8 +98,8 @@ import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.actions.AbstractRouterAction;
-import org.rm3l.router_companion.actions.PingFromRouterAction;
 import org.rm3l.router_companion.exceptions.SpeedTestException;
+import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.router_companion.resources.SpeedTestResult;
@@ -249,7 +250,8 @@ public class SpeedTestActivity extends AppCompatActivity
                             }
                         });
 
-                        final PingRTT pingRTT = runPing(pingServer);
+                        final PingRTT pingRTT = runPing(SpeedTestActivity.this, mOriginalRouter, mRouterCopy,
+                                pingServer);
                         final float avg = pingRTT.getAvg();
                         if (avg < 0) {
                             continue;
@@ -292,7 +294,7 @@ public class SpeedTestActivity extends AppCompatActivity
                 //2- Now measure ping latency
                 publishProgress(MEASURE_PING_LATENCY);
                 if (wanLatencyResults == null) {
-                    wanLatencyResults = runPing(server);
+                    wanLatencyResults = runPing(SpeedTestActivity.this, mOriginalRouter, mRouterCopy, server);
                 }
                 speedTestResult.setWanPingRTT(wanLatencyResults);
                 publishProgress(PING_LATENCY_MEASURED);
@@ -683,68 +685,6 @@ public class SpeedTestActivity extends AppCompatActivity
                 //                mSpeedTestRunning.set(false);
             }
         }
-
-        @NonNull
-        private PingRTT runPing(@NonNull final String server) throws Exception {
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "runPing: " + server);
-
-            if (Strings.isNullOrEmpty(server)) {
-                throw new IllegalArgumentException("No Server specified");
-            }
-
-            if (Utils.isDemoRouter(mOriginalRouter)) {
-                return new PingRTT().setStddev(0.01f)
-                        .setPacketLoss(new Random().nextInt(100))
-                        .setMin(new Random().nextFloat())
-                        .setMax(new Random().nextFloat() * 1024)
-                        .setAvg(new Random().nextFloat() * 512);
-            }
-
-            final String[] pingOutput =
-                    SSHUtils.getManualProperty(SpeedTestActivity.this, mRouterCopy, null,
-                            String.format(Locale.US, PingFromRouterAction.PING_CMD_TO_FORMAT,
-                                    PingFromRouterAction.MAX_PING_PACKETS_TO_SEND, server));
-            if (pingOutput == null || pingOutput.length < 2) {
-                //Nothing - abort right now with an error message
-                throw new SpeedTestException("Unable to contact remote server");
-            }
-
-            final PingRTT pingRTT = new PingRTT();
-
-            final String packetsStatusLine = pingOutput[pingOutput.length - 2];
-            final List<String> packetsStatusLineSplitList =
-                    Splitter.on(",").trimResults().omitEmptyStrings().splitToList(packetsStatusLine);
-            if (packetsStatusLineSplitList.size() >= 3) {
-                final String packetLossStr = packetsStatusLineSplitList.get(2);
-                if (!isNullOrEmpty(packetLossStr)) {
-                    try {
-                        pingRTT.setPacketLoss(Integer.parseInt(packetLossStr.replaceAll("% packet loss", "")));
-                    } catch (final NumberFormatException nfe) {
-                        nfe.printStackTrace();
-                        //No worries
-                    }
-                }
-            }
-
-            final String pingRttOutput = pingOutput[pingOutput.length - 1];
-            final List<String> pingRttOutputList = EQUAL_SPLITTER.splitToList(pingRttOutput);
-            if (pingRttOutputList.size() < 2) {
-                throw new SpeedTestException("Unable to contact remote server");
-            }
-            final String pingRtt = pingRttOutputList.get(1).replaceAll("ms", "").trim();
-            final List<String> pingRttSplitResult = SLASH_SPLITTER.splitToList(pingRtt);
-            final int size = pingRttSplitResult.size();
-            if (size >= 1) {
-                pingRTT.setMin(Float.parseFloat(pingRttSplitResult.get(0)));
-            }
-            if (size >= 2) {
-                pingRTT.setAvg(Float.parseFloat(pingRttSplitResult.get(1)));
-            }
-            if (size >= 3) {
-                pingRTT.setMax(Float.parseFloat(pingRttSplitResult.get(2)));
-            }
-            return pingRTT;
-        }
     }
 
     public static final String PER_SEC = "ps";
@@ -791,7 +731,7 @@ public class SpeedTestActivity extends AppCompatActivity
 
     private static final int WAN_UL_MEASURED = 51;
 
-    private static final Table<String, String, String> SERVERS = HashBasedTable.create();
+    public static final Table<String, String, String> SERVERS = HashBasedTable.create();
 
     private int defaultColorForPaths;
 
@@ -823,6 +763,10 @@ public class SpeedTestActivity extends AppCompatActivity
     private Router mOriginalRouter;
 
     private Long[] mPossibleFileSizes;
+
+    private boolean mPreviousSettingAutoMeasurements;
+
+    private String mPreviousSettingAutoMeasurementsSchedule;
 
     private RecyclerViewEmptySupport mRecyclerView;
 
@@ -953,6 +897,11 @@ public class SpeedTestActivity extends AppCompatActivity
         mGlobalPreferences =
                 getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                         Context.MODE_PRIVATE);
+
+        this.mPreviousSettingAutoMeasurements = mRouterPreferences
+                .getBoolean(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS, false);
+        this.mPreviousSettingAutoMeasurementsSchedule = mRouterPreferences
+                .getString(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SCHEDULE, RouterSpeedTestAutoRunnerJob.DAILY);
 
         this.mMessageReceiver = new NetworkChangeReceiver();
 
@@ -1281,6 +1230,23 @@ public class SpeedTestActivity extends AppCompatActivity
         } catch (final Exception e) {
             Utils.reportException(this, e);
             e.printStackTrace();
+        }
+        //Auto-measurements
+        final boolean currentSettingAutoMeasurements = mRouterPreferences
+                .getBoolean(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS, false);
+        final String currentSettingAutoMeasurementsSchedule = mRouterPreferences
+                .getString(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SCHEDULE, RouterSpeedTestAutoRunnerJob.DAILY);
+        if (mPreviousSettingAutoMeasurements != currentSettingAutoMeasurements ||
+                !currentSettingAutoMeasurementsSchedule.equals(mPreviousSettingAutoMeasurementsSchedule)) {
+            if (mPreviousSettingAutoMeasurements != currentSettingAutoMeasurements) {
+                this.mPreviousSettingAutoMeasurements = currentSettingAutoMeasurements;
+            }
+            if (!currentSettingAutoMeasurementsSchedule.equals(mPreviousSettingAutoMeasurementsSchedule)) {
+                this.mPreviousSettingAutoMeasurementsSchedule = currentSettingAutoMeasurementsSchedule;
+            }
+            RouterSpeedTestAutoRunnerJob
+                    .schedule(this.mOriginalRouter.getUuid(), this.mPreviousSettingAutoMeasurements,
+                            this.mPreviousSettingAutoMeasurementsSchedule);
         }
     }
 
