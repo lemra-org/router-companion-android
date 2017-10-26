@@ -80,72 +80,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:textStyle="bold"
             android:visibility="gone" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="7dp">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:maxLines="1"
-                    android:text="Test Server"
-                    android:textAppearance="?android:textAppearanceMedium"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/speedtest_server"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Auto-detected"
-                    android:textIsSelectable="true" />
-
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/speedtest_server_country_flag"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:visibility="visible" />
-
-        </RelativeLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Measurement Unit" />
-
-        <RadioGroup
-            android:id="@+id/speedtest_measurement_unit"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/speedtest_measurement_unit_bits"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Bits (b)" />
-
-            <RadioButton
-                android:id="@+id/speedtest_measurement_unit_bytes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Bytes (B)" />
-        </RadioGroup>
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -161,7 +95,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|top"
                 android:layout_marginBottom="10dp"
-
                 android:background="@color/jetstream_speed_test_background"
                 android:gravity="center"
                 android:textAppearance="?android:attr/textAppearanceMedium"
@@ -170,22 +103,85 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:textStyle="italic"
                 android:visibility="gone" />
 
-
             <ScrollView
                 android:id="@+id/speedtest_scrollView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center"
                 android:fillViewport="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:orientation="vertical">
 
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="7dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:gravity="start"
+                                android:maxLines="1"
+                                android:text="Test Server"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/speedtest_server"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Auto-detected"
+                                android:textIsSelectable="true" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/speedtest_server_country_flag"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:visibility="visible" />
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Measurement Unit" />
+
+                    <RadioGroup
+                        android:id="@+id/speedtest_measurement_unit"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/speedtest_measurement_unit_bits"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Bits (b)" />
+
+                        <RadioButton
+                            android:id="@+id/speedtest_measurement_unit_bytes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Bytes (B)" />
+                    </RadioGroup>
+
                     <ImageView
+                        android:layout_marginTop="10dp"
                         android:id="@+id/speedtest_wan_imageView"
                         android:layout_width="65dp"
                         android:layout_height="65dp"

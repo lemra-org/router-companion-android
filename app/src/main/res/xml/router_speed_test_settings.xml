@@ -60,6 +60,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!--android:title="Test device to router connection" />-->
 
     <ListPreference
+        android:icon="@drawable/ic_binary_unit"
         android:defaultValue="B"
         android:entries="@array/speedtest_units"
         android:entryValues="@array/speedtest_units_values"

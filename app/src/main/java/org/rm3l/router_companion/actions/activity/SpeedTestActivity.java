@@ -50,6 +50,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -75,6 +76,7 @@ import com.google.common.collect.Table;
 import com.google.common.io.Files;
 import com.jakewharton.byteunits.BinaryByteUnit;
 import com.jakewharton.byteunits.BitUnit;
+import com.jakewharton.byteunits.DecimalByteUnit;
 import com.squareup.picasso.Callback;
 import java.io.File;
 import java.io.IOException;
@@ -839,12 +841,13 @@ public class SpeedTestActivity extends AppCompatActivity
 
     private SpeedTestAsyncTask mSpeedTestAsyncTask;
 
+    private TextView mSpeedTestWanDlRaw;
+
+    private TextView mSpeedTestWanUlRaw;
+
     private TextView mSpeedtestLatencyTitle;
 
     private TextView mSpeedtestWanDlTitle;
-
-    private TextView mWanDlTextView;
-    private TextView mSpeedTestWanDlRaw;
 
     private TextView mSpeedtestWifiEfficiencyTitle;
 
@@ -855,8 +858,9 @@ public class SpeedTestActivity extends AppCompatActivity
 
     private Toolbar mToolbar;
 
+    private TextView mWanDlTextView;
+
     private TextView mWanUlTextView;
-    private TextView mSpeedTestWanUlRaw;
 
     private boolean mWithCurrentConnectionTesting;
 
@@ -865,6 +869,22 @@ public class SpeedTestActivity extends AppCompatActivity
     private Menu optionsMenu;
 
     private View routerLanLink;
+
+    @NonNull
+    public static String toHumanReadableSize(@NonNull final Context context, @NonNull  final Router router,
+            final long bytes) {
+        return toHumanReadableSize(router.getPreferences(context), bytes);
+    }
+
+    @NonNull
+    public static String toHumanReadableSize(@Nullable  final SharedPreferences routerPreferences, final long bytes) {
+        if (routerPreferences == null) {
+            return "";
+        }
+        return UNIT_BIT.equals(routerPreferences.getString(ROUTER_SPEED_TEST_MEASUREMENT_UNIT, UNIT_BYTE)) ?
+                BitUnit.format(bytes * 8L) :
+                DecimalByteUnit.format(bytes);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1053,15 +1073,16 @@ public class SpeedTestActivity extends AppCompatActivity
 
         mMeasurementUnitRadioGroup = findViewById(R.id.speedtest_measurement_unit);
         mMeasurementUnitRadioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onCheckedChanged(final RadioGroup group, final int checkedId) {
                 final String value;
                 switch (checkedId) {
                     case R.id.speedtest_measurement_unit_bits:
-                        value = "b";
+                        value = UNIT_BIT;
                         break;
                     case R.id.speedtest_measurement_unit_bytes:
-                        value = "B";
+                        value = UNIT_BYTE;
                         break;
                     default:
                         value = null;
@@ -1069,11 +1090,29 @@ public class SpeedTestActivity extends AppCompatActivity
                 }
                 if (value != null) {
                     mRouterPreferences.edit()
-                            .putString(RouterCompanionAppConstants.ROUTER_SPEED_TEST_MEASUREMENT_UNIT, value).apply();
-                    //TODO update views
-                    Toast.makeText(SpeedTestActivity.this, "TODO Update views", Toast.LENGTH_SHORT).show();
+                            .putString(ROUTER_SPEED_TEST_MEASUREMENT_UNIT, value).apply();
                     refreshSpeedTestResults();
-//                    Dump
+                    final CharSequence currentRawWanDl = mSpeedTestWanDlRaw.getText();
+                    if (!TextUtils.isEmpty(currentRawWanDl)) {
+                        try {
+                            mWanDlTextView.setText(
+                                    toHumanReadableSize(Long.valueOf(currentRawWanDl.toString())) + PER_SEC);
+                        } catch (final NumberFormatException nfe) {
+                            //No worries
+                            Crashlytics.logException(nfe);
+                        }
+                    }
+                    final CharSequence currentRawWanUl = mSpeedTestWanUlRaw.getText();
+                    if (!TextUtils.isEmpty(currentRawWanUl)) {
+                        try {
+                            mWanUlTextView.setText(
+                                    toHumanReadableSize(Long.valueOf(currentRawWanUl.toString())) + PER_SEC);
+                        } catch (final NumberFormatException nfe) {
+                            //No worries
+                            Crashlytics.logException(nfe);
+                        }
+                    }
+                    Utils.requestBackup(SpeedTestActivity.this);
                 }
             }
         });
@@ -1226,7 +1265,17 @@ public class SpeedTestActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-
+        final String userDefinedMeasurementUnit = mRouterPreferences
+                .getString(ROUTER_SPEED_TEST_MEASUREMENT_UNIT, UNIT_BYTE);
+        switch (userDefinedMeasurementUnit) {
+            case UNIT_BIT:
+                mMeasurementUnitRadioGroup.check(R.id.speedtest_measurement_unit_bits);
+                break;
+            case UNIT_BYTE:
+            default:
+                mMeasurementUnitRadioGroup.check(R.id.speedtest_measurement_unit_bytes);
+                break;
+        }
         try {
             registerReceiver(mMessageReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         } catch (final Exception e) {
@@ -1736,21 +1785,6 @@ public class SpeedTestActivity extends AppCompatActivity
     @NonNull
     private String toHumanReadableSize(final long bytes) {
         return toHumanReadableSize(mRouterPreferences, bytes);
-    }
-
-    @NonNull
-    public static String toHumanReadableSize(@NonNull final Context context, @NonNull  final Router router, final long bytes) {
-        return toHumanReadableSize(router.getPreferences(context), bytes);
-    }
-
-    @NonNull
-    public static String toHumanReadableSize(@Nullable  final SharedPreferences routerPreferences, final long bytes) {
-        if (routerPreferences == null) {
-            return "";
-        }
-        return UNIT_BIT.equals(routerPreferences.getString(ROUTER_SPEED_TEST_MEASUREMENT_UNIT, UNIT_BYTE)) ?
-                BitUnit.format(bytes * 8L) :
-                BinaryByteUnit.format(bytes);
     }
 
     private void updateToolbarTitleAndSubTitle() {
