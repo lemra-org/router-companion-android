@@ -121,6 +121,31 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         </RelativeLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Measurement Unit" />
+
+        <RadioGroup
+            android:id="@+id/speedtest_measurement_unit"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/speedtest_measurement_unit_bits"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bits (b)" />
+
+            <RadioButton
+                android:id="@+id/speedtest_measurement_unit_bytes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bytes (B)" />
+        </RadioGroup>
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -271,6 +296,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:orientation="horizontal">
 
                                 <TextView
+                                    android:id="@+id/speedtest_internet_dl_speed_raw_bytes"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:visibility="gone"/>
+
+                                <TextView
                                     android:id="@+id/speedtest_internet_dl_speed"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -313,6 +344,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:layout_height="wrap_content"
                                 android:orientation="horizontal"
                                 android:visibility="gone">
+
+                                <TextView
+                                    android:id="@+id/speedtest_internet_ul_speed_raw_bytes"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:visibility="gone"/>
 
                                 <TextView
                                     android:id="@+id/speedtest_internet_ul_speed"

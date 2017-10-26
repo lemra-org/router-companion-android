@@ -57,6 +57,8 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.android.supportv7.widget.decorator.DividerItemDecoration;
@@ -516,6 +518,7 @@ public class SpeedTestActivity extends AppCompatActivity
             super.onPostExecute(voidRouterActionResult);
         }
 
+        @SuppressLint("SetTextI18n")
         @Override
         protected void onProgressUpdate(Integer... values) {
             //Runs on main thread
@@ -607,24 +610,25 @@ public class SpeedTestActivity extends AppCompatActivity
                 case WAN_DL_MEASURED:
                     //noinspection ConstantConditions
                     findViewById(R.id.speedtest_dl_pb_internet).setVisibility(View.GONE);
-                    final TextView wanDlTextView = (TextView) findViewById(R.id.speedtest_internet_dl_speed);
-                    wanDlTextView.setVisibility(View.VISIBLE);
+                    mWanDlTextView.setVisibility(View.VISIBLE);
                     if (speedTestResult != null && speedTestResult.getWanDl() != null) {
-                        wanDlTextView.setText(String.format("%s%s",
+                        mWanDlTextView.setText(String.format("%s%s",
                                 toHumanReadableSize(speedTestResult.getWanDl().longValue()), PER_SEC));
                     } else {
-                        wanDlTextView.setText("-");
+                        mWanDlTextView.setText("-");
                     }
 
                     final TextView wanDLSizeAndDuration =
                             (TextView) findViewById(R.id.speedtest_internet_dl_speed_size_and_duration);
                     if (speedTestResult != null && speedTestResult.getWanDLFileSize() != null) {
                         wanDLSizeAndDuration.setVisibility(View.VISIBLE);
+                        mSpeedTestWanDlRaw.setText(Long.toString(speedTestResult.getWanDl().longValue()));
                         wanDLSizeAndDuration.setText(String.format(Locale.US, "(%d MB in %d s)",
                                 speedTestResult.getWanDLFileSize().longValue(),
                                 speedTestResult.getWanDLDuration()));
                     } else {
                         wanDLSizeAndDuration.setVisibility(View.INVISIBLE);
+                        mSpeedTestWanDlRaw.setText(null);
                     }
 
                     break;
@@ -632,13 +636,14 @@ public class SpeedTestActivity extends AppCompatActivity
                 case WAN_UL_MEASURED:
                     //noinspection ConstantConditions
                     findViewById(R.id.speedtest_ul_pb_internet).setVisibility(View.GONE);
-                    final TextView wanUlTextView = (TextView) findViewById(R.id.speedtest_internet_ul_speed);
-                    //                    wanUlTextView.setVisibility(View.VISIBLE);
+                    //                    mWanUlTextView.setVisibility(View.VISIBLE);
                     if (speedTestResult != null && speedTestResult.getWanUl() != null) {
-                        wanUlTextView.setText(String.format("%s%s",
+                        mSpeedTestWanUlRaw.setText(Long.toString(speedTestResult.getWanUl().longValue()));
+                        mWanUlTextView.setText(String.format("%s%s",
                                 toHumanReadableSize(speedTestResult.getWanUl().longValue()), PER_SEC));
                     } else {
-                        wanUlTextView.setText("-");
+                        mWanUlTextView.setText("-");
+                        mSpeedTestWanUlRaw.setText(null);
                     }
                     break;
 
@@ -809,6 +814,8 @@ public class SpeedTestActivity extends AppCompatActivity
 
     private RecyclerView.LayoutManager mLayoutManager;
 
+    private RadioGroup mMeasurementUnitRadioGroup;
+
     private BroadcastReceiver mMessageReceiver;
 
     private Router mOriginalRouter;
@@ -836,6 +843,9 @@ public class SpeedTestActivity extends AppCompatActivity
 
     private TextView mSpeedtestWanDlTitle;
 
+    private TextView mWanDlTextView;
+    private TextView mSpeedTestWanDlRaw;
+
     private TextView mSpeedtestWifiEfficiencyTitle;
 
     //    private TextView mSpeedtestWanUlTitle;
@@ -844,6 +854,9 @@ public class SpeedTestActivity extends AppCompatActivity
     private TextView[] mTitleTextViews;
 
     private Toolbar mToolbar;
+
+    private TextView mWanUlTextView;
+    private TextView mSpeedTestWanUlRaw;
 
     private boolean mWithCurrentConnectionTesting;
 
@@ -889,9 +902,9 @@ public class SpeedTestActivity extends AppCompatActivity
 
         //Establish a brand-new connection to the Router
         mRouterCopy = new Router(this, mOriginalRouter).setUuid(UUID.randomUUID().toString());
-        //In order for router avatar to be correctly fetched, we have to copy router model
-        //from original preferences
-        mRouterCopy.setRouterModel(Router.getRouterModel(this, mOriginalRouter));
+//        //In order for router avatar to be correctly fetched, we have to copy router model
+//        //from original preferences
+//        mRouterCopy.setRouterModel(Router.getRouterModel(this, mOriginalRouter));
 
         final String[] maxFileSizeValuesStrArr =
                 getResources().getStringArray(R.array.routerSpeedTestMaxFileSize_values);
@@ -949,6 +962,12 @@ public class SpeedTestActivity extends AppCompatActivity
 
         Router.doFetchAndSetRouterAvatarInImageView(this, mRouterCopy,
                 (ImageView) findViewById(R.id.speedtest_router_imageView));
+
+        mWanDlTextView = findViewById(R.id.speedtest_internet_dl_speed);
+        mSpeedTestWanDlRaw = findViewById(R.id.speedtest_internet_dl_speed_raw_bytes);
+
+        mSpeedTestWanUlRaw = findViewById(R.id.speedtest_internet_ul_speed_raw_bytes);
+        mWanUlTextView = findViewById(R.id.speedtest_internet_ul_speed);
 
         mDao = RouterManagementActivity.getDao(this);
 
@@ -1029,6 +1048,33 @@ public class SpeedTestActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 refreshSpeedTestResults();
+            }
+        });
+
+        mMeasurementUnitRadioGroup = findViewById(R.id.speedtest_measurement_unit);
+        mMeasurementUnitRadioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(final RadioGroup group, final int checkedId) {
+                final String value;
+                switch (checkedId) {
+                    case R.id.speedtest_measurement_unit_bits:
+                        value = "b";
+                        break;
+                    case R.id.speedtest_measurement_unit_bytes:
+                        value = "B";
+                        break;
+                    default:
+                        value = null;
+                        break;
+                }
+                if (value != null) {
+                    mRouterPreferences.edit()
+                            .putString(RouterCompanionAppConstants.ROUTER_SPEED_TEST_MEASUREMENT_UNIT, value).apply();
+                    //TODO update views
+                    Toast.makeText(SpeedTestActivity.this, "TODO Update views", Toast.LENGTH_SHORT).show();
+                    refreshSpeedTestResults();
+//                    Dump
+                }
             }
         });
 
@@ -1180,6 +1226,7 @@ public class SpeedTestActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+
         try {
             registerReceiver(mMessageReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         } catch (final Exception e) {
