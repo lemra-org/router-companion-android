@@ -80,6 +80,21 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:textStyle="bold"
             android:visibility="gone" />
 
+        <!-- Notice -->
+        <TextView
+            android:id="@+id/router_speedtest_notice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_marginBottom="10dp"
+            android:background="@color/jetstream_speed_test_background"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white"
+            android:textIsSelectable="true"
+            android:textStyle="italic"
+            android:visibility="gone" />
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -87,21 +102,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_marginLeft="7dp"
             android:layout_marginRight="7dp"
             android:layout_marginStart="7dp">
-
-            <!-- Notice -->
-            <TextView
-                android:id="@+id/router_speedtest_notice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|top"
-                android:layout_marginBottom="10dp"
-                android:background="@color/jetstream_speed_test_background"
-                android:gravity="center"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/white"
-                android:textIsSelectable="true"
-                android:textStyle="italic"
-                android:visibility="gone" />
 
             <ScrollView
                 android:id="@+id/speedtest_scrollView"
