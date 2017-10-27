@@ -91,7 +91,6 @@ public class RouterSpeedTestSettingsActivity extends AbstractRouterSettingsActiv
                 autoMeasurementsScheduleSetting.setEnabled(false);
             } else {
                 autoMeasurementsSettings.setTitle("Automatic measurements");
-                autoMeasurementsSettings.setChecked(true);
                 autoMeasurementsSettings.setEnabled(true);
                 autoMeasurementsScheduleSetting.setTitle("Schedule");
                 autoMeasurementsScheduleSetting.setEnabled(true);
