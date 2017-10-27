@@ -167,7 +167,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:title="Automatic measurements" />
         <ListPreference
             android:icon="@drawable/ic_action_navigation_refresh"
-            android:dependency="routerSpeedTestAuto"
+            android:dependency="routerSpeedTestAutoMeasurements"
             android:defaultValue="1D"
             android:entries="@array/speedtest_auto_schedule"
             android:entryValues="@array/speedtest_auto_schedule_values"
