@@ -70,6 +70,8 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
         @JvmField
         val TAG = FirmwareUpdateCheckerJob::class.java.simpleName!!
 
+        private const val LATEST_FIRMWARE_RELEASE_NOTIFIED_PREF = "latestFirmwareReleaseNotified"
+
         @JvmStatic
         fun schedule() {
             //This is a premium feature
@@ -324,6 +326,16 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                 return
             }
 
+            val routerPreferences = router.getPreferences(context)
+            val latestFirmwareReleaseNotified = routerPreferences?.getString(LATEST_FIRMWARE_RELEASE_NOTIFIED_PREF,
+                    null)
+            if (newReleaseVersion.equals(latestFirmwareReleaseNotified)) {
+                Crashlytics.log(Log.INFO, TAG,
+                        "Firmware release ${router.canonicalHumanReadableName}/$newReleaseVersion already notified" +
+                                " => skipping notification.")
+                return
+            }
+
             // pending implicit intent to view url
             val resultIntent = Intent(Intent.ACTION_VIEW)
             resultIntent.data = Uri.parse(downloadLink)
@@ -371,6 +383,11 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
 
             notificationManager.notify(router.id + 99999 /* ID of notification */,
                     notificationBuilder.build())
+
+            routerPreferences?.edit()
+                    ?.putString(LATEST_FIRMWARE_RELEASE_NOTIFIED_PREF, newReleaseVersion)
+                    ?.apply()
+            Utils.requestBackup(context)
         }
     }
 
