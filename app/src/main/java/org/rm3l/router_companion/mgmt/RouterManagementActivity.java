@@ -80,6 +80,7 @@ import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter;
 import co.paulburke.android.itemtouchhelperdemo.helper.OnStartDragListener;
 import com.airbnb.deeplinkdispatch.DeepLink;
 import com.crashlytics.android.Crashlytics;
+import com.evernote.android.job.JobManager;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -103,6 +104,7 @@ import org.rm3l.router_companion.actions.RouterActionListener;
 import org.rm3l.router_companion.help.ChangelogActivity;
 import org.rm3l.router_companion.help.HelpActivity;
 import org.rm3l.router_companion.job.RouterCompanionJobCreator;
+import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob;
 import org.rm3l.router_companion.main.DDWRTMainActivity;
 import org.rm3l.router_companion.mgmt.adapters.RouterListItemTouchHelperCallback;
 import org.rm3l.router_companion.mgmt.adapters.RouterListRecycleViewAdapter;
@@ -993,6 +995,32 @@ public class RouterManagementActivity extends AppCompatActivity
                 } else {
                     Crashlytics.log(Log.WARN, LOG_TAG,
                             "[DEBUG] 'Run Jobs right away' menu option should not be visible...");
+                }
+            }
+                return true;
+
+            case R.id.debug_cancel_all_jobs: {
+                if (BuildConfig.DEBUG) {
+                    final Set<String> jobTags = RouterCompanionJobCreator.JOB_MAP.keySet();
+                    final List<Router> allRouters = dao.getAllRouters();
+                    for (final String jobTag : jobTags) {
+                        JobManager.instance().cancelAllForTag(jobTag);
+                        //Also for speed-test jobs
+                        for (final Router router : allRouters) {
+                            if (router == null) {
+                                continue;
+                            }
+                            JobManager.instance()
+                                    .cancelAllForTag(
+                                            RouterSpeedTestAutoRunnerJob.getActualRouterJobTag(jobTag,
+                                                    router.getUuid()));
+                        }
+                    }
+                    Toast.makeText(this, "Requested cancellation for: " + jobTags, Toast.LENGTH_LONG)
+                            .show();
+                } else {
+                    Crashlytics.log(Log.WARN, LOG_TAG,
+                            "[DEBUG] 'Cancel ALL jobs' menu option should not be visible...");
                 }
             }
                 return true;

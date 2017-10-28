@@ -180,10 +180,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:title="Restore deleted routers"
                 app:showAsAction="never" />
 
-            <item
-                android:id="@+id/debug_run_jobs_right_away"
-                android:title="Run Jobs right away"
-                app:showAsAction="never" />
+            <item android:title="Job Scheduling">
+                <menu>
+                    <item
+                        android:id="@+id/debug_run_jobs_right_away"
+                        android:title="Run Jobs right away"
+                        app:showAsAction="never" />
+                    <item
+                        android:id="@+id/debug_cancel_all_jobs"
+                        android:title="Cancel ALL jobs"
+                        app:showAsAction="never" />
+                </menu>
+            </item>
 
         </menu>
     </item>

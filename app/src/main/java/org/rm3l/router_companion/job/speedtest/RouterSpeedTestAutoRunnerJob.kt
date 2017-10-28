@@ -104,6 +104,7 @@ class RouterSpeedTestAutoRunnerJob {
                     getActualRouterJobTag(RouterSpeedTestRunnerPeriodicJob.TAG, routerUuid))
         }
 
+        @JvmStatic
         fun getActualRouterJobTag(jobTag: String, routerUuid: String) =
                 "$JOB_TAG_PREFIX$jobTag$JOB_TAG_SEPARATOR$routerUuid"
 
