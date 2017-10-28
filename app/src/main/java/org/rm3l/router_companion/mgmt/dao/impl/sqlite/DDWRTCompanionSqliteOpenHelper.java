@@ -200,11 +200,10 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
             + ARCHIVED
             + " INTEGER NOT NULL DEFAULT 0 CHECK ("
             + ARCHIVED
-            + " IN (0,1))"
-            + "), "
+            + " IN (0,1)),"
             + ROUTER_ICON_METHOD + " INTEGER NOT NULL DEFAULT " + Router.RouterIcon_Auto + ", "
-            + ROUTER_CUSTOM_ICON + "TEXT DEFAULT NULL"
-            + ";";
+            + ROUTER_CUSTOM_ICON + " TEXT DEFAULT NULL"
+            + ");";
 
     // Database creation sql statement
     private static final String TABLE_WAN_TRAFFIC_CREATE = "CREATE TABLE IF NOT EXISTS "
