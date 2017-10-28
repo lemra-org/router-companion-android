@@ -43,6 +43,8 @@ import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.Comp
 import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.Companion.EVERY_3_HOURS
 import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.Companion.EVERY_6_HOURS
 import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.Companion.EVERY_HOUR
+import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.Companion.JOB_TAG_PREFIX
+import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.Companion.JOB_TAG_SEPARATOR
 import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.Companion.MONTHLY
 import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.Companion.WEEKLY
 import org.rm3l.router_companion.mgmt.RouterManagementActivity
@@ -68,6 +70,12 @@ class RouterSpeedTestAutoRunnerJob {
     companion object {
         val LOG_TAG = RouterSpeedTestAutoRunnerJob::class.java.simpleName!!
 
+        @JvmField
+        val JOB_TAG_PREFIX = RouterSpeedTestAutoRunnerJob::class.java.simpleName!!
+
+        @JvmField
+        val JOB_TAG_SEPARATOR = "::"
+
         /*
         <string-array name="speedtest_auto_schedule_values">
             <item>1H</item>
@@ -89,17 +97,19 @@ class RouterSpeedTestAutoRunnerJob {
         const val WEEKLY = "1W"
         const val MONTHLY = "1M"
 
-        private val allTags = mapOf(
-                DAILY to RouterSpeedTestRunnerDailyJob.TAG
-        )
-
-        private fun cancelAllSchedules() {
-            allTags.values.forEach { JobManager.instance().cancelAllForTag(it) }
+        private fun cancelAllSchedules(routerUuid: String) {
+            JobManager.instance().cancelAllForTag(
+                    getActualRouterJobTag(RouterSpeedTestRunnerDailyJob.TAG, routerUuid))
+            JobManager.instance().cancelAllForTag(
+                    getActualRouterJobTag(RouterSpeedTestRunnerPeriodicJob.TAG, routerUuid))
         }
+
+        fun getActualRouterJobTag(jobTag: String, routerUuid: String) =
+                "$JOB_TAG_PREFIX$jobTag$JOB_TAG_SEPARATOR$routerUuid"
 
         @JvmStatic
         fun schedule(routerUuid: String, autoFlag: Boolean, schedule: String) {
-            cancelAllSchedules()
+            cancelAllSchedules(routerUuid)
             //This is a premium feature
             if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                 Crashlytics.log(Log.DEBUG, LOG_TAG, "Speed Test auto measures feature is *premium*!")
@@ -111,9 +121,9 @@ class RouterSpeedTestAutoRunnerJob {
 
             if (autoFlag) {
                 when (schedule) {
-                    DAILY -> RouterSpeedTestRunnerDailyJob.schedule(extras)
+                    DAILY -> RouterSpeedTestRunnerDailyJob.schedule(routerUuid, extras)
                     EVERY_HOUR, EVERY_3_HOURS, EVERY_6_HOURS, EVERY_12_HOURS, EVERY_2_DAYS, WEEKLY, MONTHLY ->
-                        RouterSpeedTestRunnerPeriodicJob.schedule(schedule, extras)
+                        RouterSpeedTestRunnerPeriodicJob.schedule(routerUuid, schedule, extras)
                     else -> throw IllegalArgumentException("Illegal schedule: $schedule")
                 }
             }
@@ -436,8 +446,8 @@ class RouterSpeedTestRunnerDailyJob : DailyJob(), RouterCompanionJob {
         val TAG = RouterSpeedTestRunnerDailyJob::class.java.simpleName!!
 
         @JvmStatic
-        fun schedule(extras: PersistableBundleCompat) {
-            val builder = JobRequest.Builder(TAG)
+        fun schedule(routerUuid: String, extras: PersistableBundleCompat) {
+            val builder = JobRequest.Builder(RouterSpeedTestAutoRunnerJob.getActualRouterJobTag(TAG, routerUuid))
                     .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
                     .setRequiresCharging(true)
                     .setExtras(extras)
@@ -468,7 +478,7 @@ class RouterSpeedTestRunnerPeriodicJob : Job(), RouterCompanionJob {
         val TAG = RouterSpeedTestRunnerPeriodicJob::class.java.simpleName!!
 
         @JvmStatic
-        fun schedule(schedule: String, extras: PersistableBundleCompat) {
+        fun schedule(routerUuid: String, schedule: String, extras: PersistableBundleCompat) {
             val intervalMs =
                     when (schedule) {
                         EVERY_HOUR -> TimeUnit.HOURS.toMillis(1L)
@@ -485,7 +495,7 @@ class RouterSpeedTestRunnerPeriodicJob : Job(), RouterCompanionJob {
                 Crashlytics.log(Log.WARN, TAG, "intervalMs is NULL => nothing scheduled")
                 return
             }
-            JobRequest.Builder(TAG)
+            JobRequest.Builder(RouterSpeedTestAutoRunnerJob.getActualRouterJobTag(TAG, routerUuid))
                     .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
                     .setRequiresCharging(true)
                     .setExtras(extras)
