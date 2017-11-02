@@ -210,7 +210,7 @@ public class RouterListRecycleViewAdapter
 
         final Router mRouter;
 
-        public RouterItemMenuOnClickListener(final Router router) {
+        RouterItemMenuOnClickListener(final Router router) {
             this.mRouter = router;
         }
 
@@ -313,6 +313,12 @@ public class RouterListRecycleViewAdapter
                         return true;
                     }
 
+                    mRouter.setArchived(true);
+                    dao.updateRouter(mRouter); //Actual archive
+                    routersList.remove(itemPos.intValue());
+                    //        dao.deleteRouter(router.getUuid()); //Actual delete
+                    notifyItemRemoved(itemPos);
+
                     new AlertDialog.Builder(activity).setIcon(R.drawable.ic_action_alert_warning)
                             .setTitle("Delete Router?")
                             .setMessage("You'll lose this record!")
@@ -320,28 +326,49 @@ public class RouterListRecycleViewAdapter
                             .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(final DialogInterface dialogInterface, final int i) {
-                                    int numberOfItems = removeData(itemPos);
-                                    if (numberOfItems == 0) {
-                                        //All items dropped = open up 'Add Router' dialog
-                                        openAddRouterForm();
-                                    }
+                                    final Snackbar snackbar = Snackbar.make(activity.findViewById(android.R.id.content),
+                                            String.format("Removing Router '%s'...", mRouter.getCanonicalHumanReadableName()),
+                                            Snackbar.LENGTH_LONG).setAction("UNDO", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            //                        final int position = viewHolder.getAdapterPosition();
 
-                                    //                                    if (activity instanceof Activity) {
-                                    //                                        Crouton.makeText((Activity) activity,
-                                    //                                                "Record deleted", Style.CONFIRM).show();
-                                    //                                    } else {
-                                    //                                        Toast.makeText(activity, "Record deleted", Toast.LENGTH_SHORT)
-                                    //                                                .show();
-                                    //                                    }
+                                            //Unarchive
+                                            mRouter.setArchived(false);
+                                            dao.updateRouter(mRouter);
+                                            routersList.add(itemPos, mRouter);
+                                            //                        setRoutersList(dao.getAllRouters());
+                                            notifyItemInserted(itemPos);
+//                                mRecyclerView.scrollToPosition(position);
+                                        }
+                                    }).setActionTextColor(Color.RED);
 
-                                    //Request Backup
-                                    Utils.requestBackup(activity);
+                                    final View snackbarView = snackbar.getView();
+                                    snackbarView.setBackgroundColor(Color.DKGRAY);
+                                    final TextView textView =
+                                            (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                                    textView.setTextColor(Color.YELLOW);
+                                    snackbar.show();
+
+//                                    int numberOfItems = removeData(itemPos);
+//                                    if (numberOfItems == 0) {
+//                                        //All items dropped = open up 'Add Router' dialog
+//                                        openAddRouterForm();
+//                                    }
+//
+//                                    //Request Backup
+//                                    Utils.requestBackup(activity);
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    //Cancelled - nothing more to do!
+                                    //Unarchive
+                                    mRouter.setArchived(false);
+                                    dao.updateRouter(mRouter);
+                                    routersList.add(itemPos, mRouter);
+                                    //                        setRoutersList(dao.getAllRouters());
+                                    notifyItemInserted(itemPos);
                                 }
                             })
                             .create()
@@ -710,36 +737,59 @@ public class RouterListRecycleViewAdapter
 
         final Router router = routersList.get(position);
 
-        final Snackbar snackbar = Snackbar.make(mRecyclerView,
-                String.format("Removing Router '%s'...", router.getCanonicalHumanReadableName()),
-                Snackbar.LENGTH_LONG).setAction("UNDO", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //                        final int position = viewHolder.getAdapterPosition();
-                Crashlytics.log(Log.DEBUG, TAG, "XXX onItemDismiss UNDO Click: position = " + position);
-
-                //Unarchive
-                router.setArchived(false);
-                dao.updateRouter(router);
-                routersList.add(position, router);
-                //                        setRoutersList(dao.getAllRouters());
-                notifyItemInserted(position);
-                mRecyclerView.scrollToPosition(position);
-            }
-        }).setActionTextColor(Color.RED);
-
-        final View snackbarView = snackbar.getView();
-        snackbarView.setBackgroundColor(Color.DKGRAY);
-        final TextView textView =
-                (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
-        textView.setTextColor(Color.YELLOW);
-        snackbar.show();
-
         router.setArchived(true);
         dao.updateRouter(router); //Actual archive
         routersList.remove(position);
         //        dao.deleteRouter(router.getUuid()); //Actual delete
         notifyItemRemoved(position);
+
+        new AlertDialog.Builder(activity).setIcon(R.drawable.ic_action_alert_warning)
+                .setTitle("Delete Router?")
+                .setMessage("You'll lose this record!")
+                .setCancelable(true)
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(final DialogInterface dialogInterface, final int i) {
+                        final Snackbar snackbar = Snackbar.make(mRecyclerView,
+                                String.format("Removing Router '%s'...", router.getCanonicalHumanReadableName()),
+                                Snackbar.LENGTH_LONG).setAction("UNDO", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //                        final int position = viewHolder.getAdapterPosition();
+                                Crashlytics.log(Log.DEBUG, TAG, "XXX onItemDismiss UNDO Click: position = " + position);
+
+                                //Unarchive
+                                router.setArchived(false);
+                                dao.updateRouter(router);
+                                routersList.add(position, router);
+                                //                        setRoutersList(dao.getAllRouters());
+                                notifyItemInserted(position);
+//                                mRecyclerView.scrollToPosition(position);
+                            }
+                        }).setActionTextColor(Color.RED);
+
+                        final View snackbarView = snackbar.getView();
+                        snackbarView.setBackgroundColor(Color.DKGRAY);
+                        final TextView textView =
+                                (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                        textView.setTextColor(Color.YELLOW);
+                        snackbar.show();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //Cancelled - unarchive!
+                        //Unarchive
+                        router.setArchived(false);
+                        dao.updateRouter(router);
+                        routersList.add(position, router);
+                        //                        setRoutersList(dao.getAllRouters());
+                        notifyItemInserted(position);
+                    }
+                })
+                .create()
+                .show();
     }
 
     @Override
