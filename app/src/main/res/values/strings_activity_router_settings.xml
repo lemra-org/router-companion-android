@@ -290,6 +290,51 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item>B</item>
     </string-array>
 
+    <string-array name="speedtest_auto_servers_titles">
+        <item>Amsterdam (The Netherlands)</item>
+        <item>Chennai (India)</item>
+        <item>Dallas (USA)</item>
+        <item>Frankfurt (Germany)</item>
+        <item>Hong Kong (China)</item>
+        <item>Houston (USA)</item>
+        <item>London (United Kingdom)</item>
+        <item>Melbourne (Australia)</item>
+        <item>Milan (Italy)</item>
+        <item>Montreal (Canada)</item>
+        <item>Paris (France)</item>
+        <item>Querétaro (Mexico)</item>
+        <item>San Jose (USA)</item>
+        <item>Sao Paulo (Brazil)</item>
+        <item>Seattle (USA)</item>
+        <item>Singapore (Singapore)</item>
+        <item>Sydney (Australia)</item>
+        <item>Tokyo (Japan)</item>
+        <item>Toronto (Canada)</item>
+        <item>Washington, D.C. (USA)</item>
+    </string-array>
+    <string-array name="speedtest_auto_servers_values">
+        <item>NL</item>
+        <item>IN</item>
+        <item>US-DAL</item>
+        <item>DE</item>
+        <item>HK</item>
+        <item>US-HOU</item>
+        <item>GB</item>
+        <item>AU-MEL</item>
+        <item>IT</item>
+        <item>CA-MON</item>
+        <item>FR</item>
+        <item>MX</item>
+        <item>US-SJC</item>
+        <item>BR</item>
+        <item>US-SEA</item>
+        <item>SG</item>
+        <item>AU-SYD</item>
+        <item>JP</item>
+        <item>CA-TOR</item>
+        <item>US-WDC</item>
+    </string-array>
+
     <string-array name="speedtest_auto_schedule">
         <item>Every hour</item>
         <item>Every 3 hours</item>

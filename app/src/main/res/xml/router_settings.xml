@@ -166,15 +166,26 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:summaryOn="Enabled."
             android:title="Automatic measurements" />
         <ListPreference
-            android:icon="@drawable/ic_action_navigation_refresh"
+            android:defaultValue="NL"
             android:dependency="routerSpeedTestAutoMeasurements"
-            android:defaultValue="1D"
-            android:entries="@array/speedtest_auto_schedule"
-            android:entryValues="@array/speedtest_auto_schedule_values"
-            android:key="routerSpeedTestAutoMeasurementsSchedule"
+            android:entries="@array/speedtest_auto_servers_titles"
+            android:entryValues="@array/speedtest_auto_servers_values"
+            android:icon="@drawable/ic_action_hardware_computer"
+            android:key="routerSpeedTestAutoMeasurementsServer"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:title="Schedule" />
+            android:title="Server for automatic measurements" />
+        <!-- Hidden for now -->
+        <!--<ListPreference-->
+            <!--android:icon="@drawable/ic_action_navigation_refresh"-->
+            <!--android:dependency="routerSpeedTestAutoMeasurements"-->
+            <!--android:defaultValue="1D"-->
+            <!--android:entries="@array/speedtest_auto_schedule"-->
+            <!--android:entryValues="@array/speedtest_auto_schedule_values"-->
+            <!--android:key="routerSpeedTestAutoMeasurementsSchedule"-->
+            <!--android:negativeButtonText="@null"-->
+            <!--android:positiveButtonText="@null"-->
+            <!--android:title="Schedule" />-->
 
     </PreferenceCategory>
 

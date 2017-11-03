@@ -6,6 +6,7 @@ import android.support.v4.util.Pair
 import android.util.Log
 import com.crashlytics.android.Crashlytics
 import com.evernote.android.job.DailyJob
+import com.evernote.android.job.DailyJob.DailyJobResult.CANCEL
 import com.evernote.android.job.DailyJob.DailyJobResult.SUCCESS
 import com.evernote.android.job.Job
 import com.evernote.android.job.Job.Result.FAILURE
@@ -20,11 +21,12 @@ import org.rm3l.ddwrt.BuildConfig
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY
 import org.rm3l.router_companion.RouterCompanionAppConstants.MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION
+import org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SERVER
+import org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SERVER_DEFAULT
 import org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS
 import org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT
 import org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB
 import org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB_DEFAULT
-import org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_SERVER
 import org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_SERVER_AUTO
 import org.rm3l.router_companion.RouterCompanionAppConstants.ROUTER_SPEED_TEST_SERVER_RANDOM
 import org.rm3l.router_companion.actions.PingFromRouterAction
@@ -43,8 +45,6 @@ import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.Comp
 import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.Companion.EVERY_3_HOURS
 import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.Companion.EVERY_6_HOURS
 import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.Companion.EVERY_HOUR
-import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.Companion.JOB_TAG_PREFIX
-import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.Companion.JOB_TAG_SEPARATOR
 import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.Companion.MONTHLY
 import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.Companion.WEEKLY
 import org.rm3l.router_companion.mgmt.RouterManagementActivity
@@ -208,8 +208,8 @@ class RouterSpeedTestAutoRunnerJob {
 
             val mDao = RouterManagementActivity.getDao(context)
             val mOriginalRouter = mDao.getRouter(routerUuid)
-            if (mOriginalRouter == null) {
-                Crashlytics.log(Log.WARN, LOG_TAG, "router NOT found: $routerUuid")
+            if (mOriginalRouter == null || mOriginalRouter.isArchived) {
+                Crashlytics.log(Log.WARN, LOG_TAG, "router NOT found (NULL or archived): $routerUuid")
                 return
             }
             val isDemoRouter = Utils.isDemoRouter(mOriginalRouter)
@@ -228,16 +228,18 @@ class RouterSpeedTestAutoRunnerJob {
             val mRouterCopy = Router(context, mOriginalRouter).setUuid(UUID.randomUUID().toString())
             try {
                 val mRouterPreferences = mOriginalRouter.getPreferences(context)
-                val serverSetting = mRouterPreferences?.getString(ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_RANDOM)
-                var pingServerCountry: String? = null
+                val serverSetting = mRouterPreferences?.getString(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SERVER,
+                        ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SERVER_DEFAULT)
                 var server: String? = null
-                var speedTestResult: SpeedTestResult? = null
+                val speedTestResult: SpeedTestResult?
 
                 var wanDLSpeedUrlToFormat: String? = null
                 var wanULSpeedUrlToFormat: String? = null
-                pingServerCountry = serverSetting
+                var pingServerCountry = serverSetting
                 var wanLatencyResults: PingRTT? = null
                 if (ROUTER_SPEED_TEST_SERVER_AUTO == serverSetting) {
+                    //TODO Remove this block now that users can pick a server from a separate list
+                    // (intended for auto-measurements solely)
                     // Iterate over each server to determine the closest one,
                     // in terms of ping latency
                     var minLatency = java.lang.Float.MAX_VALUE
@@ -267,11 +269,12 @@ class RouterSpeedTestAutoRunnerJob {
                     }
                     pingServerCountry = serverCountry
                 } else {
-                    pingServerCountry = serverSetting
+//                    pingServerCountry = serverSetting
                     if (ROUTER_SPEED_TEST_SERVER_RANDOM == serverSetting) {
+                        //TODO Remove this block now that users can pick a server from a separate list
                         //Pick one randomly
                         val rowKeySet = SERVERS.rowKeySet()
-                        pingServerCountry = Lists.newArrayList<String>(rowKeySet).get(RANDOM.nextInt(rowKeySet.size))
+                        pingServerCountry = Lists.newArrayList<String>(rowKeySet)[RANDOM.nextInt(rowKeySet.size)]
                     }
                     server = SERVERS.get(pingServerCountry, PING_SERVER)
                     wanDLSpeedUrlToFormat = SERVERS.get(pingServerCountry, HTTP_DL_URL)
@@ -450,7 +453,7 @@ class RouterSpeedTestRunnerDailyJob : DailyJob(), RouterCompanionJob {
         fun schedule(routerUuid: String, extras: PersistableBundleCompat) {
             val builder = JobRequest.Builder(RouterSpeedTestAutoRunnerJob.getActualRouterJobTag(TAG, routerUuid))
                     .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
-                    .setRequiresCharging(true)
+//                    .setRequiresCharging(true)
                     .setExtras(extras)
             // run job between 1am and 11pm
             DailyJob.schedule(builder,
@@ -461,8 +464,13 @@ class RouterSpeedTestRunnerDailyJob : DailyJob(), RouterCompanionJob {
 
     override fun onRunDailyJob(params: Params?): DailyJobResult {
         try {
-            RouterSpeedTestAutoRunnerJob.doRunSpeedTest(context,
-                    params?.extras?.getString(ROUTER_SELECTED, null))
+            val routerUuid = params?.extras?.getString(ROUTER_SELECTED, null) ?: return CANCEL
+            val router = RouterManagementActivity.getDao(context).getRouter(routerUuid)
+            if (router == null || router.isArchived) {
+                Crashlytics.log(Log.WARN, TAG, "router is NULL or archived => cancelling daily job")
+                return CANCEL
+            }
+            RouterSpeedTestAutoRunnerJob.doRunSpeedTest(context, routerUuid)
         } catch (e: Exception) {
             //Reschedule
             Crashlytics.logException(e)
@@ -498,7 +506,7 @@ class RouterSpeedTestRunnerPeriodicJob : Job(), RouterCompanionJob {
             }
             JobRequest.Builder(RouterSpeedTestAutoRunnerJob.getActualRouterJobTag(TAG, routerUuid))
                     .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
-                    .setRequiresCharging(true)
+//                    .setRequiresCharging(true)
                     .setExtras(extras)
                     .setPeriodic(intervalMs, TimeUnit.MINUTES.toMillis(5))
                     .build()
@@ -508,8 +516,14 @@ class RouterSpeedTestRunnerPeriodicJob : Job(), RouterCompanionJob {
 
     override fun onRunJob(params: Params?): Result {
         try {
+            val routerUuid = params?.extras?.getString(ROUTER_SELECTED, null) ?: return Result.FAILURE
+            val router = RouterManagementActivity.getDao(context).getRouter(routerUuid)
+            if (router == null || router.isArchived) {
+                Crashlytics.log(Log.WARN, TAG, "router is NULL or archived => cancelling periodic job")
+                return Result.FAILURE
+            }
             RouterSpeedTestAutoRunnerJob.doRunSpeedTest(context,
-                    params?.extras?.getString(ROUTER_SELECTED, null))
+                    params.extras.getString(ROUTER_SELECTED, null))
         } catch (e: Exception) {
             //Reschedule
             Crashlytics.logException(e)

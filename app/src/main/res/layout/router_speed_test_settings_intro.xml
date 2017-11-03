@@ -39,6 +39,18 @@
         android:layout_height="wrap_content"
         android:text="It starts by downloading the smallest sample size (10MB) and watches the download duration. If it takes less than the threshold specified below (default: 8 seconds), next sample data will be tried. The download speed is then based on the last sample data downloaded."/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:textAppearanceMedium"
+        android:textStyle="bold"
+        android:text="Automatic measurements"
+        android:layout_marginTop="3dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="This allows your mobile device to periodically instruct your router to perform speed tests against a specific location server. Tests are run once a day."/>
+
 
 
 </LinearLayout>

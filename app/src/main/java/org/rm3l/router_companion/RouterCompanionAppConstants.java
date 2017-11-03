@@ -253,7 +253,10 @@ public final class RouterCompanionAppConstants {
     public static final String ROUTER_SPEED_TEST_MEASUREMENT_UNIT = "routerSpeedTestUnit";
 
     public static final String ROUTER_SPEED_TEST_AUTO_MEASUREMENTS = "routerSpeedTestAutoMeasurements";
+    public static final String ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SERVER = "routerSpeedTestAutoMeasurementsServer";
     public static final String ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SCHEDULE = "routerSpeedTestAutoMeasurementsSchedule";
+
+    public static final String ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SERVER_DEFAULT = "NL";
 
     public static final String ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT = "8";
 
