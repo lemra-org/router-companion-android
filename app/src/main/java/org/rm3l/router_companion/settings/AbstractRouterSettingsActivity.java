@@ -70,8 +70,6 @@ public abstract class AbstractRouterSettingsActivity extends AbstractDDWRTSettin
         //Need to call super.onCreate prior to calling finish()
         super.onCreate(savedInstanceState);
 
-        ColorUtils.Companion.setAppTheme(this, mRouter.getRouterFirmware(), false);
-
         if (doFinish) {
             finish();
         }
@@ -115,5 +113,10 @@ public abstract class AbstractRouterSettingsActivity extends AbstractDDWRTSettin
         }
         return String.format(Locale.US, "%s (%s:%d)", mRouter.getDisplayName(),
                 mRouter.getRemoteIpAddress(), mRouter.getRemotePort());
+    }
+
+    @Override
+    protected void setAppTheme() {
+        ColorUtils.Companion.setAppTheme(this, mRouter.getRouterFirmware(), false);
     }
 }

@@ -125,7 +125,7 @@ public abstract class AbstractDDWRTSettingsActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        ColorUtils.Companion.setAppTheme(this, null, false);
+        this.setAppTheme();
 
         setContentView(R.layout.settings);
 
@@ -190,6 +190,14 @@ public abstract class AbstractDDWRTSettingsActivity extends AppCompatActivity {
     @NonNull
     protected String getToolbarTitle() {
         return SETTINGS;
+    }
+
+    /**
+     * Set App Theme.
+     * Override to define a different one
+     */
+    protected void setAppTheme() {
+        ColorUtils.Companion.setAppTheme(this, null, false);
     }
 
     /**
