@@ -115,13 +115,15 @@ public class RouterListRecycleViewAdapter
     public static class ViewHolder extends RecyclerView.ViewHolder
             implements ItemTouchHelperViewHolder {
 
-        public final ImageView handleView;
+        final ImageView handleView;
 
         @NonNull
         final TextView routerConnProto;
 
         @NonNull
         final TextView routerFirmware;
+
+        final View routerFirmwareColorView;
 
         @NonNull
         final TextView routerIp;
@@ -162,6 +164,8 @@ public class RouterListRecycleViewAdapter
 
             this.itemView = itemView;
             this.routerViewParent = this.itemView.findViewById(R.id.router_view_parent);
+
+            this.routerFirmwareColorView = this.itemView.findViewById(R.id.router_firmware_line_color);
 
             this.handleView = (ImageView) this.itemView.findViewById(R.id.router_view_handle);
 
@@ -326,27 +330,31 @@ public class RouterListRecycleViewAdapter
                             .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(final DialogInterface dialogInterface, final int i) {
-                                    final Snackbar snackbar = Snackbar.make(activity.findViewById(android.R.id.content),
-                                            String.format("Removing Router '%s'...", mRouter.getCanonicalHumanReadableName()),
-                                            Snackbar.LENGTH_LONG).setAction("UNDO", new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            //                        final int position = viewHolder.getAdapterPosition();
+                                    final Snackbar snackbar = Snackbar
+                                            .make(activity.findViewById(android.R.id.content),
+                                                    String.format("Removing Router '%s'...",
+                                                            mRouter.getCanonicalHumanReadableName()),
+                                                    Snackbar.LENGTH_LONG)
+                                            .setAction("UNDO", new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    //                        final int position = viewHolder.getAdapterPosition();
 
-                                            //Unarchive
-                                            mRouter.setArchived(false);
-                                            dao.updateRouter(mRouter);
-                                            routersList.add(itemPos, mRouter);
-                                            //                        setRoutersList(dao.getAllRouters());
-                                            notifyItemInserted(itemPos);
+                                                    //Unarchive
+                                                    mRouter.setArchived(false);
+                                                    dao.updateRouter(mRouter);
+                                                    routersList.add(itemPos, mRouter);
+                                                    //                        setRoutersList(dao.getAllRouters());
+                                                    notifyItemInserted(itemPos);
 //                                mRecyclerView.scrollToPosition(position);
-                                        }
-                                    }).setActionTextColor(Color.RED);
+                                                }
+                                            }).setActionTextColor(Color.RED);
 
                                     final View snackbarView = snackbar.getView();
                                     snackbarView.setBackgroundColor(Color.DKGRAY);
                                     final TextView textView =
-                                            (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                                            (TextView) snackbarView
+                                                    .findViewById(android.support.design.R.id.snackbar_text);
                                     textView.setTextColor(Color.YELLOW);
                                     snackbar.show();
 
@@ -554,6 +562,7 @@ public class RouterListRecycleViewAdapter
         return items;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         // - get element from your dataset at this position
@@ -573,6 +582,17 @@ public class RouterListRecycleViewAdapter
                     return false;
                 }
             });
+        }
+
+        final Integer primaryColor = ColorUtils.Companion.getPrimaryColor(routerAt.getRouterFirmware());
+        if (primaryColor != null) {
+            holder.routerFirmwareColorView.setBackgroundColor(ContextCompat.getColor(holder.mContext, primaryColor));
+            holder.routerFirmwareColorView.setVisibility(View.VISIBLE);
+        } else {
+            holder.routerFirmwareColorView.setBackgroundColor(ContextCompat.getColor(holder.mContext,
+                    ColorUtils.Companion.isThemeLight(holder.mContext) ?
+                            R.color.lightTheme_primary : R.color.darkTheme_primary));
+            holder.routerFirmwareColorView.setVisibility(View.INVISIBLE);
         }
 
         holder.routerUuid.setText(routerAt.getUuid());
@@ -711,7 +731,7 @@ public class RouterListRecycleViewAdapter
                 .inflate(R.layout.router_mgmt_layout_row_view, parent, false);
         // set the view's size, margins, paddings and layout parameters
         // ...
-        final CardView cardView = (CardView) v.findViewById(R.id.router_item_cardview);
+        final CardView cardView = v.findViewById(R.id.router_item_cardview);
         if (ColorUtils.Companion.isThemeLight(activity)) {
             //Light
             cardView.setCardBackgroundColor(
@@ -756,7 +776,8 @@ public class RouterListRecycleViewAdapter
                             @Override
                             public void onClick(View v) {
                                 //                        final int position = viewHolder.getAdapterPosition();
-                                Crashlytics.log(Log.DEBUG, TAG, "XXX onItemDismiss UNDO Click: position = " + position);
+                                Crashlytics
+                                        .log(Log.DEBUG, TAG, "XXX onItemDismiss UNDO Click: position = " + position);
 
                                 //Unarchive
                                 router.setArchived(false);
