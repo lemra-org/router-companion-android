@@ -148,8 +148,9 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
         debug("<width,height> = <$width,$height>")
         mRecyclerView.minimumHeight = size.y
 
-        addNewButton = layout.find<FloatingActionButton>(R.id.wan_access_restriction_policy_add)
-//    addNewButton.visibility = View.GONE
+        addNewButton = layout.find(R.id.wan_access_restriction_policy_add)
+        //Hidden for now
+        addNewButton.visibility = View.GONE
 
         addNewButton.onClick {
             mParentFragmentActivity.toast("TODO Add new WAN Access Policy")
