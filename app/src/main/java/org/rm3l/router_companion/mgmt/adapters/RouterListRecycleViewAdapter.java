@@ -322,7 +322,7 @@ public class RouterListRecycleViewAdapter
                     new AlertDialog.Builder(activity).setIcon(R.drawable.ic_action_alert_warning)
                             .setTitle("Delete Router?")
                             .setMessage("You'll lose this record!")
-                            .setCancelable(true)
+                            .setCancelable(false)
                             .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(final DialogInterface dialogInterface, final int i) {
@@ -746,7 +746,7 @@ public class RouterListRecycleViewAdapter
         new AlertDialog.Builder(activity).setIcon(R.drawable.ic_action_alert_warning)
                 .setTitle("Delete Router?")
                 .setMessage("You'll lose this record!")
-                .setCancelable(true)
+                .setCancelable(false)
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialogInterface, final int i) {
