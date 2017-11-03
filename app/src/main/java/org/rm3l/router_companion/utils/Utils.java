@@ -674,7 +674,16 @@ public final class Utils {
         if (wifiInfo == null) {
             return null;
         }
-        return wifiInfo.getSSID();
+        String ssid = wifiInfo.getSSID();
+        if (ssid == null || "<unknown ssid>".equals(ssid)) {
+            //Try using extra-info
+            final String extraInfo = myNetworkInfo.getExtraInfo();
+            final int length;
+            if (extraInfo != null && (length = extraInfo.length()) >= 2) {
+                ssid = extraInfo.substring(1, length -1);
+            }
+        }
+        return ssid;
     }
 
     @Nullable
