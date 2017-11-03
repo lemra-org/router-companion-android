@@ -87,7 +87,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
             }
             val builder = JobRequest.Builder(TAG)
                     .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
-                    .setRequiresCharging(true)
+//                    .setRequiresCharging(true)
             // run job between 9am and 9pm
             DailyJob.schedule(builder,
                     TimeUnit.HOURS.toMillis(9),
