@@ -43,8 +43,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
 import java.util.Map;
 import java.util.Set;
@@ -54,6 +56,8 @@ import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.widgets.NumberPickerPreference;
 
 public abstract class AbstractDDWRTSettingsActivity extends AppCompatActivity {
+
+    private static final String TAG = AbstractDDWRTSettingsActivity.class.getSimpleName();
 
     private static class PrefChangeListener implements Preference.OnPreferenceChangeListener {
 
@@ -208,6 +212,10 @@ public abstract class AbstractDDWRTSettingsActivity extends AppCompatActivity {
      * dependent on the type of preference.
      */
     protected static void bindPreferenceSummaryToValue(Preference preference) {
+        if (preference == null) {
+            Crashlytics.log(Log.WARN, TAG, "bindPreferenceSummaryToValue called with a NULL preference!");
+            return;
+        }
         // Set the listener to watch for value changes.
         //        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
         final PrefChangeListener sBindPreferenceSummaryToValueListener =
