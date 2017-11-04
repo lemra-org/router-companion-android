@@ -45,6 +45,29 @@ SOFTWARE.
     <string name="aboutLibraries_description_special1_name" translatable="false">What\'s new?</string>
     <string name="aboutLibraries_description_special1_text" translatable="false">
   <![CDATA[
+<h4>2017-11-04: Version 10.0.0</h4>
+<h6>Bug, reliability &amp; performance fixes</h6>
+<ul>
+  <li>Fixed an issue with too frequent notifications</li>
+  <li>Fixed an issue preventing Passlock window from opening at all</li>
+  <li>Fixed an issue that causes router list to be reordered whenever an entry was updated</li>
+  <li>Fixed an issue with toggling Access Policies on some devices: you are now able to explicitly force-enable/disable policies on demand</li>
+</ul>
+<h6>Enhancements and New features</h6>
+<ul>
+  <li>Full compatibility with Android Oreo 8.0: amongst other changes, this release leverages the latest improvements
+  in Android job scheduling (so as to be battery-efficient) and introduces several notification categories in use in this app</li>
+  <li>Added the ability to manually check (on-demand) for router firmware updates.
+  Provided you have enabled the "Background Service", there is also a daily job responsible for automatically checking latest firmware builds.</li>
+  <li>Added the ability to import custom router icons.</li>
+  <li>Added per-router preference to display Bits over Bytes in Speed Test results</li>
+  <li>Added per-router preference to perform automatic daily speed tests</li>
+  <li>Added confirmation dialog to prevent deleting routers accidentally</li>
+  <li>Update to overall look and feel: more consistent themes, router icon displaying in notifications</li>
+  <li>Experimental Support for Tomato firmware: added few features to the list of supported features.</li>
+</ul>
+--------------<br/>
+
 <h4>2017-05-15: Version 9.0.5</h4>
 <h6>Bug, reliability &amp; performance fixes</h6>
 <ul>
