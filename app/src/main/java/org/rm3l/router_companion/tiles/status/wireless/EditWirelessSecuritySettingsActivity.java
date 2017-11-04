@@ -1282,6 +1282,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
         final String wepEncryption = mNvramInfo.getProperty(this.mPhyIface + "_wep_bit");
         position = (wepEncryption != null ? wepEncryptionValues.get(wepEncryption) : null);
         if (!wepEncryptionValues.containsKey(wepEncryption)) {
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "mNvramInfo: " + mNvramInfo);
             Utils.reportException(null,
                     new IllegalStateException("Unknown wepEncryption: " + wepEncryption));
         }
