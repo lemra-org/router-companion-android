@@ -119,6 +119,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <item
         android:id="@+id/changelog"
         android:orderInCategory="10"
+        android:visible="false"
         android:title="@string/what_s_new"
         app:showAsAction="never" />
 
