@@ -39,7 +39,10 @@ services:
   # checks for new updates.
   # If any, it POSTs a new message to the fcm-app-server service above, 
   # so the latter can push it to FCM for 
-  # notifications on end-user devices
+  # notifications on end-user devices.
+  #
+  # DEPRECATED, now that each client app can check for updates on demand (or automatically)
+  # TODO Remove service when confirmed that it is not used by anyone else.
   #
   dd-wrt-notifier:
     build:
