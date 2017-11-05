@@ -1242,6 +1242,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                 this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WEP;
             }
 
+            encryption = nullToEmpty(encryption);
+
             if (encryption.startsWith("WPA")) {
                 this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WPA;
             } else if (encryption.startsWith("WEP")) {
