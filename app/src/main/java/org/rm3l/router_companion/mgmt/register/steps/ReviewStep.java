@@ -607,7 +607,14 @@ public class ReviewStep extends MaterialWizardStep {
         }
 
         router.setRemoteIpAddress(routerIpOrDns);
-        router.setRemotePort(port != null ? Integer.parseInt(port) : 22);
+
+        int portToSet = 22;
+        final String portTrimmed;
+        if (port != null && !(portTrimmed = port.trim()).isEmpty() && !portTrimmed.equals("-")) {
+            portToSet = Integer.parseInt(portTrimmed);
+        }
+        router.setRemotePort(portToSet);
+
         router.setRouterConnectionProtocol(
                 connectionProtocol != null ? Router.RouterConnectionProtocol.valueOf(connectionProtocol)
                         : Router.RouterConnectionProtocol.SSH);
