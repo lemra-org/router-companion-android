@@ -587,12 +587,8 @@ public class RouterListRecycleViewAdapter
         final Integer primaryColor = ColorUtils.Companion.getPrimaryColor(routerAt.getRouterFirmware());
         if (primaryColor != null) {
             holder.routerFirmwareColorView.setBackgroundColor(ContextCompat.getColor(holder.mContext, primaryColor));
-            holder.routerFirmwareColorView.setVisibility(View.VISIBLE);
         } else {
-            holder.routerFirmwareColorView.setBackgroundColor(ContextCompat.getColor(holder.mContext,
-                    ColorUtils.Companion.isThemeLight(holder.mContext) ?
-                            R.color.lightTheme_primary : R.color.darkTheme_primary));
-            holder.routerFirmwareColorView.setVisibility(View.INVISIBLE);
+            holder.routerFirmwareColorView.setBackgroundColor(Color.TRANSPARENT);
         }
 
         holder.routerUuid.setText(routerAt.getUuid());
