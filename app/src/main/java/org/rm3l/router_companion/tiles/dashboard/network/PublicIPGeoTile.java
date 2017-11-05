@@ -198,8 +198,12 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                             new DDWRTNoDataException("Failed to retrieved Public IP Address geolocation data!"));
                 } else {
                     try {
-                        latitude = Double.parseDouble(mIPWhoisInfoWithGeo.getLatitude());
-                        longitude = Double.parseDouble(mIPWhoisInfoWithGeo.getLongitude());
+                        if (mIPWhoisInfoWithGeo.getLatitude() != null) {
+                            latitude = Double.parseDouble(mIPWhoisInfoWithGeo.getLatitude());
+                        }
+                        if (mIPWhoisInfoWithGeo.getLongitude() != null) {
+                            longitude = Double.parseDouble(mIPWhoisInfoWithGeo.getLongitude());
+                        }
                     } catch (final NumberFormatException nfe) {
                         Crashlytics.logException(nfe);
                         nfe.printStackTrace();
