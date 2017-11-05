@@ -41,6 +41,7 @@ import org.codepond.wizardroid.Wizard;
 import org.codepond.wizardroid.WizardStep;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
+import org.rm3l.router_companion.common.utils.ExceptionUtils;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.exceptions.UnknownRouterFirmwareException;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
@@ -468,39 +469,54 @@ public class ReviewStep extends MaterialWizardStep {
 
     @Override
     public Boolean validateStep(Wizard wizard) {
-        router = buildRouter();
-        boolean checkActualConnection = true;
-        if (routerSelected != null
-                && action != RouterWizardAction.ADD
-                && action != RouterWizardAction.COPY) {
-            //This is an update - check whether any of the connection parameters have changed
-            if (routerSelected.getRemoteIpAddress().equals(router.getRemoteIpAddress())
-                    && routerSelected.getRouterFirmware() == router.getRouterFirmware()
-                    && routerSelected.getRouterConnectionProtocol() == router.getRouterConnectionProtocol()
-                    && routerSelected.getRemotePort() == router.getRemotePort()
-                    && routerSelected.getUsernamePlain() != null &&
-                    routerSelected.getUsernamePlain().equals(router.getUsernamePlain())
-                    && routerSelected.getSshAuthenticationMethod() == router.getSshAuthenticationMethod()) {
+        try {
+            router = buildRouter();
+            boolean checkActualConnection = true;
+            if (routerSelected != null
+                    && action != RouterWizardAction.ADD
+                    && action != RouterWizardAction.COPY) {
+                //This is an update - check whether any of the connection parameters have changed
+                if (routerSelected.getRemoteIpAddress().equals(router.getRemoteIpAddress())
+                        && routerSelected.getRouterFirmware() == router.getRouterFirmware()
+                        && routerSelected.getRouterConnectionProtocol() == router.getRouterConnectionProtocol()
+                        && routerSelected.getRemotePort() == router.getRemotePort()
+                        && routerSelected.getUsernamePlain() != null &&
+                        routerSelected.getUsernamePlain().equals(router.getUsernamePlain())
+                        && routerSelected.getSshAuthenticationMethod() == router.getSshAuthenticationMethod()) {
 
-                //Check actual password and privkey
-                switch (routerSelected.getSshAuthenticationMethod()) {
-                    case PASSWORD:
-                        checkActualConnection =
-                                !(routerSelected.getPasswordPlain() != null &&
-                                        routerSelected.getPasswordPlain().equals(router.getPasswordPlain()));
-                        break;
-                    case PUBLIC_PRIVATE_KEY:
-                        checkActualConnection =
-                                !(routerSelected.getPrivKeyPlain() != null &&
-                                        routerSelected.getPrivKeyPlain().equals(router.getPrivKeyPlain()));
-                        break;
-                    default:
-                        checkActualConnection = false;
-                        break;
+                    //Check actual password and privkey
+                    switch (routerSelected.getSshAuthenticationMethod()) {
+                        case PASSWORD:
+                            checkActualConnection =
+                                    !(routerSelected.getPasswordPlain() != null &&
+                                            routerSelected.getPasswordPlain().equals(router.getPasswordPlain()));
+                            break;
+                        case PUBLIC_PRIVATE_KEY:
+                            checkActualConnection =
+                                    !(routerSelected.getPrivKeyPlain() != null &&
+                                            routerSelected.getPrivKeyPlain().equals(router.getPrivKeyPlain()));
+                            break;
+                        default:
+                            checkActualConnection = false;
+                            break;
+                    }
                 }
             }
+            new CheckRouterConnectionAsyncTask(wizard, checkActualConnection).execute();
+        } catch (final Exception e) {
+            Crashlytics.logException(e);
+            final Throwable rootCause = ExceptionUtils.getRootCause(e);
+            SnackbarUtils.buildSnackbar(getContext(),
+                    getView(),
+                    Color.RED,
+                    e.getClass().getSimpleName() + ": " + (rootCause != null ? rootCause.getMessage()
+                            : e.getMessage()),
+                    Color.WHITE, null,
+                    Color.YELLOW,
+                    Snackbar.LENGTH_LONG,
+                    null, null,
+                    true);
         }
-        new CheckRouterConnectionAsyncTask(wizard, checkActualConnection).execute();
         //We are returning null to indicate that this step will take care of updating the wizard
         return null;
     }
