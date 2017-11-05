@@ -95,6 +95,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -977,13 +978,19 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         final boolean singleHost = !isNullOrEmpty(connectedHostIp);
         if (!singleHost) {
             //All Hosts
+            final Serializable serializableExtra = intent.getSerializableExtra(IP_TO_HOSTNAME_RESOLVER);
             //noinspection unchecked
-            mLocalIpToHostname = new ConcurrentHashMap<>(
-                    (HashMap<String, String>) intent.getSerializableExtra(IP_TO_HOSTNAME_RESOLVER));
+            mLocalIpToHostname = (serializableExtra instanceof HashMap) ?
+                    new ConcurrentHashMap<>((HashMap<String, String>) serializableExtra) :
+                    new ConcurrentHashMap<String, String>();
         } else {
             //Single host
             mLocalIpToHostname = new ConcurrentHashMap<>();
-            mLocalIpToHostname.put(connectedHostIp, intent.getStringExtra(IP_TO_HOSTNAME_RESOLVER));
+            final String intentStringExtra = intent.getStringExtra(IP_TO_HOSTNAME_RESOLVER);
+            //noinspection ConstantConditions
+            if (connectedHostIp != null && intentStringExtra != null) {
+                mLocalIpToHostname.put(connectedHostIp, intentStringExtra);
+            }
         }
 
         mActiveIPConnections = new ArrayList<>();
