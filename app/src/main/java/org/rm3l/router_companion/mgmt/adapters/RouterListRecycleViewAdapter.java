@@ -48,7 +48,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -58,9 +57,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.TouchDelegate;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -83,6 +82,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
@@ -115,7 +115,7 @@ public class RouterListRecycleViewAdapter
     public static class ViewHolder extends RecyclerView.ViewHolder
             implements ItemTouchHelperViewHolder {
 
-        final ImageView handleView;
+//        final ImageView handleView;
 
         @NonNull
         final TextView routerConnProto;
@@ -148,10 +148,19 @@ public class RouterListRecycleViewAdapter
         private ImageView routerAvatarImage;
 
         @NonNull
-        private ImageButton routerMenu;
+        private ImageButton routerOpenButton;
 
         @NonNull
-        private ImageButton routerOpenButton;
+        private ImageButton routerEditButton;
+
+        @NonNull
+        private ImageButton routerCopyButton;
+
+        @NonNull
+        private ImageButton routerRemoveButton;
+
+        @NonNull
+        private ImageButton routerMenu;
 
         @NonNull
         private View routerUsernameAndProtoView;
@@ -167,7 +176,7 @@ public class RouterListRecycleViewAdapter
 
             this.routerFirmwareColorView = this.itemView.findViewById(R.id.router_firmware_line_color);
 
-            this.handleView = (ImageView) this.itemView.findViewById(R.id.router_view_handle);
+//            this.handleView = (ImageView) this.itemView.findViewById(R.id.router_view_handle);
 
             this.routerName = (TextView) this.itemView.findViewById(R.id.router_name);
             this.routerIp = (TextView) this.itemView.findViewById(R.id.router_ip_address);
@@ -178,7 +187,10 @@ public class RouterListRecycleViewAdapter
             this.routerModel = (TextView) this.itemView.findViewById(R.id.router_model);
 
             this.routerMenu = (ImageButton) this.itemView.findViewById(R.id.router_menu);
-            this.routerOpenButton = (ImageButton) this.itemView.findViewById(R.id.router_go);
+            this.routerOpenButton = this.itemView.findViewById(R.id.router_open);
+            this.routerEditButton = this.itemView.findViewById(R.id.router_edit);
+            this.routerCopyButton = this.itemView.findViewById(R.id.router_copy);
+            this.routerRemoveButton = this.itemView.findViewById(R.id.router_remove);
 
             this.routerAvatarImage = (ImageView) this.itemView.findViewById(R.id.router_avatar);
 
@@ -224,10 +236,6 @@ public class RouterListRecycleViewAdapter
             final Integer itemPos = findRouterPosition(mRouter.getUuid());
 
             switch (menuItem.getItemId()) {
-                case R.id.menu_router_item_open: {
-                    doOpenRouterDetails(mRouter);
-                }
-                return true;
                 case R.id.action_actions_ssh_router: {
                     //Open an SSH Client app, if any
                     Router.openSSHConsole(mRouter, activity);
@@ -308,89 +316,6 @@ public class RouterListRecycleViewAdapter
                 case R.id.action_actions_firmwares_upgrade:
                     //TODO Hidden for now
                     return true;
-                case R.id.menu_router_list_delete: {
-                    if (itemPos == null || itemPos < 0) {
-                        Toast.makeText(activity, "Internal Error - please try again later", Toast.LENGTH_SHORT)
-                                .show();
-                        ReportingUtils.reportException(null,
-                                new IllegalStateException("Weird routerPosition: " + itemPos));
-                        return true;
-                    }
-
-                    mRouter.setArchived(true);
-                    dao.updateRouter(mRouter); //Actual archive
-                    routersList.remove(itemPos.intValue());
-                    //        dao.deleteRouter(router.getUuid()); //Actual delete
-                    notifyItemRemoved(itemPos);
-
-                    new AlertDialog.Builder(activity).setIcon(R.drawable.ic_action_alert_warning)
-                            .setTitle("Delete Router?")
-                            .setMessage("You'll lose this record!")
-                            .setCancelable(false)
-                            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(final DialogInterface dialogInterface, final int i) {
-                                    final Snackbar snackbar = Snackbar
-                                            .make(activity.findViewById(android.R.id.content),
-                                                    String.format("Removing Router '%s'...",
-                                                            mRouter.getCanonicalHumanReadableName()),
-                                                    Snackbar.LENGTH_LONG)
-                                            .setAction("UNDO", new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    //                        final int position = viewHolder.getAdapterPosition();
-
-                                                    //Unarchive
-                                                    mRouter.setArchived(false);
-                                                    dao.updateRouter(mRouter);
-                                                    routersList.add(itemPos, mRouter);
-                                                    //                        setRoutersList(dao.getAllRouters());
-                                                    notifyItemInserted(itemPos);
-//                                mRecyclerView.scrollToPosition(position);
-                                                }
-                                            }).setActionTextColor(Color.RED);
-
-                                    final View snackbarView = snackbar.getView();
-                                    snackbarView.setBackgroundColor(Color.DKGRAY);
-                                    final TextView textView =
-                                            (TextView) snackbarView
-                                                    .findViewById(android.support.design.R.id.snackbar_text);
-                                    textView.setTextColor(Color.YELLOW);
-                                    snackbar.show();
-
-//                                    int numberOfItems = removeData(itemPos);
-//                                    if (numberOfItems == 0) {
-//                                        //All items dropped = open up 'Add Router' dialog
-//                                        openAddRouterForm();
-//                                    }
-//
-//                                    //Request Backup
-//                                    Utils.requestBackup(activity);
-                                }
-                            })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    //Unarchive
-                                    mRouter.setArchived(false);
-                                    dao.updateRouter(mRouter);
-                                    routersList.add(itemPos, mRouter);
-                                    //                        setRoutersList(dao.getAllRouters());
-                                    notifyItemInserted(itemPos);
-                                }
-                            })
-                            .create()
-                            .show();
-                }
-                return true;
-                case R.id.menu_router_item_edit: {
-                    openUpdateRouterForm(mRouter);
-                }
-                return true;
-                case R.id.menu_router_item_copy: {
-                    openDuplicateRouterForm(mRouter);
-                }
-                return true;
                 case R.id.menu_router_list_add_home_shortcut: {
                     mRouter.addHomeScreenShortcut(activity);
                 }
@@ -570,25 +495,26 @@ public class RouterListRecycleViewAdapter
         final Router routerAt = routersList.get(position);
 
         // Start a drag whenever the handle view it touched
-        if (holder.handleView != null) {
-            holder.handleView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (mDragStartListener != null) {
-                        if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
-                            mDragStartListener.onStartDrag(holder);
-                        }
-                    }
-                    return false;
-                }
-            });
-        }
+//        if (holder.handleView != null) {
+//            holder.handleView.setOnTouchListener(new View.OnTouchListener() {
+//                @Override
+//                public boolean onTouch(View v, MotionEvent event) {
+//                    if (mDragStartListener != null) {
+//                        if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+//                            mDragStartListener.onStartDrag(holder);
+//                        }
+//                    }
+//                    return false;
+//                }
+//            });
+//        }
 
         final Integer primaryColor = ColorUtils.Companion.getPrimaryColor(routerAt.getRouterFirmware());
         if (primaryColor != null) {
             holder.routerFirmwareColorView.setBackgroundColor(ContextCompat.getColor(holder.mContext, primaryColor));
         } else {
-            holder.routerFirmwareColorView.setBackgroundColor(Color.TRANSPARENT);
+            //TODO Fix colors
+            holder.routerFirmwareColorView.setBackgroundColor(ContextCompat.getColor(holder.mContext, R.color.transparent_semi));
         }
 
         holder.routerUuid.setText(routerAt.getUuid());
@@ -633,8 +559,8 @@ public class RouterListRecycleViewAdapter
 
         if (!isThemeLight) {
             //Set menu background to white
-            holder.routerMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
-            holder.routerOpenButton.setImageResource(R.drawable.ic_action_av_play_arrow_dark);
+//            holder.routerMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+//            holder.routerOpenButton.setImageResource(R.drawable.ic_action_av_play_arrow_dark);
             holder.routerAvatarImage.setBackgroundColor(
                     ContextCompat.getColor(activity, R.color.cardview_dark_background));
         } else {
@@ -646,6 +572,102 @@ public class RouterListRecycleViewAdapter
             @Override
             public void onClick(View v) {
                 doOpenRouterDetails(routerAt);
+            }
+        });
+
+        holder.routerEditButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                openUpdateRouterForm(routerAt);
+            }
+        });
+
+        holder.routerCopyButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                openDuplicateRouterForm(routerAt);
+            }
+        });
+
+        holder.routerRemoveButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+
+                final AtomicBoolean deleteClicked = new AtomicBoolean(false);
+                new AlertDialog.Builder(activity).setIcon(R.drawable.ic_action_alert_warning)
+                        .setTitle("Delete Router?")
+                        .setMessage("You'll lose this record!")
+                        .setCancelable(true)
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialogInterface, final int i) {
+                                deleteClicked.set(true);
+                                routerAt.setArchived(true);
+                                dao.updateRouter(routerAt); //Actual archive
+                                routersList.remove(position);
+                                //        dao.deleteRouter(router.getUuid()); //Actual delete
+                                notifyItemRemoved(position);
+
+                                final Snackbar snackbar = Snackbar
+                                        .make(activity.findViewById(android.R.id.content),
+                                                String.format("Removing Router '%s'...",
+                                                        routerAt.getCanonicalHumanReadableName()),
+                                                Snackbar.LENGTH_LONG)
+                                        .setAction("UNDO", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                if (deleteClicked.get()) {
+                                                    //Unarchive
+                                                    routerAt.setArchived(false);
+                                                    dao.updateRouter(routerAt);
+                                                    routersList.add(position, routerAt);
+                                                    //                        setRoutersList(dao.getAllRouters());
+                                                    notifyItemInserted(position);
+                                                }
+//                                mRecyclerView.scrollToPosition(position);
+                                            }
+                                        }).setActionTextColor(Color.RED);
+
+                                final View snackbarView = snackbar.getView();
+                                snackbarView.setBackgroundColor(Color.DKGRAY);
+                                final TextView textView =
+                                        (TextView) snackbarView
+                                                .findViewById(android.support.design.R.id.snackbar_text);
+                                textView.setTextColor(Color.YELLOW);
+                                snackbar.show();
+
+//                                    int numberOfItems = removeData(itemPos);
+//                                    if (numberOfItems == 0) {
+//                                        //All items dropped = open up 'Add Router' dialog
+//                                        openAddRouterForm();
+//                                    }
+//
+//                                    //Request Backup
+//                                    Utils.requestBackup(activity);
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if (deleteClicked.get()) {
+                                    //Unarchive
+                                    routerAt.setArchived(false);
+                                    dao.updateRouter(routerAt);
+                                    routersList.add(position, routerAt);
+                                    //                        setRoutersList(dao.getAllRouters());
+                                    notifyItemInserted(position);
+                                }
+                            }
+                        })
+                        .create()
+                        .show();
+            }
+        });
+
+        holder.routerMenu.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                createContextualPopupMenu(v, routerAt);
             }
         });
 
@@ -691,30 +713,30 @@ public class RouterListRecycleViewAdapter
 
                 // The bounds for the delegate view (an ImageButton
                 // in this example)
-                setClickListenerForNestedView(holder.routerMenu, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        createContextualPopupMenu(v, routerAt);
-                    }
-                }, null);
+//                setClickListenerForNestedView(holder.routerMenu, new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        createContextualPopupMenu(v, routerAt);
+//                    }
+//                }, null);
 
-                setClickListenerForNestedView(holder.routerOpenButton, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        doOpenRouterDetails(routerAt);
-                    }
-                }, null);
-                //
-                if (holder.handleView != null) {
-                    setClickListenerForNestedView(holder.handleView, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (mDragStartListener != null) {
-                                mDragStartListener.onStartDrag(holder);
-                            }
-                        }
-                    }, null);
-                }
+//                setClickListenerForNestedView(holder.routerOpenButton, new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        doOpenRouterDetails(routerAt);
+//                    }
+//                }, null);
+//                //
+//                if (holder.handleView != null) {
+//                    setClickListenerForNestedView(holder.handleView, new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            if (mDragStartListener != null) {
+//                                mDragStartListener.onStartDrag(holder);
+//                            }
+//                        }
+//                    }, null);
+//                }
             }
         });
     }
@@ -761,7 +783,7 @@ public class RouterListRecycleViewAdapter
 
         new AlertDialog.Builder(activity).setIcon(R.drawable.ic_action_alert_warning)
                 .setTitle("Delete Router?")
-                .setMessage("You'll lose this record!")
+                .setMessage("You'll lose this record: '" + router.getCanonicalHumanReadableName() + "' !")
                 .setCancelable(false)
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
@@ -930,8 +952,8 @@ public class RouterListRecycleViewAdapter
         final Menu menu = popup.getMenu();
         inflater.inflate(R.menu.menu_router_list_selection_menu, menu);
         menu.findItem(R.id.action_actions_reboot_routers).setTitle("Reboot");
-        menu.findItem(R.id.menu_router_item_open).setVisible(true);
-        menu.findItem(R.id.menu_router_item_open).setEnabled(true);
+//        menu.findItem(R.id.menu_router_item_open).setVisible(true);
+//        menu.findItem(R.id.menu_router_item_open).setEnabled(true);
         popup.show();
     }
 

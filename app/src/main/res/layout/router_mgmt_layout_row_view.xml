@@ -37,151 +37,172 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!--card_view:cardPreventCornerOverlap="true"-->
 
     <LinearLayout
-        android:id="@+id/router_view_parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:baselineAligned="false">
 
-        <RelativeLayout
-            android:layout_weight="2"
-            android:id="@+id/router_firmware_line_color"
-            android:background="@android:color/transparent"
-            android:layout_width="110dp"
-            android:layout_height="110dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:padding="5dp">
+        <LinearLayout
+            android:id="@+id/router_view_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <ImageView
+                android:layout_weight="2"
                 android:id="@+id/router_avatar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
                 android:layout_gravity="center_vertical"
-                android:layout_centerInParent="true"
                 android:adjustViewBounds="true"
                 android:background="@android:color/transparent"
                 android:contentDescription="Overview"
                 android:src="@drawable/router" />
 
-        </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/router_item_cardview_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="10"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/router_uuid"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/router_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Router Name"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:id="@+id/router_ip_address"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="IP Address" />
-
-            <TextView
-                android:id="@+id/router_firmware"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/router_model"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
             <LinearLayout
-                android:id="@+id/router_username_and_proto"
+                android:id="@+id/router_item_cardview_content"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:layout_weight="10"
+                android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/router_username"
-                    android:layout_width="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:id="@+id/router_uuid"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="root" />
+                    android:visibility="gone" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:id="@+id/router_name"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=" | " />
+                    android:text="Router Name"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textStyle="bold"/>
 
                 <TextView
-                    android:id="@+id/router_connection_protocol"
-                    android:layout_width="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:id="@+id/router_ip_address"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="SSH" />
+                    android:text="IP Address" />
+
+                <TextView
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:id="@+id/router_firmware"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:id="@+id/router_model"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:id="@+id/router_username_and_proto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/router_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="root" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" | " />
+
+                    <TextView
+                        android:id="@+id/router_connection_protocol"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SSH" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
         </LinearLayout>
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:layout_weight="1"
-            android:orientation="vertical">
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:id="@+id/router_firmware_line_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:layout_weight="1"
+                android:layout_margin="5dp"
+                android:id="@+id/router_edit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@android:color/transparent"
+                android:contentDescription="Edit"
+                android:src="@drawable/ic_edit_white_24dp"/>
+            <ImageButton
+                android:layout_weight="1"
+                android:layout_margin="5dp"
+                android:id="@+id/router_copy"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@android:color/transparent"
+                android:contentDescription="Copy as new"
+                android:src="@drawable/ic_content_copy_white_24dp"/>
+            <ImageButton
+                android:layout_weight="1"
+                android:layout_margin="5dp"
+                android:id="@+id/router_remove"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@android:color/transparent"
+                android:contentDescription="Delete"
+                android:src="@drawable/ic_delete_white_24dp"/>
+
+            <ImageButton
+                android:layout_weight="1"
+                android:layout_margin="5dp"
+                android:id="@+id/router_open"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/open"
+                android:src="@drawable/ic_launch_white_24dp"/>
 
             <ImageButton
                 android:id="@+id/router_menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_gravity="end|top"
+                android:layout_gravity="end|center"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/menu"
-                android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"/>
+                android:src="@drawable/ic_more_horiz_white_24dp"/>
 
-            <!-- Not needed for now,as popup menu provides it and clicking on the view too -->
-            <ImageButton
-                android:id="@+id/router_go"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_gravity="end|bottom"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/open"
-                android:src="@drawable/ic_action_av_play_arrow"
-                android:visibility="gone" />
+        </LinearLayout>
 
-            <ImageView
-                android:id="@+id/router_view_handle"
-                android:layout_width="?listPreferredItemHeight"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_gravity="end|bottom"
-                android:scaleType="center"
-                android:src="@drawable/ic_reorder_grey_500_24dp"
-                android:contentDescription="Drag and drop"
-                android:visibility="gone"/>
-
-        </RelativeLayout>
-
-        <!--<ImageView-->
-        <!--android:id="@+id/router_view_handle"-->
-        <!--android:layout_width="?listPreferredItemHeight"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_gravity="center_vertical|right"-->
-        <!--android:scaleType="center"-->
-        <!--android:src="@drawable/ic_reorder_grey_500_24dp" />-->
 
     </LinearLayout>
-
 
 </android.support.v7.widget.CardView>

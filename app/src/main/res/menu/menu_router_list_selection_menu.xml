@@ -24,39 +24,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_router_item_open"
-        android:alphabeticShortcut="o"
-        android:enabled="false"
-        android:orderInCategory="1"
-        android:title="@string/action_open"
-        android:visible="false"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/menu_router_item_edit"
-        android:alphabeticShortcut="e"
-        android:icon="@drawable/ic_action_editor_mode_edit"
-        android:orderInCategory="2"
-        android:title="@string/action_edit"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/menu_router_item_copy"
-        android:alphabeticShortcut="c"
-        android:icon="@drawable/ic_action_content_content_copy"
-        android:orderInCategory="3"
-        android:title="@string/action_copy"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/menu_router_list_delete"
-        android:alphabeticShortcut="r"
-        android:icon="@drawable/ic_action_remove_ddwrt_companion"
-        android:orderInCategory="4"
-        android:title="@string/action_remove"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/action_actions"
         android:alphabeticShortcut="A"
         android:icon="@drawable/ic_launch_white_24dp"
