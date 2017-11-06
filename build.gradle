@@ -93,11 +93,10 @@ ext.getAndroidSigningConfig = {
 
 ext.getVersionCodeAndName = {
     flavorName ->
-        def latestTagGitCommit = "git -C ${rootDir} rev-list --tags --max-count=1".execute().text.trim()
         // Fetch the version according to git latest tag and "how far we are from last tag"
-        def longVersionName = "git -C ${rootDir} describe --tags --long ${latestTagGitCommit}".execute().text.
-                trim()
+        def longVersionName = "git -C ${rootDir} describe --tags --long HEAD".execute().text.trim()
         def (fullVersionTag, versionBuild, gitSha) = longVersionName.tokenize('-')
+        def latestTagGitCommit = "git -C ${rootDir} rev-list rev-list -n 1 ${fullVersionTag}".execute().text.trim()
         def (versionMajor, versionMinor, versionPatch) = fullVersionTag.tokenize('.')
         def gitCommitHash = "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 
