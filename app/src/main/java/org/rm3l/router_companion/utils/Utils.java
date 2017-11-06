@@ -801,6 +801,14 @@ public final class Utils {
         return RouterCompanionAppConstants.DEMO_ROUTER_DNS.equals(routerReachableAddr);
     }
 
+    public static boolean isNonDemoRouter(@Nullable final Router router) {
+        return !isDemoRouter(router);
+    }
+
+    public static boolean isNonDemoRouter(@Nullable final String routerReachableAddr) {
+        return !isDemoRouter(routerReachableAddr);
+    }
+
     public static boolean isFirstLaunch(@NonNull final Context context) {
         final SharedPreferences defaultSharedPreferences =
                 context.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE);

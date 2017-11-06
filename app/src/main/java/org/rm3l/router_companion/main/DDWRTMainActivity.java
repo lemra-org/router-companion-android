@@ -1451,6 +1451,16 @@ public class DDWRTMainActivity extends AppCompatActivity
             return true;
 
             case R.id.action_check_for_firmware_updates:
+                if (Utils.isNonDemoRouter(mRouter) && (BuildConfig.DONATIONS || BuildConfig.WITH_ADS)) {
+                    //Download the full version to unlock this version
+                    final RouterFirmware routerFirmware = mRouter.getRouterFirmware();
+                    Utils.displayUpgradeMessage(this,
+                            String.format("Check for %s Firmware updates",
+                                    (routerFirmware != null && routerFirmware != RouterFirmware.AUTO
+                                            && routerFirmware != RouterFirmware.UNKNOWN) ?
+                                            routerFirmware.officialName : "Router"));
+                    return true;
+                }
                 FirmwareUpdateCheckerJob.manualCheckForFirmwareUpdate(this, mGooGlService, mRouter);
                 return true;
 
