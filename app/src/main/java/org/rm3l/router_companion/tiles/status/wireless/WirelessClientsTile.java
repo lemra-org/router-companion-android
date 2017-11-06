@@ -939,8 +939,17 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                             new Handler().postDelayed(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    mParentFragmentActivity.startActivity(intent);
-                                                    alertDialog.cancel();
+                                                    try {
+                                                        mParentFragmentActivity.startActivity(intent);
+                                                    } catch (final Exception e) {
+                                                        Toast.makeText(mParentFragmentActivity,
+                                                                "Internal error - issue will be reported. Sorry for the inconvenience: "
+                                                                        + e.getMessage(),
+                                                                Toast.LENGTH_SHORT).show();
+                                                        Utils.reportException(mParentFragmentActivity, e);
+                                                    } finally {
+                                                        alertDialog.cancel();
+                                                    }
                                                 }
                                             }, 1000);
                                         }
@@ -956,8 +965,17 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                         new Handler().postDelayed(new Runnable() {
                                             @Override
                                             public void run() {
-                                                mParentFragmentActivity.startActivity(intent);
-                                                alertDialog.cancel();
+                                                try {
+                                                    mParentFragmentActivity.startActivity(intent);
+                                                } catch (final Exception e) {
+                                                    Toast.makeText(mParentFragmentActivity,
+                                                            "Internal error - issue will be reported. Sorry for the inconvenience: "
+                                                                    + e.getMessage(),
+                                                            Toast.LENGTH_SHORT).show();
+                                                    Utils.reportException(mParentFragmentActivity, e);
+                                                } finally {
+                                                    alertDialog.cancel();
+                                                }
                                             }
                                         }, 1000);
                                     }
