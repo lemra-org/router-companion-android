@@ -2726,8 +2726,15 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                         }
                     });
 
-                    ConnectedHostsServiceTask.Companion.generateConnectedHostsNotification(mParentFragmentActivity,
-                            mRouter, deviceCollection);
+                    try {
+                        ConnectedHostsServiceTask.Companion
+                                .generateConnectedHostsNotification(mParentFragmentActivity,
+                                        mRouter, deviceCollection);
+                    } catch (final Exception e) {
+                        //No worries
+                        Crashlytics.log(Log.WARN, LOG_TAG, "Failed to generate connected hosts notification: " + e.getMessage());
+                        Utils.reportException(mParentFragmentActivity, e);
+                    }
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG,
                             "Discovered a total of " + devices.getDevicesCount() + " device(s)!");

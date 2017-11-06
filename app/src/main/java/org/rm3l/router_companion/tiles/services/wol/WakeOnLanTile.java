@@ -303,8 +303,14 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
 
             if (wakeOnLanTile != null) {
                 wakeOnLanTile.runBgServiceTaskAsync();
-                ConnectedHostsServiceTask.Companion.generateConnectedHostsNotification(
-                        wakeOnLanTile.mParentFragmentActivity, mRouter, macToDevice.values());
+                try {
+                    ConnectedHostsServiceTask.Companion.generateConnectedHostsNotification(
+                            wakeOnLanTile.mParentFragmentActivity, mRouter, macToDevice.values());
+                } catch (final Exception e) {
+                    //No worries
+                    Crashlytics.log(Log.WARN, LOG_TAG, "Failed to generate connected hosts notification: " + e.getMessage());
+                    Utils.reportException(mParentFragmentActivity, e);
+                }
                 //                new Handler(Looper.getMainLooper()).post(new Runnable() {
                 //                    @Override
                 //                    public void run() {
