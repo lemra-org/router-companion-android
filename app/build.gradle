@@ -110,6 +110,7 @@ android {
         //FIXME Change applicationId for lite version
         applicationId "org.rm3l.ddwrt"
         testApplicationId "org.rm3l.ddwrt.tests"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         minSdkVersion 15
         targetSdkVersion android_sdk
 
