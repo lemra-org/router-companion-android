@@ -332,6 +332,10 @@ public final class RouterCompanionAppConstants {
 
     public static final String DDWRT_RELEASE_URL_FORMAT = (DDWRT_RELEASE_BASE_URL + "/%s/%s");
 
+    public static final String PROXY_SERVER_BASE_URL = "http://tools.rm3l.org:5180";
+    public static final String PROXY_SERVER_PASSWORD_AUTH_TOKEN_ENCODED =
+            "Basic xxx";
+
     @NonNull
     public static File getClientsUsageDataFile(@NonNull final Context context,
             @NonNull final String routerUuid) {

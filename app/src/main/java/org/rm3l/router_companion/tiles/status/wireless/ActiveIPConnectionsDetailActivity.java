@@ -23,6 +23,7 @@ package org.rm3l.router_companion.tiles.status.wireless;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.PROXY_SERVER_PASSWORD_AUTH_TOKEN_ENCODED;
 import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION;
 import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_COUNTRY;
 import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_PORT;
@@ -104,6 +105,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
+import org.rm3l.router_companion.api.proxy.ProxyData;
+import org.rm3l.router_companion.api.proxy.RequestMethod;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.lookup.IPGeoLookupService;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
@@ -115,6 +118,7 @@ import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.NetworkUtils;
+import org.rm3l.router_companion.utils.NetworkUtils.AuthenticationInterceptor;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
@@ -870,8 +874,9 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
     private static final String LOG_TAG = ActiveIPConnectionsDetailActivity.class.getSimpleName();
 
     private static final IPGeoLookupService mIPGeoLookupService =
-            NetworkUtils.createApiService(null, IPWhoisInfo.Companion.getIP_WHOIS_INFO_API_PREFIX(),
-                    IPGeoLookupService.class);
+            NetworkUtils.createApiService(null, RouterCompanionAppConstants.PROXY_SERVER_BASE_URL,
+                    IPGeoLookupService.class,
+                    new AuthenticationInterceptor(PROXY_SERVER_PASSWORD_AUTH_TOKEN_ENCODED));
 
     public static final LoadingCache<String, IPWhoisInfo> mIPWhoisInfoCache =
             CacheBuilder.newBuilder()
@@ -890,10 +895,13 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                             if (isNullOrEmpty(ipAddr)) {
                                 throw new IllegalArgumentException("IP Addr is invalid");
                             }
-                            //Get to MAC OUI Vendor Lookup API
+                            //Get to IP Geo Lookup API (via Proxy)
                             try {
+                                final ProxyData proxyData = new ProxyData(
+                                        String.format("%s/%s.json", IPWhoisInfo.IP_WHOIS_INFO_API_PREFIX, ipAddr),
+                                        RequestMethod.GET);
                                 final Response<IPWhoisInfo> response =
-                                        mIPGeoLookupService.lookupIP(ipAddr).execute();
+                                        mIPGeoLookupService.lookupIP(proxyData).execute();
                                 NetworkUtils.checkResponseSuccessful(response);
                                 return response.body();
                             } catch (final Exception e) {

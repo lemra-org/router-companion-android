@@ -153,7 +153,10 @@ class IPWhoisInfo {
 
     companion object {
 
+        @JvmField
         val TOOLS_RM3L_GEOIP_API_PREFIX = "http://tools.rm3l.org:5080/json"
+
+        @JvmField
         val IP_WHOIS_INFO_API_PREFIX = "https://dazzlepod.com/ip/"
     }
 }

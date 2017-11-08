@@ -6,12 +6,16 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Base64;
 import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.readystatesoftware.chuck.ChuckInterceptor;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.router_companion.RouterCompanionApplication;
@@ -46,12 +50,22 @@ public final class NetworkUtils {
 
     @NonNull
     public static <T> T createApiService(@Nullable final Context context,
-            @NonNull final String endpointBaseUrl, @NonNull final Class<T> serviceType) {
-        return getRetrofitInstance(context, endpointBaseUrl).create(serviceType);
+            @NonNull final String endpointBaseUrl, @NonNull final Class<T> serviceType,
+            @Nullable final Interceptor... interceptors) {
+        return getRetrofitInstance(context, endpointBaseUrl, interceptors).create(serviceType);
     }
 
-    public static OkHttpClient getHttpClientInstance(@Nullable final Context context) {
+    public static OkHttpClient getHttpClientInstance(@Nullable final Context context,
+            @Nullable final Interceptor... interceptors) {
         final OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        if (interceptors != null) {
+            for (final Interceptor interceptor : interceptors) {
+                if (interceptor == null) {
+                    continue;
+                }
+                builder.addInterceptor(interceptor);
+            }
+        }
         final Context currentContext =
                 (context != null ? context : RouterCompanionApplication.getCurrentActivity());
         if (currentContext != null) {
@@ -79,7 +93,8 @@ public final class NetworkUtils {
 
     @NonNull
     public static Retrofit getRetrofitInstance(@Nullable final Context context,
-            @NonNull final String baseUrl) {
+            @NonNull final String baseUrl,
+            @Nullable final Interceptor... interceptors) {
         if (isNullOrEmpty(baseUrl)) {
             throw new IllegalArgumentException();
         }
@@ -87,7 +102,7 @@ public final class NetworkUtils {
             return new Retrofit.Builder().addCallAdapterFactory(RetryCallAdapterFactory.create())
                     .baseUrl(baseUrl)
                     .addConverterFactory(GsonConverterFactory.create())
-                    .client(getHttpClientInstance(context))
+                    .client(getHttpClientInstance(context, interceptors))
                     .build();
         } catch (final Exception e) {
             throw new DDWRTCompanionException(e);
@@ -95,5 +110,27 @@ public final class NetworkUtils {
     }
 
     private NetworkUtils() {
+    }
+
+    public static class AuthenticationInterceptor implements Interceptor {
+
+        private final String authToken;
+
+        public AuthenticationInterceptor(@NonNull final String token) {
+            this.authToken = token;
+        }
+
+        public AuthenticationInterceptor(@NonNull final String username, @NonNull final String password) {
+            this("Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
+        }
+
+        @Override
+        public okhttp3.Response intercept(@NonNull Chain chain) throws IOException {
+            final Request original = chain.request();
+            final Request.Builder builder = original.newBuilder()
+                    .header("Authorization", authToken);
+            final Request request = builder.build();
+            return chain.proceed(request);
+        }
     }
 }
