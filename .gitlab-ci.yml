@@ -2,44 +2,38 @@ stages:
   - build
   - deploy
 
-# This is NOT a job and will be ignored by GitLab-CI
-.deploy_stage_operation_key: &deploy_stage_operation  # This is an anchor
-  before_script:
-    - apk update || apt-get update -y
+before_script:
+  - apt-get update -y
 
-    # For CD pipeline
-    # Install ssh-agent if not already installed, it is required by Docker.
-    # (change apt-get to yum if you use a CentOS-based image)
-    - 'which ssh-agent || apk add openssh || apt-get install openssh-client -y'
+  # For CD pipeline
+  # Install ssh-agent if not already installed, it is required by Docker.
+  - 'which ssh-agent || apt-get install openssh-client -y'
 
-    # Run ssh-agent (inside the build environment)
-    - echo "$SSH_PRIVATE_KEY" | ssh-add -
+  # Run ssh-agent (inside the build environment)
+  - eval $(ssh-agent -s)
 
-    # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
-    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+  # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+  - ssh-add <(echo "$SSH_PRIVATE_KEY")
 
-    # For Docker builds disable host key checking. Be aware that by adding that
-    # you are suspectible to man-in-the-middle attacks.
-    # WARNING: Use this only with the Docker executor, if you use it with shell
-    # you will overwrite your user's SSH config.
-    # - mkdir -p ~/.ssh
-    # - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    # In order to properly check the server's host key, assuming you created the
-    # SSH_SERVER_HOSTKEYS variable previously, uncomment the following two lines
-    # instead.
-    - mkdir -p ~/.ssh
-    - '[[ -f /.dockerenv ]] && echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts'
+  # For Docker builds disable host key checking. Be aware that by adding that
+  # you are suspectible to man-in-the-middle attacks.
+  # WARNING: Use this only with the Docker executor, if you use it with shell
+  # you will overwrite your user's SSH config.
+  # - mkdir -p ~/.ssh
+  # - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  # In order to properly check the server's host key, assuming you created the
+  # SSH_SERVER_HOSTKEYS variable previously, uncomment the following two lines
+  # instead.
+  - mkdir -p ~/.ssh
+  - '[[ -f /.dockerenv ]] && echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts'
 
-    - 'which rsync || apk add rsync || apt-get install rsync -y'
-  # after_script:
-  #   - echo after script
-
-
+  - 'which rsync || apt-get install rsync -y'
 
 build:
   image: registry.gitlab.com/lemra/router-companion-android:latest
   stage: build
   script:
+    - chmod +x ./gradlew
     - ./gradlew htmlDependencyReport :app:assembleAmazonDebug :tasker-plugin:assembleAmazonDebug
   artifacts:
     paths:
@@ -52,8 +46,7 @@ build:
     - tasker-plugin/build/reports
 
 production_messaging:
-  <<: *deploy_stage_operation  # This is a reference to the anchor.
-  image: alpine:3.6
+  image: debian:jessie
   stage: deploy
   script:
     - ssh -p 1022 ci@rm3l.org "mkdir -p /home/ci/router-companion-android"
@@ -64,8 +57,7 @@ production_messaging:
   environment: production
 
 production_tools:
-  <<: *deploy_stage_operation  # This is a reference to the anchor.
-  image: alpine:3.6
+  image: debian:jessie
   stage: deploy
   script:
     - ssh -p 1022 ci@rm3l.org "mkdir -p /home/ci/router-companion-android"
