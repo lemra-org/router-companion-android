@@ -5,7 +5,7 @@ stages:
 # This is NOT a job and will be ignored by GitLab-CI
 .deploy_stage_operation_key: &deploy_stage_operation  # This is an anchor
   before_script:
-    - - apk update || apt-get update -y
+    - apk update || apt-get update -y
 
     # For CD pipeline
     # Install ssh-agent if not already installed, it is required by Docker.
