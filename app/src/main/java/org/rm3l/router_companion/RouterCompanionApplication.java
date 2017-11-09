@@ -145,7 +145,13 @@ public class RouterCompanionApplication extends Application
                 }
             }
         });
-        JobManager.create(this).addJobCreator(new RouterCompanionJobCreator());
+        try {
+            JobManager.create(this).addJobCreator(new RouterCompanionJobCreator());
+        } catch (final Exception e) {
+            Crashlytics.log(Log.WARN, TAG, "JobManager reported an error => no job scheduling feature then: " +
+                    e.getMessage());
+            Crashlytics.logException(e);
+        }
 
         isDebugResourceInspectorEnabled = appPreferences.getBoolean(DEBUG_RESOURCE_INSPECTOR_PREF_KEY, false);
 
