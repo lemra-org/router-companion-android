@@ -79,8 +79,8 @@ public final class NetworkUtils {
         if (currentContext != null) {
             builder.addInterceptor(new ChuckInterceptor(currentContext));
         }
-        builder.readTimeout(10, TimeUnit.SECONDS);
-        builder.connectTimeout(10, TimeUnit.SECONDS);
+        builder.readTimeout(5, TimeUnit.MINUTES);
+        builder.connectTimeout(30, TimeUnit.SECONDS);
 
         if (BuildConfig.DEBUG) {
             final HttpLoggingInterceptor interceptor =
