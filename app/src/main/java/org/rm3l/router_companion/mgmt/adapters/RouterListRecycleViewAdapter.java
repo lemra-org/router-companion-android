@@ -604,9 +604,11 @@ public class RouterListRecycleViewAdapter
                                 deleteClicked.set(true);
                                 routerAt.setArchived(true);
                                 dao.updateRouter(routerAt); //Actual archive
-                                routersList.remove(position);
-                                //        dao.deleteRouter(router.getUuid()); //Actual delete
-                                notifyItemRemoved(position);
+                                if (position >= 0 && position < routersList.size()) {
+                                    routersList.remove(position);
+                                    //        dao.deleteRouter(router.getUuid()); //Actual delete
+                                    notifyItemRemoved(position);
+                                }
 
                                 final Snackbar snackbar = Snackbar
                                         .make(activity.findViewById(android.R.id.content),
@@ -777,9 +779,11 @@ public class RouterListRecycleViewAdapter
 
         router.setArchived(true);
         dao.updateRouter(router); //Actual archive
-        routersList.remove(position);
-        //        dao.deleteRouter(router.getUuid()); //Actual delete
-        notifyItemRemoved(position);
+        if (position >= 0 && position < routersList.size()) {
+            routersList.remove(position);
+            //        dao.deleteRouter(router.getUuid()); //Actual delete
+            notifyItemRemoved(position);
+        }
 
         new AlertDialog.Builder(activity).setIcon(R.drawable.ic_action_alert_warning)
                 .setTitle("Delete Router?")
