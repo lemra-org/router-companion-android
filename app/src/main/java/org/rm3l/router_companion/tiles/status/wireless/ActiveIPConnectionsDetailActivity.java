@@ -23,7 +23,6 @@ package org.rm3l.router_companion.tiles.status.wireless;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.rm3l.router_companion.RouterCompanionAppConstants.PROXY_SERVER_PASSWORD_AUTH_TOKEN_ENCODED;
 import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION;
 import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_COUNTRY;
 import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_PORT;
@@ -99,16 +98,18 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
+import org.rm3l.router_companion.api.proxy.NetWhoisInfoProxyApiResponse;
 import org.rm3l.router_companion.api.proxy.ProxyData;
 import org.rm3l.router_companion.api.proxy.RequestMethod;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
-import org.rm3l.router_companion.lookup.IPGeoLookupService;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.IPConntrack;
 import org.rm3l.router_companion.resources.IPWhoisInfo;
@@ -118,7 +119,6 @@ import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.NetworkUtils;
-import org.rm3l.router_companion.utils.NetworkUtils.AuthenticationInterceptor;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
@@ -157,9 +157,76 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             Exception exception = null;
             try {
 
+                //First step : bulk resolve all IP addresses / hosts
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadingView.setProgress(30);
+                        loadingViewText.setText("Analyzing a total of " + mActiveIPConnections.size() + " connections...");
+                    }
+                });
+
+                final Set<String> toResolve = new HashSet<>();
+                for (final IPConntrack ipConntrackRow : mActiveIPConnections) {
+                    if (ipConntrackRow == null) {
+                        continue;
+                    }
+                    final String sourceAddressOriginalSide = ipConntrackRow.getSourceAddressOriginalSide();
+                    if (!TextUtils.isEmpty(sourceAddressOriginalSide) &&
+                            mIPWhoisInfoCache.getIfPresent(sourceAddressOriginalSide) == null) {
+                        toResolve.add(sourceAddressOriginalSide);
+                    }
+                    final String sourceAddressReplySide = ipConntrackRow.getSourceAddressReplySide();
+                    if (!TextUtils.isEmpty(sourceAddressReplySide) &&
+                            mIPWhoisInfoCache.getIfPresent(sourceAddressReplySide) == null) {
+                        toResolve.add(sourceAddressReplySide);
+                    }
+                    final String sourceHostname = ipConntrackRow.getSourceHostname();
+                    if (!TextUtils.isEmpty(sourceHostname) &&
+                            mIPWhoisInfoCache.getIfPresent(sourceHostname) == null) {
+                        toResolve.add(sourceHostname);
+                    }
+                    final String destinationAddressOriginalSide = ipConntrackRow.getDestinationAddressOriginalSide();
+                    if (!TextUtils.isEmpty(destinationAddressOriginalSide) &&
+                            mIPWhoisInfoCache.getIfPresent(destinationAddressOriginalSide) == null) {
+                        toResolve.add(destinationAddressOriginalSide);
+                    }
+                    final String destinationAddressReplySide = ipConntrackRow.getDestinationAddressReplySide();
+                    if (!TextUtils.isEmpty(destinationAddressReplySide) &&
+                            mIPWhoisInfoCache.getIfPresent(destinationAddressReplySide) == null) {
+                        toResolve.add(destinationAddressReplySide);
+                    }
+                    final String destWhoisOrHostname = ipConntrackRow.getDestWhoisOrHostname();
+                    if (!TextUtils.isEmpty(destWhoisOrHostname) &&
+                            mIPWhoisInfoCache.getIfPresent(destWhoisOrHostname) == null) {
+                        toResolve.add(destWhoisOrHostname);
+                    }
+                }
+
+                boolean skipIndividualIPGeoLocationRequests = false;
+                try {
+                    final Response<List<NetWhoisInfoProxyApiResponse>> response = NetworkUtils.PROXY_SERVICE
+                            .bulkNetworkGeoLocation(new ArrayList<>(toResolve)).execute();
+                    NetworkUtils.checkResponseSuccessful(response);
+                    final List<NetWhoisInfoProxyApiResponse> body = response.body();
+                    if (body != null) {
+                        for (final NetWhoisInfoProxyApiResponse proxyApiResponse : body) {
+                            final IPWhoisInfo info;
+                            if (proxyApiResponse == null || (info = proxyApiResponse.getInfo()) == null) {
+                                continue;
+                            }
+                            mIPWhoisInfoCache.put(proxyApiResponse.getHost(), info);
+                        }
+                    }
+                } catch (final Exception e) {
+                    Utils.reportException(ActiveIPConnectionsDetailActivity.this, e);
+                    skipIndividualIPGeoLocationRequests = true;
+                }
+
                 final int totalConnectionsCount = mActiveIPConnections.size();
                 int index = 1;
                 String existingRecord;
+
                 for (final IPConntrack ipConntrackRow : mActiveIPConnections) {
                     if (ipConntrackRow == null) {
                         continue;
@@ -173,7 +240,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     //i = 25 => 25/50 => 50%
                     //i = 50 => 50/50 = 1%
                     final int currentIdx = (index++);
-                    final int progress = Double.valueOf(100 * (totalConnectionsCount > 100 ? (1 - ((double) (
+                    final int progress = 35 + Double.valueOf(100 * (totalConnectionsCount > 100 ? (1 - ((double) (
                             totalConnectionsCount
                                     - currentIdx) / (double) totalConnectionsCount))
                             : ((double) currentIdx / (double) totalConnectionsCount))).intValue();
@@ -217,7 +284,9 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                         } else {
                             IPWhoisInfo ipWhoisInfo = null;
                             try {
-                                ipWhoisInfo = mIPWhoisInfoCache.get(destinationAddressOriginalSide);
+                                if (!skipIndividualIPGeoLocationRequests) {
+                                    ipWhoisInfo = mIPWhoisInfoCache.get(destinationAddressOriginalSide);
+                                }
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 Utils.reportException(null, e);
@@ -873,11 +942,6 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = ActiveIPConnectionsDetailActivity.class.getSimpleName();
 
-    private static final IPGeoLookupService mIPGeoLookupService =
-            NetworkUtils.createApiService(null, RouterCompanionAppConstants.PROXY_SERVER_BASE_URL,
-                    IPGeoLookupService.class,
-                    new AuthenticationInterceptor(PROXY_SERVER_PASSWORD_AUTH_TOKEN_ENCODED));
-
     public static final LoadingCache<String, IPWhoisInfo> mIPWhoisInfoCache =
             CacheBuilder.newBuilder()
                     .softValues()
@@ -901,7 +965,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                                         String.format("%s/%s.json", IPWhoisInfo.IP_WHOIS_INFO_API_PREFIX, ipAddr),
                                         RequestMethod.GET);
                                 final Response<IPWhoisInfo> response =
-                                        mIPGeoLookupService.lookupIP(proxyData).execute();
+                                        NetworkUtils.PROXY_SERVICE.proxy(proxyData).execute();
                                 NetworkUtils.checkResponseSuccessful(response);
                                 return response.body();
                             } catch (final Exception e) {
