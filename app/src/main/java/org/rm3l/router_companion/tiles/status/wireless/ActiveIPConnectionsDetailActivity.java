@@ -23,8 +23,10 @@ package org.rm3l.router_companion.tiles.status.wireless;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION;
+import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_HOSTNAME;
+import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_IP;
 import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_COUNTRY;
+import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_ORG;
 import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_PORT;
 import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_PROTOCOL;
 import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_SOURCE;
@@ -303,6 +305,15 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                                     }
                                     statsTable.put(BY_DESTINATION_COUNTRY, country, countryStats + 1);
                                 }
+
+                                final String hostname = ipWhoisInfo.getHostname();
+                                if (!isNullOrEmpty(hostname)) {
+                                    Integer hostnameStats = statsTable.get(BY_DESTINATION_HOSTNAME, hostname);
+                                    if (hostnameStats == null) {
+                                        hostnameStats = 0;
+                                    }
+                                    statsTable.put(BY_DESTINATION_HOSTNAME, hostname, hostnameStats + 1);
+                                }
                             }
                             final String org;
                             if (ipWhoisInfo == null
@@ -314,6 +325,11 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                                 if (!mLocalIpToHostname.containsKey(destinationAddressOriginalSide)) {
                                     mLocalIpToHostname.put(destinationAddressOriginalSide, org);
                                 }
+                                Integer orgStats = statsTable.get(BY_DESTINATION_ORG, org);
+                                if (orgStats == null) {
+                                    orgStats = 0;
+                                }
+                                statsTable.put(BY_DESTINATION_ORG, org, orgStats + 1);
                             }
                         }
                         ipToHostResolvedMap.put(destinationAddressOriginalSide, dstIpWhoisResolved);
@@ -355,13 +371,13 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     statsTable.put(BY_SOURCE, sourceInStats, sourceStats + 1);
 
                     final String destinationInStats =
-                            String.format("%s%s%s", ipToHostResolvedMap.get(destinationAddressOriginalSide),
-                                    SEPARATOR, destinationAddressOriginalSide);
-                    Integer destinationStats = statsTable.get(BY_DESTINATION, destinationInStats);
+                            String.format("%s%s%s", destinationAddressOriginalSide,
+                                    SEPARATOR, ipToHostResolvedMap.get(destinationAddressOriginalSide));
+                    Integer destinationStats = statsTable.get(BY_DESTINATION_IP, destinationInStats);
                     if (destinationStats == null) {
                         destinationStats = 0;
                     }
-                    statsTable.put(BY_DESTINATION, destinationInStats, destinationStats + 1);
+                    statsTable.put(BY_DESTINATION_IP, destinationInStats, destinationStats + 1);
                 }
             } catch (final Exception e) {
                 exception = e;

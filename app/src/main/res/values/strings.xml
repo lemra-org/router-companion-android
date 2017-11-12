@@ -625,5 +625,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="clear_arp_cache">Clear ARP Cache</string>
     <string name="actions">Actions</string>
     <string name="take_bug_report">Take Bug Report</string>
+    <string name="other">Other</string>
 
 </resources>

@@ -8,6 +8,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -177,9 +178,13 @@ public class ActiveIPConnectionsStatsAdapter
 
     public static final int BY_DESTINATION_COUNTRY = 2;
 
-    public static final int BY_DESTINATION = 3;
+    public static final int BY_DESTINATION_PORT = 3;
 
-    public static final int BY_DESTINATION_PORT = 4;
+    public static final int BY_DESTINATION_ORG = 4;
+
+    public static final int BY_DESTINATION_HOSTNAME = 5;
+
+    public static final int BY_DESTINATION_IP = 6;
 
     public static final String SEPARATOR =
             ("__" + ActiveIPConnectionsStatsAdapter.class.getSimpleName() + "__");
@@ -237,11 +242,17 @@ public class ActiveIPConnectionsStatsAdapter
             case BY_PROTOCOL:
                 holder.title.setText("Protocol");
                 break;
-            case BY_DESTINATION:
-                holder.title.setText("Destination");
+            case BY_DESTINATION_IP:
+                holder.title.setText("Destination IP");
                 break;
             case BY_DESTINATION_PORT:
                 holder.title.setText("Destination Port");
+                break;
+            case BY_DESTINATION_HOSTNAME:
+                holder.title.setText("Destination Hostname");
+                break;
+            case BY_DESTINATION_ORG:
+                holder.title.setText("Destination Organization");
                 break;
             default:
                 Toast.makeText(activity, "Internal Error", Toast.LENGTH_SHORT).show();
@@ -293,8 +304,13 @@ public class ActiveIPConnectionsStatsAdapter
                     itemTitleForToast = host;
                 } else {
                     final String ip = itemComponents.get(1);
-                    itemTitle = String.format("%s\n(%s)", Utils.truncateText(host, 20), ip);
-                    itemTitleForToast = String.format("%s\n(%s)", host, ip);
+                    if (TextUtils.isEmpty(ip) || "-".equals(ip)) {
+                        itemTitle = Utils.truncateText(host, 20);
+                        itemTitleForToast = host;
+                    } else {
+                        itemTitle = String.format("%s\n(%s)", Utils.truncateText(host, 20), ip);
+                        itemTitleForToast = String.format("%s\n(%s)", host, ip);
+                    }
                 }
 
                 final View.OnClickListener clickListener = new View.OnClickListener() {
