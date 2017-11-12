@@ -385,10 +385,10 @@ class RouterSpeedTestAutoRunnerJob {
 
                 if (pairAcceptedForComputation != null) {
                     val timeElapsedSeconds = pairAcceptedForComputation.second
-                    val wanDl = if (timeElapsedSeconds != 0L)
-                        pairAcceptedForComputation.first * 1024 * 1024 / timeElapsedSeconds
+                    val wanDl = if (timeElapsedSeconds != null && timeElapsedSeconds != 0L)
+                        (pairAcceptedForComputation.first as Long) * 1024 * 1024 / timeElapsedSeconds
                     else
-                        pairAcceptedForComputation.first * 1024 * 1024
+                        (pairAcceptedForComputation.first as Long) * 1024 * 1024
                     speedTestResult.setWanDl(wanDl)
                 }
 

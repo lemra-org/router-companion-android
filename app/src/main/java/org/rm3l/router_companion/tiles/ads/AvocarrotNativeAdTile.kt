@@ -38,7 +38,7 @@ class AvocarrotNativeAdTile(parentFragment: Fragment, arguments: Bundle, router:
     private val loader: AsyncTaskLoader<Unit>
 
     init {
-        loader = object : AsyncTaskLoader<Unit>(mParentFragmentActivity as Context?) {
+        loader = object : AsyncTaskLoader<Unit>(mParentFragmentActivity as Context) {
             override fun loadInBackground() {}
         }
     }

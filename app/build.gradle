@@ -414,7 +414,7 @@ dependencies {
     implementation 'com.github.curioustechizen.android-ago:library:1.3.4'
     //    implementation 'com.github.danielemaddaluno.androidupdatechecker:library:1.0.2'
 //  implementation 'com.google.android.gms:play-services-ads:11.4.0'
-    implementation 'com.google.android.gms:play-services-ads-lite:11.4.2' //only for distrib. via Play Store
+    implementation "com.google.android.gms:play-services-ads-lite:${playServices_version}" //only for distrib. via Play Store
     implementation('com.avocarrot:android-sdk:4.0.+')
     implementation 'fr.nicolaspomepuy:discreetapprate:2.0.4@aar'
     implementation 'com.squareup.picasso:picasso:2.5.2'
@@ -427,7 +427,7 @@ dependencies {
     implementation 'mbanje.kurt:fabbutton:1.2.4@aar'
     implementation 'com.sothree.slidinguppanel:library:3.4.0'
 
-    implementation 'com.google.firebase:firebase-appindexing:11.4.2'
+    implementation "com.google.firebase:firebase-appindexing:${playServices_version}"
 
     /*
      * AirBnB DeepLinkDispatch
