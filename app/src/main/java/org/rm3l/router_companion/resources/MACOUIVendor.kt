@@ -171,5 +171,8 @@ class MACOUIVendor {
     companion object {
 
         val TOOLS_RM3L_PREFIX = "http://tools.rm3l.org:5000/"
+
+        @JvmField
+        val BASE_API_ENDPOINT = "http://tools.rm3l.org:5000"
     }
 }

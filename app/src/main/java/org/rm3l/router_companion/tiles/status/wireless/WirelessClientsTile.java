@@ -97,6 +97,7 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
@@ -123,10 +124,11 @@ import org.rm3l.router_companion.actions.ResetBandwidthMonitoringCountersRouterA
 import org.rm3l.router_companion.actions.RouterAction;
 import org.rm3l.router_companion.actions.RouterActionListener;
 import org.rm3l.router_companion.actions.WakeOnLANRouterAction;
+import org.rm3l.router_companion.api.proxy.ProxyData;
+import org.rm3l.router_companion.api.proxy.RequestMethod;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
-import org.rm3l.router_companion.lookup.MACOUILookupService;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.multithreading.MultiThreadingManager;
 import org.rm3l.router_companion.resources.ClientDevices;
@@ -152,6 +154,7 @@ import org.rm3l.router_companion.utils.NVRAMParser;
 import org.rm3l.router_companion.utils.NetworkUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
+import org.rm3l.router_companion.utils.kotlin.JsonElementUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
@@ -594,10 +597,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
 
     private static final int MAC_OUI_VENDOR_LOOKUP_CACHE_SIZE = 20;
 
-    private static final MACOUILookupService mMACOUILookupService =
-            NetworkUtils.createApiService(null, MACOUIVendor.Companion.getTOOLS_RM3L_PREFIX(),
-                    MACOUILookupService.class);
-
     public static final LoadingCache<String, MACOUIVendor> mMacOuiVendorLookupCache =
             CacheBuilder.newBuilder()
                     .softValues()
@@ -617,10 +616,15 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                             }
                             //Get to MAC OUI Vendor Lookup API
                             try {
-                                final Response<MACOUIVendor> response =
-                                        mMACOUILookupService.lookupMACAddress(macAddr.replaceAll(":", "-")).execute();
+                                final ProxyData proxyData = new ProxyData(
+                                        String.format("%s/%s",
+                                                MACOUIVendor.BASE_API_ENDPOINT,
+                                                macAddr.replaceAll(":", "-").substring(0, 8)),
+                                        RequestMethod.GET);
+                                final Response<JsonElement> response =
+                                        NetworkUtils.PROXY_SERVICE.proxy(proxyData).execute();
                                 NetworkUtils.checkResponseSuccessful(response);
-                                return response.body();
+                                return JsonElementUtils.parseAs(response.body(), MACOUIVendor.class);
                             } catch (final Exception e) {
                                 e.printStackTrace();
                                 throw new DDWRTCompanionException(e);
@@ -2732,7 +2736,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                         mRouter, deviceCollection);
                     } catch (final Exception e) {
                         //No worries
-                        Crashlytics.log(Log.WARN, LOG_TAG, "Failed to generate connected hosts notification: " + e.getMessage());
+                        Crashlytics.log(Log.WARN, LOG_TAG,
+                                "Failed to generate connected hosts notification: " + e.getMessage());
                         Utils.reportException(mParentFragmentActivity, e);
                     }
 

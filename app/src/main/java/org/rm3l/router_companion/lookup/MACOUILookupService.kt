@@ -10,6 +10,7 @@ import retrofit2.http.Path
 /**
  * Created by rm3l on 27/06/16.
  */
+@Deprecated("Deprecated. Use ProxyService instead")
 interface MACOUILookupService {
 
     @Headers("Content-Type: application/json",

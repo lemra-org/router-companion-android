@@ -89,6 +89,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.RowSortedTable;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
+import com.google.gson.JsonElement;
 import com.squareup.picasso.Callback;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -120,6 +121,7 @@ import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.NetworkUtils;
 import org.rm3l.router_companion.utils.Utils;
+import org.rm3l.router_companion.utils.kotlin.JsonElementUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
@@ -964,10 +966,10 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                                 final ProxyData proxyData = new ProxyData(
                                         String.format("%s/%s.json", IPWhoisInfo.IP_WHOIS_INFO_API_PREFIX, ipAddr),
                                         RequestMethod.GET);
-                                final Response<IPWhoisInfo> response =
+                                final Response<JsonElement> response =
                                         NetworkUtils.PROXY_SERVICE.proxy(proxyData).execute();
                                 NetworkUtils.checkResponseSuccessful(response);
-                                return response.body();
+                                return JsonElementUtils.parseAs(response.body(), IPWhoisInfo.class);
                             } catch (final Exception e) {
                                 e.printStackTrace();
                                 throw new DDWRTCompanionException(e);
