@@ -1052,7 +1052,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             //All Hosts
             final Serializable serializableExtra = intent.getSerializableExtra(IP_TO_HOSTNAME_RESOLVER);
             //noinspection unchecked
-            mLocalIpToHostname = (serializableExtra instanceof HashMap) ?
+            mLocalIpToHostname = (serializableExtra != null && serializableExtra instanceof HashMap) ?
                     new ConcurrentHashMap<>((HashMap<String, String>) serializableExtra) :
                     new ConcurrentHashMap<String, String>();
         } else {
