@@ -1439,7 +1439,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                     }
                 }
             }
-        }, 1500l);
+        }, 1_500L);
     }
 
     public void setLoaderStopped(boolean mLoaderStopped) {

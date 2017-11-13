@@ -22,6 +22,7 @@
 
 package org.rm3l.router_companion.mgmt;
 
+import static org.rm3l.router_companion.RouterCompanionAppConstants.ACRA_ENABLE;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DEBUG_MODE;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.MAX_ROUTERS_FREE_VERSION;
@@ -118,6 +119,7 @@ import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.customtabs.CustomTabActivityHelper;
+import org.rm3l.router_companion.utils.kotlin.ContextUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import org.rm3l.router_companion.welcome.GettingStartedActivity;
 import org.rm3l.router_companion.widgets.RecyclerViewEmptySupport;
@@ -174,6 +176,8 @@ public class RouterManagementActivity extends AppCompatActivity
     private DDWRTCompanionDAO dao;
 
     private RecyclerView.Adapter mAdapter;
+
+    private boolean mAutoCrashReports;
 
     private boolean mBackgroundServiceEnabled;
 
@@ -259,6 +263,7 @@ public class RouterManagementActivity extends AppCompatActivity
 
         mPreferences = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         mCurrentTheme = mPreferences.getLong(THEMING_PREF, RouterCompanionAppConstants.DEFAULT_THEME);
+        mAutoCrashReports = mPreferences.getBoolean(ACRA_ENABLE, true);
 
         ColorUtils.Companion.setAppTheme(this, null, false);
 
@@ -506,25 +511,22 @@ public class RouterManagementActivity extends AppCompatActivity
                             this.mPreferences.getString(RouterCompanionAppConstants.ACRA_USER_EMAIL, null);
                     Crashlytics.setUserEmail(acraEmailAddr);
 
-                    if (this.mCurrentTheme != this.mPreferences.getLong(THEMING_PREF, -1l)
+                    final boolean currentUserChoiceForAutoCrashReporting = this.mPreferences.getBoolean(ACRA_ENABLE, true);
+                    if (this.mAutoCrashReports != currentUserChoiceForAutoCrashReporting) {
+                        //Restart activity
+                        Crashlytics.log(Log.DEBUG, LOG_TAG,
+                                "<mAutoCrashReports,currentUserChoiceForAutoCrashReporting>=<" +
+                                        mAutoCrashReports + "," + currentUserChoiceForAutoCrashReporting + ">");
+                        final String waitMessage = String.format("%sabling automatic crash reporting",
+                                currentUserChoiceForAutoCrashReporting ? "En" : "Dis");
+                        ContextUtils.restartWholeApplication(this, waitMessage, null);
+                    } else if (this.mCurrentTheme != this.mPreferences.getLong(THEMING_PREF, -1l)
                             || this.mBackgroundServiceEnabled != this.mPreferences.getBoolean(
                             NOTIFICATIONS_BG_SERVICE_ENABLE, false)
                             || this.mBackgroundServiceFrequency != this.mPreferences.getLong(
                             NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1l)) {
                         //Reload UI
-                        final AlertDialog alertDialog =
-                                Utils.buildAlertDialog(this, null, "Reloading...", false, false);
-                        alertDialog.show();
-                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(
-                                Gravity.CENTER_HORIZONTAL);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                finish();
-                                startActivity(getIntent());
-                                alertDialog.cancel();
-                            }
-                        }, 2000);
+                        ContextUtils.finishAndReload(this, "Reloading UI", null, null);
                     }
                 }
             }
@@ -766,7 +768,8 @@ public class RouterManagementActivity extends AppCompatActivity
         Crashlytics.log(Log.DEBUG, LOG_TAG, "XXX debug_leakcanary: " + debugLeakCanary);
         menu.findItem(R.id.debug_leakcanary).setChecked(debugLeakCanary);
 
-        final boolean debugResourceInspector = mPreferences.getBoolean(DEBUG_RESOURCE_INSPECTOR_PREF_KEY, false);
+        final boolean debugResourceInspector = mPreferences.getBoolean(
+                DEBUG_RESOURCE_INSPECTOR_PREF_KEY, false);
         Crashlytics.log(Log.DEBUG, LOG_TAG, "XXX debug_resourceInspector: " + debugResourceInspector);
         menu.findItem(R.id.debug_resourceinspector).setChecked(debugResourceInspector);
 
@@ -890,21 +893,8 @@ public class RouterManagementActivity extends AppCompatActivity
                             mPreferences.edit().putBoolean(DEBUG_LEAKCANARY_PREF_KEY, !checked).commit();
                     Utils.requestBackup(RouterManagementActivity.this);
                     //Restart activity
-                    final ProgressDialog alertDialog = ProgressDialog.show(this,
-                            String.format("%sabling LeakCanary", checked ? "Dis" : "En"),
-                            "Preference update commit: " + commit + ". Please wait...", true);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            alertDialog.cancel();
-                            final PendingIntent intent =
-                                    PendingIntent.getActivity(getBaseContext(), 0, new Intent(getIntent()),
-                                            PendingIntent.FLAG_CANCEL_CURRENT);
-                            final AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                            manager.set(AlarmManager.RTC, System.currentTimeMillis() + 100, intent);
-                            System.exit(2);
-                        }
-                    }, 2000);
+                    final String waitMessage = String.format("%sabling LeakCanary. Pref commit=%s", checked ? "Dis" : "En", commit);
+                    ContextUtils.restartWholeApplication(this, waitMessage, null);
                 } else {
                     Crashlytics.log(Log.WARN, LOG_TAG,
                             "[DEBUG] LeakCanary menu option should not be visible...");
@@ -920,21 +910,9 @@ public class RouterManagementActivity extends AppCompatActivity
                             mPreferences.edit().putBoolean(DEBUG_RESOURCE_INSPECTOR_PREF_KEY, !checked).commit();
                     Utils.requestBackup(RouterManagementActivity.this);
                     //Restart activity
-                    final ProgressDialog alertDialog = ProgressDialog.show(this,
-                            String.format("%sabling ResourceInspector", checked ? "Dis" : "En"),
-                            "Preference update commit: " + commit + ". Please wait...", true);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            alertDialog.cancel();
-                            final PendingIntent intent =
-                                    PendingIntent.getActivity(getBaseContext(), 0, new Intent(getIntent()),
-                                            PendingIntent.FLAG_CANCEL_CURRENT);
-                            final AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                            manager.set(AlarmManager.RTC, System.currentTimeMillis() + 100, intent);
-                            System.exit(2);
-                        }
-                    }, 2000);
+                    final String waitMessage = String.format("%sabling ResourceInspector. Pref. update commit=%s",
+                            checked ? "Dis" : "En", commit);
+                    ContextUtils.restartWholeApplication(this, waitMessage, null);
                 } else {
                     Crashlytics.log(Log.WARN, LOG_TAG,
                             "[DEBUG] ResourceInspector menu option should not be visible...");

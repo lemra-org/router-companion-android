@@ -75,7 +75,7 @@ public final class NetworkUtils {
             }
         }
         final Context currentContext =
-                (context != null ? context : RouterCompanionApplication.getCurrentActivity());
+                (context != null ? context : RouterCompanionApplication.Companion.getCurrentActivity());
         if (currentContext != null) {
             builder.addInterceptor(new ChuckInterceptor(currentContext));
         }

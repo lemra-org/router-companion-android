@@ -882,7 +882,7 @@ public class Router implements Serializable {
 
     public void addHomeScreenShortcut(@Nullable final Context ctx) {
         if (ctx == null) {
-            Toast.makeText(RouterCompanionApplication.getCurrentActivity(),
+            Toast.makeText(RouterCompanionApplication.Companion.getCurrentActivity(),
                     "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
             return;
         }

@@ -117,7 +117,7 @@ import org.rm3l.router_companion.feedback.maoni.MaoniFeedbackHandler;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.PublicIPInfo;
 import org.rm3l.router_companion.resources.conn.Router;
-import org.rm3l.router_companion.utils.kotlin.Context_extKt;
+import org.rm3l.router_companion.utils.kotlin.ContextUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
@@ -849,7 +849,7 @@ public final class Utils {
         new LibsBuilder().withFields(R.string.class.getFields())
                 .withActivityTitle("About")
                 //provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
-                .withActivityStyle(Context_extKt.isThemeLight(context) ?
+                .withActivityStyle(ContextUtils.isThemeLight(context) ?
                         Libs.ActivityStyle.LIGHT : Libs.ActivityStyle.DARK)
                 //start the activity
                 .start(context);
