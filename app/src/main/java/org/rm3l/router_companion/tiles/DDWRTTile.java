@@ -73,7 +73,7 @@ import org.rm3l.router_companion.utils.Utils;
 public abstract class DDWRTTile<T>
         implements View.OnClickListener, LoaderManager.LoaderCallbacks<T> {
 
-    protected class OnClickIntent {
+    protected static class OnClickIntent {
 
         private String contentName;
 
@@ -216,7 +216,7 @@ public abstract class DDWRTTile<T>
         this.layoutId = layoutId;
         if (layoutId != null) {
             this.layout =
-                    (ViewGroup) this.mParentFragment.getLayoutInflater(arguments).inflate(layoutId, null);
+                    (ViewGroup) this.mParentFragment.getLayoutInflater().inflate(layoutId, null);
         }
     }
 
