@@ -213,7 +213,7 @@ public class ViewSyslogActivity extends AppCompatActivity
         }
 
         public RouterSyslogRecyclerViewAdapter setLogs(List<? extends CharSequence> logs) {
-            this.mLogs = logs != null ? logs : new ArrayList<>();
+            this.mLogs = (logs != null ? logs : new ArrayList<? extends CharSequence>());
             return this;
         }
 
