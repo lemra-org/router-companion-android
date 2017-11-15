@@ -6,7 +6,6 @@ import android.text.format.DateUtils
 import android.text.format.DateUtils.FORMAT_ABBREV_MONTH
 import android.text.format.DateUtils.FORMAT_SHOW_DATE
 import android.text.format.DateUtils.FORMAT_SHOW_YEAR
-import com.google.common.primitives.Longs
 import org.rm3l.router_companion.utils.Utils
 import java.util.Calendar
 import java.util.Locale
@@ -59,30 +58,25 @@ class MonthlyCycleItem : Comparable<MonthlyCycleItem> {
         return this
     }
 
-    fun getContext(): Context? {
-        return context
-    }
+    fun getContext() = context
 
     fun setContext(context: Context?): MonthlyCycleItem {
         this.context = context
         return this
     }
 
-    fun getLabelWithYears(): CharSequence? {
-        return labelWithYears
-    }
+    fun getLabelWithYears() = labelWithYears
 
     fun setLabelWithYears(labelWithYears: String): MonthlyCycleItem {
         this.labelWithYears = labelWithYears
         return this
     }
 
-    fun getLabel(): CharSequence? {
-        return label
-    }
+    fun getLabel() = label
 
-    fun setLabel(label: String?) {
+    fun setLabel(label: String?): MonthlyCycleItem {
         this.label = label
+        return this
     }
 
     override fun toString(): String {
@@ -91,84 +85,55 @@ class MonthlyCycleItem : Comparable<MonthlyCycleItem> {
 
     override fun equals(other: Any?): Boolean {
         if (other is MonthlyCycleItem) {
-            val another = other
-            return start == another.start && end == another.end
+            return start == other.start && end == other.end
         }
         return false
     }
 
-    override fun compareTo(other: MonthlyCycleItem): Int {
-        return Longs.compare(start, other.start)
+    override fun hashCode(): Int {
+        var result = start.hashCode()
+        result = 31 * result + end.hashCode()
+        return result
     }
+
+    override fun compareTo(other: MonthlyCycleItem) = start.compareTo(other.start)
 
     fun prev(): MonthlyCycleItem {
 
         //[Feb 28 - Mar 30], with wanCycleDay=30 => [Jan 30 - Feb 28]
 
-        //        if (wanCycleDay == null) {
-        //            Toast.makeText(context, "Internal Error - issue will be reported", Toast.LENGTH_SHORT).show();
-        //            Crashlytics.logException(new IllegalStateException("wanCycleDay == NULL"));
-        //            return this;
-        //        }
+        val endCal = Calendar.getInstance()
+        endCal.timeInMillis = start
+        endCal.add(Calendar.DAY_OF_MONTH, -1)
+        val endMillis = endCal.timeInMillis
 
-        val calendar = Calendar.getInstance()
-        calendar.timeInMillis = start
-
-        calendar.add(Calendar.DATE, -31)
-        val prevMonthActualMaximum = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-        if (wanCycleDay!! > prevMonthActualMaximum) {
-            //Start the day after
-            calendar.add(Calendar.DAY_OF_MONTH, 1)
-        } else {
-            calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay!!)
-        }
-        var startMillis = calendar.timeInMillis
-
-        //end of prev is the day before current start
-        val calendarForEnd = Calendar.getInstance()
-        calendarForEnd.timeInMillis = start
-        calendarForEnd.add(Calendar.DATE, -1)
-        val endMillis = calendarForEnd.timeInMillis
-        if (wanCycleDay!! > prevMonthActualMaximum && calendar.get(Calendar.MONTH) == calendarForEnd.get(
-                Calendar.MONTH)) {
-            calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH))
-            startMillis = calendar.timeInMillis
-        }
+        val startCal = Calendar.getInstance()
+        startCal.timeInMillis = start
+        startCal.add(Calendar.MONTH, -1)
+        startCal.set(Calendar.DAY_OF_MONTH,
+                Math.min(startCal.getActualMaximum(Calendar.DAY_OF_MONTH), wanCycleDay!!))
+        val startMillis = startCal.timeInMillis
 
         return MonthlyCycleItem(context, startMillis, endMillis).setRouterPreferences(
                 routerPreferences)
     }
 
     operator fun next(): MonthlyCycleItem {
-        //        if (wanCycleDay == null) {
-        //            Toast.makeText(context, "Internal Error - issue will be reported", Toast.LENGTH_SHORT).show();
-        //            Crashlytics.logException(new IllegalStateException("wanCycleDay == NULL"));
-        //            return this;
-        //        }
+        val startCal = Calendar.getInstance()
+        startCal.timeInMillis = start
+        startCal.set(Calendar.DAY_OF_MONTH, 1) //The first day of the month the start is in
+        startCal.add(Calendar.MONTH, 1)
+        startCal.set(Calendar.DAY_OF_MONTH,
+                Math.min(startCal.getActualMaximum(Calendar.DAY_OF_MONTH), wanCycleDay!!))
+        val startMillis = startCal.timeInMillis
 
-        val calendar = Calendar.getInstance()
-        calendar.timeInMillis = end
-        calendar.add(Calendar.DATE, 1)
-        val startMillis = calendar.timeInMillis
-
-        val cal1 = Calendar.getInstance()
-        cal1.timeInMillis = startMillis
-        cal1.add(Calendar.MONTH, 1)
-        cal1.add(Calendar.DAY_OF_MONTH, -1)
-        val month1 = cal1.get(Calendar.MONTH)
-
-        calendar.add(Calendar.DATE, 30)
-        val month = calendar.get(Calendar.MONTH)
-        if (month1 != month) {
-            calendar.set(Calendar.MONTH, month1)
-            calendar.set(Calendar.DAY_OF_MONTH, cal1.getActualMaximum(Calendar.DAY_OF_MONTH))
-        } else {
-            val dayAfter30d = calendar.get(Calendar.DAY_OF_MONTH)
-            if (dayAfter30d >= wanCycleDay!! - 1) {
-                calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay!! - 1)
-            }
-        }
-        val endMillis = calendar.timeInMillis
+        val nextStartCal = Calendar.getInstance()
+        nextStartCal.timeInMillis = startMillis
+        nextStartCal.set(Calendar.DAY_OF_MONTH, 1) //The first day of the month the start is in
+        nextStartCal.add(Calendar.MONTH, 1)
+        nextStartCal.set(Calendar.DAY_OF_MONTH,
+                Math.min(nextStartCal.getActualMaximum(Calendar.DAY_OF_MONTH), wanCycleDay!! - 1))
+        val endMillis = nextStartCal.timeInMillis
 
         return MonthlyCycleItem(context, startMillis, endMillis).setRouterPreferences(
                 routerPreferences)
@@ -179,7 +144,8 @@ class MonthlyCycleItem : Comparable<MonthlyCycleItem> {
         private val sBuilder = StringBuilder(50)
         private val sFormatter = java.util.Formatter(sBuilder, Locale.US)
 
-        fun formatDateRange(context: Context?, flags: Int, start: Long, end: Long): String {
+        @JvmStatic
+        private fun formatDateRange(context: Context?, flags: Int, start: Long, end: Long): String {
             synchronized(sBuilder) {
                 sBuilder.setLength(0)
                 return DateUtils.formatDateRange(context, sFormatter, start, end, flags, null).toString()
