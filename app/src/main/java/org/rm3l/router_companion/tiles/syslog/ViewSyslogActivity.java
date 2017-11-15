@@ -75,6 +75,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import needle.UiRelatedTask;
@@ -120,7 +121,7 @@ public class ViewSyslogActivity extends AppCompatActivity
         RouterSyslogRecyclerViewAdapter(final ViewSyslogActivity activity,
                 final List<CharSequence> mLogs) {
             this.activity = activity;
-            this.mLogs = mLogs;
+            this.setLogs(mLogs);
         }
 
         @Override
@@ -212,7 +213,7 @@ public class ViewSyslogActivity extends AppCompatActivity
         }
 
         public RouterSyslogRecyclerViewAdapter setLogs(List<? extends CharSequence> logs) {
-            this.mLogs = logs;
+            this.mLogs = logs != null ? logs : new ArrayList<>();
             return this;
         }
 
