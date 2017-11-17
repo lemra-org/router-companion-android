@@ -72,6 +72,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:text="@string/internal_error_please_try_again"
             android:textAppearance="?android:textAppearanceLarge"
             android:textColor="@color/ddwrt_purple"
+            android:layout_centerInParent="true"
             android:textIsSelectable="true"
             android:visibility="gone" />
 

@@ -41,11 +41,14 @@ import android.support.v4.content.PermissionChecker
 import android.support.v7.widget.SwitchCompat
 import android.text.Editable
 import android.text.TextWatcher
+import android.text.format.DateUtils
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.CompoundButton
+import android.widget.DatePicker
 import android.widget.ImageButton
 import android.widget.NumberPicker
 import android.widget.PopupMenu
@@ -93,7 +96,10 @@ import org.rm3l.router_companion.utils.WANTrafficUtils.getTrafficDataNvramInfoAn
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style
+import org.rm3l.router_companion.widgets.AbstractDatePickerListener
+import org.rm3l.router_companion.widgets.DatePickerFragment
 import java.io.File
+import java.util.Calendar
 import java.util.Date
 import java.util.HashSet
 import java.util.concurrent.atomic.AtomicBoolean
@@ -316,10 +322,17 @@ class WANMonthlyTrafficTile(parentFragment: Fragment, arguments: Bundle?,
         mCurrentCycle = AtomicReference(mCycleOfTheDay)
 
         val monthYearTextViewToDisplay = this.layout.findViewById<View>(R.id.tile_status_wan_monthly_month_displayed) as TextView
+        val dateFromPickerButton = this.layout.findViewById<Button>(R.id.tile_status_wan_monthly_traffic_graph_placeholder_date_from_picker)
+        val dateToPickerButton = this.layout.findViewById<Button>(R.id.tile_status_wan_monthly_traffic_graph_placeholder_date_to_picker)
         monthYearTextViewToDisplay.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
 
                 val currentCycleItem = mCurrentCycle.get() ?: return
+
+                dateFromPickerButton.text = DateUtils.formatDateTime(mParentFragmentActivity,
+                        currentCycleItem.start, DateUtils.FORMAT_ABBREV_MONTH)
+                dateToPickerButton.text = DateUtils.formatDateTime(mParentFragmentActivity,
+                        currentCycleItem.end, DateUtils.FORMAT_ABBREV_MONTH)
 
                 val data = WANTrafficUtils.computeWANTrafficUsageBetweenDates(dao, mRouter!!.uuid,
                         currentCycleItem.start, currentCycleItem.end)
@@ -329,7 +342,7 @@ class WANMonthlyTrafficTile(parentFragment: Fragment, arguments: Bundle?,
                 this@WANMonthlyTrafficTile.layout.findViewById<View>(
                         R.id.tile_status_wan_monthly_traffic_graph_placeholder_current).isEnabled = true
                 this@WANMonthlyTrafficTile.layout.findViewById<View>(
-                        R.id.tile_status_wan_monthly_traffic_graph_placeholder_next).isEnabled = true
+                        R.id.tile_status_wan_monthly_traffic_graph_placeholder_date_to_picker).isEnabled = true
 
                 //Display traffic data for this month
                 if (data.isEmpty) {
@@ -847,12 +860,12 @@ class WANMonthlyTrafficTile(parentFragment: Fragment, arguments: Bundle?,
 
             val displayButton = this.layout.findViewById<View>(
                     R.id.tile_status_wan_monthly_traffic_graph_placeholder_display_button)
-            val currentButton = this.layout.findViewById<View>(R.id.tile_status_wan_monthly_traffic_graph_placeholder_current)
-            val previousButton = this.layout.findViewById<View>(R.id.tile_status_wan_monthly_traffic_graph_placeholder_previous)
-            val nextButton = this.layout.findViewById<View>(R.id.tile_status_wan_monthly_traffic_graph_placeholder_next)
+            val currentButton = this.layout.findViewById<Button>(R.id.tile_status_wan_monthly_traffic_graph_placeholder_current)
+            val dateFromPickerButton = this.layout.findViewById<Button>(R.id.tile_status_wan_monthly_traffic_graph_placeholder_date_from_picker)
+            val dateToPickerButton = this.layout.findViewById<Button>(R.id.tile_status_wan_monthly_traffic_graph_placeholder_date_to_picker)
             val monthYearDisplayed = this.layout.findViewById<View>(R.id.tile_status_wan_monthly_month_displayed) as TextView
 
-            val ctrlViews = arrayOf(monthYearDisplayed, displayButton, currentButton, previousButton, nextButton)
+            val ctrlViews = arrayOf(monthYearDisplayed, displayButton, currentButton, dateFromPickerButton, dateToPickerButton)
 
             //Create Options Menu
             val tileMenu = layout.findViewById<View>(R.id.tile_status_wan_monthly_traffic_menu) as ImageButton
@@ -914,48 +927,63 @@ class WANMonthlyTrafficTile(parentFragment: Fragment, arguments: Bundle?,
                         } catch (e: Exception) {
                             //No worries
                         }
-
                     }
                 }
 
-                previousButton.setOnClickListener {
-                    val prevCycleItem = mCurrentCycle.get()
-                            .setContext(mParentFragmentActivity)
-                            .setRouterPreferences(mRouter!!.getPreferences(mParentFragmentActivity))
-                            .prev()
-                    mCurrentCycle.set(prevCycleItem)
-                    monthYearDisplayed.text = prevCycleItem.getLabelWithYears()
-                    if (mParentFragmentPreferences != null) {
-                        try {
-                            mParentFragmentPreferences.edit()
-                                    .putString(getFormattedPrefKey(WAN_CYCLE_DISPLAYED),
-                                            mGson.toJson(prevCycleItem))
-                                    .apply()
-                        } catch (e: Exception) {
-                            //No worries
-                        }
+                dateFromPickerButton.setOnClickListener {
+                    val datePickerListener = object: AbstractDatePickerListener() {
+                        override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
+                            val calendar = Calendar.getInstance()
+                            calendar.set(year, month, dayOfMonth)
+                            val currentCycle = mCurrentCycle.get()
+                            currentCycle.start = calendar.timeInMillis
+                            monthYearDisplayed.text = currentCycle.refreshLabelWithYears()
+                            if (mParentFragmentPreferences != null) {
+                                try {
+                                    mParentFragmentPreferences.edit()
+                                            .putString(getFormattedPrefKey(WAN_CYCLE_DISPLAYED),
+                                                    mGson.toJson(currentCycle))
+                                            .apply()
+                                    Utils.requestBackup(mParentFragmentActivity)
+                                } catch (e: Exception) {
+                                    //No worries
+                                }
 
+                            }
+                        }
                     }
+                    val datePickerFragment = DatePickerFragment.newInstance(
+                            datePickerListener,
+                            mCurrentCycle.get().start)
+                    datePickerFragment.show(mParentFragmentActivity.supportFragmentManager, "dateFromPicker")
                 }
 
-                nextButton.setOnClickListener {
-                    val nextCycleItem = mCurrentCycle.get()
-                            .setContext(mParentFragmentActivity)
-                            .setRouterPreferences(mRouter!!.getPreferences(mParentFragmentActivity))
-                            .next()
-                    mCurrentCycle.set(nextCycleItem)
-                    monthYearDisplayed.text = nextCycleItem.getLabelWithYears()
-                    if (mParentFragmentPreferences != null) {
-                        try {
-                            mParentFragmentPreferences.edit()
-                                    .putString(getFormattedPrefKey(WAN_CYCLE_DISPLAYED),
-                                            mGson.toJson(nextCycleItem))
-                                    .apply()
-                        } catch (e: Exception) {
-                            //No worries
+                dateToPickerButton.setOnClickListener {
+                    val datePickerListener = object: AbstractDatePickerListener() {
+                        override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
+                            val calendar = Calendar.getInstance()
+                            calendar.set(year, month, dayOfMonth)
+                            val currentCycle = mCurrentCycle.get()
+                            currentCycle.end = calendar.timeInMillis
+                            monthYearDisplayed.text = currentCycle.refreshLabelWithYears()
+                            if (mParentFragmentPreferences != null) {
+                                try {
+                                    mParentFragmentPreferences.edit()
+                                            .putString(getFormattedPrefKey(WAN_CYCLE_DISPLAYED),
+                                                    mGson.toJson(currentCycle))
+                                            .apply()
+                                    Utils.requestBackup(mParentFragmentActivity)
+                                } catch (e: Exception) {
+                                    //No worries
+                                }
+                            }
                         }
-
                     }
+                    val datePickerFragment = DatePickerFragment.newInstance(
+                            datePickerListener = datePickerListener,
+                            startFromMillis = mCurrentCycle.get().end,
+                            minMillis = mCurrentCycle.get().start)
+                    datePickerFragment.show(mParentFragmentActivity.supportFragmentManager, "dateToPicker")
                 }
 
                 setVisibility(ctrlViews, View.VISIBLE)

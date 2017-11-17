@@ -67,9 +67,16 @@ class MonthlyCycleItem : Comparable<MonthlyCycleItem> {
 
     fun getLabelWithYears() = labelWithYears
 
-    fun setLabelWithYears(labelWithYears: String): MonthlyCycleItem {
+    fun setLabelWithYears(labelWithYears: String?): MonthlyCycleItem {
         this.labelWithYears = labelWithYears
         return this
+    }
+
+    fun refreshLabelWithYears(): String? {
+        this.setLabelWithYears(formatDateRange(context,
+                FORMAT_SHOW_YEAR or FORMAT_SHOW_DATE or FORMAT_ABBREV_MONTH, start,
+                end))
+        return this.labelWithYears
     }
 
     fun getLabel() = label

@@ -53,7 +53,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_toStartOf="@+id/tile_status_wan_monthly_traffic_status_and_menu"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="@string/wan_monthly_traffic"
+                    android:text="@string/wan_date_range_traffic"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textStyle="bold" />
 
@@ -241,10 +241,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_gravity="center">
 
             <Button
-                android:id="@+id/tile_status_wan_monthly_traffic_graph_placeholder_previous"
+                android:id="@+id/tile_status_wan_monthly_traffic_graph_placeholder_date_from_picker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/previous_sign"
+                android:text="Pick start date"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:visibility="gone" />
 
@@ -257,10 +257,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:visibility="gone" />
 
             <Button
-                android:id="@+id/tile_status_wan_monthly_traffic_graph_placeholder_next"
+                android:id="@+id/tile_status_wan_monthly_traffic_graph_placeholder_date_to_picker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/next_sign"
+                android:text="Pick end date"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:visibility="gone" />
 
