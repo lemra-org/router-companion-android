@@ -568,10 +568,10 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                 firstAndLastsDaysSet = true;
             }
             for (int d = 0; d < daysLength; d++) {
-                //Add labels every n days
                 if (firstAndLastsDaysSet && (d == 0 || d == daysLength -1)) {
                     continue;
                 }
+                //Add labels every n days
                 multiRenderer.addXTextLabel(d, (d > 0 && (d % (maxX / 5) == 0)) ? days[d] : EMPTY_STRING);
             }
 
