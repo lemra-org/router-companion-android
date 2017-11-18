@@ -31,7 +31,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -71,6 +70,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.achartengine.ChartFactory;
@@ -81,6 +81,10 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
+import org.achartengine.tools.PanListener;
+import org.achartengine.tools.ZoomEvent;
+import org.achartengine.tools.ZoomListener;
+import org.achartengine.util.MathHelper;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
@@ -141,6 +145,8 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
     private long totalOut;
 
     private List<WANTrafficData> wanTrafficDataBreakdown;
+
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -568,7 +574,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                 firstAndLastsDaysSet = true;
             }
             for (int d = 0; d < daysLength; d++) {
-                if (firstAndLastsDaysSet && (d == 0 || d == daysLength -1)) {
+                if (firstAndLastsDaysSet && (d == 0 || d == daysLength - 1)) {
                     continue;
                 }
                 //Add labels every n days
@@ -584,6 +590,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             multiRenderer.setLegendTextSize(25);
             //setting pan ability which uses graph to move on both axis
             multiRenderer.setPanEnabled(true, false);
+//            multiRenderer.setPanLimits(new double[] {-1, maxX + 30});
             //setting click false on graph
             multiRenderer.setClickEnabled(true);
             //setting lines to display on y axis
@@ -595,10 +602,10 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             //setting displaying line on grid
             multiRenderer.setShowGrid(false);
             //setting zoom
-            multiRenderer.setZoomEnabled(true, true);
+            multiRenderer.setZoomEnabled(true, false);
             //setting external zoom functions to false
             //            multiRenderer.setZoomRate(1.1f);
-            multiRenderer.setExternalZoomEnabled(true);
+            multiRenderer.setExternalZoomEnabled(false);
             //setting displaying lines on graph to be formatted(like using graphics)
             multiRenderer.setAntialiasing(true);
             //setting to in scroll to false
@@ -612,6 +619,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             // setting y axis max value, Since i'm using static values inside the graph so i'm setting y max value to 4000.
             // if you use dynamic values then get the max y value and set here
             multiRenderer.setYAxisMax(maxY);
+            multiRenderer.setYAxisMin(0);
             //setting used to move the graph on xaxiz to .5 to the right
             multiRenderer.setXAxisMin(-1);
             //setting max values to be display in x axis
@@ -647,18 +655,63 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                 public void onClick(final View v) {
                     final SeriesSelection currentSeriesAndPoint = chartView.getCurrentSeriesAndPoint();
                     if (currentSeriesAndPoint != null) {
-                        new AlertDialog.Builder(WANMonthlyTrafficActivity.this)
-                                .setCancelable(true)
-                                .setMessage(String.format("- %d\n- %d\n- %d",
-                                        currentSeriesAndPoint.getPointIndex(),
-                                        currentSeriesAndPoint.getXValue(),
-                                        currentSeriesAndPoint.getValue()))
-                                .create()
-                                .show();
-
+                        final int xAxisValue = Double.valueOf(currentSeriesAndPoint.getXValue()).intValue();
+                        if (xAxisValue >= 0 && xAxisValue < breakdownLines.size()) {
+                            new AlertDialog.Builder(WANMonthlyTrafficActivity.this)
+                                    .setCancelable(true)
+                                    .setMessage(breakdownLines.get(xAxisValue))
+                                    .create()
+                                    .show();
+                        } else {
+                            Crashlytics.log(Log.WARN, LOG_TAG,
+                                    "xAxisValue=" + xAxisValue + ": out of X axis bounds: " + daysLength);
+                        }
                     }
                 }
             });
+            chartView.addPanListener(new PanListener() {
+                @Override
+                public void panApplied() {
+                    double start = multiRenderer.getXAxisMin();
+                    double stop = multiRenderer.getXAxisMax();
+                    multiRenderer.clearXTextLabels();
+                    final List<Double> labels = MathHelper.getLabels(start, stop, 10);
+                    int labelToInt;
+                    for (final Double label : labels) {
+                        if (label == null || (labelToInt = label.intValue()) < 0 || labelToInt >= daysLength) {
+                            continue;
+                        }
+                        multiRenderer.addXTextLabel(label, days[labelToInt]);
+                    }
+//                    for (double i = start; i <= stop; i += step)
+//                        multiRenderer.addXTextLabel(i+1, "label"+(int)i);
+                    multiRenderer.setXLabels(0);
+                }
+            });
+            chartView.addZoomListener(new ZoomListener() {
+                @Override
+                public void zoomApplied(final ZoomEvent zoomEvent) {
+                    double start = multiRenderer.getXAxisMin();
+                    double stop = multiRenderer.getXAxisMax();
+                    multiRenderer.clearXTextLabels();
+                    final List<Double> labels = MathHelper.getLabels(start, stop, 10);
+                    int labelToInt;
+                    for (final Double label : labels) {
+                        if (label == null || (labelToInt = label.intValue()) < 0 || labelToInt >= daysLength) {
+                            continue;
+                        }
+                        multiRenderer.addXTextLabel(label, days[labelToInt]);
+                    }
+//                    for (double i = start; i <= stop; i += step)
+//                        multiRenderer.addXTextLabel(i+1, "label"+(int)i);
+                    multiRenderer.setXLabels(0);
+                }
+
+                @Override
+                public void zoomReset() {
+                }
+            }, true, true);
+
             chartPlaceholderView.removeAllViews();
             chartPlaceholderView.addView(chartView);
 
@@ -671,7 +724,8 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             Utils.reportException(null, e);
             final TextView errorView = findViewById(R.id.tile_status_wan_monthly_traffic_chart_error);
             errorView
-                    .setText("Internal Error. Please try again later. " + e.getClass().getSimpleName() + ": " + e.getMessage());
+                    .setText("Internal Error. Please try again later. " + e.getClass().getSimpleName() + ": " + e
+                            .getMessage());
             errorView.setVisibility(View.VISIBLE);
             loadingView.setVisibility(View.GONE);
             chartPlaceholderView.setVisibility(View.GONE);
