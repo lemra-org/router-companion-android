@@ -105,7 +105,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
 
     public static final String WAN_CYCLE = "WAN_CYCLE";
 
-    public static final String WAN_MONTHLY_TRAFFIC = "WAN Monthly Traffic";
+    public static final String WAN_MONTHLY_TRAFFIC = "WAN Traffic";
 
     public static final int COMPRESSION_QUALITY = 100;
 
@@ -534,7 +534,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             // Creating a XYMultipleSeriesRenderer to customize the whole chart
             final XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
             multiRenderer.setOrientation(XYMultipleSeriesRenderer.Orientation.HORIZONTAL);
-            multiRenderer.setChartTitle(String.format("Monthly Cycle: %s / Total IN: %s / Total OUT: %s",
+            multiRenderer.setChartTitle(String.format("Date range: %s / Total IN: %s / Total OUT: %s",
                     mCycleItem.getLabelWithYears(),
                     org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(totalIn * MB)
                             .replace("bytes", "B"),
@@ -569,7 +569,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             final int daysLength = days.length;
             boolean firstAndLastsDaysSet = false;
             if (daysLength >= 3) {
-                multiRenderer.addXTextLabel(0, days[0]);
+//                multiRenderer.addXTextLabel(0, days[0]);
                 multiRenderer.addXTextLabel(daysLength - 1, days[daysLength - 1]);
                 firstAndLastsDaysSet = true;
             }
