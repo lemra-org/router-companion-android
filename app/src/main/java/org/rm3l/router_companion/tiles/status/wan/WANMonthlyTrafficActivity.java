@@ -536,7 +536,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                             .replace("bytes", "B")));
             multiRenderer.setXTitle("Days");
             multiRenderer.setYTitle("Traffic");
-            multiRenderer.setZoomButtonsVisible(true);
+            multiRenderer.setZoomButtonsVisible(false);
             multiRenderer.setLabelsColor(
                     ContextCompat.getColor(this, themeLight ? R.color.black : R.color.theme_accent_1_light));
 
