@@ -761,7 +761,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
         sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
         sendIntent.setType("text/html");
         sendIntent.putExtra(Intent.EXTRA_SUBJECT,
-                String.format("WAN Monthly Traffic for Router '%s': %s", mRouterDisplay,
+                String.format("WAN Traffic for Router '%s': %s", mRouterDisplay,
                         mCycleItem.getLabelWithYears()));
         sendIntent.putExtra(Intent.EXTRA_TEXT, fromHtml(String.format(
                 "Traffic Breakdown\n\n>>> Total Inbound: %d B (%s) / Total Outbound: %d B (%s) <<<\n\n%s"
