@@ -21,12 +21,6 @@
  */
 package org.rm3l.router_companion.tiles.status.wan
 
-import org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING
-import org.rm3l.router_companion.RouterCompanionAppConstants.MB
-import org.rm3l.router_companion.resources.WANTrafficData.Companion.INBOUND
-import org.rm3l.router_companion.resources.WANTrafficData.Companion.OUTBOUND
-import org.rm3l.router_companion.utils.Utils.fromHtml
-
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
@@ -63,14 +57,6 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.InterstitialAd
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
-import java.io.BufferedOutputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.OutputStream
-import java.util.ArrayList
-import java.util.Locale
-import java.util.concurrent.atomic.AtomicReference
 import org.achartengine.ChartFactory
 import org.achartengine.GraphicalView
 import org.achartengine.chart.BarChart
@@ -84,21 +70,35 @@ import org.achartengine.util.MathHelper
 import org.rm3l.ddwrt.BuildConfig
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.RouterCompanionAppConstants
+import org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING
+import org.rm3l.router_companion.RouterCompanionAppConstants.MB
 import org.rm3l.router_companion.mgmt.RouterManagementActivity
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO
 import org.rm3l.router_companion.resources.MonthlyCycleItem
 import org.rm3l.router_companion.resources.WANTrafficData
+import org.rm3l.router_companion.resources.WANTrafficData.Companion.INBOUND
+import org.rm3l.router_companion.resources.WANTrafficData.Companion.OUTBOUND
 import org.rm3l.router_companion.resources.conn.Router
 import org.rm3l.router_companion.utils.AdUtils
 import org.rm3l.router_companion.utils.ColorUtils
-import org.rm3l.router_companion.utils.FileUtils.*
+import org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize
 import org.rm3l.router_companion.utils.Utils
+import org.rm3l.router_companion.utils.Utils.fromHtml
 import org.rm3l.router_companion.utils.ViewGroupUtils
 import org.rm3l.router_companion.utils.WANTrafficUtils
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style
-import java.lang.Double
+import java.io.BufferedOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
+import java.util.ArrayList
+import java.util.concurrent.atomic.AtomicReference
+
+const val PNG = "png"
+const val CSV = "csv"
 
 class WANMonthlyTrafficActivity : AppCompatActivity() {
 
@@ -387,7 +387,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
             val fileName = Utils.getEscapedFileName(
                     "WAN Monthly Traffic for '${mCycleItem!!.getLabelWithYears()}' on Router '${mRouterDisplay ?: ""}'")
 
-            mCsvFileToShare = File(cacheDir, "$fileName.csv")
+            mCsvFileToShare = File(cacheDir, "$fileName.$CSV")
             //Output the CSV file
             mCsvFileToShare!!.bufferedWriter().use { out ->
                 out.write("Date,InboundBytes,InboundReadableValue,OutboundBytes,OutboundReadableValue")
@@ -404,7 +404,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                         }
             }
 
-            mFileToShare = File(cacheDir, "$fileName.png")
+            mFileToShare = File(cacheDir, "$fileName.$PNG")
             var outputStream: OutputStream? = null
             try {
                 outputStream = BufferedOutputStream(FileOutputStream(mFileToShare!!, false))
@@ -426,7 +426,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
 
             }
 
-            setShareFiles(mFileToShare!!, mCsvFileToShare!!)
+            setShareFiles("png" to mFileToShare!!, "csv" to mCsvFileToShare!!)
         }
 
         return super.onCreateOptionsMenu(menu)
@@ -481,7 +481,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
     private fun doPaintBarChart() {
         val loadingView = findViewById<View>(R.id.tile_status_wan_monthly_traffic_chart_loading_view)
         loadingView.visibility = View.VISIBLE
@@ -597,16 +597,16 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
             if (maxY != 0.0) {
                 multiRenderer.addYTextLabel(maxY,
                         byteCountToDisplaySize(
-                                Double.valueOf(maxY * MB)!!.toLong()).replace("bytes", "B"))
+                                (maxY * MB).toLong()).replace("bytes", "B"))
                 multiRenderer.addYTextLabel(3 * maxY / 4,
                         byteCountToDisplaySize(
-                                Double.valueOf(3.0 * maxY * MB.toDouble() / 4)!!.toLong()).replace("bytes", "B"))
+                                (3.0 * maxY * MB.toDouble() / 4).toLong()).replace("bytes", "B"))
                 multiRenderer.addYTextLabel(maxY / 2,
                         byteCountToDisplaySize(
-                                Double.valueOf(maxY * MB / 2)!!.toLong()).replace("bytes", "B"))
+                                (maxY * MB / 2).toLong()).replace("bytes", "B"))
                 multiRenderer.addYTextLabel(maxY / 4,
                         byteCountToDisplaySize(
-                                Double.valueOf(maxY * MB / 4)!!.toLong()).replace("bytes", "B"))
+                                (maxY * MB / 4).toLong()).replace("bytes", "B"))
             }
 
             multiRenderer.xLabelsAngle = 70f
@@ -618,13 +618,12 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 multiRenderer.addXTextLabel((daysLength - 1).toDouble(), days[daysLength - 1])
                 firstAndLastsDaysSet = true
             }
-            for (d in 0 until daysLength) {
-                if (firstAndLastsDaysSet && (d == 0 || d == daysLength - 1)) {
-                    continue
-                }
-                //Add labels every n days
-                multiRenderer.addXTextLabel(d.toDouble(), if (d > 0 && d % (maxX / 5) == 0) days[d] else EMPTY_STRING)
-            }
+            (0 until daysLength)
+                    .filterNot {
+                        firstAndLastsDaysSet && (it == 0 || it == daysLength - 1)
+                        //Add labels every n days
+                    }
+                    .forEach { multiRenderer.addXTextLabel(it.toDouble(), if (it > 0 && it % (maxX / 5) == 0) days[it] else EMPTY_STRING) }
 
             //setting text size of the title
             //            multiRenderer.setChartTitleTextSize(35);
@@ -707,7 +706,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
             val tooltipViewHolder = TextView(this@WANMonthlyTrafficActivity)
             tooltipViewHolder.visibility = View.VISIBLE
 
-            mChartView!!.setOnTouchListener { v, event ->
+            mChartView!!.setOnTouchListener { _, event ->
                 positionX.set(event.x)
                 positionY.set(event.y)
                 false // not consumed; forward to onClick
@@ -717,7 +716,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 val currentSeriesAndPoint = mChartView!!.currentSeriesAndPoint
                 if (currentSeriesAndPoint != null) {
                     val xAxisValue = java.lang.Double.valueOf(currentSeriesAndPoint.xValue)!!.toInt()
-                    if (xAxisValue >= 0 && xAxisValue < size) {
+                    if (xAxisValue in 0..(size - 1)) {
                         //Series index: 0 => inbound, 1 => outbound
                         val seriesIndex = currentSeriesAndPoint.seriesIndex
                         if (seriesIndex == INBOUND || seriesIndex == OUTBOUND) {
@@ -736,18 +735,16 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                                 mTooltipPlaceholderView!!.addView(tooltipViewHolder)
                             }
                             val tooltipText: String
-                            if (seriesIndex == INBOUND) {
-                                tooltipText = String.format(Locale.ENGLISH,
-                                        "%s : Inbound : %s / Outbound : %s",
-                                        days[xAxisValue],
-                                        byteCountToDisplaySize(inBytes).replace("bytes", "B"),
-                                        byteCountToDisplaySize(outBytes).replace("bytes", "B"))
+                            tooltipText = if (seriesIndex == INBOUND) {
+                                "${days[xAxisValue]} : Inbound : " +
+                                        byteCountToDisplaySize(inBytes).replace("bytes", "B") +
+                                        " / Outbound : " +
+                                        byteCountToDisplaySize(outBytes).replace("bytes", "B")
                             } else {
-                                tooltipText = String.format(Locale.ENGLISH,
-                                        "%s : Outbound : %s / Inbound : %s",
-                                        days[xAxisValue],
-                                        byteCountToDisplaySize(outBytes).replace("bytes", "B"),
-                                        byteCountToDisplaySize(inBytes).replace("bytes", "B"))
+                                "${days[xAxisValue]} : Outbound : " +
+                                        byteCountToDisplaySize(outBytes).replace("bytes", "B") +
+                                        " / Inbound : " +
+                                        byteCountToDisplaySize(inBytes).replace("bytes", "B")
                             }
                             val viewTooltip = ViewTooltip.on(if (touchPositionsSet) tooltipViewHolder else v)
                                     .color(if (seriesIndex == INBOUND) inboundRendererColor else outboundRendererColor)
@@ -837,8 +834,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
             e.printStackTrace()
             Utils.reportException(null, e)
             val errorView = findViewById<TextView>(R.id.tile_status_wan_monthly_traffic_chart_error)
-            errorView.text = "Internal Error. Please try again later. " + e.javaClass.simpleName + ": " + e
-                    .message
+            errorView.text = "Internal Error. Please try again later. " + e.javaClass.simpleName + ": " + e.message
             errorView.visibility = View.VISIBLE
             loadingView.visibility = View.GONE
             chartPlaceholderView.visibility = View.GONE
@@ -849,16 +845,19 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
 
     }
 
-    private fun setShareFiles(vararg files: File?) {
+    private fun setShareFiles(vararg files: Pair<String, File>?) {
         if (mShareActionProvider == null) {
             return
         }
 
         val uriForFiles = files.filterNotNull().map {
-            FileProvider.getUriForFile(this@WANMonthlyTrafficActivity, RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY, it) }
+            it.first to
+                    FileProvider.getUriForFile(this@WANMonthlyTrafficActivity, RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY, it.second)
+        }
+                .toMap()
 
         mShareActionProvider!!.setOnShareTargetSelectedListener { _, intent ->
-            uriForFiles.forEach { grantUriPermission(intent.component!!.packageName, it, Intent.FLAG_GRANT_READ_URI_PERMISSION) }
+            uriForFiles.forEach { grantUriPermission(intent.component!!.packageName, it.value, Intent.FLAG_GRANT_READ_URI_PERMISSION) }
             true
         }
 
@@ -867,7 +866,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
 
         val sendIntent = Intent()
         sendIntent.action = Intent.ACTION_SEND_MULTIPLE
-        sendIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, ArrayList(uriForFiles))
+        sendIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, ArrayList(uriForFiles.values))
         sendIntent.type = "text/html"
         sendIntent.putExtra(Intent.EXTRA_SUBJECT,
                 "WAN Traffic for Router '$mRouterDisplay': ${mCycleItem!!.getLabelWithYears()}")
@@ -879,7 +878,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                         "(${byteCountToDisplaySize(totalOutBytes).replace("bytes", "B", true)}) " +
                         "<<<<br/><br/>${breakdownLines.joinToString("<br/>")}${Utils.getShareIntentFooter()}"))
 
-//        sendIntent.data = uriForFile
+        sendIntent.data = uriForFiles[PNG]
         //        sendIntent.setType("image/png");
         sendIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
         setShareIntent(sendIntent)
