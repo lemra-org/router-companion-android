@@ -25,9 +25,12 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.MB;
+import static org.rm3l.router_companion.resources.WANTrafficData.INBOUND;
+import static org.rm3l.router_companion.resources.WANTrafficData.OUTBOUND;
 import static org.rm3l.router_companion.utils.Utils.fromHtml;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -35,6 +38,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -51,14 +55,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
+import com.github.florent37.viewtooltip.ViewTooltip;
+import com.github.florent37.viewtooltip.ViewTooltip.ALIGN;
+import com.github.florent37.viewtooltip.ViewTooltip.ListenerDisplay;
+import com.github.florent37.viewtooltip.ViewTooltip.ListenerHide;
+import com.github.florent37.viewtooltip.ViewTooltip.Position;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -73,6 +85,9 @@ import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
 import org.achartengine.chart.BarChart;
@@ -95,7 +110,9 @@ import org.rm3l.router_companion.resources.WANTrafficData;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
+import org.rm3l.router_companion.utils.FileUtils;
 import org.rm3l.router_companion.utils.Utils;
+import org.rm3l.router_companion.utils.ViewGroupUtils;
 import org.rm3l.router_companion.utils.WANTrafficUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
@@ -147,6 +164,8 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
     private List<WANTrafficData> wanTrafficDataBreakdown;
 
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
+
+    private LinearLayout mTooltipPlaceholderView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -224,6 +243,8 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
         wanTrafficDataBreakdown =
                 WANTrafficUtils.getWANTrafficDataByRouterBetweenDates(dao, mRouter.getUuid(),
                         mCycleItem.getStart(), mCycleItem.getEnd());
+
+        mTooltipPlaceholderView = findViewById(R.id.tile_status_wan_monthly_traffic_chart_tooltip_placeholder);
 
         doPaintBarChart();
     }
@@ -443,6 +464,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void doPaintBarChart() {
         final View loadingView = findViewById(R.id.tile_status_wan_monthly_traffic_chart_loading_view);
         loadingView.setVisibility(View.VISIBLE);
@@ -516,6 +538,9 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             // Adding outbound Series to dataset
             dataset.addSeries(outboundSeries);
 
+            final float textAppearanceMediumSize = ViewGroupUtils.getTextAppearanceMediumSize(this);
+            final float textAppearanceSmallSize = ViewGroupUtils.getTextAppearanceSmallSize(this);
+
             // Creating XYSeriesRenderer to customize inboundSeries
             final XYSeriesRenderer inboundRenderer = new XYSeriesRenderer();
             inboundRenderer.setColor(ColorUtils.Companion.getColor("WAN_TRAFFIC_BAR_IN"));
@@ -523,6 +548,8 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             inboundRenderer.setLineWidth(2);
             inboundRenderer.setDisplayChartValues(false);
             inboundRenderer.setDisplayChartValuesDistance(5); //setting chart value distance
+//            inboundRenderer.setChartValuesTextAlign(Align.CENTER);
+//            inboundRenderer.setChartValuesTextSize(textAppearanceSmallSize);
 
             // Creating XYSeriesRenderer to customize outboundSeries
             final XYSeriesRenderer outboundRenderer = new XYSeriesRenderer();
@@ -530,6 +557,8 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             outboundRenderer.setFillPoints(true);
             outboundRenderer.setLineWidth(2);
             outboundRenderer.setDisplayChartValues(false);
+//            outboundRenderer.setChartValuesTextAlign(Align.CENTER);
+//            outboundRenderer.setChartValuesTextSize(textAppearanceSmallSize);
 
             // Creating a XYMultipleSeriesRenderer to customize the whole chart
             final XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
@@ -542,7 +571,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                             .replace("bytes", "B")));
             multiRenderer.setXTitle("Days");
             multiRenderer.setYTitle("Traffic");
-            multiRenderer.setZoomButtonsVisible(false);
+            multiRenderer.setZoomButtonsVisible(true);
             multiRenderer.setLabelsColor(
                     ContextCompat.getColor(this, themeLight ? R.color.black : R.color.theme_accent_1_light));
 
@@ -582,12 +611,15 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             }
 
             //setting text size of the title
-            multiRenderer.setChartTitleTextSize(35);
+//            multiRenderer.setChartTitleTextSize(35);
+            multiRenderer.setChartTitleTextSize(textAppearanceMediumSize);
             //setting text size of the axis title
             multiRenderer.setAxisTitleTextSize(25);
             //setting text size of the graph label
             multiRenderer.setLabelsTextSize(25);
-            multiRenderer.setLegendTextSize(25);
+            multiRenderer.setLegendTextSize(textAppearanceSmallSize);
+            multiRenderer.setFitLegend(true);
+            multiRenderer.setPointSize(25);
             //setting pan ability which uses graph to move on both axis
             multiRenderer.setPanEnabled(true, false);
 //            multiRenderer.setPanLimits(new double[] {-1, maxX + 30});
@@ -618,7 +650,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             multiRenderer.setTextTypeface("sans_serif", Typeface.NORMAL);
             // setting y axis max value, Since i'm using static values inside the graph so i'm setting y max value to 4000.
             // if you use dynamic values then get the max y value and set here
-            multiRenderer.setYAxisMax(maxY);
+            multiRenderer.setYAxisMax(maxY + maxY / 10);
             multiRenderer.setYAxisMin(0);
             //setting used to move the graph on xaxiz to .5 to the right
             multiRenderer.setXAxisMin(-1);
@@ -650,21 +682,109 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             final GraphicalView chartView =
                     ChartFactory.getBarChartView(this, dataset, multiRenderer, BarChart.Type.DEFAULT);
             //                            chartView.repaint();
-            chartView.setOnClickListener(new OnClickListener() {
+            final int inboundRendererColor = inboundRenderer.getColor();
+            final int outboundRendererColor = outboundRenderer.getColor();
+            final AtomicReference<ViewTooltip> displayedTooltip = new AtomicReference<>(null);
+
+            final AtomicReference<Float> positionX = new AtomicReference<>(null);
+            final AtomicReference<Float> positionY = new AtomicReference<>(null);
+            //Dynamic view, indicating where to place the tooltip
+            final TextView tooltipViewHolder  = new TextView(WANMonthlyTrafficActivity.this);
+            tooltipViewHolder.setVisibility(View.VISIBLE);
+
+            chartView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(final View v, final MotionEvent event) {
+                    positionX.set(event.getX());
+                    positionY.set(event.getY());
+                    return false; // not consumed; forward to onClick
+                }
+            });
+
+            chartView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
                     final SeriesSelection currentSeriesAndPoint = chartView.getCurrentSeriesAndPoint();
                     if (currentSeriesAndPoint != null) {
                         final int xAxisValue = Double.valueOf(currentSeriesAndPoint.getXValue()).intValue();
-                        if (xAxisValue >= 0 && xAxisValue < breakdownLines.size()) {
-                            new AlertDialog.Builder(WANMonthlyTrafficActivity.this)
-                                    .setCancelable(true)
-                                    .setMessage(breakdownLines.get(xAxisValue))
-                                    .create()
-                                    .show();
+                        if (xAxisValue >= 0 && xAxisValue < size) {
+                            //Series index: 0 => inbound, 1 => outbound
+                            final int seriesIndex = currentSeriesAndPoint.getSeriesIndex();
+                            if (seriesIndex == INBOUND || seriesIndex == OUTBOUND) {
+//                                currentSeriesAndPoint.getPointIndex()
+                                final long inBytes = Double.valueOf(inData[xAxisValue]).longValue() * MB;
+                                final long outBytes = Double.valueOf(outData[xAxisValue]).longValue() * MB;
+                                final Float posX = positionX.get();
+                                final Float posY = positionY.get();
+                                final boolean touchPositionsSet = (posX != null && posY != null);
+                                if (touchPositionsSet) {
+                                    tooltipViewHolder.setText(" ");
+                                    tooltipViewHolder.setX(posX);
+                                    tooltipViewHolder.setY(posY);
+                                    mTooltipPlaceholderView.setVisibility(View.VISIBLE);
+                                    mTooltipPlaceholderView.removeAllViews();
+                                    mTooltipPlaceholderView.addView(tooltipViewHolder);
+                                }
+                                final String tooltipText;
+                                if (seriesIndex == INBOUND) {
+                                    tooltipText = String.format(Locale.ENGLISH,
+                                            "%s : Inbound : %s / Outbound : %s",
+                                            days[xAxisValue],
+                                            FileUtils.byteCountToDisplaySize(inBytes).replace("bytes", "B"),
+                                            FileUtils.byteCountToDisplaySize(outBytes).replace("bytes", "B"));
+                                } else {
+                                    tooltipText = String.format(Locale.ENGLISH,
+                                            "%s : Outbound : %s / Inbound : %s",
+                                            days[xAxisValue],
+                                            FileUtils.byteCountToDisplaySize(outBytes).replace("bytes", "B"),
+                                            FileUtils.byteCountToDisplaySize(inBytes).replace("bytes", "B"));
+                                }
+                                final ViewTooltip viewTooltip = ViewTooltip.on(touchPositionsSet ? tooltipViewHolder : v)
+                                        .color(seriesIndex == INBOUND ? inboundRendererColor : outboundRendererColor)
+                                        .textColor(ContextCompat.getColor(
+                                                WANMonthlyTrafficActivity.this, R.color.white))
+                                        .autoHide(true, 10000)
+                                        .clickToHide(true)
+                                        .corner(30)
+                                        .position(Position.TOP)
+                                        .align(ALIGN.CENTER)
+                                        .text(tooltipText);
+                                viewTooltip.onDisplay(new ListenerDisplay() {
+                                    @Override
+                                    public void onDisplay(final View view) {
+                                        displayedTooltip.set(viewTooltip);
+                                    }
+                                }).onHide(new ListenerHide() {
+                                    @Override
+                                    public void onHide(final View view) {
+                                        displayedTooltip.set(null);
+                                    }
+                                });
+                                final ViewTooltip existingTooltip = displayedTooltip.getAndSet(viewTooltip);
+                                try {
+                                    if (existingTooltip != null) {
+                                        existingTooltip.close();
+                                    }
+                                } catch (final Exception e) {
+                                    Crashlytics.logException(e);
+                                } finally {
+                                    viewTooltip.show();
+                                }
+                            } else {
+                                Crashlytics.log(Log.WARN, LOG_TAG, "Unhandled series index: " + seriesIndex);
+                            }
                         } else {
                             Crashlytics.log(Log.WARN, LOG_TAG,
                                     "xAxisValue=" + xAxisValue + ": out of X axis bounds: " + daysLength);
+                        }
+                    } else {
+                        final ViewTooltip existingTooltip = displayedTooltip.get();
+                        try {
+                            if (existingTooltip != null) {
+                                existingTooltip.close();
+                            }
+                        } catch (final Exception e) {
+                            Crashlytics.logException(e);
                         }
                     }
                 }
@@ -683,8 +803,6 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                         }
                         multiRenderer.addXTextLabel(label, days[labelToInt]);
                     }
-//                    for (double i = start; i <= stop; i += step)
-//                        multiRenderer.addXTextLabel(i+1, "label"+(int)i);
                     multiRenderer.setXLabels(0);
                 }
             });
@@ -702,8 +820,6 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                         }
                         multiRenderer.addXTextLabel(label, days[labelToInt]);
                     }
-//                    for (double i = start; i <= stop; i += step)
-//                        multiRenderer.addXTextLabel(i+1, "label"+(int)i);
                     multiRenderer.setXLabels(0);
                 }
 

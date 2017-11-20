@@ -899,9 +899,11 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
 
     @NonNull
     private WANTrafficData cursorToWANTrafficData(@NonNull Cursor cursor) {
-
-        return new WANTrafficData(cursor.getString(1), cursor.getString(2), cursor.getDouble(3),
-                cursor.getDouble(4)).setId(cursor.getInt(0));
+        return new WANTrafficData(cursor.getInt(0),
+                cursor.getString(1),
+                cursor.getString(2),
+                cursor.getDouble(3),
+                cursor.getDouble(4));
     }
 
     @NonNull

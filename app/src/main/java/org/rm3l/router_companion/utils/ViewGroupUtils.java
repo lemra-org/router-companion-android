@@ -31,6 +31,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -258,6 +259,29 @@ public final class ViewGroupUtils {
         final Canvas canvas = new Canvas(bitmapToExport);
         view.draw(canvas);
         return bitmapToExport;
+    }
+
+    /**
+     * @param context the context
+     * @param value the value
+     * @param unit the unit (@see {@link android.util.TypedValue}
+     * @return The complex floating point value multiplied by the appropriate
+     * metrics depending on its unit.
+     */
+    public static float getFloatingPointValueFromDimension(@NonNull final Context context, float value, int unit) {
+        return TypedValue.applyDimension(unit, value, context.getResources().getDisplayMetrics());
+    }
+
+    public static float getTextAppearanceLargeSize(@NonNull final Context context) {
+        return getFloatingPointValueFromDimension(context, 22, TypedValue.COMPLEX_UNIT_SP);
+    }
+
+    public static float getTextAppearanceMediumSize(@NonNull final Context context) {
+        return getFloatingPointValueFromDimension(context, 18, TypedValue.COMPLEX_UNIT_SP);
+    }
+
+    public static float getTextAppearanceSmallSize(@NonNull final Context context) {
+        return getFloatingPointValueFromDimension(context, 14, TypedValue.COMPLEX_UNIT_SP);
     }
 
     private ViewGroupUtils() {

@@ -5,30 +5,19 @@ import android.content.SharedPreferences
 import org.rm3l.router_companion.utils.Utils
 import java.util.Calendar
 
-/**
- * Created by rm3l on 11/11/15.
- */
-class WANTrafficData(
+data class WANTrafficData @JvmOverloads constructor(
+        val id: Long = -1L, //the internal id (in DB)
         val router: String, //YYYY-MM-dd
         val date: String,
         val traffIn: Number,
         val traffOut: Number) {
-    /**
-     * the internal id (in DB)
-     */
-    private var id = -1L
-
-    fun getId(): Long {
-        return id
-    }
-
-    fun setId(id: Long): WANTrafficData {
-        this.id = id
-        return this
-    }
 
     companion object {
 
+        const val INBOUND = 0
+        const val OUTBOUND = 1
+
+        @JvmStatic
         fun getCurrentWANCycle(ctx: Context?,
                                routerPreferences: SharedPreferences?): MonthlyCycleItem {
 

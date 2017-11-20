@@ -541,6 +541,7 @@ dependencies {
     implementation 'com.evernote:android-job:1.2.0'
 
     implementation 'com.jakewharton.byteunits:byteunits:0.9.1'
+    implementation 'com.github.florent37:viewtooltip:1.0.8'
 }
 
 play {

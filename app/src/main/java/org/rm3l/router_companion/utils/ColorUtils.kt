@@ -68,7 +68,7 @@ class ColorUtils private constructor() {
 
         private val colorsCacheMapCache = mutableMapOf<String, Int>()
 
-        val colorsCache: LoadingCache<String, Int> = CacheBuilder.newBuilder()
+        private val colorsCache: LoadingCache<String, Int> = CacheBuilder.newBuilder()
                 .maximumSize(30)
                 .removalListener(RemovalListener<String, Int> { notification ->
                     Crashlytics.log(Log.DEBUG, TAG,
@@ -77,7 +77,7 @@ class ColorUtils private constructor() {
                 .build(object : CacheLoader<String, Int>() {
                     @Throws(Exception::class)
                     override fun load(key: String): Int? {
-                        val colorsToSkip = HashSet<Int>()
+                        val colorsToSkip = mutableSetOf<Int>()
 
                         //We want our new color not to be similar to white or black
                         colorsToSkip.add(Color.argb(255, 0, 0, 0))
@@ -94,11 +94,11 @@ class ColorUtils private constructor() {
                 })
 
         fun getColor(keyInCache: String): Int {
-            try {
-                return colorsCache.get(keyInCache)
+            return try {
+                colorsCache.get(keyInCache)
             } catch (e: ExecutionException) {
                 Utils.reportException(null, e)
-                return genColor(emptyList<Int>())
+                genColor(emptyList())
             }
 
         }
@@ -214,7 +214,7 @@ class ColorUtils private constructor() {
                 val themeLight = isThemeLight(activity)
                 try {
                     //Determine style by introspection
-                    @StyleRes val styleResId = Utils.getResId(
+                    @StyleRes val styleResId: Int = Utils.getResId(
                             String.format("%s_AppTheme%s%s", routerFirmware!!.name,
                                     if (themeLight) "Light" else "Dark",
                                     if (transparentStatusBar) "_StatusBarTransparent" else ""), R.style::class.java)
@@ -223,7 +223,6 @@ class ColorUtils private constructor() {
                     Crashlytics.logException(e)
                     setDefaultTheme(activity, transparentStatusBar)
                 }
-
             }
         }
 
@@ -257,7 +256,7 @@ class ColorUtils private constructor() {
                 val context = view.context
                 try {
                     //Determine style by intropsection
-                    @ColorRes val textColorResId = Utils.getResId(
+                    @ColorRes val textColorResId: Int = Utils.getResId(
                             String.format("%s_tile_title", routerFirmware!!.name.toLowerCase()),
                             R.color::class.java)
                     view.setTextColor(ContextCompat.getColor(context, textColorResId))
