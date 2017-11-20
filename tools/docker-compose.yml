@@ -27,21 +27,22 @@ services:
     #       cpus: '0.001'
     #       memory: 50M
 
-  #
-  # GeoIP Lookup
-  #
-  geoip:
-    image: fiorix/freegeoip
-    ports:
-      - "5080:8080"
-    labels:
-      org.rm3l.router_companion.service_name: "geoip"
-      org.rm3l.router_companion.service_description: "IP geolocation web server"
-      org.rm3l.router_companion.service_url: "http://tools.rm3l.org:5080"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/json/8.8.8.8"]
-      interval: 1m30s
-      timeout: 10s
-      retries: 3
-    restart: always
+#  #
+#  # GeoIP Lookup
+#  #
+#  # Deprecated. Using dazzlepod.com/ip/xxxx.json (via the backend proxy service) instead, as it provides additional information
+#  geoip:
+#    image: fiorix/freegeoip
+#    ports:
+#      - "5080:8080"
+#    labels:
+#      org.rm3l.router_companion.service_name: "geoip"
+#      org.rm3l.router_companion.service_description: "IP geolocation web server"
+#      org.rm3l.router_companion.service_url: "http://tools.rm3l.org:5080"
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:8080/json/8.8.8.8"]
+#      interval: 1m30s
+#      timeout: 10s
+#      retries: 3
+#    restart: always
     
