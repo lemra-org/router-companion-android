@@ -627,5 +627,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="take_bug_report">Take Bug Report</string>
     <string name="other">Other</string>
     <string name="wan_date_range_traffic">Traffic by date range</string>
+    <string name="zoom_in">Zoom in</string>
+    <string name="zoom_out">Zoom out</string>
+    <string name="zoom_reset">Reset zoom</string>
 
 </resources>

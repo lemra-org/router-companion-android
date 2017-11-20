@@ -38,7 +38,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Paint.Align;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -50,18 +49,14 @@ import android.support.v4.content.FileProvider;
 import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -86,7 +81,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -133,6 +127,8 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
     private static final String LOG_TAG = WANMonthlyTrafficActivity.class.getSimpleName();
 
     private final List<String> breakdownLines = new ArrayList<>();
+
+    private GraphicalView mChartView;
 
     private DDWRTCompanionDAO dao;
 
@@ -403,6 +399,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
         if (mShareActionProvider == null) {
             mShareActionProvider = new ShareActionProvider(this);
             MenuItemCompat.setActionProvider(shareMenuItem, mShareActionProvider);
+//            shareMenuItem.setIcon(R.drawable.ic_share_white_24dp);
         }
 
         final View viewToShare = findViewById(R.id.tile_status_wan_monthly_traffic_chart_placeholder);
@@ -456,6 +453,33 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
 
             case R.id.action_feedback:
                 Utils.openFeedbackForm(this, mRouter);
+                return true;
+
+            case R.id.tile_status_wan_monthly_traffic_zoom_in:
+                if (this.mChartView != null) {
+                    this.mChartView.zoomIn();
+                } else {
+                    Crashlytics.log(Log.WARN, LOG_TAG, "mChartView is NULL");
+                    Toast.makeText(this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+
+            case R.id.tile_status_wan_monthly_traffic_zoom_out:
+                if (this.mChartView != null) {
+                    this.mChartView.zoomOut();
+                } else {
+                    Crashlytics.log(Log.WARN, LOG_TAG, "mChartView is NULL");
+                    Toast.makeText(this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+
+            case R.id.tile_status_wan_monthly_traffic_zoom_reset:
+                if (this.mChartView != null) {
+                    this.mChartView.zoomReset();
+                } else {
+                    Crashlytics.log(Log.WARN, LOG_TAG, "mChartView is NULL");
+                    Toast.makeText(this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
+                }
                 return true;
 
             default:
@@ -562,6 +586,9 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
 
             // Creating a XYMultipleSeriesRenderer to customize the whole chart
             final XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
+            multiRenderer.setMargins(new int[] {30, 100, 10, 10}); //top,left,bottom,right
+            multiRenderer.setBarWidth(25);
+            multiRenderer.setBarSpacing(0.5);
             multiRenderer.setOrientation(XYMultipleSeriesRenderer.Orientation.HORIZONTAL);
             multiRenderer.setChartTitle(String.format("Date range: %s / Total IN: %s / Total OUT: %s",
                     mCycleItem.getLabelWithYears(),
@@ -571,7 +598,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                             .replace("bytes", "B")));
             multiRenderer.setXTitle("Days");
             multiRenderer.setYTitle("Traffic");
-            multiRenderer.setZoomButtonsVisible(true);
+            multiRenderer.setZoomButtonsVisible(false);
             multiRenderer.setLabelsColor(
                     ContextCompat.getColor(this, themeLight ? R.color.black : R.color.theme_accent_1_light));
 
@@ -637,7 +664,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             multiRenderer.setZoomEnabled(true, false);
             //setting external zoom functions to false
             //            multiRenderer.setZoomRate(1.1f);
-            multiRenderer.setExternalZoomEnabled(false);
+            multiRenderer.setExternalZoomEnabled(true);
             //setting displaying lines on graph to be formatted(like using graphics)
             multiRenderer.setAntialiasing(true);
             //setting to in scroll to false
@@ -679,9 +706,8 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             multiRenderer.addSeriesRenderer(inboundRenderer);
             multiRenderer.addSeriesRenderer(outboundRenderer);
 
-            final GraphicalView chartView =
-                    ChartFactory.getBarChartView(this, dataset, multiRenderer, BarChart.Type.DEFAULT);
-            //                            chartView.repaint();
+            this.mChartView = ChartFactory.getBarChartView(this, dataset, multiRenderer, BarChart.Type.DEFAULT);
+            //mChartView.repaint();
             final int inboundRendererColor = inboundRenderer.getColor();
             final int outboundRendererColor = outboundRenderer.getColor();
             final AtomicReference<ViewTooltip> displayedTooltip = new AtomicReference<>(null);
@@ -692,7 +718,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             final TextView tooltipViewHolder  = new TextView(WANMonthlyTrafficActivity.this);
             tooltipViewHolder.setVisibility(View.VISIBLE);
 
-            chartView.setOnTouchListener(new View.OnTouchListener() {
+            mChartView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(final View v, final MotionEvent event) {
                     positionX.set(event.getX());
@@ -701,10 +727,10 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                 }
             });
 
-            chartView.setOnClickListener(new View.OnClickListener() {
+            mChartView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    final SeriesSelection currentSeriesAndPoint = chartView.getCurrentSeriesAndPoint();
+                    final SeriesSelection currentSeriesAndPoint = mChartView.getCurrentSeriesAndPoint();
                     if (currentSeriesAndPoint != null) {
                         final int xAxisValue = Double.valueOf(currentSeriesAndPoint.getXValue()).intValue();
                         if (xAxisValue >= 0 && xAxisValue < size) {
@@ -789,7 +815,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                     }
                 }
             });
-            chartView.addPanListener(new PanListener() {
+            mChartView.addPanListener(new PanListener() {
                 @Override
                 public void panApplied() {
                     double start = multiRenderer.getXAxisMin();
@@ -806,7 +832,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                     multiRenderer.setXLabels(0);
                 }
             });
-            chartView.addZoomListener(new ZoomListener() {
+            mChartView.addZoomListener(new ZoomListener() {
                 @Override
                 public void zoomApplied(final ZoomEvent zoomEvent) {
                     double start = multiRenderer.getXAxisMin();
@@ -829,7 +855,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             }, true, true);
 
             chartPlaceholderView.removeAllViews();
-            chartPlaceholderView.addView(chartView);
+            chartPlaceholderView.addView(mChartView);
 
             chartPlaceholderView.setVisibility(View.VISIBLE);
             loadingView.setVisibility(View.GONE);
