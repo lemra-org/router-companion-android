@@ -517,7 +517,7 @@ public class RouterManagementActivity extends AppCompatActivity
                         Crashlytics.log(Log.DEBUG, LOG_TAG,
                                 "<mAutoCrashReports,currentUserChoiceForAutoCrashReporting>=<" +
                                         mAutoCrashReports + "," + currentUserChoiceForAutoCrashReporting + ">");
-                        final String waitMessage = String.format("%sabling automatic crash reporting",
+                        final String waitMessage = String.format("%sabling automatic crash reporting and app usage analytics",
                                 currentUserChoiceForAutoCrashReporting ? "En" : "Dis");
                         ContextUtils.restartWholeApplication(this, waitMessage, null);
                     } else if (this.mCurrentTheme != this.mPreferences.getLong(THEMING_PREF, -1l)
