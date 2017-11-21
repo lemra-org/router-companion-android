@@ -114,7 +114,8 @@ ext.getVersionCodeAndName = {
                 "gitCommitHash = $gitCommitHash")
 
         // Return the version name
-        final versionName = "$fullVersionTag-$versionBuild/$gitCommitHash-$flavorName"
+        final versionNameFullVersionLast = versionBuild ? "-$versionBuild" : ""
+        final versionName = "$fullVersionTag$versionNameFullVersionLast/$gitCommitHash-$flavorName"
         final versionCode = (
                 versionMajor.toInteger() * 100000 +
                         versionMinor.toInteger() * 10000 +
