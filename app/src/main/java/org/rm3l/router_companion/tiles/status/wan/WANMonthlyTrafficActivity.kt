@@ -426,7 +426,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
 
             }
 
-            setShareFiles("png" to mFileToShare!!, "csv" to mCsvFileToShare!!)
+            setShareFiles(PNG to mFileToShare!!, CSV to mCsvFileToShare!!)
         }
 
         return super.onCreateOptionsMenu(menu)
