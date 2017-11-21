@@ -76,22 +76,30 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
-                    android:id="@+id/tile_status_active_ip_connections_recycler_view"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="63dp"
-                    android:scrollbars="vertical" />
+                    android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/empty_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:text="No IP Connection"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textIsSelectable="true" />
+                    <TextView
+                        android:id="@+id/empty_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:text="No IP Connection"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textIsSelectable="false"
+                        android:layout_centerInParent="true"
+                        android:visibility="gone"/>
+                        <!--android:drawableTop="@drawable/ram_black_and_white"/>-->
+
+                    <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
+                        android:id="@+id/tile_status_active_ip_connections_recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="63dp"
+                        android:scrollbars="vertical" />
+                </RelativeLayout>
             </LinearLayout>
 
         </RelativeLayout>

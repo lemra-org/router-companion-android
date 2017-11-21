@@ -28,7 +28,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".actions.ManageRouterAliasesActivity">
+    tools:context="org.rm3l.router_companion.actions.ManageRouterAliasesActivity">
 
     <include layout="@layout/activity_manage_router_aliases_toolbar" />
 
@@ -43,56 +43,61 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         ads:adSize="BANNER"
         ads:adUnitId="@string/banner_ad_unit_id_router_management_activity" />
 
-    <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/coordinatorLayout"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--<FrameLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
-
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swipeRefreshLayout"
+        <TextView
+            android:id="@+id/empty_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
-                android:id="@+id/routerAliasesListView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="vertical" />
-
-            <TextView
-                android:id="@+id/empty_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="No local alias found. Click the '+' button below to add one. Aliases allow you to give a name to a given device (MAC Address), so you can easily identify if throughout the app. \nNote that you can also export/import aliases from the menu."
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textIsSelectable="true" />
-
-        </android.support.v4.widget.SwipeRefreshLayout>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/router_alias_add"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            android:clickable="true"
-            android:contentDescription="@string/router_add_new"
-            android:src="@drawable/ic_plus_white_24dp"
-            android:tint="@android:color/white"
-            app:elevation="6dp"
-            app:fabSize="normal"
-            app:layout_anchor="@id/routerAliasesListView"
-            app:layout_anchorGravity="end|bottom|right"
-            app:layout_behavior="org.rm3l.router_companion.widgets.ScrollAwareFABBehavior"
-            app:pressedTranslationZ="12dp" />
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="There is no local alias right now.\nTap the '+' button to add a new one.\nAliases allow you to give names to your devices (identified by MAC Addresses), so you can easily identify them throughout the app. \nNote that you can also export/import aliases from the menu."
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textIsSelectable="false"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
+        <!--android:drawableTop="@drawable/router_black_and_white"-->
 
-        <!--</FrameLayout>-->
-    </android.support.design.widget.CoordinatorLayout>
+
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/coordinatorLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefreshLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
+                    android:id="@+id/routerAliasesListView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scrollbars="vertical" />
+
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/router_alias_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/fab_margin"
+                android:clickable="true"
+                android:contentDescription="@string/router_add_new"
+                android:src="@drawable/ic_plus_white_24dp"
+                android:tint="@android:color/white"
+                app:elevation="6dp"
+                app:fabSize="normal"
+                app:layout_anchor="@id/routerAliasesListView"
+                app:layout_anchorGravity="end|bottom|right"
+                app:layout_behavior="org.rm3l.router_companion.widgets.ScrollAwareFABBehavior"
+                app:pressedTranslationZ="12dp"
+                android:focusable="true" />
+
+        </android.support.design.widget.CoordinatorLayout>
+    </RelativeLayout>
 
 </LinearLayout>

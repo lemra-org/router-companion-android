@@ -43,51 +43,63 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         ads:adSize="BANNER"
         ads:adUnitId="@string/banner_ad_unit_id_router_management_activity" />
 
-    <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/coordinatorLayout"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swipeRefreshLayout"
+        <TextView
+            android:id="@+id/empty_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
-                android:id="@+id/routersListView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="vertical" />
-
-            <TextView
-                android:id="@+id/empty_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="No Router to manage. Click the '+' button below to add a new one."
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textIsSelectable="true" />
-
-        </android.support.v4.widget.SwipeRefreshLayout>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/router_list_add"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            android:clickable="true"
-            android:contentDescription="@string/router_add_new"
-            android:src="@drawable/ic_plus_white_24dp"
-            android:tint="@android:color/white"
-            app:elevation="6dp"
-            app:fabSize="normal"
-            app:layout_anchor="@id/routersListView"
-            app:layout_anchorGravity="end|bottom"
-            app:layout_behavior="org.rm3l.router_companion.widgets.ScrollAwareFABBehavior"
-            app:pressedTranslationZ="12dp" />
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="@string/empty_router_list_message"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textIsSelectable="false"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            android:drawableTop="@drawable/router_black_and_white"/>
 
-    </android.support.design.widget.CoordinatorLayout>
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/coordinatorLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefreshLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
+                    android:id="@+id/routersListView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scrollbars="vertical" />
+
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/router_list_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/fab_margin"
+                android:clickable="true"
+                android:contentDescription="@string/router_add_new"
+                android:src="@drawable/ic_plus_white_24dp"
+                android:tint="@android:color/white"
+                app:elevation="6dp"
+                app:fabSize="normal"
+                app:layout_anchor="@id/routersListView"
+                app:layout_anchorGravity="end|bottom"
+                app:layout_behavior="org.rm3l.router_companion.widgets.ScrollAwareFABBehavior"
+                app:pressedTranslationZ="12dp"
+                android:focusable="true" />
+
+        </android.support.design.widget.CoordinatorLayout>
+
+
+    </RelativeLayout>
+
 
 </LinearLayout>

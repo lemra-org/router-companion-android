@@ -41,11 +41,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <TextView
         android:id="@+id/empty_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
+        android:layout_height="wrap_content"
         android:gravity="center"
+        android:layout_gravity="center"
         android:text="No tiles."
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textIsSelectable="true" />
+        android:textIsSelectable="false"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+    <!--android:drawableTop="@drawable/router_black_and_white"-->
 
 </RelativeLayout>

@@ -94,9 +94,6 @@ import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import org.rm3l.router_companion.widgets.RecyclerViewEmptySupport;
 
-/**
- * Created by rm3l on 13/12/15.
- */
 public class ManageRouterAliasesActivity extends AppCompatActivity
         implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener,
         SearchView.OnQueryTextListener, SnackbarCallback {

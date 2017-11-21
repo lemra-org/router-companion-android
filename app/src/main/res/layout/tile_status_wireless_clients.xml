@@ -245,20 +245,24 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:textIsSelectable="true"
             android:textStyle="italic" />
 
-        <TextView
-            android:id="@+id/empty_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/net_traffic_multi_text_size"
-            android:gravity="center"
-            android:text="No Host."
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textIsSelectable="true" />
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="60dp">
+
+            <TextView
+                android:id="@+id/empty_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/net_traffic_multi_text_size"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_centerInParent="true"
+                android:text="No Host."
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textIsSelectable="false"
+                android:visibility="gone"
+                android:drawableTop="@drawable/devices_black_white"/>
 
             <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
                 android:id="@+id/tile_status_wireless_clients_recycler_view"

@@ -604,24 +604,47 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         </RelativeLayout>
 
-        <!-- RecyclerView -->
-        <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
-            android:id="@+id/speedtest_results_recycler_view"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="7dp"
-            android:scrollbars="vertical" />
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/empty_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_margin="7dp"
-            android:gravity="center"
-            android:text="You do not have any SpeedTest results yet!"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textIsSelectable="true" />
+            <!-- RecyclerView -->
+            <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
+                android:id="@+id/speedtest_results_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="7dp"
+                android:scrollbars="vertical" />
+
+            <LinearLayout
+                android:id="@+id/empty_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_centerInParent="true"
+                android:layout_margin="7dp"
+                android:visibility="gone"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/speedtest_rocking_black_white"/>
+
+                <TextView
+                    android:id="@+id/empty_view_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="You do not have any SpeedTest results right now!"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textIsSelectable="false"/>
+                
+            </LinearLayout>
+            
+        </RelativeLayout>
 
     </LinearLayout>
 

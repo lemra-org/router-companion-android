@@ -952,11 +952,12 @@ public class SpeedTestActivity extends AppCompatActivity
         mLayoutManager.scrollToPosition(0);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        final TextView emptyView = (TextView) findViewById(R.id.empty_view);
+        final View emptyView = findViewById(R.id.empty_view);
+        final TextView emptyTextView = emptyView.findViewById(R.id.empty_view_text);
         if (mIsThemeLight) {
-            emptyView.setTextColor(ContextCompat.getColor(this, R.color.black));
+            emptyTextView.setTextColor(ContextCompat.getColor(this, R.color.black));
         } else {
-            emptyView.setTextColor(ContextCompat.getColor(this, R.color.white));
+            emptyTextView.setTextColor(ContextCompat.getColor(this, R.color.white));
         }
         mRecyclerView.setEmptyView(emptyView);
 

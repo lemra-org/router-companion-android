@@ -630,5 +630,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="zoom_in">Zoom in</string>
     <string name="zoom_out">Zoom out</string>
     <string name="zoom_reset">Reset zoom</string>
+    <string name="router">Router</string>
+    <string name="empty_router_list_message">There\'s no router right now! Once you register a new router (using the \'+\' button), you\'ll see it listed here.</string>
 
 </resources>

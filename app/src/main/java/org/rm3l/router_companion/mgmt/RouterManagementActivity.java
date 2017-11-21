@@ -267,39 +267,11 @@ public class RouterManagementActivity extends AppCompatActivity
 
         ColorUtils.Companion.setAppTheme(this, null, false);
 
-        //        if (ColorUtils.isThemeLight(this)) {
-        //            //Light
-        //            setTheme(R.style.AppThemeLight);
-        ////            getWindow().getDecorView()
-        ////                    .setBackgroundColor(ContextCompat.getColor(this,
-        ////                            R.color.GhostWhite));
-        //        } else {
-        //            //Default is Dark
-        //            setTheme(R.style.AppThemeDark);
-        //        }
-
         mBackgroundServiceEnabled = mPreferences.getBoolean(NOTIFICATIONS_BG_SERVICE_ENABLE, false);
         mBackgroundServiceFrequency =
                 mPreferences.getLong(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1);
 
         setContentView(R.layout.activity_router_management);
-
-        //FIXME Just a simple test
-        //        final Map<String, SubscriptionEventListener> pushEventListeners = new HashMap<>();
-        //        pushEventListeners.put("new_update", new SubscriptionEventListener() {
-        //            @Override
-        //            public void onEvent(final String channelName, final String eventName, final String data) {
-        //                runOnUiThread(new Runnable() {
-        //                    @Override
-        //                    public void run() {
-        //                        Toast.makeText(RouterManagementActivity.this,
-        //                                "[TEST] New DD-WRT Update: " + channelName + ", " + eventName + ", " + data,
-        //                                Toast.LENGTH_SHORT).show();
-        //                    }
-        //                });
-        //            }
-        //        });
-        //        this.mPusher = PushUtils.getPusher("ddwrt_updates", pushEventListeners, false);
 
         setupCustomTabHelper(this);
 
@@ -329,12 +301,6 @@ public class RouterManagementActivity extends AppCompatActivity
         this.dao = getDao(this);
 
         final List<Router> allRouters = this.dao.getAllRouters();
-//    for (final Router router : allRouters) {
-//      if (router == null) {
-//        continue;
-//      }
-//      NotificationHelperKt.createNotificationChannelGroup(router, this);
-//    }
 
         mRecyclerView = findViewById(R.id.routersListView);
 
