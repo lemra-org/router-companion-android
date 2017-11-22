@@ -191,7 +191,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:text="Last sync: "
                 android:textAppearance="?android:textAppearanceSmall"
                 android:textIsSelectable="true"
-
                 android:textStyle="italic" />
 
             <android.support.design.widget.FloatingActionButton
@@ -214,7 +213,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 app:layout_anchorGravity="end|bottom|right"
                 app:layout_behavior="org.rm3l.ddwrt.widgets.ScrollAwareFABBehavior"
                 app:pressedTranslationZ="12dp" />
-
         </RelativeLayout>
 
     </LinearLayout>
