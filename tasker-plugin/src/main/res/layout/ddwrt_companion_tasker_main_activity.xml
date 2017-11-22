@@ -203,7 +203,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
         </RelativeLayout>
-
     </LinearLayout>
 
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>
