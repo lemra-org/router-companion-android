@@ -955,7 +955,7 @@ class WANMonthlyTrafficTile(parentFragment: Fragment, arguments: Bundle?,
                     val datePickerFragment = DatePickerFragment.newInstance(
                             datePickerListener,
                             mCurrentCycle.get().start,
-                            maxMillis = System.currentTimeMillis())
+                            maxMillis = mCurrentCycle.get().end)
                     datePickerFragment.show(mParentFragmentActivity.supportFragmentManager, "dateFromPicker")
                 }
 
@@ -983,8 +983,7 @@ class WANMonthlyTrafficTile(parentFragment: Fragment, arguments: Bundle?,
                     val datePickerFragment = DatePickerFragment.newInstance(
                             datePickerListener = datePickerListener,
                             startFromMillis = mCurrentCycle.get().end,
-                            minMillis = mCurrentCycle.get().start,
-                            maxMillis = System.currentTimeMillis())
+                            minMillis = mCurrentCycle.get().start)
                     datePickerFragment.show(mParentFragmentActivity.supportFragmentManager, "dateToPicker")
                 }
 
