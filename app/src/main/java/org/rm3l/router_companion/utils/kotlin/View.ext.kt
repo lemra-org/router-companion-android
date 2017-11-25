@@ -6,9 +6,11 @@ import android.animation.Animator
 import android.animation.Animator.AnimatorListener
 import android.animation.ValueAnimator
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageButton
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.utils.ColorUtils
+import org.rm3l.router_companion.utils.ViewGroupUtils
 
 fun View.visible() {
     this.visibility = View.VISIBLE
@@ -32,10 +34,11 @@ fun View.setHeight(height: Int) {
     layoutParams = params
 }
 
-fun View.expand(expandCollapseButton: ImageButton? = null) {
+fun ViewGroup.expand(expandCollapseButton: ImageButton? = null) {
     this.visible()
-    val widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-    val heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+    val widthSpec = View.MeasureSpec.makeMeasureSpec(ViewGroupUtils.getParent(this)?.width?:0,
+            View.MeasureSpec.EXACTLY)
+    val heightSpec = View.MeasureSpec.makeMeasureSpec(this.computeFullHeight(), View.MeasureSpec.AT_MOST)
     this.measure(widthSpec, heightSpec)
     val mAnimator = slideAnimator(0, this.measuredHeight)
     mAnimator.start()
@@ -68,6 +71,31 @@ fun View.collapse(expandCollapseButton: ImageButton? = null) {
                     R.drawable.ic_expand_more_black_24dp
                 else R.drawable.ic_expand_more_white_24dp)
     }
+}
+
+fun ViewGroup.computeFullHeight(): Int {
+    val specWidth = View.MeasureSpec.makeMeasureSpec(0 /* any */, View.MeasureSpec.UNSPECIFIED)
+    val specHeight = View.MeasureSpec.makeMeasureSpec(0 /* any */, View.MeasureSpec.UNSPECIFIED)
+    this.measure(specWidth, specHeight)
+    var totalHeight = 0//this.getMeasuredHeight();
+    val initialVisibility = this.visibility
+    this.visibility = View.VISIBLE
+    val numberOfChildren = this.childCount
+    (0 until numberOfChildren)
+            .asSequence()
+            .map { this.getChildAt(it) }
+            .forEach {
+                totalHeight += if (it is ViewGroup) {
+                    it.computeFullHeight()
+                } else {
+                    val desiredWidth = View.MeasureSpec.makeMeasureSpec(this.width,
+                            View.MeasureSpec.AT_MOST)
+                    it.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED)
+                    it.measuredHeight
+                }
+            }
+    this.visibility = initialVisibility
+    return totalHeight
 }
 
 private fun View.slideAnimator(start: Int, end: Int): ValueAnimator {

@@ -561,7 +561,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             //Add padding in API v21+ as well to have the same measurements with previous versions.
             cardView.setUseCompatPadding(true);
 
-            final View detailsPlaceholderView =
+            final LinearLayout detailsPlaceholderView =
                     cardView.findViewById(R.id.activity_ip_connections_details_placeholder);
             final boolean detailsPlaceholderVisible = (detailsPlaceholderView.getVisibility() == View.VISIBLE);
 
