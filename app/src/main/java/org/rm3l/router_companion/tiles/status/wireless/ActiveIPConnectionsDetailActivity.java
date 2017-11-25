@@ -112,6 +112,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.api.proxy.NetWhoisInfoProxyApiResponse;
@@ -144,7 +146,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
         private final T result;
 
-        public AsyncTaskResult(T result, Exception exception) {
+        AsyncTaskResult(T result, Exception exception) {
             this.result = result;
             this.exception = exception;
         }
@@ -621,7 +623,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
             final String tcpConnectionState = ipConntrackRow.getTcpConnectionState();
             final TextView tcpConnectionStateView =
-                    (TextView) cardView.findViewById(R.id.activity_ip_connections_tcp_connection_state);
+                    cardView.findViewById(R.id.activity_ip_connections_tcp_connection_state);
             final TextView tcpConnectionStateDetailedView = (TextView) cardView.findViewById(
                     R.id.activity_ip_connections_details_tcp_connection_state);
 
@@ -629,9 +631,37 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                 tcpConnectionStateView.setText(tcpConnectionState);
                 tcpConnectionStateDetailedView.setText(tcpConnectionState);
                 tcpConnectionStateView.setVisibility(View.VISIBLE);
+                Integer detailsResId = null;
+                try {
+                    detailsResId = Utils.getResId(String.format("tcp_connection_state_details_%s",
+                            tcpConnectionState.replaceAll("-", "_").replaceAll(" ", "_")),
+                            R.string.class);
+                } catch (final Exception e) {
+                    Crashlytics.log(Log.WARN, LOG_TAG,
+                            "No resource ID found in string.xml for TCP Connection State: " + tcpConnectionState);
+                    Crashlytics.logException(e);
+                }
+                final Integer tcpConnectionDetailsResourceId = detailsResId;
+                final Function1<View, Unit> onClickFunction = new Function1<View, Unit>() {
+                    @Override
+                    public Unit invoke(final View view) {
+                        Utils.buildAlertDialog(
+                                ActiveIPConnectionsDetailActivity.this,
+                                tcpConnectionState,
+                                tcpConnectionDetailsResourceId != null ? getResources()
+                                        .getString(tcpConnectionDetailsResourceId) : tcpConnectionState,
+                                true,
+                                true)
+                                .show();
+                        return null;
+                    }
+                };
+                ViewUtils.setClickable(tcpConnectionStateView, onClickFunction);
+                ViewUtils.setClickable(tcpConnectionStateDetailedView, onClickFunction);
             } else {
                 tcpConnectionStateView.setVisibility(View.GONE);
                 tcpConnectionStateDetailedView.setText("-");
+                tcpConnectionStateView.setOnClickListener(null);
             }
 
             final View tcpConnectionStateDetailedViewSep =

@@ -5,9 +5,13 @@ package org.rm3l.router_companion.utils.kotlin
 import android.animation.Animator
 import android.animation.Animator.AnimatorListener
 import android.animation.ValueAnimator
+import android.text.Spannable
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.TextView
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.utils.ColorUtils
 import org.rm3l.router_companion.utils.ViewGroupUtils
@@ -108,4 +112,12 @@ private fun View.slideAnimator(start: Int, end: Int): ValueAnimator {
         this@slideAnimator.layoutParams = layoutParams
     }
     return animator
+}
+
+fun TextView.setClickable(onClickFunction: (View?) -> Unit) {
+    this.movementMethod = LinkMovementMethod.getInstance()
+    val spans = this.text as Spannable
+    spans.setSpan(object: ClickableSpan() {
+        override fun onClick(widget: View?) = onClickFunction(widget)
+    }, 0, spans.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 }
