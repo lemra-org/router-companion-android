@@ -31,7 +31,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     card_view:contentPaddingBottom="@dimen/activity_vertical_margin"
     card_view:contentPaddingLeft="10dp"
     card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin"
-    card_view:contentPaddingTop="@dimen/activity_vertical_margin">
+    card_view:contentPaddingTop="@dimen/activity_vertical_margin"
+    android:focusable="true">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -82,13 +83,23 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
                         android:layout_gravity="center_horizontal"
-                        android:layout_toEndOf="@+id/tile_status_wireless_client_device_name"
                         android:layout_toLeftOf="@+id/tile_status_wireless_client_you_and_menu"
-                        android:layout_toRightOf="@+id/tile_status_wireless_client_device_name"
                         android:layout_toStartOf="@+id/tile_status_wireless_client_you_and_menu"
+                        android:layout_toEndOf="@+id/tile_status_wireless_client_device_name"
+                        android:layout_toRightOf="@+id/tile_status_wireless_client_device_name"
                         android:gravity="center"
                         android:orientation="horizontal"
                         android:scrollHorizontally="true" />
+
+                    <ImageView
+                        android:id="@+id/tile_status_wireless_client_blocked"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerInParent="true"
+                        android:layout_toEndOf="@+id/tile_status_wireless_client_network_traffic_placeholder"
+                        android:layout_toRightOf="@+id/tile_status_wireless_client_network_traffic_placeholder"
+                        android:src="@drawable/ic_action_content_block"
+                        android:contentDescription="@string/blocked" />
 
                     <LinearLayout
                         android:id="@+id/tile_status_wireless_client_you_and_menu"
@@ -160,11 +171,28 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/loading"
                     android:textIsSelectable="true" />
 
+                <ImageButton
+                    android:id="@+id/expand_collapse"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@null"
+                    android:src="@drawable/ic_expand_more_black_24dp"
+                    android:contentDescription="@string/expand_collapse"/>
+
             </LinearLayout>
 
         </LinearLayout>
 
-        <GridLayout
+        <LinearLayout
+            android:id="@+id/tile_status_wireless_client_device_details_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tile_status_wireless_client_first_glance_view"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <GridLayout
             android:id="@+id/tile_status_wireless_client_device_details_oui_lastseen_table"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -518,45 +546,45 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         </GridLayout>
 
-        <LinearLayout
-            android:id="@+id/tile_status_wireless_client_device_details_graph_placeholder"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_below="@+id/tile_status_wireless_client_device_details_oui_lastseen_table"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal"
-            android:visibility="gone" />
+            <LinearLayout
+                android:id="@+id/tile_status_wireless_client_device_details_graph_placeholder"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:visibility="gone" />
 
-        <LinearLayout
-            android:id="@+id/tile_status_wireless_client_device_details_graph_legend"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tile_status_wireless_client_device_details_graph_placeholder"
-            android:orientation="horizontal">
-
-            <View
-                android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series1_bar"
-                android:layout_width="15dp"
-                android:layout_height="2dp" />
-
-            <TextView
-                android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series1_text"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/tile_status_wireless_client_device_details_graph_legend"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:textAppearance="?android:textAppearanceSmall" />
+                android:orientation="horizontal">
 
-            <View
-                android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series2_bar"
-                android:layout_width="15dp"
-                android:layout_height="2dp" />
+                <View
+                    android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series1_bar"
+                    android:layout_width="15dp"
+                    android:layout_height="2dp" />
 
-            <TextView
-                android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series2_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:textAppearanceSmall" />
+                <TextView
+                    android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series1_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:textAppearance="?android:textAppearanceSmall" />
+
+                <View
+                    android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series2_bar"
+                    android:layout_width="15dp"
+                    android:layout_height="2dp" />
+
+                <TextView
+                    android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series2_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:textAppearanceSmall" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -564,19 +592,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:id="@+id/tile_status_wireless_client_device_details_no_data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tile_status_wireless_client_device_details_graph_placeholder"
+            android:layout_below="@+id/tile_status_wireless_client_device_details_placeholder"
             android:gravity="center_horizontal"
             android:text="\nNo Data"
             android:textAppearance="?android:textAppearanceSmall"
             android:textIsSelectable="true"
             android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/tile_status_wireless_client_blocked"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_centerInParent="true"
-            android:src="@drawable/ic_action_content_block" />
 
     </RelativeLayout>
 

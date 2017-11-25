@@ -448,7 +448,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                 this.mContext = context;
                 this.itemView = itemView;
                 this.cardView = itemView.findViewById(R.id.activity_ip_connections_card_view);
-                this.expandCollapseButton = cardView.findViewById(R.id.activity_ip_connections_expand_collapse);
+                this.expandCollapseButton = cardView.findViewById(R.id.expand_collapse);
             }
         }
 

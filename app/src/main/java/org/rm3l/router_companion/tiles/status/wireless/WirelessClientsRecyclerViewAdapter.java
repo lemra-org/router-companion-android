@@ -28,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -65,6 +66,7 @@ import org.rm3l.router_companion.tiles.status.bandwidth.BandwidthMonitoringTile;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.Utils;
+import org.rm3l.router_companion.utils.kotlin.ViewUtils;
 import org.rm3l.router_companion.widgets.NetworkTrafficView;
 
 /**
@@ -74,7 +76,7 @@ import org.rm3l.router_companion.widgets.NetworkTrafficView;
 public class WirelessClientsRecyclerViewAdapter extends
         RecyclerView.Adapter<WirelessClientsRecyclerViewAdapter.WirelessClientsRecyclerViewHolder> {
 
-    public static class WirelessClientsRecyclerViewHolder extends RecyclerView.ViewHolder {
+    static class WirelessClientsRecyclerViewHolder extends RecyclerView.ViewHolder {
 
         final ImageView avatarView;
 
@@ -90,6 +92,8 @@ public class WirelessClientsRecyclerViewAdapter extends
 
         final ImageButton tileMenu;
 
+        private final LinearLayout detailsPlaceHolderView;
+
         private final TextView deviceActiveIpConnectionsView;
 
         private final TextView deviceAliasView;
@@ -103,6 +107,8 @@ public class WirelessClientsRecyclerViewAdapter extends
         private final TextView deviceSystemNameView;
 
         private final TextView deviceWanAccessStateView;
+
+        private final ImageButton expandCollapseButton;
 
         private final View firstGlanceView;
 
@@ -160,7 +166,7 @@ public class WirelessClientsRecyclerViewAdapter extends
 
         private final View[] wirelessRelatedViews;
 
-        public WirelessClientsRecyclerViewHolder(Context context, View itemView) {
+        WirelessClientsRecyclerViewHolder(Context context, View itemView) {
             super(itemView);
             this.cardView = (CardView) itemView;
             this.context = context;
@@ -221,7 +227,7 @@ public class WirelessClientsRecyclerViewAdapter extends
 
             thisDevice = cardView.findViewById(R.id.tile_status_wireless_client_device_this);
 
-            deviceDetailsPlaceHolder = (LinearLayout) cardView.findViewById(
+            deviceDetailsPlaceHolder = cardView.findViewById(
                     R.id.tile_status_wireless_client_device_details_graph_placeholder);
 
             noDataView = cardView.findViewById(R.id.tile_status_wireless_client_device_details_no_data);
@@ -266,6 +272,10 @@ public class WirelessClientsRecyclerViewAdapter extends
                     cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_placeholder);
 
             firstGlanceView = cardView.findViewById(R.id.tile_status_wireless_client_first_glance_view);
+
+            this.expandCollapseButton = cardView.findViewById(R.id.expand_collapse);
+
+            this.detailsPlaceHolderView = cardView.findViewById(R.id.tile_status_wireless_client_device_details_placeholder);
 
             wanBlockedDevice = cardView.findViewById(R.id.tile_status_wireless_client_blocked);
         }
@@ -314,10 +324,15 @@ public class WirelessClientsRecyclerViewAdapter extends
         holder.legendView.setVisibility(View.GONE);
 
         final boolean isThemeLight = ColorUtils.Companion.isThemeLight(holder.context);
-
+        final boolean detailsPlaceholderVisible = (holder.detailsPlaceHolderView.getVisibility() == View.VISIBLE);
         if (!isThemeLight) {
             //Set menu background to white
             holder.tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+            holder.expandCollapseButton.setImageResource(detailsPlaceholderVisible ?
+                    R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp);
+        } else {
+            holder.expandCollapseButton.setImageResource(detailsPlaceholderVisible ?
+                    R.drawable.ic_expand_less_white_24dp : R.drawable.ic_expand_more_white_24dp);
         }
 
         final String macAddress = device.getMacAddress();
@@ -746,6 +761,13 @@ public class WirelessClientsRecyclerViewAdapter extends
                     + ")");
         }
 
+        holder.expandCollapseButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                holder.firstGlanceView.performClick();
+            }
+        });
+
         holder.firstGlanceView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -783,6 +805,12 @@ public class WirelessClientsRecyclerViewAdapter extends
                     }
                 }
                 routerPreferences.edit().putStringSet(EXPANDED_CLIENTS_PREF_KEY, clientsExpanded).apply();
+
+                if (holder.detailsPlaceHolderView.getVisibility() == View.VISIBLE) {
+                    ViewUtils.collapse(holder.detailsPlaceHolderView, holder.expandCollapseButton);
+                } else {
+                    ViewUtils.expand(holder.detailsPlaceHolderView, holder.expandCollapseButton);
+                }
             }
         });
 
@@ -801,12 +829,16 @@ public class WirelessClientsRecyclerViewAdapter extends
                 holder.legendView.setVisibility(View.VISIBLE);
                 holder.noDataView.setVisibility(View.GONE);
             }
+            holder.detailsPlaceHolderView.setVisibility(View.VISIBLE);
+            holder.expandCollapseButton.setImageResource(isThemeLight ?
+                    R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_less_white_24dp);
         } else {
             //Collapse detailed view
             holder.ouiAndLastSeenView.setVisibility(View.GONE);
             holder.trafficGraphPlaceHolderView.setVisibility(View.GONE);
             holder.legendView.setVisibility(View.GONE);
             holder.noDataView.setVisibility(View.GONE);
+            ViewUtils.collapse(holder.detailsPlaceHolderView, holder.expandCollapseButton);
         }
 
         if (wanAccessState == null || wanAccessState == Device.WANAccessState.WAN_ACCESS_UNKNOWN) {
