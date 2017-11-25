@@ -68,9 +68,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -124,6 +126,7 @@ import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.NetworkUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.kotlin.JsonElementUtils;
+import org.rm3l.router_companion.utils.kotlin.ViewUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
@@ -438,11 +441,14 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
             final Context mContext;
 
+            final ImageButton expandCollapseButton;
+
             public ViewHolder(Context context, View itemView) {
                 super(itemView);
                 this.mContext = context;
                 this.itemView = itemView;
-                this.cardView = (CardView) itemView.findViewById(R.id.activity_ip_connections_card_view);
+                this.cardView = itemView.findViewById(R.id.activity_ip_connections_card_view);
+                this.expandCollapseButton = cardView.findViewById(R.id.activity_ip_connections_expand_collapse);
             }
         }
 
@@ -531,7 +537,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
             if (position < 0 || position >= mActiveIPConnections.size()) {
                 Utils.reportException(null, new IllegalStateException());
                 Toast.makeText(activity, "Internal Error. Please try again later", Toast.LENGTH_SHORT)
@@ -555,14 +561,22 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             //Add padding in API v21+ as well to have the same measurements with previous versions.
             cardView.setUseCompatPadding(true);
 
+            final View detailsPlaceholderView =
+                    cardView.findViewById(R.id.activity_ip_connections_details_placeholder);
+            final boolean detailsPlaceholderVisible = (detailsPlaceholderView.getVisibility() == View.VISIBLE);
+
             if (isThemeLight) {
                 //Light
                 cardView.setCardBackgroundColor(
                         ContextCompat.getColor(activity, R.color.cardview_light_background));
+                holder.expandCollapseButton.setImageResource(detailsPlaceholderVisible ?
+                    R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp);
             } else {
                 //Default is Dark
                 cardView.setCardBackgroundColor(
                         ContextCompat.getColor(activity, R.color.cardview_dark_background));
+                holder.expandCollapseButton.setImageResource(detailsPlaceholderVisible ?
+                        R.drawable.ic_expand_less_white_24dp : R.drawable.ic_expand_more_white_24dp);
             }
 
             //Highlight CardView
@@ -705,18 +719,23 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     R.id.activity_ip_connections_details_destination_port)).setText(dstPortToDisplay);
 
             final TextView rawLineView =
-                    (TextView) cardView.findViewById(R.id.activity_ip_connections_raw_line);
+                    cardView.findViewById(R.id.activity_ip_connections_raw_line);
             rawLineView.setText(ipConntrackRow.getRawLine());
+
+            holder.expandCollapseButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    cardView.performClick();
+                }
+            });
 
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final View placeholderView =
-                            cardView.findViewById(R.id.activity_ip_connections_details_placeholder);
-                    if (placeholderView.getVisibility() == View.VISIBLE) {
-                        placeholderView.setVisibility(View.GONE);
+                    if (detailsPlaceholderView.getVisibility() == View.VISIBLE) {
+                        ViewUtils.collapse(detailsPlaceholderView, holder.expandCollapseButton);
                     } else {
-                        placeholderView.setVisibility(View.VISIBLE);
+                        ViewUtils.expand(detailsPlaceholderView, holder.expandCollapseButton);
                     }
                 }
             });

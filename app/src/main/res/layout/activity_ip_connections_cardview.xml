@@ -217,6 +217,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         </RelativeLayout>
 
+        <ImageButton
+            android:id="@+id/activity_ip_connections_expand_collapse"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:background="@null"
+            android:src="@drawable/ic_expand_more_black_24dp"
+            android:contentDescription="Expand / Collapse"/>
+
         <LinearLayout
             android:id="@+id/activity_ip_connections_details_placeholder"
             android:layout_width="match_parent"
