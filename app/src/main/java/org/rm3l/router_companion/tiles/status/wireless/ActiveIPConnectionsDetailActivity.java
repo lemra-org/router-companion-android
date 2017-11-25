@@ -23,9 +23,9 @@ package org.rm3l.router_companion.tiles.status.wireless;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_COUNTRY;
 import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_HOSTNAME;
 import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_IP;
-import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_COUNTRY;
 import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_ORG;
 import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_DESTINATION_PORT;
 import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.BY_PROTOCOL;
@@ -33,6 +33,8 @@ import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConn
 import static org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter.SEPARATOR;
 import static org.rm3l.router_companion.utils.Utils.fromHtml;
 import static org.rm3l.router_companion.utils.Utils.getEscapedFileName;
+import static org.rm3l.router_companion.utils.Utils.nullOrEmptyTo;
+import static org.rm3l.router_companion.utils.Utils.truncateText;
 
 import android.Manifest;
 import android.app.SearchManager;
@@ -48,6 +50,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -169,7 +172,8 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         loadingView.setProgress(30);
-                        loadingViewText.setText("Analyzing a total of " + mActiveIPConnections.size() + " connections...");
+                        loadingViewText
+                                .setText("Analyzing a total of " + mActiveIPConnections.size() + " connections...");
                     }
                 });
 
@@ -437,11 +441,11 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
             final CardView cardView;
 
+            final ImageButton expandCollapseButton;
+
             final View itemView;
 
             final Context mContext;
-
-            final ImageButton expandCollapseButton;
 
             public ViewHolder(Context context, View itemView) {
                 super(itemView);
@@ -570,7 +574,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                 cardView.setCardBackgroundColor(
                         ContextCompat.getColor(activity, R.color.cardview_light_background));
                 holder.expandCollapseButton.setImageResource(detailsPlaceholderVisible ?
-                    R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp);
+                        R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp);
             } else {
                 //Default is Dark
                 cardView.setCardBackgroundColor(
@@ -745,7 +749,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
             //Fetch IP Whois info
             supportLoaderManager.initLoader(Long.valueOf(Utils.getNextLoaderId()).intValue(), null,
-                    new LoaderManager.LoaderCallbacks<Void>() {
+                    new LoaderCallbacks<Void>() {
 
                         @Override
                         public Loader<Void> onCreateLoader(int id, Bundle args) {
@@ -771,20 +775,59 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                                                     runOnUiThread(new Runnable() {
                                                         @Override
                                                         public void run() {
+                                                            final String hostname = whoisInfo.getHostname();
+                                                            final TextView destIpGlanceView = cardView
+                                                                    .findViewById(
+                                                                            R.id.activity_ip_connections_device_dest_ip);
+                                                            final boolean hostnameDisplayed = (hostname != null
+                                                                    && !hostname.isEmpty()
+                                                                    && !hostname.equalsIgnoreCase(
+                                                                    destinationAddressOriginalSide));
+                                                            if (hostnameDisplayed) {
+                                                                destIpGlanceView.setOnClickListener(
+                                                                        new OnClickListener() {
+                                                                            @Override
+                                                                            public void onClick(final View v) {
+                                                                                Toast.makeText(activity, hostname,
+                                                                                        Toast.LENGTH_SHORT).show();
+                                                                            }
+                                                                        });
+                                                            }
+                                                            destIpGlanceView
+                                                                    .setText(
+                                                                            hostnameDisplayed
+                                                                                    ?
+                                                                                    String.format("%s\n(%s)",
+                                                                                            nullOrEmptyTo(
+                                                                                                    //Truncate to the length of a complete IP address
+                                                                                                    truncateText(
+                                                                                                            hostname,
+                                                                                                            "255.255.255.255"
+                                                                                                                    .length()),
+                                                                                                    "-"),
+                                                                                            destinationAddressOriginalSide)
+                                                                                    : destinationAddressOriginalSide);
+                                                            ((TextView) cardView.findViewById(
+                                                                    R.id.activity_ip_connections_details_destination_ip_host))
+                                                                    .setText(hostname);
+                                                            final String country = whoisInfo.getCountry();
                                                             ((TextView) cardView.findViewById(
                                                                     R.id.activity_ip_connections_details_destination_whois_country))
                                                                     .setText(
-                                                                            String.format("%s (%s)",
-                                                                                    whoisInfo.getCountry(),
-                                                                                    countryCode));
+                                                                            (country != null
+                                                                                    && countryCode != null) ?
+                                                                                    String.format("%s (%s)",
+                                                                                            country,
+                                                                                            countryCode) : "-");
                                                             ((TextView) cardView.findViewById(
                                                                     R.id.activity_ip_connections_details_destination_whois_region))
                                                                     .setText(
-                                                                            whoisInfo.getRegion());
+                                                                            nullOrEmptyTo(whoisInfo.getRegion(),
+                                                                                    "-"));
                                                             ((TextView) cardView.findViewById(
                                                                     R.id.activity_ip_connections_details_destination_whois_city))
                                                                     .setText(
-                                                                            whoisInfo.getCity());
+                                                                            nullOrEmptyTo(whoisInfo.getCity(), "-"));
                                                         }
                                                     });
 

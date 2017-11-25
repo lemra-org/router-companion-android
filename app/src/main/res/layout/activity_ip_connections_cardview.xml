@@ -566,7 +566,35 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:ellipsize="end"
                     android:gravity="start"
                     android:text="@string/loading"
+                    android:textIsSelectable="true" />
 
+
+                <!-- Destination IP Host -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Destination IP Host"
+                    android:textIsSelectable="true"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space"
+                    android:textIsSelectable="true" />
+
+                <TextView
+                    android:id="@+id/activity_ip_connections_details_destination_ip_host"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginBottom="4dp"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:text="@string/loading"
                     android:textIsSelectable="true" />
 
                 <!-- Destination WHOIS -->

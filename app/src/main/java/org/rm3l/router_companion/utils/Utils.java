@@ -1090,6 +1090,16 @@ public final class Utils {
         return truncateText(str, maxLen, 0);
     }
 
+    @Nullable
+    public static String nullTo(@Nullable final String str, @Nullable final String to) {
+        return str != null ? str : to;
+    }
+
+    @Nullable
+    public static String nullOrEmptyTo(@Nullable final String str, @Nullable final String to) {
+        return isNullOrEmpty(str) ? to : str;
+    }
+
     private Utils() {
     }
 
