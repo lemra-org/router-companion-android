@@ -657,24 +657,20 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     }
                 };
                 ViewUtils.setClickable(tcpConnectionStateView, onClickFunction);
-                ViewUtils.setClickable(tcpConnectionStateDetailedView, onClickFunction);
+//                ViewUtils.setClickable(tcpConnectionStateDetailedView, onClickFunction);
             } else {
                 tcpConnectionStateView.setVisibility(View.GONE);
                 tcpConnectionStateDetailedView.setText("-");
                 tcpConnectionStateView.setOnClickListener(null);
             }
 
-            final View tcpConnectionStateDetailedViewSep =
-                    cardView.findViewById(R.id.activity_ip_connections_details_tcp_connection_state_sep);
             final View tcpConnectionStateDetailedViewTitle =
                     cardView.findViewById(R.id.activity_ip_connections_details_tcp_connection_state_title);
-            if ("TCP".equalsIgnoreCase(protocol)) {
+            if (protocol != null && "TCP".equalsIgnoreCase(protocol.trim())) {
                 tcpConnectionStateDetailedView.setVisibility(View.VISIBLE);
-                tcpConnectionStateDetailedViewSep.setVisibility(View.VISIBLE);
                 tcpConnectionStateDetailedViewTitle.setVisibility(View.VISIBLE);
             } else {
                 tcpConnectionStateDetailedView.setVisibility(View.GONE);
-                tcpConnectionStateDetailedViewSep.setVisibility(View.GONE);
                 tcpConnectionStateDetailedViewTitle.setVisibility(View.GONE);
             }
 
@@ -682,35 +678,27 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             //ID
             final View icmpIdTitle =
                     cardView.findViewById(R.id.activity_ip_connections_details_icmp_id_title);
-            final View icmpIdSep =
-                    cardView.findViewById(R.id.activity_ip_connections_details_icmp_id_sep);
             final TextView icmpId =
                     (TextView) cardView.findViewById(R.id.activity_ip_connections_details_icmp_id);
             //Type
             final View icmpTypeTitle =
                     cardView.findViewById(R.id.activity_ip_connections_details_icmp_type_title);
-            final View icmpTypeSep =
-                    cardView.findViewById(R.id.activity_ip_connections_details_icmp_type_sep);
             final TextView icmpType =
                     (TextView) cardView.findViewById(R.id.activity_ip_connections_details_icmp_type);
             //Code
             final View icmpCodeTitle =
                     cardView.findViewById(R.id.activity_ip_connections_details_icmp_code_title);
-            final View icmpCodeSep =
-                    cardView.findViewById(R.id.activity_ip_connections_details_icmp_code_sep);
             final TextView icmpCode =
                     (TextView) cardView.findViewById(R.id.activity_ip_connections_details_icmp_code);
             //Ctrl Message
             final View icmpCtrlMsgTitle =
                     cardView.findViewById(R.id.activity_ip_connections_details_icmp_ctrl_msg_title);
-            final View icmpCtrlMsgSep =
-                    cardView.findViewById(R.id.activity_ip_connections_details_icmp_ctrl_msg_sep);
             final TextView icmpCtrlMsg =
                     (TextView) cardView.findViewById(R.id.activity_ip_connections_details_icmp_ctrl_msg);
 
             final View[] icmpViews = new View[]{
-                    icmpIdTitle, icmpIdSep, icmpId, icmpTypeTitle, icmpTypeSep, icmpType, icmpCodeTitle,
-                    icmpCodeSep, icmpCode, icmpCtrlMsgTitle, icmpCtrlMsgSep, icmpCtrlMsg
+                    icmpIdTitle, icmpId, icmpTypeTitle, icmpType, icmpCodeTitle, icmpCode, icmpCtrlMsgTitle,
+                    icmpCtrlMsg
             };
 
             if ("ICMP".equalsIgnoreCase(protocol)) {
@@ -837,9 +825,14 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                                                                                                     "-"),
                                                                                             destinationAddressOriginalSide)
                                                                                     : destinationAddressOriginalSide);
-                                                            ((TextView) cardView.findViewById(
-                                                                    R.id.activity_ip_connections_details_destination_ip_host))
-                                                                    .setText(hostname);
+                                                            final TextView destIpHostDetail = cardView.findViewById(
+                                                                    R.id.activity_ip_connections_details_destination_ip_host);
+                                                            destIpHostDetail.setText(hostnameDisplayed ? hostname : "-");
+                                                            destIpHostDetail.setVisibility(hostnameDisplayed ? View.VISIBLE : View.GONE);
+                                                            cardView.findViewById(
+                                                                    R.id.activity_ip_connections_details_destination_ip_host_title)
+                                                                    .setVisibility(hostnameDisplayed ? View.VISIBLE : View.GONE);
+
                                                             final String country = whoisInfo.getCountry();
                                                             ((TextView) cardView.findViewById(
                                                                     R.id.activity_ip_connections_details_destination_whois_country))
@@ -932,9 +925,17 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             if (ipToHostResolvedMap == null) {
                 srcIpHostname.setText("");
                 srcIpHostnameDetails.setText("-");
+                srcIpHostname.setOnClickListener(null);
             } else {
                 final String srcIpHostnameResolved = ipToHostResolvedMap.get(sourceAddressOriginalSide);
-                srcIpHostname.setText(isNullOrEmpty(srcIpHostnameResolved) ? "" : srcIpHostnameResolved);
+                srcIpHostname.setText(
+                        isNullOrEmpty(srcIpHostnameResolved) ? "" : Utils.truncateText(srcIpHostnameResolved, 30));
+                srcIpHostname.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        Toast.makeText(activity, srcIpHostnameResolved, Toast.LENGTH_SHORT).show();
+                    }
+                });
                 srcIpHostnameDetails.setText(
                         isNullOrEmpty(srcIpHostnameResolved) ? "-" : srcIpHostnameResolved);
                 ipConntrackRow.setSourceHostname(srcIpHostnameResolved);

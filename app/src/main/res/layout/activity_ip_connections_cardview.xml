@@ -30,7 +30,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_marginLeft="7dp"
     android:layout_marginRight="7dp"
     android:layout_marginStart="7dp"
-    android:layout_marginTop="10dp"
+    android:layout_marginTop="5dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
@@ -108,8 +108,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/activity_ip_connections_source_ip_hostname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLength="15"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textIsSelectable="true"
                     android:visibility="invisible" />
@@ -237,37 +235,24 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <GridLayout
                 android:id="@+id/activity_ip_connections_details_table"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:columnCount="3"
-                android:stretchColumns="*">
+                android:columnCount="2">
 
                 <!-- Transport Protocol -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Protocol"
+                    android:text="@string/protocol"
                     android:textIsSelectable="true"
+                    android:layout_marginEnd="8.0dip"
+                    android:layout_marginRight="8.0dip"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:textIsSelectable="true" />
-
-                <TextView
                     android:id="@+id/activity_ip_connections_details_protocol"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill_horizontal"
                     android:text="@string/loading"
                     android:textIsSelectable="true" />
 
@@ -275,29 +260,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TTL"
+                    android:text="@string/ttl"
                     android:textIsSelectable="true"
+                    android:layout_marginEnd="8.0dip"
+                    android:layout_marginRight="8.0dip"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:textIsSelectable="true" />
-
-                <TextView
                     android:id="@+id/activity_ip_connections_details_ttl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill_horizontal"
                     android:text="@string/loading"
-
                     android:textIsSelectable="true" />
 
                 <!-- TCP Connection State -->
@@ -305,30 +278,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/activity_ip_connections_details_tcp_connection_state_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TCP Connection State"
+                    android:text="@string/tcp_connection_state"
                     android:textIsSelectable="true"
+                    android:layout_marginEnd="8.0dip"
+                    android:layout_marginRight="8.0dip"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/activity_ip_connections_details_tcp_connection_state_sep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:textIsSelectable="true" />
-
-                <TextView
                     android:id="@+id/activity_ip_connections_details_tcp_connection_state"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill_horizontal"
                     android:text="@string/loading"
-
                     android:textIsSelectable="true" />
 
                 <!-- ICMP ID -->
@@ -336,30 +296,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/activity_ip_connections_details_icmp_id_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ICMP ID"
+                    android:text="@string/icmp_id"
                     android:textIsSelectable="true"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/activity_ip_connections_details_icmp_id_sep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:textIsSelectable="true" />
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8.0dip"
+                    android:layout_marginRight="8.0dip" />
 
                 <TextView
                     android:id="@+id/activity_ip_connections_details_icmp_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill_horizontal"
                     android:text="@string/loading"
-
                     android:textIsSelectable="true" />
 
                 <!-- ICMP Type -->
@@ -367,30 +314,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/activity_ip_connections_details_icmp_type_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ICMP Type"
+                    android:text="@string/icmp_type"
                     android:textIsSelectable="true"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/activity_ip_connections_details_icmp_type_sep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:textIsSelectable="true" />
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8.0dip"
+                    android:layout_marginRight="8.0dip" />
 
                 <TextView
                     android:id="@+id/activity_ip_connections_details_icmp_type"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill_horizontal"
                     android:text="@string/loading"
-
                     android:textIsSelectable="true" />
 
                 <!-- ICMP Code -->
@@ -398,30 +332,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/activity_ip_connections_details_icmp_code_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ICMP Code"
+                    android:text="@string/icmp_code"
                     android:textIsSelectable="true"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/activity_ip_connections_details_icmp_code_sep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:textIsSelectable="true" />
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8.0dip"
+                    android:layout_marginRight="8.0dip" />
 
                 <TextView
                     android:id="@+id/activity_ip_connections_details_icmp_code"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill_horizontal"
                     android:text="@string/loading"
-
                     android:textIsSelectable="true" />
 
                 <!-- ICMP Control Message Description -->
@@ -429,173 +350,102 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/activity_ip_connections_details_icmp_ctrl_msg_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Control Message"
+                    android:text="@string/control_message"
                     android:textIsSelectable="true"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/activity_ip_connections_details_icmp_ctrl_msg_sep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:textIsSelectable="true" />
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8.0dip"
+                    android:layout_marginRight="8.0dip" />
 
                 <TextView
                     android:id="@+id/activity_ip_connections_details_icmp_ctrl_msg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill_horizontal"
                     android:text="@string/loading"
-
                     android:textIsSelectable="true" />
 
                 <!-- Source IP -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Source IP"
+                    android:text="@string/source_ip"
                     android:textIsSelectable="true"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:textIsSelectable="true" />
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8.0dip"
+                    android:layout_marginRight="8.0dip"  />
 
                 <TextView
                     android:id="@+id/activity_ip_connections_details_source_ip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill_horizontal"
                     android:text="@string/loading"
-
                     android:textIsSelectable="true" />
 
                 <!-- Source Hostname -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Source IP Host"
+                    android:text="@string/source_ip_host"
                     android:textIsSelectable="true"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:textIsSelectable="true" />
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8.0dip"
+                    android:layout_marginRight="8.0dip" />
 
                 <TextView
                     android:id="@+id/activity_ip_connections_details_source_host"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill_horizontal"
                     android:text="@string/loading"
-
                     android:textIsSelectable="true" />
 
                 <!-- Source Port -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Source Port"
+                    android:text="@string/source_port"
                     android:textIsSelectable="true"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:textIsSelectable="true" />
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8.0dip"
+                    android:layout_marginRight="8.0dip" />
 
                 <TextView
                     android:id="@+id/activity_ip_connections_details_source_port"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill_horizontal"
                     android:text="@string/loading"
-
                     android:textIsSelectable="true" />
 
                 <!-- Destination IP -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Destination IP"
+                    android:text="@string/destination_ip"
                     android:textIsSelectable="true"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:textIsSelectable="true" />
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8.0dip"
+                    android:layout_marginRight="8.0dip"  />
 
                 <TextView
                     android:id="@+id/activity_ip_connections_details_destination_ip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill_horizontal"
                     android:text="@string/loading"
                     android:textIsSelectable="true" />
 
-
                 <!-- Destination IP Host -->
                 <TextView
+                    android:id="@+id/activity_ip_connections_details_destination_ip_host_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Destination IP Host"
+                    android:text="@string/destination_ip_host"
                     android:textIsSelectable="true"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:textIsSelectable="true" />
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8.0dip"
+                    android:layout_marginRight="8.0dip"  />
 
                 <TextView
                     android:id="@+id/activity_ip_connections_details_destination_ip_host"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill_horizontal"
                     android:text="@string/loading"
                     android:textIsSelectable="true" />
 
@@ -603,202 +453,119 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Dest. IP WHOIS"
+                    android:text="@string/destination_ip_whois"
                     android:textIsSelectable="true"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:textIsSelectable="true" />
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8.0dip"
+                    android:layout_marginRight="8.0dip"  />
 
                 <TextView
                     android:id="@+id/activity_ip_connections_details_destination_whois"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill_horizontal"
                     android:text="@string/loading"
-
                     android:textIsSelectable="true" />
 
                 <!-- Destination IP Country -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Dest. IP Country"
+                    android:text="@string/dest_ip_country"
                     android:textIsSelectable="true"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:textIsSelectable="true" />
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8.0dip"
+                    android:layout_marginRight="8.0dip"  />
 
                 <TextView
                     android:id="@+id/activity_ip_connections_details_destination_whois_country"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill_horizontal"
                     android:text="@string/loading"
-
                     android:textIsSelectable="true" />
 
                 <!-- Destination IP Region -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Dest. IP Region"
+                    android:text="@string/destination_ip_region"
                     android:textIsSelectable="true"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:textIsSelectable="true" />
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8.0dip"
+                    android:layout_marginRight="8.0dip"  />
 
                 <TextView
                     android:id="@+id/activity_ip_connections_details_destination_whois_region"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill_horizontal"
                     android:text="@string/loading"
-
                     android:textIsSelectable="true" />
 
                 <!-- Destination IP City -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Dest. IP City"
+                    android:text="@string/destination_ip_city"
                     android:textIsSelectable="true"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8.0dip"
+                    android:layout_marginRight="8.0dip"  />
 
                 <TextView
                     android:id="@+id/activity_ip_connections_details_destination_whois_city"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill_horizontal"
                     android:text="@string/loading"
-
                     android:textIsSelectable="true" />
 
                 <!-- Destination Port -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Destination Port"
+                    android:text="@string/destination_port"
                     android:textIsSelectable="true"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:textIsSelectable="true" />
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8.0dip"
+                    android:layout_marginRight="8.0dip"  />
 
                 <TextView
                     android:id="@+id/activity_ip_connections_details_destination_port"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill_horizontal"
                     android:text="@string/loading"
-
                     android:textIsSelectable="true" />
 
                 <!-- Packets -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Packets"
+                    android:text="@string/packets"
                     android:textIsSelectable="true"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:textIsSelectable="true" />
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8.0dip"
+                    android:layout_marginRight="8.0dip"  />
 
                 <TextView
                     android:id="@+id/activity_ip_connections_details_packets"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill_horizontal"
                     android:text="@string/loading"
-
                     android:textIsSelectable="true" />
 
                 <!-- Bytes -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bytes"
+                    android:text="@string/bytes"
                     android:textIsSelectable="true"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:textIsSelectable="true" />
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8.0dip"
+                    android:layout_marginRight="8.0dip"  />
 
                 <TextView
                     android:id="@+id/activity_ip_connections_details_bytes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill_horizontal"
                     android:text="@string/loading"
-
                     android:textIsSelectable="true" />
 
                 <!-- Traffic in other dir. (Unreplied???) -->
