@@ -1343,14 +1343,21 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                 if (devices != null) {
                     mDevices.addAll(devices);
                 }
+                //Count total number of wireless clients
+                for (final Device device : mDevices) {
+                    if (device == null || device.getWirelessConnectionInfo() == null) {
+                        continue;
+                    }
+                    nbWirelessClients++;
+                }
 
                 //TODO Apply visitors first
                 mAdapter.setDevices(new ArrayList<>(mDevices));
                 mAdapter.notifyDataSetChanged();
 
                 ((TextView) layout.findViewById(
-                        R.id.tile_status_wireless_clients_wireless_clients_num)).setText(
-                        nbWirelessClients >= 0 ? String.valueOf(nbWirelessClients) : EMPTY_VALUE_TO_DISPLAY);
+                        R.id.tile_status_wireless_clients_wireless_clients_num))
+                        .setText(String.valueOf(nbWirelessClients));
 
                 //Filters
                 Set<Device> newDevices = new HideInactiveClientsFilterVisitorImpl(
