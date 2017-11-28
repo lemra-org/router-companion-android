@@ -1,7 +1,10 @@
 package org.rm3l.router_companion.utils;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.PROXY_SERVER_BASE_URL;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.PROXY_SERVER_PASSWORD_AUTH_TOKEN_ENCODED;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.SERVICE_NAMES_PORT_NUMBERS_API_SERVER_BASE_URL;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.SERVICE_NAMES_PORT_NUMBERS_API_SERVER_PASSWORD_AUTH_TOKEN_ENCODED;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -21,6 +24,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.RouterCompanionApplication;
+import org.rm3l.router_companion.api.iana.ServiceNamePortNumbersService;
 import org.rm3l.router_companion.api.proxy.ProxyService;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.utils.retrofit.RetryCallAdapterFactory;
@@ -36,9 +40,14 @@ public final class NetworkUtils {
     public static final String TAG = NetworkUtils.class.getSimpleName();
 
     public static final ProxyService PROXY_SERVICE =
-            NetworkUtils.createApiService(null, RouterCompanionAppConstants.PROXY_SERVER_BASE_URL,
+            NetworkUtils.createApiService(null, PROXY_SERVER_BASE_URL,
                     ProxyService.class,
                     new AuthenticationInterceptor(PROXY_SERVER_PASSWORD_AUTH_TOKEN_ENCODED));
+
+    public static final ServiceNamePortNumbersService SERVICE_NAMES_PORT_NUMBERS_MAPPING_SERVICE =
+            NetworkUtils.createApiService(null, SERVICE_NAMES_PORT_NUMBERS_API_SERVER_BASE_URL,
+                    ServiceNamePortNumbersService.class,
+                    new AuthenticationInterceptor(SERVICE_NAMES_PORT_NUMBERS_API_SERVER_PASSWORD_AUTH_TOKEN_ENCODED));
 
     @SuppressLint("DefaultLocale")
     public static void checkResponseSuccessful(@NonNull final Response<?> response) {
