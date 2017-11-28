@@ -250,6 +250,77 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     skipIndividualIPGeoLocationRequests = true;
                 }
 
+                //Now try to resolve service names and descriptions
+                for (final IPConntrack ipConntrackRow : mActiveIPConnections) {
+                    if (ipConntrackRow == null) {
+                        continue;
+                    }
+                    try {
+                        final int destinationPortOriginalSideAsInt = ipConntrackRow.getDestinationPortOriginalSide();
+                        final String transportProtocol = ipConntrackRow.getTransportProtocol();
+                        if (transportProtocol !=null) {
+                            serviceNamesToResolve.add(Pair.create((long) destinationPortOriginalSideAsInt,
+                                    Protocol.valueOf(transportProtocol.toUpperCase())));
+                        }
+                    } catch (final Exception e) {
+                        //No worries
+                        e.printStackTrace();
+                    }
+                }
+                if (!serviceNamesToResolve.isEmpty()) {
+                    final Set<Long> portNumbersToResolve = new HashSet<>();
+                    final Set<String> protocolsToResolve = new HashSet<>();
+                    for (final Pair<Long, Protocol> portProtocolPair : serviceNamesToResolve) {
+                        if (portProtocolPair == null) {
+                            continue;
+                        }
+                        if (portProtocolPair.first != null) {
+                            portNumbersToResolve.add(portProtocolPair.first);
+                        }
+                        if (portProtocolPair.second != null) {
+                            protocolsToResolve.add(portProtocolPair.second.name());
+                        }
+                    }
+                    final Gson gson = new GsonBuilder().create();
+                    final String graphQLQuery = "{\n" +
+                            "records (filter: {ports: " +
+                            gson.toJson(portNumbersToResolve) +
+                            ", protocols: " +
+                            gson.toJson(protocolsToResolve).replaceAll("\"", "") +
+                            "}) {\n" +
+                            "serviceName\n" +
+                            "portNumber\n" +
+                            "transportProtocol\n" +
+                            "description\n" +
+                            "}\n" +
+                            "}";
+                    try {
+                        final Response<RecordListResponse> response =
+                                NetworkUtils.SERVICE_NAMES_PORT_NUMBERS_MAPPING_SERVICE.query(
+                                        new GraphQLQuery(graphQLQuery))
+                                        .execute();
+                        NetworkUtils.checkResponseSuccessful(response);
+                        final Data data = response.body().getData();
+                        final List<Record> records;
+                        if (data != null && (records = data.getRecords()) != null) {
+                            final Multimap<Pair<Long, Protocol>, Record> responseMultimap = ArrayListMultimap.create();
+                            for (final Record record : records) {
+                                if (record == null || record.getPortNumber() == null || record.getTransportProtocol() == null) {
+                                    continue;
+                                }
+                                responseMultimap.put(Pair.create(record.getPortNumber(), record.getTransportProtocol()), record);
+                            }
+                            for (final Entry<Pair<Long, Protocol>, Collection<Record>> pairCollectionEntry : responseMultimap
+                                    .asMap().entrySet()) {
+                                SERVICE_NAMES_PORT_NUMBERS_CACHE.put(pairCollectionEntry.getKey(), pairCollectionEntry.getValue());
+                            }
+                        }
+                    } catch (final Exception e) {
+                        //No worries
+                        Crashlytics.logException(e);
+                    }
+                }
+
                 final int totalConnectionsCount = mActiveIPConnections.size();
                 int index = 1;
                 String existingRecord;
@@ -366,16 +437,6 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                         }
                     });
 
-                    //TODO As an enhancement, we can resolve the port to a known service (e.g, HTTP, SSH, ...)
-                    final int destinationPortOriginalSideAsInt = ipConntrackRow.getDestinationPortOriginalSide();
-                    final String destinationPortOriginalSide =
-                            Integer.toString(destinationPortOriginalSideAsInt);
-                    Integer destPortStats = statsTable.get(BY_DESTINATION_PORT, destinationPortOriginalSide);
-                    if (destPortStats == null) {
-                        destPortStats = 0;
-                    }
-                    statsTable.put(BY_DESTINATION_PORT, destinationPortOriginalSide, destPortStats + 1);
-
                     final String transportProtocol = ipConntrackRow.getTransportProtocol();
                     if (transportProtocol != null) {
                         Integer protoStats = statsTable.get(BY_PROTOCOL, transportProtocol);
@@ -385,15 +446,31 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                         statsTable.put(BY_PROTOCOL, transportProtocol, protoStats + 1);
                     }
 
+                    final int destinationPortOriginalSideAsInt = ipConntrackRow.getDestinationPortOriginalSide();
+                    final String destinationPortOriginalSide =
+                            Integer.toString(destinationPortOriginalSideAsInt);
+                    Record record = null;
                     try {
-                        if (transportProtocol !=null) {
-                            serviceNamesToResolve.add(Pair.create((long) destinationPortOriginalSideAsInt,
-                                    Protocol.valueOf(transportProtocol.toUpperCase())));
+                        final Collection<Record> records = SERVICE_NAMES_PORT_NUMBERS_CACHE
+                                .get(Pair.create((long) destinationPortOriginalSideAsInt,
+                                        Protocol.valueOf(transportProtocol.toUpperCase())));
+                        if (records != null && !records.isEmpty()) {
+                            record = records.iterator().next();
                         }
                     } catch (final Exception e) {
-                        //No worries
                         e.printStackTrace();
                     }
+                    final String keyInTablePort;
+                    if (record == null || Strings.isNullOrEmpty(record.getServiceName())) {
+                        keyInTablePort = destinationPortOriginalSide;
+                    } else {
+                        keyInTablePort = (destinationPortOriginalSide + " (" + record.getServiceName() + ")");
+                    }
+                    Integer destPortStats = statsTable.get(BY_DESTINATION_PORT, keyInTablePort);
+                    if (destPortStats == null) {
+                        destPortStats = 0;
+                    }
+                    statsTable.put(BY_DESTINATION_PORT, keyInTablePort, destPortStats + 1);
 
                     final String sourceInStats =
                             String.format("%s%s%s", ipToHostResolvedMap.get(sourceAddressOriginalSide), SEPARATOR,
@@ -412,61 +489,6 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                         destinationStats = 0;
                     }
                     statsTable.put(BY_DESTINATION_IP, destinationInStats, destinationStats + 1);
-                }
-
-                //Now try to resolve service names and descriptions
-                if (!serviceNamesToResolve.isEmpty()) {
-                    final Set<Long> portNumbersToResolve = new HashSet<>();
-                    final Set<String> protocolsToResolve = new HashSet<>();
-                    for (final Pair<Long, Protocol> portProtocolPair : serviceNamesToResolve) {
-                        if (portProtocolPair == null) {
-                            continue;
-                        }
-                        if (portProtocolPair.first != null) {
-                            portNumbersToResolve.add(portProtocolPair.first);
-                        }
-                        if (portProtocolPair.second != null) {
-                            protocolsToResolve.add(portProtocolPair.second.name());
-                        }
-                    }
-                    final Gson gson = new GsonBuilder().create();
-                    final String graphQLQuery = "{\n" +
-                            "records (filter: {ports: " +
-                            gson.toJson(portNumbersToResolve) +
-                            ", protocols: " +
-                            gson.toJson(protocolsToResolve) +
-                            "}) {\n" +
-                            "serviceName\n" +
-                            "portNumber\n" +
-                            "transportProtocol\n" +
-                            "description\n" +
-                            "}\n" +
-                            "}";
-                    try {
-                        final Response<RecordListResponse> response =
-                                NetworkUtils.SERVICE_NAMES_PORT_NUMBERS_MAPPING_SERVICE.query(
-                                        new GraphQLQuery(graphQLQuery))
-                                        .execute();
-                        NetworkUtils.checkResponseSuccessful(response);
-                        final Data data = response.body().getData();
-                        final List<Record> records;
-                        if (data != null && (records = data.getRecords()) != null) {
-                            final Multimap<Pair<Long, Protocol>, Record> responseMultimap = ArrayListMultimap.create();
-                            for (final Record record : records) {
-                                if (record == null || record.getPortNumber() == null || record.getTransportProtocol() == null) {
-                                    continue;
-                                }
-                                responseMultimap.put(Pair.create(record.getPortNumber(), record.getTransportProtocol()), record);
-                            }
-                            for (final Entry<Pair<Long, Protocol>, Collection<Record>> pairCollectionEntry : responseMultimap
-                                    .asMap().entrySet()) {
-                                SERVICE_NAMES_PORT_NUMBERS_CACHE.put(pairCollectionEntry.getKey(), pairCollectionEntry.getValue());
-                            }
-                        }
-                    } catch (final Exception e) {
-                        //No worries
-                        Crashlytics.logException(e);
-                    }
                 }
 
             } catch (final Exception e) {
