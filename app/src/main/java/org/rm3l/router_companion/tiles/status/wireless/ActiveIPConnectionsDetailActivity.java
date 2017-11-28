@@ -98,8 +98,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.RowSortedTable;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.squareup.picasso.Callback;
 import java.io.BufferedOutputStream;
@@ -110,6 +108,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -123,11 +122,11 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
-import org.rm3l.router_companion.api.graphql.GraphQLQuery;
 import org.rm3l.router_companion.api.iana.Data;
 import org.rm3l.router_companion.api.iana.Protocol;
 import org.rm3l.router_companion.api.iana.Record;
 import org.rm3l.router_companion.api.iana.RecordListResponse;
+import org.rm3l.router_companion.api.iana.ServiceNamePortNumbersServiceKt;
 import org.rm3l.router_companion.api.proxy.NetWhoisInfoProxyApiResponse;
 import org.rm3l.router_companion.api.proxy.ProxyData;
 import org.rm3l.router_companion.api.proxy.RequestMethod;
@@ -258,7 +257,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     try {
                         final int destinationPortOriginalSideAsInt = ipConntrackRow.getDestinationPortOriginalSide();
                         final String transportProtocol = ipConntrackRow.getTransportProtocol();
-                        if (transportProtocol !=null) {
+                        if (transportProtocol != null) {
                             serviceNamesToResolve.add(Pair.create((long) destinationPortOriginalSideAsInt,
                                     Protocol.valueOf(transportProtocol.toUpperCase())));
                         }
@@ -269,7 +268,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                 }
                 if (!serviceNamesToResolve.isEmpty()) {
                     final Set<Long> portNumbersToResolve = new HashSet<>();
-                    final Set<String> protocolsToResolve = new HashSet<>();
+                    final Set<Protocol> protocolsToResolve = new HashSet<>();
                     for (final Pair<Long, Protocol> portProtocolPair : serviceNamesToResolve) {
                         if (portProtocolPair == null) {
                             continue;
@@ -278,42 +277,32 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                             portNumbersToResolve.add(portProtocolPair.first);
                         }
                         if (portProtocolPair.second != null) {
-                            protocolsToResolve.add(portProtocolPair.second.name());
+                            protocolsToResolve.add(portProtocolPair.second);
                         }
                     }
-                    final Gson gson = new GsonBuilder().create();
-                    final String graphQLQuery = "{\n" +
-                            "records (filter: {ports: " +
-                            gson.toJson(portNumbersToResolve) +
-                            ", protocols: " +
-                            gson.toJson(protocolsToResolve).replaceAll("\"", "") +
-                            "}) {\n" +
-                            "serviceName\n" +
-                            "portNumber\n" +
-                            "transportProtocol\n" +
-                            "description\n" +
-                            "}\n" +
-                            "}";
                     try {
-                        final Response<RecordListResponse> response =
-                                NetworkUtils.SERVICE_NAMES_PORT_NUMBERS_MAPPING_SERVICE.query(
-                                        new GraphQLQuery(graphQLQuery))
-                                        .execute();
+                        final Response<RecordListResponse> response = ServiceNamePortNumbersServiceKt.query(
+                                NetworkUtils.SERVICE_NAMES_PORT_NUMBERS_MAPPING_SERVICE,
+                                portNumbersToResolve,
+                                protocolsToResolve,
+                                null)
+                                .execute();
                         NetworkUtils.checkResponseSuccessful(response);
                         final Data data = response.body().getData();
-                        final List<Record> records;
-                        if (data != null && (records = data.getRecords()) != null) {
-                            final Multimap<Pair<Long, Protocol>, Record> responseMultimap = ArrayListMultimap.create();
-                            for (final Record record : records) {
-                                if (record == null || record.getPortNumber() == null || record.getTransportProtocol() == null) {
-                                    continue;
-                                }
-                                responseMultimap.put(Pair.create(record.getPortNumber(), record.getTransportProtocol()), record);
+                        final List<Record> records = data.getRecords();
+                        final Multimap<Pair<Long, Protocol>, Record> responseMultimap = ArrayListMultimap.create();
+                        for (final Record record : records) {
+                            if (record == null || record.getPortNumber() == null
+                                    || record.getTransportProtocol() == null) {
+                                continue;
                             }
-                            for (final Entry<Pair<Long, Protocol>, Collection<Record>> pairCollectionEntry : responseMultimap
-                                    .asMap().entrySet()) {
-                                SERVICE_NAMES_PORT_NUMBERS_CACHE.put(pairCollectionEntry.getKey(), pairCollectionEntry.getValue());
-                            }
+                            responseMultimap
+                                    .put(Pair.create(record.getPortNumber(), record.getTransportProtocol()), record);
+                        }
+                        for (final Entry<Pair<Long, Protocol>, Collection<Record>> pairCollectionEntry : responseMultimap
+                                .asMap().entrySet()) {
+                            SERVICE_NAMES_PORT_NUMBERS_CACHE
+                                    .put(pairCollectionEntry.getKey(), pairCollectionEntry.getValue());
                         }
                     } catch (final Exception e) {
                         //No worries
@@ -881,7 +870,8 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                                         public Void loadInBackground() {
                                             try {
                                                 if (destinationPortOriginalSide > 0) {
-                                                    final Collection<Record> records = SERVICE_NAMES_PORT_NUMBERS_CACHE
+                                                    final Collection<Record> records
+                                                            = SERVICE_NAMES_PORT_NUMBERS_CACHE
                                                             .get(Pair.create((long) destinationPortOriginalSide,
                                                                     Protocol.valueOf(protocol.toUpperCase())));
                                                     if (records != null && !records.isEmpty()) {
@@ -890,29 +880,42 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                                                             runOnUiThread(new Runnable() {
                                                                 @Override
                                                                 public void run() {
-                                                                    final int destinationPortOriginalSide = ipConntrackRow.getDestinationPortOriginalSide();
+                                                                    final int destinationPortOriginalSide
+                                                                            = ipConntrackRow
+                                                                            .getDestinationPortOriginalSide();
                                                                     final String dstPortToDisplay;
                                                                     if (destinationPortOriginalSide < 0) {
                                                                         dstPortToDisplay = "-";
                                                                     } else if (destinationPortOriginalSide == 0) {
                                                                         dstPortToDisplay = "0";
                                                                     } else {
-                                                                        if (Strings.isNullOrEmpty(record.getServiceName())) {
+                                                                        if (Strings.isNullOrEmpty(
+                                                                                record.getServiceName())) {
                                                                             dstPortToDisplay =
-                                                                                    String.valueOf(destinationPortOriginalSide);
-                                                                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_service_name))
+                                                                                    String.valueOf(
+                                                                                            destinationPortOriginalSide);
+                                                                            ((TextView) cardView.findViewById(
+                                                                                    R.id.activity_ip_connections_details_destination_service_name))
                                                                                     .setText("-");
                                                                         } else {
                                                                             dstPortToDisplay =
-                                                                                    (destinationPortOriginalSide + " (" + record.getServiceName() + ")");
-                                                                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_service_name))
+                                                                                    (destinationPortOriginalSide
+                                                                                            + " (" + record
+                                                                                            .getServiceName() + ")");
+                                                                            ((TextView) cardView.findViewById(
+                                                                                    R.id.activity_ip_connections_details_destination_service_name))
                                                                                     .setText(record.getServiceName());
                                                                         }
                                                                     }
-                                                                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_dport)).setText(
-                                                                            dstPortToDisplay);
-                                                                    ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_service_description))
-                                                                            .setText(Strings.isNullOrEmpty(record.getDescription()) ? "-" : record.getDescription());
+                                                                    ((TextView) cardView.findViewById(
+                                                                            R.id.activity_ip_connections_dport))
+                                                                            .setText(
+                                                                                    dstPortToDisplay);
+                                                                    ((TextView) cardView.findViewById(
+                                                                            R.id.activity_ip_connections_details_destination_service_description))
+                                                                            .setText(Strings.isNullOrEmpty(
+                                                                                    record.getDescription()) ? "-"
+                                                                                    : record.getDescription());
                                                                 }
                                                             });
                                                         }
@@ -974,11 +977,14 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                                                                                     : destinationAddressOriginalSide);
                                                             final TextView destIpHostDetail = cardView.findViewById(
                                                                     R.id.activity_ip_connections_details_destination_ip_host);
-                                                            destIpHostDetail.setText(hostnameDisplayed ? hostname : "-");
-                                                            destIpHostDetail.setVisibility(hostnameDisplayed ? View.VISIBLE : View.GONE);
+                                                            destIpHostDetail
+                                                                    .setText(hostnameDisplayed ? hostname : "-");
+                                                            destIpHostDetail.setVisibility(
+                                                                    hostnameDisplayed ? View.VISIBLE : View.GONE);
                                                             cardView.findViewById(
                                                                     R.id.activity_ip_connections_details_destination_ip_host_title)
-                                                                    .setVisibility(hostnameDisplayed ? View.VISIBLE : View.GONE);
+                                                                    .setVisibility(hostnameDisplayed ? View.VISIBLE
+                                                                            : View.GONE);
 
                                                             final String country = whoisInfo.getCountry();
                                                             ((TextView) cardView.findViewById(
@@ -1202,49 +1208,40 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
     public static final LoadingCache<Pair<Long, Protocol>, Collection<Record>> SERVICE_NAMES_PORT_NUMBERS_CACHE =
             CacheBuilder.newBuilder()
-                .maximumSize(50)
+                    .maximumSize(50)
                     .removalListener(new RemovalListener<Pair<Long, Protocol>, Collection<Record>>() {
                         @Override
-                        public void onRemoval(@NonNull RemovalNotification<Pair<Long, Protocol>, Collection<Record>> notification) {
+                        public void onRemoval(
+                                @NonNull RemovalNotification<Pair<Long, Protocol>, Collection<Record>> notification) {
                             Crashlytics.log(Log.DEBUG, LOG_TAG,
                                     "onRemoval(" + notification.getKey() + ") - cause: " + notification.getCause());
                         }
                     })
-            .expireAfterAccess(1L, TimeUnit.DAYS)
-            .expireAfterWrite(1L, TimeUnit.DAYS)
-            .build(new CacheLoader<Pair<Long, Protocol>, Collection<Record>>() {
-                @Override
-                public Collection<Record> load(@NonNull final Pair<Long, Protocol> key) throws Exception {
-                    final Long portNumber = key.first;
-                    final Protocol protocol = key.second;
-                    if (portNumber == null || protocol == null) {
-                        throw new IllegalArgumentException("Invalid pair: " + key);
-                    }
-                    final String graphQLQuery = "{\n" +
-                            "records (filter: {ports: [" +
-                            portNumber +
-                            "], protocols: [" +
-                            protocol.name() +
-                            "]}) {\n" +
-                            "serviceName\n" +
-                            "portNumber\n" +
-                            "transportProtocol\n" +
-                            "description\n" +
-                            "}\n" +
-                            "}";
-                    try {
-                        final Response<RecordListResponse> response =
-                                NetworkUtils.SERVICE_NAMES_PORT_NUMBERS_MAPPING_SERVICE
-                                        .query(new GraphQLQuery(graphQLQuery))
+                    .expireAfterAccess(1L, TimeUnit.DAYS)
+                    .expireAfterWrite(1L, TimeUnit.DAYS)
+                    .build(new CacheLoader<Pair<Long, Protocol>, Collection<Record>>() {
+                        @Override
+                        public Collection<Record> load(@NonNull final Pair<Long, Protocol> key) throws Exception {
+                            final Long portNumber = key.first;
+                            final Protocol protocol = key.second;
+                            if (portNumber == null || protocol == null) {
+                                throw new IllegalArgumentException("Invalid pair: " + key);
+                            }
+                            try {
+                                final Response<RecordListResponse> response = ServiceNamePortNumbersServiceKt.query(
+                                        NetworkUtils.SERVICE_NAMES_PORT_NUMBERS_MAPPING_SERVICE,
+                                        Collections.singleton(portNumber),
+                                        Collections.singleton(protocol),
+                                        null)
                                         .execute();
-                        NetworkUtils.checkResponseSuccessful(response);
-                        return response.body().getData().getRecords();
-                    } catch (final Exception e) {
-                        e.printStackTrace();
-                        throw new DDWRTCompanionException(e);
-                    }
-                }
-            });
+                                NetworkUtils.checkResponseSuccessful(response);
+                                return response.body().getData().getRecords();
+                            } catch (final Exception e) {
+                                e.printStackTrace();
+                                throw new DDWRTCompanionException(e);
+                            }
+                        }
+                    });
 
     public static final LoadingCache<String, IPWhoisInfo> mIPWhoisInfoCache =
             CacheBuilder.newBuilder()
