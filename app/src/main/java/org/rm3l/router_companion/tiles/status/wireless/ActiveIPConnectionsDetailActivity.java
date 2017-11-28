@@ -1202,7 +1202,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
     public static final LoadingCache<Pair<Long, Protocol>, Collection<Record>> SERVICE_NAMES_PORT_NUMBERS_CACHE =
             CacheBuilder.newBuilder()
-                .maximumSize(20)
+                .maximumSize(50)
                     .removalListener(new RemovalListener<Pair<Long, Protocol>, Collection<Record>>() {
                         @Override
                         public void onRemoval(@NonNull RemovalNotification<Pair<Long, Protocol>, Collection<Record>> notification) {
@@ -1248,8 +1248,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
     public static final LoadingCache<String, IPWhoisInfo> mIPWhoisInfoCache =
             CacheBuilder.newBuilder()
-                    .softValues()
-                    .maximumSize(200)
+                    .maximumSize(50)
                     .removalListener(new RemovalListener<String, IPWhoisInfo>() {
                         @Override
                         public void onRemoval(@NonNull RemovalNotification<String, IPWhoisInfo> notification) {

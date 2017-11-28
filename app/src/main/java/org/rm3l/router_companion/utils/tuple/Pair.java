@@ -1,8 +1,5 @@
 package org.rm3l.router_companion.utils.tuple;
 
-/**
- * Created by rm3l on 01/12/15.
- */
 public class Pair<FIRST, SECOND> {
 
     public final FIRST first;
@@ -54,5 +51,13 @@ public class Pair<FIRST, SECOND> {
 
     private static boolean objectsEqual(Object a, Object b) {
         return a == b || (a != null && a.equals(b));
+    }
+
+    @Override
+    public String toString() {
+        return "Pair(first,second)=" +
+                '(' + first +
+                ',' + second +
+                ')';
     }
 }

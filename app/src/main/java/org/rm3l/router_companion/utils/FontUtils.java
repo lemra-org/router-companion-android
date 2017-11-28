@@ -23,7 +23,7 @@ public class FontUtils {
     }
 
     private static final Cache<String, Typeface> FONTS_CACHE =
-            CacheBuilder.newBuilder().maximumSize(5).weakValues().build();
+            CacheBuilder.newBuilder().maximumSize(5).build();
 
     public static Typeface getTypeface(@NonNull final Context context, @NonNull final String fontName,
             @Nullable final FontType fontType) {
