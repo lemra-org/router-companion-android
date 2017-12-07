@@ -48,9 +48,8 @@ import java.util.Date
 import java.util.Locale
 import java.util.Properties
 
-/**
- * Created by rm3l on 08/01/2017.
- */
+const val SSH_LOGIN_ALWAYS_ROOT_MESSAGE = "SSH Login is always 'root' in DD-WRT firmwares, " +
+        "even if you changed the username via the Web Interface"
 
 class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
 

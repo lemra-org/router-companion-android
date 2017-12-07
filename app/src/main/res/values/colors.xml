@@ -362,4 +362,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <color name="passcodelock_field_text_color">#444444</color>
     <color name="passcodelock_prompt_text_color">@color/white</color>
 
+    <color name="design_textinput_error_color">#FFDD2C00</color>
+
 </resources>

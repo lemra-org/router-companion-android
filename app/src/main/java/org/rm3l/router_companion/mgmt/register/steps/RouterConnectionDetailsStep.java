@@ -34,15 +34,19 @@ import android.widget.TextView;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
+import java.util.Map;
 import org.codepond.wizardroid.Wizard;
 import org.codepond.wizardroid.persistence.ContextVariable;
 import org.rm3l.ddwrt.R;
+import org.rm3l.router_companion.firmwares.impl.ddwrt.DDWRTFirmwareConnector;
+import org.rm3l.router_companion.firmwares.impl.ddwrt.DDWRTFirmwareConnectorKt;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.router_companion.mgmt.register.resources.RouterWizardAction;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.ViewGroupUtils;
+import org.rm3l.router_companion.widgets.wizard.MaterialWizard;
 import org.rm3l.router_companion.widgets.wizard.MaterialWizardStep;
 
 /**
@@ -100,7 +104,10 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
     @ContextVariable
     private String username;
 
+    private TextInputLayout usernameTIL;
     private EditText usernameEt;
+
+    private String routerFirmware;
 
     //Wire the layout to the step
     public RouterConnectionDetailsStep() {
@@ -125,13 +132,32 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
             }
         }
 
-        load();
-
         rootView =
                 inflater.inflate(R.layout.wizard_manage_router_2_router_connection_details_step, container,
                         false);
 
+        usernameTIL = rootView.findViewById(R.id.router_add_username_input_layout);
         usernameEt = (EditText) rootView.findViewById(R.id.router_add_username);
+        usernameEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
+            }
+
+            @Override
+            public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
+            }
+
+            @Override
+            public void afterTextChanged(final Editable s) {
+                if (TextUtils.isEmpty(s)) {
+                    usernameTIL.setErrorTextAppearance(R.style.InputLayoutErrorHint);
+                    usernameTIL.setErrorEnabled(true);
+                    usernameTIL.setError(getString(R.string.router_add_username_invalid));
+                } else {
+                    handleSSHLoginEditText();
+                }
+            }
+        });
         portEt = (EditText) rootView.findViewById(R.id.router_add_port);
         connectionProtocolView = (Spinner) rootView.findViewById(R.id.router_add_proto);
         authMethodRg = (RadioGroup) rootView.findViewById(R.id.router_add_ssh_auth_method);
@@ -253,6 +279,8 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
                 RouterConnectionDetailsStep.this.startActivityForResult(intent, READ_REQUEST_CODE);
             }
         });
+
+        load();
 
         //and set default values by using Context Variables
         try {
@@ -425,6 +453,7 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
         final TextInputLayout sshLoginInputLayout =
                 (TextInputLayout) rootView.findViewById(R.id.router_add_username_input_layout);
         if (isNullOrEmpty(usernameEt.getText().toString())) {
+            usernameTIL.setErrorTextAppearance(R.style.InputLayoutErrorHint);
             sshLoginInputLayout.setErrorEnabled(true);
             sshLoginInputLayout.setError(getString(R.string.router_add_username_invalid));
             //            Utils.scrollToView(contentScrollView, usernameEt);
@@ -493,9 +522,16 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
         connectionProtocol = connectionProtocolView.getSelectedItem().toString();
     }
 
+    private void loadFromWizardContext() {
+        final Map wizardContext = MaterialWizard.getWizardContext(getContext());
+        final Object routerFirmwareObj = wizardContext.get("routerFirmware");
+        routerFirmware = routerFirmwareObj != null ? routerFirmwareObj.toString() : null;
+    }
+
     @Override
     protected void onVisibleToUser() {
         //Nothing to do - we are not re-using any context variable field from previous steps
+        loadFromWizardContext();
         load();
         if (isViewShown && !alreadyFilled) {
             alreadyFilled = true;
@@ -532,6 +568,7 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
                 connectionProtocolView.setSelection(
                         ViewGroupUtils.getSpinnerIndex(connectionProtocolView, connectionProtocol), true);
             }
+            handleSSHLoginEditText();
         }
     }
 
@@ -539,6 +576,7 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
         if (routerSelected != null && !alreadyFilled) {
             this.connectionProtocol = routerSelected.getRouterConnectionProtocol().toString();
             this.username = routerSelected.getUsernamePlain();
+            handleSSHLoginEditText();
             this.password = routerSelected.getPasswordPlain();
             this.port = Integer.toString(routerSelected.getRemotePort());
             this.privkeyPath = routerSelected.getPrivKeyPlain();
@@ -554,6 +592,29 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
                     authMethod = Integer.toString(Router.SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY);
                     break;
             }
+        }
+    }
+
+    private void handleSSHLoginEditText() {
+        if ("DD-WRT".equalsIgnoreCase(routerFirmware)) {
+            //Read-only + hint
+            this.username = "root";
+            this.usernameTIL.setErrorTextAppearance(R.style.InputLayoutInfoHint);
+            this.usernameTIL.setError(DDWRTFirmwareConnectorKt.SSH_LOGIN_ALWAYS_ROOT_MESSAGE);
+            this.usernameTIL.setErrorEnabled(true);
+            this.usernameEt.setEnabled(false);
+        } else if ("-Auto-detect-".equalsIgnoreCase(routerFirmware)) {
+            //Just a hint
+            this.usernameTIL.setErrorTextAppearance(R.style.InputLayoutInfoHint);
+            this.usernameTIL.setError(DDWRTFirmwareConnectorKt.SSH_LOGIN_ALWAYS_ROOT_MESSAGE);
+            this.usernameTIL.setErrorEnabled(true);
+            this.usernameEt.setEnabled(true);
+        } else {
+            //Hide hint
+            this.usernameTIL.setErrorTextAppearance(R.style.InputLayoutErrorHint);
+            this.usernameTIL.setError(null);
+            this.usernameTIL.setErrorEnabled(false);
+            this.usernameEt.setEnabled(true);
         }
     }
 }

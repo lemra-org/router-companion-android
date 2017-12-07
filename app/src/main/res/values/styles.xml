@@ -273,4 +273,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="colorPrimaryDark">@color/black</item>
     </style>
 
+    <style name="InputLayoutErrorHint" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/design_textinput_error_color</item>
+    </style>
+
+    <style name="InputLayoutInfoHint" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/SteelBlue</item>
+    </style>
+
+    <!--<style name="InputLayoutAcceptedHint" parent="TextAppearance.AppCompat">-->
+        <!--<item name="android:textColor">@color/lime</item>-->
+    <!--</style>-->
+
 </resources>
