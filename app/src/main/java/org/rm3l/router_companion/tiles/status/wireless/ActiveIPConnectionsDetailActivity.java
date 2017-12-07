@@ -120,6 +120,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.api.iana.Data;
@@ -280,33 +281,39 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                             protocolsToResolve.add(portProtocolPair.second);
                         }
                     }
-                    try {
-                        final Response<RecordListResponse> response = ServiceNamePortNumbersServiceKt.query(
-                                NetworkUtils.SERVICE_NAMES_PORT_NUMBERS_MAPPING_SERVICE,
-                                portNumbersToResolve,
-                                protocolsToResolve,
-                                null)
-                                .execute();
-                        NetworkUtils.checkResponseSuccessful(response);
-                        final Data data = response.body().getData();
-                        final List<Record> records = data.getRecords();
-                        final Multimap<Pair<Long, Protocol>, Record> responseMultimap = ArrayListMultimap.create();
-                        for (final Record record : records) {
-                            if (record == null || record.getPortNumber() == null
-                                    || record.getTransportProtocol() == null) {
-                                continue;
+                    if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                        Crashlytics.log(Log.WARN, LOG_TAG, "Service names / port numbers lookup is a premium feature");
+                    } else {
+                        try {
+                            final Response<RecordListResponse> response = ServiceNamePortNumbersServiceKt.query(
+                                    NetworkUtils.SERVICE_NAMES_PORT_NUMBERS_MAPPING_SERVICE,
+                                    portNumbersToResolve,
+                                    protocolsToResolve,
+                                    null)
+                                    .execute();
+                            NetworkUtils.checkResponseSuccessful(response);
+                            final Data data = response.body().getData();
+                            final List<Record> records = data.getRecords();
+                            final Multimap<Pair<Long, Protocol>, Record> responseMultimap = ArrayListMultimap
+                                    .create();
+                            for (final Record record : records) {
+                                if (record == null || record.getPortNumber() == null
+                                        || record.getTransportProtocol() == null) {
+                                    continue;
+                                }
+                                responseMultimap
+                                        .put(Pair.create(record.getPortNumber(), record.getTransportProtocol()),
+                                                record);
                             }
-                            responseMultimap
-                                    .put(Pair.create(record.getPortNumber(), record.getTransportProtocol()), record);
+                            for (final Entry<Pair<Long, Protocol>, Collection<Record>> pairCollectionEntry : responseMultimap
+                                    .asMap().entrySet()) {
+                                SERVICE_NAMES_PORT_NUMBERS_CACHE
+                                        .put(pairCollectionEntry.getKey(), pairCollectionEntry.getValue());
+                            }
+                        } catch (final Exception e) {
+                            //No worries
+                            Crashlytics.logException(e);
                         }
-                        for (final Entry<Pair<Long, Protocol>, Collection<Record>> pairCollectionEntry : responseMultimap
-                                .asMap().entrySet()) {
-                            SERVICE_NAMES_PORT_NUMBERS_CACHE
-                                    .put(pairCollectionEntry.getKey(), pairCollectionEntry.getValue());
-                        }
-                    } catch (final Exception e) {
-                        //No worries
-                        Crashlytics.logException(e);
                     }
                 }
 
@@ -1226,6 +1233,11 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                             final Protocol protocol = key.second;
                             if (portNumber == null || protocol == null) {
                                 throw new IllegalArgumentException("Invalid pair: " + key);
+                            }
+                            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                                //Premium feature only
+                                Crashlytics.log(Log.WARN, LOG_TAG, "Service names / port numbers lookup is a premium feature");
+                                return Collections.emptyList();
                             }
                             try {
                                 final Response<RecordListResponse> response = ServiceNamePortNumbersServiceKt.query(
