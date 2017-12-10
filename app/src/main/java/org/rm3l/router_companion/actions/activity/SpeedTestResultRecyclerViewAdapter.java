@@ -12,9 +12,11 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.List;
@@ -25,6 +27,7 @@ import org.rm3l.router_companion.resources.SpeedTestResult;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.Utils;
+import org.rm3l.router_companion.utils.kotlin.ViewUtils;
 
 /**
  * Created by rm3l on 18/01/16.
@@ -36,12 +39,24 @@ public class SpeedTestResultRecyclerViewAdapter
 
         final View containerView;
 
+        private final CardView cardView;
+
+        private final ImageButton deleteImageButton;
+
+        private final LinearLayout detailsPlaceholderView;
+
+        private final ImageButton expandCollapseButton;
+
         private final View itemView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
-            containerView = itemView.findViewById(R.id.speed_test_result_container);
+            this.cardView = itemView.findViewById(R.id.speed_test_result_item_cardview);
+            this.deleteImageButton = cardView.findViewById(R.id.speedtest_result_delete);
+            this.expandCollapseButton = this.cardView.findViewById(R.id.expand_collapse);
+            containerView = this.cardView.findViewById(R.id.speed_test_result_container);
+            this.detailsPlaceholderView = cardView.findViewById(R.id.speed_test_result_details_placeholder);
         }
     }
 
@@ -76,7 +91,27 @@ public class SpeedTestResultRecyclerViewAdapter
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
+        final boolean detailsPlaceholderVisible = (holder.detailsPlaceholderView.getVisibility() == View.VISIBLE);
+        if (ColorUtils.Companion.isThemeLight(activity)) {
+            //Light
+            holder.cardView.setCardBackgroundColor(
+                    ContextCompat.getColor(activity, R.color.cardview_light_background));
+
+            holder.deleteImageButton.setImageDrawable(
+                    ContextCompat.getDrawable(activity, R.drawable.ic_delete_black_24dp));
+            holder.expandCollapseButton.setImageResource(detailsPlaceholderVisible ?
+                    R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp);
+        } else {
+            //Default is Dark
+            holder.cardView.setCardBackgroundColor(
+                    ContextCompat.getColor(activity, R.color.cardview_dark_background));
+            holder.deleteImageButton.setImageDrawable(
+                    ContextCompat.getDrawable(activity, R.drawable.ic_delete_white_24dp));
+            holder.expandCollapseButton.setImageResource(detailsPlaceholderVisible ?
+                    R.drawable.ic_expand_less_white_24dp : R.drawable.ic_expand_more_white_24dp);
+        }
+
         if (position < 0 || position >= speedTestResults.size()) {
             Utils.reportException(null, new IllegalStateException());
             Toast.makeText(activity, "Internal Error. Please try again later", Toast.LENGTH_SHORT).show();
@@ -91,16 +126,28 @@ public class SpeedTestResultRecyclerViewAdapter
 
         final View containerView = holder.containerView;
 
+        holder.expandCollapseButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                containerView.performClick();
+            }
+        });
+
         containerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final View placeholderView =
-                        containerView.findViewById(R.id.speed_test_result_details_placeholder);
-                if (placeholderView.getVisibility() == View.VISIBLE) {
-                    placeholderView.setVisibility(View.GONE);
+                if (holder.detailsPlaceholderView.getVisibility() == View.VISIBLE) {
+                    ViewUtils.collapse(holder.detailsPlaceholderView, holder.expandCollapseButton);
                 } else {
-                    placeholderView.setVisibility(View.VISIBLE);
+                    ViewUtils.expand(holder.detailsPlaceholderView, holder.expandCollapseButton);
                 }
+//                final View placeholderView =
+//                        containerView.findViewById(R.id.speed_test_result_details_placeholder);
+//                if (placeholderView.getVisibility() == View.VISIBLE) {
+//                    placeholderView.setVisibility(View.GONE);
+//                } else {
+//                    placeholderView.setVisibility(View.VISIBLE);
+//                }
             }
         });
 
@@ -237,28 +284,6 @@ public class SpeedTestResultRecyclerViewAdapter
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.speed_test_result_list_layout, parent, false);
-        // set the view's size, margins, paddings and layout parameters
-        // ...
-        final CardView cardView = (CardView) v.findViewById(R.id.speed_test_result_item_cardview);
-        final ImageButton deleteImageButton =
-                (ImageButton) cardView.findViewById(R.id.speedtest_result_delete);
-        if (ColorUtils.Companion.isThemeLight(activity)) {
-            //Light
-            cardView.setCardBackgroundColor(
-                    ContextCompat.getColor(activity, R.color.cardview_light_background));
-
-            deleteImageButton.setImageDrawable(
-                    ContextCompat.getDrawable(activity, R.drawable.ic_delete_black_24dp));
-        } else {
-            //Default is Dark
-            cardView.setCardBackgroundColor(
-                    ContextCompat.getColor(activity, R.color.cardview_dark_background));
-            deleteImageButton.setImageDrawable(
-                    ContextCompat.getDrawable(activity, R.drawable.ic_delete_white_24dp));
-        }
-
-        //        return new ViewHolder(this.context,
-        //                RippleViewCreator.addRippleToView(v));
         return new ViewHolder(v);
     }
 }
