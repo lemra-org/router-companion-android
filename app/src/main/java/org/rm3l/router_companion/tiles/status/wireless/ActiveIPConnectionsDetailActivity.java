@@ -549,7 +549,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                 activeIPConnectionsDetailActivity.slidingUpPanel.setVisibility(View.VISIBLE);
 
                 activeIPConnectionsDetailActivity.slidingUpPanelLoading.setVisibility(View.GONE);
-                activeIPConnectionsDetailActivity.slidingUpPanelStatsTitle.setText("Stats");
+                activeIPConnectionsDetailActivity.slidingUpPanelStatsTitle.setText("Stats (Connections Count)");
             }
         }
     }
