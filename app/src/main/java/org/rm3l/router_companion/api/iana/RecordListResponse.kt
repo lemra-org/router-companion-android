@@ -32,5 +32,6 @@ enum class Protocol {
     TCP,
     UDP,
     DCCP,
-    SCTP
+    SCTP,
+    DDP
 }

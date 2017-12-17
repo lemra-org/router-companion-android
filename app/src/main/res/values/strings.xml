@@ -453,11 +453,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="nslookup">nslookup</string>
     <string name="arping">arping</string>
     <string name="whois">whois</string>
+    <string name="service_port_lookup">Service Names and Port Numbers</string>
     <string name="nslookup_info">Query Domain Name Servers (DNS) for resource records</string>
     <string name="ping_info">Test the reachability of a Host from the Router and measure the round-trip time (RTT)</string>
     <string name="traceroute_info">Display the route (path) and measure transit delays of packets from the Router to a given Host</string>
     <string name="arping_info">Test whether a given IP address is in use on the router local network</string>
     <string name="whois_info">Look up records in the databases maintained by several Network Information Centers (NICs)</string>
+    <string name="service_port_lookup_info">Lookup Service names from Port numbers, or vice-versa. This supports querying various datasources (such as the IANA Official Registry, or the Nmap Services Database).</string>
     <string name="commands">Commands</string>
     <string name="submit">Submit</string>
     <string name="commands_edit_text_hint">Command(s) to run…</string>
@@ -478,6 +480,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="oui_lookup">MAC Address Lookup</string>
     <string name="toolbox_oui_lookup_submit">Lookup</string>
     <string name="oui_lookup_info">Look up details of the company that manufactured a given MAC Address. Just enter any MAC Address, Organizationally Unique Identifier (OUI), or Individual Address Block (IAB).</string>
+    <string name="toolbox_service_port_lookup_submit">Lookup</string>
     <string name="select_router">Select Router</string>
     <string name="reboot">Reboot</string>
     <string name="title_activity_dialog_as">DialogAsActivity</string>
@@ -670,4 +673,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="destination_service_name">Dest. Service</string>
     <string name="destination_service_description">Dest. Service Description</string>
 
+    <string name="toolbox_service_names_port_numbers_lookup">Service/Port Lookup</string>
+    <string name="transport_protocol">Transport Protocol</string>
+    <string name="port_number">Port Number</string>
+    <string name="service_name">Service Name</string>
+    <string name="select_transport_protocol">Select Transport Protocol</string>
 </resources>

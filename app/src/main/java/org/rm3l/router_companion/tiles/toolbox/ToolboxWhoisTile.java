@@ -38,7 +38,7 @@ public class ToolboxWhoisTile extends AbstractToolboxTile {
     }
 
     @Override
-    protected int getEditTextHint() {
+    protected Integer getEditTextHint() {
         return R.string.host_edit_text_hint;
     }
 

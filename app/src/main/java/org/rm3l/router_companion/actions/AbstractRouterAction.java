@@ -52,11 +52,13 @@ public abstract class AbstractRouterAction<T>
      */
     public static class RouterActionResult<T> {
 
+        @Nullable
         private final Exception exception;
 
+        @Nullable
         private final T result;
 
-        public RouterActionResult(T result, Exception exception) {
+        public RouterActionResult(@Nullable T result, @Nullable Exception exception) {
             this.result = result;
             this.exception = exception;
         }

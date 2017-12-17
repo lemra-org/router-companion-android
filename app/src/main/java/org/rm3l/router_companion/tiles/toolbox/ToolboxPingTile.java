@@ -43,7 +43,7 @@ public class ToolboxPingTile extends AbstractToolboxTile {
     }
 
     @Override
-    protected int getEditTextHint() {
+    protected Integer getEditTextHint() {
         return R.string.ping_edit_text_hint;
     }
 

@@ -38,7 +38,7 @@ public class ToolboxTracerouteTile extends AbstractToolboxTile {
     }
 
     @Override
-    protected int getEditTextHint() {
+    protected Integer getEditTextHint() {
         return R.string.traceroute_edit_text_hint;
     }
 

@@ -41,6 +41,7 @@ enum class RouterAction constructor(private val displayName: String) {
     CMD_SHELL("Execute Command"),
     WHOIS("WHOIS"),
     MAC_OUI_LOOKUP("MAC OUI Lookup"),
+    SERVICE_NAMES_PORT_NUMBERS_LOOKUP("Service Names and Port Numbers Lookup"),
     BACKUP_WAN_TRAFF("Backup WAN Monthly Traffic"),
     RESTORE_WAN_TRAFF("Restore WAN Monthly Traffic"),
     DELETE_WAN_TRAFF("Delete WAN Monthly Traffic"),

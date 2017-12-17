@@ -34,6 +34,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
+import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -89,8 +90,7 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
         final Button button = (Button) layout.findViewById(R.id.tile_toolbox_abstract_submit_button);
         button.setText(this.getSubmitButtonText());
 
-        final Button geolocateButton =
-                (Button) layout.findViewById(R.id.tile_toolbox_abstract_geolocate_button);
+        final Button geolocateButton = layout.findViewById(R.id.tile_toolbox_abstract_geolocate_button);
 
         final Button cancelButton =
                 (Button) layout.findViewById(R.id.tile_toolbox_abstract_cancel_button);
@@ -102,7 +102,9 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
         //Handle for Search EditText
         final AutoCompleteTextView editText =
                 (AutoCompleteTextView) this.layout.findViewById(R.id.tile_toolbox_abstract_edittext);
-        editText.setHint(this.getEditTextHint());
+        if (this.getEditTextHint() != null) {
+            editText.setHint(this.getEditTextHint());
+        }
         //Initialize with existing search data
         final Set<String> lastHosts =
                 mParentFragmentPreferences != null ? mParentFragmentPreferences.getStringSet(LAST_HOSTS,
@@ -254,7 +256,7 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                     errorView.setVisibility(View.GONE);
 
                     final String textToFind = editText.getText().toString();
-                    if (isNullOrEmpty(textToFind)) {
+                    if (checkInputAnReturnErrorMessage(textToFind) != null) {
                         editText.requestFocus();
                         openKeyboard(editText);
                         return true;
@@ -300,6 +302,9 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                     geolocateButton.setVisibility(View.GONE);
 
                     mCurrentRouterActionTask = getRouterAction(textToFind);
+                    if (mCurrentRouterActionTask == null) {
+                        return false;
+                    }
                     ActionManager.runTasks(mCurrentRouterActionTask);
 
                     return true;
@@ -313,7 +318,7 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
             public void onClick(View v) {
                 errorView.setVisibility(View.GONE);
                 final String textToFind = editText.getText().toString();
-                if (isNullOrEmpty(textToFind)) {
+                if (checkInputAnReturnErrorMessage(textToFind) != null) {
                     editText.requestFocus();
                     openKeyboard(editText);
                     return;
@@ -358,15 +363,17 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                                 lastHosts.toArray(new String[lastHosts.size()])));
 
                 //Run command
-                progressBar.setVisibility(View.VISIBLE);
-                button.setEnabled(false);
-                geolocateButton.setVisibility(View.GONE);
-
-                Utils.hideSoftKeyboard(mParentFragmentActivity);
                 mCurrentRouterActionTask = getRouterAction(textToFind);
-                ActionManager.runTasks(mCurrentRouterActionTask);
+                if (mCurrentRouterActionTask != null) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    button.setEnabled(false);
+                    geolocateButton.setVisibility(View.GONE);
 
-                cancelButton.setEnabled(true);
+                    Utils.hideSoftKeyboard(mParentFragmentActivity);
+
+                    ActionManager.runTasks(mCurrentRouterActionTask);
+                    cancelButton.setEnabled(true);
+                }
             }
         });
 
@@ -443,17 +450,7 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
 
     }
 
-    @Nullable
-    protected CharSequence checkInputAnReturnErrorMessage(@NonNull final String inputText) {
-        if (!(Patterns.IP_ADDRESS.matcher(inputText).matches() || Patterns.DOMAIN_NAME.matcher(
-                inputText).matches())) {
-            return (mParentFragmentActivity.getResources()
-                    .getString(R.string.router_add_dns_or_ip_invalid) + ":" + inputText);
-        }
-        return null;
-    }
-
-    protected abstract int getEditTextHint();
+    protected abstract Integer getEditTextHint();
 
     @Nullable
     protected abstract Integer getInfoText();
@@ -476,8 +473,26 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
         return null;
     }
 
-    @NonNull
+    @Nullable
     protected abstract AbstractRouterAction<?> getRouterAction(String textToFind);
+
+    /**
+     * Determine whether the input entered in the main field is valid.
+     * <p>Override to provide custom validation
+     * @param inputText the input text
+     * @return an error message or null if the input text is valid
+     */
+    @Nullable
+    protected CharSequence checkInputAnReturnErrorMessage(@NonNull final String inputText) {
+        if (TextUtils.isEmpty(inputText)) {
+            return "Empty input text";
+        }
+        if (!(Patterns.IP_ADDRESS.matcher(inputText).matches() || Patterns.DOMAIN_NAME.matcher(inputText).matches())) {
+            return (mParentFragmentActivity.getResources()
+                    .getString(R.string.router_add_dns_or_ip_invalid) + ":" + inputText);
+        }
+        return null;
+    }
 
     protected abstract int getSubmitButtonText();
 

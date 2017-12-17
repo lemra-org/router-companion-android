@@ -24,7 +24,7 @@ public class ToolboxMACOUITile extends AbstractToolboxTile {
     }
 
     @Override
-    protected int getEditTextHint() {
+    protected Integer getEditTextHint() {
         return R.string.oui_lookup_edit_text_hint;
     }
 

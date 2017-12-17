@@ -88,6 +88,7 @@ import org.rm3l.router_companion.fragments.toolbox.ToolboxArpingFragment;
 import org.rm3l.router_companion.fragments.toolbox.ToolboxMACOUILookupFragment;
 import org.rm3l.router_companion.fragments.toolbox.ToolboxNsLookupFragment;
 import org.rm3l.router_companion.fragments.toolbox.ToolboxPingFragment;
+import org.rm3l.router_companion.fragments.toolbox.ToolboxServiceNamesPortNumbersLookupFragment;
 import org.rm3l.router_companion.fragments.toolbox.ToolboxTracerouteFragment;
 import org.rm3l.router_companion.fragments.toolbox.ToolboxWhoisFragment;
 import org.rm3l.router_companion.main.DDWRTMainActivity;
@@ -496,6 +497,13 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                         return R.string.toolbox_oui_lookup;
                     }
                 });
+        toolboxNetworkTabs.add(
+                new FragmentTabDescription<ToolboxServiceNamesPortNumbersLookupFragment>(ToolboxServiceNamesPortNumbersLookupFragment.class) {
+                    @Override
+                    public int getTitleRes() {
+                        return R.string.toolbox_service_names_port_numbers_lookup;
+                    }
+                });
         tabsForDDWRT.putAll(15, toolboxNetworkTabs);
         return tabsForDDWRT;
     }
@@ -723,7 +731,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
     @NonNull
     public static ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> getTabsForTomato() {
         final ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>>
-                tabsForDDWRT = ArrayListMultimap.create();
+                tabsForTomato = ArrayListMultimap.create();
         //1- Dashboard: {Network, Bandwidth, System}
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> dashboardTabs =
                 new ArrayList<>();
@@ -749,7 +757,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                         return R.string.dashboard_system;
                     }
                 });
-        tabsForDDWRT.putAll(1, dashboardTabs);
+        tabsForTomato.putAll(1, dashboardTabs);
 
         //2- Status: {Status, Wireless, Clients, Monitoring}
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> statusTabs =
@@ -784,7 +792,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                 return R.string.status_syslog;
             }
         });
-        tabsForDDWRT.putAll(2, statusTabs);
+        tabsForTomato.putAll(2, statusTabs);
 
         //3- Status > Wireless
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> wirelessTabs =
@@ -796,7 +804,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                         return R.string.status_wireless;
                     }
                 });
-        tabsForDDWRT.putAll(3, wirelessTabs);
+        tabsForTomato.putAll(3, wirelessTabs);
 
         //4- Status > Clients
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> clientsTabs =
@@ -807,7 +815,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                 return R.string.status_clients;
             }
         });
-        tabsForDDWRT.putAll(4, clientsTabs);
+        tabsForTomato.putAll(4, clientsTabs);
 
         //5- Status > Monitoring
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> monitoringTabs =
@@ -826,7 +834,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                         return R.string.status_bandwidth;
                     }
                 });
-        tabsForDDWRT.putAll(5, monitoringTabs);
+        tabsForTomato.putAll(5, monitoringTabs);
 
         //7- Services > OpenVPN
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> servicesOpenVpnTabs =
@@ -852,7 +860,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                         return R.string.services_openvpn_logs;
                     }
                 });
-        tabsForDDWRT.putAll(7, servicesOpenVpnTabs);
+        tabsForTomato.putAll(7, servicesOpenVpnTabs);
 
         //8- Services > PPTP
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> servicesPPTPTabs =
@@ -871,7 +879,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                         return R.string.services_pptp_client;
                     }
                 });
-        tabsForDDWRT.putAll(8, servicesPPTPTabs);
+        tabsForTomato.putAll(8, servicesPPTPTabs);
 
         //9- Services > WOL
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> servicesWolTabs =
@@ -890,7 +898,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                 return R.string.services_wol_daemon;
             }
         });
-        tabsForDDWRT.putAll(9, servicesWolTabs);
+        tabsForTomato.putAll(9, servicesWolTabs);
 
         //11- Admin > Access Restrictions
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>>
@@ -902,7 +910,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                 return R.string.access_restrictions;
             }
         });
-        tabsForDDWRT.putAll(11, adminAccessRestrictionsTabs);
+        tabsForTomato.putAll(11, adminAccessRestrictionsTabs);
 
         //12- Admin > Commands
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> adminCmdTabs =
@@ -914,7 +922,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                         return R.string.command_shell;
                     }
                 });
-        tabsForDDWRT.putAll(12, adminCmdTabs);
+        tabsForTomato.putAll(12, adminCmdTabs);
 
         //13- Admin > NVRAM
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> adminNvramTabs =
@@ -925,7 +933,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                 return R.string.admin_area_nvram;
             }
         });
-        tabsForDDWRT.putAll(13, adminNvramTabs);
+        tabsForTomato.putAll(13, adminNvramTabs);
 
         //15- Toolbox > Network
         //FIXME Add "netstat" also (auto-refreshable)
@@ -975,8 +983,15 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                         return R.string.toolbox_oui_lookup;
                     }
                 });
-        tabsForDDWRT.putAll(15, toolboxNetworkTabs);
-        return tabsForDDWRT;
+        toolboxNetworkTabs.add(
+                new FragmentTabDescription<ToolboxServiceNamesPortNumbersLookupFragment>(ToolboxServiceNamesPortNumbersLookupFragment.class) {
+                    @Override
+                    public int getTitleRes() {
+                        return R.string.toolbox_service_names_port_numbers_lookup;
+                    }
+                });
+        tabsForTomato.putAll(15, toolboxNetworkTabs);
+        return tabsForTomato;
     }
 
     @Nullable

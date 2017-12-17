@@ -223,4 +223,19 @@
         <item>100sp</item>
     </array>
 
+    <string-array name="service_port_lookup_protocol_array">
+        <item>Transmission Control Protocol (TCP)</item>
+        <item>User Datagram Protocol (UDP)</item>
+        <item>Datagram Congestion Control Protocol (DCCP)</item>
+        <item>Stream Control Transmission Protocol (SCTP)</item>
+        <item>Datagram Delivery Protocol (DDP)</item>
+    </string-array>
+    <string-array name="service_port_lookup_protocol_array_values">
+        <item>TCP</item>
+        <item>UDP</item>
+        <item>DCCP</item>
+        <item>SCTP</item>
+        <item>DDP</item>
+    </string-array>
+
 </resources>

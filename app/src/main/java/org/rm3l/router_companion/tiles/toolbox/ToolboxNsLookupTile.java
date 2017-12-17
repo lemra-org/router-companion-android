@@ -38,7 +38,7 @@ public class ToolboxNsLookupTile extends AbstractToolboxTile {
     }
 
     @Override
-    protected int getEditTextHint() {
+    protected Integer getEditTextHint() {
         return R.string.nslookup_edit_text_hint;
     }
 
