@@ -1375,8 +1375,21 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         }
 
         mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+        final Router router = RouterManagementActivity.getDao(this).getRouter(mRouterUuid);
+        if (router == null) {
+            Toast.makeText(ActiveIPConnectionsDetailActivity.this,
+                    "Internal Error - Unknown router! Please try again later", Toast.LENGTH_SHORT)
+                    .show();
+            finish();
+            return;
+        }
+        ColorUtils.Companion.setAppTheme(this, router != null ? router.getRouterFirmware() : null, false);
+
         mRouterRemoteIp = intent.getStringExtra(ROUTER_REMOTE_IP);
         mRouterName = intent.getStringExtra(NVRAMInfo.Companion.getROUTER_NAME());
+        if (TextUtils.isEmpty(mRouterName)) {
+            mRouterName = router.getCanonicalHumanReadableName();
+        }
         mRouterLanIp = intent.getStringExtra(NVRAMInfo.Companion.getLAN_IPADDR());
         mRouterWanIp = intent.getStringExtra(NVRAMInfo.Companion.getWAN_IPADDR());
         mRouterWanPublicIp = intent.getStringExtra(NVRAMInfo.PUBLIC_IPADDR);
@@ -1427,9 +1440,6 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         handleIntent(intent);
 
         mDestinationIpToCountry = new HashMap<>();
-
-        final Router router = RouterManagementActivity.getDao(this).getRouter(mRouterUuid);
-        ColorUtils.Companion.setAppTheme(this, router != null ? router.getRouterFirmware() : null, false);
 
         final boolean themeLight = ColorUtils.Companion.isThemeLight(this);
 
