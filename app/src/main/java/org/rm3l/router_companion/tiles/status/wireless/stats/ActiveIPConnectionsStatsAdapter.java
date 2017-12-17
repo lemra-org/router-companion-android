@@ -288,7 +288,7 @@ public class ActiveIPConnectionsStatsAdapter
         final List<Integer> viewsSet = new ArrayList<>();
         int i = 0;
         double totalPercentagesSum = 0;
-        for (final Map.Entry<Double, Collection<String>> percentageEntry : percentages.asMap()
+        labelToBreak: for (final Map.Entry<Double, Collection<String>> percentageEntry : percentages.asMap()
                 .entrySet()) {
             for (final String item : percentageEntry.getValue()) {
                 i++;
@@ -356,17 +356,22 @@ public class ActiveIPConnectionsStatsAdapter
                     holder.stats5Text.setOnClickListener(clickListener);
                     holder.stats5ProgressBar.setProgress(percentageProgress);
                     viewsSet.add(i);
+                    break labelToBreak;
                 }
             }
         }
 
-        if (totalPercentagesSum < 100) {
-            final Double otherPercentage = (100 - totalPercentagesSum);
+        final Double otherPercentage = (100 - totalPercentagesSum);
+        if (otherPercentage > 0) {
             holder.stats6Other.setVisibility(View.VISIBLE);
-            holder.stats6OtherPercentValue.setText(
-                    PERCENTAGE_DECIMAL_FORMAT.format(otherPercentage) + "%");
-            holder.stats6OtherProgressBar.setProgress(otherPercentage.intValue());
-            viewsSet.add(6);
+            final String otherPercentageFormat = PERCENTAGE_DECIMAL_FORMAT.format(otherPercentage);
+            if ("0".equals(otherPercentageFormat)) {
+                holder.stats6Other.setVisibility(View.GONE);
+            } else {
+                holder.stats6OtherPercentValue.setText(otherPercentageFormat + "%");
+                holder.stats6OtherProgressBar.setProgress(otherPercentage.intValue());
+                viewsSet.add(6);
+            }
         } else {
             holder.stats6Other.setVisibility(View.GONE);
         }
