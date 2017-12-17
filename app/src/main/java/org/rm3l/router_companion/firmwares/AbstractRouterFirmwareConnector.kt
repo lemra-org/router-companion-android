@@ -67,7 +67,16 @@ abstract class AbstractRouterFirmwareConnector {
                                        dataRetrievalListener: RemoteDataRetrievalListener?): String?
 
     @Throws(Exception::class)
-    abstract fun goGetRouterModel(context: Context, router: Router): String?
+    abstract fun getRouterName(context: Context, router: Router): String?
+
+    @Throws(Exception::class)
+    abstract fun getWanIpAddress(context: Context, router: Router): String?
+
+    @Throws(Exception::class)
+    abstract fun getLanIpAddress(context: Context, router: Router): String?
+
+    @Throws(Exception::class)
+    protected abstract fun goGetRouterModel(context: Context, router: Router): String?
 
     @Throws(Exception::class)
     abstract fun getDataForWANTotalTrafficOverviewTile(context: Context,

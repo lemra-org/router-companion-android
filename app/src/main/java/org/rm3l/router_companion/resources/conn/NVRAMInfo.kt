@@ -126,6 +126,9 @@ open class NVRAMInfo : RouterData<Properties>(), Serializable {
 
         val ROUTER_NAME = "router_name"
         val WAN_IPADDR = "wan_ipaddr"
+
+        @JvmField
+        val PUBLIC_IPADDR = "PUBLIC_IPADDR"
         val MODEL = "DD_BOARD"
         val OS_VERSION = "os_version"
         val DIST_TYPE = "dist_type"

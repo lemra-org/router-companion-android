@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicLong
 
 class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
 
-    internal val nbRunsStatusRouterStateTile = AtomicInteger(0)
+    private val nbRunsStatusRouterStateTile = AtomicInteger(0)
     private val mGetWanPublicIpAddressCalls = AtomicLong(0)
 
     @Throws(Exception::class)
@@ -81,25 +81,27 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
         val d = 1 + Random().nextInt(252)
 
         val modulo = (nbRuns % 7).toInt()
-        val mWanPublicIP: String?
 
-        if (modulo == 0) {
-            mWanPublicIP = "52.64.$c.$d"
+        return if (modulo == 0) {
+            "52.64.$c.$d"
         } else if (modulo == 1) {
-            mWanPublicIP = "8.8.$c.$d"
+            "8.8.$c.$d"
         } else if (modulo == 2) {
-            mWanPublicIP = "78.87.$c.$d"
+            "78.87.$c.$d"
         } else if (modulo == 3) {
-            mWanPublicIP = "34.56.$c.$d"
+            "34.56.$c.$d"
         } else if (modulo == 4) {
-            mWanPublicIP = "67.78.$c.$d"
+            "67.78.$c.$d"
         } else if (modulo == 5) {
-            mWanPublicIP = a.toString() + "." + b + "." + c + "." + d
+            a.toString() + "." + b + "." + c + "." + d
         } else {
-            mWanPublicIP = null
+            null
         }
-        return mWanPublicIP
     }
+
+    override fun getRouterName(context: Context, router: Router) = ROUTER_NAME
+    override fun getWanIpAddress(context: Context, router: Router) = WAN_IPADDR
+    override fun getLanIpAddress(context: Context, router: Router) = LAN_IPADDR
 
     @Throws(Exception::class)
     override fun goGetRouterModel(context: Context, router: Router): String? {
@@ -196,12 +198,12 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
     override fun getDataForStatusRouterStateTile(context: Context, router: Router,
                                                  dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
 
-        val nvramInfo = NVRAMInfo().setProperty(NVRAMInfo.ROUTER_NAME, "Demo Router (Test Data)")
-                .setProperty(NVRAMInfo.WAN_IPADDR, "1.2.3.4")
-                .setProperty(NVRAMInfo.MODEL, "Router Model Family")
-                .setProperty(NVRAMInfo.DIST_TYPE, "Linux 2.4.37 #7583 Sat Oct 10 mips")
-                .setProperty(NVRAMInfo.LAN_IPADDR, "255.255.255.255")
-                .setProperty(NVRAMInfo.OS_VERSION, Integer.toString(1 + Random().nextInt(65535)))
+        val nvramInfo = NVRAMInfo().setProperty(NVRAMInfo.ROUTER_NAME, ROUTER_NAME)
+                .setProperty(NVRAMInfo.WAN_IPADDR, WAN_IPADDR)
+                .setProperty(NVRAMInfo.MODEL, MODEL)
+                .setProperty(NVRAMInfo.DIST_TYPE, DIST_TYPE)
+                .setProperty(NVRAMInfo.LAN_IPADDR, LAN_IPADDR)
+                .setProperty(NVRAMInfo.OS_VERSION, OS_VERSION)
 
         updateProgressBarViewSeparator(dataRetrievalListener, 50)
 
@@ -324,6 +326,15 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
             1, 3, 5, 6, 7, 8 -> DemoFirmwareRelease(index)
             else -> null //no update
         }
+    }
+
+    companion object {
+        private val ROUTER_NAME = "Demo Router (Test Data)"
+        private val WAN_IPADDR = "1.2.3.4"
+        private val MODEL = "Router Model Family"
+        private val DIST_TYPE = "Linux 2.4.37 #7583 Sat Oct 10 mips"
+        private val LAN_IPADDR = "192.168.77.254"
+        private val OS_VERSION = Integer.toString(1 + Random().nextInt(65535))
     }
 }
 

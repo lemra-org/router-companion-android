@@ -66,13 +66,22 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
         return SSHUtils.loadWanPublicIPFrom(context, router, null, dataRetrievalListener)
     }
 
+    override fun getRouterName(context: Context, router: Router) = SSHUtils.getNVRamInfoFromRouter(context, router,
+                Utils.getGlobalSharedPreferences(context), NVRAMInfo.ROUTER_NAME)?.getProperty(NVRAMInfo.ROUTER_NAME)
+
+    override fun getLanIpAddress(context: Context, router: Router) = SSHUtils.getNVRamInfoFromRouter(context, router,
+            Utils.getGlobalSharedPreferences(context), NVRAMInfo.LAN_IPADDR)?.getProperty(NVRAMInfo.LAN_IPADDR)
+
+    override fun getWanIpAddress(context: Context, router: Router) = SSHUtils.getNVRamInfoFromRouter(context, router,
+            Utils.getGlobalSharedPreferences(context), NVRAMInfo.WAN_IPADDR)?.getProperty(NVRAMInfo.WAN_IPADDR)
+
     @Throws(Exception::class)
     override fun goGetRouterModel(context: Context, router: Router): String? {
         val output = SSHUtils.getManualProperty(context, router,
                 Utils.getGlobalSharedPreferences(context),
                 String.format("/usr/sbin/nvram show 2>/dev/null | grep \"%s\" | awk -F'=' '{print $2}'",
                         MODEL))
-        if (output != null && output.size > 0) {
+        if (output != null && output.isNotEmpty()) {
             return output[0]
         }
         return null

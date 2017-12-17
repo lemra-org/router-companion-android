@@ -105,6 +105,16 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
                 dataRetrievalListener)
     }
 
+    override fun getRouterName(context: Context, router: Router) = SSHUtils.getNVRamInfoFromRouter(context, router,
+            Utils.getGlobalSharedPreferences(context), NVRAMInfo.ROUTER_NAME)?.getProperty(NVRAMInfo.ROUTER_NAME)
+
+    override fun getLanIpAddress(context: Context, router: Router) = SSHUtils.getNVRamInfoFromRouter(context, router,
+            Utils.getGlobalSharedPreferences(context), NVRAMInfo.LAN_IPADDR)?.getProperty(NVRAMInfo.LAN_IPADDR)
+
+    override fun getWanIpAddress(context: Context, router: Router) = SSHUtils.getNVRamInfoFromRouter(context, router,
+            Utils.getGlobalSharedPreferences(context), NVRAMInfo.WAN_IPADDR)?.getProperty(NVRAMInfo.WAN_IPADDR)
+
+
     @Throws(Exception::class)
     override fun getDataForStatusRouterStateTile(context: Context, router: Router,
                                                  dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {

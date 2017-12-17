@@ -135,6 +135,7 @@ import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.IPConntrack;
 import org.rm3l.router_companion.resources.IPWhoisInfo;
+import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter;
 import org.rm3l.router_companion.utils.AdUtils;
@@ -173,9 +174,15 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         }
     }
 
-    class BgAsyncTask extends AsyncTask<Void, Void, AsyncTaskResult<?>> {
+    static class BgAsyncTask extends AsyncTask<Void, Void, AsyncTaskResult<?>> {
 
         final RowSortedTable<Integer, String, Integer> statsTable = TreeBasedTable.create();
+
+        private final ActiveIPConnectionsDetailActivity activeIPConnectionsDetailActivity;
+
+        public BgAsyncTask(final ActiveIPConnectionsDetailActivity activeIPConnectionsDetailActivity) {
+            this.activeIPConnectionsDetailActivity = activeIPConnectionsDetailActivity;
+        }
 
         @Override
         protected AsyncTaskResult<?> doInBackground(Void... params) {
@@ -183,18 +190,20 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             try {
 
                 //First step : bulk resolve all IP addresses / hosts
-                runOnUiThread(new Runnable() {
+                activeIPConnectionsDetailActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        loadingView.setProgress(30);
-                        loadingViewText
-                                .setText("Analyzing a total of " + mActiveIPConnections.size() + " connections...");
+                        activeIPConnectionsDetailActivity.loadingView.setProgress(30);
+                        activeIPConnectionsDetailActivity.loadingViewText
+                                .setText("Analyzing a total of " +
+                                        activeIPConnectionsDetailActivity.mActiveIPConnections.size()
+                                        + " connections...");
                     }
                 });
 
                 final Set<Pair<Long, Protocol>> serviceNamesToResolve = new HashSet<>();
                 final Set<String> toResolve = new HashSet<>();
-                for (final IPConntrack ipConntrackRow : mActiveIPConnections) {
+                for (final IPConntrack ipConntrackRow : activeIPConnectionsDetailActivity.mActiveIPConnections) {
                     if (ipConntrackRow == null) {
                         continue;
                     }
@@ -246,12 +255,12 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                         }
                     }
                 } catch (final Exception e) {
-                    Utils.reportException(ActiveIPConnectionsDetailActivity.this, e);
+                    Utils.reportException(this.activeIPConnectionsDetailActivity, e);
                     skipIndividualIPGeoLocationRequests = true;
                 }
 
                 //Now try to resolve service names and descriptions
-                for (final IPConntrack ipConntrackRow : mActiveIPConnections) {
+                for (final IPConntrack ipConntrackRow : activeIPConnectionsDetailActivity.mActiveIPConnections) {
                     if (ipConntrackRow == null) {
                         continue;
                     }
@@ -282,7 +291,8 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                         }
                     }
                     if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                        Crashlytics.log(Log.WARN, LOG_TAG, "Service names / port numbers lookup is a premium feature");
+                        Crashlytics
+                                .log(Log.WARN, LOG_TAG, "Service names / port numbers lookup is a premium feature");
                     } else {
                         try {
                             final Response<RecordListResponse> response = ServiceNamePortNumbersServiceKt.query(
@@ -317,11 +327,11 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     }
                 }
 
-                final int totalConnectionsCount = mActiveIPConnections.size();
+                final int totalConnectionsCount = activeIPConnectionsDetailActivity.mActiveIPConnections.size();
                 int index = 1;
                 String existingRecord;
 
-                for (final IPConntrack ipConntrackRow : mActiveIPConnections) {
+                for (final IPConntrack ipConntrackRow : activeIPConnectionsDetailActivity.mActiveIPConnections) {
                     if (ipConntrackRow == null) {
                         continue;
                     }
@@ -341,36 +351,40 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     Crashlytics.log(Log.DEBUG, LOG_TAG,
                             String.format("<currentIdx=%d , totalConnectionsCount=%d , progress=%d%%>",
                                     currentIdx, totalConnectionsCount, progress));
-                    runOnUiThread(new Runnable() {
+                    activeIPConnectionsDetailActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            loadingView.setProgress(progress);
-                            loadingViewText.setText(
+                            activeIPConnectionsDetailActivity.loadingView.setProgress(progress);
+                            activeIPConnectionsDetailActivity.loadingViewText.setText(
                                     String.format("Analysing IP Connection (%d / %d)...", currentIdx,
                                             totalConnectionsCount));
                         }
                     });
                     final String sourceAddressOriginalSide = ipConntrackRow.getSourceAddressOriginalSide();
-                    existingRecord = ipToHostResolvedMap.get(sourceAddressOriginalSide);
+                    existingRecord = activeIPConnectionsDetailActivity.ipToHostResolvedMap
+                            .get(sourceAddressOriginalSide);
                     if (isNullOrEmpty(existingRecord)) {
                         //Set Source IP HostName
                         final String srcIpHostnameResolved;
-                        if (mLocalIpToHostname == null) {
+                        if (activeIPConnectionsDetailActivity.mLocalIpToHostname == null) {
                             srcIpHostnameResolved = "-";
                         } else {
-                            final String val = mLocalIpToHostname.get(sourceAddressOriginalSide);
+                            final String val = activeIPConnectionsDetailActivity.mLocalIpToHostname
+                                    .get(sourceAddressOriginalSide);
                             if (isNullOrEmpty(val)) {
                                 srcIpHostnameResolved = "-";
                             } else {
                                 srcIpHostnameResolved = val;
                             }
                         }
-                        ipToHostResolvedMap.put(sourceAddressOriginalSide, srcIpHostnameResolved);
+                        activeIPConnectionsDetailActivity.ipToHostResolvedMap
+                                .put(sourceAddressOriginalSide, srcIpHostnameResolved);
                     }
 
                     final String destinationAddressOriginalSide =
                             ipConntrackRow.getDestinationAddressOriginalSide();
-                    existingRecord = ipToHostResolvedMap.get(destinationAddressOriginalSide);
+                    existingRecord = activeIPConnectionsDetailActivity.ipToHostResolvedMap
+                            .get(destinationAddressOriginalSide);
                     if (isNullOrEmpty(existingRecord)) {
                         final String dstIpWhoisResolved;
                         if (isNullOrEmpty(destinationAddressOriginalSide)) {
@@ -388,7 +402,8 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                             if (ipWhoisInfo != null) {
                                 final String country = ipWhoisInfo.getCountry();
                                 if (!isNullOrEmpty(country)) {
-                                    mDestinationIpToCountry.put(destinationAddressOriginalSide, country);
+                                    activeIPConnectionsDetailActivity.mDestinationIpToCountry
+                                            .put(destinationAddressOriginalSide, country);
                                     Integer countryStats = statsTable.get(BY_DESTINATION_COUNTRY, country);
                                     if (countryStats == null) {
                                         countryStats = 0;
@@ -412,8 +427,10 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                                 dstIpWhoisResolved = "-";
                             } else {
                                 dstIpWhoisResolved = org;
-                                if (!mLocalIpToHostname.containsKey(destinationAddressOriginalSide)) {
-                                    mLocalIpToHostname.put(destinationAddressOriginalSide, org);
+                                if (!activeIPConnectionsDetailActivity.mLocalIpToHostname
+                                        .containsKey(destinationAddressOriginalSide)) {
+                                    activeIPConnectionsDetailActivity.mLocalIpToHostname
+                                            .put(destinationAddressOriginalSide, org);
                                 }
                                 Integer orgStats = statsTable.get(BY_DESTINATION_ORG, org);
                                 if (orgStats == null) {
@@ -422,14 +439,15 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                                 statsTable.put(BY_DESTINATION_ORG, org, orgStats + 1);
                             }
                         }
-                        ipToHostResolvedMap.put(destinationAddressOriginalSide, dstIpWhoisResolved);
+                        activeIPConnectionsDetailActivity.ipToHostResolvedMap
+                                .put(destinationAddressOriginalSide, dstIpWhoisResolved);
                     }
 
-                    runOnUiThread(new Runnable() {
+                    activeIPConnectionsDetailActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            loadingView.setProgress(progress);
-                            loadingViewText.setText("Computing stats...");
+                            activeIPConnectionsDetailActivity.loadingView.setProgress(progress);
+                            activeIPConnectionsDetailActivity.loadingViewText.setText("Computing stats...");
                         }
                     });
 
@@ -469,7 +487,8 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     statsTable.put(BY_DESTINATION_PORT, keyInTablePort, destPortStats + 1);
 
                     final String sourceInStats =
-                            String.format("%s%s%s", ipToHostResolvedMap.get(sourceAddressOriginalSide), SEPARATOR,
+                            String.format("%s%s%s", activeIPConnectionsDetailActivity.ipToHostResolvedMap
+                                            .get(sourceAddressOriginalSide), SEPARATOR,
                                     sourceAddressOriginalSide);
                     Integer sourceStats = statsTable.get(BY_SOURCE, sourceInStats);
                     if (sourceStats == null) {
@@ -479,7 +498,8 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
                     final String destinationInStats =
                             String.format("%s%s%s", destinationAddressOriginalSide,
-                                    SEPARATOR, ipToHostResolvedMap.get(destinationAddressOriginalSide));
+                                    SEPARATOR, activeIPConnectionsDetailActivity.ipToHostResolvedMap
+                                            .get(destinationAddressOriginalSide));
                     Integer destinationStats = statsTable.get(BY_DESTINATION_IP, destinationInStats);
                     if (destinationStats == null) {
                         destinationStats = 0;
@@ -504,32 +524,34 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                 if (exception != null) {
                     exception.printStackTrace();
                 }
-                slidingUpPanel.setVisibility(View.GONE);
+                activeIPConnectionsDetailActivity.slidingUpPanel.setVisibility(View.GONE);
             } else {
-                if (ActiveIPConnectionsDetailActivity.this.optionsMenu != null) {
-                    ActiveIPConnectionsDetailActivity.this.optionsMenu.findItem(
+                if (activeIPConnectionsDetailActivity.optionsMenu != null) {
+                    activeIPConnectionsDetailActivity.optionsMenu.findItem(
                             R.id.tile_status_active_ip_connections_search).setVisible(true);
-                    ActiveIPConnectionsDetailActivity.this.optionsMenu.findItem(
+                    activeIPConnectionsDetailActivity.optionsMenu.findItem(
                             R.id.tile_status_active_ip_connections_share).setVisible(true);
                 }
                 //No error
-                slidingUpPanel.setVisibility(View.VISIBLE);
-                loadingView.setVisibility(View.GONE);
-                loadingViewText.setVisibility(View.GONE);
+                activeIPConnectionsDetailActivity.slidingUpPanel.setVisibility(View.VISIBLE);
+                activeIPConnectionsDetailActivity.loadingView.setVisibility(View.GONE);
+                activeIPConnectionsDetailActivity.loadingViewText.setVisibility(View.GONE);
 
-                ((ActiveIPConnectionsDetailRecyclerViewAdapter) mAdapter).setActiveIPConnections(
-                        mActiveIPConnections);
-                mAdapter.notifyDataSetChanged();
+                ((ActiveIPConnectionsDetailRecyclerViewAdapter) activeIPConnectionsDetailActivity.mAdapter)
+                        .setActiveIPConnections(
+                                activeIPConnectionsDetailActivity.mActiveIPConnections);
+                activeIPConnectionsDetailActivity.mAdapter.notifyDataSetChanged();
 
-                contentView.setVisibility(View.VISIBLE);
+                activeIPConnectionsDetailActivity.contentView.setVisibility(View.VISIBLE);
 
-                ((ActiveIPConnectionsStatsAdapter) mStatsAdapter).setStatsTable(statsTable);
-                mStatsAdapter.notifyDataSetChanged();
+                ((ActiveIPConnectionsStatsAdapter) activeIPConnectionsDetailActivity.mStatsAdapter)
+                        .setStatsTable(statsTable);
+                activeIPConnectionsDetailActivity.mStatsAdapter.notifyDataSetChanged();
 
-                slidingUpPanel.setVisibility(View.VISIBLE);
+                activeIPConnectionsDetailActivity.slidingUpPanel.setVisibility(View.VISIBLE);
 
-                slidingUpPanelLoading.setVisibility(View.GONE);
-                slidingUpPanelStatsTitle.setText("Stats");
+                activeIPConnectionsDetailActivity.slidingUpPanelLoading.setVisibility(View.GONE);
+                activeIPConnectionsDetailActivity.slidingUpPanelStatsTitle.setText("Stats");
             }
         }
     }
@@ -567,7 +589,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
         private final LoaderManager supportLoaderManager;
 
-        public ActiveIPConnectionsDetailRecyclerViewAdapter(
+        ActiveIPConnectionsDetailRecyclerViewAdapter(
                 ActiveIPConnectionsDetailActivity activity) {
             this.activity = activity;
             this.supportLoaderManager = getSupportLoaderManager();
@@ -861,8 +883,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                 }
             });
 
-            final ImageView destCountryFlag =
-                    (ImageView) cardView.findViewById(R.id.activity_ip_connections_destination_country_flag);
+            final ImageView destCountryFlag = cardView.findViewById(R.id.activity_ip_connections_destination_country_flag);
 
             //Fetch IP Whois info
             supportLoaderManager.initLoader(Long.valueOf(Utils.getNextLoaderId()).intValue(), null,
@@ -1075,12 +1096,9 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                         }
                     }).forceLoad();
 
-            final TextView srcIpHostname =
-                    (TextView) cardView.findViewById(R.id.activity_ip_connections_source_ip_hostname);
-            final TextView srcIpHostnameDetails =
-                    (TextView) cardView.findViewById(R.id.activity_ip_connections_details_source_host);
-            final ProgressBar srcIpHostnameLoading = (ProgressBar) cardView.findViewById(
-                    R.id.activity_ip_connections_source_ip_hostname_loading);
+            final TextView srcIpHostname = cardView.findViewById(R.id.activity_ip_connections_source_ip_hostname);
+            final TextView srcIpHostnameDetails = cardView.findViewById(R.id.activity_ip_connections_details_source_host);
+            final ProgressBar srcIpHostnameLoading = cardView.findViewById(R.id.activity_ip_connections_source_ip_hostname_loading);
             //Set Source IP HostName
             if (ipToHostResolvedMap == null) {
                 srcIpHostname.setText("");
@@ -1104,12 +1122,9 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             srcIpHostnameLoading.setVisibility(View.GONE);
 
             //... and Destination IP Address Organization (if available)
-            final TextView destIpOrg =
-                    (TextView) cardView.findViewById(R.id.activity_ip_connections_dest_ip_org);
-            final TextView destIpOrgDetails =
-                    (TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_whois);
-            final ProgressBar destIpOrgLoading =
-                    (ProgressBar) cardView.findViewById(R.id.activity_ip_connections_dest_ip_org_loading);
+            final TextView destIpOrg = cardView.findViewById(R.id.activity_ip_connections_dest_ip_org);
+            final TextView destIpOrgDetails = cardView.findViewById(R.id.activity_ip_connections_details_destination_whois);
+            final ProgressBar destIpOrgLoading = cardView.findViewById(R.id.activity_ip_connections_dest_ip_org_loading);
             if (ipToHostResolvedMap == null) {
                 new Handler().post(new Runnable() {
                     @Override
@@ -1236,7 +1251,8 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                             }
                             if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                                 //Premium feature only
-                                Crashlytics.log(Log.WARN, LOG_TAG, "Service names / port numbers lookup is a premium feature");
+                                Crashlytics.log(Log.WARN, LOG_TAG,
+                                        "Service names / port numbers lookup is a premium feature");
                                 return Collections.emptyList();
                             }
                             try {
@@ -1315,9 +1331,17 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
     private RecyclerViewEmptySupport mRecyclerView;
 
+    private String mRouterLanIp;
+
+    private String mRouterName;
+
     private String mRouterRemoteIp;
 
     private String mRouterUuid;
+
+    private String mRouterWanIp;
+
+    private String mRouterWanPublicIp;
 
     private ShareActionProvider mShareActionProvider;
 
@@ -1354,6 +1378,10 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
         mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
         mRouterRemoteIp = intent.getStringExtra(ROUTER_REMOTE_IP);
+        mRouterName = intent.getStringExtra(NVRAMInfo.Companion.getROUTER_NAME());
+        mRouterLanIp = intent.getStringExtra(NVRAMInfo.Companion.getLAN_IPADDR());
+        mRouterWanIp = intent.getStringExtra(NVRAMInfo.Companion.getWAN_IPADDR());
+        mRouterWanPublicIp = intent.getStringExtra(NVRAMInfo.PUBLIC_IPADDR);
         mObservationDate = intent.getStringExtra(OBSERVATION_DATE);
         mConnectedHost = intent.getStringExtra(CONNECTED_HOST);
 
@@ -1378,7 +1406,13 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         }
 
         mActiveIPConnections = new ArrayList<>();
-        ipToHostResolvedMap = new ConcurrentHashMap<>();
+        ipToHostResolvedMap = new HashMap<>();
+        if (mRouterName != null) {
+            if (mRouterLanIp != null) ipToHostResolvedMap.put(mRouterLanIp, mRouterName);
+            if (mRouterWanIp != null) ipToHostResolvedMap.put(mRouterWanIp, mRouterName);
+            if (mRouterRemoteIp != null) ipToHostResolvedMap.put(mRouterRemoteIp, mRouterName);
+            if (mRouterWanPublicIp != null) ipToHostResolvedMap.put(mRouterWanPublicIp, mRouterName);
+        }
 
         for (final String activeIpConn : activeIpConnArray) {
             try {
@@ -1400,16 +1434,6 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         ColorUtils.Companion.setAppTheme(this, router != null ? router.getRouterFirmware() : null, false);
 
         final boolean themeLight = ColorUtils.Companion.isThemeLight(this);
-        //        if (themeLight) {
-        //            //Light
-        //            setTheme(R.style.AppThemeLight);
-        ////            getWindow().getDecorView()
-        ////                    .setBackgroundColor(ContextCompat.getColor(this,
-        ////                            android.R.color.white));
-        //        } else {
-        //            //Default is Dark
-        //            setTheme(R.style.AppThemeDark);
-        //        }
 
         setContentView(R.layout.tile_status_active_ip_connections);
 
@@ -1418,8 +1442,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
         mActiveIPConnectionsMultiLine = Joiner.on("\n\n").join(mActiveIPConnections);
 
-        final Toolbar mToolbar =
-                (Toolbar) findViewById(R.id.tile_status_active_ip_connections_view_toolbar);
+        final Toolbar mToolbar = findViewById(R.id.tile_status_active_ip_connections_view_toolbar);
         if (mToolbar != null) {
             mTitle = "Active IP Connections";
             mToolbar.setTitle(mTitle);
@@ -1428,29 +1451,23 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
             mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
             mToolbar.setSubtitleTextColor(ContextCompat.getColor(this, R.color.white));
-
             setSupportActionBar(mToolbar);
         }
-
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
         }
 
-        this.loadingView =
-                (ProgressBar) findViewById(R.id.tile_status_active_ip_connections_view_loadingview);
-        this.loadingViewText =
-                (TextView) findViewById(R.id.tile_status_active_ip_connections_view_loadingview_text);
+        this.loadingView = findViewById(R.id.tile_status_active_ip_connections_view_loadingview);
+        this.loadingViewText = findViewById(R.id.tile_status_active_ip_connections_view_loadingview_text);
 
         loadingView.setProgress(3);
         loadingViewText.setText("Initializing...");
 
-        this.contentView = (LinearLayout) findViewById(
-                R.id.tile_status_active_ip_connections_view_recyclerview_linearlayout);
+        this.contentView = findViewById(R.id.tile_status_active_ip_connections_view_recyclerview_linearlayout);
 
-        mRecyclerView = (RecyclerViewEmptySupport) findViewById(
-                R.id.tile_status_active_ip_connections_recycler_view);
+        mRecyclerView = findViewById(R.id.tile_status_active_ip_connections_recycler_view);
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         // allows for optimizations if all items are of the same size:
@@ -1459,7 +1476,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mLayoutManager.scrollToPosition(0);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        final TextView emptyView = (TextView) findViewById(R.id.empty_view);
+        final TextView emptyView = findViewById(R.id.empty_view);
         if (themeLight) {
             emptyView.setTextColor(ContextCompat.getColor(this, R.color.black));
         } else {
@@ -1471,8 +1488,8 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
 
         //Stats
-        this.slidingUpPanel = (LinearLayout) findViewById(R.id.active_ip_connections_stats);
-        this.slidingUpPanelStatsTitle = (TextView) findViewById(R.id.active_ip_connections_stats_title);
+        this.slidingUpPanel = findViewById(R.id.active_ip_connections_stats);
+        this.slidingUpPanelStatsTitle = findViewById(R.id.active_ip_connections_stats_title);
         if (themeLight) {
             slidingUpPanel.setBackgroundColor(
                     ContextCompat.getColor(this, R.color.black_semi_transparent));
@@ -1487,8 +1504,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         this.slidingUpPanelLoading.setVisibility(View.VISIBLE);
         this.slidingUpPanelStatsTitle.setText("Computing stats...");
 
-        mStatsRecyclerView = (RecyclerViewEmptySupport) findViewById(
-                R.id.tile_status_active_ip_connections_stats_recycler_view);
+        mStatsRecyclerView = findViewById(R.id.tile_status_active_ip_connections_stats_recycler_view);
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         // allows for optimizations if all items are of the same size:
@@ -1497,7 +1513,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         mStatsLayoutManager = new LinearLayoutManager(this);
         mStatsLayoutManager.scrollToPosition(0);
         mStatsRecyclerView.setLayoutManager(mStatsLayoutManager);
-        final TextView statsEmptyView = (TextView) findViewById(
+        final TextView statsEmptyView = findViewById(
                 R.id.tile_status_active_ip_connections_stats_recycler_view_empty_view);
         if (themeLight) {
             statsEmptyView.setTextColor(ContextCompat.getColor(this, R.color.black));
@@ -1509,7 +1525,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         mStatsAdapter = new ActiveIPConnectionsStatsAdapter(this, singleHost);
         mStatsRecyclerView.setAdapter(mStatsAdapter);
 
-        new BgAsyncTask().execute();
+        new BgAsyncTask(this).execute();
     }
 
     @Override
@@ -1527,8 +1543,8 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[],
-            int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
+            @NonNull int[] grantResults) {
 
         switch (requestCode) {
             case RouterCompanionAppConstants.Permissions.STORAGE: {
@@ -1548,8 +1564,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     Utils.displayMessage(this, "Sharing of IP Connections Data will be unavailable",
                             Style.INFO);
                     if (optionsMenu != null) {
-                        final MenuItem menuItem =
-                                optionsMenu.findItem(R.id.tile_status_active_ip_connections_share);
+                        final MenuItem menuItem = optionsMenu.findItem(R.id.tile_status_active_ip_connections_share);
                         menuItem.setEnabled(false);
                     }
                 }
@@ -1637,7 +1652,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         // Get the search close button image view
-        final ImageView closeButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
+        final ImageView closeButton = searchView.findViewById(R.id.search_close_btn);
         if (closeButton != null) {
             // Set on click listener
             closeButton.setOnClickListener(new View.OnClickListener() {
@@ -1706,15 +1721,6 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
             case R.id.action_feedback:
                 Utils.openFeedbackForm(this, mRouterUuid);
-                //                 final Intent intent = new Intent(ActiveIPConnectionsDetailActivity.this, FeedbackActivity.class);
-                //                 //FIXME Router UUID should also be available
-                //                 intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
-                //                 final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
-                //                 ViewGroupUtils.exportViewToFile(ActiveIPConnectionsDetailActivity.this, getWindow().getDecorView(), screenshotFile);
-                //                 intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
-                //                 intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
-                //
-                //                 startActivity(intent);
                 return true;
 
             default:

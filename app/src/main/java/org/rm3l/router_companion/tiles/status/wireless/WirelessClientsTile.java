@@ -129,6 +129,8 @@ import org.rm3l.router_companion.api.proxy.RequestMethod;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector;
+import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.multithreading.MultiThreadingManager;
 import org.rm3l.router_companion.resources.ClientDevices;
@@ -645,6 +647,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
 
     String mCurrentIpAddress;
 
+    private String mRouterLanIp;
+
+    private String mRouterName;
+
+    private String mRouterWanIp;
+
+    private String mRouterWanPublicIp;
+
     String mCurrentMacAddress;
 
     final Object usageDataLock = new Object();
@@ -884,6 +894,10 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                                     ActiveIPConnectionsDetailActivity.class);
                                     intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT,
                                             activeIPConnections);
+                                    intent.putExtra(NVRAMInfo.PUBLIC_IPADDR, mRouterWanPublicIp);
+                                    intent.putExtra(NVRAMInfo.Companion.getWAN_IPADDR(),mRouterWanIp);
+                                    intent.putExtra(NVRAMInfo.Companion.getROUTER_NAME(), mRouterName);
+                                    intent.putExtra(NVRAMInfo.Companion.getLAN_IPADDR(), mRouterLanIp);
                                     intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
                                     intent.putExtra(ActiveIPConnectionsDetailActivity.ROUTER_REMOTE_IP,
                                             mRouter.getRemoteIpAddress());
@@ -1246,6 +1260,10 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                         public void onClick(View widget) {
                             final Intent intent =
                                     new Intent(mParentFragmentActivity, ActiveIPConnectionsDetailActivity.class);
+                            intent.putExtra(NVRAMInfo.PUBLIC_IPADDR, mRouterWanPublicIp);
+                            intent.putExtra(NVRAMInfo.Companion.getWAN_IPADDR(),mRouterWanIp);
+                            intent.putExtra(NVRAMInfo.Companion.getROUTER_NAME(), mRouterName);
+                            intent.putExtra(NVRAMInfo.Companion.getLAN_IPADDR(), mRouterLanIp);
                             intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT,
                                     activeIPConnections);
                             intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
@@ -1765,8 +1783,19 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                 broadcastAddresses = Lists.newArrayList();
 
                 try {
+                    updateProgressBarViewSeparator(5);
+                    mRouterWanPublicIp = mRouterConnector
+                            .getWanPublicIpAddress(mParentFragmentActivity, mRouter, null);
 
-                    updateProgressBarViewSeparator(10);
+                    updateProgressBarViewSeparator(6);
+                    mRouterWanIp = mRouterConnector.getWanIpAddress(mParentFragmentActivity, mRouter);
+
+                    updateProgressBarViewSeparator(7);
+                    mRouterName = mRouterConnector.getRouterName(mParentFragmentActivity, mRouter);
+
+                    updateProgressBarViewSeparator(8);
+                    mRouterLanIp = mRouterConnector.getLanIpAddress(mParentFragmentActivity, mRouter);
+
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

@@ -22,6 +22,7 @@ import com.crashlytics.android.Crashlytics
 import org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY
 import org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_THEME
 import org.rm3l.router_companion.RouterCompanionAppConstants.THEMING_PREF
+import org.rm3l.router_companion.resources.conn.Router
 import org.rm3l.router_companion.resources.conn.Router.RouterFirmware
 import org.rm3l.router_companion.utils.AndroidHelper
 import org.rm3l.router_companion.utils.ColorUtils
@@ -51,6 +52,14 @@ fun Context.color(@ColorRes id: Int) = when {
 fun Context.inflate(res: Int, parent: ViewGroup? = null): View {
     return LayoutInflater.from(this).inflate(res, parent, false)
 }
+
+fun Activity.openFeedbackForm() = this.openFeedbackForm(routerUuid = null)
+
+fun Activity.openFeedbackForm(routerUuid: String? = null) =
+        this.openFeedbackForm(router = if (routerUuid == null) null
+        else org.rm3l.router_companion.mgmt.RouterManagementActivity.getDao(this).getRouter(routerUuid))
+
+fun Activity.openFeedbackForm(router: Router? = null) = Utils.openFeedbackForm(this, router)
 
 fun Activity.restartWholeApplication(waitMessage: CharSequence? = null, delayMillis: Long? = null) {
     Crashlytics.log(Log.INFO, this::class.java.simpleName, "Restarting whole Android Application : ${waitMessage ?:""}...")
