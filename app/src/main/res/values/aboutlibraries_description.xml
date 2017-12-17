@@ -45,6 +45,21 @@ SOFTWARE.
     <string name="aboutLibraries_description_special1_name" translatable="false">What\'s new?</string>
     <string name="aboutLibraries_description_special1_text" translatable="false">
   <![CDATA[
+<h4>2017-12-10: Version 10.1.1-0</h4>
+<h6>Enhancements and New features</h6>
+<ul>
+  <li>Enhancements to WAN Monthly traffic tile and detail bar chart</li>
+  <li>Generates an additional CSV file when sharing WAN Monthly traffic</li>
+  <li>More insights to Active IP Connections: service names / port numbers mappings (Premium) + TCP Connection states</li>
+  <li>More cosmetic updates</li>
+</ul>
+<h6>Bug, reliability &amp; performance fixes</h6>
+<ul>
+  <li>Respect user preference regarding auto crash reporting and usage analysis</li>
+  <li>Fixed wrong number of wireless clients and an issue with MAC geolocation service</li>
+</ul>
+--------------<br/>
+
   <h4>2017-11-05: Version 10.1.0</h4>
 <h6>Bug, reliability &amp; performance fixes</h6>
 --------------<br/>
