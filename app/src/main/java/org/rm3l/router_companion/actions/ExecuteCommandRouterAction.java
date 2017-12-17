@@ -10,9 +10,9 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import org.rm3l.router_companion.common.resources.audit.ActionLog;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.ReportingUtils;
@@ -29,7 +29,7 @@ public class ExecuteCommandRouterAction extends AbstractRouterAction<String[]> {
     @NonNull
     private final Context mContext;
 
-    private Map<String, String[]> mResultMap = new ConcurrentHashMap<>();
+    private Map<String, String[]> mResultMap = new HashMap<>();
 
     //Seems there is a limit on the number of characters we can pass to the SSH server console
     //This flag instructs to copy all the commands to a temporary file, upload the file to the router and exec it

@@ -115,8 +115,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -1325,7 +1323,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private ConcurrentMap<String, String> mLocalIpToHostname;
+    private Map<String, String> mLocalIpToHostname;
 
     private String mObservationDate;
 
@@ -1393,11 +1391,11 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             final Serializable serializableExtra = intent.getSerializableExtra(IP_TO_HOSTNAME_RESOLVER);
             //noinspection unchecked
             mLocalIpToHostname = (serializableExtra != null && serializableExtra instanceof HashMap) ?
-                    new ConcurrentHashMap<>((HashMap<String, String>) serializableExtra) :
-                    new ConcurrentHashMap<String, String>();
+                    ((HashMap<String, String>) serializableExtra) :
+                    new HashMap<String, String>();
         } else {
             //Single host
-            mLocalIpToHostname = new ConcurrentHashMap<>();
+            mLocalIpToHostname = new HashMap<>();
             final String intentStringExtra = intent.getStringExtra(IP_TO_HOSTNAME_RESOLVER);
             //noinspection ConstantConditions
             if (connectedHostIp != null && intentStringExtra != null) {
