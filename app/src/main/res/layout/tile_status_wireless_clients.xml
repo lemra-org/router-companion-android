@@ -127,6 +127,35 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:text="@string/loading"
                 android:textIsSelectable="true" />
 
+            <!-- Number of blocked clients -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="@string/num_blocked_clients"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text="@string/one_space" />
+
+            <TextView
+                android:id="@+id/tile_status_wireless_clients_blocked_clients_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginBottom="4dp"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:maxLines="1"
+                android:text="@string/loading"
+                android:textIsSelectable="true" />
+
             <!-- Number of active DHCP Leases -->
             <TextView
                 android:layout_width="wrap_content"

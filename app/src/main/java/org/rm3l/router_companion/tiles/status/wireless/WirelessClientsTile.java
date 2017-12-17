@@ -1361,12 +1361,19 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                 if (devices != null) {
                     mDevices.addAll(devices);
                 }
-                //Count total number of wireless clients
+
+                int nbBlockedClients = 0;
+                //Count total number of wireless clients (and number of blocked clients)
                 for (final Device device : mDevices) {
-                    if (device == null || device.getWirelessConnectionInfo() == null) {
+                    if (device == null) {
                         continue;
                     }
-                    nbWirelessClients++;
+                    if (device.getWirelessConnectionInfo() != null) {
+                        nbWirelessClients++;
+                    }
+                    if (device.getWanAccessState() == Device.WANAccessState.WAN_ACCESS_DISABLED) {
+                        nbBlockedClients++;
+                    }
                 }
 
                 //TODO Apply visitors first
@@ -1376,6 +1383,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                 ((TextView) layout.findViewById(
                         R.id.tile_status_wireless_clients_wireless_clients_num))
                         .setText(String.valueOf(nbWirelessClients));
+                ((TextView) layout.findViewById(
+                        R.id.tile_status_wireless_clients_blocked_clients_num))
+                        .setText(String.valueOf(nbBlockedClients));
 
                 //Filters
                 Set<Device> newDevices = new HideInactiveClientsFilterVisitorImpl(

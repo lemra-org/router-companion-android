@@ -678,4 +678,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="port_number">Port Number</string>
     <string name="service_name">Service Name</string>
     <string name="select_transport_protocol">Select Transport Protocol</string>
+    <string name="num_blocked_clients"># Blocked Clients</string>
 </resources>

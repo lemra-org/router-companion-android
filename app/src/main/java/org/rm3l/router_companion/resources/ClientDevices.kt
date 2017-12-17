@@ -30,6 +30,7 @@ class ClientDevices {
     private var exception: Exception? = null
 
     private var activeClientsNum: Int = 0
+    private var blockedClientsNum: Int = 0
     private var activeDhcpLeasesNum: Int = 0
     var activeIPConnections: Int = 0
 
@@ -39,6 +40,15 @@ class ClientDevices {
 
     fun setActiveClientsNum(activeClientsNum: Int): ClientDevices {
         this.activeClientsNum = activeClientsNum
+        return this
+    }
+
+    fun getBlockedClientsNum(): Int {
+        return blockedClientsNum
+    }
+
+    fun setBlockedClientsNum(blockedClientsNum: Int): ClientDevices {
+        this.blockedClientsNum = blockedClientsNum
         return this
     }
 
