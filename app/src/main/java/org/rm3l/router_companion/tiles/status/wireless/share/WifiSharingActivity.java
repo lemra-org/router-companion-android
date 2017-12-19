@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -27,6 +28,7 @@ import be.brunoparmentier.wifikeyshare.utils.NfcUtils;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Strings;
+import java.util.List;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
@@ -320,8 +322,11 @@ public class WifiSharingActivity extends AppCompatActivity {
         if (!WEP.name().equalsIgnoreCase(mWifiEncType)) { // writing WEP config is not supported
             // Update NFC write button and status text
             final FragmentManager fm = getSupportFragmentManager();
-            WifiSharingNfcFragment nfcFragment = (WifiSharingNfcFragment) fm.getFragments().get(1);
-            nfcFragment.setNfcStateEnabled(false);
+            final List<Fragment> fragments = fm.getFragments();
+            if (fragments.size() >= 2) {
+                WifiSharingNfcFragment nfcFragment = (WifiSharingNfcFragment) fragments.get(1);
+                nfcFragment.setNfcStateEnabled(false);
+            }
         }
     }
 
@@ -329,8 +334,11 @@ public class WifiSharingActivity extends AppCompatActivity {
         if (!WEP.name().equalsIgnoreCase(mWifiEncType)) { // writing WEP config is not supported
             // Update NFC write button and status text
             final FragmentManager fm = getSupportFragmentManager();
-            WifiSharingNfcFragment nfcFragment = (WifiSharingNfcFragment) fm.getFragments().get(1);
-            nfcFragment.setNfcStateEnabled(true);
+            final List<Fragment> fragments = fm.getFragments();
+            if (fragments.size() >= 2) {
+                WifiSharingNfcFragment nfcFragment = (WifiSharingNfcFragment) fragments.get(1);
+                nfcFragment.setNfcStateEnabled(true);
+            }
         }
     }
 
