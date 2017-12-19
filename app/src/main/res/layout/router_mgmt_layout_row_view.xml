@@ -34,6 +34,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_marginRight="7dp"
     android:clickable="true"
     android:focusable="true"
+    card_view:cardElevation="6dp"
+    card_view:cardMaxElevation="6dp"
     android:foreground="?android:attr/selectableItemBackground">
     <!--card_view:cardPreventCornerOverlap="true"-->
 

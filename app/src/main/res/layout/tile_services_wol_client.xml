@@ -31,7 +31,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     card_view:contentPaddingBottom="@dimen/activity_vertical_margin"
     card_view:contentPaddingLeft="10dp"
     card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin"
-    card_view:contentPaddingTop="@dimen/activity_vertical_margin">
+    card_view:contentPaddingTop="@dimen/activity_vertical_margin"
+    card_view:cardElevation="6dp"
+    card_view:cardMaxElevation="6dp"
+    android:focusable="true">
 
     <RelativeLayout
         android:layout_width="wrap_content"
