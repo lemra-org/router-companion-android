@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
@@ -30,12 +31,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
@@ -60,9 +64,11 @@ import org.rm3l.router_companion.common.utils.ViewIDUtils;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.multithreading.MultiThreadingManager;
 import org.rm3l.router_companion.resources.Device;
+import org.rm3l.router_companion.resources.Device.WANAccessState;
 import org.rm3l.router_companion.resources.MACOUIVendor;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.status.bandwidth.BandwidthMonitoringTile;
+import org.rm3l.router_companion.tiles.status.wireless.WirelessClientsTile.DeviceOnMenuItemClickListener;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.Utils;
@@ -91,6 +97,16 @@ public class WirelessClientsRecyclerViewAdapter extends
         final TextView rssiTitleView;
 
         final ImageButton tileMenu;
+
+        private final ImageButton actionsSetAliasButton;
+
+        private final SwitchCompat actionsToggleInternetAccessButton;
+
+        private final View actionsView;
+
+        private final ImageButton actionsViewIpConnectionsButton;
+
+        private final ImageButton actionsWakeOnLanButton;
 
         private final LinearLayout detailsPlaceHolderView;
 
@@ -170,6 +186,16 @@ public class WirelessClientsRecyclerViewAdapter extends
             super(itemView);
             this.cardView = (CardView) itemView;
             this.context = context;
+
+            this.actionsView = cardView.findViewById(R.id.tile_status_wireless_client_card_view_actions_background);
+            this.actionsSetAliasButton = this.actionsView
+                    .findViewById(R.id.tile_status_wireless_client_card_view_actions_set_alias);
+            this.actionsWakeOnLanButton = this.actionsView
+                    .findViewById(R.id.tile_status_wireless_client_card_view_actions_wake_on_lan);
+            this.actionsViewIpConnectionsButton = this.actionsView
+                    .findViewById(R.id.tile_status_wireless_client_card_view_actions_view_ip_conn);
+            this.actionsToggleInternetAccessButton = this.actionsView
+                    .findViewById(R.id.tile_status_wireless_client_card_view_actions_toggle_internet_access);
 
             this.legendView =
                     cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_legend);
@@ -275,7 +301,8 @@ public class WirelessClientsRecyclerViewAdapter extends
 
             this.expandCollapseButton = cardView.findViewById(R.id.expand_collapse);
 
-            this.detailsPlaceHolderView = cardView.findViewById(R.id.tile_status_wireless_client_device_details_placeholder);
+            this.detailsPlaceHolderView = cardView
+                    .findViewById(R.id.tile_status_wireless_client_device_details_placeholder);
 
             wanBlockedDevice = cardView.findViewById(R.id.tile_status_wireless_client_blocked);
         }
@@ -311,6 +338,68 @@ public class WirelessClientsRecyclerViewAdapter extends
     @Override
     public void onBindViewHolder(final WirelessClientsRecyclerViewHolder holder, final int position) {
         final Device device = devices.get(position);
+
+        holder.actionsToggleInternetAccessButton.setOnCheckedChangeListener(null);
+
+        final WANAccessState deviceWanAccessState = device.getWanAccessState();
+        switch (deviceWanAccessState) {
+            case WAN_ACCESS_ENABLED:
+                ViewUtils.setBackgroundColorFromRouterFirmware(holder.actionsView, router);
+                holder.actionsToggleInternetAccessButton.setEnabled(true);
+                holder.actionsToggleInternetAccessButton.setChecked(true);
+                break;
+            case WAN_ACCESS_DISABLED:
+                holder.actionsView
+                        .setBackgroundColor(ContextCompat.getColor(holder.context, R.color.transparent_semi));
+                holder.actionsToggleInternetAccessButton.setEnabled(true);
+                holder.actionsToggleInternetAccessButton.setChecked(false);
+                break;
+            case WAN_ACCESS_UNKNOWN:
+            default:
+                holder.actionsView
+                        .setBackgroundColor(ContextCompat.getColor(holder.context, R.color.transparent_semi));
+                holder.actionsToggleInternetAccessButton.setEnabled(false);
+                break;
+        }
+
+        final DeviceOnMenuItemClickListener deviceOnMenuItemClickListener
+                = clientsTile.new DeviceOnMenuItemClickListener(holder.deviceNameView,
+                holder.deviceAliasView, device).setToggleWanAccessSwitchCompat(holder.actionsToggleInternetAccessButton);
+
+        holder.actionsSetAliasButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                deviceOnMenuItemClickListener
+                        .onMenuItemClick(R.id.tile_status_wireless_client_rename, null);
+            }
+        });
+        holder.actionsWakeOnLanButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                deviceOnMenuItemClickListener
+                        .onMenuItemClick(R.id.tile_status_wireless_client_wol, null);
+            }
+        });
+        holder.actionsViewIpConnectionsButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                if (device.getActiveIpConnectionsCount() <= 0) {
+                    Toast.makeText(holder.context, "No active IP Connections found for device: " +
+                                    device.getAliasOrSystemName() + " (" + device.getMacAddress() + ") !",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    deviceOnMenuItemClickListener
+                            .onMenuItemClick(R.id.tile_status_wireless_client_view_active_ip_connections, null);
+                }
+            }
+        });
+        holder.actionsToggleInternetAccessButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+                deviceOnMenuItemClickListener
+                        .onMenuItemClick(R.id.tile_status_wireless_client_wan_access_state, !isChecked);
+            }
+        });
 
         final SharedPreferences routerPreferences = router.getPreferences(holder.context);
         Set<String> expandedClients = routerPreferences.getStringSet(EXPANDED_CLIENTS_PREF_KEY, null);
@@ -458,42 +547,15 @@ public class WirelessClientsRecyclerViewAdapter extends
 
                     @Override
                     public void onClick(View widget) {
-                        final Intent intent =
-                                new Intent(holder.context, ActiveIPConnectionsDetailActivity.class);
-                        intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT,
-                                deviceActiveIpConnections.toArray(new String[deviceActiveIpConnections.size()]));
-                        intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, router.getUuid());
-                        intent.putExtra(ActiveIPConnectionsDetailActivity.ROUTER_REMOTE_IP,
-                                router.getRemoteIpAddress());
-                        intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST,
-                                "'" + name + "' (" + macAddress + " - " + device.getIpAddress() + ")");
-                        intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE,
-                                new Date().toString());
-                        intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER,
-                                device.getName());
-                        intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST_IP,
-                                device.getIpAddress());
-
-                        //noinspection ConstantConditions
-                        final AlertDialog alertDialog =
-                                Utils.buildAlertDialog(holder.context, null, "Loading...", false, false);
-                        alertDialog.show();
-                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(
-                                Gravity.CENTER_HORIZONTAL);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                holder.context.startActivity(intent);
-                                alertDialog.cancel();
-                            }
-                        }, 1000);
+                        deviceOnMenuItemClickListener
+                                .onMenuItemClick(R.id.tile_status_wireless_client_view_active_ip_connections, null);
                     }
                 };
                 spans.setSpan(clickSpan, 0, spans.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
 
-        final Device.WANAccessState wanAccessState = device.getWanAccessState();
+        final Device.WANAccessState wanAccessState = deviceWanAccessState;
         final boolean isDeviceWanAccessEnabled =
                 (wanAccessState == Device.WANAccessState.WAN_ACCESS_ENABLED);
         if (isDeviceWanAccessEnabled) {
@@ -851,9 +913,7 @@ public class WirelessClientsRecyclerViewAdapter extends
             @Override
             public void onClick(View v) {
                 final PopupMenu popup = new PopupMenu(holder.context, v);
-                popup.setOnMenuItemClickListener(
-                        clientsTile.new DeviceOnMenuItemClickListener(holder.deviceNameView,
-                                holder.deviceAliasView, device));
+                popup.setOnMenuItemClickListener(deviceOnMenuItemClickListener);
                 final MenuInflater inflater = popup.getMenuInflater();
 
                 final Menu menu = popup.getMenu();
@@ -886,46 +946,7 @@ public class WirelessClientsRecyclerViewAdapter extends
                                     + " ("
                                     + deviceActiveIpConnections.size()
                                     + ")");
-                    activeIpConnectionsMenuItem.setOnMenuItemClickListener(
-                            new MenuItem.OnMenuItemClickListener() {
-                                @Override
-                                public boolean onMenuItemClick(MenuItem item) {
-                                    final Intent intent =
-                                            new Intent(holder.context, ActiveIPConnectionsDetailActivity.class);
-                                    intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT,
-                                            deviceActiveIpConnections.toArray(
-                                                    new String[deviceActiveIpConnections.size()]));
-                                    intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, router.getUuid());
-                                    intent.putExtra(ActiveIPConnectionsDetailActivity.ROUTER_REMOTE_IP,
-                                            router.getRemoteIpAddress());
-                                    intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST,
-                                            "'" + name + "' (" + macAddress + " - " + device.getIpAddress() + ")");
-                                    intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST_IP,
-                                            device.getIpAddress());
-                                    intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER,
-                                            device.getName());
-                                    intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE,
-                                            new Date().toString());
-
-                                    //noinspection ConstantConditions
-                                    final AlertDialog alertDialog =
-                                            Utils.buildAlertDialog(holder.context, null, "Loading...", false, false);
-                                    alertDialog.show();
-                                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(
-                                            Gravity.CENTER_HORIZONTAL);
-                                    new Handler().postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            holder.context.startActivity(intent);
-                                            alertDialog.cancel();
-                                        }
-                                    }, 1000);
-
-                                    return true;
-                                }
-                            });
                 }
-
                 popup.show();
             }
         });
@@ -938,7 +959,7 @@ public class WirelessClientsRecyclerViewAdapter extends
                 .inflate(R.layout.tile_status_wireless_client, parent, false);
 
         //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
-        cardView.setPreventCornerOverlap(true);
+//        cardView.setPreventCornerOverlap(true);
         //Add padding in API v21+ as well to have the same measurements with previous versions.
         cardView.setUseCompatPadding(true);
 

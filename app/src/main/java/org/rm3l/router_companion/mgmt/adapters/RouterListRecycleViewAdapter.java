@@ -103,6 +103,7 @@ import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
+import org.rm3l.router_companion.utils.kotlin.ViewUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 
 public class RouterListRecycleViewAdapter
@@ -509,13 +510,7 @@ public class RouterListRecycleViewAdapter
 //            });
 //        }
 
-        final Integer primaryColor = ColorUtils.Companion.getPrimaryColor(routerAt.getRouterFirmware());
-        if (primaryColor != null) {
-            holder.routerFirmwareColorView.setBackgroundColor(ContextCompat.getColor(holder.mContext, primaryColor));
-        } else {
-            //TODO Fix colors
-            holder.routerFirmwareColorView.setBackgroundColor(ContextCompat.getColor(holder.mContext, R.color.transparent_semi));
-        }
+        ViewUtils.setBackgroundColorFromRouterFirmware(holder.routerFirmwareColorView, routerAt);
 
         holder.routerUuid.setText(routerAt.getUuid());
         final String routerAtName = routerAt.getName();

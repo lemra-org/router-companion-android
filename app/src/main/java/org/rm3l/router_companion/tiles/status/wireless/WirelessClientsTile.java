@@ -52,6 +52,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.SwitchCompat;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.TextWatcher;
@@ -63,6 +64,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -105,6 +108,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -179,6 +183,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
         @NonNull
         private final TextView deviceNameView;
 
+        @Nullable private SwitchCompat toggleWanAccessSwitchCompat;
+
         DeviceOnMenuItemClickListener(@NonNull TextView deviceNameView,
                 @NonNull final TextView deviceAliasView, @NonNull final Device device) {
             this.deviceNameView = deviceNameView;
@@ -186,10 +192,15 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
             this.device = device;
         }
 
+        public DeviceOnMenuItemClickListener setToggleWanAccessSwitchCompat(
+                @Nullable final SwitchCompat toggleWanAccessSwitchCompat) {
+            this.toggleWanAccessSwitchCompat = toggleWanAccessSwitchCompat;
+            return this;
+        }
+
         @Override
         public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
                 throws Exception {
-
         }
 
         @Override
@@ -253,19 +264,23 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
             }
         }
 
-        @Override
-        public boolean onMenuItemClick(MenuItem item) {
+        public boolean onMenuItemClick(final int itemId, final Boolean disableWanAccess) {
             final String macAddress = device.getMacAddress();
             final String deviceName = nullToEmpty(device.getName());
 
-            switch (item.getItemId()) {
+            switch (itemId) {
                 case R.id.tile_status_wireless_client_wan_access_state:
                     if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                         //Download the full version to unlock this version
                         Utils.displayUpgradeMessage(mParentFragmentActivity, "Enable/Disable Internet Access");
                         return true;
                     }
-                    final boolean disableWanAccess = item.isChecked();
+                    if (disableWanAccess == null) {
+                        throw new IllegalArgumentException("disableWanAccess is NULL");
+                    }
+                    if (toggleWanAccessSwitchCompat != null) {
+                        toggleWanAccessSwitchCompat.setEnabled(false);
+                    }
                     new AlertDialog.Builder(mParentFragmentActivity).setIcon(
                             R.drawable.ic_action_alert_warning)
                             .setTitle(String.format("%s WAN Access for '%s' (%s)",
@@ -284,7 +299,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                             : String.format(
                                                     "'%s' (%s) will now be able to get access to the outside.",
                                                     deviceName, macAddress)))
-                            .setCancelable(true)
+                            .setCancelable(false)
                             .setPositiveButton(
                                     String.format("%s WAN Access!", disableWanAccess ? "Disable" : "Enable"),
                                     new DialogInterface.OnClickListener() {
@@ -315,7 +330,17 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    //Cancelled - nothing more to do!
+                                    if (toggleWanAccessSwitchCompat != null) {
+                                        toggleWanAccessSwitchCompat.setEnabled(true);
+                                        toggleWanAccessSwitchCompat.setOnCheckedChangeListener(null);
+                                        toggleWanAccessSwitchCompat.setChecked(false);
+                                        toggleWanAccessSwitchCompat.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                                            @Override
+                                            public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+                                                onMenuItemClick(R.id.tile_status_wireless_client_wan_access_state, !isChecked);
+                                            }
+                                        });
+                                    }
                                 }
                             })
                             .create()
@@ -425,10 +450,52 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                 .show();
                     }
                     return true;
+                case R.id.tile_status_wireless_client_view_active_ip_connections:
+                    final Set<String> deviceActiveIpConnections = device.getActiveIpConnections();
+                    final String name = device.getName();
+                    final Intent intent =
+                            new Intent(mParentFragmentActivity, ActiveIPConnectionsDetailActivity.class);
+                    intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT,
+                            deviceActiveIpConnections == null ? new String[0] :
+                                    deviceActiveIpConnections.toArray(
+                                            new String[deviceActiveIpConnections.size()]));
+                    intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
+                    intent.putExtra(ActiveIPConnectionsDetailActivity.ROUTER_REMOTE_IP,
+                            mRouter.getRemoteIpAddress());
+                    intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST,
+                            "'" + name + "' (" + macAddress + " - " + device.getIpAddress() + ")");
+                    intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST_IP,
+                            device.getIpAddress());
+                    intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER,
+                            device.getName());
+                    intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE,
+                            new Date().toString());
+
+                    //noinspection ConstantConditions
+                    final AlertDialog alertDialog =
+                            Utils.buildAlertDialog(mParentFragmentActivity, null, "Loading...", false, false);
+                    alertDialog.show();
+                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(
+                            Gravity.CENTER_HORIZONTAL);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mParentFragmentActivity.startActivity(intent);
+                            alertDialog.cancel();
+                        }
+                    }, 1000);
+                    return true;
                 default:
                     break;
             }
             return false;
+        }
+
+        @Override
+        public boolean onMenuItemClick(@NonNull final MenuItem item) {
+            final int itemId = item.getItemId();
+            return this.onMenuItemClick(itemId,
+                    (itemId == R.id.tile_status_wireless_client_wan_access_state) ? item.isChecked() : null);
         }
 
         @Override
@@ -437,6 +504,18 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
             Utils.displayMessage(mParentFragmentActivity,
                     String.format("Error on action '%s': %s", routerAction.toString(),
                             Utils.handleException(exception).first), Style.ALERT);
+            if (toggleWanAccessSwitchCompat != null &&
+                    (routerAction == RouterAction.ENABLE_WAN_ACCESS || routerAction == RouterAction.DISABLE_WAN_ACCESS)) {
+                toggleWanAccessSwitchCompat.setEnabled(true);
+                toggleWanAccessSwitchCompat.setOnCheckedChangeListener(null);
+                toggleWanAccessSwitchCompat.setChecked(routerAction == RouterAction.DISABLE_WAN_ACCESS);
+                toggleWanAccessSwitchCompat.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+                        onMenuItemClick(R.id.tile_status_wireless_client_wan_access_state, !isChecked);
+                    }
+                });
+            }
         }
 
         @Override
@@ -445,6 +524,10 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
             Utils.displayMessage(mParentFragmentActivity,
                     String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(),
                             router.getRemoteIpAddress()), Style.CONFIRM);
+            if (toggleWanAccessSwitchCompat != null &&
+                    (routerAction == RouterAction.ENABLE_WAN_ACCESS || routerAction == RouterAction.DISABLE_WAN_ACCESS)) {
+                toggleWanAccessSwitchCompat.setEnabled(true);
+            }
         }
 
         @Override

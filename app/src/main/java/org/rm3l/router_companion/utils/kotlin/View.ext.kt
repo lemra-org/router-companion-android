@@ -5,6 +5,7 @@ package org.rm3l.router_companion.utils.kotlin
 import android.animation.Animator
 import android.animation.Animator.AnimatorListener
 import android.animation.ValueAnimator
+import android.support.v4.content.ContextCompat
 import android.text.Spannable
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
@@ -13,6 +14,8 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import org.rm3l.ddwrt.R
+import org.rm3l.router_companion.resources.conn.Router
+import org.rm3l.router_companion.resources.conn.Router.RouterFirmware
 import org.rm3l.router_companion.utils.ColorUtils
 import org.rm3l.router_companion.utils.ViewGroupUtils
 
@@ -36,6 +39,19 @@ fun View.setHeight(height: Int) {
     val params = layoutParams
     params.height = height
     layoutParams = params
+}
+
+fun View.setBackgroundColorFromRouterFirmware(router: Router?) =
+        this.setBackgroundColorFromRouterFirmware(router?.routerFirmware)
+
+fun View.setBackgroundColorFromRouterFirmware(routerFirmware: RouterFirmware?) {
+    val primaryColor = ColorUtils.getPrimaryColor(routerFirmware)
+    if (primaryColor != null) {
+        this.setBackgroundColor(ContextCompat.getColor(this.context, primaryColor))
+    } else {
+        //TODO Fix colors
+        this.setBackgroundColor(ContextCompat.getColor(this.context, R.color.transparent_semi))
+    }
 }
 
 fun ViewGroup.expand(expandCollapseButton: ImageButton? = null) {
