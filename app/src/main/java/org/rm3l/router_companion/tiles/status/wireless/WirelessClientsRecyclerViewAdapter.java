@@ -362,9 +362,10 @@ public class WirelessClientsRecyclerViewAdapter extends
                 break;
         }
 
-        final DeviceOnMenuItemClickListener deviceOnMenuItemClickListener
-                = clientsTile.new DeviceOnMenuItemClickListener(holder.deviceNameView,
-                holder.deviceAliasView, device).setToggleWanAccessSwitchCompat(holder.actionsToggleInternetAccessButton);
+        final DeviceOnMenuItemClickListener deviceOnMenuItemClickListener =
+                clientsTile.new DeviceOnMenuItemClickListener(holder.deviceNameView, holder.deviceAliasView, device)
+                        .setToggleWanAccessSwitchCompat(holder.actionsToggleInternetAccessButton)
+                        .setActionsView(holder.actionsView);
 
         holder.actionsSetAliasButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -397,7 +398,7 @@ public class WirelessClientsRecyclerViewAdapter extends
             @Override
             public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
                 deviceOnMenuItemClickListener
-                        .onMenuItemClick(R.id.tile_status_wireless_client_wan_access_state, !isChecked);
+                        .onMenuItemClick(R.id.tile_status_wireless_client_wan_access_state, isChecked);
             }
         });
 

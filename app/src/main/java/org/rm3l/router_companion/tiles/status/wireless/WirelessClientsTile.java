@@ -33,6 +33,7 @@ import static org.rm3l.router_companion.main.DDWRTMainActivity.ROUTER_ACTION;
 import static org.rm3l.router_companion.tiles.status.bandwidth.BandwidthMonitoringTile.BandwidthMonitoringIfaceData;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -108,7 +109,6 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -133,8 +133,6 @@ import org.rm3l.router_companion.api.proxy.RequestMethod;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
-import org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector;
-import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.multithreading.MultiThreadingManager;
 import org.rm3l.router_companion.resources.ClientDevices;
@@ -161,6 +159,7 @@ import org.rm3l.router_companion.utils.NetworkUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.kotlin.JsonElementUtils;
+import org.rm3l.router_companion.utils.kotlin.ViewUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
@@ -185,11 +184,16 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
 
         @Nullable private SwitchCompat toggleWanAccessSwitchCompat;
 
+        @Nullable private View actionsView;
+
+        @Nullable final TextView blockedClientsView;
+
         DeviceOnMenuItemClickListener(@NonNull TextView deviceNameView,
                 @NonNull final TextView deviceAliasView, @NonNull final Device device) {
             this.deviceNameView = deviceNameView;
             this.deviceAliasView = deviceAliasView;
             this.device = device;
+            this.blockedClientsView = layout.findViewById(R.id.tile_status_wireless_clients_blocked_clients_num);
         }
 
         public DeviceOnMenuItemClickListener setToggleWanAccessSwitchCompat(
@@ -198,26 +202,65 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
             return this;
         }
 
-        @Override
-        public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                throws Exception {
+        public DeviceOnMenuItemClickListener setActionsView(@Nullable final View actionsView) {
+            this.actionsView = actionsView;
+            return this;
         }
 
         @Override
-        public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+        public void onDismissEventActionClick(int event, @Nullable Bundle token)
                 throws Exception {
+            handleActionCancellationOrFailureEvent(token);
+        }
 
+        private void handleActionCancellationOrFailureEvent(@NonNull final RouterAction routerAction) {
+            switch (routerAction) {
+                case ENABLE_WAN_ACCESS:
+                case DISABLE_WAN_ACCESS:
+                    if (toggleWanAccessSwitchCompat != null) {
+                        toggleWanAccessSwitchCompat.setEnabled(true);
+                        toggleWanAccessSwitchCompat.setOnCheckedChangeListener(null);
+                        toggleWanAccessSwitchCompat.setChecked(!toggleWanAccessSwitchCompat.isChecked());
+                        toggleWanAccessSwitchCompat.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+                                onMenuItemClick(R.id.tile_status_wireless_client_wan_access_state, isChecked);
+                            }
+                        });
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void handleActionCancellationOrFailureEvent(final @Nullable Bundle token) {
+            try {
+                final String routerActionStr = token != null ? token.getString(ROUTER_ACTION) : null;
+                Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerActionStr + "]");
+                if (isNullOrEmpty(routerActionStr)) {
+                    return;
+                }
+                this.handleActionCancellationOrFailureEvent(RouterAction.valueOf(routerActionStr));
+            } catch (IllegalArgumentException | NullPointerException e) {
+                e.printStackTrace();
+                Utils.reportException(null, e);
+            }
         }
 
         @Override
-        public void onDismissEventManual(int event, @Nullable Bundle bundle)
-                throws Exception {
+        public void onDismissEventConsecutive(int event, @Nullable Bundle token)
+                throws Exception {}
 
+        @Override
+        public void onDismissEventManual(int event, @Nullable Bundle token)
+                throws Exception {
+            handleActionCancellationOrFailureEvent(token);
         }
 
         @Override
-        public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
-
+        public void onDismissEventSwipe(int event, @Nullable Bundle token) throws Exception {
+            handleActionCancellationOrFailureEvent(token);
         }
 
         @Override
@@ -264,7 +307,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
             }
         }
 
-        public boolean onMenuItemClick(final int itemId, final Boolean disableWanAccess) {
+        public boolean onMenuItemClick(final int itemId, final Boolean newWanAccessSwitchState) {
             final String macAddress = device.getMacAddress();
             final String deviceName = nullToEmpty(device.getName());
 
@@ -275,23 +318,24 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                         Utils.displayUpgradeMessage(mParentFragmentActivity, "Enable/Disable Internet Access");
                         return true;
                     }
-                    if (disableWanAccess == null) {
-                        throw new IllegalArgumentException("disableWanAccess is NULL");
+                    if (newWanAccessSwitchState == null) {
+                        throw new IllegalArgumentException("newWanAccessSwitchState is NULL");
                     }
                     if (toggleWanAccessSwitchCompat != null) {
                         toggleWanAccessSwitchCompat.setEnabled(false);
                     }
                     new AlertDialog.Builder(mParentFragmentActivity).setIcon(
                             R.drawable.ic_action_alert_warning)
-                            .setTitle(String.format("%s WAN Access for '%s' (%s)",
-                                    disableWanAccess ? "Disable" : "Enable", deviceName, macAddress))
+                            .setTitle(String.format("%sable WAN Access for '%s' (%s)",
+                                    newWanAccessSwitchState ? "En" : "Dis", deviceName, macAddress))
                             .setMessage(String.format(
-                                    "This allows you to %s WAN (Internet) Access for a particular device.\n"
+                                    "This allows you to %sable WAN (Internet) Access for a particular device.\n"
                                             + "%s\n\n"
                                             + "Note that:\n"
                                             + "- This leverages MAC Addresses, which may be relatively easy to spoof.\n"
                                             + "- This setting will get reverted the next time the router reboots. We are working on making this persistent.",
-                                    disableWanAccess ? "disable" : "enable", disableWanAccess ? String.format(
+                                    newWanAccessSwitchState ? "en" : "dis",
+                                    !newWanAccessSwitchState ? String.format(
                                             "'%s' (%s) will still be able to connect to the router local networks, "
                                                     + "but will not be allowed to connect to the outside.",
                                             deviceName,
@@ -301,30 +345,23 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                                     deviceName, macAddress)))
                             .setCancelable(false)
                             .setPositiveButton(
-                                    String.format("%s WAN Access!", disableWanAccess ? "Disable" : "Enable"),
+                                    String.format("%s WAN Access!", !newWanAccessSwitchState ? "Disable" : "Enable"),
                                     new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(final DialogInterface dialogInterface, final int i) {
                                             final Bundle token = new Bundle();
                                             token.putString(ROUTER_ACTION,
-                                                    disableWanAccess ? RouterAction.DISABLE_WAN_ACCESS.name()
+                                                    !newWanAccessSwitchState ? RouterAction.DISABLE_WAN_ACCESS.name()
                                                             : RouterAction.ENABLE_WAN_ACCESS.name());
 
                                             SnackbarUtils.buildSnackbar(mParentFragmentActivity,
                                                     String.format("WAN Access will be %s for '%s' (%s)",
-                                                            disableWanAccess ? "disabled" : "enabled", deviceName,
+                                                            !newWanAccessSwitchState ? "disabled" : "enabled", deviceName,
                                                             macAddress),
                                                     "CANCEL",
                                                     Snackbar.LENGTH_LONG,
                                                     DeviceOnMenuItemClickListener.this,
                                                     token, true);
-
-                                            //new UndoBarController.UndoBar(mParentFragmentActivity).message(
-                                            //    String.format("WAN Access will be %s for '%s' (%s)",
-                                            //        disableWanAccess ? "disabled" : "enabled", deviceName, macAddress))
-                                            //    .listener(DeviceOnMenuItemClickListener.this)
-                                            //    .token(token)
-                                            //    .show();
                                         }
                                     })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -333,11 +370,11 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                     if (toggleWanAccessSwitchCompat != null) {
                                         toggleWanAccessSwitchCompat.setEnabled(true);
                                         toggleWanAccessSwitchCompat.setOnCheckedChangeListener(null);
-                                        toggleWanAccessSwitchCompat.setChecked(false);
+                                        toggleWanAccessSwitchCompat.setChecked(!newWanAccessSwitchState);
                                         toggleWanAccessSwitchCompat.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                                             @Override
                                             public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-                                                onMenuItemClick(R.id.tile_status_wireless_client_wan_access_state, !isChecked);
+                                                onMenuItemClick(R.id.tile_status_wireless_client_wan_access_state, isChecked);
                                             }
                                         });
                                     }
@@ -504,20 +541,10 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
             Utils.displayMessage(mParentFragmentActivity,
                     String.format("Error on action '%s': %s", routerAction.toString(),
                             Utils.handleException(exception).first), Style.ALERT);
-            if (toggleWanAccessSwitchCompat != null &&
-                    (routerAction == RouterAction.ENABLE_WAN_ACCESS || routerAction == RouterAction.DISABLE_WAN_ACCESS)) {
-                toggleWanAccessSwitchCompat.setEnabled(true);
-                toggleWanAccessSwitchCompat.setOnCheckedChangeListener(null);
-                toggleWanAccessSwitchCompat.setChecked(routerAction == RouterAction.DISABLE_WAN_ACCESS);
-                toggleWanAccessSwitchCompat.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-                        onMenuItemClick(R.id.tile_status_wireless_client_wan_access_state, !isChecked);
-                    }
-                });
-            }
+            handleActionCancellationOrFailureEvent(routerAction);
         }
 
+        @SuppressLint("DefaultLocale")
         @Override
         public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router,
                 Object returnData) {
@@ -527,6 +554,40 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
             if (toggleWanAccessSwitchCompat != null &&
                     (routerAction == RouterAction.ENABLE_WAN_ACCESS || routerAction == RouterAction.DISABLE_WAN_ACCESS)) {
                 toggleWanAccessSwitchCompat.setEnabled(true);
+                switch (routerAction) {
+                    case ENABLE_WAN_ACCESS:
+                        if (actionsView != null) {
+                            ViewUtils.setBackgroundColorFromRouterFirmware(actionsView, router);
+                        }
+                        break;
+                    case DISABLE_WAN_ACCESS:
+                        if (actionsView != null) {
+                            actionsView
+                                    .setBackgroundColor(ContextCompat
+                                            .getColor(mParentFragmentActivity, R.color.transparent_semi));
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                //Update count of blocked clients
+                if (blockedClientsView != null) {
+                    final String currentNumOfBlockedClientsStr = blockedClientsView.getText().toString();
+                    Long currentNumOfBlockedClients = null;
+                    try {
+                        currentNumOfBlockedClients = Long.parseLong(currentNumOfBlockedClientsStr);
+                    } catch (final Exception e) {
+                        //No worries
+                        Crashlytics.logException(e);
+                    }
+                    if (currentNumOfBlockedClients == null) {
+                        currentNumOfBlockedClients = 0L;
+                    }
+                    currentNumOfBlockedClients = Math.max(0L,
+                            (routerAction == RouterAction.ENABLE_WAN_ACCESS) ?
+                                    currentNumOfBlockedClients-1 : currentNumOfBlockedClients+1);
+                    blockedClientsView.setText(String.format("%d", currentNumOfBlockedClients));
+                }
             }
         }
 
