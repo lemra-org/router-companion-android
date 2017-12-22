@@ -45,6 +45,20 @@ SOFTWARE.
     <string name="aboutLibraries_description_special1_name" translatable="false">What\'s new?</string>
     <string name="aboutLibraries_description_special1_text" translatable="false">
   <![CDATA[
+<h4>2017-12-22: Version 10.1.2-0</h4>
+<h6>Enhancements and New features</h6>
+<ul>
+  <li>Following your feedback, we are redesigning the Clients list, so action buttons can be much easier to manipulate</li>
+  <li>Mapped WAN IP and LAN IP addresses to router name in Active IP Connections</li>
+  <li>Added Number of Blocked Clients in Connected Hosts tile</li>
+  <li>More cosmetic updates to overall design</li>
+</ul>
+<h6>Bug, reliability &amp; performance fixes</h6>
+<ul>
+  <li>Fix potential bug preventing Active IP Connections and Wifi Sharing from opening. Also fixed percentage computation.</li>
+</ul>
+--------------<br/>
+
 <h4>2017-12-10: Version 10.1.1-0</h4>
 <h6>Enhancements and New features</h6>
 <ul>
