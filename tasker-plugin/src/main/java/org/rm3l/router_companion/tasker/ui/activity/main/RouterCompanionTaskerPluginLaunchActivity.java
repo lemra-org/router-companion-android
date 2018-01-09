@@ -559,8 +559,9 @@ public class RouterCompanionTaskerPluginLaunchActivity extends AppCompatActivity
                 break;
 
             case R.id.ddwrt_companion_tasker_feedback:
-                new Maoni.Builder(Constants.FILEPROVIDER_AUTHORITY).withTheme(
-                        R.style.AppThemeLight_StatusBarTransparent)
+                new Maoni.Builder(this, Constants.FILEPROVIDER_AUTHORITY)
+                        .withSharedPreferences(Utils.getDefaultSharedPreferencesName(this))
+                        .withTheme(R.style.AppThemeLight_StatusBarTransparent)
                         .withWindowTitle("Send Feedback")
                         .withExtraLayout(R.layout.activity_feedback_maoni)
                         .withHandler(new FeedbackHandler(this))

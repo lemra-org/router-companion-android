@@ -99,6 +99,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -879,9 +880,15 @@ public final class Utils {
 
     public static void openFeedbackForm(final Activity activity, final Router router) {
         final MaoniFeedbackHandler handlerForMaoni = new MaoniFeedbackHandler(activity, router);
-        new Maoni.Builder(RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY).withTheme(
+        final List<String> sharedPreferencesList = new ArrayList<>();
+        sharedPreferencesList.add(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY);
+        if (router != null) {
+            sharedPreferencesList.add(router.getPreferencesFile());
+        }
+        new Maoni.Builder(activity, RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY).withTheme(
                 ColorUtils.Companion.isThemeLight(activity) ? R.style.AppThemeLight_StatusBarTransparent
                         : R.style.AppThemeDark_StatusBarTransparent)
+                .withSharedPreferences(sharedPreferencesList.toArray(new String[sharedPreferencesList.size()]))
                 .withWindowTitle("Send Feedback")
                 .withExtraLayout(R.layout.activity_feedback_maoni)
                 .withHandler(handlerForMaoni)

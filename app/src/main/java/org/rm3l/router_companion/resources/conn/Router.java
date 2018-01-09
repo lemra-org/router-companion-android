@@ -668,7 +668,11 @@ public class Router implements Serializable {
         if (router == null || ctx == null) {
             return null;
         }
-        return ctx.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE);
+        return ctx.getSharedPreferences(router.getPreferencesFile(), Context.MODE_PRIVATE);
+    }
+
+    public String getPreferencesFile() {
+        return this.getUuid();
     }
 
     @Nullable

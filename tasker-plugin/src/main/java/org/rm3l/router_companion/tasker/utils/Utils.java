@@ -5,8 +5,10 @@ import static org.rm3l.router_companion.tasker.Constants.DDWRT_COMPANION_MIN_VER
 
 import android.app.Activity;
 import android.app.backup.BackupManager;
+import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import com.crashlytics.android.Crashlytics;
@@ -85,6 +87,11 @@ public final class Utils {
             return;
         }
         new BackupManager(ctx).dataChanged();
+    }
+
+    @NonNull
+    public static String getDefaultSharedPreferencesName(@NonNull final Context context) {
+        return context.getPackageName() + "_preferences";
     }
 
     private Utils() {

@@ -309,6 +309,9 @@ public class MaoniFeedbackHandler implements Handler {
                 if (logsUrl != null) {
                     properties.put("Logs", logsUrl);
                 }
+                if (feedback.sharedPreferences != null) {
+                    properties.putAll(feedback.sharedPreferences);
+                }
 
                 final String emailText = mEmail.getText().toString();
 
