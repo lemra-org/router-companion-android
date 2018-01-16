@@ -24,11 +24,11 @@
 
 buildscript {
     ext.android_sdk = 26
-    ext.buildTools_version = '26.0.2'
+    ext.buildTools_version = '27.0.3'
     ext.support_version = '27.0.2'
     ext.kotlin_version = '1.2.10'
-    ext.anko_version = '0.10.3'
-    ext.playServices_version = '11.6.0'
+    ext.anko_version = '0.10.4'
+    ext.playServices_version = '11.8.0'
     //Workaround to have the 'com.android.application' plugin with any version of Gradle (other than the expected one)
     //see https://github.com/gradle/gradle-script-kotlin/issues/2#issuecomment-222120296
     System.properties['com.android.build.gradle.overrideVersionCheck'] = 'true'
@@ -41,7 +41,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.0-alpha08'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         //        classpath 'com.tracepot.plugins.gradle:tracepot:1.+'
