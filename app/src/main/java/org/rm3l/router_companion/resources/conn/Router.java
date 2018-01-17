@@ -756,9 +756,17 @@ public class Router implements Serializable {
             }
         }
         try {
-            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
-                    String.format("ssh://%s@%s:%d/#%s", router.getUsernamePlain(), ipAddress, remotePort,
-                            router.getCanonicalHumanReadableName()))));
+            final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                    String.format("ssh://%s@%s:%d", router.getUsernamePlain(), ipAddress, remotePort)));
+            switch (router.getSshAuthenticationMethod()) {
+                case PASSWORD:
+                    //TODO Review intent for other SSH Clients: this is specific to Termius
+                    intent.putExtra("com.serverauditor.password", router.getPasswordPlain());
+                    break;
+            }
+            //TODO Review intent for other SSH Clients: this is specific to Termius
+            intent.putExtra("com.serverauditor.groupname", "Routers");
+            context.startActivity(intent);
         } catch (final ActivityNotFoundException anfe) {
             Toast.makeText(context, "No SSH client found! Please install one to get this feature.",
                     Toast.LENGTH_SHORT).show();
