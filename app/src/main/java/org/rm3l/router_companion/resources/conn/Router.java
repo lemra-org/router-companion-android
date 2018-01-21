@@ -738,7 +738,7 @@ public class Router implements Serializable {
             @Nullable final Context context) {
         if (router == null || context == null) {
             Crashlytics.log(Log.DEBUG, TAG, "Internal Error: either router or context are null");
-            Toast.makeText(context, "Internal Error", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Internal Error. Please try again later.", Toast.LENGTH_SHORT).show();
             return;
         }
         final Router.LocalSSIDLookup effectiveLocalSSIDLookup =
@@ -756,19 +756,34 @@ public class Router implements Serializable {
             }
         }
         try {
-            final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
-                    String.format("ssh://%s@%s:%d", router.getUsernamePlain(), ipAddress, remotePort)));
+            //No need to pass the username, as an existing session probably exists in the external SSH Client app.
+            //This works well for JuiceSSH (where user can use an existing connection).
+            //With some clients such as Termius, user will be prompted for a username
+            // (password is passed below, but no support for privkeys)
+            final Intent intent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(String.format("ssh://%s:%d", ipAddress, remotePort)));
+
+            final String creds;
             switch (router.getSshAuthenticationMethod()) {
                 case PASSWORD:
-                    //TODO Review intent for other SSH Clients: this is specific to Termius
-                    intent.putExtra("com.serverauditor.password", router.getPasswordPlain());
+                    creds = router.getPasswordPlain();
+                    break;
+                case PUBLIC_PRIVATE_KEY:
+                    creds = router.getPrivKeyPlain();
+                    break;
+                default:
+                    creds = null;
                     break;
             }
             //TODO Review intent for other SSH Clients: this is specific to Termius
+            if (creds != null) {
+                intent.putExtra("com.serverauditor.password", creds);
+            }
             intent.putExtra("com.serverauditor.groupname", "Routers");
+
             context.startActivity(intent);
         } catch (final ActivityNotFoundException anfe) {
-            Toast.makeText(context, "No SSH client found! Please install one to get this feature.",
+            Toast.makeText(context, "No SSH client found! Please install one to use this feature.",
                     Toast.LENGTH_SHORT).show();
         }
     }
