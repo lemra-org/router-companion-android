@@ -89,3 +89,7 @@ fun Activity.finishAndReload(waitMessage: String? = null, delayMillis: Long? = n
         alertDialog.cancel()
     }, delayMillis?:2_000)
 }
+
+fun Context?.getApplicationName(): CharSequence {
+    return if (this == null) "" else this.applicationInfo.loadLabel(this.packageManager)
+}
