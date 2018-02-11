@@ -123,7 +123,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                     throw IllegalStateException("Could not retrieve current firmware version")
                                 }
                                 var newReleaseDLLink: String? = mNewerRelease!!.getDirectLink()
-                                if (gooGlService != null) {
+                                if (Utils.isNonDemoRouter(router) && gooGlService != null) {
                                     try {
                                         val gooGlData = GooGlData()
                                         gooGlData.longUrl = newReleaseDLLink
@@ -286,15 +286,19 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                     "${router.routerFirmware!!.name}.$newReleaseVersion",
                                     {
                                         var newReleaseDLLink: String? = newReleaseDownloadLink
-                                        try {
-                                            val gooGlData = GooGlData()
-                                            gooGlData.longUrl = newReleaseDLLink
-                                            val response = gooGlService.shortenLongUrl(GOOGLE_API_KEY,
-                                                    gooGlData).execute()
-                                            NetworkUtils.checkResponseSuccessful(response)
-                                            newReleaseDLLink = response.body()!!.id
-                                        } catch (e: Exception) {
-                                            //Do not worry about that => fallback to the original DL link
+                                        if (Utils.isNonDemoRouter(router)) {
+                                            try {
+                                                val gooGlData = GooGlData()
+                                                gooGlData.longUrl = newReleaseDLLink
+                                                val response = gooGlService.shortenLongUrl(
+                                                    GOOGLE_API_KEY,
+                                                    gooGlData
+                                                ).execute()
+                                                NetworkUtils.checkResponseSuccessful(response)
+                                                newReleaseDLLink = response.body()!!.id
+                                            } catch (e: Exception) {
+                                                //Do not worry about that => fallback to the original DL link
+                                            }
                                         }
                                         newReleaseDLLink
                                     }
