@@ -52,10 +52,6 @@ apply plugin: 'com.github.triplet.play'
 //    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 //}
 
-tasks.withType(JavaCompile) {
-    options.compilerArgs << "-AdeepLinkDoc.output=${buildDir}/doc/deeplinks.txt"
-}
-
 android {
 
     compileOptions {
@@ -562,3 +558,10 @@ kotlin {
 
 // Add to the bottom of the file
 apply plugin: 'com.google.gms.google-services'
+
+kapt {
+    javacOptions {
+        // Generate doc for Deeplinks
+        option("-AdeepLinkDoc.output=${buildDir}/doc/deeplinks.txt")
+    }
+}
