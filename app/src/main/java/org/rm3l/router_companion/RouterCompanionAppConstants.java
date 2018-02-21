@@ -340,6 +340,9 @@ public final class RouterCompanionAppConstants {
     public static final String SERVICE_NAMES_PORT_NUMBERS_API_SERVER_PASSWORD_AUTH_TOKEN_ENCODED =
             "Basic xxx";
 
+    public static final String USER_AGENT = BuildConfig.APPLICATION_ID + " v " + BuildConfig.VERSION_NAME;
+    public static final String USER_AGENT_HTTP_HEADER = "User-Agent: " + BuildConfig.APPLICATION_ID + " v " + BuildConfig.VERSION_NAME;
+
     @NonNull
     public static File getClientsUsageDataFile(@NonNull final Context context,
             @NonNull final String routerUuid) {

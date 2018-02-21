@@ -52,8 +52,10 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files// Add this line
         classpath 'com.google.gms:google-services:3.1.2'
+        classpath 'com.uber:okbuck:0.33.0'
     }
 }
+apply plugin: 'com.uber.okbuck'
 apply plugin: 'kotlin'
 
 allprojects {
@@ -145,4 +147,16 @@ compileTestKotlin {
 
 kapt {
     useBuildCache = true
+}
+
+okbuck {
+    lint {
+        disabled = true
+    }
+    buildToolVersion = buildTools_version
+    target = "android-$android_sdk"
+    buckProjects = project.subprojects
+    annotationProcessors = [
+            "local-apt-dependency": ['com.airbnb:deeplinkdispatch-processor']
+    ]
 }

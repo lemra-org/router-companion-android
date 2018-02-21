@@ -300,7 +300,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles 'proguard-rules.pro'
             signingConfig signingConfigs.release
             zipAlignEnabled true
         }
@@ -308,7 +308,7 @@ android {
             // Disable fabric build ID generation for debug builds
             ext.enableCrashlytics = false
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles 'proguard-rules.pro'
             zipAlignEnabled true
 
             //Android-Debug-Database - not needed anymore as FB's Stetho superseedes this
@@ -376,6 +376,7 @@ dependencies {
     androidTestImplementation "com.android.support:support-annotations:$support_version"
     androidTestImplementation "com.android.support.test:runner:1.0.1"
 
+    implementation project(":libraries:parcelable")
     implementation project(':common')
 
     implementation fileTree(include: '*.jar', dir: 'libs')

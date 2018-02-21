@@ -1,6 +1,5 @@
 package org.rm3l.router_companion.api.urlshortener.goo_gl
 
-import org.rm3l.ddwrt.BuildConfig
 import org.rm3l.router_companion.api.urlshortener.goo_gl.resources.GooGlData
 import retrofit2.Call
 import retrofit2.http.Body
@@ -14,14 +13,12 @@ import retrofit2.http.Query
  */
 interface GooGlService {
 
-    @Headers("Content-Type: application/json",
-            "User-Agent: ${BuildConfig.APPLICATION_ID} v ${BuildConfig.VERSION_NAME}")
+    @Headers("Content-Type: application/json")
     @POST("url")
     fun shortenLongUrl(@Query("key") key: String,
                        @Body body: GooGlData): Call<GooGlData>
 
-    @Headers("Content-Type: application/json",
-            "User-Agent: ${BuildConfig.APPLICATION_ID} v ${BuildConfig.VERSION_NAME}")
+    @Headers("Content-Type: application/json")
     @GET("url")
     fun expandShortUrl(@Query("key") key: String,
                        @Query("shortUrl") shortUrl: String): Call<GooGlData>

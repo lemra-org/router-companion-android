@@ -74,7 +74,7 @@ public final class NetworkUtils {
 
     public static OkHttpClient getHttpClientInstance(@Nullable final Context context,
             @Nullable final Interceptor... interceptors) {
-        final OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        final OkHttpClient.Builder builder = new OkHttpClient.Builder().addInterceptor(new UserAgentInterceptor());
         if (interceptors != null) {
             for (final Interceptor interceptor : interceptors) {
                 if (interceptor == null) {
@@ -146,6 +146,18 @@ public final class NetworkUtils {
             final Request original = chain.request();
             final Request.Builder builder = original.newBuilder()
                     .header("Authorization", authToken);
+            final Request request = builder.build();
+            return chain.proceed(request);
+        }
+    }
+
+    public static class UserAgentInterceptor implements Interceptor {
+
+        @Override
+        public okhttp3.Response intercept(@NonNull final Chain chain) throws IOException {
+            final Request original = chain.request();
+            final Request.Builder builder = original.newBuilder()
+                    .header("User-Agent", BuildConfig.APPLICATION_ID + " v " + BuildConfig.VERSION_NAME);
             final Request request = builder.build();
             return chain.proceed(request);
         }
