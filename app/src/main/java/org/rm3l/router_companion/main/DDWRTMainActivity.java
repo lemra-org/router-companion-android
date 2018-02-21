@@ -1216,560 +1216,539 @@ public class DDWRTMainActivity extends AppCompatActivity
 
         final Map<String, Object> eventMap = new HashMap<>();
 
-        switch (item.getItemId()) {
+        final int itemId = item.getItemId();
+        if (itemId == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else if (itemId == R.id.close) {
+            finish();
+            return true;
+        } else if (itemId == R.id.help) {
+            CustomTabActivityHelper.openCustomTab(DDWRTMainActivity.this, null,
+                    RouterCompanionAppConstants.REMOTE_HELP_WEBSITE, mRouterUuid, null,
+                    new CustomTabActivityHelper.CustomTabFallback() {
+                        @Override
+                        public void openUri(Activity activity, Uri uri) {
+                            activity.startActivity(new Intent(DDWRTMainActivity.this, HelpActivity.class));
+                        }
+                    }, false);
+            eventMap.put("Menu Item", "Help");
+            ReportingUtils.reportEvent(ReportingUtils.EVENT_MENU_ITEM, eventMap);
+            return true;
+        } else if (itemId == R.id.changelog) {
+            CustomTabActivityHelper.openCustomTab(DDWRTMainActivity.this, null,
+                    RouterCompanionAppConstants.REMOTE_HELP_WEBSITE_CHANGELOG, mRouterUuid, null,
+                    new CustomTabActivityHelper.CustomTabFallback() {
+                        @Override
+                        public void openUri(Activity activity, Uri uri) {
+                            activity.startActivity(new Intent(DDWRTMainActivity.this, ChangelogActivity.class));
+                        }
+                    }, false);
+            eventMap.put("Menu Item", "Changelog");
+            ReportingUtils.reportEvent(ReportingUtils.EVENT_MENU_ITEM, eventMap);
+            return true;
+        } else if (itemId == R.id.action_settings) {//Open Settings activity for this item
+            final Intent ddWrtMainIntent = new Intent(this, RouterSettingsActivity.class);
+            ddWrtMainIntent.putExtra(ROUTER_SELECTED, this.mRouterUuid);
+            this.startActivityForResult(ddWrtMainIntent, ROUTER_SETTINGS_ACTIVITY_CODE);
+            return true;
+        } else if (itemId == R.id.action_take_bug_report) {
+            Utils.takeBugReport(this);
+            return true;
+        } else if (itemId == R.id.action_donate) {
+            Utils.openDonateActivity(this);
+            return true;
+        } else if (itemId == R.id.action_about) {
+            Utils.launchAboutActivity(DDWRTMainActivity.this);
+            eventMap.put("Menu Item", "About");
+            ReportingUtils.reportEvent(ReportingUtils.EVENT_MENU_ITEM, eventMap);
+            return true;
+        } else if (itemId == R.id.action_feedback) {
+            Utils.openFeedbackForm(this, mRouter);
+            //                final Intent intent = new Intent(DDWRTMainActivity.this, FeedbackActivity.class);
+            //                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
+            //                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
+            //                ViewGroupUtils.exportViewToFile(DDWRTMainActivity.this, getWindow().getDecorView(), screenshotFile);
+            //                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+            //                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
+            //                startActivity(intent);
+            ////                Utils.buildFeedbackDialog(this, true);
+            return true;
+        } else if (itemId == R.id.action_remove_ads) {
+            Utils.displayUpgradeMessageForAdsRemoval(this);
+            return true;
+        } else if (itemId == R.id.action_ddwrt_actions_open_webinterface) {
+            final ProgressDialog alertDialog =
+                    ProgressDialog.show(this, "Looking for an appropriate IP Address", "Please wait...",
+                            true);
+            MultiThreadingManager.getWebTasksExecutor().execute(new UiRelatedTask<String>() {
 
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+                private String mRealm;
 
-            case R.id.close:
-                finish();
-                return true;
+                @Override
+                protected String doWork() {
+                    try {
+                        //Give time to the ProgressDialog to show up
+                        Thread.sleep(TimeUnit.SECONDS.toMillis(3));
+                        final NVRAMInfo nvRamInfoFromRouter =
+                                SSHUtils.getNVRamInfoFromRouter(DDWRTMainActivity.this, mRouter,
+                                        getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
+                                                Context.MODE_PRIVATE),
+                                        NVRAMInfo.Companion.getLAN_IPADDR(), NVRAMInfo.Companion.getWAN_IPADDR(),
+                                        NVRAMInfo.Companion.getHTTP_LANPORT(),
+                                        NVRAMInfo.Companion.getHTTP_WANPORT(),
+                                        NVRAMInfo.Companion.getHTTP_USERNAME(),
+                                        NVRAMInfo.Companion.getHTTP_PASSWD(),
+                                        NVRAMInfo.Companion.getHTTPS_ENABLE(),
+                                        NVRAMInfo.Companion.getREMOTE_MGT_HTTPS());
 
-            case R.id.help:
-                CustomTabActivityHelper.openCustomTab(DDWRTMainActivity.this, null,
-                        RouterCompanionAppConstants.REMOTE_HELP_WEBSITE, mRouterUuid, null,
-                        new CustomTabActivityHelper.CustomTabFallback() {
-                            @Override
-                            public void openUri(Activity activity, Uri uri) {
-                                activity.startActivity(new Intent(DDWRTMainActivity.this, HelpActivity.class));
-                            }
-                        }, false);
-                eventMap.put("Menu Item", "Help");
-                ReportingUtils.reportEvent(ReportingUtils.EVENT_MENU_ITEM, eventMap);
-                return true;
-            case R.id.changelog:
-                CustomTabActivityHelper.openCustomTab(DDWRTMainActivity.this, null,
-                        RouterCompanionAppConstants.REMOTE_HELP_WEBSITE_CHANGELOG, mRouterUuid, null,
-                        new CustomTabActivityHelper.CustomTabFallback() {
-                            @Override
-                            public void openUri(Activity activity, Uri uri) {
-                                activity.startActivity(new Intent(DDWRTMainActivity.this, ChangelogActivity.class));
-                            }
-                        }, false);
-                eventMap.put("Menu Item", "Changelog");
-                ReportingUtils.reportEvent(ReportingUtils.EVENT_MENU_ITEM, eventMap);
-                return true;
-            case R.id.action_settings:
-                //Open Settings activity for this item
-                final Intent ddWrtMainIntent = new Intent(this, RouterSettingsActivity.class);
-                ddWrtMainIntent.putExtra(ROUTER_SELECTED, this.mRouterUuid);
-                this.startActivityForResult(ddWrtMainIntent, ROUTER_SETTINGS_ACTIVITY_CODE);
-                return true;
-            case R.id.action_take_bug_report:
-                Utils.takeBugReport(this);
-                return true;
-            case R.id.action_donate:
-                Utils.openDonateActivity(this);
-                return true;
-            case R.id.action_about:
-                Utils.launchAboutActivity(DDWRTMainActivity.this);
-                eventMap.put("Menu Item", "About");
-                ReportingUtils.reportEvent(ReportingUtils.EVENT_MENU_ITEM, eventMap);
-                return true;
-            case R.id.action_feedback:
-                Utils.openFeedbackForm(this, mRouter);
-                //                final Intent intent = new Intent(DDWRTMainActivity.this, FeedbackActivity.class);
-                //                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
-                //                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
-                //                ViewGroupUtils.exportViewToFile(DDWRTMainActivity.this, getWindow().getDecorView(), screenshotFile);
-                //                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
-                //                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
-                //                startActivity(intent);
-                ////                Utils.buildFeedbackDialog(this, true);
-                return true;
-            case R.id.action_remove_ads:
-                Utils.displayUpgradeMessageForAdsRemoval(this);
-                return true;
-            case R.id.action_ddwrt_actions_open_webinterface: {
-                final ProgressDialog alertDialog =
-                        ProgressDialog.show(this, "Looking for an appropriate IP Address", "Please wait...",
-                                true);
-                MultiThreadingManager.getWebTasksExecutor().execute(new UiRelatedTask<String>() {
+                        if (nvRamInfoFromRouter == null || nvRamInfoFromRouter.isEmpty()) {
+                            throw new DDWRTCompanionException("Unable to retrieve info about HTTPd service");
+                        }
 
-                    private String mRealm;
+                        String lanUrl = "http";
+                        String wanUrl = "http";
+                        final String lanIpAddr = nvRamInfoFromRouter
+                                .getProperty(NVRAMInfo.Companion.getLAN_IPADDR(), EMPTY_STRING);
+                        final String lanPort = nvRamInfoFromRouter
+                                .getProperty(NVRAMInfo.Companion.getHTTP_LANPORT(), EMPTY_STRING);
 
-                    @Override
-                    protected String doWork() {
-                        try {
-                            //Give time to the ProgressDialog to show up
-                            Thread.sleep(TimeUnit.SECONDS.toMillis(3));
-                            final NVRAMInfo nvRamInfoFromRouter =
-                                    SSHUtils.getNVRamInfoFromRouter(DDWRTMainActivity.this, mRouter,
-                                            getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
-                                                    Context.MODE_PRIVATE),
-                                            NVRAMInfo.Companion.getLAN_IPADDR(), NVRAMInfo.Companion.getWAN_IPADDR(),
-                                            NVRAMInfo.Companion.getHTTP_LANPORT(),
-                                            NVRAMInfo.Companion.getHTTP_WANPORT(),
-                                            NVRAMInfo.Companion.getHTTP_USERNAME(),
-                                            NVRAMInfo.Companion.getHTTP_PASSWD(),
-                                            NVRAMInfo.Companion.getHTTPS_ENABLE(),
-                                            NVRAMInfo.Companion.getREMOTE_MGT_HTTPS());
+                        final String wanIpAddr = nvRamInfoFromRouter
+                                .getProperty(NVRAMInfo.Companion.getWAN_IPADDR(), EMPTY_STRING);
+                        final String wanPort = nvRamInfoFromRouter
+                                .getProperty(NVRAMInfo.Companion.getHTTP_WANPORT(), EMPTY_STRING);
 
-                            if (nvRamInfoFromRouter == null || nvRamInfoFromRouter.isEmpty()) {
-                                throw new DDWRTCompanionException("Unable to retrieve info about HTTPd service");
-                            }
+                        if ("1".equals(nvRamInfoFromRouter.getProperty(NVRAMInfo.Companion.getHTTPS_ENABLE()))) {
+                            lanUrl += "s";
+                        }
+                        if ("1".equals(
+                                nvRamInfoFromRouter.getProperty(NVRAMInfo.Companion.getREMOTE_MGT_HTTPS()))) {
+                            wanUrl += "s";
+                        }
+                        lanUrl += ("://" + lanIpAddr + (TextUtils.isEmpty(lanPort) ? "" : (":" + lanPort)));
+                        wanUrl += ("://" + wanIpAddr + (TextUtils.isEmpty(wanPort) ? "" : (":" + wanPort)));
 
-                            String lanUrl = "http";
-                            String wanUrl = "http";
-                            final String lanIpAddr = nvRamInfoFromRouter
-                                    .getProperty(NVRAMInfo.Companion.getLAN_IPADDR(), EMPTY_STRING);
-                            final String lanPort = nvRamInfoFromRouter
-                                    .getProperty(NVRAMInfo.Companion.getHTTP_LANPORT(), EMPTY_STRING);
+                        String mUrl = null;
 
-                            final String wanIpAddr = nvRamInfoFromRouter
-                                    .getProperty(NVRAMInfo.Companion.getWAN_IPADDR(), EMPTY_STRING);
-                            final String wanPort = nvRamInfoFromRouter
-                                    .getProperty(NVRAMInfo.Companion.getHTTP_WANPORT(), EMPTY_STRING);
-
-                            if ("1".equals(nvRamInfoFromRouter.getProperty(NVRAMInfo.Companion.getHTTPS_ENABLE()))) {
-                                lanUrl += "s";
-                            }
+                        if (canConnect(lanUrl)) {
+                            mUrl = lanUrl;
+                        } else if (canConnect(wanUrl)) {
+                            mUrl = wanUrl;
+                        } else {
+                            //Try with router IP / DNS
+                            String urlFromRouterRemoteIpOrDns = "http";
+                            final String remoteIpAddress = mRouter.getRemoteIpAddress();
                             if ("1".equals(
-                                    nvRamInfoFromRouter.getProperty(NVRAMInfo.Companion.getREMOTE_MGT_HTTPS()))) {
-                                wanUrl += "s";
+                                    nvRamInfoFromRouter.getProperty(NVRAMInfo.Companion.getHTTPS_ENABLE()))) {
+                                urlFromRouterRemoteIpOrDns += "s";
                             }
-                            lanUrl += ("://" + lanIpAddr + (TextUtils.isEmpty(lanPort) ? "" : (":" + lanPort)));
-                            wanUrl += ("://" + wanIpAddr + (TextUtils.isEmpty(wanPort) ? "" : (":" + wanPort)));
-
-                            String mUrl = null;
-
-                            if (canConnect(lanUrl)) {
-                                mUrl = lanUrl;
-                            } else if (canConnect(wanUrl)) {
-                                mUrl = wanUrl;
+                            urlFromRouterRemoteIpOrDns +=
+                                    ("://" + remoteIpAddress + (TextUtils.isEmpty(lanPort) ? ""
+                                            : (":" + lanPort)));
+                            if (canConnect(urlFromRouterRemoteIpOrDns)) {
+                                mUrl = urlFromRouterRemoteIpOrDns;
                             } else {
-                                //Try with router IP / DNS
-                                String urlFromRouterRemoteIpOrDns = "http";
-                                final String remoteIpAddress = mRouter.getRemoteIpAddress();
-                                if ("1".equals(
-                                        nvRamInfoFromRouter.getProperty(NVRAMInfo.Companion.getHTTPS_ENABLE()))) {
+                                //WAN
+                                urlFromRouterRemoteIpOrDns = "http";
+                                if ("1".equals(nvRamInfoFromRouter
+                                        .getProperty(NVRAMInfo.Companion.getREMOTE_MGT_HTTPS()))) {
                                     urlFromRouterRemoteIpOrDns += "s";
                                 }
                                 urlFromRouterRemoteIpOrDns +=
-                                        ("://" + remoteIpAddress + (TextUtils.isEmpty(lanPort) ? ""
-                                                : (":" + lanPort)));
+                                        ("://" + remoteIpAddress + (TextUtils.isEmpty(wanPort) ? ""
+                                                : (":" + wanPort)));
                                 if (canConnect(urlFromRouterRemoteIpOrDns)) {
                                     mUrl = urlFromRouterRemoteIpOrDns;
                                 } else {
-                                    //WAN
-                                    urlFromRouterRemoteIpOrDns = "http";
-                                    if ("1".equals(nvRamInfoFromRouter
-                                            .getProperty(NVRAMInfo.Companion.getREMOTE_MGT_HTTPS()))) {
-                                        urlFromRouterRemoteIpOrDns += "s";
-                                    }
-                                    urlFromRouterRemoteIpOrDns +=
-                                            ("://" + remoteIpAddress + (TextUtils.isEmpty(wanPort) ? ""
-                                                    : (":" + wanPort)));
-                                    if (canConnect(urlFromRouterRemoteIpOrDns)) {
-                                        mUrl = urlFromRouterRemoteIpOrDns;
-                                    } else {
-                                        //TODO Maybe display dialog where user can explicitly provide the information
-                                        throw new DDWRTCompanionException("Could not connect to router");
-                                    }
+                                    //TODO Maybe display dialog where user can explicitly provide the information
+                                    throw new DDWRTCompanionException("Could not connect to router");
                                 }
                             }
-                            return mUrl;
-                        } catch (final Exception e) {
-                            e.printStackTrace();
-                            return null;
                         }
+                        return mUrl;
+                    } catch (final Exception e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                }
+
+                @Override
+                protected void thenDoUiRelatedWork(@Nullable final String url) {
+                    alertDialog.cancel();
+                    if (TextUtils.isEmpty(url)) {
+                        Toast.makeText(DDWRTMainActivity.this,
+                                "Unable to determine an IP address for opening the Web Management Interface",
+                                Toast.LENGTH_SHORT).show();
+                        return;
                     }
 
-                    @Override
-                    protected void thenDoUiRelatedWork(@Nullable final String url) {
-                        alertDialog.cancel();
-                        if (TextUtils.isEmpty(url)) {
-                            Toast.makeText(DDWRTMainActivity.this,
-                                    "Unable to determine an IP address for opening the Web Management Interface",
-                                    Toast.LENGTH_SHORT).show();
-                            return;
+                    CustomTabActivityHelper.openCustomTab(DDWRTMainActivity.this, null, url, mRouterUuid,
+                            null, new CustomTabActivityHelper.CustomTabFallback() {
+                                @Override
+                                public void openUri(Activity activity, Uri uri) {
+                                    //Otherwise, default to a classic WebView implementation
+                                    final Intent webManagementIntent =
+                                            new Intent(DDWRTMainActivity.this,
+                                                    OpenWebManagementPageActivity.class);
+                                    webManagementIntent.putExtra(ROUTER_SELECTED,
+                                            DDWRTMainActivity.this.mRouterUuid);
+                                    webManagementIntent.putExtra(OpenWebManagementPageActivity.URL_TO_OPEN, url);
+                                    activity.startActivity(webManagementIntent);
+                                }
+                            }, false);
+                }
+
+                private boolean canConnect(@NonNull final String urlStr) {
+                    Crashlytics.log(Log.DEBUG, TAG, "--> Trying GET '" + urlStr + "'");
+                    HttpURLConnection urlConnection = null;
+                    try {
+                        final URL url = new URL(urlStr + "/Management.asp");
+                        if (url.getProtocol().toLowerCase().equals("https")) {
+                            trustAllHosts();
+                            final HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
+                            https.setHostnameVerifier(DO_NOT_VERIFY);
+                            urlConnection = https;
+                        } else {
+                            urlConnection = (HttpURLConnection) url.openConnection();
                         }
-
-                        CustomTabActivityHelper.openCustomTab(DDWRTMainActivity.this, null, url, mRouterUuid,
-                                null, new CustomTabActivityHelper.CustomTabFallback() {
-                                    @Override
-                                    public void openUri(Activity activity, Uri uri) {
-                                        //Otherwise, default to a classic WebView implementation
-                                        final Intent webManagementIntent =
-                                                new Intent(DDWRTMainActivity.this,
-                                                        OpenWebManagementPageActivity.class);
-                                        webManagementIntent.putExtra(ROUTER_SELECTED,
-                                                DDWRTMainActivity.this.mRouterUuid);
-                                        webManagementIntent.putExtra(OpenWebManagementPageActivity.URL_TO_OPEN, url);
-                                        activity.startActivity(webManagementIntent);
-                                    }
-                                }, false);
-                    }
-
-                    private boolean canConnect(@NonNull final String urlStr) {
-                        Crashlytics.log(Log.DEBUG, TAG, "--> Trying GET '" + urlStr + "'");
-                        HttpURLConnection urlConnection = null;
-                        try {
-                            final URL url = new URL(urlStr + "/Management.asp");
-                            if (url.getProtocol().toLowerCase().equals("https")) {
-                                trustAllHosts();
-                                final HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
-                                https.setHostnameVerifier(DO_NOT_VERIFY);
-                                urlConnection = https;
-                            } else {
-                                urlConnection = (HttpURLConnection) url.openConnection();
-                            }
-                            //FIXME Add a user-preference
-                            urlConnection.setConnectTimeout(5000);
-                            final int statusCode = urlConnection.getResponseCode();
-                            String wwwAuthenticateHeaderField = urlConnection.getHeaderField("WWW-Authenticate");
-                            if (wwwAuthenticateHeaderField != null) {
-                                final List<String> stringList =
-                                        Splitter.on("=").omitEmptyStrings().splitToList(wwwAuthenticateHeaderField);
-                                if (stringList.size() >= 2) {
-                                    final String realm = stringList.get(0);
-                                    if (realm != null) {
-                                        mRealm = realm.replaceAll("\"", "").replaceAll("'", "");
-                                    }
+                        //FIXME Add a user-preference
+                        urlConnection.setConnectTimeout(5000);
+                        final int statusCode = urlConnection.getResponseCode();
+                        String wwwAuthenticateHeaderField = urlConnection.getHeaderField("WWW-Authenticate");
+                        if (wwwAuthenticateHeaderField != null) {
+                            final List<String> stringList =
+                                    Splitter.on("=").omitEmptyStrings().splitToList(wwwAuthenticateHeaderField);
+                            if (stringList.size() >= 2) {
+                                final String realm = stringList.get(0);
+                                if (realm != null) {
+                                    mRealm = realm.replaceAll("\"", "").replaceAll("'", "");
                                 }
                             }
-                            Crashlytics.log(Log.DEBUG, TAG, "GET " + urlStr + " : " + statusCode);
-                            return true;
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Crashlytics.log(Log.DEBUG, TAG, "Didn't succeed in GET'ing " + urlStr);
-                            return false;
-                        } finally {
-                            if (urlConnection != null) {
-                                urlConnection.disconnect();
-                            }
+                        }
+                        Crashlytics.log(Log.DEBUG, TAG, "GET " + urlStr + " : " + statusCode);
+                        return true;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Crashlytics.log(Log.DEBUG, TAG, "Didn't succeed in GET'ing " + urlStr);
+                        return false;
+                    } finally {
+                        if (urlConnection != null) {
+                            urlConnection.disconnect();
                         }
                     }
-                });
-            }
-            return true;
-
-            case R.id.main_add_home_shortcut: {
-                mRouter.addHomeScreenShortcut(this);
-            }
-            return true;
-
-            case R.id.action_check_for_firmware_updates:
-                if (Utils.isNonDemoRouter(mRouter) && (BuildConfig.DONATIONS || BuildConfig.WITH_ADS)) {
-                    //Download the full version to unlock this version
-                    final RouterFirmware routerFirmware = mRouter.getRouterFirmware();
-                    Utils.displayUpgradeMessage(this,
-                            String.format("Check for %s Firmware updates",
-                                    (routerFirmware != null && routerFirmware != RouterFirmware.AUTO
-                                            && routerFirmware != RouterFirmware.UNKNOWN) ?
-                                            routerFirmware.officialName : "Router"));
-                    return true;
                 }
-                FirmwareUpdateCheckerJob.manualCheckForFirmwareUpdate(this, mGooGlService, mRouter);
+            });
+            return true;
+        } else if (itemId == R.id.main_add_home_shortcut) {
+            mRouter.addHomeScreenShortcut(this);
+            return true;
+        } else if (itemId == R.id.action_check_for_firmware_updates) {
+            if (Utils.isNonDemoRouter(mRouter) && (BuildConfig.DONATIONS || BuildConfig.WITH_ADS)) {
+                //Download the full version to unlock this version
+                final RouterFirmware routerFirmware = mRouter.getRouterFirmware();
+                Utils.displayUpgradeMessage(this,
+                        String.format("Check for %s Firmware updates",
+                                (routerFirmware != null && routerFirmware != RouterFirmware.AUTO
+                                        && routerFirmware != RouterFirmware.UNKNOWN) ?
+                                        routerFirmware.officialName : "Router"));
                 return true;
-
-            case R.id.action_ddwrt_actions_ssh_router: {
-                Router.openSSHConsole(mRouter, this);
             }
+            FirmwareUpdateCheckerJob.manualCheckForFirmwareUpdate(this, mGooGlService, mRouter);
             return true;
+        } else if (itemId == R.id.action_ddwrt_actions_ssh_router) {
+            Router.openSSHConsole(mRouter, this);
+            return true;
+        } else if (itemId == R.id.action_ddwrt_actions_reboot_router) {
+            new AlertDialog.Builder(this).setIcon(R.drawable.ic_action_alert_warning)
+                    .setTitle(String.format("Reboot '%s' (%s)", displayName, mRouter.getRemoteIpAddress()))
+                    .setMessage(String.format(
+                            "Are you sure you wish to continue?\n'%s' (%s) will be rebooted, "
+                                    + "and you might have to wait some time before connection is re-established.",
+                            displayName, mRouter.getRemoteIpAddress()))
+                    .setCancelable(true)
+                    .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(final DialogInterface dialogInterface, final int i) {
+                            final Bundle token = new Bundle();
+                            token.putString(ROUTER_ACTION, RouterAction.REBOOT.name());
 
-            case R.id.action_ddwrt_actions_reboot_router:
+                            SnackbarUtils.buildSnackbar(DDWRTMainActivity.this,
+                                    String.format("Router '%s' (%s) will be rebooted", displayName,
+                                            mRouter.getRemoteIpAddress()),
+                                    "CANCEL",
+                                    Snackbar.LENGTH_LONG,
+                                    DDWRTMainActivity.this,
+                                    token, true);
 
-                new AlertDialog.Builder(this).setIcon(R.drawable.ic_action_alert_warning)
-                        .setTitle(String.format("Reboot '%s' (%s)", displayName, mRouter.getRemoteIpAddress()))
-                        .setMessage(String.format(
-                                "Are you sure you wish to continue?\n'%s' (%s) will be rebooted, "
-                                        + "and you might have to wait some time before connection is re-established.",
-                                displayName, mRouter.getRemoteIpAddress()))
-                        .setCancelable(true)
-                        .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(final DialogInterface dialogInterface, final int i) {
-                                final Bundle token = new Bundle();
-                                token.putString(ROUTER_ACTION, RouterAction.REBOOT.name());
+                            //new UndoBarController.UndoBar(DDWRTMainActivity.this).message(
+                            //    String.format("Router '%s' (%s) will be rebooted", displayName,
+                            //        mRouter.getRemoteIpAddress()))
+                            //    .listener(DDWRTMainActivity.this)
+                            //    .token(token)
+                            //    .show();
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //Cancelled - nothing more to do!
+                        }
+                    })
+                    .create()
+                    .show();
 
-                                SnackbarUtils.buildSnackbar(DDWRTMainActivity.this,
-                                        String.format("Router '%s' (%s) will be rebooted", displayName,
-                                                mRouter.getRemoteIpAddress()),
-                                        "CANCEL",
-                                        Snackbar.LENGTH_LONG,
-                                        DDWRTMainActivity.this,
-                                        token, true);
-
-                                //new UndoBarController.UndoBar(DDWRTMainActivity.this).message(
-                                //    String.format("Router '%s' (%s) will be rebooted", displayName,
-                                //        mRouter.getRemoteIpAddress()))
-                                //    .listener(DDWRTMainActivity.this)
-                                //    .token(token)
-                                //    .show();
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Cancelled - nothing more to do!
-                            }
-                        })
-                        .create()
-                        .show();
-
+            return true;
+        } else if (itemId == R.id.action_ddwrt_actions_restore_factory_defaults) {
+            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                //Download the full version to unlock this version
+                Utils.displayUpgradeMessage(this, "Restore Factory Defaults");
                 return true;
-            case R.id.action_ddwrt_actions_restore_factory_defaults:
-                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                    //Download the full version to unlock this version
-                    Utils.displayUpgradeMessage(this, "Restore Factory Defaults");
-                    return true;
-                }
+            }
 
-                new AlertDialog.Builder(this).setIcon(R.drawable.ic_action_alert_warning)
-                        .setTitle(String.format("Reset '%s' (%s)", displayName, mRouter.getRemoteIpAddress()))
-                        .setMessage(String.format("Are you sure you wish to continue?\n"
-                                        + "This will erase the entire NVRAM, thus resetting all settings back to factory defaults. "
-                                        + "All of your settings will be erased and '%s' will be rebooted. "
-                                        + "You might have to wait some time before connection is re-established.\n\n"
-                                        + "[CAUTION]\n"
-                                        + "- Make sure to *backup* your settings first!!!\n"
-                                        + "- After resetting DD-WRT, you need to login with the default user name \"root\" and default password \"admin\".\n"
-                                        + "- Some devices may not boot properly after being reset. In this case, you will have to reflash them.",
-                                displayName))
-                        .setCancelable(true)
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Cancelled - nothing more to do!
-                            }
-                        })
-                        .setNeutralButton("*Backup*", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                displayBackupDialog(displayName);
-                            }
-                        })
-                        .setPositiveButton("Got it!\nProceed!", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(final DialogInterface dialogInterface, final int i) {
+            new AlertDialog.Builder(this).setIcon(R.drawable.ic_action_alert_warning)
+                    .setTitle(String.format("Reset '%s' (%s)", displayName, mRouter.getRemoteIpAddress()))
+                    .setMessage(String.format("Are you sure you wish to continue?\n"
+                                    + "This will erase the entire NVRAM, thus resetting all settings back to factory defaults. "
+                                    + "All of your settings will be erased and '%s' will be rebooted. "
+                                    + "You might have to wait some time before connection is re-established.\n\n"
+                                    + "[CAUTION]\n"
+                                    + "- Make sure to *backup* your settings first!!!\n"
+                                    + "- After resetting DD-WRT, you need to login with the default user name \"root\" and default password \"admin\".\n"
+                                    + "- Some devices may not boot properly after being reset. In this case, you will have to reflash them.",
+                            displayName))
+                    .setCancelable(true)
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //Cancelled - nothing more to do!
+                        }
+                    })
+                    .setNeutralButton("*Backup*", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            displayBackupDialog(displayName);
+                        }
+                    })
+                    .setPositiveButton("Got it!\nProceed!", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(final DialogInterface dialogInterface, final int i) {
 
-                                //For reporting
-                                ReportingUtils.reportException(DDWRTMainActivity.this,
-                                        new RestoreRouterDefaultsAction.AgreementToResetRouter(
-                                                DDWRTMainActivity.this));
+                            //For reporting
+                            ReportingUtils.reportException(DDWRTMainActivity.this,
+                                    new RestoreRouterDefaultsAction.AgreementToResetRouter(
+                                            DDWRTMainActivity.this));
 
-                                final Bundle token = new Bundle();
-                                token.putString(ROUTER_ACTION, RouterAction.RESTORE_FACTORY_DEFAULTS.name());
+                            final Bundle token = new Bundle();
+                            token.putString(ROUTER_ACTION, RouterAction.RESTORE_FACTORY_DEFAULTS.name());
 
-                                SnackbarUtils.buildSnackbar(DDWRTMainActivity.this,
-                                        String.format("Router '%s' (%s) will be reset", displayName,
-                                                mRouter.getRemoteIpAddress()),
-                                        "CANCEL",
-                                        Snackbar.LENGTH_LONG,
-                                        DDWRTMainActivity.this,
-                                        token, true);
+                            SnackbarUtils.buildSnackbar(DDWRTMainActivity.this,
+                                    String.format("Router '%s' (%s) will be reset", displayName,
+                                            mRouter.getRemoteIpAddress()),
+                                    "CANCEL",
+                                    Snackbar.LENGTH_LONG,
+                                    DDWRTMainActivity.this,
+                                    token, true);
 
-                                //new UndoBarController.UndoBar(DDWRTMainActivity.this).message(
-                                //    String.format("Router '%s' (%s) will be reset", displayName,
-                                //        mRouter.getRemoteIpAddress()))
-                                //    .listener(DDWRTMainActivity.this)
-                                //    .token(token)
-                                //    .show();
-                            }
-                        })
-                        .create()
-                        .show();
+                            //new UndoBarController.UndoBar(DDWRTMainActivity.this).message(
+                            //    String.format("Router '%s' (%s) will be reset", displayName,
+                            //        mRouter.getRemoteIpAddress()))
+                            //    .listener(DDWRTMainActivity.this)
+                            //    .token(token)
+                            //    .show();
+                        }
+                    })
+                    .create()
+                    .show();
 
+            return true;
+        } else if (itemId == R.id.action_ddwrt_actions_backup_restore_router_backup) {
+            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                //Download the full version to unlock this version
+                Utils.displayUpgradeMessage(this, "Backup Router");
                 return true;
-            case R.id.action_ddwrt_actions_backup_restore_router_backup:
-                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                    //Download the full version to unlock this version
-                    Utils.displayUpgradeMessage(this, "Backup Router");
-                    return true;
-                }
-                displayBackupDialog(displayName);
+            }
+            displayBackupDialog(displayName);
+            return true;
+        } else if (itemId == R.id.action_ddwrt_actions_backup_restore_router_restore) {
+            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                //Download the full version to unlock this version
+                Utils.displayUpgradeMessage(this, "Restore Router");
                 return true;
-            case R.id.action_ddwrt_actions_backup_restore_router_restore:
-                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                    //Download the full version to unlock this version
-                    Utils.displayUpgradeMessage(this, "Restore Router");
-                    return true;
-                }
+            }
 
-                final Fragment restoreRouter =
-                        getSupportFragmentManager().findFragmentByTag(RESTORE_ROUTER_FRAGMENT_TAG);
-                if (restoreRouter instanceof DialogFragment) {
-                    ((DialogFragment) restoreRouter).dismiss();
-                }
-                final DialogFragment restoreFragment = RestoreRouterDialogFragment.newInstance(mRouterUuid);
-                restoreFragment.show(getSupportFragmentManager(), RESTORE_ROUTER_FRAGMENT_TAG);
+            final Fragment restoreRouter =
+                    getSupportFragmentManager().findFragmentByTag(RESTORE_ROUTER_FRAGMENT_TAG);
+            if (restoreRouter instanceof DialogFragment) {
+                ((DialogFragment) restoreRouter).dismiss();
+            }
+            final DialogFragment restoreFragment = RestoreRouterDialogFragment.newInstance(mRouterUuid);
+            restoreFragment.show(getSupportFragmentManager(), RESTORE_ROUTER_FRAGMENT_TAG);
 
+            return true;
+        } else if (itemId == R.id.action_ddwrt_actions_firmware_upgrade) {
+            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                //Download the full version to unlock this version
+                Utils.displayUpgradeMessage(this, "Upgrade Firmware");
                 return true;
-            case R.id.action_ddwrt_actions_firmware_upgrade:
-                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                    //Download the full version to unlock this version
-                    Utils.displayUpgradeMessage(this, "Upgrade Firmware");
-                    return true;
-                }
-                //TODO
-                return true;
-            case R.id.action_ddwrt_actions_speedtest: {
-                final Intent speedTestIntent = new Intent(this, SpeedTestActivity.class);
-                speedTestIntent.putExtra(ROUTER_SELECTED, this.mRouterUuid);
-                this.startActivity(speedTestIntent);
             }
+            //TODO
             return true;
-            case R.id.action_ddwrt_actions_manage_aliases: {
-                final Intent manageAliasIntent = new Intent(this, ManageRouterAliasesActivity.class);
-                manageAliasIntent.putExtra(ROUTER_SELECTED, this.mRouterUuid);
-                this.startActivity(manageAliasIntent);
+        } else if (itemId == R.id.action_ddwrt_actions_speedtest) {
+            final Intent speedTestIntent = new Intent(this, SpeedTestActivity.class);
+            speedTestIntent.putExtra(ROUTER_SELECTED, this.mRouterUuid);
+            this.startActivity(speedTestIntent);
+            return true;
+        } else if (itemId == R.id.action_ddwrt_actions_manage_aliases) {
+            final Intent manageAliasIntent = new Intent(this, ManageRouterAliasesActivity.class);
+            manageAliasIntent.putExtra(ROUTER_SELECTED, this.mRouterUuid);
+            this.startActivity(manageAliasIntent);
+            return true;
+        } else if (itemId == R.id.action_ddwrt_actions_clear_arp_cache) {
+            SnackbarUtils.buildSnackbar(this,
+                    String.format("ARP Cache will be flushed on '%s' (%s)...", mRouter.getDisplayName(),
+                            mRouter.getRemoteIpAddress()), "CANCEL", Snackbar.LENGTH_SHORT,
+                    new SnackbarCallback() {
+                        @Override
+                        public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+                                throws Exception {
+
+                        }
+
+                        @Override
+                        public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+                                throws Exception {
+
+                        }
+
+                        @Override
+                        public void onDismissEventManual(int event, @Nullable Bundle bundle)
+                                throws Exception {
+
+                        }
+
+                        @Override
+                        public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
+                                throws Exception {
+
+                        }
+
+                        @Override
+                        public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
+                                throws Exception {
+                            ActionManager.runTasks(
+                                    new ClearARPCacheRouterAction(mRouter, DDWRTMainActivity.this,
+                                            DDWRTMainActivity.this, mGlobalPreferences));
+                        }
+
+                        @Override
+                        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+                        }
+                    }, null, true);
+            return true;
+        } else if (itemId == R.id.action_ddwrt_actions_clear_dns_cache) {
+            SnackbarUtils.buildSnackbar(this,
+                    String.format("DNS Cache will be flushed on '%s' (%s)...", mRouter.getDisplayName(),
+                            mRouter.getRemoteIpAddress()), "CANCEL", Snackbar.LENGTH_SHORT,
+                    new SnackbarCallback() {
+                        @Override
+                        public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+                                throws Exception {
+
+                        }
+
+                        @Override
+                        public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+                                throws Exception {
+
+                        }
+
+                        @Override
+                        public void onDismissEventManual(int event, @Nullable Bundle bundle)
+                                throws Exception {
+
+                        }
+
+                        @Override
+                        public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
+                                throws Exception {
+
+                        }
+
+                        @Override
+                        public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
+                                throws Exception {
+                            ActionManager.runTasks(
+                                    new ClearDNSCacheRouterAction(mRouter, DDWRTMainActivity.this,
+                                            DDWRTMainActivity.this, mGlobalPreferences));
+                        }
+
+                        @Override
+                        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+                        }
+                    }, null, true);
+            return true;
+        } else if (itemId == R.id.action_ddwrt_actions_httpd_start || itemId == R.id.action_ddwrt_actions_httpd_stop
+                || itemId == R.id.action_ddwrt_actions_httpd_restart) {
+            final int action;
+            final String actionMessage;
+            int i = item.getItemId();
+            if (i == R.id.action_ddwrt_actions_httpd_start) {
+                action = ManageHTTPdRouterAction.START;
+                actionMessage = "started";
+
+            } else if (i == R.id.action_ddwrt_actions_httpd_stop) {
+                action = ManageHTTPdRouterAction.STOP;
+                actionMessage = "stopped";
+
+            } else {
+                action = ManageHTTPdRouterAction.RESTART;
+                actionMessage = "restarted";
+
             }
+            SnackbarUtils.buildSnackbar(this,
+                    String.format("Web Server (httpd) will be %s on '%s' (%s)...", actionMessage,
+                            mRouter.getDisplayName(), mRouter.getRemoteIpAddress()), "CANCEL",
+                    Snackbar.LENGTH_SHORT, new SnackbarCallback() {
+                        @Override
+                        public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+                                throws Exception {
+
+                        }
+
+                        @Override
+                        public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+                                throws Exception {
+
+                        }
+
+                        @Override
+                        public void onDismissEventManual(int event, @Nullable Bundle bundle)
+                                throws Exception {
+
+                        }
+
+                        @Override
+                        public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
+                                throws Exception {
+
+                        }
+
+                        @Override
+                        public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
+                                throws Exception {
+                            ActionManager.runTasks(new ManageHTTPdRouterAction(mRouter, DDWRTMainActivity.this,
+                                    DDWRTMainActivity.this, mGlobalPreferences, action));
+                        }
+
+                        @Override
+                        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+                        }
+                    }, null, true);
             return true;
-
-            case R.id.action_ddwrt_actions_clear_arp_cache: {
-                SnackbarUtils.buildSnackbar(this,
-                        String.format("ARP Cache will be flushed on '%s' (%s)...", mRouter.getDisplayName(),
-                                mRouter.getRemoteIpAddress()), "CANCEL", Snackbar.LENGTH_SHORT,
-                        new SnackbarCallback() {
-                            @Override
-                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventManual(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-                                ActionManager.runTasks(
-                                        new ClearARPCacheRouterAction(mRouter, DDWRTMainActivity.this,
-                                                DDWRTMainActivity.this, mGlobalPreferences));
-                            }
-
-                            @Override
-                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
-                            }
-                        }, null, true);
-            }
-            return true;
-
-            case R.id.action_ddwrt_actions_clear_dns_cache: {
-                SnackbarUtils.buildSnackbar(this,
-                        String.format("DNS Cache will be flushed on '%s' (%s)...", mRouter.getDisplayName(),
-                                mRouter.getRemoteIpAddress()), "CANCEL", Snackbar.LENGTH_SHORT,
-                        new SnackbarCallback() {
-                            @Override
-                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventManual(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-                                ActionManager.runTasks(
-                                        new ClearDNSCacheRouterAction(mRouter, DDWRTMainActivity.this,
-                                                DDWRTMainActivity.this, mGlobalPreferences));
-                            }
-
-                            @Override
-                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
-                            }
-                        }, null, true);
-            }
-            return true;
-            case R.id.action_ddwrt_actions_httpd_start:
-            case R.id.action_ddwrt_actions_httpd_stop:
-            case R.id.action_ddwrt_actions_httpd_restart: {
-                final int action;
-                final String actionMessage;
-                switch (item.getItemId()) {
-                    case R.id.action_ddwrt_actions_httpd_start:
-                        action = ManageHTTPdRouterAction.START;
-                        actionMessage = "started";
-                        break;
-                    case R.id.action_ddwrt_actions_httpd_stop:
-                        action = ManageHTTPdRouterAction.STOP;
-                        actionMessage = "stopped";
-                        break;
-                    default:
-                        action = ManageHTTPdRouterAction.RESTART;
-                        actionMessage = "restarted";
-                        break;
-                }
-                SnackbarUtils.buildSnackbar(this,
-                        String.format("Web Server (httpd) will be %s on '%s' (%s)...", actionMessage,
-                                mRouter.getDisplayName(), mRouter.getRemoteIpAddress()), "CANCEL",
-                        Snackbar.LENGTH_SHORT, new SnackbarCallback() {
-                            @Override
-                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventManual(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-                                ActionManager.runTasks(new ManageHTTPdRouterAction(mRouter, DDWRTMainActivity.this,
-                                        DDWRTMainActivity.this, mGlobalPreferences, action));
-                            }
-
-                            @Override
-                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
-                            }
-                        }, null, true);
-            }
-            return true;
-            default:
-                break;
+        } else {
         }
 
         return true;

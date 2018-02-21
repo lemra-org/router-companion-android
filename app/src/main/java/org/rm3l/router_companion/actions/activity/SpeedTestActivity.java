@@ -1027,16 +1027,15 @@ public class SpeedTestActivity extends AppCompatActivity
             @Override
             public void onCheckedChanged(final RadioGroup group, final int checkedId) {
                 final String value;
-                switch (checkedId) {
-                    case R.id.speedtest_measurement_unit_bits:
-                        value = UNIT_BIT;
-                        break;
-                    case R.id.speedtest_measurement_unit_bytes:
-                        value = UNIT_BYTE;
-                        break;
-                    default:
-                        value = null;
-                        break;
+                if (checkedId == R.id.speedtest_measurement_unit_bits) {
+                    value = UNIT_BIT;
+
+                } else if (checkedId == R.id.speedtest_measurement_unit_bytes) {
+                    value = UNIT_BYTE;
+
+                } else {
+                    value = null;
+
                 }
                 if (value != null) {
                     mRouterPreferences.edit()
@@ -1518,44 +1517,38 @@ public class SpeedTestActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-
-            case R.id.action_feedback:
-                Utils.openFeedbackForm(this, mOriginalRouter);
-                return true;
-
-            case R.id.router_speedtest_refresh:
-                final boolean isDemoRouter = Utils.isDemoRouter(mOriginalRouter);
-                if (isDemoRouter || BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                    if (mDao.getSpeedTestResultsByRouter(mOriginalRouter.getUuid()).size()
-                            >= MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION) {
-                        if (isDemoRouter) {
-                            Toast.makeText(SpeedTestActivity.this, "You cannot have more than "
-                                    + MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION
-                                    + " Speed Test results for the Demo Router", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Utils.displayUpgradeMessage(SpeedTestActivity.this, "Save more SpeedTest runs");
-                        }
-                        return true;
+        final int itemId = item.getItemId();
+        if (itemId == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else if (itemId == R.id.action_feedback) {
+            Utils.openFeedbackForm(this, mOriginalRouter);
+            return true;
+        } else if (itemId == R.id.router_speedtest_refresh) {
+            final boolean isDemoRouter = Utils.isDemoRouter(mOriginalRouter);
+            if (isDemoRouter || BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                if (mDao.getSpeedTestResultsByRouter(mOriginalRouter.getUuid()).size()
+                        >= MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION) {
+                    if (isDemoRouter) {
+                        Toast.makeText(SpeedTestActivity.this, "You cannot have more than "
+                                + MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION
+                                + " Speed Test results for the Demo Router", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Utils.displayUpgradeMessage(SpeedTestActivity.this, "Save more SpeedTest runs");
                     }
+                    return true;
                 }
-                SnackbarUtils.buildSnackbar(this, "Going to start Speed Test...", "Undo",
-                        Snackbar.LENGTH_SHORT, this, null, true);
-                return true;
-
-            case R.id.router_speedtest_settings:
-                //Open Settings activity
-                final Intent settingsActivity = new Intent(this, RouterSpeedTestSettingsActivity.class);
-                settingsActivity.putExtra(RouterManagementActivity.ROUTER_SELECTED,
-                        mOriginalRouter.getUuid());
-                this.startActivity(settingsActivity);
-                return true;
-
-            default:
-                break;
+            }
+            SnackbarUtils.buildSnackbar(this, "Going to start Speed Test...", "Undo",
+                    Snackbar.LENGTH_SHORT, this, null, true);
+            return true;
+        } else if (itemId == R.id.router_speedtest_settings) {//Open Settings activity
+            final Intent settingsActivity = new Intent(this, RouterSpeedTestSettingsActivity.class);
+            settingsActivity.putExtra(RouterManagementActivity.ROUTER_SELECTED,
+                    mOriginalRouter.getUuid());
+            this.startActivity(settingsActivity);
+            return true;
+        } else {
         }
         return super.onOptionsItemSelected(item);
     }

@@ -138,13 +138,11 @@ public abstract class MaterialWizard extends WizardFragment
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_feedback:
-                        Utils.openFeedbackForm(MaterialWizard.this.getActivity(), "");
-                        return true;
-
-                    default:
-                        break;
+                int i = item.getItemId();
+                if (i == R.id.action_feedback) {
+                    Utils.openFeedbackForm(MaterialWizard.this.getActivity(), "");
+                    return true;
+                } else {
                 }
                 return false;
             }
@@ -220,22 +218,20 @@ public abstract class MaterialWizard extends WizardFragment
         Crashlytics.log("onclick");
         final MaterialWizardStep currentStep = (MaterialWizardStep) wizard.getCurrentStep();
 
-        switch (v.getId()) {
-            case R.id.wizard_next_button:
-                //Tell the wizard to go to next step
-                final Boolean stepValidated = currentStep.validateStep(wizard);
-                Crashlytics.log("stepValidated: " + stepValidated);
-                if (stepValidated != null && stepValidated) {
-                    currentStep.onExitSynchronous(WizardStep.EXIT_NEXT);
-                    wizard.goNext();
-                }
-                //Maybe provide a 'denial' animation
-                break;
-            case R.id.wizard_previous_button:
-                //Tell the wizard to go back one step
-                currentStep.onExitSynchronous(WizardStep.EXIT_PREVIOUS);
-                wizard.goBack();
-                break;
+        final int viewId = v.getId();
+        if (viewId == R.id.wizard_next_button) {//Tell the wizard to go to next step
+            final Boolean stepValidated = currentStep.validateStep(wizard);
+            Crashlytics.log("stepValidated: " + stepValidated);
+            if (stepValidated != null && stepValidated) {
+                currentStep.onExitSynchronous(WizardStep.EXIT_NEXT);
+                wizard.goNext();
+            }
+            //Maybe provide a 'denial' animation
+
+        } else if (viewId == R.id.wizard_previous_button) {//Tell the wizard to go back one step
+            currentStep.onExitSynchronous(WizardStep.EXIT_PREVIOUS);
+            wizard.goBack();
+
             //            case R.id.wizard_cancel_button:
             //                final SharedPreferences globalPrefs = this.getContext()
             //                        .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,

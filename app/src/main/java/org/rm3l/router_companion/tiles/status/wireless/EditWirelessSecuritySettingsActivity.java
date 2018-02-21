@@ -961,22 +961,21 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
                 final int transmitKeyRadioGroup = ((RadioGroup) findViewById(
                         R.id.wireless_security_settings_wep_default_transmit_key)).getCheckedRadioButtonId();
                 final String transmitKeySelectedItem;
-                switch (transmitKeyRadioGroup) {
-                    case R.id.wireless_security_settings_wep_default_transmit_key_1:
-                        transmitKeySelectedItem = "1";
-                        break;
-                    case R.id.wireless_security_settings_wep_default_transmit_key_2:
-                        transmitKeySelectedItem = "2";
-                        break;
-                    case R.id.wireless_security_settings_wep_default_transmit_key_3:
-                        transmitKeySelectedItem = "3";
-                        break;
-                    case R.id.wireless_security_settings_wep_default_transmit_key_4:
-                        transmitKeySelectedItem = "4";
-                        break;
-                    default:
-                        transmitKeySelectedItem = null;
-                        break;
+                if (transmitKeyRadioGroup == R.id.wireless_security_settings_wep_default_transmit_key_1) {
+                    transmitKeySelectedItem = "1";
+
+                } else if (transmitKeyRadioGroup == R.id.wireless_security_settings_wep_default_transmit_key_2) {
+                    transmitKeySelectedItem = "2";
+
+                } else if (transmitKeyRadioGroup == R.id.wireless_security_settings_wep_default_transmit_key_3) {
+                    transmitKeySelectedItem = "3";
+
+                } else if (transmitKeyRadioGroup == R.id.wireless_security_settings_wep_default_transmit_key_4) {
+                    transmitKeySelectedItem = "4";
+
+                } else {
+                    transmitKeySelectedItem = null;
+
                 }
                 if (transmitKeySelectedItem != null && !transmitKeySelectedItem.equals(
                         mNvramInfo.getProperty(this.mPhyIface + "_key"))) {
@@ -1083,27 +1082,24 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-
-            case R.id.action_feedback:
-                Utils.openFeedbackForm(this, mRouterUuid);
-                //                final Intent intent = new Intent(EditWirelessSecuritySettingsActivity.this,
-                //                        FeedbackActivity.class);
-                //                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
-                //                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
-                //                ViewGroupUtils.exportViewToFile(EditWirelessSecuritySettingsActivity.this,
-                //                        getWindow().getDecorView(), screenshotFile);
-                //                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
-                //                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
-                //                startActivity(intent);
-                ////                Utils.buildFeedbackDialog(this, true);
-                return true;
-
-            default:
-                break;
+        int i = item.getItemId();
+        if (i == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else if (i == R.id.action_feedback) {
+            Utils.openFeedbackForm(this, mRouterUuid);
+            //                final Intent intent = new Intent(EditWirelessSecuritySettingsActivity.this,
+            //                        FeedbackActivity.class);
+            //                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
+            //                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
+            //                ViewGroupUtils.exportViewToFile(EditWirelessSecuritySettingsActivity.this,
+            //                        getWindow().getDecorView(), screenshotFile);
+            //                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+            //                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
+            //                startActivity(intent);
+            ////                Utils.buildFeedbackDialog(this, true);
+            return true;
+        } else {
         }
 
         return super.onOptionsItemSelected(item);

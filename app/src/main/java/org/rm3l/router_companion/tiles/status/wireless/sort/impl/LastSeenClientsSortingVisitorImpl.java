@@ -16,58 +16,57 @@ public class LastSeenClientsSortingVisitorImpl implements ClientsSortingVisitor 
     private final Ordering<Device> lastSeenOrdering;
 
     public LastSeenClientsSortingVisitorImpl(final int lastSeenFlagSort) {
-        switch (lastSeenFlagSort) {
-            case R.id.tile_status_wireless_clients_sort_seen_recently:
-                lastSeenOrdering = new Ordering<Device>() {
-                    @Override
-                    public int compare(Device left, Device right) {
-                        if (left == right) {
-                            return 0;
-                        }
-                        if (left == null) {
-                            return 1;
-                        }
-                        if (right == null) {
-                            return -1;
-                        }
-                        final int lastSeenComparison =
-                                Long.valueOf(right.getLastSeen()).compareTo(left.getLastSeen());
-                        if (lastSeenComparison == 0) {
-                            return Ordering.natural()
-                                    .compare(nullToEmpty(left.getName()).toLowerCase(),
-                                            nullToEmpty(right.getName()).toLowerCase());
-                        }
-                        return lastSeenComparison;
+        if (lastSeenFlagSort == R.id.tile_status_wireless_clients_sort_seen_recently) {
+            lastSeenOrdering = new Ordering<Device>() {
+                @Override
+                public int compare(Device left, Device right) {
+                    if (left == right) {
+                        return 0;
                     }
-                };
-                break;
-            case R.id.tile_status_wireless_clients_sort_not_seen_recently:
-                lastSeenOrdering = new Ordering<Device>() {
-                    @Override
-                    public int compare(Device left, Device right) {
-                        if (left == right) {
-                            return 0;
-                        }
-                        if (left == null) {
-                            return -1;
-                        }
-                        if (right == null) {
-                            return 1;
-                        }
-                        final int lastSeenComparison =
-                                Long.valueOf(left.getLastSeen()).compareTo(right.getLastSeen());
-                        if (lastSeenComparison == 0) {
-                            return Ordering.natural()
-                                    .compare(nullToEmpty(left.getName()).toLowerCase(),
-                                            nullToEmpty(right.getName()).toLowerCase());
-                        }
-                        return lastSeenComparison;
+                    if (left == null) {
+                        return 1;
                     }
-                };
-                break;
-            default:
-                throw new IllegalArgumentException(
-                        "Only 'Seen Recently' or 'Not Seen Recently' flag sorting are accepted here!");
+                    if (right == null) {
+                        return -1;
+                    }
+                    final int lastSeenComparison =
+                            Long.valueOf(right.getLastSeen()).compareTo(left.getLastSeen());
+                    if (lastSeenComparison == 0) {
+                        return Ordering.natural()
+                                .compare(nullToEmpty(left.getName()).toLowerCase(),
+                                        nullToEmpty(right.getName()).toLowerCase());
+                    }
+                    return lastSeenComparison;
+                }
+            };
+
+        } else if (lastSeenFlagSort == R.id.tile_status_wireless_clients_sort_not_seen_recently) {
+            lastSeenOrdering = new Ordering<Device>() {
+                @Override
+                public int compare(Device left, Device right) {
+                    if (left == right) {
+                        return 0;
+                    }
+                    if (left == null) {
+                        return -1;
+                    }
+                    if (right == null) {
+                        return 1;
+                    }
+                    final int lastSeenComparison =
+                            Long.valueOf(left.getLastSeen()).compareTo(right.getLastSeen());
+                    if (lastSeenComparison == 0) {
+                        return Ordering.natural()
+                                .compare(nullToEmpty(left.getName()).toLowerCase(),
+                                        nullToEmpty(right.getName()).toLowerCase());
+                    }
+                    return lastSeenComparison;
+                }
+            };
+
+        } else {
+            throw new IllegalArgumentException(
+                    "Only 'Seen Recently' or 'Not Seen Recently' flag sorting are accepted here!");
         }
     }
 

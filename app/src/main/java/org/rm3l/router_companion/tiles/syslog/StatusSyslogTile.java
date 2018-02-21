@@ -419,38 +419,31 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                         final int itemId = item.getItemId();
 
                         final int nbLinesToView;
-                        switch (itemId) {
+                        if (itemId == R.id.tile_status_syslog_view_share) {
+                            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                                Utils.displayUpgradeMessage(mParentFragmentActivity, "Share Router Logs");
+                            } else {
+                                StatusSyslogTile.this.dumpAndShareLogs();
+                            }
+                            return true;
+                        } else if (itemId == R.id.tile_status_syslog_view_last25) {
+                            nbLinesToView = 25;
 
-                            case R.id.tile_status_syslog_view_share:
-                                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                                    Utils.displayUpgradeMessage(mParentFragmentActivity, "Share Router Logs");
-                                } else {
-                                    StatusSyslogTile.this.dumpAndShareLogs();
-                                }
+                        } else if (itemId == R.id.tile_status_syslog_view_last50) {
+                            nbLinesToView = 50;
+
+                        } else if (itemId == R.id.tile_status_syslog_view_last100) {
+                            nbLinesToView = 100;
+
+                        } else if (itemId == R.id.tile_status_syslog_view_all) {
+                            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                                Utils.displayUpgradeMessage(mParentFragmentActivity, "View All Logs");
                                 return true;
+                            }
+                            nbLinesToView = -1;
 
-                            case R.id.tile_status_syslog_view_last25:
-                                nbLinesToView = 25;
-                                break;
-
-                            case R.id.tile_status_syslog_view_last50:
-                                nbLinesToView = 50;
-                                break;
-
-                            case R.id.tile_status_syslog_view_last100:
-                                nbLinesToView = 100;
-                                break;
-
-                            case R.id.tile_status_syslog_view_all:
-                                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                                    Utils.displayUpgradeMessage(mParentFragmentActivity, "View All Logs");
-                                    return true;
-                                }
-                                nbLinesToView = -1;
-                                break;
-
-                            default:
-                                return false;
+                        } else {
+                            return false;
                         }
 
                         if (nbLinesToView == -1) {

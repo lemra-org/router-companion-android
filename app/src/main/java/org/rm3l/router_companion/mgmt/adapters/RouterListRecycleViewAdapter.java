@@ -236,93 +236,84 @@ public class RouterListRecycleViewAdapter
         public boolean onMenuItemClick(MenuItem menuItem) {
             final Integer itemPos = findRouterPosition(mRouter.getUuid());
 
-            switch (menuItem.getItemId()) {
-                case R.id.action_actions_ssh_router: {
-                    //Open an SSH Client app, if any
-                    Router.openSSHConsole(mRouter, activity);
-                }
+            final int itemId = menuItem.getItemId();
+            if (itemId == R.id.action_actions_ssh_router) {
+                Router.openSSHConsole(mRouter, activity);
                 return true;
-                case R.id.action_actions_reboot_routers: {
+            } else if (itemId == R.id.action_actions_reboot_routers) {
+                new AlertDialog.Builder(activity).setIcon(R.drawable.ic_action_alert_warning)
+                        .setTitle("Reboot Router?")
+                        .setMessage("Are you sure you wish to continue? ")
+                        .setCancelable(true)
+                        .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialogInterface, final int i) {
 
-                    new AlertDialog.Builder(activity).setIcon(R.drawable.ic_action_alert_warning)
-                            .setTitle("Reboot Router?")
-                            .setMessage("Are you sure you wish to continue? ")
-                            .setCancelable(true)
-                            .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(final DialogInterface dialogInterface, final int i) {
-
-                                    final String infoMsg =
-                                            String.format("Rebooting '%s' (%s)...", mRouter.getDisplayName(),
-                                                    mRouter.getRemoteIpAddress());
-                                    if (activity instanceof Activity) {
-                                        Utils.displayMessage((Activity) activity, infoMsg, Style.INFO);
-                                    } else {
-                                        Toast.makeText(activity, infoMsg, Toast.LENGTH_SHORT).show();
-                                    }
-
-                                    final RouterActionListener rebootRouterActionListener =
-                                            new RouterActionListener() {
-                                                @Override
-                                                public void onRouterActionFailure(@NonNull RouterAction routerAction,
-                                                        @NonNull Router router, @Nullable Exception exception) {
-                                                    //An error occurred
-                                                    final String msg =
-                                                            String.format("Error: %s",
-                                                                    Utils.handleException(exception).first);
-
-                                                    if (activity instanceof Activity) {
-                                                        Utils.displayMessage((Activity) activity, msg, Style.ALERT);
-                                                    } else {
-                                                        Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-
-                                                @Override
-                                                public void onRouterActionSuccess(@NonNull RouterAction routerAction,
-                                                        @NonNull Router router, Object returnData) {
-
-                                                    //No error
-                                                    final String msg = String
-                                                            .format("Action '%s' executed successfully",
-                                                                    routerAction.toString());
-                                                    if (activity instanceof Activity) {
-                                                        Utils.displayMessage((Activity) activity, msg, Style.CONFIRM);
-                                                    } else {
-                                                        Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-                                            };
-
-                                    ActionManager.runTasks(
-                                            new RebootRouterAction(mRouter, activity, rebootRouterActionListener,
-                                                    mGlobalPreferences));
+                                final String infoMsg =
+                                        String.format("Rebooting '%s' (%s)...", mRouter.getDisplayName(),
+                                                mRouter.getRemoteIpAddress());
+                                if (activity instanceof Activity) {
+                                    Utils.displayMessage((Activity) activity, infoMsg, Style.INFO);
+                                } else {
+                                    Toast.makeText(activity, infoMsg, Toast.LENGTH_SHORT).show();
                                 }
-                            })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    //Cancelled - nothing more to do!
-                                }
-                            })
-                            .create()
-                            .show();
-                }
-                return true;
-                case R.id.action_actions_restore_factory_defaults: {
-                    //TODO Hidden for now
 
-                }
+                                final RouterActionListener rebootRouterActionListener =
+                                        new RouterActionListener() {
+                                            @Override
+                                            public void onRouterActionFailure(@NonNull RouterAction routerAction,
+                                                    @NonNull Router router, @Nullable Exception exception) {
+                                                //An error occurred
+                                                final String msg =
+                                                        String.format("Error: %s",
+                                                                Utils.handleException(exception).first);
+
+                                                if (activity instanceof Activity) {
+                                                    Utils.displayMessage((Activity) activity, msg, Style.ALERT);
+                                                } else {
+                                                    Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onRouterActionSuccess(@NonNull RouterAction routerAction,
+                                                    @NonNull Router router, Object returnData) {
+
+                                                //No error
+                                                final String msg = String
+                                                        .format("Action '%s' executed successfully",
+                                                                routerAction.toString());
+                                                if (activity instanceof Activity) {
+                                                    Utils.displayMessage((Activity) activity, msg, Style.CONFIRM);
+                                                } else {
+                                                    Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        };
+
+                                ActionManager.runTasks(
+                                        new RebootRouterAction(mRouter, activity, rebootRouterActionListener,
+                                                mGlobalPreferences));
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Cancelled - nothing more to do!
+                            }
+                        })
+                        .create()
+                        .show();
                 return true;
-                case R.id.action_actions_firmwares_upgrade:
-                    //TODO Hidden for now
-                    return true;
-                case R.id.menu_router_list_add_home_shortcut: {
-                    mRouter.addHomeScreenShortcut(activity);
-                }
+            } else if (itemId == R.id.action_actions_restore_factory_defaults) {
                 return true;
-                default:
-                    return false;
+            } else if (itemId == R.id.action_actions_firmwares_upgrade) {//TODO Hidden for now
+                return true;
+            } else if (itemId == R.id.menu_router_list_add_home_shortcut) {
+                mRouter.addHomeScreenShortcut(activity);
+                return true;
+            } else {
+                return false;
             }
         }
     }

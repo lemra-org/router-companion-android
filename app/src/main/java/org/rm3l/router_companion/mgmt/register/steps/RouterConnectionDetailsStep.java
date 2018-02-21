@@ -216,40 +216,38 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
                     @Override
                     public void onCheckedChanged(RadioGroup group, int checkedId) {
 
-                        switch (checkedId) {
-                            case R.id.router_add_ssh_auth_method_none:
-                                privkeyPathView.setText(null);
-                                privkeyHdrView.setVisibility(View.GONE);
-                                privkeyButtonView.setVisibility(View.GONE);
-                                privkeyErrorMsgView.setVisibility(View.GONE);
-                                pwdView.setText(null);
-                                pwdView.setVisibility(View.GONE);
-                                pwdShowCheckBox.setVisibility(View.GONE);
-                                pwdInputLayout.setErrorEnabled(false);
-                                privkeyErrorMsgView.setText(null);
-                                break;
-                            case R.id.router_add_ssh_auth_method_password:
-                                privkeyPathView.setText(null);
-                                privkeyHdrView.setVisibility(View.GONE);
-                                privkeyButtonView.setVisibility(View.GONE);
-                                privkeyErrorMsgView.setText(null);
-                                pwdView.setVisibility(View.VISIBLE);
-                                //                                pwdView.setHint("e.g., 'default' (may be empty) ");
-                                pwdShowCheckBox.setVisibility(View.VISIBLE);
-                                pwdInputLayout.setErrorEnabled(false);
-                                break;
-                            case R.id.router_add_ssh_auth_method_privkey:
-                                pwdView.setText(null);
-                                privkeyButtonView.setHint(getString(R.string.router_add_path_to_privkey));
-                                pwdView.setVisibility(View.VISIBLE);
-                                //                                pwdView.setHint("Key passphrase, if applicable");
-                                pwdShowCheckBox.setVisibility(View.VISIBLE);
-                                privkeyHdrView.setVisibility(View.VISIBLE);
-                                privkeyButtonView.setVisibility(View.VISIBLE);
-                                pwdInputLayout.setErrorEnabled(false);
-                                break;
-                            default:
-                                break;
+                        if (checkedId == R.id.router_add_ssh_auth_method_none) {
+                            privkeyPathView.setText(null);
+                            privkeyHdrView.setVisibility(View.GONE);
+                            privkeyButtonView.setVisibility(View.GONE);
+                            privkeyErrorMsgView.setVisibility(View.GONE);
+                            pwdView.setText(null);
+                            pwdView.setVisibility(View.GONE);
+                            pwdShowCheckBox.setVisibility(View.GONE);
+                            pwdInputLayout.setErrorEnabled(false);
+                            privkeyErrorMsgView.setText(null);
+
+                        } else if (checkedId == R.id.router_add_ssh_auth_method_password) {
+                            privkeyPathView.setText(null);
+                            privkeyHdrView.setVisibility(View.GONE);
+                            privkeyButtonView.setVisibility(View.GONE);
+                            privkeyErrorMsgView.setText(null);
+                            pwdView.setVisibility(View.VISIBLE);
+                            //                                pwdView.setHint("e.g., 'default' (may be empty) ");
+                            pwdShowCheckBox.setVisibility(View.VISIBLE);
+                            pwdInputLayout.setErrorEnabled(false);
+
+                        } else if (checkedId == R.id.router_add_ssh_auth_method_privkey) {
+                            pwdView.setText(null);
+                            privkeyButtonView.setHint(getString(R.string.router_add_path_to_privkey));
+                            pwdView.setVisibility(View.VISIBLE);
+                            //                                pwdView.setHint("Key passphrase, if applicable");
+                            pwdShowCheckBox.setVisibility(View.VISIBLE);
+                            privkeyHdrView.setVisibility(View.VISIBLE);
+                            privkeyButtonView.setVisibility(View.VISIBLE);
+                            pwdInputLayout.setErrorEnabled(false);
+
+                        } else {
                         }
                     }
                 });
@@ -464,33 +462,14 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
         sshLoginInputLayout.setErrorEnabled(false);
 
         final int checkedAuthMethodRadioButtonId = authMethodRg.getCheckedRadioButtonId();
-        switch (checkedAuthMethodRadioButtonId) {
-            //            case R.id.router_add_ssh_auth_method_password: {
-            //                //Check password
-            //                final TextInputLayout pwdInputLayout =
-            //                        (TextInputLayout) rootView.findViewById(R.id.router_add_password_input_layout);
-            //                if (isNullOrEmpty(pwdView.getText().toString())) {
-            //                    pwdInputLayout.setErrorEnabled(true);
-            //                    pwdInputLayout.setError("Password required");
-            //                    Utils.scrollToView(contentScrollView, pwdView);
-            ////                    pwdView.requestFocus();
-            ////                    openKeyboard(activity, pwdView);
-            //                    return false;
-            //                }
-            //                pwdInputLayout.setErrorEnabled(false);
-            //            }
-            //            break;
-            case R.id.router_add_ssh_auth_method_privkey: {
-                //Check privkey
-                if (isNullOrEmpty(privkeyPathView.getText().toString())) {
-                    privkeyErrorMsgView.setText(getString(R.string.router_add_privkey_invalid));
-                    //                    privkeyButtonView.requestFocus();
-                    return false;
-                }
+        if (checkedAuthMethodRadioButtonId == R.id.router_add_ssh_auth_method_privkey) {
+            if (isNullOrEmpty(privkeyPathView.getText().toString())) {
+                privkeyErrorMsgView.setText(getString(R.string.router_add_privkey_invalid));
+                //                    privkeyButtonView.requestFocus();
+                return false;
             }
-            break;
-            default:
-                break;
+
+        } else {
         }
 
         return true;
@@ -503,18 +482,16 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
         password = pwdView.getText().toString();
         port = portEt.getText().toString();
         final int checkedRadioButtonId = authMethodRg.getCheckedRadioButtonId();
-        switch (checkedRadioButtonId) {
-            case R.id.router_add_ssh_auth_method_none:
-                authMethod = Integer.toString(Router.SSHAuthenticationMethod_NONE);
-                break;
-            case R.id.router_add_ssh_auth_method_password:
-                authMethod = Integer.toString(Router.SSHAuthenticationMethod_PASSWORD);
-                break;
-            case R.id.router_add_ssh_auth_method_privkey:
-                authMethod = Integer.toString(Router.SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY);
-                break;
-            default:
-                break;
+        if (checkedRadioButtonId == R.id.router_add_ssh_auth_method_none) {
+            authMethod = Integer.toString(Router.SSHAuthenticationMethod_NONE);
+
+        } else if (checkedRadioButtonId == R.id.router_add_ssh_auth_method_password) {
+            authMethod = Integer.toString(Router.SSHAuthenticationMethod_PASSWORD);
+
+        } else if (checkedRadioButtonId == R.id.router_add_ssh_auth_method_privkey) {
+            authMethod = Integer.toString(Router.SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY);
+
+        } else {
         }
         privkeyErrorMsg = privkeyErrorMsgView.getText().toString();
         privkeyPath = privkeyPathView.getText().toString();

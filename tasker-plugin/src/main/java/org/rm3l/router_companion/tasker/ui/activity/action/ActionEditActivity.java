@@ -771,45 +771,41 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                // Signal to AbstractAppCompatPluginActivity that the user canceled.
-                mIsCancelled = true;
-                onBackPressed();
-                break;
+        int i = item.getItemId();
+        if (i == android.R.id.home) {// Signal to AbstractAppCompatPluginActivity that the user canceled.
+            mIsCancelled = true;
+            onBackPressed();
 
-            case R.id.menu_refresh:
-                refresh();
-                break;
+        } else if (i == R.id.menu_refresh) {
+            refresh();
 
-            case R.id.ddwrt_companion_tasker_feedback:
-                new Maoni.Builder(this, Constants.FILEPROVIDER_AUTHORITY)
-                        .withSharedPreferences(Utils.getDefaultSharedPreferencesName(this))
-                        .withTheme(R.style.AppThemeLight_StatusBarTransparent)
-                        .withWindowTitle("Send Feedback")
-                        .withExtraLayout(R.layout.activity_feedback_maoni)
-                        .withHandler(new FeedbackHandler(this))
-                        .build()
-                        .start(this);
-                break;
-            case R.id.ddwrt_companion_tasker_about:
-                new LibsBuilder().withFields(R.string.class.getFields()).withActivityTitle("About")
-                        //provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
-                        .withActivityStyle(Libs.ActivityStyle.LIGHT)
-                        //start the activity
-                        .start(this);
-                break;
-            case R.id.menu_discard_changes:
-                // Signal to AbstractAppCompatPluginActivity that the user canceled.
-                mIsCancelled = true;
-                finish();
-                break;
-            case R.id.menu_save_changes:
-                mIsCancelled = false;
-                finish();
-                break;
-            default:
-                break;
+        } else if (i == R.id.ddwrt_companion_tasker_feedback) {
+            new Maoni.Builder(this, Constants.FILEPROVIDER_AUTHORITY)
+                    .withSharedPreferences(Utils.getDefaultSharedPreferencesName(this))
+                    .withTheme(R.style.AppThemeLight_StatusBarTransparent)
+                    .withWindowTitle("Send Feedback")
+                    .withExtraLayout(R.layout.activity_feedback_maoni)
+                    .withHandler(new FeedbackHandler(this))
+                    .build()
+                    .start(this);
+
+        } else if (i == R.id.ddwrt_companion_tasker_about) {
+            new LibsBuilder().withFields(R.string.class.getFields()).withActivityTitle("About")
+                    //provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
+                    .withActivityStyle(Libs.ActivityStyle.LIGHT)
+                    //start the activity
+                    .start(this);
+
+        } else if (i
+                == R.id.menu_discard_changes) {// Signal to AbstractAppCompatPluginActivity that the user canceled.
+            mIsCancelled = true;
+            finish();
+
+        } else if (i == R.id.menu_save_changes) {
+            mIsCancelled = false;
+            finish();
+
+        } else {
         }
 
         return true;

@@ -596,24 +596,23 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
             popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    switch (item.getItemId()) {
-                        case R.id.menu_router_alias_edit:
-                            displayRouterAliasDialog(context, mac, aliasStr,
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            if (context != null) {
-                                                context.doRefreshRoutersListWithSpinner(
-                                                        RecyclerViewRefreshCause.DATA_SET_CHANGED, null);
-                                            }
+                    int i = item.getItemId();
+                    if (i == R.id.menu_router_alias_edit) {
+                        displayRouterAliasDialog(context, mac, aliasStr,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        if (context != null) {
+                                            context.doRefreshRoutersListWithSpinner(
+                                                    RecyclerViewRefreshCause.DATA_SET_CHANGED, null);
                                         }
-                                    });
-                            return true;
-                        case R.id.menu_router_alias_remove:
-                            removeAliasEntryDialog.show();
-                            return true;
-                        default:
-                            break;
+                                    }
+                                });
+                        return true;
+                    } else if (i == R.id.menu_router_alias_remove) {
+                        removeAliasEntryDialog.show();
+                        return true;
+                    } else {
                     }
                     return false;
                 }
@@ -1098,102 +1097,95 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-
-            case R.id.action_feedback:
-                Utils.openFeedbackForm(this, mRouter);
-                //                final Intent intent = new Intent(ManageRouterAliasesActivity.this, FeedbackActivity.class);
-                //                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
-                //                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
-                //                ViewGroupUtils.exportViewToFile(ManageRouterAliasesActivity.this, getWindow().getDecorView(), screenshotFile);
-                //                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
-                //                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
-                //                startActivity(intent);
-                ////                Utils.buildFeedbackDialog(this, true);
-                return true;
-
-            case R.id.router_aliases_add:
-                displayRouterAliasDialog(this, null, null, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        doRefreshRoutersListWithSpinner(RecyclerViewRefreshCause.DATA_SET_CHANGED, null);
-                    }
-                });
-                return true;
-
-            case R.id.router_aliases_import:
-                if (PermissionChecker.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    //Permission denied
-                    Utils.displayMessage(this, "Storage access required!", ALERT);
-                    return true;
+        final int itemId = item.getItemId();
+        if (itemId == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else if (itemId == R.id.action_feedback) {
+            Utils.openFeedbackForm(this, mRouter);
+            //                final Intent intent = new Intent(ManageRouterAliasesActivity.this, FeedbackActivity.class);
+            //                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
+            //                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
+            //                ViewGroupUtils.exportViewToFile(ManageRouterAliasesActivity.this, getWindow().getDecorView(), screenshotFile);
+            //                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+            //                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
+            //                startActivity(intent);
+            ////                Utils.buildFeedbackDialog(this, true);
+            return true;
+        } else if (itemId == R.id.router_aliases_add) {
+            displayRouterAliasDialog(this, null, null, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    doRefreshRoutersListWithSpinner(RecyclerViewRefreshCause.DATA_SET_CHANGED, null);
                 }
-                final Fragment importAliasesFragment =
-                        getSupportFragmentManager().findFragmentByTag(IMPORT_ALIASES_FRAGMENT_TAG);
-                if (importAliasesFragment instanceof DialogFragment) {
-                    ((DialogFragment) importAliasesFragment).dismiss();
-                }
-                final DialogFragment importAliases =
-                        ImportAliasesDialogFragment.newInstance(mRouter.getUuid());
-                importAliases.show(getSupportFragmentManager(), IMPORT_ALIASES_FRAGMENT_TAG);
+            });
+            return true;
+        } else if (itemId == R.id.router_aliases_import) {
+            if (PermissionChecker.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                //Permission denied
+                Utils.displayMessage(this, "Storage access required!", ALERT);
                 return true;
-
-            case R.id.router_aliases_export_all:
-                if (PermissionChecker.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    //Permission denied
-                    Utils.displayMessage(this, "Storage access required!", ALERT);
-                    return true;
-                }
-                final Bundle token = new Bundle();
-                token.putInt(MAIN_ACTIVITY_ACTION, RouterActions.EXPORT_ALIASES);
-
-                SnackbarUtils.buildSnackbar(this,
-                        String.format("Going to start exporting aliases for '%s' (%s)...",
-                                mRouter.getDisplayName(), mRouter.getRemoteIpAddress()), "Undo",
-                        Snackbar.LENGTH_SHORT, ManageRouterAliasesActivity.this, token, true);
+            }
+            final Fragment importAliasesFragment =
+                    getSupportFragmentManager().findFragmentByTag(IMPORT_ALIASES_FRAGMENT_TAG);
+            if (importAliasesFragment instanceof DialogFragment) {
+                ((DialogFragment) importAliasesFragment).dismiss();
+            }
+            final DialogFragment importAliases =
+                    ImportAliasesDialogFragment.newInstance(mRouter.getUuid());
+            importAliases.show(getSupportFragmentManager(), IMPORT_ALIASES_FRAGMENT_TAG);
+            return true;
+        } else if (itemId == R.id.router_aliases_export_all) {
+            if (PermissionChecker.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                //Permission denied
+                Utils.displayMessage(this, "Storage access required!", ALERT);
                 return true;
+            }
+            final Bundle token = new Bundle();
+            token.putInt(MAIN_ACTIVITY_ACTION, RouterActions.EXPORT_ALIASES);
 
-            case R.id.router_aliases_clear_all:
-                new AlertDialog.Builder(this).setIcon(R.drawable.ic_action_alert_warning)
-                        .setTitle("Drop all aliases?")
-                        .setMessage("You'll lose all your local aliases for this router!")
-                        .setCancelable(true)
-                        .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                final SharedPreferences.Editor editor = mRouterPreferences.edit();
-                                //Iterate over all possible aliases
-                                final Set<Pair<String, String>> aliases =
-                                        Router.getAliases(ManageRouterAliasesActivity.this, mRouter);
-                                for (final Pair<String, String> alias : aliases) {
-                                    if (alias == null) {
-                                        continue;
-                                    }
-                                    editor.remove(alias.first);
+            SnackbarUtils.buildSnackbar(this,
+                    String.format("Going to start exporting aliases for '%s' (%s)...",
+                            mRouter.getDisplayName(), mRouter.getRemoteIpAddress()), "Undo",
+                    Snackbar.LENGTH_SHORT, ManageRouterAliasesActivity.this, token, true);
+            return true;
+        } else if (itemId == R.id.router_aliases_clear_all) {
+            new AlertDialog.Builder(this).setIcon(R.drawable.ic_action_alert_warning)
+                    .setTitle("Drop all aliases?")
+                    .setMessage("You'll lose all your local aliases for this router!")
+                    .setCancelable(true)
+                    .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            final SharedPreferences.Editor editor = mRouterPreferences.edit();
+                            //Iterate over all possible aliases
+                            final Set<Pair<String, String>> aliases =
+                                    Router.getAliases(ManageRouterAliasesActivity.this, mRouter);
+                            for (final Pair<String, String> alias : aliases) {
+                                if (alias == null) {
+                                    continue;
                                 }
-                                editor.apply();
-                                doRefreshRoutersListWithSpinner(RecyclerViewRefreshCause.DATA_SET_CHANGED, null);
+                                editor.remove(alias.first);
                             }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Cancelled - nothing more to do!
-                            }
-                        })
-                        .create()
-                        .show();
-                return true;
-
-            case R.id.router_aliases_list_refresh:
-                doRefreshRoutersListWithSpinner(RecyclerViewRefreshCause.DATA_SET_CHANGED, null);
-                return true;
-            default:
-                break;
+                            editor.apply();
+                            doRefreshRoutersListWithSpinner(RecyclerViewRefreshCause.DATA_SET_CHANGED, null);
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //Cancelled - nothing more to do!
+                        }
+                    })
+                    .create()
+                    .show();
+            return true;
+        } else if (itemId == R.id.router_aliases_list_refresh) {
+            doRefreshRoutersListWithSpinner(RecyclerViewRefreshCause.DATA_SET_CHANGED, null);
+            return true;
+        } else {
         }
         return super.onOptionsItemSelected(item);
     }

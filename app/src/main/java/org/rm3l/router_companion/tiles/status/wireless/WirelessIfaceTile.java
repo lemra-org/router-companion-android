@@ -572,218 +572,176 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         final String routerUuid = mRouter.getUuid();
         final int itemId = item.getItemId();
         final String wifiSsidNullToEmpty = nullToEmpty(wifiSsid);
-        switch (itemId) {
-            case R.id.tile_status_wireless_iface_share: {
-                if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && wifiPassword == null)) {
-                    //menu item should have been disabled, but anyways, you never know :)
-                    Toast.makeText(mParentFragmentActivity,
-                            "Missing parameters to share WiFi network - try again later", Toast.LENGTH_SHORT)
-                            .show();
-                    return true;
-                }
-
-                final Intent intent = new Intent(mParentFragmentActivity, WifiSharingActivity.class);
-                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
-                intent.putExtra(SSID, wifiSsidNullToEmpty);
-                intent.putExtra(WifiSharingActivity.ENC_TYPE, wifiEncryptionType.toString().toUpperCase());
-                intent.putExtra(WifiSharingActivity.PWD, wifiPassword);
-                //                intent.putExtra(WirelessIfaceQrCodeActivity.WIFI_QR_CODE, wifiQrCodeString);
-
-                final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                        String.format("Generating data to share for '%s'", wifiSsidNullToEmpty), false, false);
-                alertDialog.show();
-                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(
-                        Gravity.CENTER_HORIZONTAL);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mParentFragmentActivity.startActivity(intent);
-                        alertDialog.cancel();
-                    }
-                }, 2500);
+        if (itemId == R.id.tile_status_wireless_iface_share) {
+            if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && wifiPassword == null)) {
+                //menu item should have been disabled, but anyways, you never know :)
+                Toast.makeText(mParentFragmentActivity,
+                        "Missing parameters to share WiFi network - try again later", Toast.LENGTH_SHORT)
+                        .show();
+                return true;
             }
+            final Intent intent = new Intent(mParentFragmentActivity, WifiSharingActivity.class);
+            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
+            intent.putExtra(SSID, wifiSsidNullToEmpty);
+            intent.putExtra(WifiSharingActivity.ENC_TYPE, wifiEncryptionType.toString().toUpperCase());
+            intent.putExtra(WifiSharingActivity.PWD, wifiPassword);
+            final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                    String.format("Generating data to share for '%s'", wifiSsidNullToEmpty), false, false);
+            alertDialog.show();
+            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(
+                    Gravity.CENTER_HORIZONTAL);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mParentFragmentActivity.startActivity(intent);
+                    alertDialog.cancel();
+                }
+            }, 2500);
 
             return true;
-
-            case R.id.tile_status_wireless_iface_traffic_shaping: {
-                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                    //Download the full version to unlock this version
-                    Utils.displayUpgradeMessage(mParentFragmentActivity, "Traffic Shaping");
-                    return true;
-                }
-
-                //TODO
+        } else if (itemId == R.id.tile_status_wireless_iface_traffic_shaping) {
+            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                //Download the full version to unlock this version
+                Utils.displayUpgradeMessage(mParentFragmentActivity, "Traffic Shaping");
+                return true;
             }
             return true;
-            case R.id.tile_status_wireless_iface_set_up:
-            case R.id.tile_status_wireless_iface_set_down: {
-                if (Strings.isNullOrEmpty(phyIface)) {
-                    Utils.displayMessage(mParentFragmentActivity,
-                            "Could not determine physical interface at this time - please try again later",
-                            Style.ALERT);
-                    return true;
-                }
-                final Bundle token = new Bundle();
-                final PhysicalInterfaceState physicalInterfaceState =
-                        itemId == R.id.tile_status_wireless_iface_set_up ? PhysicalInterfaceState.UP
-                                : PhysicalInterfaceState.DOWN;
+        } else if (itemId == R.id.tile_status_wireless_iface_set_up
+                || itemId == R.id.tile_status_wireless_iface_set_down) {
+            if (Strings.isNullOrEmpty(phyIface)) {
+                Utils.displayMessage(mParentFragmentActivity,
+                        "Could not determine physical interface at this time - please try again later",
+                        Style.ALERT);
+                return true;
+            }
+            final Bundle token = new Bundle();
+            final PhysicalInterfaceState physicalInterfaceState =
+                    itemId == R.id.tile_status_wireless_iface_set_up ? PhysicalInterfaceState.UP
+                            : PhysicalInterfaceState.DOWN;
+            token.putSerializable(PHYSICAL_IFACE_STATE_ACTION, physicalInterfaceState);
+            SnackbarUtils.buildSnackbar(mParentFragmentActivity,
+                    String.format("Bringing %s physical interface %s (backing wireless network '%s').",
+                            physicalInterfaceState.toString().toLowerCase(), phyIface, wifiSsid), "CANCEL",
+                    Snackbar.LENGTH_LONG, new SnackbarCallback() {
+                        @Override
+                        public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+                                throws Exception {
 
-                token.putSerializable(PHYSICAL_IFACE_STATE_ACTION, physicalInterfaceState);
+                        }
 
-                SnackbarUtils.buildSnackbar(mParentFragmentActivity,
-                        String.format("Bringing %s physical interface %s (backing wireless network '%s').",
-                                physicalInterfaceState.toString().toLowerCase(), phyIface, wifiSsid), "CANCEL",
-                        Snackbar.LENGTH_LONG, new SnackbarCallback() {
-                            @Override
-                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                                    throws Exception {
+                        @Override
+                        public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+                                throws Exception {
 
-                            }
+                        }
 
-                            @Override
-                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-                                    throws Exception {
+                        @Override
+                        public void onDismissEventManual(int event, @Nullable Bundle bundle)
+                                throws Exception {
 
-                            }
+                        }
 
-                            @Override
-                            public void onDismissEventManual(int event, @Nullable Bundle bundle)
-                                    throws Exception {
+                        @Override
+                        public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
+                                throws Exception {
 
-                            }
+                        }
 
-                            @Override
-                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
-                                    throws Exception {
+                        @Override
+                        public void onDismissEventTimeout(int event, @Nullable Bundle token)
+                                throws Exception {
+                            try {
+                                final Serializable phyInterfaceStateSer =
+                                        token != null ? token.getSerializable(PHYSICAL_IFACE_STATE_ACTION) : null;
+                                Crashlytics.log(Log.DEBUG, LOG_TAG,
+                                        "phyInterfaceStateSer: [" + phyInterfaceStateSer + "]");
+                                if (!(phyInterfaceStateSer instanceof PhysicalInterfaceState)) {
+                                    return;
+                                }
 
-                            }
+                                final PhysicalInterfaceState interfaceState =
+                                        (PhysicalInterfaceState) phyInterfaceStateSer;
 
-                            @Override
-                            public void onDismissEventTimeout(int event, @Nullable Bundle token)
-                                    throws Exception {
-                                try {
-                                    final Serializable phyInterfaceStateSer =
-                                            token != null ? token.getSerializable(PHYSICAL_IFACE_STATE_ACTION) : null;
-                                    Crashlytics.log(Log.DEBUG, LOG_TAG,
-                                            "phyInterfaceStateSer: [" + phyInterfaceStateSer + "]");
-                                    if (!(phyInterfaceStateSer instanceof PhysicalInterfaceState)) {
-                                        return;
+                                ActionManager.runTasks(new TogglePhysicalInterfaceStateRouterAction(mRouter,
+                                        mParentFragmentActivity, new RouterActionListener() {
+                                    @Override
+                                    public void onRouterActionFailure(@NonNull RouterAction routerAction,
+                                            @NonNull Router router, @Nullable Exception exception) {
+                                        Utils.displayMessage(mParentFragmentActivity,
+                                                String.format("Error: %s",
+                                                        Utils.handleException(exception).first),
+                                                Style.ALERT);
                                     }
 
-                                    final PhysicalInterfaceState interfaceState =
-                                            (PhysicalInterfaceState) phyInterfaceStateSer;
-
-                                    ActionManager.runTasks(new TogglePhysicalInterfaceStateRouterAction(mRouter,
-                                            mParentFragmentActivity, new RouterActionListener() {
-                                        @Override
-                                        public void onRouterActionFailure(@NonNull RouterAction routerAction,
-                                                @NonNull Router router, @Nullable Exception exception) {
-                                            Utils.displayMessage(mParentFragmentActivity,
-                                                    String.format("Error: %s",
-                                                            Utils.handleException(exception).first),
-                                                    Style.ALERT);
-                                        }
-
-                                        @Override
-                                        public void onRouterActionSuccess(@NonNull RouterAction routerAction,
-                                                @NonNull Router router, Object returnData) {
-                                            Utils.displayMessage(mParentFragmentActivity, "Physical Interface '"
-                                                    + phyIface
-                                                    + "' (for wireless network '"
-                                                    + wifiSsid
-                                                    + "') is now '"
-                                                    + interfaceState
-                                                    + "'", Style.CONFIRM);
-                                            // Update info right away
-                                            //Run on main thread to avoid the exception:
-                                            //"Only the original thread that created a view hierarchy can touch its views."
-                                            mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    ((TextView) layout.findViewById(
-                                                            R.id.tile_status_wireless_iface_state)).setText(
-                                                            interfaceState.toString().toLowerCase());
-                                                }
-                                            });
-                                        }
-                                    }, mGlobalPreferences, phyIface, interfaceState));
-                                } catch (IllegalArgumentException | NullPointerException | IllegalStateException e) {
-                                    e.printStackTrace();
-                                }
+                                    @Override
+                                    public void onRouterActionSuccess(@NonNull RouterAction routerAction,
+                                            @NonNull Router router, Object returnData) {
+                                        Utils.displayMessage(mParentFragmentActivity, "Physical Interface '"
+                                                + phyIface
+                                                + "' (for wireless network '"
+                                                + wifiSsid
+                                                + "') is now '"
+                                                + interfaceState
+                                                + "'", Style.CONFIRM);
+                                        // Update info right away
+                                        //Run on main thread to avoid the exception:
+                                        //"Only the original thread that created a view hierarchy can touch its views."
+                                        mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                ((TextView) layout.findViewById(
+                                                        R.id.tile_status_wireless_iface_state)).setText(
+                                                        interfaceState.toString().toLowerCase());
+                                            }
+                                        });
+                                    }
+                                }, mGlobalPreferences, phyIface, interfaceState));
+                            } catch (IllegalArgumentException | NullPointerException | IllegalStateException e) {
+                                e.printStackTrace();
                             }
+                        }
 
-                            @Override
-                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+                        @Override
+                        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
 
-                            }
-                        }, token, true);
-
-                //new UndoBarController.UndoBar(mParentFragmentActivity).message(
-                //    String.format("Bringing %s physical interface %s (backing wireless network '%s').",
-                //        physicalInterfaceState.toString().toLowerCase(), phyIface, wifiSsid))
-                //    .listener(new UndoBarController.AdvancedUndoListener() {
-                //
-                //      @Override public void onUndo(@Nullable Parcelable token) {
-                //        //Nothing to do
-                //      }
-                //
-                //      @Override public void onHide(@Nullable Parcelable parcelable) {
-                //        if (parcelable instanceof Bundle) {
-                //          final Bundle token = (Bundle) parcelable;
-                //
-                //
-                //        }
-                //      }
-                //
-                //      @Override public void onClear(@NonNull Parcelable[] token) {
-                //        //Nothing to do
-                //      }
-                //    })
-                //    .token(token)
-                //    .show();
-            }
+                        }
+                    }, token, true);
             return true;
-            case R.id.tile_status_wireless_iface_security: {
-
-                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                    //Download the full version to unlock this version
-                    Utils.displayUpgradeMessage(mParentFragmentActivity, "Edit Wireless Security Settings");
-                    return true;
-                }
-
-                final NVRAMInfo nvramInfo = new NVRAMInfo().setProperty(WirelessIfaceTile.IFACE, this.iface)
-                        .setProperty(WirelessIfaceTile.PARENT_IFACE, nullToEmpty(this.parentIface))
-                        .setProperty(SSID, wifiSsidNullToEmpty)
-                        .setProperty(EditWirelessSecuritySettingsActivity.HWADDR, nullToEmpty(hwAddr));
-                if (mNvramInfo != null) {
-                    nvramInfo.putAll(mNvramInfo);
-                }
-
-                final Intent intent =
-                        new Intent(mParentFragmentActivity, EditWirelessSecuritySettingsActivity.class);
-                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
-                intent.putExtra(SSID, wifiSsidNullToEmpty);
-                intent.putExtra(EditWirelessSecuritySettingsActivity.WIRELESS_SECURITY_NVRAMINFO,
-                        nvramInfo);
-
-                final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                        String.format("Loading Security Settings for '%s'", wifiSsidNullToEmpty), false, false);
-                alertDialog.show();
-                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(
-                        Gravity.CENTER_HORIZONTAL);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mWirelessSecurityFormOpened.set(true);
-                        ((AbstractBaseFragment) mParentFragment).startActivityForResult(intent,
-                                new WirelessSecuritySettingsActivityResultListener(wifiSsidNullToEmpty));
-                        alertDialog.cancel();
-                    }
-                }, 2500);
+        } else if (itemId == R.id.tile_status_wireless_iface_security) {
+            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                //Download the full version to unlock this version
+                Utils.displayUpgradeMessage(mParentFragmentActivity, "Edit Wireless Security Settings");
+                return true;
             }
+            final NVRAMInfo nvramInfo = new NVRAMInfo().setProperty(WirelessIfaceTile.IFACE, this.iface)
+                    .setProperty(WirelessIfaceTile.PARENT_IFACE, nullToEmpty(this.parentIface))
+                    .setProperty(SSID, wifiSsidNullToEmpty)
+                    .setProperty(EditWirelessSecuritySettingsActivity.HWADDR, nullToEmpty(hwAddr));
+            if (mNvramInfo != null) {
+                nvramInfo.putAll(mNvramInfo);
+            }
+            final Intent intent =
+                    new Intent(mParentFragmentActivity, EditWirelessSecuritySettingsActivity.class);
+            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
+            intent.putExtra(SSID, wifiSsidNullToEmpty);
+            intent.putExtra(EditWirelessSecuritySettingsActivity.WIRELESS_SECURITY_NVRAMINFO,
+                    nvramInfo);
+            final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                    String.format("Loading Security Settings for '%s'", wifiSsidNullToEmpty), false, false);
+            alertDialog.show();
+            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(
+                    Gravity.CENTER_HORIZONTAL);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mWirelessSecurityFormOpened.set(true);
+                    ((AbstractBaseFragment) mParentFragment).startActivityForResult(intent,
+                            new WirelessSecuritySettingsActivityResultListener(wifiSsidNullToEmpty));
+                    alertDialog.cancel();
+                }
+            }, 2500);
             return true;
-            default:
-                break;
+        } else {
         }
         return false;
     }

@@ -1721,18 +1721,14 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-
-            case R.id.action_feedback:
-                Utils.openFeedbackForm(this, mRouterUuid);
-                return true;
-
-            default:
-                break;
+        int i = item.getItemId();
+        if (i == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else if (i == R.id.action_feedback) {
+            Utils.openFeedbackForm(this, mRouterUuid);
+            return true;
+        } else {
         }
         return super.onOptionsItemSelected(item);
     }

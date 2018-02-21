@@ -545,44 +545,37 @@ public class RouterCompanionTaskerPluginLaunchActivity extends AppCompatActivity
 
     @Override
     public final boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                break;
+        int i = item.getItemId();
+        if (i == android.R.id.home) {
+            onBackPressed();
 
-            case R.id.launch_ddwrt_companion:
-                launchDDWRTCompanionApp();
-                break;
+        } else if (i == R.id.launch_ddwrt_companion) {
+            launchDDWRTCompanionApp();
 
-            case R.id.launch_tasker:
-                launchTaskerApp();
-                break;
+        } else if (i == R.id.launch_tasker) {
+            launchTaskerApp();
 
-            case R.id.ddwrt_companion_tasker_feedback:
-                new Maoni.Builder(this, Constants.FILEPROVIDER_AUTHORITY)
-                        .withSharedPreferences(Utils.getDefaultSharedPreferencesName(this))
-                        .withTheme(R.style.AppThemeLight_StatusBarTransparent)
-                        .withWindowTitle("Send Feedback")
-                        .withExtraLayout(R.layout.activity_feedback_maoni)
-                        .withHandler(new FeedbackHandler(this))
-                        .build()
-                        .start(this);
-                break;
+        } else if (i == R.id.ddwrt_companion_tasker_feedback) {
+            new Maoni.Builder(this, Constants.FILEPROVIDER_AUTHORITY)
+                    .withSharedPreferences(Utils.getDefaultSharedPreferencesName(this))
+                    .withTheme(R.style.AppThemeLight_StatusBarTransparent)
+                    .withWindowTitle("Send Feedback")
+                    .withExtraLayout(R.layout.activity_feedback_maoni)
+                    .withHandler(new FeedbackHandler(this))
+                    .build()
+                    .start(this);
 
-            case R.id.ddwrt_companion_tasker_about:
-                new LibsBuilder().withFields(R.string.class.getFields()).withActivityTitle("About")
-                        //provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
-                        .withActivityStyle(Libs.ActivityStyle.LIGHT)
-                        //start the activity
-                        .start(this);
-                break;
+        } else if (i == R.id.ddwrt_companion_tasker_about) {
+            new LibsBuilder().withFields(R.string.class.getFields()).withActivityTitle("About")
+                    //provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
+                    .withActivityStyle(Libs.ActivityStyle.LIGHT)
+                    //start the activity
+                    .start(this);
 
-            case R.id.exit:
-                finish();
-                break;
+        } else if (i == R.id.exit) {
+            finish();
 
-            default:
-                break;
+        } else {
         }
         return true;
     }

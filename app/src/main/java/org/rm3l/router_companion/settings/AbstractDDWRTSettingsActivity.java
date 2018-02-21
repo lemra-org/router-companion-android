@@ -166,13 +166,12 @@ public abstract class AbstractDDWRTSettingsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-
-            case R.id.action_feedback:
-                Utils.openFeedbackForm(this, getRouterUuid());
+        final int itemId = item.getItemId();
+        if (itemId == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else if (itemId == R.id.action_feedback) {
+            Utils.openFeedbackForm(this, getRouterUuid());
         }
 
         return super.onOptionsItemSelected(item);

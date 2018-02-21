@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
@@ -14,8 +15,11 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import com.readystatesoftware.chuck.ChuckInterceptor;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.rm3l.router_companion.tasker.BuildConfig;
 import org.rm3l.router_companion.tasker.RouterCompanionTaskerPluginApplication;
@@ -82,7 +86,7 @@ public final class NetworkUtils {
 
     public static OkHttpClient getHttpClientInstance() {
         if (HTTP_CLIENT_INSTANCE == null) {
-            final OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            final OkHttpClient.Builder builder = new OkHttpClient.Builder().addInterceptor(new UserAgentInterceptor());
             final Activity currentActivity = RouterCompanionTaskerPluginApplication.getCurrentActivity();
             if (currentActivity != null) {
                 builder.addInterceptor(new ChuckInterceptor(currentActivity));
@@ -115,5 +119,39 @@ public final class NetworkUtils {
     }
 
     private NetworkUtils() {
+    }
+
+    public static class AuthenticationInterceptor implements Interceptor {
+
+        private final String authToken;
+
+        public AuthenticationInterceptor(@NonNull final String token) {
+            this.authToken = token;
+        }
+
+        public AuthenticationInterceptor(@NonNull final String username, @NonNull final String password) {
+            this("Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
+        }
+
+        @Override
+        public okhttp3.Response intercept(@NonNull Chain chain) throws IOException {
+            final Request original = chain.request();
+            final Request.Builder builder = original.newBuilder()
+                    .header("Authorization", authToken);
+            final Request request = builder.build();
+            return chain.proceed(request);
+        }
+    }
+
+    public static class UserAgentInterceptor implements Interceptor {
+
+        @Override
+        public okhttp3.Response intercept(@NonNull final Chain chain) throws IOException {
+            final Request original = chain.request();
+            final Request.Builder builder = original.newBuilder()
+                    .header("User-Agent", BuildConfig.APPLICATION_ID + " v " + BuildConfig.VERSION_NAME);
+            final Request request = builder.build();
+            return chain.proceed(request);
+        }
     }
 }

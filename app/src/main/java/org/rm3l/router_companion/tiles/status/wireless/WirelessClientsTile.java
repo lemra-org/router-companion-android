@@ -311,118 +311,173 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
             final String macAddress = device.getMacAddress();
             final String deviceName = nullToEmpty(device.getName());
 
-            switch (itemId) {
-                case R.id.tile_status_wireless_client_wan_access_state:
-                    if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                        //Download the full version to unlock this version
-                        Utils.displayUpgradeMessage(mParentFragmentActivity, "Enable/Disable Internet Access");
-                        return true;
-                    }
-                    if (newWanAccessSwitchState == null) {
-                        throw new IllegalArgumentException("newWanAccessSwitchState is NULL");
-                    }
-                    if (toggleWanAccessSwitchCompat != null) {
-                        toggleWanAccessSwitchCompat.setEnabled(false);
-                    }
-                    new AlertDialog.Builder(mParentFragmentActivity).setIcon(
-                            R.drawable.ic_action_alert_warning)
-                            .setTitle(String.format("%sable WAN Access for '%s' (%s)",
-                                    newWanAccessSwitchState ? "En" : "Dis", deviceName, macAddress))
-                            .setMessage(String.format(
-                                    "This allows you to %sable WAN (Internet) Access for a particular device.\n"
-                                            + "%s\n\n"
-                                            + "Note that:\n"
-                                            + "- This leverages MAC Addresses, which may be relatively easy to spoof.\n"
-                                            + "- This setting will get reverted the next time the router reboots. We are working on making this persistent.",
-                                    newWanAccessSwitchState ? "en" : "dis",
-                                    !newWanAccessSwitchState ? String.format(
-                                            "'%s' (%s) will still be able to connect to the router local networks, "
-                                                    + "but will not be allowed to connect to the outside.",
-                                            deviceName,
-                                            macAddress)
-                                            : String.format(
-                                                    "'%s' (%s) will now be able to get access to the outside.",
-                                                    deviceName, macAddress)))
-                            .setCancelable(false)
-                            .setPositiveButton(
-                                    String.format("%s WAN Access!", !newWanAccessSwitchState ? "Disable" : "Enable"),
+            if (itemId == R.id.tile_status_wireless_client_wan_access_state) {
+                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                    //Download the full version to unlock this version
+                    Utils.displayUpgradeMessage(mParentFragmentActivity, "Enable/Disable Internet Access");
+                    return true;
+                }
+                if (newWanAccessSwitchState == null) {
+                    throw new IllegalArgumentException("newWanAccessSwitchState is NULL");
+                }
+                if (toggleWanAccessSwitchCompat != null) {
+                    toggleWanAccessSwitchCompat.setEnabled(false);
+                }
+                new AlertDialog.Builder(mParentFragmentActivity).setIcon(
+                        R.drawable.ic_action_alert_warning)
+                        .setTitle(String.format("%sable WAN Access for '%s' (%s)",
+                                newWanAccessSwitchState ? "En" : "Dis", deviceName, macAddress))
+                        .setMessage(String.format(
+                                "This allows you to %sable WAN (Internet) Access for a particular device.\n"
+                                        + "%s\n\n"
+                                        + "Note that:\n"
+                                        + "- This leverages MAC Addresses, which may be relatively easy to spoof.\n"
+                                        + "- This setting will get reverted the next time the router reboots. We are working on making this persistent.",
+                                newWanAccessSwitchState ? "en" : "dis",
+                                !newWanAccessSwitchState ? String.format(
+                                        "'%s' (%s) will still be able to connect to the router local networks, "
+                                                + "but will not be allowed to connect to the outside.",
+                                        deviceName,
+                                        macAddress)
+                                        : String.format(
+                                                "'%s' (%s) will now be able to get access to the outside.",
+                                                deviceName, macAddress)))
+                        .setCancelable(false)
+                        .setPositiveButton(
+                                String.format("%s WAN Access!", !newWanAccessSwitchState ? "Disable" : "Enable"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(final DialogInterface dialogInterface, final int i) {
+                                        final Bundle token = new Bundle();
+                                        token.putString(ROUTER_ACTION,
+                                                !newWanAccessSwitchState ? RouterAction.DISABLE_WAN_ACCESS.name()
+                                                        : RouterAction.ENABLE_WAN_ACCESS.name());
+
+                                        SnackbarUtils.buildSnackbar(mParentFragmentActivity,
+                                                String.format("WAN Access will be %s for '%s' (%s)",
+                                                        !newWanAccessSwitchState ? "disabled" : "enabled", deviceName,
+                                                        macAddress),
+                                                "CANCEL",
+                                                Snackbar.LENGTH_LONG,
+                                                DeviceOnMenuItemClickListener.this,
+                                                token, true);
+                                    }
+                                })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if (toggleWanAccessSwitchCompat != null) {
+                                    toggleWanAccessSwitchCompat.setEnabled(true);
+                                    toggleWanAccessSwitchCompat.setOnCheckedChangeListener(null);
+                                    toggleWanAccessSwitchCompat.setChecked(!newWanAccessSwitchState);
+                                    toggleWanAccessSwitchCompat
+                                            .setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                                                @Override
+                                                public void onCheckedChanged(final CompoundButton buttonView,
+                                                        final boolean isChecked) {
+                                                    onMenuItemClick(R.id.tile_status_wireless_client_wan_access_state,
+                                                            isChecked);
+                                                }
+                                            });
+                                }
+                            }
+                        })
+                        .create()
+                        .show();
+                return true;
+            } else if (itemId == R.id.tile_status_wireless_client_wol) {//TODO Support SecureOn Password????
+                new AlertDialog.Builder(mParentFragmentActivity).setIcon(
+                        R.drawable.ic_action_alert_warning)
+                        .setTitle(String.format("Wake up '%s' (%s)", deviceName, macAddress))
+                        .setMessage(String.format("This lets you turn on a computer via the network.\n"
+                                        + "For this to work properly:\n"
+                                        + "- '%s' (%s) hardware must support Wake-on-LAN (WOL). You can enable it in the BIOS or in the Operating System Settings.\n"
+                                        + "- WOL magic packet will be sent from the router to '%s' (%s). To wake over the Internet, "
+                                        + "you must forward packets from any port you want to the device you wish to wake.\n"
+                                        + "Note that some computers support WOL only when they are in Sleep mode or Hibernated, "
+                                        + "not powered off. Some may also require a SecureOn password, which is not supported (yet)!",
+                                deviceName, macAddress, deviceName, macAddress))
+                        .setCancelable(true)
+                        .setPositiveButton("Send Magic Packet!", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialogInterface, final int i) {
+
+                                final Bundle token = new Bundle();
+                                token.putString(ROUTER_ACTION, RouterAction.WAKE_ON_LAN.name());
+
+                                SnackbarUtils.buildSnackbar(mParentFragmentActivity,
+                                        String.format("WOL Request will be sent from router to '%s' (%s)",
+                                                deviceName,
+                                                macAddress),
+                                        "CANCEL",
+                                        Snackbar.LENGTH_LONG,
+                                        DeviceOnMenuItemClickListener.this,
+                                        token, true);
+
+                                //new UndoBarController.UndoBar(mParentFragmentActivity).message(
+                                //    String.format("WOL Request will be sent from router to '%s' (%s)", deviceName,
+                                //        macAddress))
+                                //    .listener(DeviceOnMenuItemClickListener.this)
+                                //    .token(token)
+                                //    .show();
+
+                                //                                    new WoLUtils.SendWoLMagicPacketAsyncTask(mParentFragmentActivity, device).execute(macAddress, mBroadcastAddress);
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Cancelled - nothing more to do!
+                            }
+                        })
+                        .create()
+                        .show();
+                return true;
+            } else if (itemId == R.id.tile_status_wireless_client_rename) {
+                if (mParentFragmentPreferences == null) {
+                    Toast.makeText(mParentFragmentActivity, "Internal Error: ", Toast.LENGTH_SHORT).show();
+                    Utils.reportException(null, new IllegalStateException(
+                            "Click on R.id.tile_status_wireless_client_rename - mParentFragmentPreferences == null"));
+                } else {
+                    final String currentAlias = mParentFragmentPreferences.getString(macAddress, null);
+                    final boolean isNewAlias = isNullOrEmpty(currentAlias);
+                    final EditText aliasInputText = new EditText(mParentFragmentActivity);
+                    aliasInputText.setText(currentAlias, TextView.BufferType.EDITABLE);
+                    aliasInputText.setHint("e.g., \"Mom's PC\"");
+                    new AlertDialog.Builder(mParentFragmentActivity).setTitle(
+                            (isNewAlias ? "Set device alias" : "Update device alias") + ": " + macAddress)
+                            .setMessage(
+                                    "Note that the Alias you define here is stored locally only, not on the router.")
+                            .setView(aliasInputText)
+                            .setCancelable(true)
+                            .setPositiveButton(isNewAlias ? "Set Alias" : "Update Alias",
                                     new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(final DialogInterface dialogInterface, final int i) {
-                                            final Bundle token = new Bundle();
-                                            token.putString(ROUTER_ACTION,
-                                                    !newWanAccessSwitchState ? RouterAction.DISABLE_WAN_ACCESS.name()
-                                                            : RouterAction.ENABLE_WAN_ACCESS.name());
-
-                                            SnackbarUtils.buildSnackbar(mParentFragmentActivity,
-                                                    String.format("WAN Access will be %s for '%s' (%s)",
-                                                            !newWanAccessSwitchState ? "disabled" : "enabled", deviceName,
-                                                            macAddress),
-                                                    "CANCEL",
-                                                    Snackbar.LENGTH_LONG,
-                                                    DeviceOnMenuItemClickListener.this,
-                                                    token, true);
+                                            try {
+                                                final String newAlias = nullToEmpty(
+                                                        aliasInputText.getText().toString());
+                                                if (newAlias.equals(currentAlias)) {
+                                                    return;
+                                                }
+                                                mParentFragmentPreferences.edit().putString(macAddress, newAlias)
+                                                        .apply();
+                                                //Update device name immediately
+                                                device.setAlias(newAlias);
+                                                deviceNameView.setText(device.getName());
+                                                deviceAliasView.setText(newAlias);
+                                                Utils.displayMessage(mParentFragmentActivity,
+                                                        "Alias set! Changes will appear upon next sync.",
+                                                        Style.CONFIRM);
+                                            } catch (final Exception e) {
+                                                Utils.reportException(null, new IllegalStateException(
+                                                        "Error: Click on R.id.tile_status_wireless_client_rename",
+                                                        e));
+                                                Utils.displayMessage(mParentFragmentActivity,
+                                                        "Internal Error - please try again later", Style.ALERT);
+                                            }
                                         }
                                     })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    if (toggleWanAccessSwitchCompat != null) {
-                                        toggleWanAccessSwitchCompat.setEnabled(true);
-                                        toggleWanAccessSwitchCompat.setOnCheckedChangeListener(null);
-                                        toggleWanAccessSwitchCompat.setChecked(!newWanAccessSwitchState);
-                                        toggleWanAccessSwitchCompat.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                                            @Override
-                                            public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-                                                onMenuItemClick(R.id.tile_status_wireless_client_wan_access_state, isChecked);
-                                            }
-                                        });
-                                    }
-                                }
-                            })
-                            .create()
-                            .show();
-                    return true;
-                case R.id.tile_status_wireless_client_wol:
-                    //TODO Support SecureOn Password????
-                    new AlertDialog.Builder(mParentFragmentActivity).setIcon(
-                            R.drawable.ic_action_alert_warning)
-                            .setTitle(String.format("Wake up '%s' (%s)", deviceName, macAddress))
-                            .setMessage(String.format("This lets you turn on a computer via the network.\n"
-                                            + "For this to work properly:\n"
-                                            + "- '%s' (%s) hardware must support Wake-on-LAN (WOL). You can enable it in the BIOS or in the Operating System Settings.\n"
-                                            + "- WOL magic packet will be sent from the router to '%s' (%s). To wake over the Internet, "
-                                            + "you must forward packets from any port you want to the device you wish to wake.\n"
-                                            + "Note that some computers support WOL only when they are in Sleep mode or Hibernated, "
-                                            + "not powered off. Some may also require a SecureOn password, which is not supported (yet)!",
-                                    deviceName, macAddress, deviceName, macAddress))
-                            .setCancelable(true)
-                            .setPositiveButton("Send Magic Packet!", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(final DialogInterface dialogInterface, final int i) {
-
-                                    final Bundle token = new Bundle();
-                                    token.putString(ROUTER_ACTION, RouterAction.WAKE_ON_LAN.name());
-
-                                    SnackbarUtils.buildSnackbar(mParentFragmentActivity,
-                                            String.format("WOL Request will be sent from router to '%s' (%s)",
-                                                    deviceName,
-                                                    macAddress),
-                                            "CANCEL",
-                                            Snackbar.LENGTH_LONG,
-                                            DeviceOnMenuItemClickListener.this,
-                                            token, true);
-
-                                    //new UndoBarController.UndoBar(mParentFragmentActivity).message(
-                                    //    String.format("WOL Request will be sent from router to '%s' (%s)", deviceName,
-                                    //        macAddress))
-                                    //    .listener(DeviceOnMenuItemClickListener.this)
-                                    //    .token(token)
-                                    //    .show();
-
-                                    //                                    new WoLUtils.SendWoLMagicPacketAsyncTask(mParentFragmentActivity, device).execute(macAddress, mBroadcastAddress);
-                                }
-                            })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -431,99 +486,44 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                             })
                             .create()
                             .show();
-                    return true;
-                case R.id.tile_status_wireless_client_rename:
-                    if (mParentFragmentPreferences == null) {
-                        Toast.makeText(mParentFragmentActivity, "Internal Error: ", Toast.LENGTH_SHORT).show();
-                        Utils.reportException(null, new IllegalStateException(
-                                "Click on R.id.tile_status_wireless_client_rename - mParentFragmentPreferences == null"));
-                    } else {
-                        final String currentAlias = mParentFragmentPreferences.getString(macAddress, null);
-                        final boolean isNewAlias = isNullOrEmpty(currentAlias);
-                        final EditText aliasInputText = new EditText(mParentFragmentActivity);
-                        aliasInputText.setText(currentAlias, TextView.BufferType.EDITABLE);
-                        aliasInputText.setHint("e.g., \"Mom's PC\"");
-                        new AlertDialog.Builder(mParentFragmentActivity).setTitle(
-                                (isNewAlias ? "Set device alias" : "Update device alias") + ": " + macAddress)
-                                .setMessage(
-                                        "Note that the Alias you define here is stored locally only, not on the router.")
-                                .setView(aliasInputText)
-                                .setCancelable(true)
-                                .setPositiveButton(isNewAlias ? "Set Alias" : "Update Alias",
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(final DialogInterface dialogInterface, final int i) {
-                                                try {
-                                                    final String newAlias = nullToEmpty(
-                                                            aliasInputText.getText().toString());
-                                                    if (newAlias.equals(currentAlias)) {
-                                                        return;
-                                                    }
-                                                    mParentFragmentPreferences.edit().putString(macAddress, newAlias)
-                                                            .apply();
-                                                    //Update device name immediately
-                                                    device.setAlias(newAlias);
-                                                    deviceNameView.setText(device.getName());
-                                                    deviceAliasView.setText(newAlias);
-                                                    Utils.displayMessage(mParentFragmentActivity,
-                                                            "Alias set! Changes will appear upon next sync.",
-                                                            Style.CONFIRM);
-                                                } catch (final Exception e) {
-                                                    Utils.reportException(null, new IllegalStateException(
-                                                            "Error: Click on R.id.tile_status_wireless_client_rename",
-                                                            e));
-                                                    Utils.displayMessage(mParentFragmentActivity,
-                                                            "Internal Error - please try again later", Style.ALERT);
-                                                }
-                                            }
-                                        })
-                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        //Cancelled - nothing more to do!
-                                    }
-                                })
-                                .create()
-                                .show();
-                    }
-                    return true;
-                case R.id.tile_status_wireless_client_view_active_ip_connections:
-                    final Set<String> deviceActiveIpConnections = device.getActiveIpConnections();
-                    final String name = device.getName();
-                    final Intent intent =
-                            new Intent(mParentFragmentActivity, ActiveIPConnectionsDetailActivity.class);
-                    intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT,
-                            deviceActiveIpConnections == null ? new String[0] :
-                                    deviceActiveIpConnections.toArray(
-                                            new String[deviceActiveIpConnections.size()]));
-                    intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
-                    intent.putExtra(ActiveIPConnectionsDetailActivity.ROUTER_REMOTE_IP,
-                            mRouter.getRemoteIpAddress());
-                    intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST,
-                            "'" + name + "' (" + macAddress + " - " + device.getIpAddress() + ")");
-                    intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST_IP,
-                            device.getIpAddress());
-                    intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER,
-                            device.getName());
-                    intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE,
-                            new Date().toString());
+                }
+                return true;
+            } else if (itemId == R.id.tile_status_wireless_client_view_active_ip_connections) {
+                final Set<String> deviceActiveIpConnections = device.getActiveIpConnections();
+                final String name = device.getName();
+                final Intent intent =
+                        new Intent(mParentFragmentActivity, ActiveIPConnectionsDetailActivity.class);
+                intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT,
+                        deviceActiveIpConnections == null ? new String[0] :
+                                deviceActiveIpConnections.toArray(
+                                        new String[deviceActiveIpConnections.size()]));
+                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
+                intent.putExtra(ActiveIPConnectionsDetailActivity.ROUTER_REMOTE_IP,
+                        mRouter.getRemoteIpAddress());
+                intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST,
+                        "'" + name + "' (" + macAddress + " - " + device.getIpAddress() + ")");
+                intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST_IP,
+                        device.getIpAddress());
+                intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER,
+                        device.getName());
+                intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE,
+                        new Date().toString());
 
-                    //noinspection ConstantConditions
-                    final AlertDialog alertDialog =
-                            Utils.buildAlertDialog(mParentFragmentActivity, null, "Loading...", false, false);
-                    alertDialog.show();
-                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(
-                            Gravity.CENTER_HORIZONTAL);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mParentFragmentActivity.startActivity(intent);
-                            alertDialog.cancel();
-                        }
-                    }, 1000);
-                    return true;
-                default:
-                    break;
+                //noinspection ConstantConditions
+                final AlertDialog alertDialog =
+                        Utils.buildAlertDialog(mParentFragmentActivity, null, "Loading...", false, false);
+                alertDialog.show();
+                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(
+                        Gravity.CENTER_HORIZONTAL);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mParentFragmentActivity.startActivity(intent);
+                        alertDialog.cancel();
+                    }
+                }, 1000);
+                return true;
+            } else {
             }
             return false;
         }
@@ -1617,198 +1617,146 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         final int itemId = item.getItemId();
-        switch (itemId) {
-            case R.id.tile_status_wireless_clients_realtime_graphs: {
-                final boolean rtGraphsEnabled = !item.isChecked();
-                if (rtGraphsEnabled) {
-                    //Restart loader
-                    if (mSupportLoaderManager != null && mCurrentLoader != null) {
-                        mSupportLoaderManager.restartLoader(mCurrentLoader.getId(), mFragmentArguments, this);
-                    }
+        if (itemId == R.id.tile_status_wireless_clients_realtime_graphs) {
+            final boolean rtGraphsEnabled = !item.isChecked();
+            if (rtGraphsEnabled) {
+                //Restart loader
+                if (mSupportLoaderManager != null && mCurrentLoader != null) {
+                    mSupportLoaderManager.restartLoader(mCurrentLoader.getId(), mFragmentArguments, this);
                 }
-                if (mParentFragmentPreferences != null) {
-                    mParentFragmentPreferences.edit()
-                            .putBoolean(getFormattedPrefKey(RT_GRAPHS), rtGraphsEnabled)
-                            .apply();
-                }
-                return true;
             }
-            case R.id.tile_status_wireless_clients_reset_counters: {
-                //Reset Counters
-                final Bundle token = new Bundle();
-                token.putString(ROUTER_ACTION, RouterAction.RESET_COUNTERS.name());
-
-                SnackbarUtils.buildSnackbar(mParentFragmentActivity,
-                        "Bandwidth Monitoring counters will be reset.",
-                        "CANCEL",
-                        Snackbar.LENGTH_LONG,
-                        new MenuActionItemClickListener(),
-                        token, true);
-
-                //new UndoBarController.UndoBar(mParentFragmentActivity).message(
-                //    "Bandwidth Monitoring counters will be reset.")
-                //    .listener(new MenuActionItemClickListener())
-                //    .token(token)
-                //    .show();
-                return true;
+            if (mParentFragmentPreferences != null) {
+                mParentFragmentPreferences.edit()
+                        .putBoolean(getFormattedPrefKey(RT_GRAPHS), rtGraphsEnabled)
+                        .apply();
             }
-            case R.id.tile_status_wireless_clients_show_only_hosts_with_wan_access_disabled: {
-                //First filter (based on WAN Access State)
-                final boolean showOnlyWanAccessDisabledHosts = !item.isChecked();
-                Set<Device> newDevices = new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(
-                        showOnlyWanAccessDisabledHosts).visit(mDevices);
-
-                //Apply all other visitors
-                newDevices = new HideInactiveClientsFilterVisitorImpl(
-                        mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
-                                getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false)).visit(newDevices);
-
-                newDevices = new HideInactiveClientsFilterVisitorImpl(
-                        mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
-                                getFormattedPrefKey(WIRELESS_DEVICES_ONLY), false)).visit(newDevices);
-
-                newDevices = applyCurrentSortingStrategy(newDevices);
-
-                mAdapter.setDevices(new ArrayList<>(newDevices));
-                mAdapter.notifyDataSetChanged();
-
-                //Save preference
-                if (mParentFragmentPreferences != null) {
-                    mParentFragmentPreferences.edit()
-                            .putBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS),
-                                    showOnlyWanAccessDisabledHosts)
-                            .apply();
-                }
-
-                return true;
+            return true;
+        } else if (itemId == R.id.tile_status_wireless_clients_reset_counters) {
+            final Bundle token = new Bundle();
+            token.putString(ROUTER_ACTION, RouterAction.RESET_COUNTERS.name());
+            SnackbarUtils.buildSnackbar(mParentFragmentActivity,
+                    "Bandwidth Monitoring counters will be reset.",
+                    "CANCEL",
+                    Snackbar.LENGTH_LONG,
+                    new MenuActionItemClickListener(),
+                    token, true);
+            return true;
+        } else if (itemId == R.id.tile_status_wireless_clients_show_only_hosts_with_wan_access_disabled) {
+            final boolean showOnlyWanAccessDisabledHosts = !item.isChecked();
+            Set<Device> newDevices = new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(
+                    showOnlyWanAccessDisabledHosts).visit(mDevices);
+            newDevices = new HideInactiveClientsFilterVisitorImpl(
+                    mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
+                            getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false)).visit(newDevices);
+            newDevices = new HideInactiveClientsFilterVisitorImpl(
+                    mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
+                            getFormattedPrefKey(WIRELESS_DEVICES_ONLY), false)).visit(newDevices);
+            newDevices = applyCurrentSortingStrategy(newDevices);
+            mAdapter.setDevices(new ArrayList<>(newDevices));
+            mAdapter.notifyDataSetChanged();
+            if (mParentFragmentPreferences != null) {
+                mParentFragmentPreferences.edit()
+                        .putBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS),
+                                showOnlyWanAccessDisabledHosts)
+                        .apply();
             }
-            case R.id.tile_status_wireless_clients_hide_inactive_hosts: {
-                final boolean hideInactive = !item.isChecked();
-
-                //Filter
-                Set<Device> newDevices =
-                        new HideInactiveClientsFilterVisitorImpl(hideInactive).visit(mDevices);
-
-                newDevices = new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(
-                        mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
-                                getFormattedPrefKey(WIRELESS_DEVICES_ONLY), false)).visit(newDevices);
-
-                newDevices = new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(
-                        mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
-                                getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false)).visit(newDevices);
-
-                newDevices = applyCurrentSortingStrategy(newDevices);
-
-                mAdapter.setDevices(new ArrayList<>(newDevices));
-                mAdapter.notifyDataSetChanged();
-
-                //Save preference
-                if (mParentFragmentPreferences != null) {
-                    mParentFragmentPreferences.edit()
-                            .putBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), hideInactive)
-                            .apply();
-                }
-                return true;
+            return true;
+        } else if (itemId == R.id.tile_status_wireless_clients_hide_inactive_hosts) {
+            final boolean hideInactive = !item.isChecked();
+            Set<Device> newDevices =
+                    new HideInactiveClientsFilterVisitorImpl(hideInactive).visit(mDevices);
+            newDevices = new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(
+                    mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
+                            getFormattedPrefKey(WIRELESS_DEVICES_ONLY), false)).visit(newDevices);
+            newDevices = new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(
+                    mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
+                            getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false)).visit(newDevices);
+            newDevices = applyCurrentSortingStrategy(newDevices);
+            mAdapter.setDevices(new ArrayList<>(newDevices));
+            mAdapter.notifyDataSetChanged();
+            if (mParentFragmentPreferences != null) {
+                mParentFragmentPreferences.edit()
+                        .putBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), hideInactive)
+                        .apply();
             }
-            case R.id.tile_status_wireless_clients_wireless_devices_only: {
-                final boolean showWirelessOnly = !item.isChecked();
-
-                //Filter
-                Set<Device> newDevices =
-                        new ShowWirelessDevicesOnlyClientsFilterVisitorImpl(showWirelessOnly).visit(mDevices);
-
-                newDevices = new HideInactiveClientsFilterVisitorImpl(
-                        mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
-                                getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false)).visit(newDevices);
-
-                newDevices = new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(
-                        mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
-                                getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false)).visit(newDevices);
-
-                newDevices = applyCurrentSortingStrategy(newDevices);
-
-                mAdapter.setDevices(new ArrayList<>(newDevices));
-                mAdapter.notifyDataSetChanged();
-
-                //Save preference
-                if (mParentFragmentPreferences != null) {
-                    mParentFragmentPreferences.edit()
-                            .putBoolean(getFormattedPrefKey(WIRELESS_DEVICES_ONLY), showWirelessOnly)
-                            .apply();
-                }
-                return true;
+            return true;
+        } else if (itemId == R.id.tile_status_wireless_clients_wireless_devices_only) {
+            final boolean showWirelessOnly = !item.isChecked();
+            Set<Device> newDevices =
+                    new ShowWirelessDevicesOnlyClientsFilterVisitorImpl(showWirelessOnly).visit(mDevices);
+            newDevices = new HideInactiveClientsFilterVisitorImpl(
+                    mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
+                            getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false)).visit(newDevices);
+            newDevices = new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(
+                    mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
+                            getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false)).visit(newDevices);
+            newDevices = applyCurrentSortingStrategy(newDevices);
+            mAdapter.setDevices(new ArrayList<>(newDevices));
+            mAdapter.notifyDataSetChanged();
+            if (mParentFragmentPreferences != null) {
+                mParentFragmentPreferences.edit()
+                        .putBoolean(getFormattedPrefKey(WIRELESS_DEVICES_ONLY), showWirelessOnly)
+                        .apply();
             }
-            case R.id.tile_status_wireless_clients_sort_a_z:
-            case R.id.tile_status_wireless_clients_sort_z_a:
-            case R.id.tile_status_wireless_clients_sort_top_senders:
-            case R.id.tile_status_wireless_clients_sort_top_receivers:
-            case R.id.tile_status_wireless_clients_sort_top_senders_current_rate:
-            case R.id.tile_status_wireless_clients_sort_top_receivers_current_rate:
-            case R.id.tile_status_wireless_clients_sort_seen_recently:
-            case R.id.tile_status_wireless_clients_sort_not_seen_recently: {
-                final boolean hideInactive =
-                        (mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
-                                getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false));
+            return true;
+        } else if (itemId == R.id.tile_status_wireless_clients_sort_a_z
+                || itemId == R.id.tile_status_wireless_clients_sort_z_a
+                || itemId == R.id.tile_status_wireless_clients_sort_top_senders
+                || itemId == R.id.tile_status_wireless_clients_sort_top_receivers
+                || itemId == R.id.tile_status_wireless_clients_sort_top_senders_current_rate
+                || itemId == R.id.tile_status_wireless_clients_sort_top_receivers_current_rate
+                || itemId == R.id.tile_status_wireless_clients_sort_seen_recently
+                || itemId == R.id.tile_status_wireless_clients_sort_not_seen_recently) {
+            final boolean hideInactive =
+                    (mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
+                            getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false));
+            Set<Device> newDevices =
+                    new HideInactiveClientsFilterVisitorImpl(hideInactive).visit(mDevices);
+            newDevices = new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(
+                    mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
+                            getFormattedPrefKey(WIRELESS_DEVICES_ONLY), false)).visit(newDevices);
+            newDevices = new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(
+                    mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
+                            getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false)).visit(newDevices);
+            ClientsSortingVisitor clientsSortingVisitor = null;
+            if (itemId == R.id.tile_status_wireless_clients_sort_a_z
+                    || itemId == R.id.tile_status_wireless_clients_sort_z_a) {
+                clientsSortingVisitor = new ClientsAlphabeticalSortingVisitorImpl(itemId);
 
-                //Filters
-                Set<Device> newDevices =
-                        new HideInactiveClientsFilterVisitorImpl(hideInactive).visit(mDevices);
-                newDevices = new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(
-                        mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
-                                getFormattedPrefKey(WIRELESS_DEVICES_ONLY), false)).visit(newDevices);
-                newDevices = new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(
-                        mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
-                                getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false)).visit(newDevices);
+            } else if (itemId == R.id.tile_status_wireless_clients_sort_top_senders
+                    || itemId == R.id.tile_status_wireless_clients_sort_top_receivers
+                    || itemId == R.id.tile_status_wireless_clients_sort_top_senders_current_rate
+                    || itemId == R.id.tile_status_wireless_clients_sort_top_receivers_current_rate) {
+                clientsSortingVisitor = new TopTalkersClientsSortingVisitorImpl(itemId);
 
-                ClientsSortingVisitor clientsSortingVisitor = null;
-                switch (itemId) {
-                    case R.id.tile_status_wireless_clients_sort_a_z:
-                    case R.id.tile_status_wireless_clients_sort_z_a:
-                        clientsSortingVisitor = new ClientsAlphabeticalSortingVisitorImpl(itemId);
-                        break;
-                    case R.id.tile_status_wireless_clients_sort_top_senders:
-                    case R.id.tile_status_wireless_clients_sort_top_receivers:
-                    case R.id.tile_status_wireless_clients_sort_top_senders_current_rate:
-                    case R.id.tile_status_wireless_clients_sort_top_receivers_current_rate:
-                        clientsSortingVisitor = new TopTalkersClientsSortingVisitorImpl(itemId);
-                        break;
-                    case R.id.tile_status_wireless_clients_sort_seen_recently:
-                    case R.id.tile_status_wireless_clients_sort_not_seen_recently:
-                        clientsSortingVisitor = new LastSeenClientsSortingVisitorImpl(itemId);
-                        break;
-                    default:
-                        break;
-                }
+            } else if (itemId == R.id.tile_status_wireless_clients_sort_seen_recently
+                    || itemId == R.id.tile_status_wireless_clients_sort_not_seen_recently) {
+                clientsSortingVisitor = new LastSeenClientsSortingVisitorImpl(itemId);
 
-                newDevices = clientsSortingVisitor.visit(newDevices);
-
-                mAdapter.setDevices(new ArrayList<>(newDevices));
-                mAdapter.notifyDataSetChanged();
-
-                //Save preference
-                if (mParentFragmentPreferences != null) {
-                    mParentFragmentPreferences.edit()
-                            .putInt(getFormattedPrefKey(SORTING_STRATEGY), sortIds.get(itemId))
-                            .apply();
-                }
-
-                return true;
+            } else {
             }
-            case R.id.tile_status_wireless_clients_reset_sort_prefs: {
-                if (mParentFragmentPreferences != null) {
-                    mParentFragmentPreferences.edit()
-                            .remove(getFormattedPrefKey(SORT_TOP_TALKERS))
-                            .remove(getFormattedPrefKey(SORT_APHABETICAL))
-                            .remove(getFormattedPrefKey(SORT_LAST_SEEN))
-                            .remove(getFormattedPrefKey(SORTING_STRATEGY))
-                            .apply();
-                }
-                Utils.displayMessage(mParentFragmentActivity, "Changes will appear upon next sync.",
-                        Style.CONFIRM);
-                return true;
+            newDevices = clientsSortingVisitor.visit(newDevices);
+            mAdapter.setDevices(new ArrayList<>(newDevices));
+            mAdapter.notifyDataSetChanged();
+            if (mParentFragmentPreferences != null) {
+                mParentFragmentPreferences.edit()
+                        .putInt(getFormattedPrefKey(SORTING_STRATEGY), sortIds.get(itemId))
+                        .apply();
             }
-            default:
-                break;
+            return true;
+        } else if (itemId == R.id.tile_status_wireless_clients_reset_sort_prefs) {
+            if (mParentFragmentPreferences != null) {
+                mParentFragmentPreferences.edit()
+                        .remove(getFormattedPrefKey(SORT_TOP_TALKERS))
+                        .remove(getFormattedPrefKey(SORT_APHABETICAL))
+                        .remove(getFormattedPrefKey(SORT_LAST_SEEN))
+                        .remove(getFormattedPrefKey(SORTING_STRATEGY))
+                        .apply();
+            }
+            Utils.displayMessage(mParentFragmentActivity, "Changes will appear upon next sync.",
+                    Style.CONFIRM);
+            return true;
+        } else {
         }
 
         return false;
@@ -3008,23 +2956,21 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
         }
 
         ClientsSortingVisitor clientsSortingVisitor = null;
-        switch (currentSortingStrategy) {
-            case R.id.tile_status_wireless_clients_sort_a_z:
-            case R.id.tile_status_wireless_clients_sort_z_a:
-                clientsSortingVisitor = new ClientsAlphabeticalSortingVisitorImpl(currentSortingStrategy);
-                break;
-            case R.id.tile_status_wireless_clients_sort_seen_recently:
-            case R.id.tile_status_wireless_clients_sort_not_seen_recently:
-                clientsSortingVisitor = new LastSeenClientsSortingVisitorImpl(currentSortingStrategy);
-                break;
-            case R.id.tile_status_wireless_clients_sort_top_senders:
-            case R.id.tile_status_wireless_clients_sort_top_receivers:
-            case R.id.tile_status_wireless_clients_sort_top_senders_current_rate:
-            case R.id.tile_status_wireless_clients_sort_top_receivers_current_rate:
-                clientsSortingVisitor = new TopTalkersClientsSortingVisitorImpl(currentSortingStrategy);
-                break;
-            default:
-                break;
+        if (R.id.tile_status_wireless_clients_sort_a_z == currentSortingStrategy
+                || R.id.tile_status_wireless_clients_sort_z_a == currentSortingStrategy) {
+            clientsSortingVisitor = new ClientsAlphabeticalSortingVisitorImpl(currentSortingStrategy);
+
+        } else if (R.id.tile_status_wireless_clients_sort_seen_recently == currentSortingStrategy
+                || R.id.tile_status_wireless_clients_sort_not_seen_recently == currentSortingStrategy) {
+            clientsSortingVisitor = new LastSeenClientsSortingVisitorImpl(currentSortingStrategy);
+
+        } else if (R.id.tile_status_wireless_clients_sort_top_senders == currentSortingStrategy
+                || R.id.tile_status_wireless_clients_sort_top_receivers == currentSortingStrategy
+                || R.id.tile_status_wireless_clients_sort_top_senders_current_rate == currentSortingStrategy
+                || R.id.tile_status_wireless_clients_sort_top_receivers_current_rate == currentSortingStrategy) {
+            clientsSortingVisitor = new TopTalkersClientsSortingVisitorImpl(currentSortingStrategy);
+
+        } else {
         }
 
         if (clientsSortingVisitor == null) {

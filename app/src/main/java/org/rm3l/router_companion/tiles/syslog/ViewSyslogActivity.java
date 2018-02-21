@@ -535,30 +535,24 @@ public class ViewSyslogActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-
-            case R.id.tile_status_syslog_full_sort:
-                setRefreshingState(true);
-                //Now tell adapter to sort data
-                mAdapter.toggleSorting();
-                mAdapter.notifyDataSetChanged();
-                setRefreshingState(false);
-                return true;
-
-            case R.id.menu_refresh:
-                refreshData();
-                return true;
-
-            case R.id.action_feedback:
-                Utils.openFeedbackForm(this, mRouter);
-                return true;
-
-            default:
-                break;
+        int i = item.getItemId();
+        if (i == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else if (i == R.id.tile_status_syslog_full_sort) {
+            setRefreshingState(true);
+            //Now tell adapter to sort data
+            mAdapter.toggleSorting();
+            mAdapter.notifyDataSetChanged();
+            setRefreshingState(false);
+            return true;
+        } else if (i == R.id.menu_refresh) {
+            refreshData();
+            return true;
+        } else if (i == R.id.action_feedback) {
+            Utils.openFeedbackForm(this, mRouter);
+            return true;
+        } else {
         }
         return super.onOptionsItemSelected(item);
     }

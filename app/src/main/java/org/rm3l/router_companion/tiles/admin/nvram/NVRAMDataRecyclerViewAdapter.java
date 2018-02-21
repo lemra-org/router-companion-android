@@ -364,15 +364,14 @@ public class NVRAMDataRecyclerViewAdapter
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.menu_nvram_var_edit:
-                                holder.cardView.performClick();
-                                return true;
-                            case R.id.menu_nvram_var_remove:
-                                deleteDialog.show();
-                                return true;
-                            default:
-                                break;
+                        final int itemId = item.getItemId();
+                        if (itemId == R.id.menu_nvram_var_edit) {
+                            holder.cardView.performClick();
+                            return true;
+                        } else if (itemId == R.id.menu_nvram_var_remove) {
+                            deleteDialog.show();
+                            return true;
+                        } else {
                         }
                         return false;
                     }

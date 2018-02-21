@@ -296,20 +296,16 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                             if (currentSort == null || currentSort <= 0) {
                                 mNvramInfoToDisplay = new HashMap<>(mNvramInfoDefaultSortingData);
                             } else {
-                                switch (currentSort) {
-                                    case R.id.tile_admin_nvram_sort_asc:
-                                        //asc
-                                        mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
-                                        break;
-                                    case R.id.tile_admin_nvram_sort_desc:
-                                        //desc
-                                        mNvramInfoToDisplay = new TreeMap<>(
-                                                COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
-                                        break;
-                                    case R.id.tile_admin_nvram_sort_default:
-                                    default:
-                                        mNvramInfoToDisplay = new HashMap<>();
-                                        break;
+                                if (R.id.tile_admin_nvram_sort_asc == currentSort) {//asc
+                                    mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
+
+                                } else if (R.id.tile_admin_nvram_sort_desc == currentSort) {//desc
+                                    mNvramInfoToDisplay = new TreeMap<>(
+                                            COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
+
+                                } else {
+                                    mNvramInfoToDisplay = new HashMap<>();
+
                                 }
                                 mNvramInfoToDisplay.putAll(mNvramInfoDefaultSortingData);
                             }
@@ -375,20 +371,16 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                             if (currentSort == null || currentSort <= 0) {
                                 mNvramInfoToDisplayCopy = new HashMap<>(mNvramInfoDefaultSortingData);
                             } else {
-                                switch (currentSort) {
-                                    case R.id.tile_admin_nvram_sort_asc:
-                                        //asc
-                                        mNvramInfoToDisplayCopy = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
-                                        break;
-                                    case R.id.tile_admin_nvram_sort_desc:
-                                        //desc
-                                        mNvramInfoToDisplayCopy =
-                                                new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
-                                        break;
-                                    case R.id.tile_admin_nvram_sort_default:
-                                    default:
-                                        mNvramInfoToDisplayCopy = new HashMap<>();
-                                        break;
+                                if (R.id.tile_admin_nvram_sort_asc == currentSort) {//asc
+                                    mNvramInfoToDisplayCopy = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
+
+                                } else if (R.id.tile_admin_nvram_sort_desc == currentSort) {//desc
+                                    mNvramInfoToDisplayCopy =
+                                            new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
+
+                                } else {
+                                    mNvramInfoToDisplayCopy = new HashMap<>();
+
                                 }
                                 //noinspection ConstantConditions
                                 for (Map.Entry<Object, Object> entry : mNvramInfoDefaultSortingData.entrySet()) {
@@ -577,20 +569,16 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                         if (currentSort == null || currentSort <= 0) {
                             mNvramInfoToDisplayCopy = new HashMap<>();
                         } else {
-                            switch (currentSort) {
-                                case R.id.tile_admin_nvram_sort_asc:
-                                    //asc
-                                    mNvramInfoToDisplayCopy = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
-                                    break;
-                                case R.id.tile_admin_nvram_sort_desc:
-                                    //desc
-                                    mNvramInfoToDisplayCopy =
-                                            new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
-                                    break;
-                                case R.id.tile_admin_nvram_sort_default:
-                                default:
-                                    mNvramInfoToDisplayCopy = new HashMap<>();
-                                    break;
+                            if (R.id.tile_admin_nvram_sort_asc == currentSort) {//asc
+                                mNvramInfoToDisplayCopy = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
+
+                            } else if (R.id.tile_admin_nvram_sort_desc == currentSort) {//desc
+                                mNvramInfoToDisplayCopy =
+                                        new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
+
+                            } else {
+                                mNvramInfoToDisplayCopy = new HashMap<>();
+
                             }
                         }
                     } else {
@@ -654,29 +642,26 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
     public boolean onMenuItemClick(MenuItem item) {
         final int itemId = item.getItemId();
         //Store current value in preferences
-        switch (itemId) {
-            case R.id.tile_admin_nvram_sort_default:
-            case R.id.tile_admin_nvram_sort_asc:
-            case R.id.tile_admin_nvram_sort_desc:
-                item.setEnabled(false);
-                //Store in preferences if any
-                final Integer currentSort;
-                if (mParentFragmentPreferences != null) {
-                    currentSort = sortIds.inverse()
-                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), -1));
-                } else {
-                    currentSort = null;
-                }
+        if (itemId == R.id.tile_admin_nvram_sort_default || itemId == R.id.tile_admin_nvram_sort_asc
+                || itemId == R.id.tile_admin_nvram_sort_desc) {
+            item.setEnabled(false);
+            //Store in preferences if any
+            final Integer currentSort;
+            if (mParentFragmentPreferences != null) {
+                currentSort = sortIds.inverse()
+                        .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), -1));
+            } else {
+                currentSort = null;
+            }
 
-                if (mParentFragmentPreferences != null && (currentSort == null || currentSort != itemId)) {
-                    //No pref on file or different pref on file => store in preferences
-                    final SharedPreferences.Editor editor = mParentFragmentPreferences.edit();
-                    editor.putInt(getFormattedPrefKey(SORT), sortIds.get(itemId));
-                    editor.apply();
-                }
-                break;
-            default:
-                break;
+            if (mParentFragmentPreferences != null && (currentSort == null || currentSort != itemId)) {
+                //No pref on file or different pref on file => store in preferences
+                final SharedPreferences.Editor editor = mParentFragmentPreferences.edit();
+                editor.putInt(getFormattedPrefKey(SORT), sortIds.get(itemId));
+                editor.apply();
+            }
+
+        } else {
         }
 
         if (itemId != R.id.tile_admin_nvram_share) {
@@ -691,46 +676,42 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
             if (isNullOrEmpty(textToFind)) {
                 //Filter on while dataset
                 final Properties mNvramInfoDefaultSortingData = mNvramInfoDefaultSorting.getData();
-                switch (itemId) {
-                    case R.id.tile_admin_nvram_sort_default:
-                        mNvramInfoToDisplay = new HashMap<>(mNvramInfoDefaultSortingData);
-                        notifyDatasetChanged = true;
-                        break;
-                    case R.id.tile_admin_nvram_sort_asc:
-                        mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
-                        mNvramInfoToDisplay.putAll(mNvramInfoDefaultSortingData);
-                        notifyDatasetChanged = true;
-                        break;
-                    case R.id.tile_admin_nvram_sort_desc:
-                        mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
-                        mNvramInfoToDisplay.putAll(mNvramInfoDefaultSortingData);
-                        notifyDatasetChanged = true;
-                        break;
-                    default:
-                        break;
+                if (itemId == R.id.tile_admin_nvram_sort_default) {
+                    mNvramInfoToDisplay = new HashMap<>(mNvramInfoDefaultSortingData);
+                    notifyDatasetChanged = true;
+
+                } else if (itemId == R.id.tile_admin_nvram_sort_asc) {
+                    mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
+                    mNvramInfoToDisplay.putAll(mNvramInfoDefaultSortingData);
+                    notifyDatasetChanged = true;
+
+                } else if (itemId == R.id.tile_admin_nvram_sort_desc) {
+                    mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
+                    mNvramInfoToDisplay.putAll(mNvramInfoDefaultSortingData);
+                    notifyDatasetChanged = true;
+
+                } else {
                 }
                 mNvramInfoToDisplayCopy = mNvramInfoToDisplay;
             } else {
                 //Already filtered data
                 final Map<Object, Object> adapterNvramInfo =
                         ((NVRAMDataRecyclerViewAdapter) mAdapter).getNvramInfo();
-                switch (itemId) {
-                    case R.id.tile_admin_nvram_sort_default:
-                        mNvramInfoToDisplayCopy = new HashMap<>(adapterNvramInfo);
-                        notifyDatasetChanged = true;
-                        break;
-                    case R.id.tile_admin_nvram_sort_asc:
-                        mNvramInfoToDisplayCopy = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
-                        mNvramInfoToDisplayCopy.putAll(adapterNvramInfo);
-                        notifyDatasetChanged = true;
-                        break;
-                    case R.id.tile_admin_nvram_sort_desc:
-                        mNvramInfoToDisplayCopy = new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
-                        mNvramInfoToDisplayCopy.putAll(adapterNvramInfo);
-                        notifyDatasetChanged = true;
-                        break;
-                    default:
-                        break;
+                if (itemId == R.id.tile_admin_nvram_sort_default) {
+                    mNvramInfoToDisplayCopy = new HashMap<>(adapterNvramInfo);
+                    notifyDatasetChanged = true;
+
+                } else if (itemId == R.id.tile_admin_nvram_sort_asc) {
+                    mNvramInfoToDisplayCopy = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
+                    mNvramInfoToDisplayCopy.putAll(adapterNvramInfo);
+                    notifyDatasetChanged = true;
+
+                } else if (itemId == R.id.tile_admin_nvram_sort_desc) {
+                    mNvramInfoToDisplayCopy = new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
+                    mNvramInfoToDisplayCopy.putAll(adapterNvramInfo);
+                    notifyDatasetChanged = true;
+
+                } else {
                 }
             }
 
@@ -861,21 +842,17 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                         if (currentSort == null || currentSort <= 0) {
                             mNvramInfoToDisplay = new HashMap<>(defaultNVRAMInfo);
                         } else {
-                            switch (currentSort) {
-                                case R.id.tile_admin_nvram_sort_asc:
-                                    //asc
-                                    mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
-                                    mNvramInfoToDisplay.putAll(defaultNVRAMInfo);
-                                    break;
-                                case R.id.tile_admin_nvram_sort_desc:
-                                    //desc
-                                    mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
-                                    mNvramInfoToDisplay.putAll(defaultNVRAMInfo);
-                                    break;
-                                case R.id.tile_admin_nvram_sort_default:
-                                default:
-                                    mNvramInfoToDisplay = new HashMap<>(defaultNVRAMInfo);
-                                    break;
+                            if (R.id.tile_admin_nvram_sort_asc == currentSort) {//asc
+                                mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
+                                mNvramInfoToDisplay.putAll(defaultNVRAMInfo);
+
+                            } else if (R.id.tile_admin_nvram_sort_desc == currentSort) {//desc
+                                mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
+                                mNvramInfoToDisplay.putAll(defaultNVRAMInfo);
+
+                            } else {
+                                mNvramInfoToDisplay = new HashMap<>(defaultNVRAMInfo);
+
                             }
                         }
                     } else {

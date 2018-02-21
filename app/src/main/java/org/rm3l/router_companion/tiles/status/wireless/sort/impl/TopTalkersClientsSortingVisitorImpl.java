@@ -37,105 +37,104 @@ public class TopTalkersClientsSortingVisitorImpl implements ClientsSortingVisito
     private final Ordering<Device> topTalkersOrdering;
 
     public TopTalkersClientsSortingVisitorImpl(final int topTalkersSort) {
-        switch (topTalkersSort) {
-            case R.id.tile_status_wireless_clients_sort_top_receivers:
-                topTalkersOrdering = new Ordering<Device>() {
-                    @Override
-                    public int compare(Device left, Device right) {
-                        if (left == right) {
-                            return 0;
-                        }
-                        if (left == null) {
-                            return 1;
-                        }
-                        if (right == null) {
-                            return -1;
-                        }
-                        final int rxTotalComparison =
-                                Double.valueOf(right.getRxTotal()).compareTo(left.getRxTotal());
-                        if (rxTotalComparison == 0) {
-                            return Ordering.natural()
-                                    .compare(nullToEmpty(left.getName()).toLowerCase(),
-                                            nullToEmpty(right.getName()).toLowerCase());
-                        }
-                        return rxTotalComparison;
+        if (topTalkersSort == R.id.tile_status_wireless_clients_sort_top_receivers) {
+            topTalkersOrdering = new Ordering<Device>() {
+                @Override
+                public int compare(Device left, Device right) {
+                    if (left == right) {
+                        return 0;
                     }
-                };
-                break;
-            case R.id.tile_status_wireless_clients_sort_top_senders:
-                topTalkersOrdering = new Ordering<Device>() {
-                    @Override
-                    public int compare(Device left, Device right) {
-                        if (left == right) {
-                            return 0;
-                        }
-                        if (left == null) {
-                            return -1;
-                        }
-                        if (right == null) {
-                            return 1;
-                        }
-                        final int txTotalComparison =
-                                Double.valueOf(right.getTxTotal()).compareTo(left.getTxTotal());
-                        if (txTotalComparison == 0) {
-                            return Ordering.natural()
-                                    .compare(nullToEmpty(left.getName()).toLowerCase(),
-                                            nullToEmpty(right.getName()).toLowerCase());
-                        }
-                        return txTotalComparison;
+                    if (left == null) {
+                        return 1;
                     }
-                };
-                break;
-            case R.id.tile_status_wireless_clients_sort_top_receivers_current_rate:
-                topTalkersOrdering = new Ordering<Device>() {
-                    @Override
-                    public int compare(Device left, Device right) {
-                        if (left == right) {
-                            return 0;
-                        }
-                        if (left == null) {
-                            return 1;
-                        }
-                        if (right == null) {
-                            return -1;
-                        }
-                        final int rxTotalComparison =
-                                Double.valueOf(right.getRxRate()).compareTo(left.getRxRate());
-                        if (rxTotalComparison == 0) {
-                            return Ordering.natural()
-                                    .compare(nullToEmpty(left.getName()).toLowerCase(),
-                                            nullToEmpty(right.getName()).toLowerCase());
-                        }
-                        return rxTotalComparison;
+                    if (right == null) {
+                        return -1;
                     }
-                };
-                break;
-            case R.id.tile_status_wireless_clients_sort_top_senders_current_rate:
-                topTalkersOrdering = new Ordering<Device>() {
-                    @Override
-                    public int compare(Device left, Device right) {
-                        if (left == right) {
-                            return 0;
-                        }
-                        if (left == null) {
-                            return -1;
-                        }
-                        if (right == null) {
-                            return 1;
-                        }
-                        final int txTotalComparison =
-                                Double.valueOf(right.getTxRate()).compareTo(left.getTxRate());
-                        if (txTotalComparison == 0) {
-                            return Ordering.natural()
-                                    .compare(nullToEmpty(left.getName()).toLowerCase(),
-                                            nullToEmpty(right.getName()).toLowerCase());
-                        }
-                        return txTotalComparison;
+                    final int rxTotalComparison =
+                            Double.valueOf(right.getRxTotal()).compareTo(left.getRxTotal());
+                    if (rxTotalComparison == 0) {
+                        return Ordering.natural()
+                                .compare(nullToEmpty(left.getName()).toLowerCase(),
+                                        nullToEmpty(right.getName()).toLowerCase());
                     }
-                };
-                break;
-            default:
-                throw new IllegalArgumentException("Only Senders or Receivers sorting are accepted here!");
+                    return rxTotalComparison;
+                }
+            };
+
+        } else if (topTalkersSort == R.id.tile_status_wireless_clients_sort_top_senders) {
+            topTalkersOrdering = new Ordering<Device>() {
+                @Override
+                public int compare(Device left, Device right) {
+                    if (left == right) {
+                        return 0;
+                    }
+                    if (left == null) {
+                        return -1;
+                    }
+                    if (right == null) {
+                        return 1;
+                    }
+                    final int txTotalComparison =
+                            Double.valueOf(right.getTxTotal()).compareTo(left.getTxTotal());
+                    if (txTotalComparison == 0) {
+                        return Ordering.natural()
+                                .compare(nullToEmpty(left.getName()).toLowerCase(),
+                                        nullToEmpty(right.getName()).toLowerCase());
+                    }
+                    return txTotalComparison;
+                }
+            };
+
+        } else if (topTalkersSort == R.id.tile_status_wireless_clients_sort_top_receivers_current_rate) {
+            topTalkersOrdering = new Ordering<Device>() {
+                @Override
+                public int compare(Device left, Device right) {
+                    if (left == right) {
+                        return 0;
+                    }
+                    if (left == null) {
+                        return 1;
+                    }
+                    if (right == null) {
+                        return -1;
+                    }
+                    final int rxTotalComparison =
+                            Double.valueOf(right.getRxRate()).compareTo(left.getRxRate());
+                    if (rxTotalComparison == 0) {
+                        return Ordering.natural()
+                                .compare(nullToEmpty(left.getName()).toLowerCase(),
+                                        nullToEmpty(right.getName()).toLowerCase());
+                    }
+                    return rxTotalComparison;
+                }
+            };
+
+        } else if (topTalkersSort == R.id.tile_status_wireless_clients_sort_top_senders_current_rate) {
+            topTalkersOrdering = new Ordering<Device>() {
+                @Override
+                public int compare(Device left, Device right) {
+                    if (left == right) {
+                        return 0;
+                    }
+                    if (left == null) {
+                        return -1;
+                    }
+                    if (right == null) {
+                        return 1;
+                    }
+                    final int txTotalComparison =
+                            Double.valueOf(right.getTxRate()).compareTo(left.getTxRate());
+                    if (txTotalComparison == 0) {
+                        return Ordering.natural()
+                                .compare(nullToEmpty(left.getName()).toLowerCase(),
+                                        nullToEmpty(right.getName()).toLowerCase());
+                    }
+                    return txTotalComparison;
+                }
+            };
+
+        } else {
+            throw new IllegalArgumentException("Only Senders or Receivers sorting are accepted here!");
         }
     }
 

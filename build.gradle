@@ -157,6 +157,10 @@ okbuck {
     target = "android-$android_sdk"
     buckProjects = project.subprojects
     annotationProcessors = [
-            "local-apt-dependency": ['com.airbnb:deeplinkdispatch-processor']
+            "local-apt-dependency": ['com.airbnb.deeplinkdispatch.DeepLinkProcessor']
     ]
+//    wrapper {
+//        //Fork with kapt support
+//        repo = 'https://github.com/cwoodwar6/buck.git'
+//    }
 }

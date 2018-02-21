@@ -346,97 +346,95 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo>
         final int itemId = menuItem.getItemId();
         String cycle = null;
         boolean knownMenuItem = false;
-        switch (itemId) {
-            case R.id.tile_overview_wan_total_traffic_options_selection_month:
-                if (!menuItem.isChecked()) {
-                    menuItem.setChecked(true);
-                    cycle = CYCLE_MONTH;
-                } else {
-                    menuItem.setChecked(false);
-                }
-                knownMenuItem = true;
-                break;
-            case R.id.tile_overview_wan_total_traffic_options_selection_day:
-                if (!menuItem.isChecked()) {
-                    menuItem.setChecked(true);
-                    cycle = CYCLE_DAY;
-                } else {
-                    menuItem.setChecked(false);
-                }
-                knownMenuItem = true;
-                break;
-            case R.id.tile_overview_wan_total_traffic_options_change_cycle:
-                final AlertDialog.Builder builder = new AlertDialog.Builder(mParentFragmentActivity);
-                final LayoutInflater dialogInflater = LayoutInflater.from(builder.getContext());
+        if (itemId == R.id.tile_overview_wan_total_traffic_options_selection_month) {
+            if (!menuItem.isChecked()) {
+                menuItem.setChecked(true);
+                cycle = CYCLE_MONTH;
+            } else {
+                menuItem.setChecked(false);
+            }
+            knownMenuItem = true;
 
-                final View view = dialogInflater.inflate(R.layout.data_usage_cycle_editor, null, false);
-                final NumberPicker cycleDayPicker = (NumberPicker) view.findViewById(R.id.wan_cycle_day);
+        } else if (itemId == R.id.tile_overview_wan_total_traffic_options_selection_day) {
+            if (!menuItem.isChecked()) {
+                menuItem.setChecked(true);
+                cycle = CYCLE_DAY;
+            } else {
+                menuItem.setChecked(false);
+            }
+            knownMenuItem = true;
 
-                final int wanCycleDay;
-                if (mParentFragmentPreferences != null) {
-                    final int cycleDay = mParentFragmentPreferences.getInt(WAN_CYCLE_DAY_PREF, 1);
-                    wanCycleDay = (cycleDay < 1 ? 1 : (cycleDay > 31 ? 31 : cycleDay));
-                } else {
-                    wanCycleDay = 1;
-                }
+        } else if (itemId == R.id.tile_overview_wan_total_traffic_options_change_cycle) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(mParentFragmentActivity);
+            final LayoutInflater dialogInflater = LayoutInflater.from(builder.getContext());
 
-                cycleDayPicker.setMinValue(1);
-                cycleDayPicker.setMaxValue(31);
-                cycleDayPicker.setValue(wanCycleDay);
-                cycleDayPicker.setWrapSelectorWheel(true);
+            final View view = dialogInflater.inflate(R.layout.data_usage_cycle_editor, null, false);
+            final NumberPicker cycleDayPicker = (NumberPicker) view.findViewById(R.id.wan_cycle_day);
 
-                builder.setTitle(R.string.data_usage_cycle_editor_title);
-                builder.setView(view);
+            final int wanCycleDay;
+            if (mParentFragmentPreferences != null) {
+                final int cycleDay = mParentFragmentPreferences.getInt(WAN_CYCLE_DAY_PREF, 1);
+                wanCycleDay = (cycleDay < 1 ? 1 : (cycleDay > 31 ? 31 : cycleDay));
+            } else {
+                wanCycleDay = 1;
+            }
 
-                builder.setCancelable(true);
+            cycleDayPicker.setMinValue(1);
+            cycleDayPicker.setMaxValue(31);
+            cycleDayPicker.setValue(wanCycleDay);
+            cycleDayPicker.setWrapSelectorWheel(true);
 
-                builder.setPositiveButton(R.string.data_usage_cycle_editor_positive,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // clear focus to finish pending text edits
-                                cycleDayPicker.clearFocus();
+            builder.setTitle(R.string.data_usage_cycle_editor_title);
+            builder.setView(view);
 
-                                final int wanCycleDay = cycleDayPicker.getValue();
+            builder.setCancelable(true);
 
-                                //Update preferences
-                                if (mParentFragmentPreferences == null) {
-                                    return;
-                                }
-                                mParentFragmentPreferences.edit()
-                                        .putInt(WAN_CYCLE_DAY_PREF, wanCycleDay)
-                                        .putString(getFormattedPrefKey(CYCLE), CYCLE_MONTH)
-                                        .apply();
+            builder.setPositiveButton(R.string.data_usage_cycle_editor_positive,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // clear focus to finish pending text edits
+                            cycleDayPicker.clearFocus();
 
-                                final Calendar calendar = Calendar.getInstance();
-                                mCurrentDay = calendar.get(Calendar.DAY_OF_MONTH);
+                            final int wanCycleDay = cycleDayPicker.getValue();
 
-                                mCycleItem.set(WANTrafficData.getCurrentWANCycle(mParentFragmentActivity,
-                                        mParentFragmentPreferences));
-
-                                //Update title
-                                final MonthlyCycleItem cycleItem = mCycleItem.get();
-                                ((TextView) layout.findViewById(
-                                        R.id.tile_overview_wan_total_traffic_title)).setText(
-                                        WAN_TOTAL_TRAFFIC + ": " + cycleItem.getLabel());
-
-                                //Update bandwidth data right away
-                                if (mNvramInfo != null) {
-
-                                    mNvramInfo.putAll(
-                                            WANTrafficUtils.computeWANTrafficUsageBetweenDates(dao, mRouter.getUuid(),
-                                                    cycleItem.getStart(), cycleItem.getEnd()));
-
-                                    updateWANOverviewTile(CYCLE_MONTH);
-                                }
+                            //Update preferences
+                            if (mParentFragmentPreferences == null) {
+                                return;
                             }
-                        });
+                            mParentFragmentPreferences.edit()
+                                    .putInt(WAN_CYCLE_DAY_PREF, wanCycleDay)
+                                    .putString(getFormattedPrefKey(CYCLE), CYCLE_MONTH)
+                                    .apply();
 
-                builder.create().show();
+                            final Calendar calendar = Calendar.getInstance();
+                            mCurrentDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-                return true;
-            default:
-                break;
+                            mCycleItem.set(WANTrafficData.getCurrentWANCycle(mParentFragmentActivity,
+                                    mParentFragmentPreferences));
+
+                            //Update title
+                            final MonthlyCycleItem cycleItem = mCycleItem.get();
+                            ((TextView) layout.findViewById(
+                                    R.id.tile_overview_wan_total_traffic_title)).setText(
+                                    WAN_TOTAL_TRAFFIC + ": " + cycleItem.getLabel());
+
+                            //Update bandwidth data right away
+                            if (mNvramInfo != null) {
+
+                                mNvramInfo.putAll(
+                                        WANTrafficUtils.computeWANTrafficUsageBetweenDates(dao, mRouter.getUuid(),
+                                                cycleItem.getStart(), cycleItem.getEnd()));
+
+                                updateWANOverviewTile(CYCLE_MONTH);
+                            }
+                        }
+                    });
+
+            builder.create().show();
+
+            return true;
+        } else {
         }
 
         if (cycle != null) {

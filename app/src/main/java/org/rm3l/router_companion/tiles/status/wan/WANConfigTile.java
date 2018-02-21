@@ -355,165 +355,162 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
     @Override
     public boolean onMenuItemClick(MenuItem menuItem) {
         final int itemId = menuItem.getItemId();
-        switch (itemId) {
-            case R.id.tile_wan_config_dhcp_release:
-            case R.id.tile_wan_config_dhcp_renew:
-                if (mDhcpActionRunning.get()) {
-                    Utils.displayMessage(mParentFragmentActivity,
-                            "Action already in progress. Please wait a few seconds...", Style.INFO);
-                    return true;
-                }
-
-                final boolean renew = (itemId == R.id.tile_wan_config_dhcp_renew);
-                final DHCPClientAction dhcpClientRouterAction =
-                        (renew ? DHCPClientAction.RENEW : DHCPClientAction.RELEASE);
-
-                mDhcpActionRunning.set(true);
-                layout.findViewById(R.id.tile_status_wan_config_menu).setEnabled(false);
-
-                SnackbarUtils.buildSnackbar(mParentFragmentActivity,
-                        String.format("WAN DHCP Lease will be %s on '%s' (%s). ",
-                                renew ? "renewed" : "released", mRouter.getDisplayName(),
-                                mRouter.getRemoteIpAddress()), "CANCEL", Snackbar.LENGTH_LONG,
-                        new SnackbarCallback() {
-                            @Override
-                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-                                cancel();
-                            }
-
-                            @Override
-                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-                                cancel();
-                            }
-
-                            @Override
-                            public void onDismissEventManual(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-                                cancel();
-                            }
-
-                            @Override
-                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-                                cancel();
-                            }
-
-                            @Override
-                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-                                Utils.displayMessage(mParentFragmentActivity,
-                                        String.format("%s WAN DHCP Lease...", renew ? "Renewing" : "Releasing"),
-                                        Style.INFO);
-                                ActionManager.runTasks(new DHCPClientRouterAction(mRouter, mParentFragmentActivity,
-                                        new RouterActionListener() {
-                                            @Override
-                                            public void onRouterActionFailure(@NonNull RouterAction routerAction,
-                                                    @NonNull final Router router,
-                                                    @Nullable final Exception exception) {
-                                                mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        try {
-                                                            Utils.displayMessage(mParentFragmentActivity,
-                                                                    String.format(
-                                                                            "Error while trying to %s WAN DHCP Lease on '%s' (%s): %s",
-                                                                            renew ? "renew" : "release",
-                                                                            router.getDisplayName(),
-                                                                            router.getRemoteIpAddress(),
-                                                                            Utils.handleException(exception).first),
-                                                                    Style.ALERT);
-                                                        } finally {
-                                                            mDhcpActionRunning.set(false);
-                                                            layout.findViewById(R.id.tile_status_wan_config_menu)
-                                                                    .setEnabled(true);
-                                                        }
-                                                    }
-                                                });
-                                            }
-
-                                            @Override
-                                            public void onRouterActionSuccess(@NonNull RouterAction routerAction,
-                                                    @NonNull final Router router, Object returnData) {
-                                                mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-
-                                                        try {
-                                                            Utils.displayMessage(mParentFragmentActivity,
-                                                                    String.format(
-                                                                            "WAN DHCP Lease %s successfully on host '%s' (%s). ",
-                                                                            renew ? "renewed" : "released",
-                                                                            router.getDisplayName(),
-                                                                            router.getRemoteIpAddress()),
-                                                                    Style.CONFIRM);
-                                                        } finally {
-                                                            mDhcpActionRunning.set(false);
-                                                            if (mLoader != null) {
-                                                                //Reload everything right away
-                                                                doneWithLoaderInstance(WANConfigTile.this, mLoader,
-                                                                        1l);
-                                                            }
-                                                            layout.findViewById(R.id.tile_status_wan_config_menu)
-                                                                    .setEnabled(true);
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                        }, mGlobalPreferences, dhcpClientRouterAction));
-                            }
-
-                            @Override
-                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
-                            }
-
-                            private void cancel() {
-                                mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            layout.findViewById(R.id.tile_status_wan_config_menu).setEnabled(true);
-                                        } finally {
-                                            mDhcpActionRunning.set(false);
-                                        }
-                                    }
-                                });
-                            }
-
-                        }, new Bundle(), true);
-
-                //new UndoBarController.UndoBar(mParentFragmentActivity).message(
-                //    String.format("WAN DHCP Lease will be %s on '%s' (%s). ",
-                //        renew ? "renewed" : "released", mRouter.getDisplayName(),
-                //        mRouter.getRemoteIpAddress()))
-                //    .listener(new UndoBarController.AdvancedUndoListener() {
-                //      @Override public void onHide(@Nullable Parcelable parcelable) {
-                //
-                //      }
-                //
-                //      @Override public void onClear(@NonNull Parcelable[] parcelables) {
-                //        mParentFragmentActivity.runOnUiThread(new Runnable() {
-                //          @Override public void run() {
-                //            try {
-                //              layout.findViewById(R.id.tile_status_wan_config_menu).setEnabled(true);
-                //            } finally {
-                //              mDhcpActionRunning.set(false);
-                //            }
-                //          }
-                //        });
-                //      }
-                //
-                //      @Override public void onUndo(@Nullable Parcelable parcelable) {
-                //
-                //      }
-                //    })
-                //    .token(new Bundle())
-                //    .show();
+        if (itemId == R.id.tile_wan_config_dhcp_release || itemId == R.id.tile_wan_config_dhcp_renew) {
+            if (mDhcpActionRunning.get()) {
+                Utils.displayMessage(mParentFragmentActivity,
+                        "Action already in progress. Please wait a few seconds...", Style.INFO);
                 return true;
-            default:
-                break;
+            }
+
+            final boolean renew = (itemId == R.id.tile_wan_config_dhcp_renew);
+            final DHCPClientAction dhcpClientRouterAction =
+                    (renew ? DHCPClientAction.RENEW : DHCPClientAction.RELEASE);
+
+            mDhcpActionRunning.set(true);
+            layout.findViewById(R.id.tile_status_wan_config_menu).setEnabled(false);
+
+            SnackbarUtils.buildSnackbar(mParentFragmentActivity,
+                    String.format("WAN DHCP Lease will be %s on '%s' (%s). ",
+                            renew ? "renewed" : "released", mRouter.getDisplayName(),
+                            mRouter.getRemoteIpAddress()), "CANCEL", Snackbar.LENGTH_LONG,
+                    new SnackbarCallback() {
+                        @Override
+                        public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+                                throws Exception {
+                            cancel();
+                        }
+
+                        @Override
+                        public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+                                throws Exception {
+                            cancel();
+                        }
+
+                        @Override
+                        public void onDismissEventManual(int event, @Nullable Bundle bundle)
+                                throws Exception {
+                            cancel();
+                        }
+
+                        @Override
+                        public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
+                                throws Exception {
+                            cancel();
+                        }
+
+                        @Override
+                        public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
+                                throws Exception {
+                            Utils.displayMessage(mParentFragmentActivity,
+                                    String.format("%s WAN DHCP Lease...", renew ? "Renewing" : "Releasing"),
+                                    Style.INFO);
+                            ActionManager.runTasks(new DHCPClientRouterAction(mRouter, mParentFragmentActivity,
+                                    new RouterActionListener() {
+                                        @Override
+                                        public void onRouterActionFailure(@NonNull RouterAction routerAction,
+                                                @NonNull final Router router,
+                                                @Nullable final Exception exception) {
+                                            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    try {
+                                                        Utils.displayMessage(mParentFragmentActivity,
+                                                                String.format(
+                                                                        "Error while trying to %s WAN DHCP Lease on '%s' (%s): %s",
+                                                                        renew ? "renew" : "release",
+                                                                        router.getDisplayName(),
+                                                                        router.getRemoteIpAddress(),
+                                                                        Utils.handleException(exception).first),
+                                                                Style.ALERT);
+                                                    } finally {
+                                                        mDhcpActionRunning.set(false);
+                                                        layout.findViewById(R.id.tile_status_wan_config_menu)
+                                                                .setEnabled(true);
+                                                    }
+                                                }
+                                            });
+                                        }
+
+                                        @Override
+                                        public void onRouterActionSuccess(@NonNull RouterAction routerAction,
+                                                @NonNull final Router router, Object returnData) {
+                                            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+
+                                                    try {
+                                                        Utils.displayMessage(mParentFragmentActivity,
+                                                                String.format(
+                                                                        "WAN DHCP Lease %s successfully on host '%s' (%s). ",
+                                                                        renew ? "renewed" : "released",
+                                                                        router.getDisplayName(),
+                                                                        router.getRemoteIpAddress()),
+                                                                Style.CONFIRM);
+                                                    } finally {
+                                                        mDhcpActionRunning.set(false);
+                                                        if (mLoader != null) {
+                                                            //Reload everything right away
+                                                            doneWithLoaderInstance(WANConfigTile.this, mLoader,
+                                                                    1l);
+                                                        }
+                                                        layout.findViewById(R.id.tile_status_wan_config_menu)
+                                                                .setEnabled(true);
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }, mGlobalPreferences, dhcpClientRouterAction));
+                        }
+
+                        @Override
+                        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+                        }
+
+                        private void cancel() {
+                            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        layout.findViewById(R.id.tile_status_wan_config_menu).setEnabled(true);
+                                    } finally {
+                                        mDhcpActionRunning.set(false);
+                                    }
+                                }
+                            });
+                        }
+
+                    }, new Bundle(), true);
+
+            //new UndoBarController.UndoBar(mParentFragmentActivity).message(
+            //    String.format("WAN DHCP Lease will be %s on '%s' (%s). ",
+            //        renew ? "renewed" : "released", mRouter.getDisplayName(),
+            //        mRouter.getRemoteIpAddress()))
+            //    .listener(new UndoBarController.AdvancedUndoListener() {
+            //      @Override public void onHide(@Nullable Parcelable parcelable) {
+            //
+            //      }
+            //
+            //      @Override public void onClear(@NonNull Parcelable[] parcelables) {
+            //        mParentFragmentActivity.runOnUiThread(new Runnable() {
+            //          @Override public void run() {
+            //            try {
+            //              layout.findViewById(R.id.tile_status_wan_config_menu).setEnabled(true);
+            //            } finally {
+            //              mDhcpActionRunning.set(false);
+            //            }
+            //          }
+            //        });
+            //      }
+            //
+            //      @Override public void onUndo(@Nullable Parcelable parcelable) {
+            //
+            //      }
+            //    })
+            //    .token(new Bundle())
+            //    .show();
+            return true;
+        } else {
         }
         return false;
     }

@@ -799,327 +799,300 @@ public class RouterManagementActivity extends AppCompatActivity
         final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
         final List<Router> routersList = adapter.getRoutersList();
 
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-
-            case R.id.exit:
-                finish();
-                return true;
-
-            case R.id.help:
-                CustomTabActivityHelper.openCustomTab(RouterManagementActivity.this, null,
-                        RouterCompanionAppConstants.REMOTE_HELP_WEBSITE, null, null,
-                        new CustomTabActivityHelper.CustomTabFallback() {
-                            @Override
-                            public void openUri(Activity activity, Uri uri) {
-                                activity.startActivity(
-                                        new Intent(RouterManagementActivity.this, HelpActivity.class));
-                            }
-                        }, false);
-                return true;
-            case R.id.changelog:
-                CustomTabActivityHelper.openCustomTab(RouterManagementActivity.this, null,
-                        RouterCompanionAppConstants.REMOTE_HELP_WEBSITE_CHANGELOG, null, null,
-                        new CustomTabActivityHelper.CustomTabFallback() {
-                            @Override
-                            public void openUri(Activity activity, Uri uri) {
-                                activity.startActivity(
-                                        new Intent(RouterManagementActivity.this, ChangelogActivity.class));
-                            }
-                        }, false);
-                return true;
-
-            case R.id.debug_open_sharedprefs:
-                if (BuildConfig.DEBUG) {
-                    Toast.makeText(this, "[Chuck] Not implemented", Toast.LENGTH_SHORT).show();
-                    //Preferator.launch(this);
-                } else {
-                    Crashlytics.log(Log.WARN, LOG_TAG,
-                            "[DEBUG] SharedPreferences menu option should not be visible...");
-                }
-                return true;
-
-            case R.id.debug_open_chuck:
-                if (BuildConfig.DEBUG) {
-                    startActivity(Chuck.getLaunchIntent(this));
-                } else {
-                    Crashlytics.log(Log.WARN, LOG_TAG,
-                            "[DEBUG] 'Chuck' menu option should not be visible...");
-                }
-                return true;
-
-            case R.id.debug_leakcanary:
-
-                if (BuildConfig.DEBUG) {
-                    final boolean checked = item.isChecked();
-                    item.setChecked(!checked);
-                    final boolean commit =
-                            mPreferences.edit().putBoolean(DEBUG_LEAKCANARY_PREF_KEY, !checked).commit();
-                    Utils.requestBackup(RouterManagementActivity.this);
-                    //Restart activity
-                    final String waitMessage = String.format("%sabling LeakCanary. Pref commit=%s", checked ? "Dis" : "En", commit);
-                    ContextUtils.restartWholeApplication(this, waitMessage, null);
-                } else {
-                    Crashlytics.log(Log.WARN, LOG_TAG,
-                            "[DEBUG] LeakCanary menu option should not be visible...");
-                }
-                return true;
-
-            case R.id.debug_resourceinspector:
-
-                if (BuildConfig.DEBUG) {
-                    final boolean checked = item.isChecked();
-                    item.setChecked(!checked);
-                    final boolean commit =
-                            mPreferences.edit().putBoolean(DEBUG_RESOURCE_INSPECTOR_PREF_KEY, !checked).commit();
-                    Utils.requestBackup(RouterManagementActivity.this);
-                    //Restart activity
-                    final String waitMessage = String.format("%sabling ResourceInspector. Pref. update commit=%s",
-                            checked ? "Dis" : "En", commit);
-                    ContextUtils.restartWholeApplication(this, waitMessage, null);
-                } else {
-                    Crashlytics.log(Log.WARN, LOG_TAG,
-                            "[DEBUG] ResourceInspector menu option should not be visible...");
-                }
-                return true;
-
-            case R.id.debug_welcome_screen:
-                if (BuildConfig.DEBUG) {
-                    if (welcomeScreen != null) {
-                        welcomeScreen.forceShow();
-                    }
-                } else {
-                    Crashlytics.log(Log.WARN, LOG_TAG,
-                            "[DEBUG] 'Force-show welcome screen' menu option should not be visible...");
-                }
-                return true;
-
-            case R.id.debug_restore_deleted_routers:
-                if (BuildConfig.DEBUG) {
-                    final List<Router> allRoutersIncludingArchived = dao.getAllRoutersIncludingArchived();
-                    int nbRoutersRestored = 0;
-                    for (final Router potentiallyArchivedRouter : allRoutersIncludingArchived) {
-                        if (potentiallyArchivedRouter == null || !potentiallyArchivedRouter.isArchived()) {
-                            continue;
+        final int itemId = item.getItemId();
+        if (itemId == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else if (itemId == R.id.exit) {
+            finish();
+            return true;
+        } else if (itemId == R.id.help) {
+            CustomTabActivityHelper.openCustomTab(RouterManagementActivity.this, null,
+                    RouterCompanionAppConstants.REMOTE_HELP_WEBSITE, null, null,
+                    new CustomTabActivityHelper.CustomTabFallback() {
+                        @Override
+                        public void openUri(Activity activity, Uri uri) {
+                            activity.startActivity(
+                                    new Intent(RouterManagementActivity.this, HelpActivity.class));
                         }
-                        potentiallyArchivedRouter.setArchived(false);
-                        dao.updateRouter(potentiallyArchivedRouter);
-                        nbRoutersRestored++;
-                    }
-                    if (nbRoutersRestored > 0) {
-                        doRefreshRoutersListWithSpinner(RoutersListRefreshCause.DATA_SET_CHANGED, null);
-                        final String msg = "[DEBUG] Restored " + nbRoutersRestored + " routers.";
-                        Crashlytics.log(Log.DEBUG, LOG_TAG, msg);
-                        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Crashlytics.log(Log.WARN, LOG_TAG,
-                            "[DEBUG] 'Restore deleted routers' menu option should not be visible...");
-                }
-                return true;
-
-            case R.id.debug_run_jobs_right_away: {
-                if (BuildConfig.DEBUG) {
-                    final List<String> jobTags = RouterCompanionJobCreator.getOneShotJobTags();
-                    if (jobTags.isEmpty()) {
-                        Toast.makeText(this, "Jobs Tags set is empty", Toast.LENGTH_SHORT).show();
-                    } else {
-                        new AlertDialog.Builder(this)
-                                .setTitle("Select Job to trigger")
-                                .setItems(jobTags.toArray(new String[jobTags.size()]), new OnClickListener() {
-                                    @Override
-                                    public void onClick(final DialogInterface dialog, final int which) {
-                                        RouterCompanionJobCreator.runJobImmediately(jobTags.get(which));
-                                    }
-                                })
-                                .show();
-                    }
-                } else {
-                    Crashlytics.log(Log.WARN, LOG_TAG,
-                            "[DEBUG] 'Run Jobs right away' menu option should not be visible...");
-                }
-            }
-                return true;
-
-            case R.id.debug_cancel_all_jobs: {
-                if (BuildConfig.DEBUG) {
-                    final Set<String> jobTags = RouterCompanionJobCreator.JOB_MAP.keySet();
-                    final List<Router> allRouters = dao.getAllRouters();
-                    for (final String jobTag : jobTags) {
-                        JobManager.instance().cancelAllForTag(jobTag);
-                        //Also for speed-test jobs
-                        for (final Router router : allRouters) {
-                            if (router == null) {
-                                continue;
-                            }
-                            JobManager.instance()
-                                    .cancelAllForTag(
-                                            RouterSpeedTestAutoRunnerJob.getActualRouterJobTag(jobTag,
-                                                    router.getUuid()));
+                    }, false);
+            return true;
+        } else if (itemId == R.id.changelog) {
+            CustomTabActivityHelper.openCustomTab(RouterManagementActivity.this, null,
+                    RouterCompanionAppConstants.REMOTE_HELP_WEBSITE_CHANGELOG, null, null,
+                    new CustomTabActivityHelper.CustomTabFallback() {
+                        @Override
+                        public void openUri(Activity activity, Uri uri) {
+                            activity.startActivity(
+                                    new Intent(RouterManagementActivity.this, ChangelogActivity.class));
                         }
-                    }
-                    Toast.makeText(this, "Requested cancellation for: " + jobTags, Toast.LENGTH_LONG)
-                            .show();
-                } else {
-                    Crashlytics.log(Log.WARN, LOG_TAG,
-                            "[DEBUG] 'Cancel ALL jobs' menu option should not be visible...");
-                }
-            }
-                return true;
-
-            case R.id.router_list_actionbar_add:
-                this.openAddRouterForm();
-                return true;
-
-            case R.id.router_list_take_bug_report:
-                Utils.takeBugReport(this);
-                return true;
-            case R.id.router_list_refresh:
-                doRefreshRoutersListWithSpinner(RoutersListRefreshCause.DATA_SET_CHANGED, null);
-                return true;
-            case R.id.router_list_donate:
-                Utils.openDonateActivity(this);
-                return true;
-            case R.id.router_list_about:
-                Utils.launchAboutActivity(RouterManagementActivity.this);
-                return true;
-            case R.id.router_list_settings:
-                this.startActivityForResult(new Intent(this, RouterManagementSettingsActivity.class),
-                        ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE);
-                return true;
-            case R.id.router_list_feedback: {
-                Utils.openFeedbackForm(this, "");
-                //                final Intent intent = new Intent(this, FeedbackActivity.class);
-                //                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
-                //                ViewGroupUtils.exportViewToFile(this, getWindow().getDecorView(), screenshotFile);
-                //                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
-                //                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
-                //                startActivity(intent);
-                //                Utils.buildFeedbackDialog(this, true);
+                    }, false);
+            return true;
+        } else if (itemId == R.id.debug_open_sharedprefs) {
+            if (BuildConfig.DEBUG) {
+                Toast.makeText(this, "[Chuck] Not implemented", Toast.LENGTH_SHORT).show();
+                //Preferator.launch(this);
+            } else {
+                Crashlytics.log(Log.WARN, LOG_TAG,
+                        "[DEBUG] SharedPreferences menu option should not be visible...");
             }
             return true;
-            case R.id.router_list_actions_restore_factory_defaults:
-                //TODO Hidden for now
-                return true;
-            case R.id.router_list_actions_firmwares_upgrade:
-                //TODO Hidden for now
-                return true;
-            case R.id.router_list_remove_ads:
-                Utils.displayUpgradeMessageForAdsRemoval(this);
-                return true;
-            case R.id.router_list_actions_reboot_routers: {
-                if (routersList == null || routersList.isEmpty()) {
-                    Utils.displayMessage(RouterManagementActivity.this,
-                            "Empty Router list - action not submitted.", Style.INFO);
-                    return true;
+        } else if (itemId == R.id.debug_open_chuck) {
+            if (BuildConfig.DEBUG) {
+                startActivity(Chuck.getLaunchIntent(this));
+            } else {
+                Crashlytics.log(Log.WARN, LOG_TAG,
+                        "[DEBUG] 'Chuck' menu option should not be visible...");
+            }
+            return true;
+        } else if (itemId == R.id.debug_leakcanary) {
+            if (BuildConfig.DEBUG) {
+                final boolean checked = item.isChecked();
+                item.setChecked(!checked);
+                final boolean commit =
+                        mPreferences.edit().putBoolean(DEBUG_LEAKCANARY_PREF_KEY, !checked).commit();
+                Utils.requestBackup(RouterManagementActivity.this);
+                //Restart activity
+                final String waitMessage = String
+                        .format("%sabling LeakCanary. Pref commit=%s", checked ? "Dis" : "En", commit);
+                ContextUtils.restartWholeApplication(this, waitMessage, null);
+            } else {
+                Crashlytics.log(Log.WARN, LOG_TAG,
+                        "[DEBUG] LeakCanary menu option should not be visible...");
+            }
+            return true;
+        } else if (itemId == R.id.debug_resourceinspector) {
+            if (BuildConfig.DEBUG) {
+                final boolean checked = item.isChecked();
+                item.setChecked(!checked);
+                final boolean commit =
+                        mPreferences.edit().putBoolean(DEBUG_RESOURCE_INSPECTOR_PREF_KEY, !checked).commit();
+                Utils.requestBackup(RouterManagementActivity.this);
+                //Restart activity
+                final String waitMessage = String.format("%sabling ResourceInspector. Pref. update commit=%s",
+                        checked ? "Dis" : "En", commit);
+                ContextUtils.restartWholeApplication(this, waitMessage, null);
+            } else {
+                Crashlytics.log(Log.WARN, LOG_TAG,
+                        "[DEBUG] ResourceInspector menu option should not be visible...");
+            }
+            return true;
+        } else if (itemId == R.id.debug_welcome_screen) {
+            if (BuildConfig.DEBUG) {
+                if (welcomeScreen != null) {
+                    welcomeScreen.forceShow();
                 }
-                final List<String> allRoutersStr = new ArrayList<>();
-                for (Router router : routersList) {
-                    if (router == null) {
+            } else {
+                Crashlytics.log(Log.WARN, LOG_TAG,
+                        "[DEBUG] 'Force-show welcome screen' menu option should not be visible...");
+            }
+            return true;
+        } else if (itemId == R.id.debug_restore_deleted_routers) {
+            if (BuildConfig.DEBUG) {
+                final List<Router> allRoutersIncludingArchived = dao.getAllRoutersIncludingArchived();
+                int nbRoutersRestored = 0;
+                for (final Router potentiallyArchivedRouter : allRoutersIncludingArchived) {
+                    if (potentiallyArchivedRouter == null || !potentiallyArchivedRouter.isArchived()) {
                         continue;
                     }
-                    allRoutersStr.add(
-                            String.format("'%s' (%s)", router.getDisplayName(), router.getRemoteIpAddress()));
+                    potentiallyArchivedRouter.setArchived(false);
+                    dao.updateRouter(potentiallyArchivedRouter);
+                    nbRoutersRestored++;
                 }
-                new AlertDialog.Builder(this).setIcon(R.drawable.ic_action_alert_warning)
-                        .setTitle("Reboot All Router(s)?")
-                        .setMessage(String.format("Are you sure you wish to continue? "
-                                        + "The following Routers will be rebooted: \n\n%s",
-                                Joiner.on("\n").skipNulls().join(allRoutersStr)))
-                        .setCancelable(true)
-                        .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(final DialogInterface dialogInterface, final int i) {
+                if (nbRoutersRestored > 0) {
+                    doRefreshRoutersListWithSpinner(RoutersListRefreshCause.DATA_SET_CHANGED, null);
+                    final String msg = "[DEBUG] Restored " + nbRoutersRestored + " routers.";
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, msg);
+                    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Crashlytics.log(Log.WARN, LOG_TAG,
+                        "[DEBUG] 'Restore deleted routers' menu option should not be visible...");
+            }
+            return true;
+        } else if (itemId == R.id.debug_run_jobs_right_away) {
+            if (BuildConfig.DEBUG) {
+                final List<String> jobTags = RouterCompanionJobCreator.getOneShotJobTags();
+                if (jobTags.isEmpty()) {
+                    Toast.makeText(this, "Jobs Tags set is empty", Toast.LENGTH_SHORT).show();
+                } else {
+                    new Builder(this)
+                            .setTitle("Select Job to trigger")
+                            .setItems(jobTags.toArray(new String[jobTags.size()]), new OnClickListener() {
+                                @Override
+                                public void onClick(final DialogInterface dialog, final int which) {
+                                    RouterCompanionJobCreator.runJobImmediately(jobTags.get(which));
+                                }
+                            })
+                            .show();
+                }
+            } else {
+                Crashlytics.log(Log.WARN, LOG_TAG,
+                        "[DEBUG] 'Run Jobs right away' menu option should not be visible...");
+            }
+            return true;
+        } else if (itemId == R.id.debug_cancel_all_jobs) {
+            if (BuildConfig.DEBUG) {
+                final Set<String> jobTags = RouterCompanionJobCreator.JOB_MAP.keySet();
+                final List<Router> allRouters = dao.getAllRouters();
+                for (final String jobTag : jobTags) {
+                    JobManager.instance().cancelAllForTag(jobTag);
+                    //Also for speed-test jobs
+                    for (final Router router : allRouters) {
+                        if (router == null) {
+                            continue;
+                        }
+                        JobManager.instance()
+                                .cancelAllForTag(
+                                        RouterSpeedTestAutoRunnerJob.getActualRouterJobTag(jobTag,
+                                                router.getUuid()));
+                    }
+                }
+                Toast.makeText(this, "Requested cancellation for: " + jobTags, Toast.LENGTH_LONG)
+                        .show();
+            } else {
+                Crashlytics.log(Log.WARN, LOG_TAG,
+                        "[DEBUG] 'Cancel ALL jobs' menu option should not be visible...");
+            }
+            return true;
+        } else if (itemId == R.id.router_list_actionbar_add) {
+            this.openAddRouterForm();
+            return true;
+        } else if (itemId == R.id.router_list_take_bug_report) {
+            Utils.takeBugReport(this);
+            return true;
+        } else if (itemId == R.id.router_list_refresh) {
+            doRefreshRoutersListWithSpinner(RoutersListRefreshCause.DATA_SET_CHANGED, null);
+            return true;
+        } else if (itemId == R.id.router_list_donate) {
+            Utils.openDonateActivity(this);
+            return true;
+        } else if (itemId == R.id.router_list_about) {
+            Utils.launchAboutActivity(RouterManagementActivity.this);
+            return true;
+        } else if (itemId == R.id.router_list_settings) {
+            this.startActivityForResult(new Intent(this, RouterManagementSettingsActivity.class),
+                    ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE);
+            return true;
+        } else if (itemId == R.id.router_list_feedback) {
+            Utils.openFeedbackForm(this, "");
+            return true;
+        } else if (itemId == R.id.router_list_actions_restore_factory_defaults) {//TODO Hidden for now
+            return true;
+        } else if (itemId == R.id.router_list_actions_firmwares_upgrade) {//TODO Hidden for now
+            return true;
+        } else if (itemId == R.id.router_list_remove_ads) {
+            Utils.displayUpgradeMessageForAdsRemoval(this);
+            return true;
+        } else if (itemId == R.id.router_list_actions_reboot_routers) {
+            if (routersList == null || routersList.isEmpty()) {
+                Utils.displayMessage(RouterManagementActivity.this,
+                        "Empty Router list - action not submitted.", Style.INFO);
+                return true;
+            }
+            final List<String> allRoutersStr = new ArrayList<>();
+            for (Router router : routersList) {
+                if (router == null) {
+                    continue;
+                }
+                allRoutersStr.add(
+                        String.format("'%s' (%s)", router.getDisplayName(), router.getRemoteIpAddress()));
+            }
+            new Builder(this).setIcon(R.drawable.ic_action_alert_warning)
+                    .setTitle("Reboot All Router(s)?")
+                    .setMessage(String.format("Are you sure you wish to continue? "
+                                    + "The following Routers will be rebooted: \n\n%s",
+                            Joiner.on("\n").skipNulls().join(allRoutersStr)))
+                    .setCancelable(true)
+                    .setPositiveButton("Proceed!", new OnClickListener() {
+                        @Override
+                        public void onClick(final DialogInterface dialogInterface, final int i) {
 
-                                Utils.displayMessage(RouterManagementActivity.this,
-                                        String.format("Rebooting %d Router(s)....", routersList.size()), Style.INFO);
+                            Utils.displayMessage(RouterManagementActivity.this,
+                                    String.format("Rebooting %d Router(s)....", routersList.size()), Style.INFO);
 
-                                final AtomicInteger currentNum = new AtomicInteger(0);
-                                final AtomicInteger numActionsWithNoSuccess = new AtomicInteger(0);
-                                final int totalNumOfDevices = routersList.size();
+                            final AtomicInteger currentNum = new AtomicInteger(0);
+                            final AtomicInteger numActionsWithNoSuccess = new AtomicInteger(0);
+                            final int totalNumOfDevices = routersList.size();
 
-                                for (final Router selectedRouter : routersList) {
-                                    ActionManager.runTasks(
-                                            new RebootRouterAction(selectedRouter, RouterManagementActivity.this,
-                                                    new RouterActionListener() {
-                                                        @Override
-                                                        public void onRouterActionFailure(
-                                                                @NonNull RouterAction routerAction,
-                                                                @NonNull Router router,
-                                                                @Nullable Exception exception) {
-                                                            final int incrementAndGet = currentNum.incrementAndGet();
-                                                            numActionsWithNoSuccess.incrementAndGet();
-                                                            if (incrementAndGet >= totalNumOfDevices) {
-                                                                //An error occurred
-                                                                Utils.displayMessage(RouterManagementActivity.this,
-                                                                        String.format(
-                                                                                "Action '%s' executed but %d error(s) occurred: %s",
-                                                                                routerAction.toString(),
-                                                                                numActionsWithNoSuccess.get(),
-                                                                                Utils.handleException(
-                                                                                        exception).first),
-                                                                        Style.INFO);
-                                                            }
+                            for (final Router selectedRouter : routersList) {
+                                ActionManager.runTasks(
+                                        new RebootRouterAction(selectedRouter, RouterManagementActivity.this,
+                                                new RouterActionListener() {
+                                                    @Override
+                                                    public void onRouterActionFailure(
+                                                            @NonNull RouterAction routerAction,
+                                                            @NonNull Router router,
+                                                            @Nullable Exception exception) {
+                                                        final int incrementAndGet = currentNum.incrementAndGet();
+                                                        numActionsWithNoSuccess.incrementAndGet();
+                                                        if (incrementAndGet >= totalNumOfDevices) {
+                                                            //An error occurred
+                                                            Utils.displayMessage(RouterManagementActivity.this,
+                                                                    String.format(
+                                                                            "Action '%s' executed but %d error(s) occurred: %s",
+                                                                            routerAction.toString(),
+                                                                            numActionsWithNoSuccess.get(),
+                                                                            Utils.handleException(
+                                                                                    exception).first),
+                                                                    Style.INFO);
                                                         }
+                                                    }
 
-                                                        @Override
-                                                        public void onRouterActionSuccess(
-                                                                @NonNull RouterAction routerAction,
-                                                                @NonNull Router router, Object returnData) {
-                                                            final int incrementAndGet = currentNum.incrementAndGet();
-                                                            if (incrementAndGet >= totalNumOfDevices) {
-                                                                final int numActionsThatDidNotSucceed =
-                                                                        numActionsWithNoSuccess.get();
-                                                                if (numActionsThatDidNotSucceed > 0) {
-                                                                    //An error occurred
-                                                                    if (numActionsThatDidNotSucceed
-                                                                            < totalNumOfDevices) {
-                                                                        Utils.displayMessage(
-                                                                                RouterManagementActivity.this,
-                                                                                String.format(
-                                                                                        "Action '%s' executed but %d error(s) occurred",
-                                                                                        routerAction.toString(),
-                                                                                        numActionsThatDidNotSucceed),
-                                                                                Style.INFO);
-                                                                    } else {
-                                                                        //No action succeeded
-                                                                        Utils.displayMessage(
-                                                                                RouterManagementActivity.this,
-                                                                                String.format(
-                                                                                        "None of the '%s' actions submitted succeeded - please try again later.",
-                                                                                        routerAction.toString()),
-                                                                                Style.INFO);
-                                                                    }
-                                                                } else {
-                                                                    //No error
+                                                    @Override
+                                                    public void onRouterActionSuccess(
+                                                            @NonNull RouterAction routerAction,
+                                                            @NonNull Router router, Object returnData) {
+                                                        final int incrementAndGet = currentNum.incrementAndGet();
+                                                        if (incrementAndGet >= totalNumOfDevices) {
+                                                            final int numActionsThatDidNotSucceed =
+                                                                    numActionsWithNoSuccess.get();
+                                                            if (numActionsThatDidNotSucceed > 0) {
+                                                                //An error occurred
+                                                                if (numActionsThatDidNotSucceed
+                                                                        < totalNumOfDevices) {
                                                                     Utils.displayMessage(
                                                                             RouterManagementActivity.this,
                                                                             String.format(
-                                                                                    "Action '%s' executed successfully on %d Routers",
+                                                                                    "Action '%s' executed but %d error(s) occurred",
                                                                                     routerAction.toString(),
-                                                                                    routersList.size()),
-                                                                            Style.CONFIRM);
+                                                                                    numActionsThatDidNotSucceed),
+                                                                            Style.INFO);
+                                                                } else {
+                                                                    //No action succeeded
+                                                                    Utils.displayMessage(
+                                                                            RouterManagementActivity.this,
+                                                                            String.format(
+                                                                                    "None of the '%s' actions submitted succeeded - please try again later.",
+                                                                                    routerAction.toString()),
+                                                                            Style.INFO);
                                                                 }
+                                                            } else {
+                                                                //No error
+                                                                Utils.displayMessage(
+                                                                        RouterManagementActivity.this,
+                                                                        String.format(
+                                                                                "Action '%s' executed successfully on %d Routers",
+                                                                                routerAction.toString(),
+                                                                                routersList.size()),
+                                                                        Style.CONFIRM);
                                                             }
                                                         }
-                                                    }, mPreferences));
-                                }
+                                                    }
+                                                }, mPreferences));
                             }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Cancelled - nothing more to do!
-                            }
-                        })
-                        .create()
-                        .show();
-            }
+                        }
+                    })
+                    .setNegativeButton("Cancel", new OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //Cancelled - nothing more to do!
+                        }
+                    })
+                    .create()
+                    .show();
             return true;
-            default:
-                break;
+        } else {
         }
         return super.onOptionsItemSelected(item);
     }

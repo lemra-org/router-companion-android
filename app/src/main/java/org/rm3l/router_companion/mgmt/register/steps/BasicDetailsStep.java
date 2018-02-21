@@ -273,25 +273,23 @@ public class BasicDetailsStep extends MaterialWizardStep {
                     @Override
                     public void onCheckedChanged(RadioGroup group, int checkedId) {
 
-                        switch (checkedId) {
-                            case R.id.router_add_icon_auto:
-                                customIconPathView.setText(null);
-                                customIconErrorMsgView.setText(null);
+                        if (checkedId == R.id.router_add_icon_auto) {
+                            customIconPathView.setText(null);
+                            customIconErrorMsgView.setText(null);
+                            customIconPreview.setImageURI(null);
+                            customIconContainer.setVisibility(View.GONE);
+
+                        } else if (checkedId == R.id.router_add_icon_custom) {
+                            customIconButtonView.setHint(getString(R.string.router_icon));
+                            customIconContainer.setVisibility(View.VISIBLE);
+                            if (!TextUtils.isEmpty(customIconPathView.getText())) {
+                                customIconPreview.setImageURI(Uri.fromFile(
+                                        new File(customIconPathView.getText().toString())));
+                            } else {
                                 customIconPreview.setImageURI(null);
-                                customIconContainer.setVisibility(View.GONE);
-                                break;
-                            case R.id.router_add_icon_custom:
-                                customIconButtonView.setHint(getString(R.string.router_icon));
-                                customIconContainer.setVisibility(View.VISIBLE);
-                                if (!TextUtils.isEmpty(customIconPathView.getText())) {
-                                    customIconPreview.setImageURI(Uri.fromFile(
-                                            new File(customIconPathView.getText().toString())));
-                                } else {
-                                    customIconPreview.setImageURI(null);
-                                }
-                                break;
-                            default:
-                                break;
+                            }
+
+                        } else {
                         }
                     }
                 });
@@ -481,17 +479,13 @@ public class BasicDetailsStep extends MaterialWizardStep {
         }
 
         final int checkedIconMethodRadioButtonId = iconMethodRg.getCheckedRadioButtonId();
-        switch (checkedIconMethodRadioButtonId) {
-            case R.id.router_add_icon_custom: {
-                //Check file submitted
-                if (isNullOrEmpty(customIconPathView.getText().toString())) {
-                    customIconErrorMsgView.setText("Please specify an image file");
-                    return false;
-                }
+        if (checkedIconMethodRadioButtonId == R.id.router_add_icon_custom) {
+            if (isNullOrEmpty(customIconPathView.getText().toString())) {
+                customIconErrorMsgView.setText("Please specify an image file");
+                return false;
             }
-            break;
-            default:
-                break;
+
+        } else {
         }
 
         return stepValidated;
@@ -506,15 +500,13 @@ public class BasicDetailsStep extends MaterialWizardStep {
         routerFirmware = routerFirmwareSpinner.getSelectedItem().toString();
         isDemoModeStr = Boolean.toString(Utils.isDemoRouter(routerIpOrDns));
         final int checkedRadioButtonId = iconMethodRg.getCheckedRadioButtonId();
-        switch (checkedRadioButtonId) {
-            case R.id.router_add_icon_auto:
-                routerIconMethod = Integer.toString(Router.RouterIcon_Auto);
-                break;
-            case R.id.router_add_icon_custom:
-                routerIconMethod = Integer.toString(Router.RouterIcon_Custom);
-                break;
-            default:
-                break;
+        if (checkedRadioButtonId == R.id.router_add_icon_auto) {
+            routerIconMethod = Integer.toString(Router.RouterIcon_Auto);
+
+        } else if (checkedRadioButtonId == R.id.router_add_icon_custom) {
+            routerIconMethod = Integer.toString(Router.RouterIcon_Custom);
+
+        } else {
         }
         customIconErrorMsg = customIconErrorMsgView.getText().toString();
         customIconPath = customIconPathView.getText().toString();

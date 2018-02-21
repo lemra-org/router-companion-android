@@ -270,26 +270,23 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-
-            case R.id.action_feedback:
-                Utils.openFeedbackForm(this, mRouterUuid);
-                //                final Intent intent = new Intent(EditWOLDaemonSettingsActivity.this, FeedbackActivity.class);
-                //                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
-                //                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
-                //                ViewGroupUtils.exportViewToFile(EditWOLDaemonSettingsActivity.this,
-                //                        getWindow().getDecorView(), screenshotFile);
-                //                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
-                //                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
-                //                startActivity(intent);
-                ////                Utils.buildFeedbackDialog(this, true);
-                return true;
-
-            default:
-                break;
+        int i = item.getItemId();
+        if (i == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else if (i == R.id.action_feedback) {
+            Utils.openFeedbackForm(this, mRouterUuid);
+            //                final Intent intent = new Intent(EditWOLDaemonSettingsActivity.this, FeedbackActivity.class);
+            //                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
+            //                final File screenshotFile = new File(getCacheDir(), "feedback_screenshot.png");
+            //                ViewGroupUtils.exportViewToFile(EditWOLDaemonSettingsActivity.this,
+            //                        getWindow().getDecorView(), screenshotFile);
+            //                intent.putExtra(FeedbackActivity.SCREENSHOT_FILE, screenshotFile.getAbsolutePath());
+            //                intent.putExtra(FeedbackActivity.CALLER_ACTIVITY, this.getClass().getCanonicalName());
+            //                startActivity(intent);
+            ////                Utils.buildFeedbackDialog(this, true);
+            return true;
+        } else {
         }
 
         return super.onOptionsItemSelected(item);
