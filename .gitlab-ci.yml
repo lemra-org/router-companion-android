@@ -36,7 +36,7 @@ build:
     - chmod +x ./gradlew ./buckw
 
     # With Buck (much faster, but not everything is supported)
-    - ./gradlew :buckWrapper
+    - bash ./buckw targets
     - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
 
     # With Gradle
