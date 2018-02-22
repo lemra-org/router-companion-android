@@ -70,6 +70,13 @@ android {
             keyAlias 'DDWRTCompanionAndroidKey'
             (storeFile, storePassword, keyPassword) = rootProject.getAndroidSigningConfig()
         }
+        debug {
+            keyAlias = 'androiddebugkey'
+            keyPassword = 'android'
+            storeFile = new File("${projectDir}/../debug.keystore")
+            storePassword = 'android'
+            storeType = "jks"
+        }
     }
 
     sourceSets {
