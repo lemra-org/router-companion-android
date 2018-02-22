@@ -33,8 +33,10 @@ build:
   image: registry.gitlab.com/lemra/router-companion-android:latest
   stage: build
   script:
-    - chmod +x ./gradlew
-    - ./gradlew htmlDependencyReport :app:assembleAmazonDebug :tasker-plugin:assembleAmazonDebug
+    - chmod +x ./gradlew ./buckw
+    - ./buckw build appAmazonDebug tasker-pluginAmazonDebug
+    - ./gradlew htmlDependencyReport
+#    - ./gradlew htmlDependencyReport :app:assembleAmazonDebug :tasker-plugin:assembleAmazonDebug
   artifacts:
     paths:
     - app/build/reports   
