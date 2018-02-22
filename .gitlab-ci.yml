@@ -34,11 +34,19 @@ build:
   stage: build
   script:
     - chmod +x ./gradlew ./buckw
+
+    # With Buck (much faster, but not everything is supported)
+    - ./gradlew :buckWrapper
     - ./buckw build appAmazonDebug tasker-pluginAmazonDebug
+
+    # With Gradle
+    - chmod +x ./gradlew
     - ./gradlew htmlDependencyReport
 #    - ./gradlew htmlDependencyReport :app:assembleAmazonDebug :tasker-plugin:assembleAmazonDebug
   artifacts:
     paths:
+    - .okbuck/gen/
+    - buck-out/gen/
     - app/build/reports   
     - app/build/outputs/
     - app/build/doc
