@@ -90,9 +90,11 @@ if (propsFile.exists()) {
     storeFile = new File(props['keystore'].toString())
     keyPassword = props['keyPassword']
 }
-
-ext.getAndroidSigningConfig = {
-    return [storeFile, keyPassword, keyPassword]
+ext.getReleaseSigningConfig = {
+    return ['DDWRTCompanionAndroidKey', storeFile, keyPassword, keyPassword]
+}
+ext.getDebugSigningConfig = {
+    return ['androiddebugkey', new File("${rootDir}/debug.keystore"), 'android', 'android']
 }
 
 ext.getVersionCodeAndName = {
