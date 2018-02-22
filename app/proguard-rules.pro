@@ -41,7 +41,7 @@
 # please KEEP ALL THE NAMES
 -keepnames class ** { *; }
 
--libraryjars libs
+#-libraryjars libs
 
 -dontwarn javax.annotation.**
 -dontwarn org.ietf.jgss.**
