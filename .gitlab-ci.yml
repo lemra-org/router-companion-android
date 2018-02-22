@@ -32,23 +32,35 @@ before_script:
 build:
   image: registry.gitlab.com/lemra/router-companion-android:latest
   stage: build
-  script:
-    - chmod +x ./gradlew ./buckw
+  before_script:
+    - export GRADLE_USER_HOME=cache/.gradle
 
     # With Buck (much faster, but not everything is supported)
     # TODO For now we need to manually create such dirs, otherwise Buck builds do not succeed
-    - mkdir -p buck-out/bin/.okbuck/cache/__unpack_com.google.android.gms.play-services-ads-lite-license-11.8.0.aar#aar_unzip__/res
-    - mkdir -p buck-out/bin/.okbuck/cache/__unpack_com.google.android.gms.play-services-base-license-11.8.0.aar#aar_unzip__/res
-    - mkdir -p buck-out/bin/.okbuck/cache/__unpack_com.google.android.gms.play-services-basement-license-11.8.0.aar#aar_unzip__/res
-    - mkdir -p buck-out/bin/.okbuck/cache/__unpack_com.google.android.gms.play-services-tasks-license-11.8.0.aar#aar_unzip__/res
-    - mkdir -p buck-out/bin/.okbuck/cache/__unpack_com.google.firebase.firebase-analytics-impl-license-11.8.0.aar#aar_unzip__/res
-    - mkdir -p buck-out/bin/.okbuck/cache/__unpack_com.google.firebase.firebase-analytics-license-11.8.0.aar#aar_unzip__/res
-    - mkdir -p buck-out/bin/.okbuck/cache/__unpack_com.google.firebase.firebase-appindexing-license-11.8.0.aar#aar_unzip__/res
-    - mkdir -p buck-out/bin/.okbuck/cache/__unpack_com.google.firebase.firebase-common-license-11.8.0.aar#aar_unzip__/res
-    - mkdir -p buck-out/bin/.okbuck/cache/__unpack_com.google.firebase.firebase-core-11.8.0.aar#aar_unzip__/res
-    - mkdir -p buck-out/bin/.okbuck/cache/__unpack_com.google.firebase.firebase-iid-license-11.8.0.aar#aar_unzip__/res
+    - mkdir -p "buck-out/bin/.okbuck/cache/__unpack_com.google.android.gms.play-services-ads-lite-license-11.8.0.aar#aar_unzip__/res"
+    - mkdir -p "buck-out/bin/.okbuck/cache/__unpack_com.google.android.gms.play-services-base-license-11.8.0.aar#aar_unzip__/res"
+    - mkdir -p "buck-out/bin/.okbuck/cache/__unpack_com.google.android.gms.play-services-basement-license-11.8.0.aar#aar_unzip__/res"
+    - mkdir -p "buck-out/bin/.okbuck/cache/__unpack_com.google.android.gms.play-services-tasks-license-11.8.0.aar#aar_unzip__/res"
+    - mkdir -p "buck-out/bin/.okbuck/cache/__unpack_com.google.firebase.firebase-analytics-impl-license-11.8.0.aar#aar_unzip__/res"
+    - mkdir -p "buck-out/bin/.okbuck/cache/__unpack_com.google.firebase.firebase-analytics-license-11.8.0.aar#aar_unzip__/res"
+    - mkdir -p "buck-out/bin/.okbuck/cache/__unpack_com.google.firebase.firebase-appindexing-license-11.8.0.aar#aar_unzip__/res"
+    - mkdir -p "buck-out/bin/.okbuck/cache/__unpack_com.google.firebase.firebase-common-license-11.8.0.aar#aar_unzip__/res"
+    - mkdir -p "buck-out/bin/.okbuck/cache/__unpack_com.google.firebase.firebase-core-11.8.0.aar#aar_unzip__/res"
+    - mkdir -p "buck-out/bin/.okbuck/cache/__unpack_com.google.firebase.firebase-iid-license-11.8.0.aar#aar_unzip__/res"
+    - tree buck-out/bin/.okbuck/cache
 
-    - bash ./buckw targets
+    - chmod +x ./gradlew ./buckw
+
+  cache:
+    key: "$CI_COMMIT_REF_SLUG" #per branch caching
+    untracked: true
+    paths:
+      - $GRADLE_USER_HOME/caches/
+      - $GRADLE_USER_HOME/wrapper/
+      - $GRADLE_USER_HOME/build-cache/
+      - buck-out/cache/
+  script:
+#    - bash ./buckw targets
     - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
 
     # With Gradle
