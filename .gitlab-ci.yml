@@ -62,7 +62,7 @@ build:
       - .okbuck
 
   script:
-    - tree buck-out/bin/.okbuck/cache && bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug || true
+    - tree buck-out/bin/.okbuck/cache && bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
 
     # With Gradle
     - ./gradlew htmlDependencyReport
