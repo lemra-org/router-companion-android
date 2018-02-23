@@ -52,7 +52,7 @@ build:
     - chmod +x ./gradlew ./buckw
 
   cache:
-    key: "$CI_COMMIT_REF_SLUG" #per branch caching
+    key: "$CI_COMMIT_REF_SLUG" # per branch caching
     untracked: true
     paths:
       - $GRADLE_USER_HOME/caches/
