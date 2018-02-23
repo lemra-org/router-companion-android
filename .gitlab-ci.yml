@@ -63,7 +63,7 @@ build:
 
   script:
 #    - bash ./buckw targets
-    - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug || true
+    - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
 
     # With Gradle
     - ./gradlew htmlDependencyReport
