@@ -52,7 +52,7 @@ build:
     - chmod +x ./gradlew ./buckw
 
   cache:
-    key: "$CI_COMMIT_REF_SLUG" # per branch caching
+    key: "${CI_PROJECT_PATH_SLUG}-${CI_COMMIT_REF_SLUG}" # per branch caching
     untracked: true
     paths:
       - $GRADLE_USER_HOME/caches/
@@ -62,21 +62,23 @@ build:
       - .okbuck
 
   script:
-#    - bash ./buckw targets
-    - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
+    - tree buck-out/bin/.okbuck/cache && bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug || true
 
     # With Gradle
     - ./gradlew htmlDependencyReport
 #    - ./gradlew htmlDependencyReport :app:assembleAmazonDebug :tasker-plugin:assembleAmazonDebug
   artifacts:
     paths:
-    # - .okbuck/gen/
-    - buck-out/gen/
-    - app/build/reports   
+    - buck-out/gen/app/*.apk
+    - buck-out/gen/tasker-plugin/*.apk
+
+    - app/build/reports
     - app/build/outputs/
     - app/build/doc
+
     - common/build/reports
     - common/build/outputs
+
     - tasker-plugin/build/outputs
     - tasker-plugin/build/reports
 
