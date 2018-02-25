@@ -48,7 +48,7 @@ build:
       - .okbuck
 
   script:
-    - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug || (
+    - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug ||
         for f in com.google.android.gms.play-services-ads-lite com.google.android.gms.play-services-base-license
           com.google.android.gms.play-services-basement-license com.google.android.gms.play-services-tasks-license
           com.google.firebase.firebase-analytics-impl-license com.google.firebase.firebase-analytics-license
@@ -57,7 +57,7 @@ build:
             missingDir="buck-out/bin/.okbuck/cache/__unpack_${f}-11.8.0.aar#aar_unzip__/res" ;
             mkdir -p $missingDir;
         done &&
-        bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug )
+        bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
 
     # With Gradle
     - ./gradlew htmlDependencyReport
