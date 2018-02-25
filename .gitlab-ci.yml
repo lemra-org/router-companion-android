@@ -41,8 +41,8 @@ build:
         com.google.android.gms.play-services-basement-license com.google.android.gms.play-services-tasks-license
         com.google.firebase.firebase-analytics-impl-license com.google.firebase.firebase-analytics-license
         com.google.firebase.firebase-appindexing-license com.google.firebase.firebase-common-license
-        com.google.firebase.firebase-core com.google.firebase.firebase-iid-license ; do ;
-          missingDir="buck-out/bin/.okbuck/cache/__unpack_${f}-11.8.0.aar\#aar_unzip__/res" ;
+        com.google.firebase.firebase-core com.google.firebase.firebase-iid-license ; do
+          missingDir="buck-out/bin/.okbuck/cache/__unpack_${f}-11.8.0.aar#aar_unzip__/res" ;
           mkdir -p $missingDir;
       done
     - tree buck-out/bin/.okbuck/cache
