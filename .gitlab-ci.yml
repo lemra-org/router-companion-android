@@ -33,6 +33,10 @@ build:
   image: registry.gitlab.com/lemra/router-companion-android:latest
   stage: build
   before_script:
+    - sysctl fs.inotify.max_user_watches=999999
+    - sysctl fs.inotify.max_queued_events=999999
+    - sysctl fs.inotify.max_user_instances=999999
+    - sysctl -p
     - export GRADLE_USER_HOME=cache/.gradle
     - chmod +x ./gradlew ./buckw
     - for f in com.google.android.gms.play-services-ads-lite com.google.android.gms.play-services-base-license
@@ -56,8 +60,8 @@ build:
       - .okbuck
 
   script:
-    - watchman watch-del $CI_PROJECT_DIR
-    - watchman watch-project $CI_PROJECT_DIR
+    - watchman watch-del $CI_PROJECT_DIR || true
+    - watchman watch-project $CI_PROJECT_DIR || true
     - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
 
     # With Gradle
