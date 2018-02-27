@@ -32,6 +32,7 @@ before_script:
 build:
   image: registry.gitlab.com/lemra/router-companion-android:latest
   stage: build
+
   before_script:
     - sysctl fs.inotify.max_user_watches=999999 || true
     - sysctl fs.inotify.max_queued_events=999999 || true
@@ -67,9 +68,8 @@ build:
         com.google.firebase.firebase-iid-license ;
       do
         nonStdAarFullName="${nonStdAar}-11.8.0.aar";
-        # Not sure in which order to create 'res' dirs for non-standard AAR libraries
         mkdir -pv $CI_PROJECT_DIR'/buck-out/bin/.okbuck/cache/__unpack_'${nonStdAarFullName}'#aar_unzip__/res' ;
-        bash ./buckw build //.okbuck/cache:${nonStdAarFullName}
+        bash ./buckw build //.okbuck/cache:${nonStdAarFullName} ;
         mkdir -pv $CI_PROJECT_DIR'/buck-out/bin/.okbuck/cache/__unpack_'${nonStdAarFullName}'#aar_unzip__/res' ;
       done
     - watchman watch-project $CI_PROJECT_DIR || true
