@@ -53,7 +53,7 @@ build:
       - .okbuck
 
   script:
-    - ./gradlew okbuck
+    - ./gradlew :buckWrapper
     - for f in com.google.android.gms.play-services-ads-lite com.google.android.gms.play-services-base-license
         com.google.android.gms.play-services-basement-license com.google.android.gms.play-services-tasks-license
         com.google.firebase.firebase-analytics-impl-license com.google.firebase.firebase-analytics-license
