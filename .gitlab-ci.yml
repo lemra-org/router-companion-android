@@ -37,16 +37,9 @@ build:
     - sysctl fs.inotify.max_queued_events=999999
     - sysctl fs.inotify.max_user_instances=999999
     - sysctl -p
+
     - export GRADLE_USER_HOME=cache/.gradle
     - chmod +x ./gradlew ./buckw
-    - for f in com.google.android.gms.play-services-ads-lite com.google.android.gms.play-services-base-license
-        com.google.android.gms.play-services-basement-license com.google.android.gms.play-services-tasks-license
-        com.google.firebase.firebase-analytics-impl-license com.google.firebase.firebase-analytics-license
-        com.google.firebase.firebase-appindexing-license com.google.firebase.firebase-common-license
-        com.google.firebase.firebase-core com.google.firebase.firebase-iid-license ; do
-          missingDir="$CI_PROJECT_DIR/buck-out/bin/.okbuck/cache/__unpack_${f}-11.8.0.aar#aar_unzip__/res" ;
-          mkdir -p $missingDir;
-      done
 
 # This is done on a best effort basis - no cache if run on different runners
   cache:
@@ -60,6 +53,15 @@ build:
       - .okbuck
 
   script:
+    - ./gradlew okbuck
+    - for f in com.google.android.gms.play-services-ads-lite com.google.android.gms.play-services-base-license
+        com.google.android.gms.play-services-basement-license com.google.android.gms.play-services-tasks-license
+        com.google.firebase.firebase-analytics-impl-license com.google.firebase.firebase-analytics-license
+        com.google.firebase.firebase-appindexing-license com.google.firebase.firebase-common-license
+        com.google.firebase.firebase-core com.google.firebase.firebase-iid-license ; do
+          missingDir="$CI_PROJECT_DIR/buck-out/bin/.okbuck/cache/__unpack_${f}-11.8.0.aar#aar_unzip__/res" ;
+          mkdir -p $missingDir;
+      done
     - watchman watch-del $CI_PROJECT_DIR || true
     - watchman watch-project $CI_PROJECT_DIR || true
     - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
