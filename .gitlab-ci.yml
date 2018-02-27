@@ -33,13 +33,14 @@ build:
   image: registry.gitlab.com/lemra/router-companion-android:latest
   stage: build
   before_script:
-    - sysctl fs.inotify.max_user_watches=999999
-    - sysctl fs.inotify.max_queued_events=999999
-    - sysctl fs.inotify.max_user_instances=999999
+    - sysctl fs.inotify.max_user_watches=999999 || true
+    - sysctl fs.inotify.max_queued_events=999999 || true
+    - sysctl fs.inotify.max_user_instances=999999 || true
     - sysctl -p
 
 #    - export GRADLE_USER_HOME=cache/.gradle
     - chmod +x ./gradlew ./buckw
+    - watchman watch-del $CI_PROJECT_DIR || true
 
 ## This is done on a best effort basis - no cache if run on different runners
 #  cache:
@@ -62,7 +63,6 @@ build:
           missingDir="$CI_PROJECT_DIR/buck-out/bin/.okbuck/cache/__unpack_${f}-11.8.0.aar#aar_unzip__/res" ;
           mkdir -p $missingDir;
       done
-    - watchman watch-del $CI_PROJECT_DIR || true
     - watchman watch-project $CI_PROJECT_DIR || true
     - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
 
