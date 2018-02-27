@@ -66,7 +66,11 @@ build:
         com.google.firebase.firebase-core
         com.google.firebase.firebase-iid-license ;
       do
-        mkdir -pv $CI_PROJECT_DIR'/buck-out/bin/.okbuck/cache/__unpack_'${nonStdAar}'-11.8.0.aar#aar_unzip__/res' ;
+        nonStdAarFullName="${nonStdAar}-11.8.0.aar";
+        # Not sure in which order to create 'res' dirs for non-standard AAR libraries
+        mkdir -pv $CI_PROJECT_DIR'/buck-out/bin/.okbuck/cache/__unpack_'${nonStdAarFullName}'#aar_unzip__/res' ;
+        bash ./buckw build //.okbuck/cache:${nonStdAarFullName}
+        mkdir -pv $CI_PROJECT_DIR'/buck-out/bin/.okbuck/cache/__unpack_'${nonStdAarFullName}'#aar_unzip__/res' ;
       done
     - watchman watch-project $CI_PROJECT_DIR || true
     - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
