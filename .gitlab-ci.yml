@@ -42,16 +42,16 @@ build:
     - chmod +x ./gradlew ./buckw
     - watchman watch-del $CI_PROJECT_DIR || true
 
-## This is done on a best effort basis - no cache if run on different runners
-#  cache:
-#    key: "$CI_PROJECT_PATH_SLUG-$CI_COMMIT_REF_SLUG" # per branch caching
-#    untracked: false
-#    paths:
-#      - $GRADLE_USER_HOME/caches/
-#      - $GRADLE_USER_HOME/wrapper/
-#      - $GRADLE_USER_HOME/build-cache/
-#      - buck-out
-#      - .okbuck
+# This is done on a best effort basis - no cache if run on different runners
+  cache:
+    key: "cache-$CI_PROJECT_PATH_SLUG-$CI_COMMIT_REF_SLUG" # per branch caching
+    untracked: false
+    paths:
+      - $GRADLE_USER_HOME/caches/
+      - $GRADLE_USER_HOME/wrapper/
+      - $GRADLE_USER_HOME/build-cache/
+      - buck-out
+      - .okbuck
 
   script:
     - bash ./buckw targets
