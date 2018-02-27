@@ -45,7 +45,7 @@ build:
 # This is done on a best effort basis - no cache if run on different runners
   cache:
     key: "cache-$CI_PROJECT_PATH_SLUG-$CI_COMMIT_REF_SLUG" # per branch caching
-    untracked: false
+    untracked: true
     paths:
       - $GRADLE_USER_HOME/caches/
       - $GRADLE_USER_HOME/wrapper/
@@ -60,7 +60,7 @@ build:
         com.google.firebase.firebase-analytics-impl-license com.google.firebase.firebase-analytics-license
         com.google.firebase.firebase-appindexing-license com.google.firebase.firebase-common-license
         com.google.firebase.firebase-core com.google.firebase.firebase-iid-license ; do
-          missingDir="$CI_PROJECT_DIR/buck-out/bin/.okbuck/cache/__unpack_${f}-11.8.0.aar#aar_unzip__/res" ;
+          missingDir=$CI_PROJECT_DIR/buck-out/bin/.okbuck/cache/__unpack_${f}-11.8.0.aar\#aar_unzip__/res ;
           mkdir -p $missingDir;
       done
     - watchman watch-project $CI_PROJECT_DIR || true
