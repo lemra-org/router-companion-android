@@ -39,11 +39,11 @@ build:
     - sysctl fs.inotify.max_user_instances=999999 || true
     - sysctl -p
 
-#    - export GRADLE_USER_HOME=cache/.gradle
+    - export GRADLE_USER_HOME=cache/.gradle
     - chmod +x ./gradlew ./buckw
     - watchman watch-del $CI_PROJECT_DIR || true
 
-# This is done on a best effort basis - no cache if run on different runners
+# We should not rely upon this, as it is done on a best effort basis => no cache if run on different runners
   cache:
     key: "cache-$CI_PROJECT_PATH_SLUG-$CI_COMMIT_REF_SLUG" # per branch caching
     untracked: true
