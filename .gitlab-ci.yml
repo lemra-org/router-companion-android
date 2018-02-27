@@ -60,8 +60,7 @@ build:
         com.google.firebase.firebase-analytics-impl-license com.google.firebase.firebase-analytics-license
         com.google.firebase.firebase-appindexing-license com.google.firebase.firebase-common-license
         com.google.firebase.firebase-core com.google.firebase.firebase-iid-license ; do
-          missingDir=$CI_PROJECT_DIR/buck-out/bin/.okbuck/cache/__unpack_${f}-11.8.0.aar\#aar_unzip__/res ;
-          mkdir -p $missingDir;
+          mkdir -p $CI_PROJECT_DIR/buck-out/bin/.okbuck/cache/__unpack_${f}-11.8.0.aar\#aar_unzip__/res ;
       done
     - watchman watch-project $CI_PROJECT_DIR || true
     - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
