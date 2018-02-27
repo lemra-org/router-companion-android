@@ -69,7 +69,20 @@ build:
         mkdir -pv $CI_PROJECT_DIR'/buck-out/bin/.okbuck/cache/__unpack_'${nonStdAar}'-11.8.0.aar#aar_unzip__/res' ;
       done
     - watchman watch-project $CI_PROJECT_DIR || true
-    - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
+    - bash -c "./buckw build appAmazonDebug tasker-pluginAmazonDebug ||
+      ( ( for nonStdAar in com.google.android.gms.play-services-ads-lite-license
+            com.google.android.gms.play-services-base-license
+            com.google.android.gms.play-services-basement-license
+            com.google.android.gms.play-services-tasks-license
+            com.google.firebase.firebase-analytics-impl-license
+            com.google.firebase.firebase-analytics-license
+            com.google.firebase.firebase-appindexing-license
+            com.google.firebase.firebase-common-license
+            com.google.firebase.firebase-core
+            com.google.firebase.firebase-iid-license ;
+          do
+            mkdir -pv $CI_PROJECT_DIR'/buck-out/bin/.okbuck/cache/__unpack_'${nonStdAar}'-11.8.0.aar#aar_unzip__/res' ;
+          done ) && ./buckw build appAmazonDebug tasker-pluginAmazonDebug ) "
 
     # With Gradle
     - ./gradlew htmlDependencyReport
