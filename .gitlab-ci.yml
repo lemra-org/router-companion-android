@@ -3,30 +3,11 @@ stages:
   - deploy
 
 before_script:
-  #- apt-get update -y
-
-  # For CD pipeline
-  # Install ssh-agent if not already installed, it is required by Docker.
-  #- 'which ssh-agent || apt-get install openssh-client -y'
-  #- 'which rsync || apt-get install rsync -y'
-
   # Run ssh-agent (inside the build environment)
   - eval $(ssh-agent -s)
 
   # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
   - ssh-add <(echo "$SSH_PRIVATE_KEY")
-
-  # For Docker builds disable host key checking. Be aware that by adding that
-  # you are suspectible to man-in-the-middle attacks.
-  # WARNING: Use this only with the Docker executor, if you use it with shell
-  # you will overwrite your user's SSH config.
-  # - mkdir -p ~/.ssh
-  # - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-  # In order to properly check the server's host key, assuming you created the
-  # SSH_SERVER_HOSTKEYS variable previously, uncomment the following two lines
-  # instead.
-  - mkdir -p ~/.ssh
-  - '[[ -f /.dockerenv ]] && echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts'
 
 build:
   image: registry.gitlab.com/lemra/router-companion-android/android-sdk:latest
@@ -38,13 +19,10 @@ build:
     - sysctl fs.inotify.max_user_instances=999999 || true
     - sysctl -p
 
-    # Done in the image
-    #- export GRADLE_USER_HOME=cache/.gradle
-    
     - chmod +x ./gradlew ./buckw
     - watchman watch-del $CI_PROJECT_DIR || true
 
-# We should not rely upon this, as it is done on a best effort basis => no cache if run on different runners
+# We should not rely upon the cache, as it is done on a best effort basis => no cache if run on different runners
   cache:
     key: "cache-$CI_PROJECT_PATH_SLUG-$CI_COMMIT_REF_SLUG" # per branch caching
     untracked: true
@@ -74,11 +52,9 @@ build:
         mkdir -pv $CI_PROJECT_DIR'/buck-out/bin/.okbuck/cache/__unpack_'${nonStdAarFullName}'#aar_unzip__/res' ;
       done
     - watchman watch-project $CI_PROJECT_DIR || true
-    - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
 
-    # With Gradle
+    - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
     - ./gradlew htmlDependencyReport
-#    - ./gradlew htmlDependencyReport :app:assembleAmazonDebug :tasker-plugin:assembleAmazonDebug
   artifacts:
     paths:
     - "buck-out/gen/app/*.apk"
