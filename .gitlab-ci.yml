@@ -1,30 +1,12 @@
 stages:
   - build
+  - pre_deploy
   - deploy
 
-before_script:
-  # Run ssh-agent (inside the build environment)
-  - eval $(ssh-agent -s)
-
-  # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
-  - ssh-add <(echo "$SSH_PRIVATE_KEY")
-  
-  # For Docker builds disable host key checking. Be aware that by adding that
-  # you are suspectible to man-in-the-middle attacks.
-  # WARNING: Use this only with the Docker executor, if you use it with shell
-  # you will overwrite your user's SSH config.
-  # - mkdir -p ~/.ssh
-  # - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-  # In order to properly check the server's host key, assuming you created the
-  # SSH_SERVER_HOSTKEYS variable previously, uncomment the following two lines
-  # instead.
-  - mkdir -p ~/.ssh
-  - '[[ -f /.dockerenv ]] && echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts'
 
 build:
   image: registry.gitlab.com/lemra/router-companion-android/android-sdk:latest
   stage: build
-
   before_script:
     - sysctl fs.inotify.max_user_watches=999999 || true
     - sysctl fs.inotify.max_queued_events=999999 || true
@@ -34,7 +16,7 @@ build:
     - chmod +x ./gradlew ./buckw
     - watchman watch-del $CI_PROJECT_DIR || true
 
-# We should not rely upon the cache, as it is done on a best effort basis => no cache if run on different runners
+  # We should not rely upon the cache, as it is done on a best effort basis => no cache if run on different runners
   cache:
     key: "cache-$CI_PROJECT_PATH_SLUG-$CI_COMMIT_REF_SLUG" # per branch caching
     untracked: true
@@ -67,6 +49,7 @@ build:
 
     - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
     - ./gradlew htmlDependencyReport
+
   artifacts:
     paths:
     - "buck-out/gen/app/*.apk"
@@ -82,24 +65,55 @@ build:
     - tasker-plugin/build/outputs
     - tasker-plugin/build/reports
 
-production_messaging:
+
+.production_job_template: &production_job_definition
   image: registry.gitlab.com/lemra/router-companion-android/production_deployments:latest
-  stage: deploy
-  script:
-    - ssh -p 1022 ci@rm3l.org "mkdir -p /home/ci/router-companion-android"
-    - rsync -ravz -e 'ssh -p 1022' --exclude='.git/' --exclude='.gitlab-ci.yml' --exclude='.gradle' --exclude='build' --delete-excluded ./messaging ci@rm3l.org:/home/ci/router-companion-android
-    - ssh -p 1022 ci@rm3l.org "cd /home/ci/router-companion-android/messaging && docker-compose -p router-companion-android-messaging pull && docker-compose -p router-companion-android-messaging up -d --build --remove-orphans"
   only:
     - master
   environment: production
+  before_script:
+    # Run ssh-agent (inside the build environment)
+    - eval $(ssh-agent -s)
+
+    # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+  
+    # For Docker builds disable host key checking. Be aware that by adding that
+    # you are suspectible to man-in-the-middle attacks.
+    # WARNING: Use this only with the Docker executor, if you use it with shell
+    # you will overwrite your user's SSH config.
+    # - mkdir -p ~/.ssh
+    # - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    # In order to properly check the server's host key, assuming you created the
+    # SSH_SERVER_HOSTKEYS variable previously, uncomment the following two lines
+    # instead.
+    - mkdir -p ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts'
+
+prepare_production_environment:
+  <<: *production_job_definition
+  stage: pre_deploy
+  script:
+    - ssh -p 1022 ci@rm3l.org "mkdir -p /home/ci/router-companion-android"
+    - rsync -ravz -e 'ssh -p 1022' 
+          --exclude='.git/' 
+          --exclude='.gitlab-ci.yml' 
+          --exclude='.gradle' 
+          --exclude='build' 
+          --delete-excluded ./messaging 
+          --delete-excluded ./tools 
+        ci@rm3l.org:/home/ci/router-companion-android
+
+production_messaging:
+  <<: *production_job_definition
+  stage: deploy
+  script:
+    #- rsync -ravz -e 'ssh -p 1022' --exclude='.git/' --exclude='.gitlab-ci.yml' --exclude='.gradle' --exclude='build' --delete-excluded ./messaging ci@rm3l.org:/home/ci/router-companion-android
+    - ssh -p 1022 ci@rm3l.org "cd /home/ci/router-companion-android/messaging && docker-compose -p router-companion-android-messaging pull && docker-compose -p router-companion-android-messaging up -d --build --remove-orphans"
 
 production_tools:
-  image: registry.gitlab.com/lemra/router-companion-android/production_deployments:latest
+  <<: *production_job_definition
   stage: deploy
   script:
-    - ssh -p 1022 ci@rm3l.org "mkdir -p /home/ci/router-companion-android"
-    - rsync -ravz -e 'ssh -p 1022' --exclude='.git/' --exclude='.gitlab-ci.yml' --exclude='.gradle' --exclude='build' --delete-excluded ./tools ci@rm3l.org:/home/ci/router-companion-android
+    #- rsync -ravz -e 'ssh -p 1022' --exclude='.git/' --exclude='.gitlab-ci.yml' --exclude='.gradle' --exclude='build' --delete-excluded ./tools ci@rm3l.org:/home/ci/router-companion-android
     - ssh -p 1022 ci@rm3l.org "cd /home/ci/router-companion-android/tools && docker-compose -p router-companion-android-tools pull && docker-compose -p router-companion-android-tools up -d --build --remove-orphans"
-  only:
-    - master
-  environment: production
