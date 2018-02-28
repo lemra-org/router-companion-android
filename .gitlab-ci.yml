@@ -4,19 +4,29 @@ stages:
   - deploy
 
 
-build:
+################################################################################
+# Build, using Buck (much faster than with Gradle)
+################################################################################
+build_project:
   image: registry.gitlab.com/lemra/router-companion-android/android-sdk:latest
   stage: build
   before_script:
-    - sysctl fs.inotify.max_user_watches=999999 || true
-    - sysctl fs.inotify.max_queued_events=999999 || true
-    - sysctl fs.inotify.max_user_instances=999999 || true
+    # Properly configure inotify values (for Watchman)
+    - export INOTIFY_SYSCTL_VALUE=999999
+    - sysctl 
+          fs.inotify.max_user_watches=$INOTIFY_SYSCTL_VALUE 
+          fs.inotify.max_queued_events=$INOTIFY_SYSCTL_VALUE 
+          fs.inotify.max_user_instances=$INOTIFY_SYSCTL_VALUE 
+        || true
     - sysctl -p
 
     - chmod +x ./gradlew ./buckw
+
     - watchman watch-del $CI_PROJECT_DIR || true
 
-  # We should not rely upon the cache, as it is done on a best effort basis => no cache if run on different runners
+  # Note on caching: 
+  # We should not rely upon the cache, as it is done on a best effort basis, 
+  # i.e., no cache if run on different runners
   cache:
     key: "cache-$CI_PROJECT_PATH_SLUG-$CI_COMMIT_REF_SLUG" # per branch caching
     untracked: true
@@ -28,7 +38,13 @@ build:
       - .okbuck
 
   script:
+    # This is because of the AAR issue below, we first run a 'buck target', 
+    # so Okbuck is run first if needed (thus dropping the 'buck-out' folder)
     - bash ./buckw targets
+
+    # Some Google dependencies do not strictly follow the AAR spec 
+    # (which requires a 'res' folder to be present, even when empty)
+    # Buck is much stricter, and we need to manually create such folder.
     - for nonStdAar in com.google.android.gms.play-services-ads-lite-license
         com.google.android.gms.play-services-base-license
         com.google.android.gms.play-services-basement-license
@@ -45,6 +61,7 @@ build:
         bash ./buckw build //.okbuck/cache:${nonStdAarFullName} ;
         mkdir -pv $CI_PROJECT_DIR'/buck-out/bin/.okbuck/cache/__unpack_'${nonStdAarFullName}'#aar_unzip__/res' ;
       done
+
     - watchman watch-project $CI_PROJECT_DIR || true
 
     - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
@@ -66,30 +83,31 @@ build:
     - tasker-plugin/build/reports
 
 
+################################################################################
+# Production deployments (only on master).
+#
+# For deployment, few environment variables are required:
+# - SSH_PRIVATE_KEY
+# - SSH_SERVER_HOSTKEYS
+################################################################################
+#
+# Template anchor: configures the SSH client, 
+# so it can safely connect to the deploy server
+#
 .production_job_template: &production_job_definition
   image: registry.gitlab.com/lemra/router-companion-android/production_deployments:latest
   only:
     - master
   environment: production
   before_script:
-    # Run ssh-agent (inside the build environment)
-    - eval $(ssh-agent -s)
-
-    # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
-    - ssh-add <(echo "$SSH_PRIVATE_KEY")
-  
-    # For Docker builds disable host key checking. Be aware that by adding that
-    # you are suspectible to man-in-the-middle attacks.
-    # WARNING: Use this only with the Docker executor, if you use it with shell
-    # you will overwrite your user's SSH config.
-    # - mkdir -p ~/.ssh
-    # - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    # In order to properly check the server's host key, assuming you created the
-    # SSH_SERVER_HOSTKEYS variable previously, uncomment the following two lines
-    # instead.
     - mkdir -p ~/.ssh
-    - '[[ -f /.dockerenv ]] && echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - '[[ -f /.dockerenv ]] && echo "$SSH_SERVER_HOSTKEYS" >> ~/.ssh/known_hosts'
 
+#
+# Preparation job: Syncs only the necessary files that wil be used by the actual deploy jobs
+#
 prepare_production_environment:
   <<: *production_job_definition
   stage: pre_deploy
@@ -104,16 +122,22 @@ prepare_production_environment:
           --delete-excluded ./tools 
         ci@rm3l.org:/home/ci/router-companion-android
 
+#
+# Deploy messaging containers
+#
 production_messaging:
   <<: *production_job_definition
   stage: deploy
   script:
-    #- rsync -ravz -e 'ssh -p 1022' --exclude='.git/' --exclude='.gitlab-ci.yml' --exclude='.gradle' --exclude='build' --delete-excluded ./messaging ci@rm3l.org:/home/ci/router-companion-android
-    - ssh -p 1022 ci@rm3l.org "cd /home/ci/router-companion-android/messaging && docker-compose -p router-companion-android-messaging pull && docker-compose -p router-companion-android-messaging up -d --build --remove-orphans"
+    - ssh -p 1022 ci@rm3l.org 
+        "cd /home/ci/router-companion-android/messaging && docker-compose -p router-companion-android-messaging pull && docker-compose -p router-companion-android-messaging up -d --build --remove-orphans"
 
+#
+# Deploy tools containers
+#
 production_tools:
   <<: *production_job_definition
   stage: deploy
   script:
-    #- rsync -ravz -e 'ssh -p 1022' --exclude='.git/' --exclude='.gitlab-ci.yml' --exclude='.gradle' --exclude='build' --delete-excluded ./tools ci@rm3l.org:/home/ci/router-companion-android
-    - ssh -p 1022 ci@rm3l.org "cd /home/ci/router-companion-android/tools && docker-compose -p router-companion-android-tools pull && docker-compose -p router-companion-android-tools up -d --build --remove-orphans"
+    - ssh -p 1022 ci@rm3l.org 
+        "cd /home/ci/router-companion-android/tools && docker-compose -p router-companion-android-tools pull && docker-compose -p router-companion-android-tools up -d --build --remove-orphans"
