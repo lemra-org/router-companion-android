@@ -3,7 +3,7 @@ stages:
   - deploy
 
 before_script:
-  - apt-get update -y
+  #- apt-get update -y
 
   # For CD pipeline
   # Install ssh-agent if not already installed, it is required by Docker.
@@ -24,10 +24,10 @@ before_script:
   # In order to properly check the server's host key, assuming you created the
   # SSH_SERVER_HOSTKEYS variable previously, uncomment the following two lines
   # instead.
-  - mkdir -p ~/.ssh
-  - '[[ -f /.dockerenv ]] && echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts'
+  #- mkdir -p ~/.ssh
+  #- '[[ -f /.dockerenv ]] && echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts'
 
-  - 'which rsync || apt-get install rsync -y'
+  #- 'which rsync || apt-get install rsync -y'
 
 build:
   image: registry.gitlab.com/lemra/router-companion-android/android-sdk:latest
