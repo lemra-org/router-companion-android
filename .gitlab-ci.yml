@@ -30,7 +30,7 @@ before_script:
   - 'which rsync || apt-get install rsync -y'
 
 build:
-  image: registry.gitlab.com/lemra/router-companion-android:latest
+  image: registry.gitlab.com/lemra/router-companion-android/android-sdk:latest
   stage: build
 
   before_script:
@@ -94,7 +94,7 @@ build:
     - tasker-plugin/build/reports
 
 production_messaging:
-  image: debian:jessie
+  image: registry.gitlab.com/lemra/router-companion-android/production_deployments:latest
   stage: deploy
   script:
     - ssh -p 1022 ci@rm3l.org "mkdir -p /home/ci/router-companion-android"
@@ -105,7 +105,7 @@ production_messaging:
   environment: production
 
 production_tools:
-  image: debian:jessie
+  image: registry.gitlab.com/lemra/router-companion-android/production_deployments:latest
   stage: deploy
   script:
     - ssh -p 1022 ci@rm3l.org "mkdir -p /home/ci/router-companion-android"
