@@ -23,7 +23,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 DD-WRT Companion for android
 -------
 
-Build Status: [![Build Status](https://jenkins.rm3l.org/buildStatus/icon?job=DD-WRT_Companion__Android)](https://jenkins.rm3l.org/buildStatus/icon?job=DD-WRT_Companion__Android)
+Build Status: [![pipeline status](https://gitlab.com/lemra/router-companion-android/badges/master/pipeline.svg)](https://gitlab.com/lemra/router-companion-android/commits/master)
 
 
 Had you ever tried to use the DD-WRT web interface on an Android device, you should have noticed how impractical it is to navigate with.
