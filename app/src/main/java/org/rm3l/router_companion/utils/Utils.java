@@ -100,6 +100,7 @@ import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -609,8 +610,10 @@ public final class Utils {
 
     public static int getResId(String resourceName, Class<?> clazz) {
         try {
+            Log.d(TAG, "XXX getResId(" + resourceName + ") : declaredFields for " + clazz + " : " +
+                    Arrays.toString(clazz.getDeclaredFields()));
             final Field idField = clazz.getDeclaredField(resourceName);
-            return idField.getInt(idField);
+            return idField.getInt(null);
         } catch (NoSuchFieldException e) {
             throw new IllegalArgumentException("Field not found: " + clazz + "#" + resourceName);
         } catch (IllegalAccessException e) {
