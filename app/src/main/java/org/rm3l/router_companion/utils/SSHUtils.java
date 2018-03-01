@@ -74,23 +74,11 @@ import org.rm3l.router_companion.resources.conn.openwrt.UCIInfo;
  */
 public final class SSHUtils {
 
-    private static class SSHLogger implements com.jcraft.jsch.Logger {
+    private enum SSHLogger implements com.jcraft.jsch.Logger {
 
-        static final Map<Integer, String> name = Maps.newHashMapWithExpectedSize(5);
+        INSTANCE;
 
         private static final String LOG_TAG = TAG + "." + SSHLogger.class.getSimpleName();
-
-        private static SSHLogger instance = null;
-
-        public static SSHLogger getInstance() {
-            if (instance == null) {
-                instance = new SSHLogger();
-            }
-            return instance;
-        }
-
-        private SSHLogger() {
-        }
 
         public boolean isEnabled(int level) {
             if (BuildConfig.DEBUG) {
@@ -100,50 +88,29 @@ public final class SSHUtils {
 
             //Otherwise, just WARN, ERROR and FATAL are on
             return (level == WARN || level == ERROR || level == FATAL);
-            /*
-            switch (level) {
-                case DEBUG:
-                    return BuildConfig.DEBUG;
-                case INFO:
-                case WARN:
-                case ERROR:
-                case FATAL:
-                    return true;
-            }
-            return false;
-            */
         }
 
         public void log(int level, String message) {
-            final String levelTag = name.get(level);
-            final String messageToDisplay =
-                    String.format("%s%s\n", isNullOrEmpty(levelTag) ? "???" : levelTag, message);
             switch (level) {
                 case INFO:
-                    Crashlytics.log(Log.INFO, LOG_TAG, messageToDisplay);
+                    Crashlytics.log(Log.INFO, LOG_TAG, "[INFO] " + message);
                     break;
                 case WARN:
-                    Crashlytics.log(Log.WARN, LOG_TAG, messageToDisplay);
+                    Crashlytics.log(Log.WARN, LOG_TAG, "[WARN] " + message);
                     break;
                 case ERROR:
-                    Crashlytics.log(Log.ERROR, LOG_TAG, messageToDisplay);
+                    Crashlytics.log(Log.ERROR, LOG_TAG, "[ERROR] " + message);
                     break;
                 case FATAL:
-                    Crashlytics.log(Log.ERROR, LOG_TAG, messageToDisplay);
+                    Crashlytics.log(Log.ERROR, LOG_TAG, "[FATAL] " + message);
                     break;
                 case DEBUG:
+                    Crashlytics.log(Log.ERROR, LOG_TAG, "[DEBUG] " + message);
+                    break;
                 default:
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, messageToDisplay);
+                    Crashlytics.log(Log.ERROR, LOG_TAG, "[" + level + "] " + message);
                     break;
             }
-        }
-
-        static {
-            name.put(DEBUG, "[DEBUG] ");
-            name.put(INFO, "[INFO] ");
-            name.put(WARN, "[WARN] ");
-            name.put(ERROR, "[ERROR] ");
-            name.put(FATAL, "[FATAL] ");
         }
     }
 
@@ -976,6 +943,6 @@ public final class SSHUtils {
     }
 
     static {
-        JSch.setLogger(SSHLogger.getInstance());
+        JSch.setLogger(SSHLogger.INSTANCE);
     }
 }
