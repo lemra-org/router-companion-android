@@ -45,6 +45,7 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.status.wireless.ActiveIPConnectionsDetailActivity;
 import org.rm3l.router_companion.utils.ColorUtils;
+import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
@@ -205,12 +206,12 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                             longitude = Double.parseDouble(mIPWhoisInfoWithGeo.getLongitude());
                         }
                     } catch (final NumberFormatException nfe) {
-                        Crashlytics.logException(nfe);
+                        ReportingUtils.reportException(PublicIPGeoTile.this.mParentFragmentActivity, nfe);
                         nfe.printStackTrace();
                         //No worries
                     }
                     if (latitude == null || longitude == null) {
-                        Crashlytics.logException(
+                        ReportingUtils.reportException(mParentFragmentActivity,
                                 new IllegalStateException("latitude == null || longitude == null"));
                         data = (None) new None().setException(
                                 new DDWRTNoDataException("Invalid coordinates - please try again later!"));

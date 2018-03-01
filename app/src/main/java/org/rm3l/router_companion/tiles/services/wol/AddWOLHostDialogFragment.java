@@ -41,6 +41,7 @@ import org.rm3l.router_companion.actions.WakeOnLANRouterAction;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.Device;
 import org.rm3l.router_companion.resources.conn.Router;
+import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 
@@ -319,7 +320,7 @@ public class AddWOLHostDialogFragment extends DialogFragment {
                 try {
                     displayMessage(String.format("Error on action '%s': %s", routerAction.toString(),
                             Utils.handleException(exception).first), Style.ALERT);
-                    Crashlytics.logException(exception);
+                    ReportingUtils.reportException(getContext(), exception);
                 } finally {
                     if (mWaitingDialog != null) {
                         mWaitingDialog.cancel();

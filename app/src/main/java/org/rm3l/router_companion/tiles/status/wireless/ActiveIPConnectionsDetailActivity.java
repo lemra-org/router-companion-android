@@ -140,6 +140,7 @@ import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.NetworkUtils;
+import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.kotlin.JsonElementUtils;
 import org.rm3l.router_companion.utils.kotlin.ViewUtils;
@@ -320,7 +321,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                             }
                         } catch (final Exception e) {
                             //No worries
-                            Crashlytics.logException(e);
+                            ReportingUtils.reportException(null, e);
                         }
                     }
                 }
@@ -758,7 +759,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                 } catch (final Exception e) {
                     Crashlytics.log(Log.WARN, LOG_TAG,
                             "No resource ID found in string.xml for TCP Connection State: " + tcpConnectionState);
-                    Crashlytics.logException(e);
+                    ReportingUtils.reportException(getApplicationContext(), e);
                 }
                 final Integer tcpConnectionDetailsResourceId = detailsResId;
                 final Function1<View, Unit> onClickFunction = new Function1<View, Unit>() {
@@ -1433,7 +1434,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                 }
                 mActiveIPConnections.add(ipConntrackRow);
             } catch (final Exception e) {
-                Crashlytics.logException(e);
+                ReportingUtils.reportException(getApplicationContext(), e);
             }
         }
 

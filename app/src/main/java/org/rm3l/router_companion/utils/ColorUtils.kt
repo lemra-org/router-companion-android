@@ -220,7 +220,7 @@ class ColorUtils private constructor() {
                                     if (transparentStatusBar) "_StatusBarTransparent" else ""), R.style::class.java)
                     activity.setTheme(styleResId)
                 } catch (e: Exception) {
-                    Crashlytics.logException(e)
+                    Utils.reportException(activity, e)
                     setDefaultTheme(activity, transparentStatusBar)
                 }
             }

@@ -53,6 +53,7 @@ import org.rm3l.router_companion.resources.ProcMountPoint;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
+import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 
@@ -181,7 +182,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                         pbText.setVisibility(View.GONE);
                     }
                 } catch (NumberFormatException e) {
-                    Crashlytics.logException(e);
+                    ReportingUtils.reportException(mParentFragmentActivity, e);
                     pb.setVisibility(View.GONE);
                     pbText.setVisibility(View.GONE);
                 }
@@ -203,7 +204,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                         pbText.setVisibility(View.GONE);
                     }
                 } catch (NumberFormatException e) {
-                    Crashlytics.logException(e);
+                    ReportingUtils.reportException(mParentFragmentActivity, e);
                     pb.setVisibility(View.GONE);
                     pbText.setVisibility(View.GONE);
                 }
@@ -475,8 +476,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                                             Long.toString(
                                                     Math.min(100, 100 * nvramUsedBytesLong / nvramTotalBytesLong)));
                                 } catch (final NumberFormatException e) {
-                                    e.printStackTrace();
-                                    Crashlytics.logException(e);
+                                    ReportingUtils.reportException(mParentFragmentActivity, e);
                                 }
                             }
                         }
@@ -496,8 +496,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                                         totalSize += Long.parseLong(stringList.get(2));
                                         totalUsed += Long.parseLong(stringList.get(3));
                                     } catch (final NumberFormatException e) {
-                                        e.printStackTrace();
-                                        Crashlytics.logException(e);
+                                        ReportingUtils.reportException(mParentFragmentActivity, e);
                                     }
                                 }
                             }
@@ -523,8 +522,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                                         totalSize += Long.parseLong(stringList.get(2));
                                         totalUsed += Long.parseLong(stringList.get(3));
                                     } catch (final NumberFormatException e) {
-                                        e.printStackTrace();
-                                        Crashlytics.logException(e);
+                                        ReportingUtils.reportException(mParentFragmentActivity, e);
                                     }
                                 }
                             }

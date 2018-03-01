@@ -86,6 +86,7 @@ import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.multithreading.MultiThreadingManager;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.ColorUtils;
+import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
@@ -628,7 +629,7 @@ public class ViewSyslogActivity extends AppCompatActivity
                         Toast.makeText(ViewSyslogActivity.this,
                                 "Error: " + Throwables.getRootCause(exception).getMessage(), Toast.LENGTH_LONG)
                                 .show();
-                        Crashlytics.logException(exception);
+                        ReportingUtils.reportException(getApplicationContext(), exception);
                     } else {
                         mAdapter.setLogs(mLogsAtomicRef.get());
                         warmumpForSharing();

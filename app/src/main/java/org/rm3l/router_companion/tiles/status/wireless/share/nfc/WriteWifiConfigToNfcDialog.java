@@ -24,6 +24,7 @@ import com.crashlytics.android.Crashlytics;
 import java.util.Arrays;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.tiles.status.wireless.share.WifiSharingActivity;
+import org.rm3l.router_companion.utils.ReportingUtils;
 
 /**
  * Created by rm3l on 10/11/2016.
@@ -223,7 +224,7 @@ public class WriteWifiConfigToNfcDialog extends AlertDialog implements View.OnCl
         } catch (Exception e) {
             setViewText(mLabelView, R.string.status_failed_to_write);
             Log.e(TAG, "Unable to write Wi-Fi config to NFC tag.", e);
-            Crashlytics.logException(e);
+            ReportingUtils.reportException(getContext(), e);
         }
     }
 

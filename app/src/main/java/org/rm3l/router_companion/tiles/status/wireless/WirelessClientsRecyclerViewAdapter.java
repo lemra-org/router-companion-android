@@ -71,6 +71,7 @@ import org.rm3l.router_companion.tiles.status.bandwidth.BandwidthMonitoringTile;
 import org.rm3l.router_companion.tiles.status.wireless.WirelessClientsTile.DeviceOnMenuItemClickListener;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ImageUtils;
+import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.kotlin.ViewUtils;
 import org.rm3l.router_companion.widgets.NetworkTrafficView;
@@ -759,8 +760,7 @@ public class WirelessClientsRecyclerViewAdapter extends
                 try {
                     device.setMacouiVendorDetails(mMacOuiVendorLookupCache.get(macAddress));
                 } catch (final Exception e) {
-                    Crashlytics.logException(e);
-                    e.printStackTrace();
+                    ReportingUtils.reportException(null, e);
                 }
                 return null;
             }

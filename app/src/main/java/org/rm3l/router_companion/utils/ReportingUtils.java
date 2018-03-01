@@ -92,22 +92,28 @@ public final class ReportingUtils {
     public static void reportException(@Nullable final Context context,
             @NonNull final Throwable error) {
 
-        if (context != null) {
-            final SharedPreferences sharedPreferences =
-                    context.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-            if (sharedPreferences.getBoolean(ACRA_ENABLE, true)) {
+        if (BuildConfig.DEBUG) {
+            //Crashlytics is disabled in DEBUG builds
+            Log.e(TAG, error.getMessage());
+            error.printStackTrace();
+        } else {
+            if (context != null) {
+                final SharedPreferences sharedPreferences =
+                        context.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+                if (sharedPreferences.getBoolean(ACRA_ENABLE, true)) {
 
-                //ACRA Notification
-                //            ACRA.getErrorReporter().handleSilentException(error);
+                    //ACRA Notification
+                    //            ACRA.getErrorReporter().handleSilentException(error);
 
-                //Crashlytics Notification
-                final String acraEmailAddr = sharedPreferences.getString(ACRA_USER_EMAIL, null);
-                if (!isNullOrEmpty(acraEmailAddr)) {
-                    Crashlytics.setUserEmail(acraEmailAddr);
+                    //Crashlytics Notification
+                    final String acraEmailAddr = sharedPreferences.getString(ACRA_USER_EMAIL, null);
+                    if (!isNullOrEmpty(acraEmailAddr)) {
+                        Crashlytics.setUserEmail(acraEmailAddr);
+                    }
                 }
             }
+            Crashlytics.logException(error);
         }
-        Crashlytics.logException(error);
     }
 
     public static void reportRatingEvent(@NonNull final RatingEvent ratingEvent) {

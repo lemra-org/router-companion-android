@@ -32,6 +32,7 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.actions.AbstractRouterAction;
 import org.rm3l.router_companion.actions.PingFromRouterAction;
 import org.rm3l.router_companion.resources.conn.Router;
+import org.rm3l.router_companion.utils.ReportingUtils;
 
 public class ToolboxPingTile extends AbstractToolboxTile {
 
@@ -63,7 +64,7 @@ public class ToolboxPingTile extends AbstractToolboxTile {
         try {
             packetCount = Integer.parseInt(packetCountStr);
         } catch (final Exception e) {
-            Crashlytics.logException(e);
+            ReportingUtils.reportException(mParentFragmentActivity, e);
             //No worries
         }
 

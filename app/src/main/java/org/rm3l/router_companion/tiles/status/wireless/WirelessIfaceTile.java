@@ -99,6 +99,7 @@ import org.rm3l.router_companion.tiles.status.wireless.share.WifiSharingActivity
 import org.rm3l.router_companion.tiles.status.wireless.share.nfc.WriteWifiConfigToNfcDialog;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ImageUtils;
+import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
@@ -1411,7 +1412,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                 NumberFormat.getInstance().parse(noiseProp);
                 isNumber = true;
             } catch (ParseException e) {
-                Crashlytics.logException(e);
+                ReportingUtils.reportException(mParentFragmentActivity, e);
             }
             if (isNumber) {
                 noiseView.setText(noiseProp + " dBm");

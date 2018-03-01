@@ -156,6 +156,7 @@ import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.NVRAMParser;
 import org.rm3l.router_companion.utils.NetworkUtils;
+import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.kotlin.JsonElementUtils;
@@ -578,7 +579,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                         currentNumOfBlockedClients = Long.parseLong(currentNumOfBlockedClientsStr);
                     } catch (final Exception e) {
                         //No worries
-                        Crashlytics.logException(e);
+                        ReportingUtils.reportException(mParentFragmentActivity, e);
                     }
                     if (currentNumOfBlockedClients == null) {
                         currentNumOfBlockedClients = 0L;

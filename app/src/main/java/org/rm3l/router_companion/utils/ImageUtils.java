@@ -263,7 +263,7 @@ public final class ImageUtils {
         }
     }
 
-    public static void updateNotificationIconWithRouterAvatar(@NonNull Context mCtx,
+    public static void updateNotificationIconWithRouterAvatar(@NonNull final Context mCtx,
             @Nullable Router router, final int notifyID, final Notification notification) {
 
         try {
@@ -282,8 +282,7 @@ public final class ImageUtils {
                     try {
                         requestCreator.into(contentView, iconId, notifyID, notification);
                     } catch (final Exception ignored) {
-                        ignored.printStackTrace();
-                        Crashlytics.logException(ignored);
+                        ReportingUtils.reportException(mCtx, ignored);
                     }
                 }
             };

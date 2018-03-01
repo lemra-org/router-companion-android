@@ -364,7 +364,7 @@ public class SpeedTestActivity extends AppCompatActivity
                             nullToEmpty(cmdExecOutput[cmdExecOutput.length - 1]).trim())) {
                         final SpeedTestException speedTestException =
                                 new SpeedTestException("Failed to download data: " + remoteFileName + "MB");
-                        Crashlytics.logException(speedTestException);
+                        ReportingUtils.reportException(SpeedTestActivity.this, speedTestException);
                         throw speedTestException;
                     }
 
@@ -373,7 +373,7 @@ public class SpeedTestActivity extends AppCompatActivity
                         elapsedSeconds =
                                 Long.parseLong(nullToEmpty(cmdExecOutput[cmdExecOutput.length - 2]).trim());
                     } catch (final NumberFormatException nfe) {
-                        Crashlytics.logException(nfe);
+                        ReportingUtils.reportException(SpeedTestActivity.this, nfe);
                         throw new SpeedTestException("Unexpected output - please try again later.");
                     }
 
@@ -421,7 +421,7 @@ public class SpeedTestActivity extends AppCompatActivity
                 speedTestResult.setWanUl(new Random().nextInt(27) * 1024 ^ 5);
                 publishProgress(WAN_UL_MEASURED);
             } catch (Exception e) {
-                Crashlytics.logException(e);
+                ReportingUtils.reportException(SpeedTestActivity.this, e);
                 exception = e;
             }
 
@@ -1048,7 +1048,7 @@ public class SpeedTestActivity extends AppCompatActivity
                                     toHumanReadableSize(Long.valueOf(currentRawWanDl.toString())) + PER_SEC);
                         } catch (final NumberFormatException nfe) {
                             //No worries
-                            Crashlytics.logException(nfe);
+                            ReportingUtils.reportException(SpeedTestActivity.this, nfe);
                         }
                     }
                     final CharSequence currentRawWanUl = mSpeedTestWanUlRaw.getText();
@@ -1058,7 +1058,7 @@ public class SpeedTestActivity extends AppCompatActivity
                                     toHumanReadableSize(Long.valueOf(currentRawWanUl.toString())) + PER_SEC);
                         } catch (final NumberFormatException nfe) {
                             //No worries
-                            Crashlytics.logException(nfe);
+                            ReportingUtils.reportException(SpeedTestActivity.this, nfe);
                         }
                     }
                     Utils.requestBackup(SpeedTestActivity.this);
@@ -1283,7 +1283,7 @@ public class SpeedTestActivity extends AppCompatActivity
                     }
                 }
             } catch (final Exception e) {
-                Crashlytics.logException(e);
+                ReportingUtils.reportException(SpeedTestActivity.this, e);
             } finally {
                 super.onDestroy();
             }
@@ -1472,7 +1472,7 @@ public class SpeedTestActivity extends AppCompatActivity
 
                     setShareFile(csvTextOutput, mFileToShare);
                 } catch (IOException e) {
-                    Crashlytics.logException(e);
+                    ReportingUtils.reportException(SpeedTestActivity.this, e);
                     Utils.displayMessage(this,
                             "Failed to export file - sharing will be unavailable. Please try again later",
                             Style.ALERT);

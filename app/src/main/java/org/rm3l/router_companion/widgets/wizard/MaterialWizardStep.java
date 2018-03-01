@@ -15,6 +15,7 @@ import org.codepond.wizardroid.persistence.ContextVariable;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.events.wizard.WizardStepVisibleToUserEvent;
 import org.rm3l.router_companion.resources.Encrypted;
+import org.rm3l.router_companion.utils.ReportingUtils;
 
 //import com.squareup.otto.Bus;
 //import com.squareup.otto.Produce;
@@ -167,8 +168,7 @@ public abstract class MaterialWizardStep extends WizardStep implements WizardSte
                     .putString(CURRENT_WIZARD_CONTEXT_PREF_KEY, gson.toJson(wizardContextMap))
                     .apply();
         } catch (final Exception e) {
-            e.printStackTrace();
-            Crashlytics.logException(e);
+            ReportingUtils.reportException(getContext(), e);
         }
     }
 

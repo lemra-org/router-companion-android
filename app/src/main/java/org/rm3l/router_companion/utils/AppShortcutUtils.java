@@ -30,7 +30,7 @@ public final class AppShortcutUtils {
             }
         } catch (final Exception e) {
             //No worries
-            Crashlytics.logException(e);
+            ReportingUtils.reportException(null, e);
         }
     }
 

@@ -189,7 +189,7 @@ public class ReviewStep extends MaterialWizardStep {
                                 router != null ? router.toString() : e.getMessage(), e));
             } else {
                 if (wizard == null) {
-                    Crashlytics.logException(new IllegalStateException("wizard == NULL"));
+                    ReportingUtils.reportException(getContext(), new IllegalStateException("wizard == NULL"));
                 } else {
                     onExitSynchronous(WizardStep.EXIT_NEXT);
                     wizard.goNext();
@@ -504,7 +504,7 @@ public class ReviewStep extends MaterialWizardStep {
             }
             new CheckRouterConnectionAsyncTask(wizard, checkActualConnection).execute();
         } catch (final Exception e) {
-            Crashlytics.logException(e);
+            ReportingUtils.reportException(getContext(), e);
             final Throwable rootCause = ExceptionUtils.getRootCause(e);
             SnackbarUtils.buildSnackbar(getContext(),
                     getView(),
@@ -638,7 +638,7 @@ public class ReviewStep extends MaterialWizardStep {
                     + "'");
             if (fwPositionInStringArrayValues < 0) {
                 //TODO Unknown - should we try to guess?
-                Crashlytics.logException(new DDWRTCompanionException("fwPositionInStringArrayValues < 0"));
+                ReportingUtils.reportException(getContext(), new DDWRTCompanionException("fwPositionInStringArrayValues < 0"));
                 router.setRouterFirmware(Router.RouterFirmware.AUTO);
             } else {
                 final String[] fwStringArray =

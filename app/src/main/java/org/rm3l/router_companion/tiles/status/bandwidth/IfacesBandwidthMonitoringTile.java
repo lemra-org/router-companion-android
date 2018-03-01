@@ -79,6 +79,7 @@ import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.utils.ColorUtils;
+import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 
@@ -439,7 +440,7 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
 
                             wanIface = nvRamInfoFromRouter.getProperty(NVRAMInfo.Companion.getWAN_IFACE());
                         } catch (final Exception e) {
-                            Crashlytics.logException(e);
+                            ReportingUtils.reportException(mParentFragmentActivity, e);
                             //No worries
                         }
                     }

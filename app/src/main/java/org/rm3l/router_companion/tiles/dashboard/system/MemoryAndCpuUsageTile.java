@@ -33,6 +33,7 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.status.router.StatusRouterMemoryTile;
 import org.rm3l.router_companion.utils.ColorUtils;
+import org.rm3l.router_companion.utils.ReportingUtils;
 
 /**
  * Created by rm3l on 03/01/16.
@@ -322,8 +323,7 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo> {
                                                                             .intValue())));
                                         }
                                     } catch (final NumberFormatException e) {
-                                        e.printStackTrace();
-                                        Crashlytics.logException(e);
+                                        ReportingUtils.reportException(getContext(), e);
                                     }
                                 }
                             }

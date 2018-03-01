@@ -53,6 +53,7 @@ import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
+import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
@@ -192,7 +193,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                         pbText.setVisibility(View.GONE);
                     }
                 } catch (NumberFormatException e) {
-                    Crashlytics.logException(e);
+                    ReportingUtils.reportException(mParentFragmentActivity, e);
                     pb.setVisibility(View.GONE);
                     pbText.setVisibility(View.GONE);
                 }
@@ -358,8 +359,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                                                                                 .intValue())));
                                             }
                                         } catch (final NumberFormatException e) {
-                                            e.printStackTrace();
-                                            Crashlytics.logException(e);
+                                            ReportingUtils.reportException(mParentFragmentActivity, e);
                                         }
                                     }
                                 }

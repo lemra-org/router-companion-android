@@ -6,6 +6,7 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import com.crashlytics.android.Crashlytics;
+import org.rm3l.router_companion.utils.ReportingUtils;
 
 /**
  * Created by rm3l on 28/03/16.
@@ -73,8 +74,7 @@ public class ViewPagerWithAllowedSwipeDirection extends ViewPager {
                     return false;
                 }
             } catch (Exception exception) {
-                Crashlytics.logException(exception);
-                exception.printStackTrace();
+                ReportingUtils.reportException(getContext(), exception);
             }
         }
 

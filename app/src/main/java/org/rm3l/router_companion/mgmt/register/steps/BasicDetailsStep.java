@@ -409,7 +409,7 @@ public class BasicDetailsStep extends MaterialWizardStep {
                     try {
                         inputStream = contentResolver.openInputStream(uri);
                         if (inputStream == null) {
-                            Crashlytics.logException(new IllegalStateException("inputStream==NULL"));
+                            ReportingUtils.reportException(getContext(), new IllegalStateException("inputStream==NULL"));
                             throw new IllegalStateException("Couldn't read file");
                         }
                         final File internalDir = BasicDetailsStep.this.getContext().getFilesDir();
@@ -430,7 +430,7 @@ public class BasicDetailsStep extends MaterialWizardStep {
                                 inputStream.close();
                             } catch (final Exception e) {
                                 //No worries
-                                Crashlytics.logException(e);
+                                ReportingUtils.reportException(getContext(), e);
                             }
                         }
                         if (outputStream != null) {
@@ -438,7 +438,7 @@ public class BasicDetailsStep extends MaterialWizardStep {
                                 outputStream.close();
                             } catch (final Exception e) {
                                 //No worries
-                                Crashlytics.logException(e);
+                                ReportingUtils.reportException(getContext(), e);
                             }
                         }
                     }

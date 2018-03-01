@@ -44,6 +44,7 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.status.wireless.ActiveIPConnectionsDetailActivity;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
+import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
@@ -258,8 +259,7 @@ public class IPGeoActivity extends AppCompatActivity {
                         }
                     });
                 } catch (final Exception e) {
-                    e.printStackTrace();
-                    Crashlytics.logException(e);
+                    ReportingUtils.reportException(IPGeoActivity.this, e);
                     //No worries
                     runOnUiThread(new Runnable() {
                         @Override
