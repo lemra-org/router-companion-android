@@ -415,6 +415,11 @@
 -keepclasseswithmembers class **.R$* {
     public static final int define_*;
 }
+-keepattributes InnerClasses
+-keep class **.R
+-keep class **.R$* {
+    <fields>;
+}
 
 # Evernote Android Job
 -dontwarn com.evernote.android.job.gcm.**
