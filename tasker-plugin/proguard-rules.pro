@@ -33,6 +33,7 @@
 -keep class android.support.v4.app.** { *; }
 -keep class android.support.v4.view.** { *; }
 -keep class android.support.v4.widget.** { *; }
+-keep interface android.support.v4.widget.** { *; }
 
 -keep interface android.support.v4.app.** { *; }
 -keep interface android.support.v4.view.** { *; }
@@ -40,6 +41,7 @@
 -keep class android.support.v7.app.** { *; }
 -keep interface android.support.v7.app.** { *; }
 -keep class android.support.v7.widget.** { *; }
+-keep interface android.support.v7.widget.** { *; }
 
 
 -keep public class * extends android.app.Activity
@@ -190,3 +192,13 @@
 -dontwarn org.json.**
 -dontwarn java.util.Base64
 -dontwarn java.util.Base64$Encoder
+
+-dontwarn com.android.support.**
+-dontwarn org.jetbrains.anko.appcompat.v7.**
+
+# OkHttp
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
