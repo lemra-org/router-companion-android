@@ -363,12 +363,10 @@ play {
 dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation "androidx.core:core-ktx:$android_ktx_version"
-
-    //TODO Replace Anko with KTX
-//    implementation "org.jetbrains.anko:anko-sdk25:$anko_version"
-//    implementation "org.jetbrains.anko:anko-sdk25-coroutines:$anko_version"
-//    implementation "org.jetbrains.anko:anko-appcompat-v7:$anko_version"
+//    implementation "androidx.core:core-ktx:$android_ktx_version"
+    implementation "org.jetbrains.anko:anko-sdk25:$anko_version"
+    implementation "org.jetbrains.anko:anko-sdk25-coroutines:$anko_version"
+    implementation "org.jetbrains.anko:anko-appcompat-v7:$anko_version"
 
     // Unit testing dependencies
     testImplementation 'junit:junit:4.12'
