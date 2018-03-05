@@ -206,9 +206,11 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 //    implementation "androidx.core:core-ktx:$android_ktx_version"
-    implementation "org.jetbrains.anko:anko-sdk25:$anko_version"
-    implementation "org.jetbrains.anko:anko-sdk25-listeners:$anko_version"
-    implementation "org.jetbrains.anko:anko:$anko_version"
+//    implementation "org.jetbrains.anko:anko-sdk25:$anko_version"
+//    implementation "org.jetbrains.anko:anko-sdk25-listeners:$anko_version"
+//    implementation "org.jetbrains.anko:anko:$anko_version"
+    // Anko Commons
+    implementation "org.jetbrains.anko:anko-commons:$anko_version"
 
     implementation project(":libraries:parcelable")
     implementation project(':common')
@@ -303,7 +305,7 @@ dependencies {
 
 //  debugImplementation 'com.amitshekhar.android:debug-db:0.4.0'
 
-    implementation 'com.facebook.device.yearclass:yearclass:2.0.0'
+//    implementation 'com.facebook.device.yearclass:yearclass:2.0.0'
 
     //Chuck: in-app HTTP inspector for OkHttp
     debugImplementation('com.readystatesoftware.chuck:library:1.0.4') {

@@ -65,7 +65,7 @@ build_project:
     - watchman watch-project $CI_PROJECT_DIR || true
 
     - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
-    - ./gradlew htmlDependencyReport
+    - ./gradlew projectReport htmlDependencyReport countAmazonDebugDexMethods
 
   artifacts:
     paths:

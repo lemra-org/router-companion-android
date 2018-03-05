@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.AsyncTaskLoader
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.Loader
-import android.support.v4.view.ViewCompat
 import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -32,11 +31,8 @@ import com.google.common.base.Throwables
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.find
-import org.jetbrains.anko.imageResource
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
-import org.jetbrains.anko.sdk25.coroutines.onClick
-import org.jetbrains.anko.textColor
 import org.jetbrains.anko.toast
 import org.rm3l.ddwrt.BuildConfig
 import org.rm3l.ddwrt.R
@@ -131,8 +127,8 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
         mRecyclerView.layoutManager = mLayoutManager
         //
         val emptyView = layout.find<TextView>(R.id.empty_view)
-        emptyView.textColor = ContextCompat.getColor(mParentFragmentActivity,
-                if (mParentFragmentActivity.isThemeLight()) R.color.black else R.color.white)
+        emptyView.setTextColor( ContextCompat.getColor(mParentFragmentActivity,
+                if (mParentFragmentActivity.isThemeLight()) R.color.black else R.color.white))
         mRecyclerView.setEmptyView(emptyView)
 
         // specify an adapter (see also next example)
@@ -152,7 +148,7 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
         //Hidden for now
         addNewButton.visibility = View.GONE
 
-        addNewButton.onClick {
+        addNewButton.setOnClickListener {
             mParentFragmentActivity.toast("TODO Add new WAN Access Policy")
             mParentFragmentActivity.startActivity(
                     mParentFragmentActivity.intentFor<AddOrEditWANAccessPolicyActivity>(
@@ -167,10 +163,10 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
 
         if (mParentFragmentActivity?.isThemeLight()) {
             //Set menu background to white
-            tileMenu.imageResource = R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark
+            tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark)
         }
 
-        tileMenu.onClick {
+        tileMenu.setOnClickListener {
             val popup = PopupMenu(mParentFragmentActivity, it)
             popup.setOnMenuItemClickListener(this@AccessRestrictionsWANAccessTile)
             val inflater = popup.menuInflater
@@ -182,7 +178,7 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
     }
 
     fun canChildScrollUp(): Boolean {
-        val canScrollVertically = ViewCompat.canScrollVertically(mRecyclerView, -1)
+        val canScrollVertically = mRecyclerView?.canScrollVertically(-1)
         if (!canScrollVertically) {
             return canScrollVertically
         }
@@ -299,7 +295,7 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
                 val rootCause = Throwables.getRootCause(exception)
                 errorPlaceHolderView.text = "Error: ${rootCause?.message ?: "null"}"
                 val parentContext = this.mParentFragmentActivity
-                errorPlaceHolderView.onClick {
+                errorPlaceHolderView.setOnClickListener {
                     rootCause?.let {
                         parentContext.longToast(it.message ?: "Internal Error")
                     }
@@ -480,7 +476,7 @@ internal class WANAccessRulesRecyclerViewAdapter(
         holder.wanPolicyStateText.setBackgroundColor(
                 ContextCompat.getColor(tile.mParentFragmentActivity, stateBgColor))
 
-        holder.wanPolicyStateText.onClick {
+        holder.wanPolicyStateText.setOnClickListener {
             holder.menuImageButton.performClick()
         }
 
@@ -558,7 +554,7 @@ internal class WANAccessRulesRecyclerViewAdapter(
                     R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark)
         }
 
-        holder.menuImageButton.onClick {
+        holder.menuImageButton.setOnClickListener {
             val popup = PopupMenu(tile.mParentFragmentActivity, it)
             popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
                 when (item.itemId) {
@@ -603,7 +599,7 @@ internal class WANAccessRulesRecyclerViewAdapter(
             popup.show()
         }
 
-        holder.removeImageButton.onClick { removeWanPolicyDialog.show() }
+        holder.removeImageButton.setOnClickListener { removeWanPolicyDialog.show() }
     }
 
     override fun getItemCount(): Int {

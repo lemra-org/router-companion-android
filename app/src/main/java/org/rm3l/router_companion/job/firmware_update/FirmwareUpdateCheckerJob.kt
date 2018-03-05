@@ -397,7 +397,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
 
     override fun isOneShotJob() = false
 
-    override fun onRunDailyJob(params: Params?): DailyJobResult {
+    override fun onRunDailyJob(params: Params): DailyJobResult {
         try {
             if (!handleJob(context, params)) {
                 Crashlytics.log(Log.WARN, TAG,
@@ -417,9 +417,9 @@ class FirmwareUpdateCheckerOneShotJob : Job(), RouterCompanionJob {
         val TAG = FirmwareUpdateCheckerOneShotJob::class.java.simpleName!!
     }
 
-    override fun onRunJob(params: Params?): Result {
+    override fun onRunJob(params: Params): Result {
         return try {
-            params?.extras?.putBoolean(MANUAL_REQUEST, true)
+            params.extras.putBoolean(MANUAL_REQUEST, true)
             if (FirmwareUpdateCheckerJob.handleJob(context, params)) Result.SUCCESS else Result.FAILURE
         } catch (e: Exception) {
             Crashlytics.logException(e)

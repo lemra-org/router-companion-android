@@ -317,14 +317,14 @@
 -dontwarn javax.annotation.**
 -dontwarn javax.inject.**
 -dontwarn sun.misc.Unsafe
+-dontwarn com.google.common.collect.MinMaxPriorityQueue
+-dontwarn com.google.common.util.concurrent.FuturesGetChecked**
+-dontwarn javax.lang.model.element.Modifier
+-dontwarn afu.org.checkerframework.**
+-dontwarn org.checkerframework.**
 
-# Guava 19.0
--dontwarn java.lang.ClassValue
--dontwarn com.google.j2objc.annotations.Weak
--dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
-
-# Retrolambda
--dontwarn java.lang.invoke.*
+## Retrolambda
+#-dontwarn java.lang.invoke.*
 
 # AWS SDK
 # Class names are needed in reflection
@@ -414,12 +414,12 @@
 #-keep class **.R$* {
 #    <fields>;
 #}
--keepclasseswithmembers class **.R$* {
+-keepclasseswithmembers class org.rm3l.ddwrt.R$* {
     public static final int define_*;
 }
 -keepattributes InnerClasses
--keep class **.R
--keep class **.R$* {
+-keep class org.rm3l.ddwrt.R
+-keep class org.rm3l.ddwrt.R$* {
     <fields>;
 }
 
@@ -441,3 +441,5 @@
 -keep class okhttp3.** { *; }
 -keep interface okhttp3.** { *; }
 -dontwarn okhttp3.**
+
+-keep class org.rm3l.ddwrt.BuildConfig

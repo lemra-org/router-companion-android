@@ -76,43 +76,50 @@
 -keepattributes Signature
 -keepattributes Exceptions
 
-# Configuration for Guava 18.0
+## Configuration for Guava 18.0
+##
+## disagrees with instructions provided by Guava project: https://code.google.com/p/guava-libraries/wiki/UsingProGuardWithGuava
 #
-# disagrees with instructions provided by Guava project: https://code.google.com/p/guava-libraries/wiki/UsingProGuardWithGuava
-
--dontwarn com.google.errorprone.annotations.**
--dontwarn om.google.j2objc.annotations.**
-
--dontwarn com.google.common.collect.**
-
-
--keep class com.google.common.io.Resources {
-    public static <methods>;
-}
--keep class com.google.common.collect.Lists {
-    public static ** reverse(**);
-}
--keep class com.google.common.base.Charsets {
-    public static <fields>;
-}
-
--keep class com.google.common.base.Joiner {
-    public static com.google.common.base.Joiner on(java.lang.String);
-    public ** join(...);
-}
-
--keep class com.google.common.collect.MapMakerInternalMap$ReferenceEntry
--keep class com.google.common.cache.LocalCache$ReferenceEntry
-
-# http://stackoverflow.com/questions/9120338/proguard-configuration-for-guava-with-obfuscation-and-optimization
--dontwarn javax.annotation.**
--dontwarn javax.inject.**
+#-dontwarn com.google.errorprone.annotations.**
+#-dontwarn om.google.j2objc.annotations.**
+#
+#-dontwarn com.google.common.collect.**
+#
+#
+#-keep class com.google.common.io.Resources {
+#    public static <methods>;
+#}
+#-keep class com.google.common.collect.Lists {
+#    public static ** reverse(**);
+#}
+#-keep class com.google.common.base.Charsets {
+#    public static <fields>;
+#}
+#
+#-keep class com.google.common.base.Joiner {
+#    public static com.google.common.base.Joiner on(java.lang.String);
+#    public ** join(...);
+#}
+#
+#-keep class com.google.common.collect.MapMakerInternalMap$ReferenceEntry
+#-keep class com.google.common.cache.LocalCache$ReferenceEntry
+#
+## http://stackoverflow.com/questions/9120338/proguard-configuration-for-guava-with-obfuscation-and-optimization
+#-dontwarn javax.annotation.**
+#-dontwarn javax.inject.**
+#-dontwarn sun.misc.Unsafe
+#
+## Guava 19.0
+#-dontwarn java.lang.ClassValue
+#-dontwarn com.google.j2objc.annotations.Weak
+#-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+# Guava 24.0-android
 -dontwarn sun.misc.Unsafe
-
-# Guava 19.0
--dontwarn java.lang.ClassValue
--dontwarn com.google.j2objc.annotations.Weak
--dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-dontwarn com.google.common.collect.MinMaxPriorityQueue
+-dontwarn com.google.common.util.concurrent.FuturesGetChecked**
+-dontwarn javax.lang.model.element.Modifier
+-dontwarn afu.org.checkerframework.**
+-dontwarn org.checkerframework.**
 
 # Retrolambda
 -dontwarn java.lang.invoke.*
@@ -151,11 +158,18 @@
 -dontwarn me.panavtec.drawableview.internal.**
 
 
--keep class .R
--keep class **.R$* {
+#-keep class .R
+#-keep class **.R$* {
+#    <fields>;
+#}
+-keepclasseswithmembers class org.rm3l.ddwrt.tasker.R$* {
+    public static final int define_*;
+}
+-keepattributes InnerClasses
+-keep class org.rm3l.ddwrt.tasker.R
+-keep class org.rm3l.ddwrt.tasker.R$* {
     <fields>;
 }
-
 
 -dontwarn java.awt.**
 -dontwarn javax.swing.**
@@ -202,3 +216,5 @@
 -keep class okhttp3.** { *; }
 -keep interface okhttp3.** { *; }
 -dontwarn okhttp3.**
+
+-keep class org.rm3l.ddwrt.tasker.BuildConfig
