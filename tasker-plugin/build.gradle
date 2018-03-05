@@ -47,7 +47,6 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
-//apply plugin: 'android-apt'
 apply plugin: 'com.github.triplet.play'
 
 android {
@@ -217,33 +216,32 @@ dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    // Unit testing dependencies
-    testImplementation 'junit:junit:4.12'
-    // Set this dependency if you want to use the Hamcrest matcher library
-    testImplementation 'org.hamcrest:hamcrest-library:1.4-atlassian-1'
-    // more stuff, e.g., Mockito
-    testImplementation 'org.mockito:mockito-core:2.2.26'
-
-    // Required for instrumented tests
-    androidTestImplementation "com.android.support:support-annotations:$support_version"
-    androidTestImplementation "com.android.support.test:runner:1.0.0"
-
     implementation "com.android.support:appcompat-v7:$support_version"
     implementation "com.android.support:design:$support_version"
+    implementation "com.android.support:cardview-v7:$support_version"
+    implementation "com.android.support:preference-v7:$support_version"
 
-    implementation('org.rm3l:maoni:4.1.2@aar') {
+    implementation('org.rm3l:maoni:6.0.0@aar') {
         transitive = true
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'design'
         exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'animated-vector-drawable'
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-compat'
 //    exclude group: 'org.rm3l', module: 'maoni-email'
     }
 
-    implementation('org.rm3l:maoni-doorbell:2.4.0') {
-        transitive = false;
+    implementation('org.rm3l:maoni-doorbell:2.5.0-maoni_6.0.0') {
+        transitive = false
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'design'
         exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'animated-vector-drawable'
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-compat'
     }
 
     //Send notifications on Slack as well
@@ -257,25 +255,22 @@ dependencies {
 
     implementation('com.mikepenz:aboutlibraries:5.9.6@aar') {
         transitive = true
+        exclude group: 'com.android.support', module: 'cardview-v7'
     }
 
     implementation group: 'net.jcip', name: 'jcip-annotations', version: "1.0"
-    //    implementation group:'com.android.support', name:'support-annotations', version:"${ANDROID_SUPPORT_VERSION_MATCHER}"
-    //    implementation group:'com.android.support', name:'appcompat-v7', version:"${ANDROID_SUPPORT_VERSION_MATCHER}"
-    implementation group: 'com.twofortyfouram', name: 'android-annotation', version: "[2.0.1,3.0["
-    implementation group: 'com.twofortyfouram', name: 'android-assertion', version: "[1.0.4,2.0["
-    implementation group: 'com.twofortyfouram', name: 'android-plugin-api-for-locale',
-            version: "[1.0.1,2.0.0["
-    implementation group: 'com.twofortyfouram', name: 'android-plugin-client-sdk-for-locale',
-            version: "[4.0.2,5.0["
-    implementation group: 'com.twofortyfouram', name: 'android-spackle', version: "[2.0.0,3.0["
-
-    androidTestImplementation group: 'com.twofortyfouram', name: 'android-test', version: "[1.0.0,2.0["
+    implementation group: 'com.twofortyfouram', name: 'android-annotation', version: "[3.0.0,4.0["
+//    implementation group: 'com.twofortyfouram', name: 'android-assertion', version: "[2.0.0,3.0)"
+    implementation group: 'com.twofortyfouram', name: 'android-plugin-api-for-locale', version: "[1.0.2,2.0["
+    implementation group: 'com.twofortyfouram', name: 'android-plugin-client-sdk-for-locale', version: "[4.0.3, 5.0["
+    implementation group: 'com.twofortyfouram', name: 'android-spackle', version: "[2.0.0,4.0["
+    androidTestImplementation group:'com.twofortyfouram', name:'android-test', version:'[6.0.1,7.0)'
+    androidTestImplementation group:'com.twofortyfouram', name:'android-assertion', version:'[2.0.0,3.0)'
     implementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
-        transitive = true;
+        transitive = true
     }
 
-    implementation 'com.google.code.gson:gson:2.8.1'
+    implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.google.guava:guava:23.0-android'
 
 //  implementation 'org.apache.commons:commons-lang3:3.5'
@@ -283,38 +278,45 @@ dependencies {
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
 
     //LeakCanary - to detect memory leaks (only in debug flavor)
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.1'
-    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-    testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 
-    implementation 'com.facebook.stetho:stetho:1.5.0'
-    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
+    debugImplementation 'com.facebook.stetho:stetho:1.5.0'
+    debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
+    releaseImplementation "net.igenius:stetho-no-op:1.1"
+    testImplementation "net.igenius:stetho-no-op:1.1"
 
     implementation 'com.zsoltsafrany:needle:1.0.0'
 
-    implementation 'com.amazonaws:aws-android-sdk-core:2.4.5'
-    implementation 'com.amazonaws:aws-android-sdk-s3:2.4.5'
+    implementation 'com.amazonaws:aws-android-sdk-core:2.6.15'
+    implementation 'com.amazonaws:aws-android-sdk-s3:2.6.15'
 
     //TODO Migrate to >= 1.0.0
-    implementation 'com.stephentuso:welcome:0.7.2'
+    implementation('com.stephentuso:welcome:0.7.3') {
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'preference-v7'
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
 
-    implementation 'com.sothree.slidinguppanel:library:3.3.1'
+    implementation 'com.sothree.slidinguppanel:library:3.4.0'
 
 //  debugImplementation 'com.amitshekhar.android:debug-db:0.4.0'
 
 //    implementation 'com.facebook.device.yearclass:yearclass:2.0.0'
 
     //Chuck: in-app HTTP inspector for OkHttp
-    debugImplementation('com.readystatesoftware.chuck:library:1.0.4') {
+    debugImplementation('com.readystatesoftware.chuck:library:1.1.0') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'design'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
         exclude group: 'com.android.support', module: 'support-v4'
     }
-    releaseImplementation 'com.readystatesoftware.chuck:library-no-op:1.0.4'
+    releaseImplementation 'com.readystatesoftware.chuck:library-no-op:1.1.0'
 }
 
 

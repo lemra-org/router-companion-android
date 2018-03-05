@@ -30,13 +30,13 @@ buildscript {
     ext.android_ktx_version = '0.2'
     ext.anko_version = '0.10.4'
     ext.playServices_version = '11.8.0'
+    ext.robolectric_version = '3.7.1'
     //Workaround to have the 'com.android.application' plugin with any version of Gradle (other than the expected one)
     //see https://github.com/gradle/gradle-script-kotlin/issues/2#issuecomment-222120296
     System.properties['com.android.build.gradle.overrideVersionCheck'] = 'true'
     repositories {
         jcenter()
         mavenCentral()
-        //        maven { url 'http://www.tracepot.com/maven' }
         maven {
             url 'https://maven.google.com'
         }
@@ -45,13 +45,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.0-alpha04'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-        //        classpath 'com.tracepot.plugins.gradle:tracepot:1.+'
         classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
-//    classpath 'me.tatarka:gradle-retrolambda:3.2.5'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files// Add this line
         classpath 'com.google.gms:google-services:3.2.0'
         classpath 'com.uber:okbuck:0.34.1'
     }
@@ -65,6 +59,17 @@ allprojects {
         maven { url "https://jitpack.io" }
         maven {
             url 'https://maven.google.com'
+        }
+    }
+    if (plugins.hasPlugin('android')) {
+        dependencies {
+            testImplementation "org.robolectric:robolectric:$robolectric_version"
+            androidTestImplementation "com.android.support:support-annotations:$support_version"
+        }
+    }
+    if (plugins.hasPlugin(JavaPlugin)) {
+        dependencies {
+            implementation 'junit:junit:4.12'
         }
     }
 }

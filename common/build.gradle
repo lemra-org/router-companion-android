@@ -52,8 +52,9 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles 'proguard-rules.pro'
+            zipAlignEnabled true
         }
 
         debug {
@@ -62,7 +63,6 @@ android {
             zipAlignEnabled true
         }
     }
-    buildToolsVersion '27.0.3'
 }
 
 //Automate the way version name is built for each flavor
@@ -76,10 +76,5 @@ android.productFlavors.each {
 dependencies {
     implementation project(":libraries:parcelable")
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    testImplementation 'junit:junit:4.12'
     implementation "com.android.support:appcompat-v7:$support_version"
-
-    //Push
-    //    compile 'com.google.firebase:firebase-messaging:9.4.0'
-    //    compile 'com.pusher:pusher-java-client:1.0.0'
 }
