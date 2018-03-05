@@ -24,9 +24,6 @@
 
 -dontwarn javax.annotation.**
 
-# Because the following classes make use of reflection (clazz.newInstance(...))
--keep class org.rm3l.ddwrt.tasker.**
--keep class org.rm3l.ddwrt.tasker.**
 
 
 #ACRA specifics
@@ -186,14 +183,16 @@
 #-keep class **.R$* {
 #    <fields>;
 #}
--keepclasseswithmembers class org.rm3l.ddwrt.tasker.R$* {
+-keepclasseswithmembers class org.rm3l.router_companion.tasker.R$* {
     public static final int define_*;
 }
 -keepattributes InnerClasses
--keep class org.rm3l.ddwrt.tasker.R
--keep class org.rm3l.ddwrt.tasker.R$* {
+-keep class org.rm3l.router_companion.tasker.R
+-keep class org.rm3l.router_companion.tasker.R$* {
     <fields>;
 }
+
+-keep class org.rm3l.router_companion.tasker.BuildConfig
 
 -dontwarn java.awt.**
 -dontwarn javax.swing.**
@@ -240,9 +239,6 @@
 -keep class okhttp3.** { *; }
 -keep interface okhttp3.** { *; }
 -dontwarn okhttp3.**
-
--keep class org.rm3l.ddwrt.tasker.BuildConfig
-
 
 -dontwarn java.awt.**
 -dontwarn javax.swing.**
@@ -394,7 +390,11 @@
 -keep interface okhttp3.** { *; }
 -dontwarn okhttp3.**
 
--keep class org.rm3l.ddwrt.tasker.BuildConfig
-
 -keep class com.twofortyfouram.annotation.**
 -dontwarn com.twofortyfouram.annotation.**
+
+# For enumeration classes, see http://proguard.sourceforge.net/manual/examples.html#enumerations
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
