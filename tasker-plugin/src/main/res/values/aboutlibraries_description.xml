@@ -23,7 +23,7 @@ SOFTWARE.
     <string name="aboutLibraries_description_showIcon" translatable="false">true</string>
     <string name="aboutLibraries_description_showVersion" translatable="false">true</string>
     <string name="aboutLibraries_description_text" translatable="false"><![CDATA[
-    Copyright © 2016 Armel Soro.<br/>
+    Copyright © 2016-2018 Armel Soro.<br/>
     ]]></string>
     <string name="aboutLibraries_description_name" translatable="false">DD-WRT Companion Tasker Plugin</string>
 
