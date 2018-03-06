@@ -462,9 +462,9 @@ class RouterSpeedTestRunnerDailyJob : DailyJob(), RouterCompanionJob {
         }
     }
 
-    override fun onRunDailyJob(params: Params?): DailyJobResult {
+    override fun onRunDailyJob(params: Params): DailyJobResult {
         try {
-            val routerUuid = params?.extras?.getString(ROUTER_SELECTED, null) ?: return CANCEL
+            val routerUuid = params.extras.getString(ROUTER_SELECTED, null) ?: return CANCEL
             val router = RouterManagementActivity.getDao(context).getRouter(routerUuid)
             if (router == null || router.isArchived) {
                 Crashlytics.log(Log.WARN, TAG, "router is NULL or archived => cancelling daily job")
@@ -514,9 +514,9 @@ class RouterSpeedTestRunnerPeriodicJob : Job(), RouterCompanionJob {
         }
     }
 
-    override fun onRunJob(params: Params?): Result {
+    override fun onRunJob(params: Params): Result {
         try {
-            val routerUuid = params?.extras?.getString(ROUTER_SELECTED, null) ?: return Result.FAILURE
+            val routerUuid = params.extras.getString(ROUTER_SELECTED, null) ?: return Result.FAILURE
             val router = RouterManagementActivity.getDao(context).getRouter(routerUuid)
             if (router == null || router.isArchived) {
                 Crashlytics.log(Log.WARN, TAG, "router is NULL or archived => cancelling periodic job")
@@ -534,7 +534,7 @@ class RouterSpeedTestRunnerPeriodicJob : Job(), RouterCompanionJob {
 
 
 class RouterSpeedTestRunnerOneShotJob : Job(), RouterCompanionJob {
-    override fun onRunJob(params: Params?): Result {
+    override fun onRunJob(params: Params): Result {
         return try {
             RouterManagementActivity.getDao(context).allRouters.forEach {
                 try {

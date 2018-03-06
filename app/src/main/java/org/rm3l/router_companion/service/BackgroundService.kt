@@ -110,7 +110,7 @@ class BackgroundService: DailyJob(), RouterCompanionJob {
 
     override fun isOneShotJob() = false
 
-    override fun onRunDailyJob(params: Params?): DailyJobResult {
+    override fun onRunDailyJob(params: Params): DailyJobResult {
         try {
             if (context.getSharedPreferences(
                     RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
@@ -133,7 +133,7 @@ class BackgroundServiceOneShotJob: Job(), RouterCompanionJob {
         val TAG = BackgroundServiceOneShotJob::class.java.simpleName!!
     }
 
-    override fun onRunJob(params: Params?): Result {
+    override fun onRunJob(params: Params): Result {
         return try {
             BackgroundService.handleJob(context, params)
             Result.SUCCESS

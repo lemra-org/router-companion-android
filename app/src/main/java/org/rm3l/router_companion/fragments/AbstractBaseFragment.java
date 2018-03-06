@@ -166,6 +166,8 @@ public abstract class AbstractBaseFragment<T> extends Fragment
 
     @Nullable
     private Toolbar toolbar;
+    
+    private Loader<T> mDefaultLoader;
 
     @NonNull
     public static AbstractBaseFragment[] getFragments(@NonNull Activity activity,
@@ -1052,6 +1054,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment
 
         this.router = RouterManagementActivity.getDao(this.getActivity())
                 .getRouter(getArguments().getString(ROUTER_CONNECTION_INFO));
+                
+        this.mDefaultLoader = new Loader<>(this.getActivity());
+
         Crashlytics.log(Log.DEBUG, LOG_TAG, "onCreate() loaderIdsInUse: " + mLoaderIdsInUse);
         //        if (savedInstanceState != null) {
         //            final ArrayList<Integer> loaderIdsSaved = savedInstanceState.getIntegerArrayList(STATE_LOADER_IDS);
@@ -1324,12 +1329,14 @@ public abstract class AbstractBaseFragment<T> extends Fragment
      * @param args Any arguments supplied by the caller.
      * @return Return a new Loader instance that is ready to start loading.
      */
-    @Nullable
+    @NonNull
     @Override
     public final Loader<T> onCreateLoader(int id, Bundle args) {
-        final Loader<T> loader = this.getLoader(id, args);
+        Loader<T> loader = this.getLoader(id, args);
         if (loader != null) {
             loader.forceLoad();
+        } else {
+            loader = this.mDefaultLoader;
         }
         return loader;
     }

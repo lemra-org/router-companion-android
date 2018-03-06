@@ -18,7 +18,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.google.common.base.Strings.isNullOrEmpty
 import org.jetbrains.anko.find
-import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.toast
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.mgmt.RouterManagementActivity
@@ -84,7 +83,7 @@ class AddOrEditWANAccessPolicyActivity : AppCompatActivity() {
         mViewPager!!.adapter = mSectionsPagerAdapter
 
         val fab = find<FloatingActionButton>(R.id.fab)
-        fab.onClick {
+        fab.setOnClickListener {
             Snackbar.make(it!!, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null)
                     .show()

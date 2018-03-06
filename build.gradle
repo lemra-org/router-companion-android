@@ -23,36 +23,34 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.android_sdk = 26
+    ext.android_sdk = 27
     ext.buildTools_version = '27.0.3'
-    ext.support_version = '27.0.2'
-    ext.kotlin_version = '1.2.21'
+    ext.support_version = '27.1.0'
+    ext.kotlin_version = '1.2.30'
+    ext.android_ktx_version = '0.2'
     ext.anko_version = '0.10.4'
     ext.playServices_version = '11.8.0'
+    ext.robolectric_version = '3.7.1'
+    ext.junit_version = '4.12'
+    ext.mockito_version = '1.10.19'
+
     //Workaround to have the 'com.android.application' plugin with any version of Gradle (other than the expected one)
     //see https://github.com/gradle/gradle-script-kotlin/issues/2#issuecomment-222120296
     System.properties['com.android.build.gradle.overrideVersionCheck'] = 'true'
     repositories {
         jcenter()
         mavenCentral()
-        //        maven { url 'http://www.tracepot.com/maven' }
         maven {
             url 'https://maven.google.com'
         }
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0-alpha02'
+        classpath 'com.android.tools.build:gradle:3.2.0-alpha04'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-        //        classpath 'com.tracepot.plugins.gradle:tracepot:1.+'
         classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
-//    classpath 'me.tatarka:gradle-retrolambda:3.2.5'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files// Add this line
-        classpath 'com.google.gms:google-services:3.1.2'
-        classpath 'com.uber:okbuck:0.33.0'
+        classpath 'com.google.gms:google-services:3.2.0'
+        classpath 'com.uber:okbuck:0.34.1'
     }
 }
 apply plugin: 'com.uber.okbuck'
@@ -134,7 +132,7 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 }
 compileKotlin {
     kotlinOptions {
