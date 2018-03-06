@@ -741,7 +741,7 @@ public final class Utils {
         }
         int result = 0;
 
-        for (int i = 3; i >= 0; i--) {
+        for (int i = 0; i < 4; i++) {
             final int ip = ipParts[3 - i];
             checkIp4Part(ip);
 
