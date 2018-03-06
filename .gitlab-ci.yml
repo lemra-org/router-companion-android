@@ -65,9 +65,10 @@ build_project:
     - watchman watch-project $CI_PROJECT_DIR || true
 
     - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
-    - ./gradlew htmlDependencyReport
+    - ./gradlew test htmlDependencyReport
 
   artifacts:
+    when: always
     paths:
     - "buck-out/gen/app/*.apk"
     - "buck-out/gen/tasker-plugin/*.apk"

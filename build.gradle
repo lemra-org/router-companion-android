@@ -31,6 +31,9 @@ buildscript {
     ext.anko_version = '0.10.4'
     ext.playServices_version = '11.8.0'
     ext.robolectric_version = '3.7.1'
+    ext.junit_version = '4.12'
+    ext.mockito_version = '1.10.19'
+
     //Workaround to have the 'com.android.application' plugin with any version of Gradle (other than the expected one)
     //see https://github.com/gradle/gradle-script-kotlin/issues/2#issuecomment-222120296
     System.properties['com.android.build.gradle.overrideVersionCheck'] = 'true'
@@ -59,17 +62,6 @@ allprojects {
         maven { url "https://jitpack.io" }
         maven {
             url 'https://maven.google.com'
-        }
-    }
-    if (plugins.hasPlugin('android')) {
-        dependencies {
-            testImplementation "org.robolectric:robolectric:$robolectric_version"
-            androidTestImplementation "com.android.support:support-annotations:$support_version"
-        }
-    }
-    if (plugins.hasPlugin(JavaPlugin)) {
-        dependencies {
-            implementation 'junit:junit:4.12'
         }
     }
 }

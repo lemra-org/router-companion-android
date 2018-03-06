@@ -57,6 +57,12 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
 
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+
     signingConfigs {
         release {
             (keyAlias, storeFile, storePassword, keyPassword) = rootProject.getReleaseSigningConfig()
@@ -371,6 +377,11 @@ dependencies {
 //    implementation "org.jetbrains.anko:anko-sdk25:$anko_version"
 //    implementation "org.jetbrains.anko:anko-sdk25-coroutines:$anko_version"
 //    implementation "org.jetbrains.anko:anko-appcompat-v7:$anko_version"
+
+    testImplementation "junit:junit:$junit_version"
+    testImplementation "org.robolectric:robolectric:$robolectric_version"
+    androidTestImplementation "com.android.support:support-annotations:$support_version"
+    testImplementation "org.mockito:mockito-core:$mockito_version"
 
     implementation project(":libraries:parcelable")
     implementation project(':common')

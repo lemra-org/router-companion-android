@@ -27,11 +27,9 @@ import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 @RunWith(MockitoJUnitRunner.class)
 public class UtilsTest {
 
-    @Mock
-    Activity mMockActivity;
+    @Mock private Activity mMockActivity;
 
-    @Mock
-    Context mMockContext;
+    @Mock private Context mMockContext;
 
     @Test
     public void testDecimalToIp4() {
