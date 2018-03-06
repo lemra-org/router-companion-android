@@ -742,7 +742,7 @@ public final class Utils {
         int result = 0;
 
         for (int i = 0; i < 4; i++) {
-            final int ip = ipParts[3 - i];
+            final int ip = ipParts[i];
             checkIp4Part(ip);
 
             //left shifting 24,16,8,0 and bitwise OR
