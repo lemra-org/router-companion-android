@@ -1,20 +1,92 @@
 package org.rm3l.router_companion.mgmt
 
 import android.support.design.widget.FloatingActionButton
+import android.widget.Button
+import android.widget.TextView
+import com.mikepenz.aboutlibraries.ui.LibsActivity
 import org.junit.*
+import org.junit.Assert.*
 import org.junit.runner.*
+import org.rm3l.ddwrt.BuildConfig
 import org.rm3l.ddwrt.R
-import org.robolectric.Robolectric
+import org.rm3l.maoni.ui.MaoniActivity
+import org.rm3l.router_companion.mgmt.RouterManagementActivity.NEW_ROUTER_ADDED
+import org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE
+import org.rm3l.router_companion.mgmt.register.ManageRouterFragmentActivity
+import org.rm3l.router_companion.settings.RouterManagementSettingsActivity
+import org.robolectric.Robolectric.buildActivity
+import org.robolectric.Robolectric.setupActivity
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 
 @RunWith(RobolectricTestRunner::class)
 class RouterManagementActivityTest {
 
-    @Test
-    fun clickingAddRouter_shouldOpenUpWizard() {
-        val activity = Robolectric.setupActivity(RouterManagementActivity::class.java)
-        activity.findViewById<FloatingActionButton>(R.id.router_list_add).performClick()
+    private var activity: RouterManagementActivity? = null
 
-        //TODO Add assertions here
+    @Before
+    fun beforeEachTest() {
+        activity = setupActivity(RouterManagementActivity::class.java)
+    }
+
+    @Test
+    fun clickingAddRouterBtn_shouldOpenUpWizard() {
+        activity!!.findViewById<FloatingActionButton>(R.id.router_list_add).performClick()
+        testAddRouterWizard()
+    }
+
+    @Test
+    fun clickingAddRouterMenuItem_shouldOpenUpWizard() {
+        shadowOf(activity).clickMenuItem(R.id.router_list_actionbar_add)
+        testAddRouterWizard()
+    }
+
+    private fun testAddRouterWizard() {
+        val startedIntent = shadowOf(activity).nextStartedActivityForResult
+        assertEquals(NEW_ROUTER_ADDED, startedIntent.requestCode)
+        val shadowIntent = shadowOf(startedIntent.intent)
+        assertEquals(ManageRouterFragmentActivity::class.java, shadowIntent.intentClass)
+
+        //Register a demo router
+//        val manageRouterActivity = setupActivity(ManageRouterFragmentActivity::class.java)
+//        manageRouterActivity.findViewById<Button>(R.id.router_add_ip_demo).performClick()
+//
+//        //Check that view has been updated with demo details
+//        assertEquals(BuildConfig.APPLICATION_ID,
+//            manageRouterActivity.findViewById<TextView>(R.id.router_add_ip).text)
+
+        //TODO Proceed with the other steps in the wizard
+    }
+
+    @Test
+    fun clickingRefreshRouterListMenuItem_shouldRefreshData() {
+        shadowOf(activity).clickMenuItem(R.id.router_list_refresh)
+
+        //TODO
+    }
+
+    @Test
+    fun clickingAboutMenuItem_shouldOpenAboutActivity() {
+        shadowOf(activity).clickMenuItem(R.id.router_list_about)
+        val startedIntent = shadowOf(activity).nextStartedActivity
+        val shadowIntent = shadowOf(startedIntent)
+        assertEquals(LibsActivity::class.java, shadowIntent.intentClass)
+    }
+
+    @Test
+    fun clickingRouterManagementSettingsMenuItem_shouldOpenUpActivity() {
+        shadowOf(activity).clickMenuItem(R.id.router_list_settings)
+        val startedIntent = shadowOf(activity).nextStartedActivityForResult
+        assertEquals(ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE, startedIntent.requestCode)
+        val shadowIntent = shadowOf(startedIntent.intent)
+        assertEquals(RouterManagementSettingsActivity::class.java, shadowIntent.intentClass)
+    }
+
+    @Test
+    fun clickingSendFeedbackMenuItem_shouldOpenUpActivity() {
+        shadowOf(activity).clickMenuItem(R.id.router_list_feedback)
+        val startedIntent = shadowOf(activity).nextStartedActivity
+        val shadowIntent = shadowOf(startedIntent)
+        assertEquals(MaoniActivity::class.java, shadowIntent.intentClass)
     }
 }

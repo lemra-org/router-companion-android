@@ -28,6 +28,7 @@ import android.content.Context
 import android.content.IntentFilter
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
@@ -132,8 +133,9 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
                     RouterActionsDeepLinkActivity::class.java.canonicalName)
         }
 
-        if (BuildConfig.DEBUG) {
-            //Stetho.initializeWithDefaults(this);
+        if (BuildConfig.DEBUG && !IS_USING_ROBOLECTRIC_UNIT_TESTING) {
+            // if using Robolectric in local unit test, thrown IOException.
+            // see https://github.com/facebook/stetho/issues/440
             Stetho.initialize(
                     newInitializerBuilder(this)
                             .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
@@ -302,5 +304,8 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
 
         @JvmStatic
         fun getCurrentActivity() = mCurrentActivity?.get()
+
+        @JvmStatic
+        val IS_USING_ROBOLECTRIC_UNIT_TESTING = ("robolectric" == Build.FINGERPRINT)
     }
 }
