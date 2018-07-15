@@ -282,7 +282,7 @@ dependencies {
     implementation group: 'com.twofortyfouram', name: 'android-spackle', version: "[2.0.0,4.0["
     androidTestImplementation group:'com.twofortyfouram', name:'android-test', version:'[6.0.1,7.0)'
     androidTestImplementation group:'com.twofortyfouram', name:'android-assertion', version:'[2.0.0,3.0)'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
         transitive = true
     }
 
