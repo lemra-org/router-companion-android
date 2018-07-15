@@ -390,7 +390,7 @@ dependencies {
 
     implementation "com.mikepenz:aboutlibraries:6.1.0"
 
-    implementation('com.mikepenz:materialdrawer:5.9.5@aar') {
+    implementation('com.mikepenz:materialdrawer:6.0.8@aar') {
         transitive = true
     }
 
