@@ -509,8 +509,8 @@ dependencies {
 
     implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
 
-    implementation 'com.amazonaws:aws-android-sdk-core:2.6.15'
-    implementation 'com.amazonaws:aws-android-sdk-s3:2.6.15'
+    implementation 'com.amazonaws:aws-android-sdk-core:2.6.25'
+    implementation 'com.amazonaws:aws-android-sdk-s3:2.6.25'
 
     //TODO Migrate to >= 1.0.0
     implementation('com.stephentuso:welcome:0.7.3') {
