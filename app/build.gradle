@@ -350,7 +350,7 @@ repositories {
     maven {
         url 'https://maven.fabric.io/public'
     }
-    maven { url "https://s3.amazonaws.com/avocarrot-android-builds/dist" }
+    maven { url "https://s3.amazonaws.com/avocarrot-android-builds/dist/" }
 
     maven { url 'http://dl.bintray.com/igenius-code/maven' }
 }
@@ -419,7 +419,16 @@ dependencies {
     //    implementation 'com.github.danielemaddaluno.androidupdatechecker:library:1.0.2'
 //  implementation 'com.google.android.gms:play-services-ads:11.4.0'
     implementation "com.google.android.gms:play-services-ads-lite:${playServices_version}" //only for distrib. via Play Store
-    implementation('com.avocarrot:android-sdk:4.0.+')
+
+    //Avocarrot - unable to resolve com.avocarrot:android-sdk:4.5.+
+    //Example taken from https://github.com/Avocarrot/android-sdk/blob/master/avocarrot-sample/app/build.gradle
+//    implementation('com.avocarrot:android-sdk:4.5.+')
+    implementation "com.avocarrot.sdk:mediation-sdk-banner:${avocarrot_glispa_version}"
+    implementation "com.avocarrot.sdk:mediation-sdk-interstitial:${avocarrot_glispa_version}"
+    implementation "com.avocarrot.sdk:mediation-sdk-nativead:${avocarrot_glispa_version}"
+    implementation "com.avocarrot.sdk:mediation-sdk-native-assets:${avocarrot_glispa_version}"
+    implementation "com.avocarrot.sdk:mediation-sdk-video:${avocarrot_glispa_version}"
+
     implementation 'fr.nicolaspomepuy:discreetapprate:2.0.4@aar'
     implementation 'com.squareup.picasso:picasso:2.5.2'
     //    implementation 'com.github.halysongoncalves:pugnotification:1.8.1'

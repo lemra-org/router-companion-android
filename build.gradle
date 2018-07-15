@@ -33,6 +33,7 @@ buildscript {
     ext.robolectric_version = '3.7.1'
     ext.junit_version = '4.12'
     ext.mockito_version = '1.10.19'
+    ext.avocarrot_glispa_version = '4.10.1'
 
     //Workaround to have the 'com.android.application' plugin with any version of Gradle (other than the expected one)
     //see https://github.com/gradle/gradle-script-kotlin/issues/2#issuecomment-222120296
