@@ -25,7 +25,7 @@
 buildscript {
     ext.android_sdk = 27
     ext.buildTools_version = '27.0.3'
-    ext.support_version = '27.1.0'
+    ext.support_version = '27.1.1'
     ext.kotlin_version = '1.2.50'
     ext.android_ktx_version = '1.0.0-alpha1'
     ext.anko_version = '0.10.4'
