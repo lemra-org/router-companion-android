@@ -439,7 +439,7 @@ dependencies {
     implementation 'mbanje.kurt:fabbutton:1.2.4@aar'
     implementation 'com.sothree.slidinguppanel:library:3.4.0'
 
-    implementation "com.google.firebase:firebase-appindexing:${playServices_version}"
+    implementation "com.google.firebase:firebase-appindexing:${firebase_version}"
 
     /*
      * AirBnB DeepLinkDispatch

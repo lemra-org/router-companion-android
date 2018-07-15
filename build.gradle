@@ -30,6 +30,7 @@ buildscript {
     ext.android_ktx_version = '1.0.0-alpha1'
     ext.anko_version = '0.10.4'
     ext.playServices_version = '15.0.1'
+    ext.firebase_version = '16.0.1'
     ext.robolectric_version = '3.7.1'
     ext.junit_version = '4.12'
     ext.mockito_version = '1.10.19'
