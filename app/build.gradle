@@ -429,7 +429,7 @@ dependencies {
     implementation "com.avocarrot.sdk:mediation-sdk-video:${avocarrot_glispa_version}"
 
     implementation 'fr.nicolaspomepuy:discreetapprate:2.0.4@aar'
-    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.squareup.picasso:picasso:2.71828'
     //    implementation 'com.github.halysongoncalves:pugnotification:1.8.1'
 
     implementation 'org.osmdroid:osmdroid-android:5.6.5@aar'
