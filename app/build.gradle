@@ -400,7 +400,8 @@ dependencies {
 
     implementation 'com.google.guava:guava:25.1-android'
     implementation 'commons-net:commons-net:3.6'
-    implementation 'com.jcraft:jsch:0.1.51'
+    //WARNING: Test that changing JSCh versions do not produce unwanted side-effects, such as an inability to connect
+    implementation 'com.jcraft:jsch:0.1.54'
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation "com.android.support:design:$support_version"
     implementation "com.android.support:support-v4:$support_version"
