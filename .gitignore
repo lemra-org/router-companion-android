@@ -53,3 +53,5 @@ infer-out
 .okbuck
 .buckconfig.local
 **/BUCK
+
+**/class_files.txt
