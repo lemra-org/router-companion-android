@@ -73,7 +73,7 @@ class RecyclerViewEmptySupport : RecyclerView {
         if (emptyView == null || adapter == null) {
             return
         }
-        if (adapter.itemCount > 0) {
+        if (adapter != null && adapter!!.itemCount > 0) {
             emptyView!!.visibility = View.GONE
         } else {
             emptyView!!.visibility = View.VISIBLE

@@ -247,9 +247,10 @@ public class Router implements Serializable {
         }
 
         @Override
-        public void onBitmapFailed(android.graphics.drawable.Drawable errorDrawable) {
+        public void onBitmapFailed(Exception e, android.graphics.drawable.Drawable errorDrawable) {
             //Callback indicating the image could not be successfully loaded.
             //No worries
+            Utils.reportException(mApplicationContext, e);
         }
 
         @Override
@@ -684,7 +685,7 @@ public class Router implements Serializable {
         if (routerAvatarUrl == null) {
             return null;
         }
-        return Picasso.with(context).load(routerAvatarUrl).get();
+        return new Picasso.Builder(context).build().load(routerAvatarUrl).get();
     }
 
     @Nullable
@@ -981,7 +982,7 @@ public class Router implements Serializable {
                             getRouterAvatarUrl(contextForshortcut, this, mAvatarDownloadOpts),
                             new Target() {
                                 @Override
-                                public void onBitmapFailed(Drawable errorDrawable) {
+                                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
                                 }
 
                                 @Override

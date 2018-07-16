@@ -1015,7 +1015,7 @@ public class DDWRTMainActivity extends AppCompatActivity
             final ImageView navigationViewHeaderAvatar =
                     (ImageView) findViewById(R.id.left_drawer_router_avatar);
             if (navigationViewHeaderAvatar != null) {
-                Picasso.with(this).cancelRequest(navigationViewHeaderAvatar);
+                new Picasso.Builder(this).build().cancelRequest(navigationViewHeaderAvatar);
             }
         }
         super.onDestroy();

@@ -1052,7 +1052,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                                                                                 countryCode), destCountryFlag, null,
                                                                         null, new Callback() {
                                                                             @Override
-                                                                            public void onError() {
+                                                                            public void onError(Exception e) {
                                                                                 destCountryFlag
                                                                                         .setVisibility(View.GONE);
                                                                             }

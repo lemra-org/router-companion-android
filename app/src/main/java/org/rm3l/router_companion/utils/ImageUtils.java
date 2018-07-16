@@ -111,7 +111,7 @@ public final class ImageUtils {
             if (context == null || imageView == null) {
                 return;
             }
-            final Picasso picasso = Picasso.with(context);
+            final Picasso picasso = new Picasso.Builder(context).build();
             picasso.setIndicatorsEnabled(false);
             picasso.setLoggingEnabled(BuildConfig.DEBUG);
             final RequestCreator requestCreator = picasso.load(url);
@@ -143,7 +143,7 @@ public final class ImageUtils {
             if (context == null || target == null) {
                 return;
             }
-            final Picasso picasso = Picasso.with(context);
+            final Picasso picasso = new Picasso.Builder(context).build();
             picasso.setIndicatorsEnabled(false);
             picasso.setLoggingEnabled(BuildConfig.DEBUG);
             final RequestCreator requestCreator = picasso.load(url);
@@ -271,7 +271,7 @@ public final class ImageUtils {
             final RemoteViews contentView = notification.contentView;
             final int iconId = android.R.id.icon;
 
-            final Picasso picasso = Picasso.with(mCtx);
+            final Picasso picasso = new Picasso.Builder(mCtx).build();
             picasso.setIndicatorsEnabled(false);
             picasso.setLoggingEnabled(BuildConfig.DEBUG);
             final RequestCreator requestCreator = picasso.load(
@@ -300,7 +300,7 @@ public final class ImageUtils {
     private ImageUtils() {
     }
 
-    static void downloadImageForRouter(@Nullable Context context,
+    static void downloadImageForRouter(@Nullable final Context context,
             @NonNull final Router router, @Nullable final ImageView imageView,
             @Nullable final List<Transformation> transformations, @Nullable final Integer placeHolderRes,
             @Nullable final Integer errorPlaceHolderRes, @Nullable final String[] opts) {
@@ -315,8 +315,9 @@ public final class ImageUtils {
                     placeHolderRes,
                     errorPlaceHolderRes, new Callback() {
                         @Override
-                        public void onError() {
+                        public void onError(Exception e) {
                             Crashlytics.log(Log.DEBUG, TAG, "onError: " + url);
+                            Utils.reportException(context, e);
                             reportException(null, new MissingRouterModelImageException(
                                     routerModel + " (" + routerModelNormalized + ")"));
                             //Report event

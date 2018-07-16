@@ -1834,7 +1834,8 @@ public class SpeedTestActivity extends AppCompatActivity
                         countryCodeSplitted.isEmpty() ? countryCode : countryCodeSplitted.get(0)), imageView,
                 null, null, new Callback() {
                     @Override
-                    public void onError() {
+                    public void onError(Exception e) {
+                        Utils.reportException(ctx,e);
                         imageView.setVisibility(View.GONE);
                     }
 

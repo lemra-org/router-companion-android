@@ -169,7 +169,7 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
         DrawerImageLoader.init(object : AbstractDrawerImageLoader() {
             override fun cancel(imageView: ImageView?) {
                 if (imageView != null) {
-                    Picasso.with(imageView.context).cancelRequest(imageView)
+                    Picasso.Builder(imageView.context).build().cancelRequest(imageView)
                 }
             }
 
@@ -180,8 +180,8 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
             }
 
             override fun set(imageView: ImageView?, uri: Uri?, placeholder: Drawable?) {
-                if (imageView != null) {
-                    Picasso.with(imageView.context).load(uri).placeholder(placeholder).into(imageView)
+                if (imageView != null && placeholder != null) {
+                    Picasso.Builder(imageView.context).build().load(uri).placeholder(placeholder).into(imageView)
                 }
             }
         })
