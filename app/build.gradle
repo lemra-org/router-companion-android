@@ -53,8 +53,8 @@ apply plugin: 'com.github.triplet.play'
 android {
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     testOptions {
@@ -388,10 +388,26 @@ dependencies {
 
     implementation fileTree(include: '*.jar', dir: 'libs')
 
-    implementation "com.mikepenz:aboutlibraries:6.1.0"
+    implementation ("com.mikepenz:aboutlibraries:6.1.0") {
+        transitive = true
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'design'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'animated-vector-drawable'
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-compat'
+    }
 
     implementation('com.mikepenz:materialdrawer:6.0.8@aar') {
         transitive = true
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'design'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'animated-vector-drawable'
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-compat'
     }
 
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
