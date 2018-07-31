@@ -38,6 +38,8 @@
 #   public *;
 #}
 
+-printconfiguration config.txt
+
 # please KEEP ALL THE NAMES
 -keepnames class ** { *; }
 
@@ -82,6 +84,7 @@
 -keep public class * extends android.content.BroadcastReceiver
 -keep public class * extends android.content.ContentProvider
 -keep public class com.android.vending.licensing.ILicensingService
+-keep public class com.android.vending.billing.IInAppBillingService
 
 -keepclasseswithmembernames class * {
     native <methods>;
