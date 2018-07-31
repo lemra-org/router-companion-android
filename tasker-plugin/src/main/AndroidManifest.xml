@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -94,12 +95,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-                <!--<action android:name="android.intent.action.SEARCH" />-->
+                <!--<action android:name="android.intent.action.SEARCH" /&gt; -->
             </intent-filter>
 
-            <!--<meta-data-->
+            <!-- &lt;meta-data-->
             <!--android:name="android.app.searchable"-->
-            <!--android:resource="@xml/searchable" />-->
+            <!--android:resource="@xml/searchable" /&gt; -->
 
         </activity>
 
@@ -108,16 +109,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
              have a Launcher Activity), including this in the manifest will help when users try to
              open the app directly from the app store.
         -->
-        <!--<activity-->
+        <!-- &lt;activity-->
         <!--android:name="com.twofortyfouram.locale.sdk.client.ui.activity.InfoActivity"-->
         <!--android:exported="true"-->
-        <!--tools:ignore="ExportedActivity">-->
-        <!--<intent-filter>-->
-        <!--<action android:name="android.intent.action.MAIN"/>-->
+        <!--tools:ignore="ExportedActivity"&gt; -->
+        <!-- &lt;intent-filter&gt; -->
+        <!-- &lt;action android:name="android.intent.action.MAIN"/&gt; -->
 
-        <!--<category android:name="android.intent.category.INFO"/>-->
-        <!--</intent-filter>-->
-        <!--</activity>-->
+        <!-- &lt;category android:name="android.intent.category.INFO"/&gt; -->
+        <!-- &lt;/intent-filter&gt; -->
+        <!-- &lt;/activity&gt; -->
 
         <activity
             android:name="org.rm3l.router_companion.tasker.ui.activity.action.ActionEditActivity"
@@ -147,18 +148,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING" />
             </intent-filter>
         </activity-alias>
-        <!--<activity-alias-->
+        <!-- &lt;activity-alias-->
         <!--android:name=".ui.activity.PluginActivity2"-->
         <!--android:exported="true"-->
         <!--android:icon="@mipmap/ic_launcher"-->
         <!--android:label="Toast 2 Action"-->
         <!--android:targetActivity="org.rm3l.ddwrt.tasker.ui.activity.action.ActionEditActivity"-->
-        <!--tools:ignore="ExportedActivity">-->
+        <!--tools:ignore="ExportedActivity"&gt; -->
         <!--&lt;!&ndash; this Intent filter allows the plug-in to be discovered by the host. &ndash;&gt;-->
-        <!--<intent-filter>-->
-        <!--<action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING"/>-->
-        <!--</intent-filter>-->
-        <!--</activity-alias>-->
+        <!-- &lt;intent-filter&gt; -->
+        <!-- &lt;action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING"/&gt; -->
+        <!-- &lt;/intent-filter&gt; -->
+        <!-- &lt;/activity-alias&gt; -->
 
         <!--
              This is the "fire" BroadcastReceiver. Note that the host will reject plug-in

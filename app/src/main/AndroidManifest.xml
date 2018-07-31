@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -15,7 +16,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
@@ -33,7 +34,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
          This permission is actually no longer needed, as the PlayStore version is paying (to support the project),
         and the F-Droid version will not feature Google In-App Billng
       -->
-    <!-- <uses-permission android:name="com.android.vending.BILLING" /> -->
+    <!-- &lt;uses-permission android:name="com.android.vending.BILLING" /&gt; -->
 
 
     <!-- To get DhcpInfo, so as to default forms with the current gateway -->
@@ -49,7 +50,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     Any app that declares the WRITE_EXTERNAL_STORAGE permission is
     implicitly granted the READ_EXTERNAL_STORAGE permission.
       -->
-    <!-- <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/> -->
+    <!-- &lt;uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/&gt; -->
 
 
     <!-- "Normal Permission" -->
@@ -73,14 +74,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
     <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
 
-    <!-- <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/> -->
+    <!-- &lt;uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/&gt; -->
 
 
     <!-- Protection level: ??? -->
     <!-- To write NFC tag (for WiFi networks), or 'Touch to connect' feature -->
     <uses-permission android:name="android.permission.NFC" />
     <!-- NFC is an option here. The app still functions if NFC isn't present -->
-    <!-- <uses-feature android:name="android.hardware.nfc" android:required="false" /> -->
+    <!-- &lt;uses-feature android:name="android.hardware.nfc" android:required="false" /&gt; -->
 
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
@@ -142,15 +143,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <!--<receiver android:name="org.rm3l.router_companion.mgmt.BootReceiver">-->
-        <!--<intent-filter>-->
-        <!--<action android:name="android.intent.action.BOOT_COMPLETED"/>-->
-        <!--</intent-filter>-->
-        <!--</receiver>-->
+        <!--&lt;receiver android:name="org.rm3l.router_companion.mgmt.BootReceiver"&gt;-->
+        <!--&lt;intent-filter&gt;-->
+        <!--&lt;action android:name="android.intent.action.BOOT_COMPLETED"/&gt;-->
+        <!--&lt;/intent-filter&gt;-->
+        <!--&lt;/receiver&gt;-->
 
-        <!--<service-->
+        <!--&lt;service&gt;-->
         <!--android:name="org.rm3l.router_companion.service.BackgroundService"-->
-        <!--android:exported="false"/>-->
+        <!--android:exported="false"/&gt;-->
 
         <activity
             android:name="org.rm3l.router_companion.SplashActivity"
@@ -173,8 +174,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.APP_ERROR" />
-                <!-- <action android:name="android.intent.action.MAIN" /> -->
-                <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+                <!-- &lt;action android:name="android.intent.action.MAIN" /&gt; -->
+                <!-- &lt;category android:name="android.intent.category.LAUNCHER" /&gt; -->
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
             <intent-filter>
@@ -231,11 +232,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:label="@string/support_app"
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustResize" />
-        <!-- <activity -->
+        <!-- &lt;activity -->
         <!-- android:name="org.acra.CrashReportDialog" -->
         <!-- android:excludeFromRecents="true" -->
         <!-- android:finishOnTaskLaunch="true" -->
-        <!-- android:windowSoftInputMode="adjustResize" /> -->
+        <!-- android:windowSoftInputMode="adjustResize" /&gt; -->
         <activity
             android:name="org.rm3l.router_companion.tiles.status.wan.WANMonthlyTrafficActivity"
             android:label="WAN Monthly Traffic"
@@ -256,15 +257,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:value="org.rm3l.router_companion.main.DDWRTMainActivity" />
         </activity>
         <!-- Deprecated -->
-        <!-- <activity -->
+        <!-- &lt;activity -->
         <!-- android:name=".tiles.status.wireless.WirelessIfaceQrCodeActivity" -->
         <!-- android:label="@string/wifi_qr_code" -->
         <!-- android:parentActivityName=".main.DDWRTMainActivity" -->
-        <!-- android:windowSoftInputMode="adjustResize" > -->
-        <!-- <meta-data -->
+        <!-- android:windowSoftInputMode="adjustResize" &gt; -->
+        <!-- &lt;meta-data -->
         <!-- android:name="android.support.PARENT_ACTIVITY" -->
-        <!-- android:value=".main.DDWRTMainActivity" /> -->
-        <!-- </activity> -->
+        <!-- android:value=".main.DDWRTMainActivity" /&gt; -->
+        <!-- &lt;/activity&gt; -->
         <activity
             android:name="org.rm3l.router_companion.tiles.status.wireless.share.WifiSharingActivity"
             android:label="@string/wifi_sharing"
@@ -397,31 +398,31 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <!-- TODO Connected Hosts Widget -->
-        <!-- <receiver -->
+        <!-- &lt;receiver -->
         <!-- android:name=".widgets.home.clients.ConnectedHostsWidgetProvider" -->
         <!-- android:label="DD-WRT: Clients" -->
-        <!-- android:icon="@drawable/wol_widget"> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.appwidget.action.APPWIDGET_UPDATE" /> -->
-        <!-- <action android:name="org.rm3l.ddwrt.widgets.home.clients.ACTION_DISABLE_WAN_ACCESS" /> -->
-        <!-- <action android:name="org.rm3l.ddwrt.widgets.home.clients.ACTION_ENABLE_WAN_ACCESS" /> -->
-        <!-- </intent-filter> -->
+        <!-- android:icon="@drawable/wol_widget"&gt; -->
+        <!-- &lt;intent-filter&gt; -->
+        <!-- &lt;action android:name="android.appwidget.action.APPWIDGET_UPDATE" /&gt; -->
+        <!-- &lt;action android:name="org.rm3l.ddwrt.widgets.home.clients.ACTION_DISABLE_WAN_ACCESS" /&gt; -->
+        <!-- &lt;action android:name="org.rm3l.ddwrt.widgets.home.clients.ACTION_ENABLE_WAN_ACCESS" /&gt; -->
+        <!-- &lt;/intent-filter&gt; -->
 
 
-        <!-- <meta-data -->
+        <!-- &lt;meta-data -->
         <!-- android:name="android.appwidget.provider" -->
-        <!-- android:resource="@xml/wolwidget_info" /> -->
-        <!-- </receiver> -->
-        <!-- <activity android:name=".widgets.home.clients.ConnectedHostsWidgetConfigureActivity" > -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" /> -->
-        <!-- </intent-filter> -->
-        <!-- </activity> -->
+        <!-- android:resource="@xml/wolwidget_info" /&gt; -->
+        <!-- &lt;/receiver&gt; -->
+        <!-- &lt;activity android:name=".widgets.home.clients.ConnectedHostsWidgetConfigureActivity" &gt; -->
+        <!-- &lt;intent-filter&gt; -->
+        <!-- &lt;action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" /&gt; -->
+        <!-- &lt;/intent-filter&gt; -->
+        <!-- &lt;/activity&gt; -->
         <!-- &lt;!&ndash; The service serving the RemoteViews to the collection widget &ndash;&gt; -->
-        <!-- <service -->
+        <!-- &lt;service -->
         <!-- android:name=".widgets.home.clients.ConnectedHostsWidgetService" -->
         <!-- android:permission="android.permission.BIND_REMOTEVIEWS" -->
-        <!-- android:exported="false" /> -->
+        <!-- android:exported="false" /&gt; -->
 
 
         <!-- Include the AdActivity configChanges and theme. -->
@@ -575,20 +576,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         </service>
 
         <!-- Firebase (FCM) -->
-        <!--<service android:name="org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseMessagingService">-->
+        <!-- &lt;service android:name="org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseMessagingService"&gt; -->
 
         <!--&lt;!&ndash; message handling beyond receiving notifications on apps in the background &ndash;&gt;-->
-        <!--<intent-filter>-->
-        <!--<action android:name="com.google.firebase.MESSAGING_EVENT"/>-->
-        <!--</intent-filter>-->
-        <!--</service>-->
-        <!--<service android:name="org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseInstanceIDService">-->
+        <!-- &lt;intent-filter&gt; -->
+        <!-- &lt;action android:name="com.google.firebase.MESSAGING_EVENT"/&gt; -->
+        <!-- &lt;/intent-filter&gt; -->
+        <!-- &lt;/service&gt; -->
+        <!-- &lt;service android:name="org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseInstanceIDService"&gt; -->
 
         <!--&lt;!&ndash; handle the creation, rotation, and updating of registration tokens &ndash;&gt;-->
-        <!--<intent-filter>-->
-        <!--<action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>-->
-        <!--</intent-filter>-->
-        <!--</service>-->
+        <!-- &lt;intent-filter&gt; -->
+        <!-- &lt;action android:name="com.google.firebase.INSTANCE_ID_EVENT"/&gt; -->
+        <!-- &lt;/intent-filter&gt; -->
+        <!-- &lt;/service&gt; -->
 
         <meta-data
             android:name="io.fabric.ApiKey"
