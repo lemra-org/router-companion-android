@@ -25,35 +25,38 @@
 buildscript {
     ext.android_sdk = 28
     ext.buildTools_version = '27.0.3'
-    ext.support_version = '28.0.0-alpha3'
-    ext.kotlin_version = '1.2.50'
+    //https://mvnrepository.com/artifact/com.android.tools.build/gradle?repo=google
+    ext.gradleBuildPlugin_version = '3.3.0-alpha03'
+    ext.support_version = '28.0.0-alpha1' //TODO Migrate to 28.0.0-beta1 once resolvable
+    ext.kotlin_version = '1.2.51'
     ext.android_ktx_version = '1.0.0-alpha1'
-    ext.anko_version = '0.10.4'
+    ext.anko_version = '0.10.5'
     ext.playServices_version = '15.0.1'
     ext.firebase_version = '16.0.1'
-    ext.robolectric_version = '3.7.1'
+    ext.robolectric_version = '3.8'
     ext.junit_version = '4.12'
     ext.mockito_version = '1.10.19'
     ext.avocarrot_glispa_version = '4.10.1'
     ext.work_version = '1.0.0-alpha04'
 
+    ext.playPublisherPlugin_version = '1.2.2'
+    ext.googlePlayServicesPlugin_version = '4.0.1'
+    ext.okbuck_version = '0.40.0'
+
     //Workaround to have the 'com.android.application' plugin with any version of Gradle (other than the expected one)
     //see https://github.com/gradle/gradle-script-kotlin/issues/2#issuecomment-222120296
     System.properties['com.android.build.gradle.overrideVersionCheck'] = 'true'
     repositories {
+        google()
         jcenter()
         mavenCentral()
-        maven {
-            url 'https://maven.google.com'
-        }
-        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.0-alpha03'
+        classpath "com.android.tools.build:gradle:$gradleBuildPlugin_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
-        classpath 'com.google.gms:google-services:3.2.0'
-        classpath 'com.uber:okbuck:0.40.0'
+        classpath "com.github.triplet.gradle:play-publisher:$playPublisherPlugin_version"
+        classpath "com.google.gms:google-services:$googlePlayServicesPlugin_version"
+        classpath "com.uber:okbuck:$okbuck_version"
     }
 }
 apply plugin: 'com.uber.okbuck'
@@ -61,11 +64,9 @@ apply plugin: 'kotlin'
 
 allprojects {
     repositories {
+        google()
         jcenter()
         maven { url "https://jitpack.io" }
-        maven {
-            url 'https://maven.google.com'
-        }
     }
 }
 
@@ -132,6 +133,8 @@ ext.getVersionCodeAndName = {
 
 }
 repositories {
+    google()
+    jcenter()
     mavenCentral()
 }
 dependencies {
