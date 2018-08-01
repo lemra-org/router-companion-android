@@ -28,7 +28,7 @@ buildscript {
     //https://mvnrepository.com/artifact/com.android.tools.build/gradle?repo=google
     ext.gradleBuildPlugin_version = '3.3.0-alpha03'
     ext.support_version = '28.0.0-alpha1' //TODO Migrate to 28.0.0-beta1 once resolvable
-    ext.kotlin_version = '1.2.51'
+    ext.kotlin_version = '1.2.60'
     ext.android_ktx_version = '1.0.0-alpha1'
     ext.anko_version = '0.10.5'
     ext.playServices_version = '15.0.1'
@@ -61,6 +61,7 @@ buildscript {
 }
 apply plugin: 'com.uber.okbuck'
 apply plugin: 'kotlin'
+apply plugin: 'kotlin-kapt'
 
 allprojects {
     repositories {
