@@ -56,7 +56,7 @@ build_project:
         com.google.firebase.firebase-core
         com.google.firebase.firebase-iid-license ;
       do
-        nonStdAarFullName="${nonStdAar}-11.8.0.aar";
+        nonStdAarFullName="${nonStdAar}-15.0.1.aar";
         mkdir -pv $CI_PROJECT_DIR'/buck-out/bin/.okbuck/cache/__unpack_'${nonStdAarFullName}'#aar_unzip__/res' ;
         bash ./buckw build //.okbuck/cache:${nonStdAarFullName} ;
         mkdir -pv $CI_PROJECT_DIR'/buck-out/bin/.okbuck/cache/__unpack_'${nonStdAarFullName}'#aar_unzip__/res' ;
