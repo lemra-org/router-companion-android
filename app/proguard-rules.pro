@@ -454,4 +454,4 @@
 }
 
 -keep class android.graphics.** { *; }
--dontwarn android.**
+-dontwarn android.graphics.**
