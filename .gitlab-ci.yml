@@ -64,6 +64,9 @@ build_project:
 
     - watchman watch-project $CI_PROJECT_DIR || true
 
+    # Temp. cmd to clean up Buck cache
+    - bash ./buckw clean
+
     - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
     - ./gradlew testAmazonDebugUnitTest htmlDependencyReport
 
