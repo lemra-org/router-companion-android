@@ -1,14 +1,14 @@
 -injars /home/rm3l/Projects/MobileDev/router-companion-android/app/libs/achartengine-1.2.0.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/leakcanary-android-1.5.4.aar/00215917158ef786f44ce75a542ec84f/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/stetho-okhttp3-1.5.0.aar/bf5226b366232d8c6eec55dbc947d75e/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/stetho-1.5.0.aar/7305abe33598fcc11f880737baac33c2/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/library-1.1.0.aar/4f73d5c9566b9d7b0d6e9fb99d55ef7c/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/resinspector-0.5.3.aar/a39a00c7aa2f7294f43a6915bce590af/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.2.50/baf551dec8b4dc94c9dd59561400f16b3b5835a6/kotlin-stdlib-jdk8-1.2.50.jar(**.class)
--injars /home/rm3l/.gradle/caches/modules-2/files-2.1/org.jetbrains.anko/anko-commons/0.10.4/436b8634ad86d093f55b1e7226c5c40d9743be5c/anko-commons-0.10.4.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/aboutlibraries-6.1.0.aar/533d0627ac3072fc19dc3a34ae59f3f7/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/materialdrawer-6.0.8.aar/9a9ebdc12ea2724caf5502467d11622f/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/crashlytics-2.9.4.aar/955d0b6f8f635ad471ae533245ea6ef2/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/ad76da34c135d30f9a0deb837ceda343/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/219e00936dc1e8580d57ba7daeac690d/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/d4555139158eabec89802ae353208f90/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/1012f401e8066e0452dc8be28de3a6a7/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/1207264ca030da37efbf7a9d5ed018fc/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.3.21/d0634d54452abc421db494ad32dd215e6591c49f/kotlin-stdlib-jdk8-1.3.21.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/5b60700b42e4bd5ac6462ab021ea4afe/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/6e56a583db987794307e670baed4b12c/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/2049207d034756f3c980d899c2d89bfc/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/d7aa56c8831ae18a8d6fc3c72fac49b1/jars/classes.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.google.guava/guava/25.1-android/bdaab946ca5ad20253502d873ba0c3313d141036/guava-25.1-android.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/commons-net/commons-net/3.6/b71de00508dcb078d2b24b5fa7e538636de9b3da/commons-net-3.6.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.jcraft/jsch/0.1.54/da3584329a263616e277e15462b387addd1b208d/jsch-0.1.54.jar(**.class)
@@ -17,127 +17,144 @@
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.amazonaws/aws-android-sdk-kms/2.6.25/b90d1695869ed699879eae9cf58c02b1324feb48/aws-android-sdk-kms-2.6.25.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.amazonaws/aws-android-sdk-core/2.6.25/7f347bd048a5ac1c4c3726d3570e4f096a48cc11/aws-android-sdk-core-2.6.25.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.8.5/f645ed69d595b24d4cf8b3fbb64cc505bede8829/gson-2.8.5.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/design-27.1.1.aar/c613d90610ee0333340dd783174dccae/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/passcodelock-1.5.1.aar/6141ede385d75dc49971e8f8ab489ef6/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/preference-v7-27.1.1.aar/36315be915410e0c8edc12ff2cd34aee/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/library-3.4.0.aar/52d0757107ac31a26f45b938eedf039e/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/wizardroid-1.3.1.aar/0818c1c78b3f31d4e3caf4ae4d1fb142/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/play-services-ads-lite-15.0.1.aar/a49795a55a56dab9300dd68a37b6258e/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/firebase-appindexing-16.0.1.aar/52a7ebc8e69278fcd3f2608051f25e2f/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/play-services-base-15.0.1.aar/50b79c2fb5b14e22d1133506d7b183ae/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/firebase-common-16.0.0.aar/c9da45ee62546708ff5f8aecffb09355/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/play-services-tasks-15.0.1.aar/13c7d161de81b85b6cbac9e15b0758c2/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/play-services-basement-15.0.1.aar/1fa036da4da6490c4e32e2b5d45f472a/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/support-v4-27.1.1.aar/8ccab39c86e8e486398ad69804b940f2/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/cardview-v7-27.1.1.aar/da9b6e8c8ca579f4d1ca17324915f4e8/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/recyclerview-v7-27.1.1.aar/8adc5024cc67d01455a952999a52903d/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/customtabs-27.1.1.aar/87a824d9938d5ae80c58c25f1e58ac46/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/539093ebc0bf4054d3e51d5ba9cb4fab/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/7e7f0ff977b759b9c5eb5e574cb6020d/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/c84dd7f840a505d4f4d41158b771f65f/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/8c8ec2f368aa5d0212f66ff865d13c05/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/dea4e8c4bf3a49bd72c389abbaf2f9ba/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/43d37b90f0f6a0f34d4583cd62308660/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/f9a736b74d4bd5e4fc7f06fad31c0faa/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/d408596dbabdc6d4f3580860385bce91/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/2ef877ddc60e98c025eebf61197e4696/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/eee774c606c377ea93d37e1977134cab/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/dd8866cbe7687691e14ff70507df6cf2/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/ee6cb6842fd91aa4cef9c92558460498/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/b4db63876e1940e30395236f81a9aa12/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/5ff0c9325582f12e30a2f6fb63792231/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/670906c76f19fb6a42a8c6c8657c435f/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/b24cb5006baa1bb2e65e9183a2a2e9d9/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/ba692dc1ccf9848b892b8ded64a744ec/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/ad728f37f43d600b933b74790c24c2c6/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/f74a86be4aa347a8693311a0fa5ccdf5/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/993482e9f0a29e31a8546d71c2807ee9/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/f0c3856bb6dd1506d9e2d397a4a660d0/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/142a811604f43334dc97af29ba22be06/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/cc76a6dbeac7c856de69f4e60a9a2a93/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/e6de87e6555b07686059588ad63f4888/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/8687f043ff316be8bbaa9b8466cd9a45/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/57a3bf8161a2bf5dcb8751918a4b9fef/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/f75f45177d7b106526aebc9a23609f23/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/7b62ffddc9e555b7689d3cc6a3c058ef/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/4927f228b177b29b627ac4a1a78ed425/jars/classes.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.google.zxing/core/3.3.3/b640badcc97f18867c4dfd249ef8d20ec0204c07/core-3.3.3.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/library-1.4.0.aar/5ed213767f62648b715582a983ed3509/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/mediation-sdk-banner-4.10.1.aar/f5181b2f06963d187752173a3cd5c85d/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/mediation-sdk-interstitial-4.10.1.aar/c5a6d1a8898366a901e50edfb80d5089/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/mediation-sdk-nativead-4.10.1.aar/04b458c2c9dded8292caeda2ab96474f/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/mediation-sdk-native-assets-4.10.1.aar/b7b202851643a4e95cfff66a7035f022/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/mediation-sdk-video-4.10.1.aar/652e5bfc6fb9329d49140f41cdec80e8/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/discreetapprate-2.0.4.aar/073a3584e5f8ce8389a03ad18e25d8d2/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/picasso-2.71828.aar/fa072fea621cf7d18326650bddb15380/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/osmdroid-android-6.0.1.aar/0f6691180370188c89e3d9b0b94148cd/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/circleprogress-1.2.1.aar/8d5b68503f31ac7b54dfdd6779c565ce/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/fabbutton-1.2.4.aar/2dea8f47c7c1dceb6b4ee5279bbaf464/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/6531251ce8c5c2efbbeb604e15137e22/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/5b914c47132a93daca192d2e2c035c93/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/57fff0c7c0b23034c84b4a317cba7514/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/31a5be6d048e3c84b765bf47aea61df0/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/9a4d402898aadbd74e6f849edee94e5d/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/3a7a6d999ba34038f59e62ba8d13a179/jars/classes.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.airbnb/deeplinkdispatch/3.1.1/4b0bdd348bea4901e2bccfff2cff6bbfcd1550ca/deeplinkdispatch-3.1.1.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.squareup.retrofit2/retrofit/2.3.0/bcacde6a8ccedcc56c127403d26b76072fe6214d/retrofit-2.3.0.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/logging-interceptor/3.10.0/55f574ec622f65ac9c0e2e922d3ffa01dc4f139e/logging-interceptor-3.10.0.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/maoni-6.0.0.aar/00723116c50d54074d3ab0a39286b7f6/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/a2c32d51a6a0eaa927c2057c4db61613/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/modules-2/files-2.1/org.rm3l/maoni-email/3.0.0-1/61adb9a28ca4230d8bb5fd0d89ebc4149a97f7c5/maoni-email-3.0.0-1.jar(**.class)
+-injars /home/rm3l/.gradle/caches/modules-2/files-2.1/org.rm3l/maoni-common/6.0.0/4f3d76db9f1faeb9a4f3bd7daaa2192ed036c49e/maoni-common-6.0.0.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/org.rm3l/maoni-doorbell/2.5.0-maoni_6.0.0/8468fd0ab7ff195083403f9204dcba5fd808174f/maoni-doorbell-2.5.0-maoni_6.0.0.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.zsoltsafrany/needle/1.0.0/e4cf07fb0304459555cffa4c18f59276bb3e7867/needle-1.0.0.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/com.amulyakhare.textdrawable-1.0.1.aar/16da6dcecf9bb978628553b02bacac89/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/welcome-0.7.3.aar/babce91de78aaec35392b7f160bb867d/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/android-job-1.3.0-alpha03.aar/a4f41043b327b52de273235f3421728e/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/work-runtime-1.0.0-alpha04.aar/a9c0aef60b22b0b48cd88198fd8ae10f/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/05e52a9ca066bf437cceff75b274c18f/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/dfe3a1b03f38f7cda8a0b5bf020ea7d3/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/f1791bdb5ae2a24bea74686829de331e/jars/classes.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.jakewharton.byteunits/byteunits/0.9.1/202a0c874feafe7ece9be0a53e9640c9a26f2197/byteunits-0.9.1.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/viewtooltip-1.0.8.aar/59905fcec20f0377426368be3d60d465/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/leakcanary-analyzer-1.5.4.aar/18017c0b19ebdfe5c52e4a444feebbe7/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/cfd0c28e2e1c80448dfa80fbbec5d682/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/8e626a3a44c4b00f8d45205a70a95c6c/jars/classes.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/commons-cli/commons-cli/1.2/2bf96b7aa8b611c177d329452af1dc933e14501c/commons-cli-1.2.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/3.0.2/25ea2e8b0c338a877313bd4672d3fe056ea78f0d/jsr305-3.0.2.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/okhttp/3.10.0/7ef0f1d95bf4c0b3ba30bbae25e0e562b05cf75e/okhttp-3.10.0.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/nl.qbusict/cupboard/2.2.0/dc6f78fc951c5bdeec92c14c6dd6adc9ce6195d0/cupboard-2.2.0.jar(**.class)
--injars /home/rm3l/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/1.2.50/3811b225f9a22abf4f9d8a6f81adef0ba78a3c5/kotlin-stdlib-jdk7-1.2.50.jar(**.class)
--injars /home/rm3l/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.2.50/66d47b004c5b8a1d2d1df9e463187390ed741316/kotlin-stdlib-1.2.50.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/iconics-core-3.0.4.aar/1c40f8cb3bb620ebe7b15b76606827f0/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/fastadapter-extensions-expandable-3.2.7.aar/796ae82038abbd39256b8a79e1601833/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/fastadapter-commons-3.2.7.aar/fc119fb3c50b7e5ce4e1dcb60f6ce99a/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/fastadapter-3.2.7.aar/fd1bc7618dcc86115bb76d7b1b127ad0/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/materialize-1.1.2.aar/9475c2c7150f3544dd610715d56430c0/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/crashlytics-core-2.6.3.aar/1ceb969e8b7b6ae349053e7a80856a71/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/beta-1.2.9.aar/30344d05cc391d28741d74fb4a47cb65/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/answers-1.4.2.aar/5054ca5e298f65252d0b053050d2695a/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/fabric-1.4.3.aar/1b1d8cb462cc05c7d8b4d7977c129ade/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/1.3.21/d207ce2c9bcf17dc8e51bab4dbfdac4d013e7138/kotlin-stdlib-jdk7-1.3.21.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/69cd3a3383e25d8a318f9a7554e29d27/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.3.21/4bcc2012b84840e19e1e28074284cac908be0295/kotlin-stdlib-1.3.21.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/6717c810b318c05db552c6aa86d6f8e0/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/a6dd03bbe03c848eff24a6a384f9879b/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/1066e74777208d821e7d1a7ef213b573/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/0f46c2e298186da2275bdcd67a75a33b/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/74357c157397ee02d62782102c002c36/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/73fb1b1d42629205e1e8ef9bb12648c8/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/7f725a2b7ea2ea361403ffd77366702c/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/8b93e2245956c937ff0265caf8be0f85/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/34eb8a13d1da410165a2f24d5feb24ff/jars/classes.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/org.checkerframework/checker-compat-qual/2.0.0/fc89b03860d11d6213d0154a62bcd1c2f69b9efa/checker-compat-qual-2.0.0.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_annotations/2.1.3/39b109f2cd352b2d71b52a3b5a1a9850e1dc304b/error_prone_annotations-2.1.3.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.google.j2objc/j2objc-annotations/1.1/976d8d30bebc251db406f2bdb3eb01962b5685b3/j2objc-annotations-1.1.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/org.codehaus.mojo/animal-sniffer-annotations/1.14/775b7e22fb10026eed3f86e8dc556dfafe35f2d5/animal-sniffer-annotations-1.14.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/transition-27.1.1.aar/8fe50c23771ac6d8cd3819a0a2363f94/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.1.1.aar/64faac7d7ef0487a2d265d9d64fd89be/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/extensions-1.1.0.aar/fdb8b65f799198e6f9db5d105b2c22c4/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/support-fragment-27.1.1.aar/db373bc3fa13caf5aab5a9afd210f532/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-27.1.1.aar/688fb07962735a4130c9d6c451770ba6/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/support-core-ui-27.1.1.aar/a5635bda7cb5d1240f6b65fab464cb61/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/mediation-sdk-mraid-4.10.1.aar/eba8e07c09b45ffe5a90f8869ce7f094/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/runtime-1.1.1-rc1.aar/92b949407cead24674ee55d982fdd638/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/support-core-utils-27.1.1.aar/630449d80fdd2dc966f13d5bc311ea82/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-27.1.1.aar/0a252656b2b4048dd6b150683a4c5173/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.1.aar/51e12d8a510385e24bfc29baa0ad46b9/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/mediation-sdk-vast-4.10.1.aar/e0532a213e202733c0c4da2719a0fc03/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/exifinterface-27.1.0.aar/3922e8870424d1c1b039ac88015a99e4/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/runtime-1.1.0.aar/a147836c8596fa6a687eec7385b3679b/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/viewmodel-1.1.0.aar/1a614684bb0275de3571d03d79d13a52/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/livedata-1.1.0.aar/75651274db88c562ad8db80851ef07b5/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/livedata-core-1.1.0.aar/2e20edc4df7a445f71d6229a14696663/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/modules-2/files-2.1/android.arch.lifecycle/common/1.1.0/edf3f7bfb84a7521d0599efa3b0113a0ee90f85/common-1.1.0.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/runtime-1.1.1.aar/4cd41f532876c887054bb71ed1b32fd6/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/modules-2/files-2.1/android.arch.persistence.room/common/1.1.1-rc1/5397b78fb7e122920aa14fe84062aa344e9d8fab/common-1.1.1-rc1.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/db-framework-1.1.1-rc1.aar/fce7bf88da80c615096a85809772c22d/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/db-1.1.1-rc1.aar/1d4092e699ef82a9dfe436d1e21535d1/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/5da58785c7c08d7cea9703412480e370/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/f67434979b7c8032f180328111cbef85/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/08caf46139ba86b3bedf61a091696fe0/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/b33e51cddb055fef2101fc93655eee15/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/37a5ebc216327bb5f230651f2724f31a/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/1262aee53c6456c2d189f78dbb7ab66f/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/8be9516af3e5f5fd8f89ce9ecf3fa774/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/5a1906419d94e5743c4558da78cbb454/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/8898140cab39291036bbc7194f1beca0/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/f6dc6a9be73ef0e2bf97ab2d2c926b2e/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/bd98c011c3cfbe566956b21c1fcebb2d/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/c5ee6853111e46b3c4c91079bd311ccc/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/d6fb9c30170d43314295f9b6e0a426e8/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/f94cc5b0fb0628e4ba3e283836830687/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/5d7634f6cc7c1e43774f292951cfa96f/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/eebed016e468790593dfc336b018a1ef/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/5f01221f5f625870213450fd1abb1697/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.android.support/collections/28.0.0/c1bcdade4d3cc2836130424a3f3e4182c666a745/collections-28.0.0.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/2281efd6976e3d34b39f814d445b4267/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/889c267d805b5c159112d23ab4d00545/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/a8b2efc1b8877357f06dbdb1df9ec988/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/76c28fa4712821129168e57d7ee600c3/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/c8332bdad5cbbf7463b7786484174683/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/3ec89e876f3a95dd6ff89325ed626165/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/a342d7edf42468a42e6c3eb270d648f0/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/491646632c33b2c30f804d255f095f1c/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/bd143d60c5f90754b886f0f0f8f02c2c/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/ddc19ff864f2986f85b4f4aaefe64e42/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/modules-2/files-2.1/android.arch.lifecycle/common/1.1.1/207a6efae6a3555e326de41f76bdadd9a239cbce/common-1.1.1.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/7895ab5a885997036dd43a0379108b35/jars/classes.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/android.arch.core/common/1.1.1/e55b70d1f5620db124b3e85a7f4bdc7bd48d9f95/common-1.1.1.jar(**.class)
--injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.android.support/support-annotations/27.1.1/39ded76b5e1ce1c5b2688e1d25cdc20ecee32007/support-annotations-27.1.1.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/play-services-ads-base-15.0.1.aar/7ea97172f2efe3f84632f94ae55282bc/jars/classes.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/mediation-sdk-4.10.1.aar/4244c336578ad8a5ad1a80a7d2de1529/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.android.support/support-annotations/28.0.0/ed73f5337a002d1fd24339d5fb08c2c9d9ca60d8/support-annotations-28.0.0.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/69028d0fbd104c9d7e1551a165fc84b5/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/abaaf0e091f58c8babc911acb706d9a2/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/adbe7d94fb11007ee2cb7c381d920ed4/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/0b55460b8fa5fe4956ec974f76c33f23/jars/classes.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.squareup.okio/okio/1.14.0/102d7be47241d781ef95f1581d414b0943053130/okio-1.14.0.jar(**.class)
--injars /home/rm3l/.gradle/caches/modules-2/files-2.1/org.rm3l/maoni-email/3.0.0-1/61adb9a28ca4230d8bb5fd0d89ebc4149a97f7c5/maoni-email-3.0.0-1.jar(**.class)
--injars /home/rm3l/.gradle/caches/modules-2/files-2.1/org.rm3l/maoni-common/6.0.0/4f3d76db9f1faeb9a4f3bd7daaa2192ed036c49e/maoni-common-6.0.0.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/drawableview-0.6.0.aar/b0013ee9418e2dcac05cf067cbc570b1/jars/classes.jar(**.class)
+-injars /home/rm3l/.gradle/caches/transforms-2/files-2.1/986a01cd2071e8c8ff60369c44ed61d5/jars/classes.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.squareup.leakcanary/leakcanary-watcher/1.5.4/5e3dadce30fd748563219945d867a2e96f287931/leakcanary-watcher-1.5.4.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/com.squareup.haha/haha/2.0.3/640a438d2d415c056ca6a673ac26b183b044e160/haha-2.0.3.jar(**.class)
--injars /home/rm3l/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.2.50/6b19a2fcc29d34878b3aab33fd5fcf70458a73df/kotlin-stdlib-common-1.2.50.jar(**.class)
+-injars /home/rm3l/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.3.21/f30e4a9897913e53d778f564110bafa1fef46643/kotlin-stdlib-common-1.3.21.jar(**.class)
 -injars /home/rm3l/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/13.0/919f0dfe192fb4e063e7dacadee7f8bb9a2672a9/annotations-13.0.jar(**.class)
--injars /home/rm3l/.gradle/caches/transforms-1/files-1.1/core-4.10.1.aar/0fe9e5b85ef30a2c8e9aeda351003730/jars/classes.jar(**.class)
--injars /home/rm3l/Projects/MobileDev/router-companion-android/common/build/intermediates/intermediate-jars/debug/classes/classes.jar(**.class)
--injars /home/rm3l/Projects/MobileDev/router-companion-android/libraries/parcelable/build/intermediates/intermediate-jars/debug/classes/classes.jar(**.class)
--injars /home/rm3l/Projects/MobileDev/router-companion-android/common/build/intermediates/intermediate-jars/debug/classes/dir(**.class)
--injars /home/rm3l/Projects/MobileDev/router-companion-android/libraries/parcelable/build/intermediates/intermediate-jars/debug/classes/dir(**.class)
--injars /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/javac/amazonDebug/compileAmazonDebugJavaWithJavac/classes(**.class)
+-injars /home/rm3l/Projects/MobileDev/router-companion-android/common/build/intermediates/runtime_library_classes/debug/classes.jar(**.class)
+-injars /home/rm3l/Projects/MobileDev/router-companion-android/libraries/parcelable/build/intermediates/runtime_library_classes/debug/classes.jar(**.class)
+-injars /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/javac/amazonDebug/classes(**.class)
 -injars /home/rm3l/Projects/MobileDev/router-companion-android/app/build/tmp/kotlin-classes/amazonDebug(**.class)
--injars /home/rm3l/Projects/MobileDev/router-companion-android/app/build/tmp/kapt3/classes/amazonDebug(**.class)
--injars /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/transforms/mergeJavaRes/amazon/debug/0.jar(!**.class)
+-injars /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_java_res/amazonDebug/out.jar(!**.class)
 -outjars /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/transforms/proguard/amazon/debug/0.jar
 
--libraryjars /home/rm3l/Android/Sdk/platforms/android-27/android.jar
--libraryjars /home/rm3l/Android/Sdk/build-tools/27.0.3/core-lambda-stubs.jar
--libraryjars /home/rm3l/Android/Sdk/platforms/android-27/optional/org.apache.http.legacy.jar
+-libraryjars /home/rm3l/Android/Sdk/platforms/android-28/android.jar
+-libraryjars /home/rm3l/Android/Sdk/build-tools/28.0.3/core-lambda-stubs.jar
+-libraryjars /home/rm3l/Android/Sdk/platforms/android-28/optional/org.apache.http.legacy.jar
+-libraryjars /home/rm3l/Android/Sdk/platforms/android-28/optional/android.test.mock.jar
+-libraryjars /home/rm3l/Android/Sdk/platforms/android-28/optional/android.test.base.jar
+-libraryjars /home/rm3l/Android/Sdk/platforms/android-28/optional/android.test.runner.jar
 
--dontskipnonpubliclibraryclassmembers
 -forceprocessing
 -printusage /home/rm3l/Projects/MobileDev/router-companion-android/app/build/outputs/mapping/amazon/debug/usage.txt
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
 -optimizationpasses 5
 -printmapping /home/rm3l/Projects/MobileDev/router-companion-android/app/build/outputs/mapping/amazon/debug/mapping.txt
 -dontusemixedcaseclassnames
--keepattributes SourceFile,LineNumberTable,SourceFile,LineNumberTable,Exceptions,Signature,Enclosing,InnerClasses,EnclosingMethod,*Annotation*,Signature,*Annotation*,Signature,Exceptions,InnerClasses,Signature,*Annotation*,*Annotation*,**,**,**,**,**,*Annotation*,*Annotation*,**,Exceptions
+-keepattributes SourceFile,LineNumberTable,SourceFile,LineNumberTable,Exceptions,Signature,Enclosing,InnerClasses,EnclosingMethod,*Annotation*,Signature,*Annotation*,Signature,Exceptions,InnerClasses,Signature,*Annotation*,*Annotation*,*Annotation*,*Annotation*
 -dontpreverify
 -verbose
 -dontnote okhttp3.internal.Platform
--dontwarn javax.annotation.**,org.ietf.jgss.**,com.jcraft.jzlib.**,sun.misc.**,**CanvasView,com.avocarrot.**,com.squareup.okhttp.**,okio.**,com.squareup.otto.*,com.squareup.leakcanary.**,retrofit2.**,com.google.errorprone.annotations.**,om.google.j2objc.annotations.**,com.google.common.collect.**,com.google.common.collect.MinMaxPriorityQueue,javax.annotation.**,javax.inject.**,sun.misc.Unsafe,com.google.common.collect.MinMaxPriorityQueue,com.google.common.util.concurrent.FuturesGetChecked**,javax.lang.model.element.Modifier,afu.org.checkerframework.**,org.checkerframework.**,com.fasterxml.jackson.**,org.apache.commons.logging.**,org.apache.http.**,com.amazonaws.http.**,com.amazonaws.metrics.**,me.panavtec.drawableview.internal.**,java.awt.**,javax.swing.**,javax.jms.**,javax.naming.**,javax.mail.**,java.beans.**,java.management.**,org.apache.log4j.**,kotlin.**,java.nio.**,org.json.**,java.util.Base64,java.util.Base64$Encoder,mbanje.kurt.fabbutton.FabButton$Behavior,org.osmdroid.tileprovider.modules.NetworkAvailabliltyCheck,com.mikepenz.iconics.**,com.evernote.android.job.gcm.**,com.evernote.android.job.util.GcmAvailableHelper,com.android.support.**,org.jetbrains.anko.appcompat.v7.**,okhttp3.**,com.squareup.haha.guava.**,com.squareup.haha.perflib.**,com.squareup.haha.trove.**,com.squareup.leakcanary.**,android.app.Notification,com.facebook.stetho.**,com.google.firebase.components.Component$Instantiation,android.security.NetworkSecurityPolicy,android.app.Notification,sun.misc.Unsafe,libcore.io.Memory,com.google.android.apps.common.proguard.UsedBy*,javax.annotation.**,org.checkerframework.**,okio.Okio,okio.DeflaterSink,com.evernote.android.job.gcm.**,com.evernote.android.job.GcmAvailableHelper,com.evernote.android.job.work.**,com.evernote.android.job.WorkManagerAvailableHelper,javax.annotation.Nullable,javax.annotation.ParametersAreNonnullByDefault,com.google.firebase.analytics.FirebaseAnalytics,com.google.firebase.analytics.FirebaseAnalytics$Event,com.google.firebase.analytics.FirebaseAnalytics$Param,android.arch.persistence.room.paging.**,edu.umd.cs.findbugs.annotations.SuppressFBWarnings
+-dontwarn javax.annotation.**,org.ietf.jgss.**,com.jcraft.jzlib.**,sun.misc.**,**CanvasView,com.squareup.okhttp.**,okio.**,com.squareup.otto.*,com.squareup.leakcanary.**,retrofit2.**,com.google.errorprone.annotations.**,om.google.j2objc.annotations.**,com.google.common.collect.**,com.google.common.collect.MinMaxPriorityQueue,javax.annotation.**,javax.inject.**,sun.misc.Unsafe,com.google.common.collect.MinMaxPriorityQueue,com.google.common.util.concurrent.FuturesGetChecked**,javax.lang.model.element.Modifier,afu.org.checkerframework.**,org.checkerframework.**,com.fasterxml.jackson.**,org.apache.commons.logging.**,org.apache.http.**,com.amazonaws.http.**,com.amazonaws.metrics.**,me.panavtec.drawableview.internal.**,java.awt.**,javax.swing.**,javax.jms.**,javax.naming.**,javax.mail.**,java.beans.**,java.management.**,org.apache.log4j.**,kotlin.**,java.nio.**,org.json.**,java.util.Base64,java.util.Base64$Encoder,mbanje.kurt.fabbutton.FabButton$Behavior,org.osmdroid.tileprovider.modules.NetworkAvailabliltyCheck,com.mikepenz.iconics.**,com.evernote.android.job.gcm.**,com.evernote.android.job.util.GcmAvailableHelper,com.android.support.**,org.jetbrains.anko.appcompat.v7.**,okhttp3.**,android.graphics.**,com.google.android.material.**,androidx.**,com.squareup.haha.guava.**,com.squareup.haha.perflib.**,com.squareup.haha.trove.**,com.squareup.leakcanary.**,android.app.Notification,com.facebook.stetho.**,com.google.firebase.components.Component$Instantiation,android.security.NetworkSecurityPolicy,android.app.Notification,sun.misc.Unsafe,libcore.io.Memory,com.google.android.apps.common.proguard.UsedBy*,javax.annotation.**,org.checkerframework.**,okio.Okio,okio.DeflaterSink,com.evernote.android.job.gcm.**,com.evernote.android.job.GcmAvailableHelper,com.evernote.android.job.work.**,com.evernote.android.job.WorkManagerAvailableHelper,javax.annotation.Nullable,javax.annotation.ParametersAreNonnullByDefault,com.google.firebase.analytics.FirebaseAnalytics,com.google.firebase.analytics.FirebaseAnalytics$Event,com.google.firebase.analytics.FirebaseAnalytics$Param,com.moat.**
 -printconfiguration /home/rm3l/Projects/MobileDev/router-companion-android/app/config.txt
 -dump /home/rm3l/Projects/MobileDev/router-companion-android/app/class_files.txt
 -printseeds /home/rm3l/Projects/MobileDev/router-companion-android/app/build/outputs/mapping/amazon/debug/seeds.txt
@@ -411,22 +428,18 @@
     public <methods>;
 }
 
--keep class com.avocarrot.** {
+# MoBFox : ads platform
+-keep class com.mobfox. {
     <fields>;
     <methods>;
 }
 
--keepclassmembers class com.avocarrot.** {
+-keep class com.mobfox.adapter. {
     <fields>;
     <methods>;
 }
 
--keep class com.avocarrot.androidsdk.** {
-    <fields>;
-    <methods>;
-}
-
--keepclassmembers class com.avocarrot.androidsdk.** {
+-keep class com.mobfox.sdk. {
     <fields>;
     <methods>;
 }
@@ -598,466 +611,451 @@
     public static ** valueOf(java.lang.String);
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:833
--keep class android.arch.lifecycle.ProcessLifecycleOwnerInitializer {
-    <init>(...);
+-keep class android.graphics.** {
+    <fields>;
+    <methods>;
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:144
+-keep class com.google.android.material.** {
+    <fields>;
+    <methods>;
+}
+
+-keep class androidx.** {
+    <fields>;
+    <methods>;
+}
+
+-keep interface  androidx.** {
+    <fields>;
+    <methods>;
+}
+
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:116
+-keep class android.support.v4.app.CoreComponentFactory {
+    <init>();
+}
+
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:138
 -keep class android.support.v4.content.FileProvider {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:764
--keep class androidx.work.impl.WorkManagerInitializer {
-    <init>(...);
-}
-
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:784
--keep class androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryChargingProxy {
-    <init>(...);
-}
-
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:792
--keep class androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryNotLowProxy {
-    <init>(...);
-}
-
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:808
--keep class androidx.work.impl.background.systemalarm.ConstraintProxy$NetworkStateProxy {
-    <init>(...);
-}
-
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:800
--keep class androidx.work.impl.background.systemalarm.ConstraintProxy$StorageNotLowProxy {
-    <init>(...);
-}
-
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:824
--keep class androidx.work.impl.background.systemalarm.ConstraintProxyUpdateReceiver {
-    <init>(...);
-}
-
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:815
--keep class androidx.work.impl.background.systemalarm.RescheduleReceiver {
-    <init>(...);
-}
-
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:770
--keep class androidx.work.impl.background.systemalarm.SystemAlarmService {
-    <init>(...);
-}
-
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:774
--keep class androidx.work.impl.background.systemjob.SystemJobService {
-    <init>(...);
-}
-
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:780
--keep class androidx.work.impl.utils.ForceStopRunnable$BroadcastReceiver {
-    <init>(...);
-}
-
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:577
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:571
 -keep class com.amazonaws.mobileconnectors.s3.transferutility.TransferService {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:847
--keep class com.avocarrot.sdk.CallbackJobService {
-    <init>(...);
-}
-
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:844
--keep class com.avocarrot.sdk.CallbackService {
-    <init>(...);
-}
-
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:839
--keep class com.avocarrot.sdk.mraid.MraidActivity {
-    <init>(...);
-}
-
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:701
--keep class com.avocarrot.sdk.nativead.vast.FullscreenActivity {
-    <init>(...);
-}
-
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:705
--keep class com.avocarrot.sdk.video.vast.VastActivity {
-    <init>(...);
-}
-
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:684
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:681
 -keep class com.crashlytics.android.CrashlyticsInitProvider {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:739
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:788
 -keep class com.evernote.android.job.JobBootReceiver {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:759
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:808
 -keep class com.evernote.android.job.JobRescheduleService {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:750
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:799
 -keep class com.evernote.android.job.gcm.PlatformGcmService {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:729
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:778
 -keep class com.evernote.android.job.v14.PlatformAlarmReceiver {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:721
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:770
 -keep class com.evernote.android.job.v14.PlatformAlarmService {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:725
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:774
 -keep class com.evernote.android.job.v14.PlatformAlarmServiceExact {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:717
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:766
 -keep class com.evernote.android.job.v21.PlatformJobService {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:438
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:432
 -keep class com.google.android.gms.ads.AdActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:690
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:686
+-keep class com.google.android.gms.ads.MobileAdsInitProvider {
+    <init>();
+}
+
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:723
 -keep class com.google.android.gms.common.api.GoogleApiActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:695
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:739
+-keep class com.google.android.gms.measurement.AppMeasurementInstallReferrerReceiver {
+    <init>();
+}
+
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:753
+-keep class com.google.android.gms.measurement.AppMeasurementJobService {
+    <init>();
+}
+
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:734
+-keep class com.google.android.gms.measurement.AppMeasurementReceiver {
+    <init>();
+}
+
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:749
+-keep class com.google.android.gms.measurement.AppMeasurementService {
+    <init>();
+}
+
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:692
+-keep class com.google.firebase.components.ComponentDiscoveryService {
+    <init>();
+}
+
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:703
+-keep class com.google.firebase.iid.FirebaseInstanceIdReceiver {
+    <init>();
+}
+
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:715
+-keep class com.google.firebase.iid.FirebaseInstanceIdService {
+    <init>();
+}
+
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:728
 -keep class com.google.firebase.provider.FirebaseInitProvider {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:682
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:679
 -keep class com.mikepenz.aboutlibraries.ui.LibsActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:662
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:623
+-keep class com.mobfox.sdk.services.MobFoxService {
+    <init>();
+}
+
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:659
 -keep class com.readystatesoftware.chuck.internal.data.ChuckContentProvider {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:678
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:675
 -keep class com.readystatesoftware.chuck.internal.support.ClearTransactionsService {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:667
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:664
 -keep class com.readystatesoftware.chuck.internal.ui.MainActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:673
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:670
 -keep class com.readystatesoftware.chuck.internal.ui.TransactionActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:633
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:630
 -keep class com.squareup.leakcanary.DisplayLeakService {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:638
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:635
 -keep class com.squareup.leakcanary.internal.DisplayLeakActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:629
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:626
 -keep class com.squareup.leakcanary.internal.HeapAnalyzerService {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:652
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:649
 -keep class com.squareup.leakcanary.internal.RequestStoragePermissionActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:710
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:759
 -keep class com.squareup.picasso.PicassoProvider {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:715
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:764
 -keep class org.rm3l.maoni.ui.MaoniActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:123
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:116
 -keep class org.rm3l.router_companion.RouterCompanionApplication {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:165
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:159
 -keep class org.rm3l.router_companion.SplashActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:483
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:477
 -keep class org.rm3l.router_companion.actions.ManageRouterAliasesActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:538
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:532
 -keep class org.rm3l.router_companion.actions.activity.OpenWebManagementPageActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:493
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:487
 -keep class org.rm3l.router_companion.actions.activity.SpeedTestActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:123
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:116
 -keep class org.rm3l.router_companion.backup.DDWRTCompanionBackupAgent {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:522
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:516
 -keep class org.rm3l.router_companion.deeplinks.DeepLinkActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:535
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:529
 -keep class org.rm3l.router_companion.deeplinks.RouterActionsDeepLinkActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:238
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:232
 -keep class org.rm3l.router_companion.donate.DonateActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:575
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:569
 -keep class org.rm3l.router_companion.feedback.SendFeedbackBroadcastReceiver {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:232
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:226
 -keep class org.rm3l.router_companion.help.ChangelogActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:226
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:220
 -keep class org.rm3l.router_companion.help.HelpActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:622
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:616
 -keep class org.rm3l.router_companion.job.firmware_update.FirmwareReleaseDownloadPageActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:200
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:194
 -keep class org.rm3l.router_companion.main.DDWRTMainActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:178
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:172
 -keep class org.rm3l.router_companion.mgmt.RouterManagementActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:544
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:538
 -keep class org.rm3l.router_companion.mgmt.register.ManageRouterFragmentActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:580
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:574
 -keep class org.rm3l.router_companion.service.RouterCompanionServiceImpl {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:302
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:296
 -keep class org.rm3l.router_companion.settings.PinLockPreferenceActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:287
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:281
 -keep class org.rm3l.router_companion.settings.RouterManagementSettingsActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:259
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:253
 -keep class org.rm3l.router_companion.settings.RouterSettingsActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:503
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:497
 -keep class org.rm3l.router_companion.settings.RouterSpeedTestSettingsActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:613
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:607
 -keep class org.rm3l.router_companion.tiles.admin.accessrestrictions.AddOrEditWANAccessPolicyActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:512
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:506
 -keep class org.rm3l.router_companion.tiles.dashboard.network.IPGeoActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:311
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:305
 -keep class org.rm3l.router_companion.tiles.services.vpn.client.EditOpenVPNClientSettingsActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:443
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:437
 -keep class org.rm3l.router_companion.tiles.services.wol.EditWOLDaemonSettingsActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:321
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:315
 -keep class org.rm3l.router_companion.tiles.status.router.RouterCpuInfoActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:330
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:324
 -keep class org.rm3l.router_companion.tiles.status.router.RouterMemInfoActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:249
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:243
 -keep class org.rm3l.router_companion.tiles.status.wan.WANMonthlyTrafficActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:339
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:333
 -keep class org.rm3l.router_companion.tiles.status.wireless.ActiveIPConnectionsDetailActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:473
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:467
 -keep class org.rm3l.router_companion.tiles.status.wireless.EditWirelessSecuritySettingsActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:278
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:272
 -keep class org.rm3l.router_companion.tiles.status.wireless.share.WifiSharingActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:565
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:559
 -keep class org.rm3l.router_companion.tiles.syslog.ViewSyslogActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:554
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:548
 -keep class org.rm3l.router_companion.welcome.GettingStartedActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:453
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:447
 -keep class org.rm3l.router_companion.widgets.UpgradeDialogAsActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:372
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:366
 -keep class org.rm3l.router_companion.widgets.home.actions.RouterActionsWidgetConfigureActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:358
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:352
 -keep class org.rm3l.router_companion.widgets.home.actions.RouterActionsWidgetProvider {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:460
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:454
 -keep class org.rm3l.router_companion.widgets.home.actions.RouterRebootWidgetConfirmationDialogFromWidgetActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:466
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:460
 -keep class org.rm3l.router_companion.widgets.home.wol.RouterWolWidgetConfirmationDialogFromWidgetActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:396
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:390
 -keep class org.rm3l.router_companion.widgets.home.wol.WOLWidgetConfigureActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:381
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:375
 -keep class org.rm3l.router_companion.widgets.home.wol.WOLWidgetProvider {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:404
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:398
 -keep class org.rm3l.router_companion.widgets.home.wol.WOLWidgetService {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:561
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:555
 -keep class org.wordpress.passcodelock.PasscodeManagePasswordActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/processAmazonDebugManifest/merged/AndroidManifest.xml:557
+# Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/build/intermediates/merged_manifests/amazonDebug/AndroidManifest.xml:551
 -keep class org.wordpress.passcodelock.PasscodeUnlockActivity {
-    <init>(...);
+    <init>();
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/design-27.1.1.aar/c613d90610ee0333340dd783174dccae/res/layout/design_bottom_navigation_item.xml:26
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/539093ebc0bf4054d3e51d5ba9cb4fab/res/layout/design_bottom_navigation_item.xml:27
 -keep class android.support.design.internal.BaselineLayout {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/design-27.1.1.aar/c613d90610ee0333340dd783174dccae/res/layout/design_navigation_item.xml:17
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/539093ebc0bf4054d3e51d5ba9cb4fab/res/layout/design_navigation_item.xml:17
 -keep class android.support.design.internal.NavigationMenuItemView {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/design-27.1.1.aar/c613d90610ee0333340dd783174dccae/res/layout/design_navigation_menu.xml:17
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/539093ebc0bf4054d3e51d5ba9cb4fab/res/layout/design_navigation_menu.xml:17
 -keep class android.support.design.internal.NavigationMenuView {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/design-27.1.1.aar/c613d90610ee0333340dd783174dccae/res/layout/design_layout_snackbar_include.xml:18
--keep class android.support.design.internal.SnackbarContentLayout {
-    <init>(...);
-}
-
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/wizard.xml:22
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/maoni-6.0.0.aar/00723116c50d54074d3ab0a39286b7f6/res/layout/maoni_activity_feedback.xml:31
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/library-1.1.0.aar/4f73d5c9566b9d7b0d6e9fb99d55ef7c/res/layout/chuck_activity_transaction.xml:25
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/library-1.1.0.aar/4f73d5c9566b9d7b0d6e9fb99d55ef7c/res/layout/chuck_activity_main.xml:24
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/a2c32d51a6a0eaa927c2057c4db61613/res/layout/maoni_activity_feedback.xml:31
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/1012f401e8066e0452dc8be28de3a6a7/res/layout/chuck_activity_transaction.xml:25
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/1012f401e8066e0452dc8be28de3a6a7/res/layout/chuck_activity_main.xml:24
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_main.xml:30
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_add_or_edit_wan_access_policy.xml:11
 -keep class android.support.design.widget.AppBarLayout {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/design-27.1.1.aar/c613d90610ee0333340dd783174dccae/res/layout/design_text_input_password_icon.xml:18
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/539093ebc0bf4054d3e51d5ba9cb4fab/res/layout/design_text_input_password_icon.xml:18
 -keep class android.support.design.widget.CheckableImageButton {
     <init>(...);
 }
 
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/wizard.xml:28
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/maoni-6.0.0.aar/00723116c50d54074d3ab0a39286b7f6/res/layout/maoni_activity_feedback.xml:38
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/a2c32d51a6a0eaa927c2057c4db61613/res/layout/maoni_activity_feedback.xml:38
 -keep class android.support.design.widget.CollapsingToolbarLayout {
     <init>(...);
 }
 
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/wizard.xml:15
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/maoni-6.0.0.aar/00723116c50d54074d3ab0a39286b7f6/res/layout/maoni_activity_feedback.xml:22
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/design-27.1.1.aar/c613d90610ee0333340dd783174dccae/res/layout/design_bottom_sheet_dialog.xml:26
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/library-1.1.0.aar/4f73d5c9566b9d7b0d6e9fb99d55ef7c/res/layout/chuck_activity_transaction.xml:17
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/a2c32d51a6a0eaa927c2057c4db61613/res/layout/maoni_activity_feedback.xml:22
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/539093ebc0bf4054d3e51d5ba9cb4fab/res/layout/design_bottom_sheet_dialog.xml:26
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/1012f401e8066e0452dc8be28de3a6a7/res/layout/chuck_activity_transaction.xml:17
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_router_management.xml:63
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_manage_router_aliases.xml:64
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_main.xml:23
@@ -1070,7 +1068,7 @@
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/tile_network_map_overview.xml:374
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/tile_admin_nvram.xml:199
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/tile_admin_access_restrictions_wan_access.xml:196
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/maoni-6.0.0.aar/00723116c50d54074d3ab0a39286b7f6/res/layout/maoni_activity_feedback.xml:77
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/a2c32d51a6a0eaa927c2057c4db61613/res/layout/maoni_activity_feedback.xml:77
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_wifi_sharing_qrcode.xml:86
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_web.xml:65
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_router_management.xml:81
@@ -1081,12 +1079,19 @@
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/design-27.1.1.aar/c613d90610ee0333340dd783174dccae/res/layout/design_layout_snackbar.xml:18
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/539093ebc0bf4054d3e51d5ba9cb4fab/res/layout/mtrl_layout_snackbar.xml:18
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/539093ebc0bf4054d3e51d5ba9cb4fab/res/layout/design_layout_snackbar.xml:18
 -keep class android.support.design.widget.Snackbar$SnackbarLayout {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/library-1.1.0.aar/4f73d5c9566b9d7b0d6e9fb99d55ef7c/res/layout/chuck_activity_transaction.xml:48
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/539093ebc0bf4054d3e51d5ba9cb4fab/res/layout/mtrl_layout_snackbar_include.xml:18
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/539093ebc0bf4054d3e51d5ba9cb4fab/res/layout/design_layout_snackbar_include.xml:18
+-keep class android.support.design.widget.SnackbarContentLayout {
+    <init>(...);
+}
+
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/1012f401e8066e0452dc8be28de3a6a7/res/layout/chuck_activity_transaction.xml:48
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_wifi_sharing.xml:17
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_main.xml:47
 -keep class android.support.design.widget.TabLayout {
@@ -1118,7 +1123,7 @@
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/tile_admin_nvram_edit.xml:73
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/tile_admin_nvram_add.xml:45
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/tile_admin_nvram.xml:102
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/maoni-6.0.0.aar/00723116c50d54074d3ab0a39286b7f6/res/layout/maoni_form_content.xml:47
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/a2c32d51a6a0eaa927c2057c4db61613/res/layout/maoni_form_content.xml:47
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/add_or_edit_router_alias.xml:53
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_router_add_local_ssid_lookup.xml:54
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_router_add.xml:119
@@ -1130,11 +1135,11 @@
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/wizardroid-1.3.1.aar/0818c1c78b3f31d4e3caf4ae4d1fb142/res/layout-v11/wizardroid_basic_wizard.xml:11
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/c84dd7f840a505d4f4d41158b771f65f/res/layout-v11/wizardroid_basic_wizard.xml:11
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/pager.xml:35
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/library-1.1.0.aar/4f73d5c9566b9d7b0d6e9fb99d55ef7c/res/layout/chuck_activity_transaction.xml:55
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/1012f401e8066e0452dc8be28de3a6a7/res/layout/chuck_activity_transaction.xml:55
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_wifi_sharing.xml:29
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/welcome-0.7.3.aar/babce91de78aaec35392b7f160bb867d/res/layout/activity_welcome.xml:24
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/dfe3a1b03f38f7cda8a0b5bf020ea7d3/res/layout/activity_welcome.xml:24
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_screen_slide.xml:17
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_main.xml:61
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_add_or_edit_wan_access_policy.xml:30
@@ -1142,8 +1147,8 @@
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/materialdrawer-6.0.8.aar/9a9ebdc12ea2724caf5502467d11622f/res/layout/material_drawer_fits_not.xml:2
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/materialdrawer-6.0.8.aar/9a9ebdc12ea2724caf5502467d11622f/res/layout/material_drawer.xml:2
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/2049207d034756f3c980d899c2d89bfc/res/layout/material_drawer_fits_not.xml:2
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/2049207d034756f3c980d899c2d89bfc/res/layout/material_drawer.xml:2
 -keep class android.support.v4.widget.DrawerLayout {
     <init>(...);
 }
@@ -1152,10 +1157,10 @@
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/wizard_manage_router_3_advanced_options_1_local_ssid_lookup_step.xml:3
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/wizard_manage_router_2_router_connection_details_step.xml:2
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/wizard_manage_router_1_basic_details_step.xml:2
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/maoni-6.0.0.aar/00723116c50d54074d3ab0a39286b7f6/res/layout/maoni_form_content.xml:22
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/library-1.1.0.aar/4f73d5c9566b9d7b0d6e9fb99d55ef7c/res/layout/chuck_fragment_transaction_payload.xml:17
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/library-1.1.0.aar/4f73d5c9566b9d7b0d6e9fb99d55ef7c/res/layout/chuck_fragment_transaction_overview.xml:17
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_alert_dialog_material.xml:41
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/a2c32d51a6a0eaa927c2057c4db61613/res/layout/maoni_form_content.xml:22
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/1012f401e8066e0452dc8be28de3a6a7/res/layout/chuck_fragment_transaction_payload.xml:17
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/1012f401e8066e0452dc8be28de3a6a7/res/layout/chuck_fragment_transaction_overview.xml:17
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_alert_dialog_material.xml:41
 -keep class android.support.v4.widget.NestedScrollView {
     <init>(...);
 }
@@ -1169,74 +1174,80 @@
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_select_dialog_material.xml:23
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_select_dialog_material.xml:23
 -keep class android.support.v7.app.AlertController$RecycleListView {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/preference-v7-27.1.1.aar/36315be915410e0c8edc12ff2cd34aee/res/layout/preference_material.xml:41
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/preference-v7-27.1.1.aar/36315be915410e0c8edc12ff2cd34aee/res/layout/preference_dropdown_material.xml:47
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/preference-v7-27.1.1.aar/36315be915410e0c8edc12ff2cd34aee/res/layout/preference_dropdown.xml:38
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/preference-v7-27.1.1.aar/36315be915410e0c8edc12ff2cd34aee/res/layout/preference.xml:32
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/preference-v7-27.1.1.aar/36315be915410e0c8edc12ff2cd34aee/res/layout/expand_button.xml:41
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/57a3bf8161a2bf5dcb8751918a4b9fef/res/layout-v17/preference_widget_seekbar_material.xml:41
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/57a3bf8161a2bf5dcb8751918a4b9fef/res/layout-v17/preference_dropdown_material.xml:47
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/57a3bf8161a2bf5dcb8751918a4b9fef/res/layout-v17/preference_category_material.xml:33
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/57a3bf8161a2bf5dcb8751918a4b9fef/res/layout/preference_widget_seekbar_material.xml:40
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/57a3bf8161a2bf5dcb8751918a4b9fef/res/layout/preference_material.xml:41
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/57a3bf8161a2bf5dcb8751918a4b9fef/res/layout/preference_dropdown_material.xml:47
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/57a3bf8161a2bf5dcb8751918a4b9fef/res/layout/preference_dropdown.xml:38
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/57a3bf8161a2bf5dcb8751918a4b9fef/res/layout/preference_category_material.xml:33
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/57a3bf8161a2bf5dcb8751918a4b9fef/res/layout/preference.xml:32
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/57a3bf8161a2bf5dcb8751918a4b9fef/res/layout/expand_button.xml:42
 -keep class android.support.v7.internal.widget.PreferenceImageView {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/preference-v7-27.1.1.aar/36315be915410e0c8edc12ff2cd34aee/res/layout/preference_widget_seekbar_material.xml:66
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/preference-v7-27.1.1.aar/36315be915410e0c8edc12ff2cd34aee/res/layout/preference_widget_seekbar.xml:66
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/57a3bf8161a2bf5dcb8751918a4b9fef/res/layout/preference_widget_seekbar_material.xml:79
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/57a3bf8161a2bf5dcb8751918a4b9fef/res/layout/preference_widget_seekbar.xml:66
 -keep class android.support.v7.preference.UnPressableLinearLayout {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_action_menu_item_layout.xml:17
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_action_menu_item_layout.xml:17
 -keep class android.support.v7.view.menu.ActionMenuItemView {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_expanded_menu_layout.xml:17
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_expanded_menu_layout.xml:17
 -keep class android.support.v7.view.menu.ExpandedMenuView {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_popup_menu_item_layout.xml:17
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_list_menu_item_layout.xml:17
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_popup_menu_item_layout.xml:17
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_list_menu_item_layout.xml:17
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_cascading_menu_item_layout.xml:20
 -keep class android.support.v7.view.menu.ListMenuItemView {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_screen_toolbar.xml:27
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_screen_toolbar.xml:27
 -keep class android.support.v7.widget.ActionBarContainer {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_screen_toolbar.xml:43
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_action_mode_bar.xml:19
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_screen_toolbar.xml:43
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_action_mode_bar.xml:19
 -keep class android.support.v7.widget.ActionBarContextView {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_screen_toolbar.xml:17
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_screen_toolbar.xml:17
 -keep class android.support.v7.widget.ActionBarOverlayLayout {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_action_menu_layout.xml:17
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_action_menu_layout.xml:17
 -keep class android.support.v7.widget.ActionMenuView {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_activity_chooser_view.xml:19
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_activity_chooser_view.xml:19
 -keep class android.support.v7.widget.ActivityChooserView$InnerLayout {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_alert_dialog_material.xml:18
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_alert_dialog_material.xml:18
 -keep class android.support.v7.widget.AlertDialogLayout {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_alert_dialog_button_bar_material.xml:26
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_alert_dialog_button_bar_material.xml:26
 -keep class android.support.v7.widget.ButtonBarLayout {
     <init>(...);
 }
@@ -1249,7 +1260,7 @@
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/speed_test_result_list_layout.xml:22
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/router_mgmt_layout_row_view.xml:22
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/router_alias.xml:22
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/aboutlibraries-6.1.0.aar/533d0627ac3072fc19dc3a34ae59f3f7/res/layout/listitem_opensource.xml:2
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/6e56a583db987794307e670baed4b12c/res/layout/listitem_opensource.xml:2
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/base_tiles_container_tile_recycler_row_view.xml:23
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_ip_connections_stats_cardview.xml:23
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_ip_connections_cardview.xml:23
@@ -1257,36 +1268,36 @@
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_screen_content_include.xml:19
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_screen_content_include.xml:19
 -keep class android.support.v7.widget.ContentFrameLayout {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_alert_dialog_title_material.xml:45
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_alert_dialog_title_material.xml:45
 -keep class android.support.v7.widget.DialogTitle {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_screen_simple_overlay_action_mode.xml:23
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_screen_simple_overlay_action_mode.xml:23
 -keep class android.support.v7.widget.FitWindowsFrameLayout {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_screen_simple.xml:17
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_dialog_title_material.xml:22
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_screen_simple.xml:17
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_dialog_title_material.xml:22
 -keep class android.support.v7.widget.FitWindowsLinearLayout {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/preference-v7-27.1.1.aar/36315be915410e0c8edc12ff2cd34aee/res/layout/preference_recyclerview.xml:18
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/materialdrawer-6.0.8.aar/9a9ebdc12ea2724caf5502467d11622f/res/layout/material_drawer_recycler_view.xml:2
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/aboutlibraries-6.1.0.aar/533d0627ac3072fc19dc3a34ae59f3f7/res/layout/fragment_opensource.xml:1
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/library-1.1.0.aar/4f73d5c9566b9d7b0d6e9fb99d55ef7c/res/layout/chuck_fragment_transaction_list.xml:17
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/57a3bf8161a2bf5dcb8751918a4b9fef/res/layout/preference_recyclerview.xml:18
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/2049207d034756f3c980d899c2d89bfc/res/layout/material_drawer_recycler_view.xml:2
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/6e56a583db987794307e670baed4b12c/res/layout/fragment_opensource.xml:1
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/1012f401e8066e0452dc8be28de3a6a7/res/layout/chuck_fragment_transaction_list.xml:17
 -keep class android.support.v7.widget.RecyclerView {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_search_view.xml:75
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_search_view.xml:75
 -keep class android.support.v7.widget.SearchView$SearchAutoComplete {
     <init>(...);
 }
@@ -1300,15 +1311,15 @@
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/tile_services_pptp_client.xml:58
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/tile_services_openvpn_server.xml:58
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/tile_services_openvpn_client.xml:58
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/preference-v7-27.1.1.aar/36315be915410e0c8edc12ff2cd34aee/res/layout/preference_widget_switch_compat.xml:20
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/materialdrawer-6.0.8.aar/9a9ebdc12ea2724caf5502467d11622f/res/layout/material_drawer_item_switch.xml:58
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/materialdrawer-6.0.8.aar/9a9ebdc12ea2724caf5502467d11622f/res/layout/material_drawer_item_secondary_switch.xml:58
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/57a3bf8161a2bf5dcb8751918a4b9fef/res/layout/preference_widget_switch_compat.xml:20
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/2049207d034756f3c980d899c2d89bfc/res/layout/material_drawer_item_switch.xml:58
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/2049207d034756f3c980d899c2d89bfc/res/layout/material_drawer_item_secondary_switch.xml:58
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_router_import_aliases.xml:82
 -keep class android.support.v7.widget.SwitchCompat {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout-v26/abc_screen_toolbar.xml:37
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout-v26/abc_screen_toolbar.xml:37
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/wizard.xml:62
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/tile_status_wireless_iface_qrcode.xml:29
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/tile_status_wan_monthly_traffic_chart.xml:30
@@ -1318,10 +1329,10 @@
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/tile_status_active_ip_connections.xml:24
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/settings.xml:6
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/new_activity_router_add.xml:11
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/maoni-6.0.0.aar/00723116c50d54074d3ab0a39286b7f6/res/layout/maoni_screenshot_preview.xml:29
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/maoni-6.0.0.aar/00723116c50d54074d3ab0a39286b7f6/res/layout/maoni_activity_feedback.xml:60
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/library-1.1.0.aar/4f73d5c9566b9d7b0d6e9fb99d55ef7c/res/layout/chuck_activity_transaction.xml:31
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/library-1.1.0.aar/4f73d5c9566b9d7b0d6e9fb99d55ef7c/res/layout/chuck_activity_main.xml:30
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/a2c32d51a6a0eaa927c2057c4db61613/res/layout/maoni_screenshot_preview.xml:29
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/a2c32d51a6a0eaa927c2057c4db61613/res/layout/maoni_activity_feedback.xml:60
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/1012f401e8066e0452dc8be28de3a6a7/res/layout/chuck_activity_transaction.xml:31
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/1012f401e8066e0452dc8be28de3a6a7/res/layout/chuck_activity_main.xml:30
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_wol_daemon_settings.xml:29
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_wireless_security_settings.xml:29
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_wifi_sharing.xml:10
@@ -1329,7 +1340,7 @@
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_speedtest.xml:46
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_router_management_toolbar.xml:22
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_openvpn_client_settings.xml:29
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/aboutlibraries-6.1.0.aar/533d0627ac3072fc19dc3a34ae59f3f7/res/layout/activity_opensource.xml:7
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/6e56a583db987794307e670baed4b12c/res/layout/activity_opensource.xml:7
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_manage_router_aliases_toolbar.xml:22
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_main_toolbar.xml:22
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_main.xml:37
@@ -1337,13 +1348,13 @@
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_feedback.xml:12
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/activity_add_or_edit_wan_access_policy.xml:18
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/actionswidget_configure.xml:8
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_screen_toolbar.xml:36
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_screen_toolbar.xml:36
 -keep class android.support.v7.widget.Toolbar {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_screen_simple_overlay_action_mode.xml:32
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_screen_simple.xml:25
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_screen_simple_overlay_action_mode.xml:32
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_screen_simple.xml:25
 -keep class android.support.v7.widget.ViewStubCompat {
     <init>(...);
 }
@@ -1353,40 +1364,20 @@
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_alert_dialog_title_material.xml:56
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_alert_dialog_material.xml:52
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/2e29f41683b747c8d39e38af68df6156/res/layout/abc_alert_dialog_button_bar_material.xml:43
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_alert_dialog_title_material.xml:56
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_alert_dialog_material.xml:52
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/121fcc82e3387891e57c297873139211/res/layout/abc_alert_dialog_button_bar_material.xml:43
 -keep class android.widget.Space {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/customtabs-27.1.1.aar/87a824d9938d5ae80c58c25f1e58ac46/res/layout/browser_actions_context_menu_page.xml:5
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/4927f228b177b29b627ac4a1a78ed425/res/layout/browser_actions_context_menu_page.xml:5
 -keep class androidx.browser.browseractions.BrowserActionsFallbackMenuView {
     <init>(...);
 }
 
 # Referenced at /home/rm3l/Projects/MobileDev/router-companion-android/app/src/main/res/layout/pager.xml:29
 -keep class com.android.common.view.SlidingTabLayout {
-    <init>(...);
-}
-
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/mediation-sdk-nativead-4.10.1.aar/04b458c2c9dded8292caeda2ab96474f/res/layout/avo_nativead_feed.xml:1
--keep class com.avocarrot.sdk.nativead.FeedNativeAdView {
-    <init>(...);
-}
-
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/mediation-sdk-nativead-4.10.1.aar/04b458c2c9dded8292caeda2ab96474f/res/layout/avo_nativead_fullscreen.xml:1
--keep class com.avocarrot.sdk.nativead.FullscreenNativeAdView {
-    <init>(...);
-}
-
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/mediation-sdk-nativead-4.10.1.aar/04b458c2c9dded8292caeda2ab96474f/res/layout/avo_nativead_grid.xml:1
--keep class com.avocarrot.sdk.nativead.GridNativeAdView {
-    <init>(...);
-}
-
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/mediation-sdk-nativead-4.10.1.aar/04b458c2c9dded8292caeda2ab96474f/res/layout/avo_nativead_list.xml:1
--keep class com.avocarrot.sdk.nativead.ListNativeAdView {
     <init>(...);
 }
 
@@ -1447,21 +1438,26 @@
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/materialdrawer-6.0.8.aar/9a9ebdc12ea2724caf5502467d11622f/res/layout/material_drawer_item_profile.xml:22
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/materialdrawer-6.0.8.aar/9a9ebdc12ea2724caf5502467d11622f/res/layout/material_drawer_item_mini_profile.xml:6
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/materialdrawer-6.0.8.aar/9a9ebdc12ea2724caf5502467d11622f/res/layout/material_drawer_header.xml:17
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/materialdrawer-6.0.8.aar/9a9ebdc12ea2724caf5502467d11622f/res/layout/material_drawer_compact_header.xml:18
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/2049207d034756f3c980d899c2d89bfc/res/layout/material_drawer_item_profile.xml:22
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/2049207d034756f3c980d899c2d89bfc/res/layout/material_drawer_item_mini_profile.xml:6
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/2049207d034756f3c980d899c2d89bfc/res/layout/material_drawer_header.xml:17
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/2049207d034756f3c980d899c2d89bfc/res/layout/material_drawer_compact_header.xml:18
 -keep class com.mikepenz.materialdrawer.view.BezelImageView {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/materialize-1.1.2.aar/9475c2c7150f3544dd610715d56430c0/res/layout/materialize.xml:5
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/74357c157397ee02d62782102c002c36/res/layout/materialize.xml:5
 -keep class com.mikepenz.materialize.view.ScrimInsetsFrameLayout {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/materialdrawer-6.0.8.aar/9a9ebdc12ea2724caf5502467d11622f/res/layout/material_drawer_slider.xml:2
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/2049207d034756f3c980d899c2d89bfc/res/layout/material_drawer_slider.xml:2
 -keep class com.mikepenz.materialize.view.ScrimInsetsRelativeLayout {
+    <init>(...);
+}
+
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/7b62ffddc9e555b7689d3cc6a3c058ef/res/layout/banner_xml.xml:5
+-keep class com.mobfox.sdk.bannerads.Banner {
     <init>(...);
 }
 
@@ -1471,27 +1467,27 @@
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/leakcanary-android-1.5.4.aar/00215917158ef786f44ce75a542ec84f/res/layout/leak_canary_ref_row.xml:24
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/ad76da34c135d30f9a0deb837ceda343/res/layout/leak_canary_ref_row.xml:24
 -keep class com.squareup.leakcanary.internal.DisplayLeakConnectorView {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/leakcanary-android-1.5.4.aar/00215917158ef786f44ce75a542ec84f/res/layout/leak_canary_ref_row.xml:40
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/ad76da34c135d30f9a0deb837ceda343/res/layout/leak_canary_ref_row.xml:40
 -keep class com.squareup.leakcanary.internal.MoreDetailsView {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/welcome-0.7.3.aar/babce91de78aaec35392b7f160bb867d/res/layout/activity_welcome.xml:12
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/dfe3a1b03f38f7cda8a0b5bf020ea7d3/res/layout/activity_welcome.xml:12
 -keep class com.stephentuso.welcome.ui.view.WelcomeScreenBackgroundView {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/welcome-0.7.3.aar/babce91de78aaec35392b7f160bb867d/res/layout/activity_welcome.xml:60
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/dfe3a1b03f38f7cda8a0b5bf020ea7d3/res/layout/activity_welcome.xml:60
 -keep class com.stephentuso.welcome.ui.view.WelcomeScreenViewPagerIndicator {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/fabbutton-1.2.4.aar/2dea8f47c7c1dceb6b4ee5279bbaf464/res/layout/widget_fab_button.xml:31
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/3a7a6d999ba34038f59e62ba8d13a179/res/layout/widget_fab_button.xml:31
 -keep class mbanje.kurt.fabbutton.CircleImageView {
     <init>(...);
 }
@@ -1501,12 +1497,12 @@
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/fabbutton-1.2.4.aar/2dea8f47c7c1dceb6b4ee5279bbaf464/res/layout/widget_fab_button.xml:40
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/3a7a6d999ba34038f59e62ba8d13a179/res/layout/widget_fab_button.xml:40
 -keep class mbanje.kurt.fabbutton.ProgressRingView {
     <init>(...);
 }
 
-# Referenced at /home/rm3l/.gradle/caches/transforms-1/files-1.1/maoni-6.0.0.aar/00723116c50d54074d3ab0a39286b7f6/res/layout/maoni_screenshot_preview.xml:114
+# Referenced at /home/rm3l/.gradle/caches/transforms-2/files-2.1/a2c32d51a6a0eaa927c2057c4db61613/res/layout/maoni_screenshot_preview.xml:114
 -keep class me.panavtec.drawableview.DrawableView {
     <init>(...);
 }
@@ -1618,29 +1614,7 @@
     public <init>();
 }
 
-# Copyright (C) 2015 The Android Open Source Project
-# 
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-# 
-#      http://www.apache.org/licenses/LICENSE-2.0
-# 
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# Preference objects are inflated via reflection
--keep public class android.support.v7.preference.Preference {
-    public <init>(android.content.Context,android.util.AttributeSet);
-}
-
--keep public class * extends android.support.v7.preference.Preference {
-    public <init>(android.content.Context,android.util.AttributeSet);
-}
-
-# Keep implemtations of the AdMob mediation adapter interfaces. Adapters for
+# Keep implementations of the AdMob mediation adapter interfaces. Adapters for
 # third party ad networks implement these interfaces and are invoked by the
 # AdMob SDK via reflection.
 -keep class * extends com.google.android.gms.ads.mediation.MediationAdapter {
@@ -1663,23 +1637,75 @@
     public <methods>;
 }
 
+-keep class * extends com.google.android.gms.ads.mediation.MediationAdNetworkAdapter {
+    public <fields>;
+    public <methods>;
+}
+
+-keep class * extends com.google.android.gms.ads.mediation.Adapter {
+    public <fields>;
+    public <methods>;
+}
+
 # We keep all fields for every generated proto file as the runtime uses
 # reflection over them that ProGuard cannot detect. Without this keep
 # rule, fields may be removed that would cause runtime failures.
--keepclassmembers class * extends com.google.android.gms.internal.ads.zzbbo {
+-keepclassmembers class * extends com.google.android.gms.internal.ads.zzdoa {
     <fields>;
 }
 
 # We keep all fields for every generated proto file as the runtime uses
 # reflection over them that ProGuard cannot detect. Without this keep
 # rule, fields may be removed that would cause runtime failures.
--keepclassmembers class * extends com.google.android.gms.internal.icing.zzck {
+-keepclassmembers class * extends com.google.android.gms.internal.icing.zzdj {
+    <fields>;
+}
+
+# We keep all fields for every generated proto file as the runtime uses
+# reflection over them that ProGuard cannot detect. Without this keep
+# rule, fields may be removed that would cause runtime failures.
+-keepclassmembers class * extends com.google.android.gms.internal.measurement.zzez {
     <fields>;
 }
 
 # b/35135904 Ensure that proguard will not strip the mResultGuardian.
 -keepclassmembers class com.google.android.gms.common.api.internal.BasePendingResult {
     com.google.android.gms.common.api.internal.BasePendingResult$ReleasableResultGuardian mResultGuardian;
+}
+
+# We keep all fields for every generated proto file as the runtime uses
+# reflection over them that ProGuard cannot detect. Without this keep
+# rule, fields may be removed that would cause runtime failures.
+-keepclassmembers class * extends com.google.android.gms.internal.measurement.zzez {
+    <fields>;
+}
+
+# We keep all fields for every generated proto file as the runtime uses
+# reflection over them that ProGuard cannot detect. Without this keep
+# rule, fields may be removed that would cause runtime failures.
+-keepclassmembers class * extends com.google.android.gms.internal.measurement.zzez {
+    <fields>;
+}
+
+# We keep all fields for every generated proto file as the runtime uses
+# reflection over them that ProGuard cannot detect. Without this keep
+# rule, fields may be removed that would cause runtime failures.
+-keepclassmembers class * extends com.google.android.gms.internal.measurement.zzez {
+    <fields>;
+}
+
+# We keep all fields for every generated proto file as the runtime uses
+# reflection over them that ProGuard cannot detect. Without this keep
+# rule, fields may be removed that would cause runtime failures.
+-keepclassmembers class * extends com.google.android.gms.internal.measurement.zzez {
+    <fields>;
+}
+
+# We keep all fields for every generated proto file as the runtime uses
+# reflection over them that ProGuard cannot detect. Without this keep
+# rule, fields may be removed that would cause runtime failures.
+-keepclassmembers class * extends com.google.android.gms.internal.measurement.zzez {
+    <fields>;
 }
 
 # Proguard flags for consumers of the Google Play services SDK
@@ -1747,10 +1773,33 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+# Preference objects are inflated via reflection
+-keep public class android.support.v7.preference.Preference {
+    public <init>(android.content.Context,android.util.AttributeSet);
+}
+
+-keep public class * extends android.support.v7.preference.Preference {
+    public <init>(android.content.Context,android.util.AttributeSet);
+}
+
+# Copyright (C) 2015 The Android Open Source Project
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#      http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 # When layoutManager xml attribute is used, RecyclerView inflates
 # LayoutManagers' constructors using reflection.
 -keep public class * extends android.support.v7.widget.RecyclerView$LayoutManager {
-    public <init>(...);
+    public <init>(android.content.Context,android.util.AttributeSet,int,int);
+    public <init>();
 }
 
 # Copyright (C) 2018 The Android Open Source Project
@@ -1770,409 +1819,10 @@
 # removed when we stop supporting AAPT1 builds.
 -keep,allowshrinking class android.support.v7.app.AppCompatViewInflater
 
--keep public interface  com.avocarrot.sdk.banner.BannerAd {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.banner.mediation.BannerMediationAdapter {
-    <fields>;
-    <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.banner.mediation.BannerMediationListener {
-    <fields>;
-    <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.banner.mediation.BannerMediationAdapterBuilder {
-    <fields>;
-    <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.banner.listeners.** {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.banner.BannerAdPool {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.banner.BannerAdCache {
-    public <fields>;
-    public <methods>;
-}
-
--keep class com.avocarrot.sdk.network.** {
-    <fields>;
-    <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.interstitial.InterstitialAd {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.interstitial.mediation.InterstitialMediationAdapterBuilder {
-    <fields>;
-    <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.interstitial.mediation.InterstitialMediationAdapter {
-    <fields>;
-    <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.interstitial.mediation.InterstitialMediationListener {
-    <fields>;
-    <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.interstitial.listeners.** {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.interstitial.InterstitialAdPool {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.interstitial.InterstitialAdCache {
-    <fields>;
-    <methods>;
-}
-
--keep class com.avocarrot.sdk.network.** {
-    <fields>;
-    <methods>;
-}
-
--keep interface  com.avocarrot.sdk.nativead.mediation.NativeMediationListener {
-    <fields>;
-    <methods>;
-}
-
--keep interface  com.avocarrot.sdk.nativead.mediation.NativeMediationAdapter {
-    <fields>;
-    <methods>;
-}
-
--keep interface  com.avocarrot.sdk.nativead.mediation.NativeMediationAdapterBuilder {
-    <fields>;
-    <methods>;
-}
-
--keep interface  com.avocarrot.sdk.nativead.listeners.NativeAdVastPlayerViewListener {
-    <fields>;
-    <methods>;
-}
-
--keep interface  com.avocarrot.sdk.nativead.listeners.NativeAdCallback {
-    <fields>;
-    <methods>;
-}
-
--keep interface  com.avocarrot.sdk.nativead.listeners.StreamNativeAdCallback {
-    <fields>;
-    <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.nativead.NativeAd {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.adapters.AvocarrotNativeAdapter {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.adapters.ServerAdNativeMediationAdapter {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.NativeAdPool {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.NativeAdView {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.NativeAdView$Builder {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.NativeAdView$Builder$** {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.NativeAdView$Attributes {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.NativeAdView$Attributes$** {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.NativeAdView$MediaParams {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.NativeAdView$MediaParams$Builder {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.StreamAdBaseAdapter {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.StreamAdBaseAdapter$Builder {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.json2view.DynamicViewId {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.mediation.NativeMediationAdapterRegistry {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.NativeAdConfig {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.NativeAdConfig$Builder {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.NativeExpressAdSize {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.NativeExpressAdSize$Builder {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.mediation.VastLoadable {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.utils.MediaStorage {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.model.AdData {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.vast.NativeVastPlayerView {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.StreamAdSource {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.recyclerview.StreamAdRecyclerAdapter {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.mediation.NativeAdVastCacheLoader {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.mediation.NativeAdVastLoader {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.network.MediaStorageLoadable {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.NativeAdCache {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.json2view.DynamicNativeAdView {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.ListNativeAdView {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.FullscreenNativeAdView {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.FeedNativeAdView {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.GridNativeAdView {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.recyclerview.** {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.json2view.** {
-    public <fields>;
-    public <methods>;
-}
-
--keep class com.avocarrot.sdk.network.** {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativeassets.MediationInfo {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativeassets.MediationInfo$Builder {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativeassets.NativeAssetsAd {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativeassets.NativeAssetsAdPool {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativeassets.NativeAssetsConfig {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativeassets.NativeAssetsConfig$Builder {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativeassets.NativeAssetsAdCache {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativeassets.mediation.NativeAdResourceLoader {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativeassets.mediation.NativeAdResourceLoader$Listener {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativeassets.mediation.NativeAdResourceLoaderOptions {
-    <fields>;
-    <methods>;
-}
-
--keep interface  com.avocarrot.sdk.nativeassets.listeners.NativeAssetsAdCallback {
-    <fields>;
-    <methods>;
-}
-
--keep class com.avocarrot.sdk.network.** {
-    <fields>;
-    <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.video.VideoAd {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.video.mediation.VideoMediationAdapterBuilder {
-    <fields>;
-    <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.video.mediation.VideoMediationAdapter {
-    <fields>;
-    <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.video.mediation.VideoMediationListener {
-    <fields>;
-    <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.video.listeners.** {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.video.VideoAdPool {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.video.VideoAdCache {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.video.adapters.ServerAdVideoMediationAdapter {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.video.VideoAdPlayerViewFactory {
-    public <fields>;
-    public <methods>;
-}
-
--keep class com.avocarrot.sdk.network.** {
-    <fields>;
-    <methods>;
+# aapt is not able to read app::actionViewClass and app:actionProviderClass to produce proguard
+# keep rules. Add a commonly used SearchView to the keep list until b/109831488 is resolved.
+-keep class android.support.v7.widget.SearchView {
+    <init>(...);
 }
 
 -keep public class com.evernote.android.job.v21.PlatformJobService
@@ -2188,20 +1838,6 @@
 -keep public class com.evernote.android.job.gcm.PlatformGcmService
 
 -keep public class com.evernote.android.job.work.PlatformWorker
-
--keep class * extends androidx.work.Worker
-
--keep class * extends androidx.work.InputMerger
-
-# Worker#internalInit is marked as @Keep
-# We need to keep Data and Extras for the method descriptor of internalInit.
--keep class androidx.work.Data
-
--keep class androidx.work.impl.Extras
-
-# We reflectively try and instantiate FirebaseJobScheduler when we find a Firebase dependency
-# on the classpath.
--keep class androidx.work.impl.background.firebase.FirebaseJobScheduler
 
 # Fabric Proguard Config
 -keep class com.google.android.gms.common.GooglePlayServicesUtil {
@@ -2219,6 +1855,25 @@
     <methods>;
 }
 
+# Copyright (C) 2016 The Android Open Source Project
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#      http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# keep setters in VectorDrawables so that animations can still work.
+-keepclassmembers class android.support.graphics.drawable.VectorDrawableCompat$* {
+    void set*(***);
+    *** get*();
+}
+
 # Copyright (C) 2017 The Android Open Source Project
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -2232,9 +1887,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# FragmentTransitionSupport is instantiated in support-fragment via reflection.
--keep public class android.support.transition.FragmentTransitionSupport
-
 # Keep a field in transition that is used to keep a reference to weakly-referenced object
 -keepclassmembers class android.support.transition.ChangeBounds$* extends android.animation.AnimatorListenerAdapter {
     android.support.transition.ChangeBounds$ViewBounds mViewBounds;
@@ -2258,27 +1910,37 @@
     public static final android.os.Parcelable$Creator *;
 }
 
--keep class * extends android.arch.lifecycle.AndroidViewModel {
-    <init>(android.app.Application);
+# Prevent Parcelable objects from being removed or renamed.
+-keep class android.support.mediacompat.** extends android.os.Parcelable {
+    public static final android.os.Parcelable$Creator *;
 }
 
-# Copyright (C) 2016 The Android Open Source Project
-# 
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-# 
-#      http://www.apache.org/licenses/LICENSE-2.0
-# 
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# keep setters in VectorDrawables so that animations can still work.
--keepclassmembers class android.support.graphics.drawable.VectorDrawableCompat$* {
-    void set*(***);
-    *** get*();
+-keep class android.support.v4.media.Audio* extends android.os.Parcelable {
+    public static final android.os.Parcelable$Creator *;
+}
+
+-keep class android.support.v4.media.MediaBrowserCompatUtils* extends android.os.Parcelable {
+    public static final android.os.Parcelable$Creator *;
+}
+
+-keep class android.support.v4.media.MediaBrowserProtocol* extends android.os.Parcelable {
+    public static final android.os.Parcelable$Creator *;
+}
+
+-keep class android.support.v4.media.MediaBrowserService* extends android.os.Parcelable {
+    public static final android.os.Parcelable$Creator *;
+}
+
+-keep class android.support.v4.media.Volume* extends android.os.Parcelable {
+    public static final android.os.Parcelable$Creator *;
+}
+
+-keep class android.support.v4.media.app.** extends android.os.Parcelable {
+    public static final android.os.Parcelable$Creator *;
+}
+
+-keep class android.support.v4.media.session.MediaButton* extends android.os.Parcelable {
+    public static final android.os.Parcelable$Creator *;
 }
 
 # Copyright (C) 2016 The Android Open Source Project
@@ -2300,510 +1962,22 @@
     public <init>();
 }
 
--keep public class com.avocarrot.sdk.mraid.MraidActivity {
-    public <fields>;
-    public <methods>;
-}
+# aapt2 is not (yet) keeping FQCNs defined in the appComponentFactory <application> attribute
+-keep class android.support.v4.app.CoreComponentFactory
 
--keep public class com.avocarrot.sdk.mraid.MRAIDBroadcastReceiver {
-    public <fields>;
-    public <methods>;
-}
+-keep public class * extends androidx.versionedparcelable.VersionedParcelable
 
--keep public interface  com.avocarrot.sdk.mraid.MRAIDBroadcastReceiver$Listener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.mraid.MRAIDNativeFeatureListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.mraid.MRAIDView {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.mraid.MRAIDViewListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.mraid.MRAIDWebChromeClient {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.mraid.internal.MRAIDLog {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.mraid.internal.MRAIDLog$Logger {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.mraid.WebViewPopup {
-    public <fields>;
-    public <methods>;
-}
-
--keepclassmembers class com.avocarrot.sdk.mraid.WebViewPopup {
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.Reflection {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.Reflection$MethodBuilder {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.ReflectionMethodBuilderFactory {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.mraid.MraidActionException {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class * extends android.arch.persistence.room.RoomDatabase
-
--keep public class com.avocarrot.sdk.vast.util.VASTLog {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vast.util.VASTLog$Logger {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.video.vast.VASTPlayer {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.video.vast.VASTPlayer$VASTPlayerListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.domain.Vast {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.player.ui.BaseVastPlayerView {
-    public protected <fields>;
-    public protected <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.player.ui.BaseVastPlayerView$Builder {
-    public protected <fields>;
-    public protected <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.player.ui.VastWebView {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.player.TinyScheduler {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.player.TinyScheduler$Listener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.player.ui.ActivityLifecycleCallbacksAdapter {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.player.ui.RelativeLayoutParams {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.player.VastPlayerFactory {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.player.ui.FrameLayoutParams {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.domain.MediaFiles$Picker {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.domain.Companion$Picker {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.domain.Icon$Picker {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.domain.CacheStatus {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.domain.CacheStatus$Status {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.domain.VastCompanionAdModel {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.domain.VastIconModel {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.domain.VastModel$Builder {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.domain.VastModel$Setter {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.domain.VastModel$Processor {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.domain.VastMediaModel {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.domain.VastMediaModel$** {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.EventManager {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.EventSubscriber {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.VastMediaLoadingEventSubscriber {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.VastMediaLoadingEventSubscriber$** {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.player.VastPlayer {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.player.VastPlayerState {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.player.tracking.EventTracker {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.player.tracking.EventTracker$Builder {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.player.VastPlayerState$** {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.player.VastEventReceiver {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.player.VastEventReceiver$Callback {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vast.PlayerViewFactory {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vast.VideoAdPlayerViewListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vast.player.VideoPlayerViewProxy {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.VpaidAd {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.VpaidAdRequests {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.VpaidBridgeMethods {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.VpaidBridgeMethods {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.PlayerStateListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.ViewModeChangeListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidAcceptInvitationListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidAdSizeChangeListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidAdStateChangeListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidBridgeCallbackListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidCallbackHandler {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidCallbackResultListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidClickListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidDurationChangeListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidErrorListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidExpandChangeListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidHandshakeResultListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidImpressionListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidInteractionListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidPauseListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidPlayingListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidRemainingTimeChangeListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidSkippableStateChangeListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidUserMinimizeListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidVideoPlaybackListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.listeners.VpaidVolumeChangeListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vpaid.VpaidEventTrackerWrapper {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vpaid.VpaidJavascriptInterface {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.player.ExpectedVpaidResponse {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vpaid.player.TimeoutHandler {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.player.TimeoutListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vpaid.player.VpaidInterfaceTimeoutController {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vpaid.player.VpaidPlayer {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.player.VpaidPlayerState {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vpaid.player.VpaidPlayerStateValidator {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vpaid.player.VpaidPlayerStub {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vpaid.ui.listeners.OnPageFinishedListener.java
-
--keep public interface  com.avocarrot.sdk.vpaid.ui.listeners.PauseResumeLifecycleCallbacksListener.java
-
--keep public class com.avocarrot.sdk.vast.domain.IconPicker {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.domain.CompanionAdPicker {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.domain.MediaPicker {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.domain.VastModel {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.domain.VastModel$Builder {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.domain.VastModel$Processor {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.vast.domain.MediaFileMatcherFactory {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.vast.VideoAdPlayerViewListener {
+-keep public class android.support.**Parcelizer {
     <fields>;
     <methods>;
 }
 
--keep class com.avocarrot.sdk.network.** {
+-keep public class androidx.**Parcelizer {
     <fields>;
     <methods>;
 }
+
+-keep public class androidx.versionedparcelable.ParcelImpl
 
 -keepclassmembers enum  android.arch.lifecycle.Lifecycle$Event {
     <fields>;
@@ -2826,894 +2000,42 @@
     <init>();
 }
 
--keep public class com.avocarrot.sdk.Avocarrot {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.BuildConfig {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.CallbackService {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.base.Ad {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.base.AdSource {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.base.LifecycleAdSource {
+-keep @android.support.annotation.Keep class * {
     <fields>;
     <methods>;
 }
 
--keep public interface  com.avocarrot.sdk.base.validators.AdSourceValidator {
-    public <fields>;
-    public <methods>;
+-keepclasseswithmembers class * {
+    @android.support.annotation.Keep
+    <methods>;
 }
 
--keep public class com.avocarrot.sdk.mediation.MediationAdapterRegistry {
+-keepclasseswithmembers class * {
+    @android.support.annotation.Keep
+    <fields>;
+}
+
+-keepclasseswithmembers class * {
+    @android.support.annotation.Keep
+    <init>(...);
+}
+
+-keep class com.moat.** {
     <fields>;
     <methods>;
 }
 
--keep public class com.avocarrot.sdk.base.LifecycleAdSource {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativeassets.model.** {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.LoaderSingleThreadDispatcher {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.base.LifecycleCallback {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.base.ActivityResumedCallback {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.base.ActivityPausedCallback {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.base.ActivityDestroyedCallback {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.base.EndpointMap {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.base.AdUnitStorage {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.device.DeviceId {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.mediation.** {
-    public <fields>;
-    public <methods>;
-}
-
--keep public enum  com.avocarrot.sdk.mediation.** {
-    <fields>;
-    <methods>;
-}
-
--keep public enum  com.avocarrot.sdk.consts.AdType {
-    <fields>;
-    **[] $VALUES;
-    <methods>;
-}
-
--keep public enum  com.avocarrot.sdk.consts.AdType {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.user.UserData {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.user.UserDataStorage {
-    public <fields>;
-    public <methods>;
-}
-
-# Sometimes keepattributes is not enough to keep annotations
--keep class android.webkit.JavascriptInterface {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.adapters.ServerAdMediationAdapter {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.parsers.Callbacks {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.parsers.GetAdResponse {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.parsers.MediationResponse {
-    public <fields>;
-    **[] $VALUES;
-    public <methods>;
-}
-
--keep public enum  com.avocarrot.sdk.base.CommandType {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.base.GetServerAdCommand {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.base.GetClientAdCommand {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.base.ShowAdCommand {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.parsers.MediationResponse {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.base.AdSourceWrapper {
-    <fields>;
-    <methods>;
-}
-
--keep public abstract class com.avocarrot.sdk.base.AdSource {
-    <fields>;
-    <methods>;
-}
-
--keep public abstract class com.avocarrot.sdk.base.BaseAd {
-    <fields>;
-    <methods>;
-}
-
--keep public enum  com.avocarrot.sdk.base.AdState {
-    <fields>;
-    <methods>;
-}
-
--keep public enum  com.avocarrot.sdk.base.AdState$** {
-    public <fields>;
-    **[] $VALUES;
-    public <methods>;
-}
-
--keep public abstract class com.avocarrot.sdk.base.BaseMediationAdapterListener {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.base.GetServerAdCommand {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.base.GetClientAdCommand {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.base.MediationCommand {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.base.ShowAdCommand {
-    public <fields>;
-    public <methods>;
-}
-
--keep interface  com.avocarrot.sdk.base.validators.AdSourceValidator {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.TestFileUtils {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.ShadowLoader {
-    public <fields>;
-    public <methods>;
-}
-
--keep public final class com.avocarrot.sdk.mediation.MediationAdapterRegistry {
-    <fields>;
-    <methods>;
-}
-
--keepclassmembers class com.avocarrot.sdk.mediation.MediationAdapterRegistry {
-    <fields>;
-    <methods>;
-    static Object create(String,Class);
-    static MediationConfig create(String,MediationConfig);
-    static InterstitialMediationAdapterBuilder create(String,InterstitialMediationAdapterBuilder);
-}
-
--keep public class com.avocarrot.sdk.network.http.HttpClient {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.json2view.DynamicLayoutTemplate {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.internal.listeners.OpenUrlClickListener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.base.BaseMediationAdapterListener {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.parsers.GetAdResponse {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.parsers.ResponseParsingException {
-    public <fields>;
-    public <methods>;
-}
-
--keep public enum  com.avocarrot.sdk.base.CommandType {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.base.InFeedAdPoolSettings {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.StreamAdPositionTranslator {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.Loader {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.base.InFeedCapacity {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.ConnectionPolicy {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.nativead.StreamAdPositioning {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.StreamAdSettingsLoadable {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.Request {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.http.HttpRequest {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.http.HttpRequest$Builder {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.http.HttpResponse {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.http.ResponseContent {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.http.ResponseContentFactory {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.FileUtils {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.ApiCall {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.ClickApiRequest {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.GetAdCall {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.ImpressionCall {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.RequestHandler {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.ApiRequest {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.ClickCall {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.GetAdLoadable {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.LatencyApiRequest {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.RetryStrategy {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.BaseApiRequest {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.DynamicLayoutTemplateLoadable {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.HandshakeCall {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.MediationCall {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.ServerException {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.BitmapDecoder {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.EventReportCall {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.HandshakeKeyCall {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.MediationLoadable {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.StreamAdSettingsLoadable {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.CallbackMessageAgent {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.ExternalReportApiRequest {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.ImageLoadable {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.NetworkConfig {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.VideoReportApiRequest {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.CallbackReportRequest {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.ExternalReportCall {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.ImpressionApiRequest {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.VideoReportCall {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.CallbackJobService {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.base.cache.WeakRefAdCache {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.base.cache.StrongRefAdCache {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.ImageLoadable {
-    <fields>;
-    <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.base.cache.AdCache {
-    <fields>;
-    <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.mediation.MediationConfig {
-    <fields>;
-    <methods>;
-}
-
--keep class com.avocarrot.sdk.network.** {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.google.android.gms.ads.identifier.AdvertisingIdClient {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.google.android.gms.ads.identifier.AdvertisingIdClient$Info {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.base.RemoteLoggerSettings {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.base.RemoteLoggerSettings$Builder {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.logger.Logger {
-    <fields>;
-    <methods>;
-}
-
--keep class com.avocarrot.sdk.logger.Logger$DeviceInfoMetaInjector {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.logger.LogEvent {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.consts.AdType {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.consts.SDK {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.ApplicationUtils {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.Base64 {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.Base64Exception {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.CacheControl {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.CacheControl$Builder {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.ConnectionPolicy {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.ContextUtils {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.FileUtils {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.HashUtils {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.IOUtils {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.ParcelUtils {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.Permissions {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.Reflection {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.Reflection$MethodBuilder {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.ResUtils {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.utils.ViewUtils {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.mediation.Dumpable {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.mediation.HierarchyVisibilityChecker {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.mediation.StandaloneVisibilityChecker {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.mediation.ViewVisibilityTracker {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.mediation.ViewVisibilityTracker$Listener {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.mediation.VisibilityChecker {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.mediation.VisibilityOptions {
-    <fields>;
-    <methods>;
-}
-
--keep class com.avocarrot.sdk.network.** {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.Loader {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.Loader$* {
-    <fields>;
-    <methods>;
-}
-
--keep class com.avocarrot.sdk.network.Loader$LoadTask {
-    <fields>;
-    <methods>;
-}
-
--keep class com.avocarrot.sdk.network.Loader$UnexpectedLoaderException {
-    <fields>;
-    <methods>;
-}
-
--keep class com.avocarrot.sdk.network.Loader$LoaderThreadFactory {
-    <fields>;
-    <methods>;
-}
-
--keep class com.avocarrot.sdk.network.LoaderStaticThreadDispatcher {
-    <fields>;
-    <methods>;
-}
-
--keep class com.avocarrot.sdk.network.LoaderStaticThreadDispatcher$LoaderThreadFactory {
-    <fields>;
-    <methods>;
-}
-
--keep class com.avocarrot.sdk.network.LoaderStaticThreadDispatcher$LoaderCallback {
-    <fields>;
-    <methods>;
-}
-
--keep class com.avocarrot.sdk.network.LoaderSingleThreadDispatcher {
-    <fields>;
-    <methods>;
-}
-
--keep class com.avocarrot.sdk.network.LoaderSingleThreadDispatcher$LoaderRequest {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.LoaderSingleThreadDispatcher {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.MobileNetworkOperatorParams {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.NetworkConstants {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.VisitorDetectedLocation {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.http.FileHttpBody {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.http.ByteArrayHttpBody {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.http.HttpBody {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.http.HttpClient {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.http.HttpMethod {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.http.HttpRequest {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.http.HttpRequest$Builder {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.http.HttpResponse {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.network.http.NetworkInterceptor {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.network.http.ResponseContent {
-    public <fields>;
-    public <methods>;
-}
-
--keep public interface  com.avocarrot.sdk.network.http.ResponseContentFactory {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.network.http.SSLSocketFactoryWrapper {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.device.DeviceId {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.device.DeviceLocale {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.device.DeviceUtils {
-    public <fields>;
-    public <methods>;
-}
-
--keep public enum  com.avocarrot.sdk.device.DeviceUtils$InternetAccessType {
-    <fields>;
-    <methods>;
-}
-
--keep public enum  com.avocarrot.sdk.device.DeviceUtils$ScreenOrientation {
-    <fields>;
-    <methods>;
-}
-
--keep public class com.avocarrot.sdk.device.StaticDeviceData {
-    public <fields>;
-    public <methods>;
-}
-
--keep public class com.avocarrot.sdk.device.AdvertisingIdInfoRetriever {
-    <fields>;
-    <methods>;
-}
-
--keep class com.avocarrot.sdk.device.AdvertisingIdInfoRetriever$Info {
-    <fields>;
-    <methods>;
-}
-
--keep class com.avocarrot.sdk.device.AdvertisingIdInfoRetriever$InfoHolder {
-    <fields>;
-    <methods>;
-}
-
--keep class com.avocarrot.sdk.service.JobServiceScheduler {
-    <fields>;
-    <methods>;
+# Prevent Proguard from inlining methods that are intentionally extracted to ensure locals have a
+# constrained liveness scope by the GC. This is needed to avoid keeping previous request references
+# alive for an indeterminate amount of time. See also https://github.com/google/volley/issues/114
+-keepclassmembers,allowshrinking,allowobfuscation class com.android.volley.NetworkDispatcher {
+    void processRequest();
+}
+
+-keepclassmembers,allowshrinking,allowobfuscation class com.android.volley.CacheDispatcher {
+    void processRequest();
 }
 
 -assumenosideeffects class kotlin.jvm.internal.Intrinsics {
     static void checkParameterIsNotNull(java.lang.Object,java.lang.String);
-}
-
--assumenosideeffects class androidx.work.impl.logger.InternalLogger {
-    public void verbose(...);
-    public void debug(...);
-    public void info(...);
 }

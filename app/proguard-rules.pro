@@ -237,11 +237,11 @@
     public *;
 }
 
--dontwarn com.avocarrot.**
--keep class com.avocarrot.** { *; }
--keepclassmembers class com.avocarrot.** { *; }
--keep class com.avocarrot.androidsdk.** { *; }
--keepclassmembers class com.avocarrot.androidsdk.** { *; }
+# MoBFox : ads platform
+-keep class com.mobfox. {*;}
+-keep class com.mobfox.adapter. {*;}
+-keep class com.mobfox.sdk. {*;}
+
 -keep public class * extends android.view.View {
     public void *(android.content.Context);
     public void *(android.content.Context, android.util.AttributeSet);
@@ -455,3 +455,11 @@
 
 -keep class android.graphics.** { *; }
 -dontwarn android.graphics.**
+
+#androidx
+-dontwarn com.google.android.material.**
+-keep class com.google.android.material.** { *; }
+
+-dontwarn androidx.**
+-keep class androidx.** { *; }
+-keep interface androidx.** { *; }

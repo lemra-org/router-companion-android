@@ -270,18 +270,10 @@
 -dontwarn java.util.Base64
 -dontwarn java.util.Base64$Encoder
 
-
--dontwarn com.avocarrot.**
--keep class com.avocarrot.** { *; }
--keepclassmembers class com.avocarrot.** { *; }
--keep class com.avocarrot.androidsdk.** { *; }
--keepclassmembers class com.avocarrot.androidsdk.** { *; }
--keep public class * extends android.view.View {
-    public void *(android.content.Context);
-    public void *(android.content.Context, android.util.AttributeSet);
-    public void *(android.content.Context, android.util.AttributeSet, int);
-    public void set*(...);
-}
+# MoBFox : ads platform
+-keep class com.mobfox. {*;}
+-keep class com.mobfox.adapter. {*;}
+-keep class com.mobfox.sdk. {*;}
 
 -dontwarn com.squareup.okhttp.**
 
@@ -401,3 +393,11 @@
 
 -keep class android.graphics.** { *; }
 -dontwarn android.**
+
+#androidx
+-dontwarn com.google.android.material.**
+-keep class com.google.android.material.** { *; }
+
+-dontwarn androidx.**
+-keep class androidx.** { *; }
+-keep interface androidx.** { *; }
