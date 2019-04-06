@@ -66,7 +66,7 @@ OKBUCK_DIR="$SCRIPT_DIR/.okbuck"
 MAX_DISPLAY_CHANGES=10
 WATCHMAN_TIMEOUT=10
 WATCHMAN_FAILED="WATCHMAN FAILED"
-BUCK_BINARY_DIR="$OKBUCK_DIR/cache/buck_binary"
+BUCK_BINARY_DIR="$OKBUCK_DIR/workspace/buck_binary"
 
 # Timeout a call and exit early. This can be called via timeout <time> <command>.
 timeout( ) {
@@ -102,10 +102,7 @@ getChanges ( ) {
         ["type", "f"],
         ["anyof",
             ["suffix", "gradle"],
-            ["suffix", "map"],
-            ["suffix", "pro"],
-            ["name", ["lint.xml", "gradle-wrapper.properties"]],
-            ["match", "**/src/**/AndroidManifest.xml", "wholename"]
+            ["name", ["gradle-wrapper.properties"]]
         ],
         ["not",
             ["dirname", ".okbuck"]
@@ -117,16 +114,24 @@ EOT`
     SOURCE_ROOTS=`watchman --output-encoding=json --no-pretty -j 2>&1 <<-EOT
 ["query", "$SCRIPT_DIR", {
     "since": "n:okbuck_source_roots",
-    "expression": ["allof",
+    "expression": ["anyof",
+        ["allof",
         ["type", "d"],
         ["anyof",
             ["match", "**/src/**/java", "wholename"],
             ["match", "**/src/**/res", "wholename"],
+            ["match", "**/src/**/kotlin", "wholename"],
             ["match", "**/src/**/resources", "wholename"]
         ],
         ["not",
             ["dirname", ".okbuck"]
         ]
+    ],
+    ["allof",
+        ["type", "f"],
+        ["anyof", ["name", "AndroidManifest.xml"]],
+        ["not", ["dirname", ".okbuck"]]
+    ]
     ],
     "fields": ["new", "exists", "name"]
 }]
@@ -173,37 +178,11 @@ watchmanWorkflow ( ) {
     fi
 }
 
-killBuckDaemons ( ) {
-    DAEMONS=$(ps -ef | grep "[c]om.facebook.buck.cli.Main\$DaemonBootstrap" | awk '{print $2}')
-    if [ ! -z "$DAEMONS" ]; then
-        echo "$DAEMONS" | xargs kill -9
-    fi
-}
-
 setupBuckBinary ( ) {
-    BUCK_BINARY=$(find "$BUCK_BINARY_DIR" -name buck-*.pex)
+    BUCK_BINARY=$(find "$BUCK_BINARY_DIR" -name buck*.pex)
 
     if [[ ! -x "$BUCK_BINARY" ]]; then
         chmod +x "$BUCK_BINARY"
-    fi
-
-    # No existing daemon or clean project root
-    BUCKD_VERSION_FILE="$SCRIPT_DIR/.buckd/buckd.version"
-    if [[ ! -f "$BUCKD_VERSION_FILE" ]]; then
-        killBuckDaemons
-    else
-        BUCKD_VERSION=$(cat "$BUCKD_VERSION_FILE")
-    fi
-
-    # Unknown daemon state
-    if [[ -z "$BUCKD_VERSION" ]]; then
-        killBuckDaemons
-    fi
-
-    # Daemon version does not match
-    BUCK_BINARY_VERSION=$(basename "$BUCK_BINARY" | cut -f 1 -d "." | cut -f 2 -d "-")
-    if [[ "$BUCK_BINARY_VERSION" != "$BUCKD_VERSION" ]]; then
-        killBuckDaemons
     fi
 }
 
@@ -232,11 +211,24 @@ setupBuckRun ( ) {
     setupBuckBinary
 }
 
+setupBuckFlags ( ) {
+    EXTRA_BUCK_CONFIG="$EXTRA_BUCK_CONFIG --config-file .okbuck/config/okbuck.buckconfig"
+}
+
 # Handle parameters and flags
 handleParams ( ) {
-   # Go directly to the kill command, help command, or --help option. Do not run okbuck.
-   if [[ "kill" == $1 || "help" == $1 || $@ == *"--help"* || $@ == *" -h "* ]]; then
-      SKIP_OKBUCK=true
+   SKIP_FLAGS=''
+   for arg in "$@"
+   do
+       case "$arg" in
+       --help|-h|help|kill) export SKIP_OKBUCK=1 && SKIP_FLAGS=1 ;; # Go directly to the kill command, help command, or --help option. Do not run okbuck.
+       --version) export SKIP_FLAGS=1;;
+       esac;
+   done
+
+   if [[ -z "$SKIP_FLAGS" ]]; then
+       # --help|-h|help|kill|--version do not support --config-file
+       setupBuckFlags
    fi
 }
 
@@ -244,4 +236,4 @@ handleParams "$@"
 setupBuckRun
 
 # Invoke buck binary with arguments
-exec "$BUCK_BINARY" "$@"
+exec "$BUCK_BINARY" "$@" $EXTRA_BUCK_CONFIG

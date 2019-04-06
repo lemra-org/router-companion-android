@@ -24,24 +24,25 @@
 
 buildscript {
     ext.android_sdk = 28
-    ext.buildTools_version = '28.0.2'
+    ext.buildTools_version = '28.0.3'
     //https://mvnrepository.com/artifact/com.android.tools.build/gradle?repo=google
-    ext.gradleBuildPlugin_version = '3.3.0-alpha03'
-    ext.support_version = '28.0.0-alpha1' //TODO Migrate to 28.0.0-rc2 once resolvable
-    ext.kotlin_version = '1.2.60'
-    ext.android_ktx_version = '1.0.0-alpha1'
-    ext.anko_version = '0.10.5'
-    ext.playServices_version = '15.0.1'
-    ext.firebase_version = '16.0.1'
+    ext.gradleBuildPlugin_version = '3.5.0-alpha10'
+    ext.support_version = '28.0.0'
+    ext.kotlin_version = '1.3.21'
+    ext.android_ktx_version = '1.0.0'
+    ext.anko_version = '0.10.8'
+    ext.playServices_version = '17.2.0'
+    ext.firebase_core_version = '16.0.8'
+    ext.firebase_appindexing_version = '17.1.0'
     ext.robolectric_version = '3.8'
     ext.junit_version = '4.12'
     ext.mockito_version = '1.10.19'
-    ext.avocarrot_glispa_version = '4.10.1'
+    ext.avocarrot_glispa_mobfox_version = '3.6.9'
 //    ext.work_version = '1.0.0-alpha08'
 
-    ext.playPublisherPlugin_version = '1.2.2'
-    ext.googlePlayServicesPlugin_version = '4.0.1'
-    ext.okbuck_version = '0.40.1'
+    ext.playPublisherPlugin_version = '2.2.0'
+    ext.googlePlayServicesPlugin_version = '4.2.0'
+    ext.okbuck_version = '0.47.2'
 
     //Workaround to have the 'com.android.application' plugin with any version of Gradle (other than the expected one)
     //see https://github.com/gradle/gradle-script-kotlin/issues/2#issuecomment-222120296
@@ -49,6 +50,9 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
         mavenCentral()
     }
     dependencies {
@@ -62,7 +66,7 @@ buildscript {
 apply plugin: 'idea'
 apply plugin: 'com.uber.okbuck'
 apply plugin: 'kotlin'
-apply plugin: 'kotlin-kapt'
+//apply plugin: 'kotlin-kapt'
 
 allprojects {
     repositories {
@@ -160,9 +164,9 @@ idea.module {
     excludeDirs += file('buck-out/')
 }
 
-kapt {
-    useBuildCache = true
-}
+//kapt {
+//    useBuildCache = true
+//}
 
 okbuck {
     lint {

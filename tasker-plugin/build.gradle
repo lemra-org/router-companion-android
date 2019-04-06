@@ -32,7 +32,7 @@ buildscript {
     dependencies {
         //noinspection GradleDynamicVersion
         classpath 'io.fabric.tools:gradle:1.+'
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6'
     }
 }
 
@@ -47,17 +47,17 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
-apply plugin: 'com.github.triplet.play'
+//apply plugin: 'com.github.triplet.play'
 
 android {
     compileSdkVersion android_sdk
     buildToolsVersion buildTools_version
 
-    playAccountConfigs {
-        defaultAccountConfig {
-            jsonFile = rootProject.getPlayStoreConfig()
-        }
-    }
+//    playConfigs {
+//        defaultAccountConfig {
+//            jsonFile = rootProject.getPlayStoreConfig()
+//        }
+//    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -126,7 +126,7 @@ android {
                 versionName +
                 "\n----------------------------\n")
 
-        playAccountConfig = playAccountConfigs.defaultAccountConfig
+//        playConfig = playConfigs.defaultAccountConfig
     }
 
     //Those files, from Apache Commons lib cause build errors
@@ -335,11 +335,10 @@ dependencies {
     releaseImplementation 'com.readystatesoftware.chuck:library-no-op:1.1.0'
 }
 
-
-play {
-    // ...
-    track = 'beta'
-    untrackOld = true // will untrack 'alpha' while upload to 'beta'
-    uploadImages = false
-    errorOnSizeLimit = true
-}
+//play {
+//    // ...
+//    track = 'beta'
+//    untrackOld = true // will untrack 'alpha' while upload to 'beta'
+//    uploadImages = false
+//    errorOnSizeLimit = true
+//}
