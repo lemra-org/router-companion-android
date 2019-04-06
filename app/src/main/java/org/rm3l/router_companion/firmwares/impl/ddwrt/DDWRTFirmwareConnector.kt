@@ -682,7 +682,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                         yearReleasesPair.second
                                 .map { releaseByDay ->
                                     val releaseByDayName = releaseByDay.name
-                                    val releaseByDaySplitList = releaseByDayName.split(delimiters = "-", limit = 4)
+                                    val releaseByDaySplitList = releaseByDayName.split(delimiters = *arrayOf("-"), limit = 4)
                                     val ddwrtRelease = DDWRTRelease(
                                             year.trim().toInt(),
                                             "${releaseByDaySplitList[0]}-${releaseByDaySplitList[1]}-${releaseByDaySplitList[2]}",
