@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/tile_status_wireless_iface"
     android:layout_width="match_parent"
@@ -607,4 +607,4 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         </RelativeLayout>
 
     </LinearLayout>
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>

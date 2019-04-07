@@ -2,7 +2,7 @@ package org.rm3l.router_companion;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 
 /**

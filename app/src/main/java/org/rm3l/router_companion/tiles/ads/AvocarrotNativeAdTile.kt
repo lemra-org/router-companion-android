@@ -2,9 +2,9 @@ package org.rm3l.router_companion.tiles.ads
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.content.AsyncTaskLoader
-import android.support.v4.content.Loader
+import androidx.fragment.app.Fragment
+import androidx.loader.content.AsyncTaskLoader
+import androidx.loader.content.Loader
 import android.util.Log
 import android.view.View
 import android.widget.Button

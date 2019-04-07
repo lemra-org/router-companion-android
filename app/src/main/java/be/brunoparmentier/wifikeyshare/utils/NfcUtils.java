@@ -27,7 +27,7 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.NdefFormatable;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import be.brunoparmentier.wifikeyshare.model.WifiNetwork;
 import java.io.IOException;

@@ -3,7 +3,7 @@ package org.rm3l.router_companion.help;
 import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.View;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;

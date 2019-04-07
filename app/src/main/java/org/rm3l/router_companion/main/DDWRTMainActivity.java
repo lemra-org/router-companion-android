@@ -60,19 +60,19 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -1760,9 +1760,9 @@ public class DDWRTMainActivity extends AppCompatActivity
      * or when it is fully stopped/idle.
      *
      * @param state The new scroll state.
-     * @see android.support.v4.view.ViewPager#SCROLL_STATE_IDLE
-     * @see android.support.v4.view.ViewPager#SCROLL_STATE_DRAGGING
-     * @see android.support.v4.view.ViewPager#SCROLL_STATE_SETTLING
+     * @see androidx.viewpager.widget.ViewPager#SCROLL_STATE_IDLE
+     * @see androidx.viewpager.widget.ViewPager#SCROLL_STATE_DRAGGING
+     * @see androidx.viewpager.widget.ViewPager#SCROLL_STATE_SETTLING
      */
     @Override
     public void onPageScrollStateChanged(int state) {

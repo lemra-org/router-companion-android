@@ -2,8 +2,8 @@ package org.rm3l.router_companion.mgmt.register;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import org.codepond.wizardroid.WizardStep;
@@ -25,7 +25,7 @@ public class ManageRouterWizard extends MaterialWizard {
     private int action;
 
     /**
-     * Note that initially MaterialWizard inherits from {@link android.support.v4.app.Fragment} and
+     * Note that initially MaterialWizard inherits from {@link androidx.fragment.app.Fragment} and
      * therefore you must have an empty constructor
      */
     public ManageRouterWizard() {

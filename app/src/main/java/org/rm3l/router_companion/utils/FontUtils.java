@@ -2,8 +2,8 @@ package org.rm3l.router_companion.utils;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 

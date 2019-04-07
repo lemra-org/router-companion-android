@@ -51,7 +51,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
             <!--android:text="Local Wireless Network SSID" />-->
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/router_add_local_ssid_lookup_ssid_til"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -70,10 +70,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="text"
                     android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- IP / DNS -->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/router_add_local_ssid_lookup_ip_til"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -81,7 +81,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="@dimen/activity_vertical_margin">
 
-                <android.support.design.widget.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/router_add_local_ssid_lookup_ip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -93,10 +93,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:inputType="text"
                     android:maxLines="1"
                     android:selectAllOnFocus="true" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- SSH Port -->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/router_add_local_ssid_lookup_port_til"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -104,7 +104,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="@dimen/activity_vertical_margin">
 
-                <android.support.design.widget.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/router_add_local_ssid_lookup_port"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -118,7 +118,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:maxLines="1"
                     android:selectAllOnFocus="true"
                     android:text="@string/router_add_default_ssh_port" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
 

@@ -22,7 +22,7 @@
 
 package org.rm3l.router_companion.mgmt;
 
-import android.support.v4.app.DialogFragment;
+import androidx.fragment.app.DialogFragment;
 import org.rm3l.router_companion.resources.conn.Router;
 
 public interface RouterMgmtDialogListener {

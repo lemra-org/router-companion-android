@@ -59,7 +59,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_alignParentRight="true"
             android:orientation="horizontal">
 
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/tile_status_router_syslog_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -137,11 +137,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:orientation="vertical">
 
         <!-- Filter -->
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/tile_status_router_syslog_filter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -154,7 +154,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:imeOptions="actionSearch"
                 android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
                 android:textColor="@android:color/holo_blue_dark" />
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"

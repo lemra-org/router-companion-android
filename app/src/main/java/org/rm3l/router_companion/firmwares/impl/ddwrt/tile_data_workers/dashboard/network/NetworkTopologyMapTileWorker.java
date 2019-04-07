@@ -5,8 +5,8 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.UNKNOWN;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.Patterns;
 import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;

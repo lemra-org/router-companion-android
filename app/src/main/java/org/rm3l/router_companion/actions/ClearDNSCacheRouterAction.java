@@ -23,8 +23,8 @@ package org.rm3l.router_companion.actions;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.SSHUtils;
 

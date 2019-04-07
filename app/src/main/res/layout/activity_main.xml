@@ -20,21 +20,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="org.rm3l.router_companion.main.DDWRTMainActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:elevation="2dp"
         app:paddingEnd="0dp"
         app:paddingStart="0dp">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -44,7 +44,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
 
         <!-- The Tab rests directly below the Toolbar, attached below it -->
-        <android.support.design.widget.TabLayout
+        <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabanim_tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,10 +55,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             app:tabSelectedTextColor="@color/white"
             app:tabTextColor="@color/LightGrey" />
 
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <!-- Helps handing the Fragments to load for each Tab -->
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/tabanim_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -74,4 +74,4 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!--android:layout_below="@id/toolbar"/>-->
 
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

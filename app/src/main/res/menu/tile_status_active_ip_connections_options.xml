@@ -29,7 +29,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:orderInCategory="1"
         android:title="@string/action_search"
         android:visible="false"
-        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom" />
 
     <item
@@ -38,7 +38,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:orderInCategory="3"
         android:title="@string/share"
         android:visible="false"
-        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
+        app:actionProviderClass="androidx.appcompat.widget.ShareActionProvider"
         app:showAsAction="ifRoom" />
 
     <item

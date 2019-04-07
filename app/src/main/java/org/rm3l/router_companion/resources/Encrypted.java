@@ -24,7 +24,7 @@ package org.rm3l.router_companion.resources;
 
 import static com.google.common.base.Charsets.UTF_8;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Base64;
 import android.util.Log;
 import com.crashlytics.android.Crashlytics;

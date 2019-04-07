@@ -5,10 +5,10 @@ import static org.rm3l.router_companion.mgmt.register.resources.RouterWizardActi
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import androidx.annotation.LayoutRes;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.view.Window;
 import android.view.WindowManager;
 import org.rm3l.ddwrt.R;

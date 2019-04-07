@@ -2,7 +2,7 @@ package org.rm3l.router_companion.job.speedtest
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.support.v4.util.Pair
+import androidx.core.util.Pair
 import android.util.Log
 import com.crashlytics.android.Crashlytics
 import com.evernote.android.job.DailyJob

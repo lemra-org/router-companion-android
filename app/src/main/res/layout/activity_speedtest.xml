@@ -43,7 +43,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:orientation="vertical"
         tools:context=".actions.activity.SpeedTestActivity">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/routerSpeedTestToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

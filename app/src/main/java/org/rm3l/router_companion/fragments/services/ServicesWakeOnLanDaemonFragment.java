@@ -1,7 +1,7 @@
 package org.rm3l.router_companion.fragments.services;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import org.rm3l.router_companion.fragments.AbstractBaseFragment;

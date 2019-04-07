@@ -2,7 +2,7 @@ package org.rm3l.router_companion.service.tasks;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.Utils;
 

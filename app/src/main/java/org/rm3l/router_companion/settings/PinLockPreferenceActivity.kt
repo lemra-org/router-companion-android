@@ -3,9 +3,9 @@ package org.rm3l.router_companion.settings
 import android.os.Bundle
 import android.preference.PreferenceFragment
 import android.preference.SwitchPreference
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import org.rm3l.ddwrt.R

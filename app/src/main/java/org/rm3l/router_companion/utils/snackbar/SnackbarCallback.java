@@ -1,8 +1,8 @@
 package org.rm3l.router_companion.utils.snackbar;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
+import androidx.annotation.Nullable;
+import com.google.android.material.snackbar.Snackbar;
 
 /**
  * Created by rm3l on 09/12/15.

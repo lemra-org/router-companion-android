@@ -42,7 +42,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/http_auth_prompt_username_input_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -50,7 +50,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="@dimen/activity_vertical_margin">
 
-                <android.support.design.widget.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/http_auth_prompt_username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -63,7 +63,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:maxLines="1"
                     android:selectAllOnFocus="true"
                     android:text="root" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/http_auth_prompt_password_hdr"

@@ -26,11 +26,11 @@ import static org.rm3l.router_companion.utils.Utils.SPACE_SPLITTER;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.loader.content.AsyncTaskLoader;
+import androidx.loader.content.Loader;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -88,7 +88,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
      * Called when a previously created loader has finished its load.  Note
      * that normally an application is <em>not</em> allowed to commit fragment
      * transactions while in this call, since it can happen after an
-     * activity's state is saved.  See {@link android.support.v4.app.FragmentManager#beginTransaction()
+     * activity's state is saved.  See {@link androidx.fragment.app.FragmentManager#beginTransaction()
      * FragmentManager.openTransaction()} for further discussion on this.
      * <p/>
      * <p>This function is guaranteed to be called prior to the release of

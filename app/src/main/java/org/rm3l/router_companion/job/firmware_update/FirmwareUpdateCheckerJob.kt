@@ -14,9 +14,9 @@ import android.graphics.drawable.Drawable
 import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.app.NotificationCompat
-import android.support.v4.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import android.util.Log
 import android.widget.Toast
 import com.crashlytics.android.Crashlytics

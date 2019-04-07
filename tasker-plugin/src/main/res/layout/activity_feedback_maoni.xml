@@ -5,13 +5,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/activity_feedback_email_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/activity_vertical_margin">
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/activity_feedback_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -19,6 +19,6 @@
             android:imeOptions="flagNoExtractUi"
             android:inputType="textEmailAddress"
             android:maxLines="1" />
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

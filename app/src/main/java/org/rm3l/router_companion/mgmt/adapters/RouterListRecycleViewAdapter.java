@@ -43,13 +43,13 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.fragment.app.FragmentActivity;
+import androidx.core.content.ContextCompat;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -620,7 +620,7 @@ public class RouterListRecycleViewAdapter
                                 snackbarView.setBackgroundColor(Color.DKGRAY);
                                 final TextView textView =
                                         (TextView) snackbarView
-                                                .findViewById(android.support.design.R.id.snackbar_text);
+                                                .findViewById(com.google.android.material.R.id.snackbar_text);
                                 textView.setTextColor(Color.YELLOW);
                                 snackbar.show();
 
@@ -800,7 +800,7 @@ public class RouterListRecycleViewAdapter
                         final View snackbarView = snackbar.getView();
                         snackbarView.setBackgroundColor(Color.DKGRAY);
                         final TextView textView =
-                                (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                                (TextView) snackbarView.findViewById(com.google.android.material.R.id.snackbar_text);
                         textView.setTextColor(Color.YELLOW);
                         snackbar.show();
                     }

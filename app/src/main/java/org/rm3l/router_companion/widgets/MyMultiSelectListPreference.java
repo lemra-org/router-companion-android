@@ -2,7 +2,7 @@ package org.rm3l.router_companion.widgets;
 
 import android.content.Context;
 import android.preference.MultiSelectListPreference;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import java.util.HashSet;
 import java.util.Set;

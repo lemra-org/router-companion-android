@@ -23,7 +23,7 @@
 package org.rm3l.router_companion;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.amazonaws.regions.Regions;
 import com.google.common.base.Charsets;
 import java.io.File;

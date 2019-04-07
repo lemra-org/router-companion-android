@@ -1,6 +1,6 @@
 package org.rm3l.router_companion.widgets.wizard;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import org.codepond.wizardroid.Wizard;
 
 /**

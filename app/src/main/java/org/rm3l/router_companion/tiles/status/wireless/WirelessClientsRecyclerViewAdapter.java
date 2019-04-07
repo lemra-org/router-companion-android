@@ -15,10 +15,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SwitchCompat;
+import androidx.core.content.ContextCompat;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.SwitchCompat;
 import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
@@ -657,7 +657,7 @@ public class WirelessClientsRecyclerViewAdapter extends
                 final XYSeriesRenderer.FillOutsideLine fill = new XYSeriesRenderer.FillOutsideLine(
                         XYSeriesRenderer.FillOutsideLine.Type.BOUNDS_ABOVE);
                 //Fill with a slightly transparent version of the original color
-                fill.setColor(android.support.v4.graphics.ColorUtils.setAlphaComponent(color, 30));
+                fill.setColor(androidx.core.graphics.ColorUtils.setAlphaComponent(color, 30));
                 renderer.addFillOutsideLine(fill);
 
                 if (i == 0) {

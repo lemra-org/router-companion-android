@@ -11,7 +11,7 @@ import android.content.Context.MODE_PRIVATE
 import android.content.ContextWrapper
 import android.content.Intent
 import android.os.Handler
-import android.support.annotation.ColorRes
+import androidx.annotation.ColorRes
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater

@@ -1,6 +1,6 @@
 package org.rm3l.router_companion.mgmt
 
-import android.support.design.widget.FloatingActionButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mikepenz.aboutlibraries.ui.LibsActivity
 import org.junit.*
 import org.junit.Assert.*

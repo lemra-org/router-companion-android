@@ -25,7 +25,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 
 import android.app.Activity;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;

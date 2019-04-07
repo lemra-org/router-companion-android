@@ -43,17 +43,17 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.Loader;
-import android.support.v4.content.PermissionChecker;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.SwitchCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.loader.content.AsyncTaskLoader;
+import androidx.core.content.ContextCompat;
+import androidx.loader.content.Loader;
+import androidx.core.content.PermissionChecker;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.appcompat.widget.SwitchCompat;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.TextWatcher;
@@ -1302,7 +1302,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
      * Called when a previously created loader has finished its load.  Note
      * that normally an application is <em>not</em> allowed to commit fragment
      * transactions while in this call, since it can happen after an
-     * activity's state is saved.  See {@link android.support.v4.app.FragmentManager#beginTransaction()
+     * activity's state is saved.  See {@link androidx.fragment.app.FragmentManager#beginTransaction()
      * FragmentManager.openTransaction()} for further discussion on this.
      * <p/>
      * <p>This function is guaranteed to be called prior to the release of

@@ -1,6 +1,6 @@
 package org.rm3l.router_companion.common.utils;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Created by rm3l on 25/09/17.

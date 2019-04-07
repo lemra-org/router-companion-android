@@ -27,18 +27,18 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.Loader;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.loader.app.LoaderManager;
+import androidx.core.content.ContextCompat;
+import androidx.loader.content.Loader;
+import androidx.core.view.ViewCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -1345,7 +1345,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
      * Called when a previously created loader has finished its load.  Note
      * that normally an application is <em>not</em> allowed to commit fragment
      * transactions while in this call, since it can happen after an
-     * activity's state is saved.  See {@link android.support.v4.app.FragmentManager#beginTransaction()
+     * activity's state is saved.  See {@link androidx.fragment.app.FragmentManager#beginTransaction()
      * FragmentManager.openTransaction()} for further discussion on this.
      * <p/>
      * <p>This function is guaranteed to be called prior to the release of
