@@ -37,6 +37,9 @@ build_project:
       - buck-out
       - .okbuck
 
+  variables:
+    EXTRA_OKBUCK_ARGS: '--stacktrace --scan'
+
   script:
     # This is because of the AAR issue below, we first run a 'buck target', 
     # so Okbuck is run first if needed (thus dropping the 'buck-out' folder)
