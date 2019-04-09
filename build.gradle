@@ -189,9 +189,9 @@ okbuck {
 //        //Fork with kapt support
 //        repo = 'https://github.com/cwoodwar6/buck.git'
 //    }
-    wrapper {
-        repo = 'https://github.com/facebook/buck.git'
-    }
+    //Issue with Kotlin: https://github.com/uber/okbuck/issues/798#issuecomment-476291448
+    // Set a specific buck binary or alternate buck distribution.
+    buckBinary = "com.github.rm3l:buck:fc8f977a04b2847c6707668a73320ad336d20527@pex"
 }
 
 buildScan {
