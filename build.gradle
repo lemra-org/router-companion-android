@@ -24,6 +24,7 @@
 
 buildscript {
     ext.android_sdk = 28
+    ext.buildScan_version = '2.2.1'
     ext.buildTools_version = '28.0.3'
     //https://mvnrepository.com/artifact/com.android.tools.build/gradle?repo=google
     ext.gradleBuildPlugin_version = '3.3.2'
@@ -57,6 +58,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
+        classpath "com.gradle:build-scan-plugin:$buildScan_version"
         classpath "com.android.tools.build:gradle:$gradleBuildPlugin_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.github.triplet.gradle:play-publisher:$playPublisherPlugin_version"
@@ -66,6 +68,8 @@ buildscript {
         }
     }
 }
+
+apply plugin: 'com.gradle.build-scan'
 apply plugin: 'idea'
 apply plugin: 'com.uber.okbuck'
 apply plugin: 'kotlin'
@@ -187,5 +191,15 @@ okbuck {
 //    }
     wrapper {
         repo = 'https://github.com/facebook/buck.git'
+    }
+}
+
+buildScan {
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
+
+    if (System.getenv('CI')) {
+        publishAlways()
+        tag 'CI'
     }
 }
