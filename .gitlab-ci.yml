@@ -38,12 +38,12 @@ build_project:
       - .okbuck
 
   variables:
-    EXTRA_OKBUCK_ARGS: '--stacktrace --scan'
+    EXTRA_OKBUCK_ARGS: '-Pandroid.debug.obsoleteApi=true --stacktrace --scan'
 
   script:
     # This is because of the AAR issue below, we first run a 'buck target', 
     # so Okbuck is run first if needed (thus dropping the 'buck-out' folder)
-    - bash ./buckw targets
+    - bash ./buckw targets || true
 
     # Some Google dependencies do not strictly follow the AAR spec 
     # (which requires a 'res' folder to be present, even when empty)
@@ -68,9 +68,9 @@ build_project:
     - watchman watch-project $CI_PROJECT_DIR || true
 
     # Temp. cmd to clean up Buck cache
-    - bash ./buckw clean
+    - bash ./buckw clean || true
 
-    - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug
+    - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug || ./gradlew :app:assembleAmazonDebug :tasker-plugin:assembleAmazonDebug
     - ./gradlew testAmazonDebugUnitTest htmlDependencyReport
 
   artifacts:
