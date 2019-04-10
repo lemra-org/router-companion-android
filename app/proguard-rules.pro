@@ -241,7 +241,14 @@
 -keep class com.google.android.gms.measurement.AppMeasurement  { *; }
 ##############################
 
-
+##############################
+# AboutLibraries
+##############################
+-keep class .R
+-keep class **.R$* {
+    <fields>;
+}
+##############################
 
 
 

@@ -231,7 +231,14 @@
 -dontwarn com.twofortyfouram.annotation.**
 ##############################
 
-
+##############################
+# AboutLibraries
+##############################
+-keep class .R
+-keep class **.R$* {
+    <fields>;
+}
+##############################
 
 
 # If your project uses WebView with JS, uncomment the following
