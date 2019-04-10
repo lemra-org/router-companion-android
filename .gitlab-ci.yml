@@ -70,7 +70,10 @@ build_project:
     # Temp. cmd to clean up Buck cache
     - bash ./buckw clean || true
 
-    - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug || ./gradlew :app:assembleAmazonDebug :tasker-plugin:assembleAmazonDebug
+    # - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug || ./gradlew :app:assembleAmazonDebug :tasker-plugin:assembleAmazonDebug
+    - bash ./buckw build appAmazonDebug || ./gradlew :app:assembleAmazonDebug
+    - bash ./buckw build tasker-pluginAmazonDebug || ./gradlew :tasker-plugin:assembleAmazonDebug
+
     - ./gradlew testAmazonDebugUnitTest htmlDependencyReport
 
   artifacts:
