@@ -92,6 +92,8 @@ android {
             assets.srcDirs = ['src/main/assets']
         }
 
+        main.java.srcDirs += 'src/main/kotlin'
+
         // Move the tests to tests/java, tests/res, etc...
 //        instrumentTest.setRoot('src/androidTests')
 
@@ -108,7 +110,9 @@ android {
     defaultConfig {
         applicationId "org.rm3l.ddwrt.tasker"
         testApplicationId "org.rm3l.ddwrt.tasker.tests"
-        minSdkVersion 15
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        minSdkVersion 16
         targetSdkVersion android_sdk
 
         // Enabling multidex support.
@@ -246,6 +250,8 @@ dependencies {
 //    exclude group: 'org.rm3l', module: 'maoni-email'
     }
 
+    implementation('org.rm3l:maoni-common:6.0.0')
+
     implementation('org.rm3l:maoni-doorbell:2.5.0-maoni_6.0.0') {
         transitive = false
         exclude group: 'com.android.support', module: 'appcompat-v7'
@@ -266,7 +272,7 @@ dependencies {
 //    exclude group: 'com.android.support', module: 'support-v4'
 //  }
 
-    implementation('com.mikepenz:aboutlibraries:7.0.0-rc1') {
+    implementation('com.mikepenz:aboutlibraries:6.1.0') {
         transitive = true
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
@@ -287,7 +293,7 @@ dependencies {
     }
 
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'com.google.guava:guava:27.1-jre'
+    implementation 'com.google.guava:guava:27.1-android'
 
 //  implementation 'org.apache.commons:commons-lang3:3.5'
 
