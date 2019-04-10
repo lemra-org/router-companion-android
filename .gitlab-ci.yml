@@ -61,7 +61,7 @@ build_project:
       do
         nonStdAarFullName="${nonStdAar}-15.0.1.aar";
         mkdir -pv $CI_PROJECT_DIR'/buck-out/bin/.okbuck/cache/__unpack_'${nonStdAarFullName}'#aar_unzip__/res' ;
-        bash ./buckw build //.okbuck/cache:${nonStdAarFullName} ;
+        bash ./buckw build //.okbuck/cache:${nonStdAarFullName} || true ;
         mkdir -pv $CI_PROJECT_DIR'/buck-out/bin/.okbuck/cache/__unpack_'${nonStdAarFullName}'#aar_unzip__/res' ;
       done
 
