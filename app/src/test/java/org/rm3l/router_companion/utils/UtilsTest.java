@@ -17,7 +17,7 @@ import java.io.StringReader;
 import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
-import org.mockito.runners.*;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 
