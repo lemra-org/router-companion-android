@@ -84,7 +84,9 @@ public class AbstractBaseFragmentRecyclerViewAdapter
                 ContextCompat.getColor(mContext, android.R.color.transparent));
 
         holder.cardView.removeAllViews();
-        holder.cardView.addView(viewGroupLayout);
+        if (viewGroupLayout.getParent() == null) {
+            holder.cardView.addView(viewGroupLayout);
+        }
         holder.cardView.setContentPadding(15, 5, 15, 5);
         holder.cardView.setOnClickListener(ddwrtTile);
 
