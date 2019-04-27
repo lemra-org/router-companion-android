@@ -48,6 +48,11 @@
 ###########################
 # DD-WRT Companion
 ###########################
+-keep class org.rm3l.ddwrt.R
+-keep class org.rm3l.ddwrt.R$* {
+    <fields>;
+}
+
 -keep class org.rm3l.router_companion.firmwares.impl.** {
     *;
 }
@@ -198,6 +203,4 @@
 -keepclasseswithmembers class **.R$* {
     public static final int define_*;
 }
-
-
 #### End R8
