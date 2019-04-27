@@ -188,6 +188,16 @@
 -dontwarn java.lang.ClassValue
 ################################
 
+########
+# AboutLibraries
+########
+#-keep class .R
+#-keep class **.R$* {
+#    <fields>;
+#}
+-keepclasseswithmembers class **.R$* {
+    public static final int define_*;
+}
 
 
 #### End R8

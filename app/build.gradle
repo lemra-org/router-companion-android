@@ -388,16 +388,7 @@ dependencies {
 
     implementation fileTree(include: '*.jar', dir: 'libs')
 
-    implementation ("com.mikepenz:aboutlibraries:6.2.3") {
-        transitive = true
-        exclude group: 'com.android.support', module: 'appcompat-v7'
-        exclude group: 'com.android.support', module: 'design'
-        exclude group: 'com.android.support', module: 'support-v4'
-        exclude group: 'com.android.support', module: 'animated-vector-drawable'
-        exclude group: 'com.android.support', module: 'recyclerview-v7'
-        exclude group: 'com.android.support', module: 'support-annotations'
-        exclude group: 'com.android.support', module: 'support-compat'
-    }
+    implementation "com.mikepenz:aboutlibraries:6.2.3"
 
     implementation('com.mikepenz:materialdrawer:6.0.8@aar') {
         transitive = true

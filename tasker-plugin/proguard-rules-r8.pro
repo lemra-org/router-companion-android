@@ -188,6 +188,12 @@
 -dontwarn java.lang.ClassValue
 ################################
 
-
+########
+# AboutLibraries
+########
+-keep class .R
+-keep class **.R$* {
+    <fields>;
+}
 
 #### End R8
