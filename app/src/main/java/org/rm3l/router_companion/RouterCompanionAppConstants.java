@@ -235,7 +235,7 @@ public final class RouterCompanionAppConstants {
 
     public static final String[] CLOUDINARY_OPTS = new String[]{"w_270", "h_150", "e_blur"};
 
-    public static final String IMAGE_CDN_URL_PREFIX = "http://res.cloudinary.com/rm3l/image/upload";
+    public static final String IMAGE_CDN_URL_PREFIX = "https://res.cloudinary.com/rm3l/image/upload";
 
     public static final String LAST_KNOWN_VERSION = "lastKnownVersion";
 
