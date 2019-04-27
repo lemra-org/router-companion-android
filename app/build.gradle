@@ -306,7 +306,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles 'proguard-rules.pro'
+            proguardFiles 'proguard-rules-r8.pro'
             signingConfig signingConfigs.release
             zipAlignEnabled true
         }

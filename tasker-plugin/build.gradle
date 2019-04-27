@@ -183,7 +183,7 @@ android {
         //        }
         release {
             minifyEnabled true
-            proguardFiles 'proguard-rules.pro'
+            proguardFiles 'proguard-rules-r8.pro'
             signingConfig signingConfigs.release
             zipAlignEnabled true
         }
@@ -191,7 +191,7 @@ android {
             // Disable fabric build ID generation for debug builds
             ext.enableCrashlytics = false
             minifyEnabled true
-            proguardFiles 'proguard-rules.pro'
+            proguardFiles 'proguard-rules-r8.pro'
             zipAlignEnabled true
         }
     }
