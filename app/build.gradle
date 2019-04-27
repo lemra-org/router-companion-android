@@ -314,7 +314,7 @@ android {
             // Disable fabric build ID generation for debug builds
             ext.enableCrashlytics = false
             minifyEnabled true
-            proguardFiles 'proguard-rules.pro'
+            proguardFiles 'proguard-rules-r8.pro'
             zipAlignEnabled true
 
             //Android-Debug-Database - not needed anymore as FB's Stetho superseedes this
