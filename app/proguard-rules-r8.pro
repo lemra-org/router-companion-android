@@ -56,6 +56,11 @@
 -keep class org.rm3l.router_companion.firmwares.impl.** {
     *;
 }
+
+-keepclassmembers public class org.rm3l.router_companion.** {
+ public *;
+}
+
 ###########################
 
 ###############################
