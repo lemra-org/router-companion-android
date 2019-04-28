@@ -53,6 +53,8 @@
     <fields>;
 }
 
+-keep class org.rm3l.ddwrt.BuildConfig
+
 -keep class org.rm3l.router_companion.firmwares.impl.** {
     *;
 }
