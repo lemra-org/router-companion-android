@@ -28,8 +28,10 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferNetworkLossHandler;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 
@@ -56,7 +58,7 @@ public final class AWSUtils {
     @NonNull
     public static AmazonS3 getAmazonS3Client(final Context context) {
         if (s3Client == null) {
-            s3Client = new AmazonS3Client(getAWSCredentialsProvider(context));
+            s3Client = new AmazonS3Client(getAWSCredentialsProvider(context), Region.getRegion(Regions.DEFAULT_REGION));
             s3Client.setRegion(Region.getRegion(AWS_COGNITO_IDENTITY_POOL_REGION));
         }
         return s3Client;
@@ -65,7 +67,8 @@ public final class AWSUtils {
     @NonNull
     public static TransferUtility getTransferUtility(final Context context) {
         if (s3TransferUtility == null) {
-            s3TransferUtility = new TransferUtility(getAmazonS3Client(context), context);
+            TransferNetworkLossHandler.getInstance(context);
+            s3TransferUtility = TransferUtility.builder().s3Client(getAmazonS3Client(context)).context(context).build();
         }
         return s3TransferUtility;
     }
