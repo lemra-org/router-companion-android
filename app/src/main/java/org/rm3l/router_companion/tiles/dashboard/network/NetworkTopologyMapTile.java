@@ -148,7 +148,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
             //                    (int)(drawable.getIntrinsicHeight() * 0.5));
             //Scale to 70x70
             final Drawable d = new BitmapDrawable(mParentFragmentActivity.getResources(),
-                    Bitmap.createScaledBitmap(((BitmapDrawable) drawable).getBitmap(), 170, 170, true));
+                    Bitmap.createScaledBitmap(((BitmapDrawable) drawable).getBitmap(), 70, 70, true));
 
             wanInternetTextView.setCompoundDrawablesWithIntrinsicBounds(d, null, null, null);
 
