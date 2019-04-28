@@ -23,5 +23,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <base-config cleartextTrafficPermitted="false" />
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">rm3l.org</domain>
+        <domain includeSubdomains="false">www.geognos.com</domain>
     </domain-config>
 </network-security-config>
