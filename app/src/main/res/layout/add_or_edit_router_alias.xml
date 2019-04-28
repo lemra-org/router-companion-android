@@ -50,13 +50,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <!--android:textAppearance="?android:textAppearanceMedium"-->
             <!--android:text="MAC Address"/>-->
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
                 android:layout_marginStart="4dp">
 
-                <android.support.design.widget.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/add_or_edit_router_alias_mac"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -73,8 +73,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:selectAllOnFocus="true">
 
                     <requestFocus />
-                </android.support.design.widget.TextInputEditText>
-            </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputEditText>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--<TextView-->
             <!--android:id="@+id/add_or_edit_router_alias_value_textview"-->
@@ -85,13 +85,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <!--android:textAppearance="?android:textAppearanceMedium"-->
             <!--android:text="Alias"/>-->
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
                 android:layout_marginStart="4dp">
 
-                <android.support.design.widget.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/add_or_edit_router_alias_value"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -106,7 +106,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:inputType="textNoSuggestions"
                     android:isScrollContainer="true"
                     android:selectAllOnFocus="true" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
 

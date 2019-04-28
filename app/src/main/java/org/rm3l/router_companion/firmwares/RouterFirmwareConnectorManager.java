@@ -1,6 +1,6 @@
 package org.rm3l.router_companion.firmwares;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;

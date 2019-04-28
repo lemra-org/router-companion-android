@@ -22,7 +22,7 @@
 
 package org.rm3l.router_companion.exceptions
 
-import android.support.v4.content.AsyncTaskLoader
+import androidx.loader.content.AsyncTaskLoader
 
 /**
  * By default, auto-refresh is enabled on all tiles. But this exception is raised whenever the user

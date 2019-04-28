@@ -17,7 +17,7 @@ import java.io.StringReader;
 import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
-import org.mockito.runners.*;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 
@@ -55,6 +55,8 @@ public class UtilsTest {
     public void testGetApplicationName_FromNonNullContext() {
         final ApplicationInfo applicationInfo = mock(ApplicationInfo.class);
         final String label = BuildConfig.APPLICATION_ID + "_" + BuildConfig.VERSION_NAME;
+        final PackageManager packageManager = mock(PackageManager.class);
+        when(mMockContext.getPackageManager()).thenReturn(packageManager);
         when(applicationInfo.loadLabel(any(PackageManager.class))).thenReturn(label);
         when(mMockContext.getApplicationInfo()).thenReturn(applicationInfo);
         assertEquals(label, Utils.getApplicationName(mMockContext));
@@ -69,7 +71,7 @@ public class UtilsTest {
     public void testGetLines() throws IOException {
         final String str = String.format("line1%1$sline2%1$s%1$smy line 3 %1$s", LINE_SEPARATOR);
         final String[] lines = Utils.getLines(new BufferedReader(new StringReader(str)));
-        assertFalse(lines.length == 0);
+        assertNotEquals(0, lines.length);
         assertEquals(4, lines.length);
     }
 

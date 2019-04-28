@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/router_add_content_scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -26,7 +26,7 @@
             android:imeOptions="flagNoExtractUi"
             android:prompt="@string/router_connection_proto_select" />
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/router_add_port_input_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="@dimen/activity_vertical_margin">
 
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/router_add_port"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -46,9 +46,9 @@
                 android:maxLines="1"
                 android:selectAllOnFocus="true"
                 android:text="@string/router_add_default_ssh_port" />
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/router_add_username_input_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="@dimen/activity_vertical_margin">
 
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/router_add_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
                 android:maxLines="1"
                 android:selectAllOnFocus="true"
                 android:text="root" />
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- SSH Authentication Method selection -->
         <TextView
@@ -149,14 +149,14 @@
                 android:visibility="gone" />
 
             <!-- Password-->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/router_add_password_input_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
                 android:layout_marginStart="4dp">
 
-                <android.support.design.widget.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/router_add_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -167,7 +167,7 @@
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:selectAllOnFocus="true" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <CheckBox
                 android:id="@+id/router_add_password_show_checkbox"
@@ -182,4 +182,4 @@
         </LinearLayout>
 
     </LinearLayout>
-</android.support.v4.widget.NestedScrollView>
+</androidx.core.widget.NestedScrollView>

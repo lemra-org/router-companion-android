@@ -5,8 +5,8 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.MB;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;

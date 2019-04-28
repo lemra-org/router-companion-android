@@ -2,7 +2,7 @@ package org.rm3l.router_companion.tiles.status.wireless.sort.impl;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Ordering;
 import java.util.Set;

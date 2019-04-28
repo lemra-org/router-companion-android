@@ -26,7 +26,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:orientation="vertical"
     tools:context="org.rm3l.router_companion.tiles.services.vpn.client.EditOpenVPNClientSettingsActivity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/openvpn_client_settings_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -195,7 +195,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
                 <!--android:text="@string/openvpncl_setting_ca_cert" />-->
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/openvpn_client_settings_ca_cert_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -203,7 +203,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin">
 
-                    <android.support.design.widget.TextInputEditText
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/openvpn_client_settings_ca_cert"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -219,7 +219,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:isScrollContainer="true"
                         android:selectAllOnFocus="true" />
 
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Public Client Cert -->
                 <!--<TextView-->
@@ -230,7 +230,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
                 <!--android:text="@string/openvpncl_setting_public_client_cert" />-->
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/openvpn_client_settings_public_client_cert_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -238,7 +238,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin">
 
-                    <android.support.design.widget.TextInputEditText
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/openvpn_client_settings_public_client_cert"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -253,7 +253,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:inputType="textMultiLine"
                         android:isScrollContainer="true"
                         android:selectAllOnFocus="true" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Private Client Key -->
                 <!--<TextView-->
@@ -264,7 +264,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
                 <!--android:text="@string/openvpncl_setting_private_client_key" />-->
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/openvpn_client_settings_private_client_key_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -272,7 +272,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin">
 
-                    <android.support.design.widget.TextInputEditText
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/openvpn_client_settings_private_client_key"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -287,7 +287,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:inputType="textMultiLine"
                         android:isScrollContainer="true"
                         android:selectAllOnFocus="true" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Advanced Options (to display or not) -->
                 <CheckBox
@@ -493,7 +493,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
                     <!--android:text="@string/openvpncl_setting_tls_auth_key" />-->
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/openvpn_client_settings_advanced_options_tls_auth_key_input_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -501,7 +501,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginStart="4dp"
                         android:layout_marginTop="@dimen/activity_vertical_margin">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/openvpn_client_settings_advanced_options_tls_auth_key"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
@@ -516,7 +516,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:inputType="textMultiLine"
                             android:isScrollContainer="true"
                             android:selectAllOnFocus="true" />
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Additional Config -->
                     <!--<TextView-->
@@ -527,7 +527,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
                     <!--android:text="@string/openvpncl_setting_additional_config" />-->
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/openvpn_client_settings_advanced_options_additional_config_input_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -535,7 +535,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginStart="4dp"
                         android:layout_marginTop="@dimen/activity_vertical_margin">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/openvpn_client_settings_advanced_options_additional_config"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
@@ -550,7 +550,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:inputType="textMultiLine"
                             android:isScrollContainer="true"
                             android:selectAllOnFocus="true" />
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Policy based Routing -->
                     <!--<TextView-->
@@ -561,7 +561,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
                     <!--android:text="@string/openvpncl_setting_policy_based_routing" />-->
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/openvpn_client_settings_advanced_options_policy_based_routing_input_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -569,7 +569,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginStart="4dp"
                         android:layout_marginTop="@dimen/activity_vertical_margin">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/openvpn_client_settings_advanced_options_policy_based_routing"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
@@ -584,7 +584,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:inputType="textMultiLine"
                             android:isScrollContainer="true"
                             android:selectAllOnFocus="true" />
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- PKCS12 Key -->
                     <!--<TextView-->
@@ -595,7 +595,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
                     <!--android:text="@string/openvpncl_setting_pkcs12_key" />-->
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/openvpn_client_settings_advanced_options_pkcs12_key_input_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -603,7 +603,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginStart="4dp"
                         android:layout_marginTop="@dimen/activity_vertical_margin">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/openvpn_client_settings_advanced_options_pkcs12_key"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
@@ -618,7 +618,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:inputType="textMultiLine"
                             android:isScrollContainer="true"
                             android:selectAllOnFocus="true" />
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Static Key -->
                     <!--<TextView-->
@@ -629,7 +629,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
                     <!--android:text="@string/openvpncl_setting_static_key" />-->
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/openvpn_client_settings_advanced_options_static_key_input_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -637,7 +637,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginStart="4dp"
                         android:layout_marginTop="@dimen/activity_vertical_margin">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/openvpn_client_settings_advanced_options_static_key"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
@@ -652,7 +652,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:inputType="textMultiLine"
                             android:isScrollContainer="true"
                             android:selectAllOnFocus="true" />
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
                 </LinearLayout>
 

@@ -10,7 +10,7 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.media.AudioManager
 import android.net.Uri
-import android.support.v4.app.NotificationCompat
+import androidx.core.app.NotificationCompat
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan

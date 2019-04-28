@@ -22,9 +22,9 @@
 package org.rm3l.router_companion.tiles.toolbox
 
 import android.os.Bundle
-import android.support.design.widget.TextInputEditText
-import android.support.design.widget.TextInputLayout
-import android.support.v4.app.Fragment
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+import androidx.fragment.app.Fragment
 import android.text.TextUtils
 import android.view.View
 import android.widget.RadioButton

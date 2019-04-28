@@ -26,7 +26,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:orientation="vertical"
     tools:context="org.rm3l.router_companion.tiles.services.wol.EditWOLDaemonSettingsActivity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/wol_daemon_settings_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

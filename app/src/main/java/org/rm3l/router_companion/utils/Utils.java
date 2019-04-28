@@ -57,15 +57,15 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.customtabs.CustomTabsClient;
-import android.support.customtabs.CustomTabsServiceConnection;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.PermissionChecker;
-import android.support.v4.util.Pair;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.browser.customtabs.CustomTabsClient;
+import androidx.browser.customtabs.CustomTabsServiceConnection;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.PermissionChecker;
+import androidx.core.util.Pair;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -776,7 +776,7 @@ public final class Utils {
      * @return whether custom tabs are supported
      */
     public static boolean isChromeCustomTabsSupported(@NonNull final Context context) {
-        final Intent serviceIntent = new Intent("android.support.customtabs.action.CustomTabsService");
+        final Intent serviceIntent = new Intent("androidx.customtabs.action.CustomTabsService");
         serviceIntent.setPackage("com.android.chrome");
 
         final CustomTabsServiceConnection serviceConnection = new CustomTabsServiceConnection() {

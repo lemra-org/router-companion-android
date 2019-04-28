@@ -24,7 +24,7 @@
 
 package org.rm3l.router_companion.tiles.syslog;
 
-import static android.support.v4.content.ContextCompat.getColor;
+import static androidx.core.content.ContextCompat.getColor;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
@@ -40,16 +40,16 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.FileProvider;
-import android.support.v4.content.Loader;
-import android.support.v4.content.PermissionChecker;
-import android.support.v7.widget.SwitchCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.loader.content.AsyncTaskLoader;
+import androidx.core.content.FileProvider;
+import androidx.loader.content.Loader;
+import androidx.core.content.PermissionChecker;
+import androidx.appcompat.widget.SwitchCompat;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;

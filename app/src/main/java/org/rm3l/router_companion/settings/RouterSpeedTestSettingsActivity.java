@@ -34,7 +34,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.airbnb.deeplinkdispatch.DeepLink;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;

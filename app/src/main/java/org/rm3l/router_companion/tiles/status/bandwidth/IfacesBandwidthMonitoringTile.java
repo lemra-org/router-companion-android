@@ -26,12 +26,12 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.Loader;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.loader.content.AsyncTaskLoader;
+import androidx.core.content.ContextCompat;
+import androidx.loader.content.Loader;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -774,7 +774,7 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
 
             final FillOutsideLine fill = new FillOutsideLine(FillOutsideLine.Type.BOUNDS_ABOVE);
             //Fill with a slightly transparent version of the original color
-            fill.setColor(android.support.v4.graphics.ColorUtils.setAlphaComponent(colorForIface, 30));
+            fill.setColor(androidx.core.graphics.ColorUtils.setAlphaComponent(colorForIface, 30));
             renderer.addFillOutsideLine(fill);
 
             if (i == 0) {

@@ -2,14 +2,14 @@ package org.rm3l.router_companion.tiles.admin.accessrestrictions
 
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.ViewPager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -29,12 +29,12 @@ import org.rm3l.router_companion.utils.kotlin.setAppTheme
 class AddOrEditWANAccessPolicyActivity : AppCompatActivity() {
 
     /**
-     * The [android.support.v4.view.PagerAdapter] that will provide
+     * The [androidx.viewpager.widget.PagerAdapter] that will provide
      * fragments for each of the sections. We use a
      * [FragmentPagerAdapter] derivative, which will keep every
      * loaded fragment in memory. If this becomes too memory intensive, it
      * may be best to switch to a
-     * [android.support.v4.app.FragmentStatePagerAdapter].
+     * [androidx.fragment.app.FragmentStatePagerAdapter].
      */
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
 

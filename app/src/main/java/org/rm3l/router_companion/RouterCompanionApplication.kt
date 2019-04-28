@@ -30,12 +30,12 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.LocalBroadcastManager
+import androidx.core.content.ContextCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.util.Log
 import android.widget.ImageView
 import com.airbnb.deeplinkdispatch.DeepLinkHandler
-import com.avocarrot.sdk.Avocarrot
+//import com.avocarrot.sdk.Avocarrot
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
 import com.evernote.android.job.JobConfig
@@ -134,10 +134,10 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
                     RouterActionsDeepLinkActivity::class.java.canonicalName)
         }
 
-        if (BuildConfig.WITH_ADS || BuildConfig.WITH_INTERSTITIAL_ADS) {
-            Avocarrot.setTestMode(BuildConfig.DEBUG) // enable test ads
-            Avocarrot.setDebugMode(BuildConfig.DEBUG) // enable logger
-        }
+//        if (BuildConfig.WITH_ADS || BuildConfig.WITH_INTERSTITIAL_ADS) {
+//            Avocarrot.setTestMode(BuildConfig.DEBUG) // enable test ads
+//            Avocarrot.setDebugMode(BuildConfig.DEBUG) // enable logger
+//        }
 
         if (BuildConfig.DEBUG && !IS_USING_ROBOLECTRIC_UNIT_TESTING) {
             // if using Robolectric in local unit test, thrown IOException.

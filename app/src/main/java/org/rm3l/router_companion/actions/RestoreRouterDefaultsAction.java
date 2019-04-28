@@ -23,8 +23,8 @@ package org.rm3l.router_companion.actions;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.common.base.Joiner;
 import java.util.Date;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;

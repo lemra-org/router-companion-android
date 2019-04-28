@@ -25,7 +25,7 @@ package org.rm3l.router_companion.utils;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import com.google.common.base.Splitter;
 import java.util.List;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;

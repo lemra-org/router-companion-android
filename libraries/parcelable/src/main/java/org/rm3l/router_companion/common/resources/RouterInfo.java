@@ -2,8 +2,8 @@ package org.rm3l.router_companion.common.resources;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Created by rm3l on 07/08/16.

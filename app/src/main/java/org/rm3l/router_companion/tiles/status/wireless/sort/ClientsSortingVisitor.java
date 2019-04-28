@@ -21,7 +21,7 @@
  */
 package org.rm3l.router_companion.tiles.status.wireless.sort;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import java.util.Set;
 import org.rm3l.router_companion.resources.Device;
 

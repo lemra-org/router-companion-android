@@ -2,20 +2,20 @@ package org.rm3l.router_companion.tiles.ads
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.content.AsyncTaskLoader
-import android.support.v4.content.Loader
+import androidx.fragment.app.Fragment
+import androidx.loader.content.AsyncTaskLoader
+import androidx.loader.content.Loader
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import com.avocarrot.sdk.mediation.ResponseStatus
-import com.avocarrot.sdk.nativeassets.NativeAssetsAd
-import com.avocarrot.sdk.nativeassets.NativeAssetsAdPool
-import com.avocarrot.sdk.nativeassets.NativeAssetsConfig
-import com.avocarrot.sdk.nativeassets.listeners.NativeAssetsAdCallback
-import com.avocarrot.sdk.nativeassets.model.NativeAssets
+//import com.avocarrot.sdk.mediation.ResponseStatus
+//import com.avocarrot.sdk.nativeassets.NativeAssetsAd
+//import com.avocarrot.sdk.nativeassets.NativeAssetsAdPool
+//import com.avocarrot.sdk.nativeassets.NativeAssetsConfig
+//import com.avocarrot.sdk.nativeassets.listeners.NativeAssetsAdCallback
+//import com.avocarrot.sdk.nativeassets.model.NativeAssets
 import com.crashlytics.android.Crashlytics
 import org.jetbrains.anko.find
 import org.rm3l.ddwrt.R
@@ -26,7 +26,8 @@ import org.rm3l.router_companion.utils.kotlin.hide
 import org.rm3l.router_companion.utils.kotlin.show
 
 class AvocarrotNativeAdTile(parentFragment: Fragment, arguments: Bundle, router: Router?)
-    : NativeAssetsAdCallback,
+    :
+//    NativeAssetsAdCallback,
     DDWRTTile<Unit>(parentFragment, arguments, router, R.layout.tile_native_ad, null) {
 
     override fun getTileHeaderViewId() = R.id.tile_native_ad_hdr
@@ -34,14 +35,14 @@ class AvocarrotNativeAdTile(parentFragment: Fragment, arguments: Bundle, router:
     override fun getLoader(id: Int, args: Bundle): AsyncTaskLoader<Unit> {
         return object : AsyncTaskLoader<Unit>(mParentFragmentActivity as Context) {
             override fun loadInBackground() {
-                NativeAssetsAdPool
-                    .load(
-                        mParentFragmentActivity,
-                        RouterCompanionAppConstants.AVOCARROT_LIST_PLACEMENT_KEY,
-                        adConfig,
-                        this@AvocarrotNativeAdTile
-                    )
-//                .reloadAd()
+//                NativeAssetsAdPool
+//                    .load(
+//                        mParentFragmentActivity,
+//                        RouterCompanionAppConstants.AVOCARROT_LIST_PLACEMENT_KEY,
+//                        adConfig,
+//                        this@AvocarrotNativeAdTile
+//                    )
+////                .reloadAd()
             }
         }
     }
@@ -129,76 +130,76 @@ class AvocarrotNativeAdTile(parentFragment: Fragment, arguments: Bundle, router:
 //                .loadAd()
     }
 
-    override fun onAdFailed(nativeAssetsAd: NativeAssetsAd, responseStatus: ResponseStatus) {
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "onAdFailed. ResponseStatus=$responseStatus")
-    }
-
-    override fun onAdClicked(nativeAssetsAd: NativeAssetsAd) {
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "onAdClicked")
-    }
-
-    override fun onAdLoaded(nativeAssetsAd: NativeAssetsAd, nativeAssets: NativeAssets) {
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "onAdLoaded")
-
-        val avocarrotContainerLayout = layout.find<View>(R.id.tile_native_ad_container)
-        avocarrotContainerLayout.show()
-        layout.find<View>(R.id.admob_banner).hide()
-
-        val clickableViews: MutableList<View> = mutableListOf()
-        val titleView = layout.find<TextView>(R.id.tile_native_ad_headline)
-        val bodyView = layout.find<TextView>(R.id.tile_native_ad_description)
-        val iconView = layout.find<ImageView>(R.id.tile_native_ad_image_view)
-        val imageView = layout.find<ImageView>(R.id.tile_native_ad_rating_image_view)
-        val button = layout.find<Button>(R.id.tile_native_ad_button)
-
-        titleView.text = nativeAssets.text
-        clickableViews.add(titleView)
-
-        bodyView.text = nativeAssets.text
-
-        iconView.setImageDrawable(nativeAssets.icon?.drawable)
-        clickableViews.add(iconView)
-
-        imageView.setImageDrawable(nativeAssets.image?.drawable)
-        clickableViews.add(imageView)
-
-//        final TextView ctaView = ...
-//        final ImageView adChoiceImageView = ...
-//        final TextView adChoiceTextView = ...
-
-
-//        if (ctaView != null) {
-//            ctaView.setText(nativeAssets.getCallToAction());
-//            clickableViews.add(ctaView);
-//        }
-//        final AdChoice adChoice = nativeAssets.getAdChoice();
-//        if (adChoice != null) {
-//            if (adChoiceImageView != null) {
-//                adChoiceImageView.setImageDrawable(adChoice.getIcon().getDrawable());
-//                nativeAssetsAd.registerAdChoiceViewForClick(adChoiceImageView);
-//            }
-//            if (adChoiceTextView != null) {
-//                adChoiceTextView.setText(adChoice.getIconCaption());
-//                nativeAssetsAd.registerAdChoiceViewForClick(adChoiceTextView);
-//            }
-//        } else {
-//            adChoiceImageView.setImageDrawable(null);
-//            adChoiceTextView.setText(null);
-//        }
-        nativeAssetsAd.registerViewsForClick(clickableViews);
-        nativeAssetsAd.registerViewForImpression(avocarrotContainerLayout)
-    }
-
-    override fun onAdOpened(nativeAssetsAd: NativeAssetsAd) {
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "onAdOpened")
-    }
+//    override fun onAdFailed(nativeAssetsAd: NativeAssetsAd, responseStatus: ResponseStatus) {
+//        Crashlytics.log(Log.DEBUG, LOG_TAG, "onAdFailed. ResponseStatus=$responseStatus")
+//    }
+//
+//    override fun onAdClicked(nativeAssetsAd: NativeAssetsAd) {
+//        Crashlytics.log(Log.DEBUG, LOG_TAG, "onAdClicked")
+//    }
+//
+//    override fun onAdLoaded(nativeAssetsAd: NativeAssetsAd, nativeAssets: NativeAssets) {
+//        Crashlytics.log(Log.DEBUG, LOG_TAG, "onAdLoaded")
+//
+//        val avocarrotContainerLayout = layout.find<View>(R.id.tile_native_ad_container)
+//        avocarrotContainerLayout.show()
+//        layout.find<View>(R.id.admob_banner).hide()
+//
+//        val clickableViews: MutableList<View> = mutableListOf()
+//        val titleView = layout.find<TextView>(R.id.tile_native_ad_headline)
+//        val bodyView = layout.find<TextView>(R.id.tile_native_ad_description)
+//        val iconView = layout.find<ImageView>(R.id.tile_native_ad_image_view)
+//        val imageView = layout.find<ImageView>(R.id.tile_native_ad_rating_image_view)
+//        val button = layout.find<Button>(R.id.tile_native_ad_button)
+//
+//        titleView.text = nativeAssets.text
+//        clickableViews.add(titleView)
+//
+//        bodyView.text = nativeAssets.text
+//
+//        iconView.setImageDrawable(nativeAssets.icon?.drawable)
+//        clickableViews.add(iconView)
+//
+//        imageView.setImageDrawable(nativeAssets.image?.drawable)
+//        clickableViews.add(imageView)
+//
+////        final TextView ctaView = ...
+////        final ImageView adChoiceImageView = ...
+////        final TextView adChoiceTextView = ...
+//
+//
+////        if (ctaView != null) {
+////            ctaView.setText(nativeAssets.getCallToAction());
+////            clickableViews.add(ctaView);
+////        }
+////        final AdChoice adChoice = nativeAssets.getAdChoice();
+////        if (adChoice != null) {
+////            if (adChoiceImageView != null) {
+////                adChoiceImageView.setImageDrawable(adChoice.getIcon().getDrawable());
+////                nativeAssetsAd.registerAdChoiceViewForClick(adChoiceImageView);
+////            }
+////            if (adChoiceTextView != null) {
+////                adChoiceTextView.setText(adChoice.getIconCaption());
+////                nativeAssetsAd.registerAdChoiceViewForClick(adChoiceTextView);
+////            }
+////        } else {
+////            adChoiceImageView.setImageDrawable(null);
+////            adChoiceTextView.setText(null);
+////        }
+//        nativeAssetsAd.registerViewsForClick(clickableViews);
+//        nativeAssetsAd.registerViewForImpression(avocarrotContainerLayout)
+//    }
+//
+//    override fun onAdOpened(nativeAssetsAd: NativeAssetsAd) {
+//        Crashlytics.log(Log.DEBUG, LOG_TAG, "onAdOpened")
+//    }
 
     companion object {
         private val LOG_TAG = AvocarrotNativeAdTile::class.java.simpleName
 
-        private val adConfig = NativeAssetsConfig.Builder()
-            .prefetchIcon(true)
-            .prefetchImage(true)
-            .prefetchAdChoiceIcon(true)
+//        private val adConfig = NativeAssetsConfig.Builder()
+//            .prefetchIcon(true)
+//            .prefetchImage(true)
+//            .prefetchAdChoiceIcon(true)
     }
 }

@@ -8,8 +8,8 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.SERVICE_NAME
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.Base64;
 import android.util.Log;
 import com.crashlytics.android.Crashlytics;

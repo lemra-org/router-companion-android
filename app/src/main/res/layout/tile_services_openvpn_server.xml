@@ -55,7 +55,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textStyle="bold" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/tile_services_openvpn_server_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

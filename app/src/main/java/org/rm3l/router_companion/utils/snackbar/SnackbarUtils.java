@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.ColorInt;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.ColorInt;
+import androidx.annotation.Nullable;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -110,7 +110,7 @@ public final class SnackbarUtils {
         final View snackbarView = snackbar.getView();
         snackbarView.setBackgroundColor(bgColor);
         final TextView textView =
-                (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                (TextView) snackbarView.findViewById(com.google.android.material.R.id.snackbar_text);
         textView.setTextColor(titleColor);
 
         if (show) {

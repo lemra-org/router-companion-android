@@ -2,7 +2,7 @@ package org.rm3l.router_companion.common.resources.audit;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Created by rm3l on 06/09/16.

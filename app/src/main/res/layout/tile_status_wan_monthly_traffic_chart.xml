@@ -27,7 +27,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:orientation="vertical"
     tools:context="org.rm3l.router_companion.tiles.status.wan.WANMonthlyTrafficActivity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/tile_status_wan_monthly_traffic_chart_view_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -29,16 +29,16 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.Snackbar
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.ActivityOptionsCompat
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.Fragment
-import android.support.v4.content.AsyncTaskLoader
-import android.support.v4.content.FileProvider
-import android.support.v4.content.Loader
-import android.support.v4.content.PermissionChecker
-import android.support.v7.widget.SwitchCompat
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityOptionsCompat
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.loader.content.AsyncTaskLoader
+import androidx.core.content.FileProvider
+import androidx.loader.content.Loader
+import androidx.core.content.PermissionChecker
+import androidx.appcompat.widget.SwitchCompat
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.format.DateUtils
@@ -540,7 +540,7 @@ class WANMonthlyTrafficTile(parentFragment: Fragment, arguments: Bundle?,
                         return@OnMenuItemClickListener true
                     }
                     R.id.tile_wan_monthly_traffic_change_cycle -> {
-                        val builder = android.support.v7.app.AlertDialog.Builder(mParentFragmentActivity)
+                        val builder = androidx.appcompat.app.AlertDialog.Builder(mParentFragmentActivity)
                         val dialogInflater = LayoutInflater.from(builder.context)
 
                         val view = dialogInflater.inflate(R.layout.data_usage_cycle_editor, null, false)

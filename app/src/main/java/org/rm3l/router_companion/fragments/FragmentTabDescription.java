@@ -1,6 +1,6 @@
 package org.rm3l.router_companion.fragments;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Created by rm3l on 01/09/15.

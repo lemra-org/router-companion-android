@@ -1,6 +1,6 @@
 package org.rm3l.router_companion.utils.retrofit;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;

@@ -1,6 +1,6 @@
 package com.nextstagesearch.design;
 
-//import android.support.v7.graphics.Palette;
+//import androidx.v7.graphics.Palette;
 
 /**
  * Created by oded on 9/15/15.

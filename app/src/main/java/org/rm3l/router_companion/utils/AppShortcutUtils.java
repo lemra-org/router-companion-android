@@ -3,7 +3,7 @@ package org.rm3l.router_companion.utils;
 import android.content.Context;
 import android.content.pm.ShortcutManager;
 import android.os.Build;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import com.crashlytics.android.Crashlytics;
 
 /**

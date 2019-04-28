@@ -118,13 +118,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
             android:maxLines="1" />
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tile_toolbox_abstract_ping_packets_inputlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:visibility="gone">
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/tile_toolbox_abstract_ping_packets"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -136,7 +136,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:maxLines="1"
                 android:selectAllOnFocus="true"
                 android:text="5" />
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
             android:id="@+id/tile_toolbox_abstract_service_port_lookup_layout"
@@ -168,12 +168,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/service_name" />
             </RadioGroup>
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tile_toolbox_abstract_service_port_lookup_port_textinputlayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone">
-                <android.support.design.widget.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tile_toolbox_abstract_service_port_lookup_port_edittext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -184,13 +184,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:inputType="numberSigned"
                     android:maxLines="1"
                     android:selectAllOnFocus="true" />
-            </android.support.design.widget.TextInputLayout>
-            <android.support.design.widget.TextInputLayout
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tile_toolbox_abstract_service_port_lookup_service_textinputlayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone">
-                <android.support.design.widget.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tile_toolbox_abstract_service_port_lookup_service_edittext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -201,7 +201,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:inputType="text"
                     android:maxLines="1"
                     android:selectAllOnFocus="true" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:layout_width="match_parent"

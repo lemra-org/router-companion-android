@@ -98,10 +98,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!--android:visibility="gone">-->
 
         <!--&lt;!&ndash; Filter &ndash;&gt;-->
-        <!--<android.support.design.widget.TextInputLayout-->
+        <!--<com.google.android.material.textfield.TextInputLayout-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="wrap_content">-->
-        <!--<android.support.design.widget.TextInputEditText-->
+        <!--<com.google.android.material.textfield.TextInputEditText-->
         <!--android:selectAllOnFocus="true"-->
         <!--android:id="@+id/tile_admin_access_restrictions_wan_access_filter"-->
         <!--android:layout_width="fill_parent"-->
@@ -117,7 +117,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!--android:imeOptions="actionSearch"-->
         <!--android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"-->
         <!--android:textColor="@color/accent_material_light" />-->
-        <!--</android.support.design.widget.TextInputLayout>-->
+        <!--</com.google.android.material.textfield.TextInputLayout>-->
 
         <!--&lt;!&ndash; Size &ndash;&gt;-->
         <!--<TextView-->
@@ -193,7 +193,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:textIsSelectable="true"
                 android:textStyle="italic" />
 
-            <android.support.design.widget.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/wan_access_restriction_policy_add"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -22,7 +22,7 @@
 package org.rm3l.router_companion.fragments.toolbox;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import java.util.List;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 

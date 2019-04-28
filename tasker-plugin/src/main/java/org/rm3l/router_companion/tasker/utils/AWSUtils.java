@@ -25,7 +25,7 @@ import static org.rm3l.router_companion.tasker.Constants.AWS_COGNITO_IDENTITY_PO
 import static org.rm3l.router_companion.tasker.Constants.AWS_COGNITO_IDENTITY_POOL_REGION;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;

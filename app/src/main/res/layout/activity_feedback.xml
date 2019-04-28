@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/activity_feedback_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -58,13 +58,13 @@
                     android:layout_marginBottom="@dimen/activity_vertical_margin"
                     android:text="@string/feedback_dialog_text" />
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/activity_feedback_email_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/activity_vertical_margin">
 
-                    <android.support.design.widget.TextInputEditText
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/activity_feedback_email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -72,15 +72,15 @@
                         android:imeOptions="flagNoExtractUi"
                         android:inputType="textEmailAddress"
                         android:maxLines="1" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/activity_feedback_content_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/activity_vertical_margin">
 
-                    <android.support.design.widget.TextInputEditText
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/activity_feedback_content"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
                         android:inputType="textCapSentences|textMultiLine"
                         android:isScrollContainer="true"
                         android:minLines="5" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <LinearLayout
                     android:id="@+id/activity_feedback_router_information"

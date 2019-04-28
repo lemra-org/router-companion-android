@@ -5,7 +5,7 @@ package org.rm3l.router_companion.utils.kotlin
 import android.animation.Animator
 import android.animation.Animator.AnimatorListener
 import android.animation.ValueAnimator
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.text.Spannable
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan

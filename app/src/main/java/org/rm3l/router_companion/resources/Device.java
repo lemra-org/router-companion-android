@@ -26,8 +26,8 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.router_companion.resources.Device.WANAccessState.WAN_ACCESS_UNKNOWN;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import java.util.Set;
 
 /**

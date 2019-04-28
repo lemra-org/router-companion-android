@@ -21,7 +21,7 @@
  */
 package org.rm3l.router_companion.tiles.status.wireless.filter.impl;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 import java.util.Set;
