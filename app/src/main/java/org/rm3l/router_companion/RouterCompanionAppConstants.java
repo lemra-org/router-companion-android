@@ -89,10 +89,10 @@ public final class RouterCompanionAppConstants {
             + "8"
             + "I";
 
-    public static final String REMOTE_HELP_WEBSITE = "http://help.ddwrt-companion.rm3l.org";
+    public static final String REMOTE_HELP_WEBSITE = "https://help.ddwrt-companion.app";
 
     public static final String REMOTE_HELP_WEBSITE_CHANGELOG =
-            "http://help.ddwrt-companion.rm3l.org/doc/release-notes.html";
+            "https://help.ddwrt-companion.app/doc/release-notes.html";
 
     public static final int DOORBELL_APPID = 0;
 
@@ -313,7 +313,7 @@ public final class RouterCompanionAppConstants {
 
     public static final String Q_A_WEBSITE = "https://www.codewake.com/p/ddwrt-companion";
 
-    public static final String PUBLIC_ROADMAP_WEBSITE = "http://ddwrt-companion.rm3l.org/roadmap";
+    public static final String PUBLIC_ROADMAP_WEBSITE = "https://ddwrt-companion.app/roadmap";
 
     public static final String URL_SHORTENER_API_BASE_URL =
             "https://www.googleapis.com/urlshortener/v1/";

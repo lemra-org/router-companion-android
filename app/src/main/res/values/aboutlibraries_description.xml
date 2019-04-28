@@ -25,7 +25,7 @@ SOFTWARE.
     <string name="aboutLibraries_description_text" translatable="false"><![CDATA[
   App that lets you connect to, monitor and manage your DD-WRT (and variants) routers on the go.
   <br/><br/>
-  <a href="http://ddwrt-companion.rm3l.org" target="_blank">http://ddwrt-companion.rm3l.org</a>
+  <a href="https://ddwrt-companion.app" target="_blank">https://ddwrt-companion.app</a>
  &mdash;
 <a href="mailto:apps+ddwrt@rm3l.org?subject=DD-WRT%20Companion%20Android%20Application">apps+ddwrt@rm3l.org</a>
 <br/><br/>
@@ -274,7 +274,7 @@ This was a popular request: you are now able to PIN-protect the app. Head to the
   such as Location and Identity.
   Those permissions were inadvertently inherited from some third-party libraries used throughout
   the app. As they are not relevant whatsoever for this app, they have been removed.
-  For your information, <a href="http://help.ddwrt-companion.rm3l.org/android/permissions.html">this page</a>
+  For your information, <a href="https://help.ddwrt-companion.app/android/permissions.html">this page</a>
   lists the sole permissions required by the app. Thanks for your feedbacks.</li>
   <li>WAN monitoring graphs now fixed</li>
   <li>Fixed data retrieval issues on some devices</li>

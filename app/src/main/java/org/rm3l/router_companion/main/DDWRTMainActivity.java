@@ -258,7 +258,7 @@ public class DDWRTMainActivity extends AppCompatActivity
             HashBiMap.create(11);
 
     private static final Uri BASE_APP_URI = Uri.parse(
-            "android-app://" + BuildConfig.APPLICATION_ID + "/http/ddwrt-companion.rm3l.org/routers");
+            "android-app://" + BuildConfig.APPLICATION_ID + "/http/ddwrt-companion.app/routers");
 
     @NonNull
     private DDWRTCompanionDAO dao;

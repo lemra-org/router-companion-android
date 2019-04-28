@@ -342,7 +342,7 @@ data class DemoFirmwareRelease(val index: Int) : FirmwareRelease(index.toString(
     override fun getDirectLink(): String {
         return when (index) {
             1, 3, 5, 8 -> RouterCompanionAppConstants.DDWRT_RELEASE_BASE_URL
-            6, 7 -> "http://ddwrt-companion.rm3l.org"
+            6, 7 -> "https://ddwrt-companion.app"
             else -> "N/A"
         }
     }

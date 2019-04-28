@@ -53,7 +53,7 @@ public class GettingStartedActivity extends WelcomeActivity {
                 .parallaxPage(R.layout.welcome_parallax_feedback, "Have your say",
                         "Sending feedback from within the app is now easier. "
                                 + "Feel free to submit new ideas, file bugs or simply say hello.\n\n"
-                                + "Help and Support: http://ddwrt-companion.rm3l.org", R.color.purple_background)
+                                + "Help and Support: https://ddwrt-companion.app", R.color.purple_background)
 
                 //                .basicPage(R.drawable.welcome_screen_notifs_widgets,
                 //                        "One more thing...",

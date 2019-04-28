@@ -103,7 +103,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <data android:scheme="http" />
                 <data android:scheme="https" />
-                <data android:host="tasker.ddwrt-companion.rm3l.org" />
+                <data android:host="tasker.ddwrt-companion.app" />
                 <data android:pathPrefix="/tasker" />
 
                 <!--<action android:name="android.intent.action.SEARCH" /&gt; -->
