@@ -6,7 +6,7 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.AWS_S3_FEEDB
 import static org.rm3l.router_companion.RouterCompanionAppConstants.AWS_S3_LOGS_FOLDER_NAME;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DOORBELL_APIKEY;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.DOORBELL_APPID;
-import static org.rm3l.router_companion.RouterCompanionAppConstants.GOOGLE_API_KEY;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.FIREBASE_API_KEY;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -45,8 +45,10 @@ import org.rm3l.maoni.common.model.DeviceInfo;
 import org.rm3l.maoni.common.model.Feedback;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.api.feedback.DoorbellService;
-import org.rm3l.router_companion.api.urlshortener.goo_gl.GooGlService;
-import org.rm3l.router_companion.api.urlshortener.goo_gl.resources.GooGlData;
+import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.FirebaseDynamicLinksService;
+import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.resources.DynamicLinkInfo;
+import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.resources.ShortLinksDataRequest;
+import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.resources.ShortLinksDataResponse;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.multithreading.MultiThreadingManager;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
@@ -191,15 +193,22 @@ public class MaoniFeedbackHandler implements Handler {
                                         new IllegalStateException("Failed to upload screenshot capture"));
                             } else {
                                 //Set URL TO S3
-                                final GooGlData gooGlData = new GooGlData();
-                                gooGlData.setLongUrl(
-                                        String.format("https://%s.s3.amazonaws.com/%s/%s.png", AWS_S3_BUCKET_NAME,
-                                                AWS_S3_FEEDBACKS_FOLDER_NAME, feedback.id));
-                                final Response<GooGlData> response = mGooGlService.shortenLongUrl(
-                                        GOOGLE_API_KEY,
-                                        gooGlData).execute();
-                                NetworkUtils.checkResponseSuccessful(response);
-                                screenshotCaptureUploadUrl = response.body().getId();
+                                final String longLink = String.format("https://%s.s3.amazonaws.com/%s/%s.png",
+                                        AWS_S3_BUCKET_NAME,
+                                        AWS_S3_FEEDBACKS_FOLDER_NAME, feedback.id);
+                                try {
+                                    final ShortLinksDataRequest gooGlData = new ShortLinksDataRequest(
+                                            new DynamicLinkInfo(longLink));
+                                    final Response<ShortLinksDataResponse> response = mFirebaseDynamicLinksService.shortLinks(
+                                            FIREBASE_API_KEY,
+                                            gooGlData).execute();
+                                    NetworkUtils.checkResponseSuccessful(response);
+                                    screenshotCaptureUploadUrl = response.body().getShortLink();
+                                } catch (final Exception e) {
+                                    //No worries
+                                    Utils.reportException(mContext, e);
+                                    screenshotCaptureUploadUrl = longLink;
+                                }
                             }
                             break;
                         }
@@ -268,15 +277,21 @@ public class MaoniFeedbackHandler implements Handler {
                                         null, new IllegalStateException("Failed to upload logs"));
                             } else {
                                 //Set URL TO S3
-                                final GooGlData gooGlData = new GooGlData();
-                                gooGlData.setLongUrl(
-                                        String.format("https://%s.s3.amazonaws.com/%s/%s/%s.txt",
-                                                AWS_S3_BUCKET_NAME, AWS_S3_FEEDBACKS_FOLDER_NAME,
-                                                AWS_S3_LOGS_FOLDER_NAME, feedback.id));
-                                final Response<GooGlData> response = mGooGlService.shortenLongUrl(GOOGLE_API_KEY,
-                                        gooGlData).execute();
-                                NetworkUtils.checkResponseSuccessful(response);
-                                logsUrl = response.body().getId();
+                                final String longLink = String.format("https://%s.s3.amazonaws.com/%s/%s/%s.txt",
+                                        AWS_S3_BUCKET_NAME, AWS_S3_FEEDBACKS_FOLDER_NAME,
+                                        AWS_S3_LOGS_FOLDER_NAME, feedback.id);
+                                try {
+                                    final ShortLinksDataRequest shortLinksDataRequest = new ShortLinksDataRequest(
+                                            new DynamicLinkInfo(longLink));
+                                    final Response<ShortLinksDataResponse> response = mFirebaseDynamicLinksService
+                                            .shortLinks(FIREBASE_API_KEY, shortLinksDataRequest).execute();
+                                    NetworkUtils.checkResponseSuccessful(response);
+                                    logsUrl = response.body().getShortLink();
+                                } catch (final Exception e) {
+                                    //No worries
+                                    Utils.reportException(mContext, e);
+                                    logsUrl = longLink;
+                                }
                             }
                             break;
                         }
@@ -457,7 +472,7 @@ public class MaoniFeedbackHandler implements Handler {
 
     private final SharedPreferences mGlobalPreferences;
 
-    private GooGlService mGooGlService;
+    private FirebaseDynamicLinksService mFirebaseDynamicLinksService;
 
     private Router mRouter;
 
@@ -471,8 +486,8 @@ public class MaoniFeedbackHandler implements Handler {
                         Context.MODE_PRIVATE);
         mDoorbellService =
                 NetworkUtils.createApiService(context, FEEDBACK_API_BASE_URL, DoorbellService.class);
-        mGooGlService = NetworkUtils.createApiService(context,
-                RouterCompanionAppConstants.URL_SHORTENER_API_BASE_URL, GooGlService.class);
+        mFirebaseDynamicLinksService = NetworkUtils.createApiService(context,
+                RouterCompanionAppConstants.FIREBASE_DYNAMIC_LINKS_BASE_URL, FirebaseDynamicLinksService.class);
     }
 
     @Override

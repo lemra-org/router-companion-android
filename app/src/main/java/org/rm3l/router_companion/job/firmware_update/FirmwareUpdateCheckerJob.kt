@@ -10,7 +10,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
@@ -24,20 +23,17 @@ import com.evernote.android.job.DailyJob
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobManager
 import com.evernote.android.job.JobRequest
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Picasso.LoadedFrom
-import com.squareup.picasso.Target
 import needle.UiRelatedTask
 import org.rm3l.ddwrt.BuildConfig
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.RouterCompanionAppConstants
 import org.rm3l.router_companion.RouterCompanionAppConstants.CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES
-import org.rm3l.router_companion.RouterCompanionAppConstants.GOOGLE_API_KEY
+import org.rm3l.router_companion.RouterCompanionAppConstants.FIREBASE_API_KEY
 import org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_CHOICE_PREF
 import org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_ENABLE
-import org.rm3l.router_companion.actions.activity.OpenWebManagementPageActivity
-import org.rm3l.router_companion.api.urlshortener.goo_gl.GooGlService
-import org.rm3l.router_companion.api.urlshortener.goo_gl.resources.GooGlData
+import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.FirebaseDynamicLinksService
+import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.resources.DynamicLinkInfo
+import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.resources.ShortLinksDataRequest
 import org.rm3l.router_companion.common.utils.ExceptionUtils
 import org.rm3l.router_companion.firmwares.FirmwareRelease
 import org.rm3l.router_companion.firmwares.NoNewFirmwareUpdate
@@ -68,7 +64,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
 
     companion object {
         @JvmField
-        val TAG = FirmwareUpdateCheckerJob::class.java.simpleName!!
+        val TAG = FirmwareUpdateCheckerJob::class.java.simpleName
 
         private const val LATEST_FIRMWARE_RELEASE_NOTIFIED_PREF = "latestFirmwareReleaseNotified"
 
@@ -95,7 +91,8 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
         }
 
         @JvmStatic
-        fun manualCheckForFirmwareUpdate(activity: Activity, gooGlService: GooGlService?, router: Router) {
+        fun manualCheckForFirmwareUpdate(activity: Activity,
+                                         firebaseDynamicLinksService: FirebaseDynamicLinksService?, router: Router) {
             val alertDialog = ProgressDialog.show(activity, "Checking for firmware updates",
                     "Please wait...",
                     true)
@@ -123,14 +120,14 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                     throw IllegalStateException("Could not retrieve current firmware version")
                                 }
                                 var newReleaseDLLink: String? = mNewerRelease!!.getDirectLink()
-                                if (Utils.isNonDemoRouter(router) && gooGlService != null) {
+                                if (newReleaseDLLink != null && Utils.isNonDemoRouter(router) && firebaseDynamicLinksService != null) {
                                     try {
-                                        val gooGlData = GooGlData()
-                                        gooGlData.longUrl = newReleaseDLLink
-                                        val response = gooGlService.shortenLongUrl(GOOGLE_API_KEY,
-                                                gooGlData).execute()
+                                        val shortLinksDataRequest = ShortLinksDataRequest(
+                                            dynamicLinkInfo = DynamicLinkInfo(link = newReleaseDLLink))
+                                        val response = firebaseDynamicLinksService.shortLinks(
+                                            FIREBASE_API_KEY, shortLinksDataRequest).execute()
                                         NetworkUtils.checkResponseSuccessful(response)
-                                        newReleaseDLLink = response.body()!!.id
+                                        newReleaseDLLink = response.body()!!.shortLink
                                     } catch (e: Exception) {
                                         //Do not worry about that => fallback to the original DL link
                                     }
@@ -227,8 +224,8 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
             val routerDao = RouterManagementActivity.getDao(context)
             val globalPreferences = context.getSharedPreferences(
                     RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-            val gooGlService = NetworkUtils.createApiService(context,
-                    RouterCompanionAppConstants.URL_SHORTENER_API_BASE_URL, GooGlService::class.java)
+            val firebaseDynamicLinksService = NetworkUtils.createApiService(context,
+                    RouterCompanionAppConstants.FIREBASE_DYNAMIC_LINKS_BASE_URL, FirebaseDynamicLinksService::class.java)
 
             //First check if user is interested in getting updates
             val notificationChoices = globalPreferences?.getStringSet(NOTIFICATIONS_CHOICE_PREF, emptySet())
@@ -286,16 +283,16 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                     "${router.routerFirmware!!.name}.$newReleaseVersion",
                                     {
                                         var newReleaseDLLink: String? = newReleaseDownloadLink
-                                        if (Utils.isNonDemoRouter(router)) {
+                                        if (newReleaseDLLink != null && Utils.isNonDemoRouter(router)) {
                                             try {
-                                                val gooGlData = GooGlData()
-                                                gooGlData.longUrl = newReleaseDLLink
-                                                val response = gooGlService.shortenLongUrl(
-                                                    GOOGLE_API_KEY,
-                                                    gooGlData
+                                                val shortLinksDataRequest = ShortLinksDataRequest(
+                                                    dynamicLinkInfo = DynamicLinkInfo(link = newReleaseDLLink))
+                                                val response = firebaseDynamicLinksService.shortLinks(
+                                                    FIREBASE_API_KEY,
+                                                    shortLinksDataRequest
                                                 ).execute()
                                                 NetworkUtils.checkResponseSuccessful(response)
-                                                newReleaseDLLink = response.body()!!.id
+                                                newReleaseDLLink = response.body()!!.shortLink
                                             } catch (e: Exception) {
                                                 //Do not worry about that => fallback to the original DL link
                                             }
@@ -414,7 +411,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
 class FirmwareUpdateCheckerOneShotJob : Job(), RouterCompanionJob {
 
     companion object {
-        val TAG = FirmwareUpdateCheckerOneShotJob::class.java.simpleName!!
+        val TAG = FirmwareUpdateCheckerOneShotJob::class.java.simpleName
     }
 
     override fun onRunJob(params: Params): Result {

@@ -145,7 +145,7 @@ import org.rm3l.router_companion.actions.RouterActions;
 import org.rm3l.router_companion.actions.RouterRestoreDialogListener;
 import org.rm3l.router_companion.actions.activity.OpenWebManagementPageActivity;
 import org.rm3l.router_companion.actions.activity.SpeedTestActivity;
-import org.rm3l.router_companion.api.urlshortener.goo_gl.GooGlService;
+import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.FirebaseDynamicLinksService;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.exceptions.StorageException;
 import org.rm3l.router_companion.fragments.PageSlidingTabStripFragment;
@@ -282,7 +282,7 @@ public class DDWRTMainActivity extends AppCompatActivity
     @NonNull
     private SharedPreferences mGlobalPreferences;
 
-    private GooGlService mGooGlService;
+    private FirebaseDynamicLinksService mFirebaseDynamicLinksService;
 
     @Nullable
     private InterstitialAd mInterstitialAd;
@@ -847,8 +847,8 @@ public class DDWRTMainActivity extends AppCompatActivity
 
         Utils.displayRatingBarIfNeeded(this);
 
-        mGooGlService = NetworkUtils.createApiService(this,
-                RouterCompanionAppConstants.URL_SHORTENER_API_BASE_URL, GooGlService.class);
+        mFirebaseDynamicLinksService = NetworkUtils.createApiService(this,
+                RouterCompanionAppConstants.FIREBASE_DYNAMIC_LINKS_BASE_URL, FirebaseDynamicLinksService.class);
     }
 
     @Override
@@ -1453,7 +1453,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                         routerFirmware.officialName : "Router"));
                 return true;
             }
-            FirmwareUpdateCheckerJob.manualCheckForFirmwareUpdate(this, mGooGlService, mRouter);
+            FirmwareUpdateCheckerJob.manualCheckForFirmwareUpdate(this, mFirebaseDynamicLinksService, mRouter);
             return true;
         } else if (itemId == R.id.action_ddwrt_actions_ssh_router) {
             Router.openSSHConsole(mRouter, this);
