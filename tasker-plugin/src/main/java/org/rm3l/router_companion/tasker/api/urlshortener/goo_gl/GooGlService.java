@@ -12,6 +12,7 @@ import retrofit2.http.Query;
 /**
  * Created by rm3l on 25/04/16.
  */
+@Deprecated
 public interface GooGlService {
 
     @Headers({

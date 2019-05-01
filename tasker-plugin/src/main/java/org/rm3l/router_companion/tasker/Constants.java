@@ -22,10 +22,16 @@ public final class Constants {
     public static final String DOORBELL_APIKEY = \"fake-api-key\";
             "oSkkIxtDRySKXshbQxUdjZesjzAfhNkfXNtktYkCejLMnZ7cUNCxrvfXSKBLpHTA";
 
+    @Deprecated
     public static final String URL_SHORTENER_API_BASE_URL =
             "https://www.googleapis.com/urlshortener/v1/";
 
+    @Deprecated
     public static final String GOOGLE_API_KEY = \"fake-api-key\";
+
+    public static final String FIREBASE_DYNAMIC_LINKS_BASE_URL = "https://firebasedynamiclinks.googleapis.com/v1/";
+
+    public static final String FIREBASE_API_KEY = \"fake-api-key\";
 
     public static final String AWS_COGNITO_IDENTITY_POOL_ID =
             "us-east-1:f2097772-8b26-4db4-8875-e60eddfe46b8";

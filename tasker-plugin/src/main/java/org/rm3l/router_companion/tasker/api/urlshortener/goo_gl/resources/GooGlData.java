@@ -3,6 +3,7 @@ package org.rm3l.router_companion.tasker.api.urlshortener.goo_gl.resources;
 /**
  * Created by rm3l on 02/08/16.
  */
+@Deprecated
 public class GooGlData {
 
     private String created;
