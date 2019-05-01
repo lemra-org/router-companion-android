@@ -11,6 +11,7 @@ import retrofit2.http.Query
 /**
  * Created by rm3l on 25/04/16.
  */
+@Deprecated("goo.gl is now deprecated and returns an error = use FirebaseDynamicLinksService instead")
 interface GooGlService {
 
     @Headers("Content-Type: application/json")

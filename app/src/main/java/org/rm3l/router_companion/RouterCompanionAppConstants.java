@@ -315,10 +315,17 @@ public final class RouterCompanionAppConstants {
 
     public static final String PUBLIC_ROADMAP_WEBSITE = "https://ddwrt-companion.app/roadmap";
 
+    //#528 : goo.gl is now deprecated => use Firebase DynamicLinks instead
+    @Deprecated
     public static final String URL_SHORTENER_API_BASE_URL =
             "https://www.googleapis.com/urlshortener/v1/";
 
+    @Deprecated
     public static final String GOOGLE_API_KEY = \"fake-api-key\";
+
+    public static final String FIREBASE_DYNAMIC_LINKS_BASE_URL = "https://firebasedynamiclinks.googleapis.com/v1/";
+
+    public static final String FIREBASE_API_KEY = \"fake-api-key\";
 
     public static final String UNIT_BYTE = "B";
 

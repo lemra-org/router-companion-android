@@ -17,7 +17,7 @@ import org.rm3l.maoni.common.contract.Handler;
 import org.rm3l.maoni.common.model.Feedback;
 import org.rm3l.maoni.doorbell.MaoniDoorbellListener;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
-import org.rm3l.router_companion.api.urlshortener.goo_gl.GooGlService;
+import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.FirebaseDynamicLinksService;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.NetworkUtils;
@@ -54,7 +54,7 @@ public class MaoniDoorbellFeedbackHandler extends MaoniDoorbellListener implemen
 
     private final SharedPreferences mGlobalPreferences;
 
-    private GooGlService mGooGlService;
+    private FirebaseDynamicLinksService mFirebaseDynamicLinksService;
 
     private Router mRouter;
 
@@ -83,8 +83,8 @@ public class MaoniDoorbellFeedbackHandler extends MaoniDoorbellListener implemen
         mGlobalPreferences =
                 activity.getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                         Context.MODE_PRIVATE);
-        mGooGlService = NetworkUtils.createApiService(activity,
-                RouterCompanionAppConstants.URL_SHORTENER_API_BASE_URL, GooGlService.class);
+        mFirebaseDynamicLinksService = NetworkUtils.createApiService(activity,
+                RouterCompanionAppConstants.FIREBASE_DYNAMIC_LINKS_BASE_URL, FirebaseDynamicLinksService.class);
     }
 
     @Override
