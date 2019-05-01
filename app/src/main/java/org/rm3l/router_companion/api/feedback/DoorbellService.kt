@@ -3,6 +3,7 @@ package org.rm3l.router_companion.api.feedback
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.Headers
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -23,10 +24,9 @@ interface DoorbellService {
     @Headers("Content-Type: application/json")
     @POST("applications/{id}/submit")
     fun submitFeedbackForm(
-            @Path("id") applicationId: Int, @Query("key") key: String,
-            @Query("email") email: String, @Query("message") message: String,
-            @Query("name") userName: String, @Query("properties") propertiesJson: String,
-            @Query("attachments[]") attachments: Array<String>): Call<ResponseBody>
+            @Path("id") applicationId: Int,
+            @Query("key") key: String,
+            @Body request: DoorbellSubmitRequest): Call<ResponseBody>
 
     @Multipart
     @POST("applications/{id}/upload")

@@ -25,7 +25,10 @@ import com.google.common.base.Throwables;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import needle.UiRelatedProgressTask;
@@ -37,6 +40,7 @@ import org.rm3l.router_companion.tasker.BuildConfig;
 import org.rm3l.router_companion.tasker.Constants;
 import org.rm3l.router_companion.tasker.R;
 import org.rm3l.router_companion.tasker.api.feedback.DoorbellService;
+import org.rm3l.router_companion.tasker.api.feedback.DoorbellSubmitRequest;
 import org.rm3l.router_companion.tasker.api.urlshortener.firebase.dynamiclinks.FirebaseDynamicLinksService;
 import org.rm3l.router_companion.tasker.api.urlshortener.firebase.dynamiclinks.resources.ShortLinksDataRequest;
 import org.rm3l.router_companion.tasker.api.urlshortener.firebase.dynamiclinks.resources.ShortLinksDataRequest.DynamicLinkInfo;
@@ -322,9 +326,18 @@ public class FeedbackHandler implements Handler {
 
                 final String emailText = mEmail.getText().toString();
 
+                final List<String> tags = new ArrayList<>();
+                tags.add("android");
+                if (feedback.appInfo.applicationId != null) {
+                    tags.add(feedback.appInfo.applicationId.toString());
+                }
+
                 final Response<ResponseBody> response =
-                        mDoorbellService.submitFeedbackForm(Constants.DOORBELL_APPID, Constants.DOORBELL_APIKEY,
-                                emailText, String.format("%s\n\n"
+                        mDoorbellService.submitFeedbackForm(Constants.DOORBELL_APPID,
+                                Constants.DOORBELL_APIKEY,
+                                new DoorbellSubmitRequest()
+                                .setEmail(emailText)
+                                .setMessage(String.format("%s\n\n"
                                                 + "-------\n"
                                                 + "%s"
                                                 + "- Android Version: %s (SDK %s)\n"
@@ -337,8 +350,9 @@ public class FeedbackHandler implements Handler {
                                         deviceInfo != null ? deviceInfo.sdkVersion : UNKNOWN,
                                         deviceInfo != null ? deviceInfo.model : UNKNOWN,
                                         deviceInfo != null ? deviceInfo.manufacturer : UNKNOWN,
-                                        Constants.Q_A_WEBSITE),
-                                null, GSON_BUILDER.create().toJson(properties), new String[0]).execute();
+                                        Constants.Q_A_WEBSITE))
+                                .setProperties(properties)
+                                .setTags(tags)).execute();
                 NetworkUtils.checkResponseSuccessful(response);
 
                 return new AbstractMap.SimpleImmutableEntry<>(response, null);

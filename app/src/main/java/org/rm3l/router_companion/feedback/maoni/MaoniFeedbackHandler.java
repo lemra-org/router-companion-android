@@ -33,7 +33,10 @@ import com.google.common.base.Throwables;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import needle.UiRelatedProgressTask;
@@ -45,6 +48,7 @@ import org.rm3l.maoni.common.model.DeviceInfo;
 import org.rm3l.maoni.common.model.Feedback;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.api.feedback.DoorbellService;
+import org.rm3l.router_companion.api.feedback.DoorbellSubmitRequest;
 import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.FirebaseDynamicLinksService;
 import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.resources.DynamicLinkInfo;
 import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.resources.ShortLinksDataRequest;
@@ -53,6 +57,7 @@ import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.multithreading.MultiThreadingManager;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
+import org.rm3l.router_companion.resources.conn.Router.RouterFirmware;
 import org.rm3l.router_companion.utils.AWSUtils;
 import org.rm3l.router_companion.utils.NetworkUtils;
 import org.rm3l.router_companion.utils.Utils;
@@ -330,26 +335,43 @@ public class MaoniFeedbackHandler implements Handler {
 
                 final String emailText = mEmail.getText().toString();
 
-                final Response<ResponseBody> response =
-                        mDoorbellService.submitFeedbackForm(DOORBELL_APPID, DOORBELL_APIKEY, emailText,
-                                String.format("%s\n\n"
-                                                + "-------\n"
-                                                + "%s"
-                                                + "- Android Version: %s (SDK %s)\n"
-                                                + "- Device: %s (%s)\n"
-                                                + "%s"
-                                                + "-------\n\n"
-                                                + ">>> NOTE: Visit the Public Roadmap and vote for your favorite features: %s <<<",
-                                        contentText, TextUtils.isEmpty(screenshotCaptureUploadUrl) ? ""
-                                                : String.format("Screenshot: %s\n\n", screenshotCaptureUploadUrl),
-                                        deviceInfo != null ? deviceInfo.androidReleaseVersion : UNKNOWN,
-                                        deviceInfo != null ? deviceInfo.sdkVersion : UNKNOWN,
-                                        deviceInfo != null ? deviceInfo.model : UNKNOWN,
-                                        deviceInfo != null ? deviceInfo.manufacturer : UNKNOWN,
-                                        TextUtils.isEmpty(routerInfoText) ? "" : routerInfoText,
-                                        RouterCompanionAppConstants.PUBLIC_ROADMAP_WEBSITE), null,
-                                GSON_BUILDER.create().toJson(properties), new String[0]).execute();
+                final DoorbellSubmitRequest doorbellSubmitRequest = new DoorbellSubmitRequest(
+                        emailText,
+                        String.format("%s\n\n"
+                                        + "-------\n"
+                                        + "%s"
+                                        + "- Android Version: %s (SDK %s)\n"
+                                        + "- Device: %s (%s)\n"
+                                        + "%s"
+                                        + "-------\n\n"
+                                        + ">>> NOTE: Visit the Public Roadmap and vote for your favorite features: %s <<<",
+                                contentText,
+                                TextUtils.isEmpty(screenshotCaptureUploadUrl) ? ""
+                                        : String.format("Screenshot: %s\n\n", screenshotCaptureUploadUrl),
+                                deviceInfo != null ? deviceInfo.androidReleaseVersion : UNKNOWN,
+                                deviceInfo != null ? deviceInfo.sdkVersion : UNKNOWN,
+                                deviceInfo != null ? deviceInfo.model : UNKNOWN,
+                                deviceInfo != null ? deviceInfo.manufacturer : UNKNOWN,
+                                TextUtils.isEmpty(routerInfoText) ? "" : routerInfoText,
+                                RouterCompanionAppConstants.PUBLIC_ROADMAP_WEBSITE)
+                );
 
+                final List<String> tags = new ArrayList<>();
+                tags.add("android");
+                if (feedback.appInfo.applicationId != null) {
+                    tags.add(feedback.appInfo.applicationId.toString());
+                }
+                if (mRouter != null && mRouter.getRouterFirmware() != null) {
+                    tags.add("firmware=" + mRouter.getRouterFirmware().name().toLowerCase());
+                }
+                doorbellSubmitRequest.setTags(tags);
+                doorbellSubmitRequest.setProperties(properties);
+
+                final Response<ResponseBody> response =
+                        mDoorbellService.submitFeedbackForm(
+                                DOORBELL_APPID,
+                                DOORBELL_APIKEY,
+                                doorbellSubmitRequest).execute();
                 NetworkUtils.checkResponseSuccessful(response);
 
                 return new AbstractMap.SimpleImmutableEntry<>(response, null);
@@ -517,12 +539,10 @@ public class MaoniFeedbackHandler implements Handler {
             mRouterInfo.setText(String.format("- Model: %s\n"
                             + "- Firmware: %s\n"
                             + "- Kernel: %s\n"
-                            + "- CPU Model: %s\n"
-                            + "- CPU Cores: %s\n", Router.getRouterModel(mContext, mRouter),
+                            + "- CPU Model: %s\n", Router.getRouterModel(mContext, mRouter),
                     routerPrefs.getString(NVRAMInfo.Companion.getLOGIN_PROMPT(), "-"),
                     routerPrefs.getString(NVRAMInfo.Companion.getKERNEL(), "-"),
-                    routerPrefs.getString(NVRAMInfo.Companion.getCPU_MODEL(), "-"),
-                    routerPrefs.getString(NVRAMInfo.Companion.getCPU_CORES_COUNT(), "-")),
+                    routerPrefs.getString(NVRAMInfo.Companion.getCPU_MODEL(), "-")),
                     TextView.BufferType.EDITABLE);
         }
     }
