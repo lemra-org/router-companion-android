@@ -29,7 +29,6 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.MAX_ROUTERS_
 import static org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_BG_SERVICE_ENABLE;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.THEMING_PREF;
-import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_LEAKCANARY_PREF_KEY;
 import static org.rm3l.router_companion.RouterCompanionApplication.DEBUG_RESOURCE_INSPECTOR_PREF_KEY;
 
 import android.app.Activity;
@@ -730,10 +729,6 @@ public class RouterManagementActivity extends AppCompatActivity
         debugOnlyTools.setEnabled(BuildConfig.DEBUG);
         debugOnlyTools.setVisible(BuildConfig.DEBUG);
 
-        final boolean debugLeakCanary = mPreferences.getBoolean(DEBUG_LEAKCANARY_PREF_KEY, false);
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "XXX debug_leakcanary: " + debugLeakCanary);
-        menu.findItem(R.id.debug_leakcanary).setChecked(debugLeakCanary);
-
         final boolean debugResourceInspector = mPreferences.getBoolean(
                 DEBUG_RESOURCE_INSPECTOR_PREF_KEY, false);
         Crashlytics.log(Log.DEBUG, LOG_TAG, "XXX debug_resourceInspector: " + debugResourceInspector);
@@ -843,22 +838,6 @@ public class RouterManagementActivity extends AppCompatActivity
             } else {
                 Crashlytics.log(Log.WARN, LOG_TAG,
                         "[DEBUG] 'Chuck' menu option should not be visible...");
-            }
-            return true;
-        } else if (itemId == R.id.debug_leakcanary) {
-            if (BuildConfig.DEBUG) {
-                final boolean checked = item.isChecked();
-                item.setChecked(!checked);
-                final boolean commit =
-                        mPreferences.edit().putBoolean(DEBUG_LEAKCANARY_PREF_KEY, !checked).commit();
-                Utils.requestBackup(RouterManagementActivity.this);
-                //Restart activity
-                final String waitMessage = String
-                        .format("%sabling LeakCanary. Pref commit=%s", checked ? "Dis" : "En", commit);
-                ContextUtils.restartWholeApplication(this, waitMessage, null);
-            } else {
-                Crashlytics.log(Log.WARN, LOG_TAG,
-                        "[DEBUG] LeakCanary menu option should not be visible...");
             }
             return true;
         } else if (itemId == R.id.debug_resourceinspector) {

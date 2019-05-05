@@ -44,7 +44,6 @@ import com.facebook.stetho.Stetho
 import com.facebook.stetho.Stetho.newInitializerBuilder
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
-import com.squareup.leakcanary.LeakCanary
 import com.squareup.picasso.Picasso
 import io.fabric.sdk.android.Fabric
 import org.rm3l.ddwrt.BuildConfig
@@ -147,15 +146,6 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
                             .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                             .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                             .build())
-        }
-
-        if (BuildConfig.DEBUG && appPreferences.getBoolean(DEBUG_LEAKCANARY_PREF_KEY, false)) {
-            Log.d(TAG, "--> Start w/ LeakCanary...")
-            LeakCanary.install(this)
-        } else {
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, "--> Start w/o LeakCanary...")
-            }
         }
 
         val intentFilter = IntentFilter(DeepLinkHandler.ACTION)
@@ -288,9 +278,6 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
     }
 
     companion object {
-
-        @JvmField
-        val DEBUG_LEAKCANARY_PREF_KEY = \"fake-key\";
 
         private var mDebugResourceInspectorEnabled = false
 

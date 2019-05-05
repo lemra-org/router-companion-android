@@ -23,26 +23,31 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.android_sdk = 28
-    ext.buildScan_version = '2.2.1'
-    ext.buildTools_version = '28.0.3'
-    ext.gradleBuildPlugin_version = '3.4.0'
-    ext.support_version = '28.0.0'
-    ext.androidx_version = '1.0.0'
-    ext.kotlin_version = '1.3.30'
-    ext.android_ktx_version = '1.0.0'
-    ext.anko_version = '0.10.8'
-    ext.playServices_version = '17.2.0'
-    ext.firebase_core_version = '16.0.8'
-    ext.firebase_appindexing_version = '17.1.0'
-    ext.robolectric_version = '4.3-alpha-2'
-    ext.junit_version = '4.13-beta-2'
-    ext.mockito_version = '2.26.0'
-    ext.avocarrot_glispa_mobfox_version = '3.6.9'
 
-    ext.playPublisherPlugin_version = '2.2.0'
-    ext.googlePlayServicesPlugin_version = '4.2.0'
-    ext.okbuck_version = '0.47.2'
+    ext {
+        android_sdk = 28
+        buildScan_version = '2.2.1'
+        buildTools_version = '28.0.3'
+        gradleBuildPlugin_version = '3.4.0'
+        support_version = '28.0.0'
+        androidx_version = '1.0.0'
+        kotlin_version = '1.3.31'
+        android_ktx_version = '1.0.0'
+        anko_version = '0.10.8'
+        playServices_version = '17.2.0'
+        firebase_core_version = '16.0.8'
+        firebase_appindexing_version = '17.1.0'
+        robolectric_version = '4.3-alpha-2'
+        junit_version = '4.13-beta-2'
+        mockito_version = '2.26.0'
+        avocarrot_glispa_mobfox_version = '3.6.9'
+
+        playPublisherPlugin_version = '2.2.0'
+        googlePlayServicesPlugin_version = '4.2.0'
+        okbuck_version = '0.47.2'
+
+        leakCanaryVersion = '2.0-alpha-1'
+    }
 
     //Workaround to have the 'com.android.application' plugin with any version of Gradle (other than the expected one)
     //see https://github.com/gradle/gradle-script-kotlin/issues/2#issuecomment-222120296

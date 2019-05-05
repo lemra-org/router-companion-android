@@ -183,36 +183,6 @@ android {
             buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
             buildConfigField "boolean", "WITH_TASKER", "false"
         }
-        blackberry {
-            dimension "mode"
-            //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
-            buildConfigField "boolean", "DONATIONS", "false"
-            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
-            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
-            buildConfigField "boolean", "WITH_ADS", "false"
-            buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
-            buildConfigField "boolean", "WITH_TASKER", "false"
-        }
-        amazonUnderground {
-            dimension "mode"
-            //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
-            buildConfigField "boolean", "DONATIONS", "false"
-            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
-            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
-            buildConfigField "boolean", "WITH_ADS", "false"
-            buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
-            buildConfigField "boolean", "WITH_TASKER", "false"
-        }
-        samsung {
-            dimension "mode"
-            //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
-            buildConfigField "boolean", "DONATIONS", "false"
-            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
-            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
-            buildConfigField "boolean", "WITH_ADS", "false"
-            buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
-            buildConfigField "boolean", "WITH_TASKER", "false"
-        }
         // For FOSS version only (no ads)
         fdroid {
             dimension "mode"
@@ -263,41 +233,6 @@ android {
             buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
             buildConfigField "boolean", "WITH_TASKER", "false"
         }
-        blackberryFreeWithAds {
-            dimension "mode"
-            //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
-            buildConfigField "boolean", "DONATIONS", "false"
-            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
-            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
-
-            buildConfigField "boolean", "WITH_ADS", "true"
-            buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "true"
-            buildConfigField "boolean", "WITH_TASKER", "false"
-        }
-        samsungFreeWithAds {
-            dimension "mode"
-            //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
-            buildConfigField "boolean", "DONATIONS", "false"
-            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
-            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
-
-            buildConfigField "boolean", "WITH_ADS", "true"
-            buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "true"
-            buildConfigField "boolean", "WITH_TASKER", "false"
-        }
-        //        // For FOSS version only (with ads)
-        //        fdroidFreeWithAds {
-        //            //Disable 'Donations' menu item
-        //            buildConfigField "boolean", "DONATIONS", "false"
-        //            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
-        //
-        //            buildConfigField "boolean", "WITH_ADS", "true"
-        //        }
-        /*
-         * =========================================================================================
-         * -END- Full-featured product flavors (but backed by Ads)
-         * =========================================================================================
-         */
     }
 //  dexOptions {
 //    incremental true
@@ -380,7 +315,7 @@ dependencies {
 
     testImplementation "junit:junit:$junit_version"
     testImplementation "org.robolectric:robolectric:$robolectric_version"
-    androidTestImplementation "androidx.annotation:annotation:1.0.0"
+    androidTestImplementation "androidx.annotation:annotation:1.0.2"
     testImplementation "org.mockito:mockito-core:$mockito_version"
 
     implementation project(":libraries:parcelable")
@@ -410,11 +345,11 @@ dependencies {
     //WARNING: Test that changing JSCh versions do not produce unwanted side-effects, such as an inability to connect
     implementation 'com.jcraft:jsch:0.1.55'
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation "com.google.android.material:material:1.0.0-rc01"
+    implementation "com.google.android.material:material:1.0.0"
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
     implementation "androidx.cardview:cardview:1.0.0"
     implementation "androidx.recyclerview:recyclerview:1.0.0"
-    implementation "androidx.appcompat:appcompat:1.0.0"
+    implementation "androidx.appcompat:appcompat:1.0.2"
 //  implementation "androidx.palette:palette:1.0.0"
     implementation "androidx.browser:browser:1.0.0"
     implementation "androidx.preference:preference:1.0.0"
@@ -466,7 +401,7 @@ dependencies {
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.14.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.14.1'
 
     implementation('org.rm3l:maoni:6.0.0@aar') {
         transitive = true
@@ -482,7 +417,7 @@ dependencies {
 
     implementation('org.rm3l:maoni-common:6.0.0')
 
-    implementation('org.rm3l:maoni-doorbell:2.5.0-maoni_6.0.0') {
+    implementation('org.rm3l:maoni-doorbell:2.6.0-maoni_6.0.0') {
         transitive = false
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'design'
@@ -503,9 +438,8 @@ dependencies {
 //  }
 
     //LeakCanary - to detect memory leaks (only in debug flavor)
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
-    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.3'
-    testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.3'
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:${leakCanaryVersion}"
+    androidTestImplementation "com.squareup.leakcanary:leakcanary-android-instrumentation:${leakCanaryVersion}"
 
     debugImplementation 'com.facebook.stetho:stetho:1.5.1'
     debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
