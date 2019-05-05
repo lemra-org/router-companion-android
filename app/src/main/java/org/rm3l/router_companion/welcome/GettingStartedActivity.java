@@ -1,8 +1,10 @@
 package org.rm3l.router_companion.welcome;
 
-import com.stephentuso.welcome.WelcomeScreenBuilder;
-import com.stephentuso.welcome.ui.WelcomeActivity;
-import com.stephentuso.welcome.util.WelcomeScreenConfiguration;
+import com.stephentuso.welcome.BasicPage;
+import com.stephentuso.welcome.ParallaxPage;
+import com.stephentuso.welcome.TitlePage;
+import com.stephentuso.welcome.WelcomeActivity;
+import com.stephentuso.welcome.WelcomeConfiguration;
 import org.rm3l.ddwrt.R;
 
 /**
@@ -22,38 +24,39 @@ public class GettingStartedActivity extends WelcomeActivity {
     }
 
     @Override
-    protected WelcomeScreenConfiguration configuration() {
-        return new WelcomeScreenBuilder(this)
-
-                .theme(R.style.CustomWelcomeScreenTheme)
+    protected WelcomeConfiguration configuration() {
+        return new WelcomeConfiguration.Builder(this)
 
                 //.defaultTitleTypefacePath("Montserrat-Bold.ttf")
                 //.defaultHeaderTypefacePath("Montserrat-Bold.ttf")
 
-                .titlePage(R.drawable.logo_ddwrt_companion__large, "Welcome. Swipe to get started",
-                        R.color.purple_background)
+                .page(new TitlePage(R.drawable.logo_ddwrt_companion__large, "Welcome. Swipe to get started")
+                        .background(R.color.purple_background))
 
-                .basicPage(R.drawable.welcome_screen_easy_fun_management, "Easy and fun router management",
+                .page(new BasicPage(R.drawable.welcome_screen_easy_fun_management, "Easy and fun router management",
                         "Manage and monitor your routers on the go. "
-                                + "Your routers must have DD-WRT firmware installed and SSH configured properly.",
-                        R.color.purple_background)
+                                + "Your routers must have DD-WRT firmware installed and SSH configured properly.")
+                        .background(R.color.purple_background))
 
-                .basicPage(R.drawable.welcome_screen_protect_app, "Secure",
+                .page(new BasicPage(R.drawable.welcome_screen_protect_app, "Secure",
                         "All of your sensitive info is encrypted locally.\n"
-                                + "And you can now PIN-protect the app. Visit the global settings to manage PIN lock.",
-                        R.color.purple_background)
+                                + "And you can now PIN-protect the app. Visit the global settings to manage PIN lock.")
+                        .background(R.color.purple_background))
 
                 //TODO Add custom fragment, which includes a button to open the Play Store to download the Tasker Plugin
-                .parallaxPage(R.layout.welcome_parallax_automation, "Automation",
+                .page(new ParallaxPage(R.layout.welcome_parallax_automation, "Automation",
                         "Get the 'DD-WRT Companion Tasker Plugin' app on Google Play Store, "
                                 + "to make the most of your DD-WRT-powered routers.\n"
-                                + "This plugin for Tasker allows you to automate various actions via DD-WRT Companion.",
-                        R.color.purple_background, 0.2f, 2f)
+                                + "This plugin for Tasker allows you to automate various actions via DD-WRT Companion.")
+                        .background(R.color.purple_background)
+                        .firstParallaxFactor(0.2f)
+                        .lastParallaxFactor(2f))
 
-                .parallaxPage(R.layout.welcome_parallax_feedback, "Have your say",
+                .page(new ParallaxPage(R.layout.welcome_parallax_feedback, "Have your say",
                         "Sending feedback from within the app is now easier. "
                                 + "Feel free to submit new ideas, file bugs or simply say hello.\n\n"
-                                + "Help and Support: https://ddwrt-companion.app", R.color.purple_background)
+                                + "Help and Support: https://ddwrt-companion.app")
+                        .background(R.color.purple_background))
 
                 //                .basicPage(R.drawable.welcome_screen_notifs_widgets,
                 //                        "One more thing...",

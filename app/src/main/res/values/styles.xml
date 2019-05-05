@@ -236,7 +236,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </style>
 
     <style name="WelcomeScreenPageIndicator.Custom">
-        <item name="animated">true</item>
+        <item name="animation">slide</item>
     </style>
 
     <style name="WelcomeScreenText.Title.Centered.Custom">

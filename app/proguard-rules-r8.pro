@@ -210,4 +210,12 @@
 -keepclasseswithmembers class **.R$* {
     public static final int define_*;
 }
+
+########
+# Welcome Android
+########
+-keepclassmembers class * extends com.stephentuso.welcome.WelcomeActivity {
+    public static java.lang.String welcomeKey();
+}
+
 #### End R8

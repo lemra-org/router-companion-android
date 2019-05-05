@@ -86,8 +86,8 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
 import com.readystatesoftware.chuck.Chuck;
-import com.stephentuso.welcome.WelcomeScreenHelper;
-import com.stephentuso.welcome.ui.WelcomeActivity;
+import com.stephentuso.welcome.WelcomeHelper;
+import com.stephentuso.welcome.WelcomeActivity;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -206,7 +206,7 @@ public class RouterManagementActivity extends AppCompatActivity
 
     private Menu optionsMenu;
 
-    private WelcomeScreenHelper welcomeScreen;
+    private WelcomeHelper welcomeScreen;
 
     @NonNull
     public static DDWRTCompanionDAO getDao(Context context) {
@@ -425,7 +425,7 @@ public class RouterManagementActivity extends AppCompatActivity
 
         Utils.displayRatingBarIfNeeded(this);
 
-        welcomeScreen = new WelcomeScreenHelper(this, GettingStartedActivity.class);
+        welcomeScreen = new WelcomeHelper(this, GettingStartedActivity.class);
 
         if (ACTION_OPEN_ADD_ROUTER_WIZARD.equals(intent.getAction())) {
             mCloseOnActionDone = intent.getBooleanExtra(CLOSE_ON_ACTION_DONE, false);
@@ -509,7 +509,7 @@ public class RouterManagementActivity extends AppCompatActivity
                 }
             }
             break;
-            case WelcomeScreenHelper.DEFAULT_WELCOME_SCREEN_REQUEST:
+            case WelcomeHelper.DEFAULT_WELCOME_SCREEN_REQUEST:
                 //TODO
                 final String welcomeKey = \"fake-key\";
                 if (resultCode == RESULT_OK) {
