@@ -1,3 +1,5 @@
+import com.google.gms.googleservices.GoogleServicesPlugin
+
 /*
  * DD-WRT Companion is a mobile app that lets you connect to,
  * monitor and manage your DD-WRT routers on the go.
@@ -360,15 +362,16 @@ dependencies {
     //    implementation 'com.github.danielemaddaluno.androidupdatechecker:library:1.0.2'
 //  implementation 'com.google.android.gms:play-services-ads:11.4.0'
     implementation "com.google.android.gms:play-services-ads-lite:${playServices_version}" //only for distrib. via Play Store
+//    implementation "com.google.firebase:firebase-ads:${playServices_version}"
 
-    //Avocarrot => acquired by Glispa => acquired by MobFox
-    implementation "com.github.mobfox.MobFox-Android-SDK-Core:MobFox-Android-SDK-Core:${avocarrot_glispa_mobfox_version}"
-
-//    implementation "com.avocarrot.sdk:mediation-sdk-banner:${avocarrot_glispa_version}"
-//    implementation "com.avocarrot.sdk:mediation-sdk-interstitial:${avocarrot_glispa_version}"
-//    implementation "com.avocarrot.sdk:mediation-sdk-nativead:${avocarrot_glispa_version}"
-//    implementation "com.avocarrot.sdk:mediation-sdk-native-assets:${avocarrot_glispa_version}"
-//    implementation "com.avocarrot.sdk:mediation-sdk-video:${avocarrot_glispa_version}"
+//    //Avocarrot => acquired by Glispa => acquired by MobFox
+//    implementation "com.github.mobfox.MobFox-Android-SDK-Core:MobFox-Android-SDK-Core:${avocarrot_glispa_mobfox_version}"
+//
+////    implementation "com.avocarrot.sdk:mediation-sdk-banner:${avocarrot_glispa_version}"
+////    implementation "com.avocarrot.sdk:mediation-sdk-interstitial:${avocarrot_glispa_version}"
+////    implementation "com.avocarrot.sdk:mediation-sdk-nativead:${avocarrot_glispa_version}"
+////    implementation "com.avocarrot.sdk:mediation-sdk-native-assets:${avocarrot_glispa_version}"
+////    implementation "com.avocarrot.sdk:mediation-sdk-video:${avocarrot_glispa_version}"
 
     implementation 'fr.nicolaspomepuy:discreetapprate:2.0.4@aar'
     implementation 'com.squareup.picasso:picasso:2.71828'
@@ -403,7 +406,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.14.1'
 
-    implementation('org.rm3l:maoni:6.0.0@aar') {
+    implementation("org.rm3l:maoni:${maoni_version}@aar") {
         transitive = true
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'design'
@@ -415,9 +418,9 @@ dependencies {
 //    exclude group: 'org.rm3l', module: 'maoni-email'
     }
 
-    implementation('org.rm3l:maoni-common:6.0.0')
+    implementation("org.rm3l:maoni-common:${maoni_version}")
 
-    implementation('org.rm3l:maoni-doorbell:2.6.0-maoni_6.0.0') {
+    implementation("org.rm3l:maoni-doorbell:${maoniDoorbell_version}") {
         transitive = false
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'design'
@@ -530,4 +533,4 @@ apply plugin: 'com.google.gms.google-services'
 //}
 
 //Workaround from https://github.com/invertase/react-native-firebase/issues/1155#issuecomment-395944013
-com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true
+GoogleServicesPlugin.config.disableVersionCheck = true
