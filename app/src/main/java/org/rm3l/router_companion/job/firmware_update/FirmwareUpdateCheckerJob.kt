@@ -76,7 +76,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                 return
             }
 
-            if (!JobManager.instance().getAllJobRequestsForTag(TAG).isEmpty()) {
+            if (JobManager.instance().getAllJobRequestsForTag(TAG).isNotEmpty()) {
                 // job already scheduled, nothing to do
                 Crashlytics.log(Log.DEBUG, TAG, "job $TAG already scheduled => nothing to do!")
                 return
@@ -85,7 +85,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                     .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
 //                    .setRequiresCharging(true)
             // run job between 9am and 9pm
-            DailyJob.schedule(builder,
+            schedule(builder,
                     TimeUnit.HOURS.toMillis(9),
                     TimeUnit.HOURS.toMillis(21))
         }

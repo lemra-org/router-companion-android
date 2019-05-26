@@ -19,20 +19,15 @@
  *
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
-package org.rm3l.router_companion.fragments.toolbox;
+package org.rm3l.router_companion.fragments.toolbox
 
-import android.os.Bundle;
-import androidx.annotation.Nullable;
-import java.util.Arrays;
-import java.util.List;
-import org.rm3l.router_companion.tiles.DDWRTTile;
-import org.rm3l.router_companion.tiles.toolbox.ToolboxPingTile;
+import android.os.Bundle
+import java.util.Arrays
+import org.rm3l.router_companion.tiles.DDWRTTile
+import org.rm3l.router_companion.tiles.toolbox.ToolboxPingTile
 
-public class ToolboxPingFragment extends AbstractToolboxFragment {
+class ToolboxPingFragment : AbstractToolboxFragment() {
 
-    @Nullable
-    @Override
-    protected List<DDWRTTile> doGetTiles(@Nullable Bundle savedInstanceState) {
-        return Arrays.<DDWRTTile>asList(new ToolboxPingTile(this, savedInstanceState, this.router));
-    }
+    override fun doGetTiles(savedInstanceState: Bundle?) =
+        listOf(ToolboxPingTile(this, savedInstanceState, this.router))
 }

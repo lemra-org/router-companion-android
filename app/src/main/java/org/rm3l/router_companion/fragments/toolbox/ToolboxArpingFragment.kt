@@ -19,31 +19,15 @@
  *
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
+package org.rm3l.router_companion.fragments.toolbox
 
-package org.rm3l.router_companion.fragments.admin;
+import android.os.Bundle
+import java.util.Arrays
+import org.rm3l.router_companion.tiles.DDWRTTile
+import org.rm3l.router_companion.tiles.toolbox.ToolboxArpingTile
 
-import android.os.Bundle;
-import androidx.annotation.Nullable;
-import java.util.Arrays;
-import java.util.List;
-import org.rm3l.router_companion.fragments.AbstractBaseFragment;
-import org.rm3l.router_companion.tiles.DDWRTTile;
-import org.rm3l.router_companion.tiles.admin.commands.AdminCommandsTile;
+class ToolboxArpingFragment : AbstractToolboxFragment() {
 
-/**
- * 'Admin > Commands' fragment
- */
-public class AdminCommandsFragment extends AbstractBaseFragment {
-
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Arrays.<DDWRTTile>asList(new AdminCommandsTile(this, savedInstanceState, this.router));
-    }
-
-    @Override
-    protected boolean isSwipeRefreshLayoutEnabled() {
-        //Disabled, as swipe refresh actually does not make sense in this kind of fragment
-        return false;
-    }
+    override fun doGetTiles(savedInstanceState: Bundle?) =
+        listOf(ToolboxArpingTile(this, savedInstanceState, this.router))
 }

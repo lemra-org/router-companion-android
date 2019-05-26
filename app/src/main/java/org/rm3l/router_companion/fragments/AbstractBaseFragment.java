@@ -1274,7 +1274,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
         //        mSwipeRefreshLayout.addView(this.getLayout(inflater, container, savedInstanceState));
         mSwipeRefreshLayout.addView(rootView);
 
-        //        mSwipeRefreshLayout.setEnabled(isSwipeRefreshLayoutEnabled());
+        mSwipeRefreshLayout.setEnabled(isSwipeRefreshLayoutEnabled());
 
         initLoaders();
 

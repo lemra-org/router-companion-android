@@ -10,6 +10,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.loader.content.AsyncTaskLoader;
 import androidx.loader.content.Loader;
 import androidx.core.util.Pair;
 import android.view.KeyEvent;
@@ -41,12 +42,47 @@ public class AdminCommandsTile extends DDWRTTile<Void> {
 
     private AbstractRouterAction<?> mCurrentRouterActionTask = null;
 
-    private final RouterStreamActionListener mRouterActionListener;
+    private RouterStreamActionListener mRouterActionListener;
 
-    public AdminCommandsTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
+    public AdminCommandsTile(@NonNull Fragment parentFragment, @Nullable Bundle arguments,
             @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_admin_commands, null);
+    }
 
+    @Override
+    public void onStop() {
+        if (mCurrentRouterActionTask == null) {
+            return;
+        }
+        try {
+            mCurrentRouterActionTask.cancel();
+        } catch (final Exception e) {
+            ReportingUtils.reportException(null, e);
+        } finally {
+            layout.findViewById(R.id.tile_toolbox_ping_abstract_loading_view).setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_admin_commands_submit_button).setEnabled(true);
+            layout.findViewById(R.id.tile_admin_commands_cancel_button).setEnabled(false);
+        }
+    }
+
+    @Override
+    public int getTileHeaderViewId() {
+        return -1;
+    }
+
+    @Override
+    public int getTileTitleViewId() {
+        return R.id.tile_admin_commands_title;
+    }
+
+    @Override
+    public boolean isEmbeddedWithinScrollView() {
+        //        return false;
+        return BuildConfig.WITH_ADS && super.isEmbeddedWithinScrollView();
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Void> loader, Void data) {
         final Button button = (Button) layout.findViewById(R.id.tile_admin_commands_submit_button);
         final Button cancelButton =
                 (Button) layout.findViewById(R.id.tile_admin_commands_cancel_button);
@@ -133,82 +169,41 @@ public class AdminCommandsTile extends DDWRTTile<Void> {
             }
         };
 
-        editText.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                final int DRAWABLE_LEFT = 0;
-                final int DRAWABLE_TOP = 1;
-                final int DRAWABLE_RIGHT = 2;
-                final int DRAWABLE_BOTTOM = 3;
+        editText.setOnTouchListener((v, event) -> {
+            final int DRAWABLE_LEFT = 0;
+            final int DRAWABLE_TOP = 1;
+            final int DRAWABLE_RIGHT = 2;
+            final int DRAWABLE_BOTTOM = 3;
 
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    if (event.getRawX() >= (editText.getRight()
-                            - editText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                        errorView.setVisibility(View.GONE);
-                        //'Clear' button - clear data, and reset everything out
-                        //Reset everything
-                        editText.setText(EMPTY_STRING);
-
-                        if (mParentFragmentPreferences != null) {
-                            final SharedPreferences.Editor editor = mParentFragmentPreferences.edit();
-                            editor.putString(getFormattedPrefKey(LAST_COMMANDS), EMPTY_STRING).apply();
-                        }
-
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-
-        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= (editText.getRight()
+                        - editText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
                     errorView.setVisibility(View.GONE);
-
-                    final String textToFind = editText.getText().toString();
-                    if (isNullOrEmpty(textToFind)) {
-                        editText.requestFocus();
-                        openKeyboard(editText);
-                        return true;
-                    }
-
-                    final String existingSearch =
-                            mParentFragmentPreferences != null ? mParentFragmentPreferences.getString(
-                                    getFormattedPrefKey(LAST_COMMANDS), null) : null;
+                    //'Clear' button - clear data, and reset everything out
+                    //Reset everything
+                    editText.setText(EMPTY_STRING);
 
                     if (mParentFragmentPreferences != null) {
                         final SharedPreferences.Editor editor = mParentFragmentPreferences.edit();
-                        if (!textToFind.equalsIgnoreCase(existingSearch)) {
-                            editor.putString(getFormattedPrefKey(LAST_COMMANDS), textToFind);
-                        }
-                        editor.apply();
+                        editor.putString(getFormattedPrefKey(LAST_COMMANDS), EMPTY_STRING).apply();
                     }
-
-                    //Run command
-                    progressBar.setVisibility(View.VISIBLE);
-                    button.setEnabled(false);
-
-                    mCurrentRouterActionTask = getRouterAction(textToFind);
-                    ActionManager.runTasks(mCurrentRouterActionTask);
 
                     return true;
                 }
-                return false;
             }
+            return false;
         });
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        editText.setOnEditorActionListener((v, actionId, event) -> {
+
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 errorView.setVisibility(View.GONE);
+
                 final String textToFind = editText.getText().toString();
                 if (isNullOrEmpty(textToFind)) {
                     editText.requestFocus();
                     openKeyboard(editText);
-                    return;
+                    return true;
                 }
 
                 final String existingSearch =
@@ -216,11 +211,11 @@ public class AdminCommandsTile extends DDWRTTile<Void> {
                                 getFormattedPrefKey(LAST_COMMANDS), null) : null;
 
                 if (mParentFragmentPreferences != null) {
+                    final SharedPreferences.Editor editor = mParentFragmentPreferences.edit();
                     if (!textToFind.equalsIgnoreCase(existingSearch)) {
-                        final SharedPreferences.Editor editor = mParentFragmentPreferences.edit();
                         editor.putString(getFormattedPrefKey(LAST_COMMANDS), textToFind);
-                        editor.apply();
                     }
+                    editor.apply();
                 }
 
                 //Run command
@@ -230,58 +225,55 @@ public class AdminCommandsTile extends DDWRTTile<Void> {
                 mCurrentRouterActionTask = getRouterAction(textToFind);
                 ActionManager.runTasks(mCurrentRouterActionTask);
 
-                cancelButton.setEnabled(true);
+                return true;
             }
+            return false;
         });
 
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onStop();
+        button.setOnClickListener(v -> {
+            errorView.setVisibility(View.GONE);
+            final String textToFind = editText.getText().toString();
+            if (isNullOrEmpty(textToFind)) {
+                editText.requestFocus();
+                openKeyboard(editText);
+                return;
             }
+
+            final String existingSearch =
+                    mParentFragmentPreferences != null ? mParentFragmentPreferences.getString(
+                            getFormattedPrefKey(LAST_COMMANDS), null) : null;
+
+            if (mParentFragmentPreferences != null) {
+                if (!textToFind.equalsIgnoreCase(existingSearch)) {
+                    final SharedPreferences.Editor editor = mParentFragmentPreferences.edit();
+                    editor.putString(getFormattedPrefKey(LAST_COMMANDS), textToFind);
+                    editor.apply();
+                }
+            }
+
+            //Run command
+            progressBar.setVisibility(View.VISIBLE);
+            button.setEnabled(false);
+
+            mCurrentRouterActionTask = getRouterAction(textToFind);
+            ActionManager.runTasks(mCurrentRouterActionTask);
+
+            cancelButton.setEnabled(true);
         });
-    }
 
-    @Override
-    public void onStop() {
-        if (mCurrentRouterActionTask == null) {
-            return;
-        }
-        try {
-            mCurrentRouterActionTask.cancel();
-        } catch (final Exception e) {
-            ReportingUtils.reportException(null, e);
-        } finally {
-            layout.findViewById(R.id.tile_toolbox_ping_abstract_loading_view).setVisibility(View.GONE);
-            layout.findViewById(R.id.tile_admin_commands_submit_button).setEnabled(true);
-            layout.findViewById(R.id.tile_admin_commands_cancel_button).setEnabled(false);
-        }
-    }
-
-    @Override
-    public int getTileHeaderViewId() {
-        return -1;
-    }
-
-    @Override
-    public int getTileTitleViewId() {
-        return R.id.tile_admin_commands_title;
-    }
-
-    @Override
-    public boolean isEmbeddedWithinScrollView() {
-        //        return false;
-        return BuildConfig.WITH_ADS && super.isEmbeddedWithinScrollView();
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Void> loader, Void data) {
+        cancelButton.setOnClickListener(v -> onStop());
     }
 
     @Nullable
     @Override
     protected Loader<Void> getLoader(int id, Bundle args) {
-        return null;
+        return new AsyncTaskLoader<Void>(mParentFragmentActivity) {
+            @Nullable
+            @Override
+            public Void loadInBackground() {
+                return null;
+            }
+        };
     }
 
     @Nullable
