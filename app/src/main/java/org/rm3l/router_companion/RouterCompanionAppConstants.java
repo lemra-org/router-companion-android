@@ -63,6 +63,8 @@ public final class RouterCompanionAppConstants {
     //FIXME JUST FOR TESTS
     public static final String MOBFOX_INVENTORY_HASH = "";
 
+    public static final String ADMOB_APP_ID = "xxx";
+
     //    public static final String MOBFOX_INVENTORY_HASH = "xxx";
     public static final String MOBFOX_INVENTORY_ID = "xxx";
 
