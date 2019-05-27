@@ -8,7 +8,7 @@ import org.rm3l.router_companion.actions.MACOUILookupAction
 import org.rm3l.router_companion.resources.conn.Router
 
 class ToolboxMACOUITile(
-    parentFragment: Fragment, arguments: Bundle,
+    parentFragment: Fragment, arguments: Bundle?,
     router: Router?
 ) : AbstractToolboxTile(parentFragment, arguments, router) {
 

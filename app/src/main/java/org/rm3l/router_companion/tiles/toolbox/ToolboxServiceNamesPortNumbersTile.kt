@@ -40,7 +40,7 @@ import org.rm3l.router_companion.resources.conn.Router
 import org.rm3l.router_companion.utils.kotlin.gone
 import org.rm3l.router_companion.utils.kotlin.visible
 
-class ToolboxServiceNamesPortNumbersTile(parentFragment: Fragment, arguments: Bundle, router: Router?) :
+class ToolboxServiceNamesPortNumbersTile(parentFragment: Fragment, arguments: Bundle?, router: Router?) :
         AbstractToolboxTile(parentFragment, arguments, router) {
 
     private val transportProtocolValuesFromSpinner: Array<String>
