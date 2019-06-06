@@ -21,7 +21,7 @@ class ServiceNamesPortNumbersMappingLookupAction(router: Router,
             val routerStreamActionListener = listener as? RouterStreamActionListener
             routerStreamActionListener?.notifyRouterActionProgress(SERVICE_NAMES_PORT_NUMBERS_LOOKUP, router,
                     0, null)
-            val response = NetworkUtils.SERVICE_NAMES_PORT_NUMBERS_MAPPING_SERVICE.query(
+            val response = NetworkUtils.getServiceNamePortNumbersService().query(
                     ports = this.ports,
                     protocols = this.protocols,
                     services = this.services?.map { it.toLowerCase() }).execute()

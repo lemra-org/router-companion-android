@@ -34,6 +34,7 @@ import org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_ENABL
 import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.FirebaseDynamicLinksService
 import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.resources.DynamicLinkInfo
 import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.resources.ShortLinksDataRequest
+import org.rm3l.router_companion.api.urlshortener.is_gd.IsGdService
 import org.rm3l.router_companion.common.utils.ExceptionUtils
 import org.rm3l.router_companion.firmwares.FirmwareRelease
 import org.rm3l.router_companion.firmwares.NoNewFirmwareUpdate
@@ -92,7 +93,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
 
         @JvmStatic
         fun manualCheckForFirmwareUpdate(activity: Activity,
-                                         firebaseDynamicLinksService: FirebaseDynamicLinksService?, router: Router) {
+                                         router: Router) {
             val alertDialog = ProgressDialog.show(activity, "Checking for firmware updates",
                     "Please wait...",
                     true)
@@ -120,16 +121,35 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                     throw IllegalStateException("Could not retrieve current firmware version")
                                 }
                                 var newReleaseDLLink: String? = mNewerRelease!!.getDirectLink()
-                                if (newReleaseDLLink != null && Utils.isNonDemoRouter(router) && firebaseDynamicLinksService != null) {
-                                    try {
-                                        val shortLinksDataRequest = ShortLinksDataRequest(
-                                            dynamicLinkInfo = DynamicLinkInfo(link = newReleaseDLLink))
-                                        val response = firebaseDynamicLinksService.shortLinks(
-                                            FIREBASE_API_KEY, shortLinksDataRequest).execute()
-                                        NetworkUtils.checkResponseSuccessful(response)
-                                        newReleaseDLLink = response.body()!!.shortLink
-                                    } catch (e: Exception) {
-                                        //Do not worry about that => fallback to the original DL link
+                                if (newReleaseDLLink != null && Utils.isNonDemoRouter(router)) {
+                                    var shortened = false
+                                    if (NetworkUtils.getFirebaseDynamicLinksService() != null) {
+                                        try {
+                                            val shortLinksDataRequest = ShortLinksDataRequest(
+                                                dynamicLinkInfo = DynamicLinkInfo(link = newReleaseDLLink))
+                                            val response = NetworkUtils.getFirebaseDynamicLinksService().shortLinks(
+                                                shortLinksDataRequest).execute()
+                                            NetworkUtils.checkResponseSuccessful(response)
+                                            newReleaseDLLink = response.body()!!.shortLink
+                                            shortened = true
+                                        } catch (e: Exception) {
+                                            //Do not worry about that => fallback to the original DL link
+                                            shortened = false
+                                        }
+                                    }
+                                    if (!shortened) {
+                                        if (NetworkUtils.getIsGdService() != null) {
+                                            try {
+                                                val response = NetworkUtils.getIsGdService()
+                                                    .shortLinks(newReleaseDLLink!!).execute()
+                                                NetworkUtils.checkResponseSuccessful(response)
+                                                newReleaseDLLink = response.body()!!.shorturl
+                                                shortened = true
+                                            } catch(e1: Exception) {
+                                                //Do not worry about that => fallback to the original DL link
+                                                shortened = false
+                                            }
+                                        }
                                     }
                                 }
                                 return newReleaseDLLink to null
@@ -224,8 +244,8 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
             val routerDao = RouterManagementActivity.getDao(context)
             val globalPreferences = context.getSharedPreferences(
                     RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-            val firebaseDynamicLinksService = NetworkUtils.createApiService(context,
-                    RouterCompanionAppConstants.FIREBASE_DYNAMIC_LINKS_BASE_URL, FirebaseDynamicLinksService::class.java)
+            val firebaseDynamicLinksService = NetworkUtils.getFirebaseDynamicLinksService()
+            val isGdService = NetworkUtils.getIsGdService()
 
             //First check if user is interested in getting updates
             val notificationChoices = globalPreferences?.getStringSet(NOTIFICATIONS_CHOICE_PREF, emptySet())
@@ -284,17 +304,32 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                     {
                                         var newReleaseDLLink: String? = newReleaseDownloadLink
                                         if (newReleaseDLLink != null && Utils.isNonDemoRouter(router)) {
+                                            var shortened: Boolean
                                             try {
                                                 val shortLinksDataRequest = ShortLinksDataRequest(
-                                                    dynamicLinkInfo = DynamicLinkInfo(link = newReleaseDLLink))
+                                                    dynamicLinkInfo = DynamicLinkInfo(link = newReleaseDLLink)
+                                                )
                                                 val response = firebaseDynamicLinksService.shortLinks(
-                                                    FIREBASE_API_KEY,
                                                     shortLinksDataRequest
                                                 ).execute()
                                                 NetworkUtils.checkResponseSuccessful(response)
                                                 newReleaseDLLink = response.body()!!.shortLink
+                                                shortened = true
                                             } catch (e: Exception) {
                                                 //Do not worry about that => fallback to the original DL link
+                                                shortened = false
+                                            }
+
+                                            if (!shortened) {
+                                                try {
+                                                    val response = isGdService.shortLinks(newReleaseDLLink!!).execute()
+                                                    NetworkUtils.checkResponseSuccessful(response)
+                                                    newReleaseDLLink = response.body()!!.shorturl
+                                                    shortened = true
+                                                } catch (e: Exception) {
+                                                    //Do not worry about that => fallback to the original DL link
+                                                    shortened = false
+                                                }
                                             }
                                         }
                                         newReleaseDLLink

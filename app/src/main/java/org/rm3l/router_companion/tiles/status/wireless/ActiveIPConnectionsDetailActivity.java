@@ -240,7 +240,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
                 boolean skipIndividualIPGeoLocationRequests = false;
                 try {
-                    final Response<List<NetWhoisInfoProxyApiResponse>> response = NetworkUtils.PROXY_SERVICE
+                    final Response<List<NetWhoisInfoProxyApiResponse>> response = NetworkUtils.getProxyService()
                             .bulkNetworkGeoLocation(new ArrayList<>(toResolve)).execute();
                     NetworkUtils.checkResponseSuccessful(response);
                     final List<NetWhoisInfoProxyApiResponse> body = response.body();
@@ -295,7 +295,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     } else {
                         try {
                             final Response<RecordListResponse> response = ServiceNamePortNumbersServiceKt.query(
-                                    NetworkUtils.SERVICE_NAMES_PORT_NUMBERS_MAPPING_SERVICE,
+                                    NetworkUtils.getServiceNamePortNumbersService(),
                                     portNumbersToResolve,
                                     protocolsToResolve,
                                     null)
@@ -1256,7 +1256,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                             }
                             try {
                                 final Response<RecordListResponse> response = ServiceNamePortNumbersServiceKt.query(
-                                        NetworkUtils.SERVICE_NAMES_PORT_NUMBERS_MAPPING_SERVICE,
+                                        NetworkUtils.getServiceNamePortNumbersService(),
                                         Collections.singleton(portNumber),
                                         Collections.singleton(protocol),
                                         null)
@@ -1292,7 +1292,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                                         String.format("%s/%s.json", IPWhoisInfo.IP_WHOIS_INFO_API_PREFIX, ipAddr),
                                         RequestMethod.GET);
                                 final Response<JsonElement> response =
-                                        NetworkUtils.PROXY_SERVICE.proxy(proxyData).execute();
+                                        NetworkUtils.getProxyService().proxy(proxyData).execute();
                                 NetworkUtils.checkResponseSuccessful(response);
                                 return JsonElementUtils.parseAs(response.body(), IPWhoisInfo.class);
                             } catch (final Exception e) {

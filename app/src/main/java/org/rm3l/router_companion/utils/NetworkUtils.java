@@ -1,10 +1,13 @@
 package org.rm3l.router_companion.utils;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.FIREBASE_DYNAMIC_LINKS_BASE_URL;
+import static org.rm3l.router_companion.RouterCompanionAppConstants.IS_GD_URL_SHORTENER_BASE_URL;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.PROXY_SERVER_BASE_URL;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.PROXY_SERVER_PASSWORD_AUTH_TOKEN_ENCODED;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.SERVICE_NAMES_PORT_NUMBERS_API_SERVER_BASE_URL;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.SERVICE_NAMES_PORT_NUMBERS_API_SERVER_PASSWORD_AUTH_TOKEN_ENCODED;
+import static org.rm3l.router_companion.feedback.maoni.MaoniFeedbackHandler.FEEDBACK_API_BASE_URL;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -24,8 +27,11 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.RouterCompanionApplication;
+import org.rm3l.router_companion.api.feedback.DoorbellService;
 import org.rm3l.router_companion.api.iana.ServiceNamePortNumbersService;
 import org.rm3l.router_companion.api.proxy.ProxyService;
+import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.FirebaseDynamicLinksService;
+import org.rm3l.router_companion.api.urlshortener.is_gd.IsGdService;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.utils.retrofit.RetryCallAdapterFactory;
 import retrofit2.Response;
@@ -39,15 +45,49 @@ public final class NetworkUtils {
 
     public static final String TAG = NetworkUtils.class.getSimpleName();
 
-    public static final ProxyService PROXY_SERVICE =
-            NetworkUtils.createApiService(null, PROXY_SERVER_BASE_URL,
-                    ProxyService.class,
-                    new AuthenticationInterceptor(PROXY_SERVER_PASSWORD_AUTH_TOKEN_ENCODED));
+    private static class ProxyServiceClientsHolder {
+        private static final ProxyService PROXY_SERVICE =
+                NetworkUtils.createApiService(null, PROXY_SERVER_BASE_URL,
+                        ProxyService.class,
+                        new AuthenticationInterceptor(PROXY_SERVER_PASSWORD_AUTH_TOKEN_ENCODED));
+    }
+    public static ProxyService getProxyService() {
+        return ProxyServiceClientsHolder.PROXY_SERVICE;
+    }
 
-    public static final ServiceNamePortNumbersService SERVICE_NAMES_PORT_NUMBERS_MAPPING_SERVICE =
-            NetworkUtils.createApiService(null, SERVICE_NAMES_PORT_NUMBERS_API_SERVER_BASE_URL,
-                    ServiceNamePortNumbersService.class,
-                    new AuthenticationInterceptor(SERVICE_NAMES_PORT_NUMBERS_API_SERVER_PASSWORD_AUTH_TOKEN_ENCODED));
+    private static class ServiceNamePortNumbersServiceHolder {
+        private static final ServiceNamePortNumbersService SERVICE_NAMES_PORT_NUMBERS_MAPPING_SERVICE =
+                NetworkUtils.createApiService(null, SERVICE_NAMES_PORT_NUMBERS_API_SERVER_BASE_URL,
+                        ServiceNamePortNumbersService.class,
+                        new AuthenticationInterceptor(SERVICE_NAMES_PORT_NUMBERS_API_SERVER_PASSWORD_AUTH_TOKEN_ENCODED));
+    }
+    public static ServiceNamePortNumbersService getServiceNamePortNumbersService() {
+        return ServiceNamePortNumbersServiceHolder.SERVICE_NAMES_PORT_NUMBERS_MAPPING_SERVICE;
+    }
+
+    private static class FirebaseDynamicLinksServiceHolder {
+        private static final FirebaseDynamicLinksService FIREBASE_DYNAMIC_LINKS_SERVICE =
+                NetworkUtils.createApiService(null, FIREBASE_DYNAMIC_LINKS_BASE_URL, FirebaseDynamicLinksService.class);
+    }
+    public static FirebaseDynamicLinksService getFirebaseDynamicLinksService() {
+        return FirebaseDynamicLinksServiceHolder.FIREBASE_DYNAMIC_LINKS_SERVICE;
+    }
+
+    private static class IsGdServiceHolder {
+        private static final IsGdService IS_GD_URL_SHORTENER_SERVICE =
+                NetworkUtils.createApiService(null, IS_GD_URL_SHORTENER_BASE_URL, IsGdService.class);
+    }
+    public static IsGdService getIsGdService() {
+        return IsGdServiceHolder.IS_GD_URL_SHORTENER_SERVICE;
+    }
+
+    private static class DoorbellServiceHolder {
+        private static final DoorbellService DOORBELL_SERVICE =
+                NetworkUtils.createApiService(null, FEEDBACK_API_BASE_URL, DoorbellService .class);
+    }
+    public static DoorbellService getDoorbellService() {
+        return DoorbellServiceHolder.DOORBELL_SERVICE;
+    }
 
     @SuppressLint("DefaultLocale")
     public static void checkResponseSuccessful(@NonNull final Response<?> response) {
@@ -72,7 +112,7 @@ public final class NetworkUtils {
         return getRetrofitInstance(context, endpointBaseUrl, interceptors).create(serviceType);
     }
 
-    public static OkHttpClient getHttpClientInstance(@Nullable final Context context,
+    private static OkHttpClient getHttpClientInstance(@Nullable final Context context,
             @Nullable final Interceptor... interceptors) {
         final OkHttpClient.Builder builder = new OkHttpClient.Builder().addInterceptor(new UserAgentInterceptor());
         if (interceptors != null) {
@@ -93,12 +133,7 @@ public final class NetworkUtils {
 
         if (BuildConfig.DEBUG) {
             final HttpLoggingInterceptor interceptor =
-                    new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-                        @Override
-                        public void log(String message) {
-                            Crashlytics.log(Log.DEBUG, TAG, message);
-                        }
-                    });
+                    new HttpLoggingInterceptor(message -> Crashlytics.log(Log.DEBUG, TAG, message));
             interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
             builder.addInterceptor(interceptor);
 
@@ -109,7 +144,7 @@ public final class NetworkUtils {
     }
 
     @NonNull
-    public static Retrofit getRetrofitInstance(@Nullable final Context context,
+    private static Retrofit getRetrofitInstance(@Nullable final Context context,
             @NonNull final String baseUrl,
             @Nullable final Interceptor... interceptors) {
         if (isNullOrEmpty(baseUrl)) {
@@ -133,7 +168,7 @@ public final class NetworkUtils {
 
         private final String authToken;
 
-        public AuthenticationInterceptor(@NonNull final String token) {
+        AuthenticationInterceptor(@NonNull final String token) {
             this.authToken = token;
         }
 
@@ -141,6 +176,7 @@ public final class NetworkUtils {
             this("Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
         }
 
+        @NonNull
         @Override
         public okhttp3.Response intercept(@NonNull Chain chain) throws IOException {
             final Request original = chain.request();
@@ -153,6 +189,7 @@ public final class NetworkUtils {
 
     public static class UserAgentInterceptor implements Interceptor {
 
+        @NonNull
         @Override
         public okhttp3.Response intercept(@NonNull final Chain chain) throws IOException {
             final Request original = chain.request();

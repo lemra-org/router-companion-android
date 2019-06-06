@@ -146,6 +146,7 @@ import org.rm3l.router_companion.actions.RouterRestoreDialogListener;
 import org.rm3l.router_companion.actions.activity.OpenWebManagementPageActivity;
 import org.rm3l.router_companion.actions.activity.SpeedTestActivity;
 import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.FirebaseDynamicLinksService;
+import org.rm3l.router_companion.api.urlshortener.is_gd.IsGdService;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.exceptions.StorageException;
 import org.rm3l.router_companion.fragments.PageSlidingTabStripFragment;
@@ -283,6 +284,8 @@ public class DDWRTMainActivity extends AppCompatActivity
     private SharedPreferences mGlobalPreferences;
 
     private FirebaseDynamicLinksService mFirebaseDynamicLinksService;
+
+    private IsGdService mIsGdService;
 
     @Nullable
     private InterstitialAd mInterstitialAd;
@@ -849,6 +852,9 @@ public class DDWRTMainActivity extends AppCompatActivity
 
         mFirebaseDynamicLinksService = NetworkUtils.createApiService(this,
                 RouterCompanionAppConstants.FIREBASE_DYNAMIC_LINKS_BASE_URL, FirebaseDynamicLinksService.class);
+
+        mIsGdService = NetworkUtils.createApiService(this,
+                RouterCompanionAppConstants.IS_GD_URL_SHORTENER_BASE_URL, IsGdService.class);
     }
 
     @Override
@@ -1453,7 +1459,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                         routerFirmware.officialName : "Router"));
                 return true;
             }
-            FirmwareUpdateCheckerJob.manualCheckForFirmwareUpdate(this, mFirebaseDynamicLinksService, mRouter);
+            FirmwareUpdateCheckerJob.manualCheckForFirmwareUpdate(this, mRouter);
             return true;
         } else if (itemId == R.id.action_ddwrt_actions_ssh_router) {
             Router.openSSHConsole(mRouter, this);

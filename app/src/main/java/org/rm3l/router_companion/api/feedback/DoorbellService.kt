@@ -2,6 +2,8 @@ package org.rm3l.router_companion.api.feedback
 
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
+import org.rm3l.router_companion.RouterCompanionAppConstants.DOORBELL_APIKEY
+import org.rm3l.router_companion.RouterCompanionAppConstants.DOORBELL_APPID
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.Headers
@@ -17,20 +19,14 @@ import retrofit2.http.Query
 interface DoorbellService {
 
     @Headers("Content-Type: application/json")
-    @POST("applications/{id}/open")
-    fun openApplication(
-            @Path("id") applicationId: Int, @Query("key") key: String): Call<ResponseBody>
+    @POST("applications/$DOORBELL_APPID/open?key=$DOORBELL_APIKEY")
+    fun openApplication(): Call<ResponseBody>
 
     @Headers("Content-Type: application/json")
-    @POST("applications/{id}/submit")
-    fun submitFeedbackForm(
-            @Path("id") applicationId: Int,
-            @Query("key") key: String,
-            @Body request: DoorbellSubmitRequest): Call<ResponseBody>
+    @POST("applications/$DOORBELL_APPID/submit?key=$DOORBELL_APIKEY")
+    fun submitFeedbackForm(@Body request: DoorbellSubmitRequest): Call<ResponseBody>
 
     @Multipart
-    @POST("applications/{id}/upload")
-    fun upload(
-            @Path("id") applicationId: Int, @Query("key") key: String,
-            @Part("files[]\"; filename=\"screenshot.png\" ") filename: RequestBody): Call<Array<String>>
+    @POST("applications/$DOORBELL_APPID/upload?key=$DOORBELL_APIKEY")
+    fun upload(@Part("files[]\"; filename=\"screenshot.png\" ") filename: RequestBody): Call<Array<String>>
 }

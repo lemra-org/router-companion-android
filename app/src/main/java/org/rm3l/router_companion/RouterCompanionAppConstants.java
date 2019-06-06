@@ -327,6 +327,8 @@ public final class RouterCompanionAppConstants {
 
     public static final String FIREBASE_DYNAMIC_LINKS_BASE_URL = "https://firebasedynamiclinks.googleapis.com/v1/";
 
+    public static final String IS_GD_URL_SHORTENER_BASE_URL = "https://is.gd/";
+
     public static final String FIREBASE_API_KEY = \"fake-api-key\";
 
     public static final String UNIT_BYTE = "B";

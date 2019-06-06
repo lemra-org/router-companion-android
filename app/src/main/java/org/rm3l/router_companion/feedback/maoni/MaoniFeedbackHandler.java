@@ -204,8 +204,8 @@ public class MaoniFeedbackHandler implements Handler {
                                 try {
                                     final ShortLinksDataRequest gooGlData = new ShortLinksDataRequest(
                                             new DynamicLinkInfo(longLink));
-                                    final Response<ShortLinksDataResponse> response = mFirebaseDynamicLinksService.shortLinks(
-                                            FIREBASE_API_KEY,
+                                    final Response<ShortLinksDataResponse> response = NetworkUtils.getFirebaseDynamicLinksService()
+                                            .shortLinks(
                                             gooGlData).execute();
                                     NetworkUtils.checkResponseSuccessful(response);
                                     screenshotCaptureUploadUrl = response.body().getShortLink();
@@ -288,8 +288,8 @@ public class MaoniFeedbackHandler implements Handler {
                                 try {
                                     final ShortLinksDataRequest shortLinksDataRequest = new ShortLinksDataRequest(
                                             new DynamicLinkInfo(longLink));
-                                    final Response<ShortLinksDataResponse> response = mFirebaseDynamicLinksService
-                                            .shortLinks(FIREBASE_API_KEY, shortLinksDataRequest).execute();
+                                    final Response<ShortLinksDataResponse> response = NetworkUtils.getFirebaseDynamicLinksService()
+                                            .shortLinks(shortLinksDataRequest).execute();
                                     NetworkUtils.checkResponseSuccessful(response);
                                     logsUrl = response.body().getShortLink();
                                 } catch (final Exception e) {
@@ -307,7 +307,7 @@ public class MaoniFeedbackHandler implements Handler {
                 //2. Open App in Doorbell
                 publishProgress(OPENING_APPLICATION);
                 final Response<ResponseBody> openResponse =
-                        mDoorbellService.openApplication(DOORBELL_APPID, DOORBELL_APIKEY).execute();
+                        NetworkUtils.getDoorbellService().openApplication().execute();
                 NetworkUtils.checkResponseSuccessful(openResponse);
 
                 if (openResponse.code() != 201) {
@@ -368,10 +368,7 @@ public class MaoniFeedbackHandler implements Handler {
                 doorbellSubmitRequest.setProperties(properties);
 
                 final Response<ResponseBody> response =
-                        mDoorbellService.submitFeedbackForm(
-                                DOORBELL_APPID,
-                                DOORBELL_APIKEY,
-                                doorbellSubmitRequest).execute();
+                        NetworkUtils.getDoorbellService().submitFeedbackForm(doorbellSubmitRequest).execute();
                 NetworkUtils.checkResponseSuccessful(response);
 
                 return new AbstractMap.SimpleImmutableEntry<>(response, null);
@@ -486,15 +483,11 @@ public class MaoniFeedbackHandler implements Handler {
 
     private Activity mContext;
 
-    private DoorbellService mDoorbellService;
-
     private EditText mEmail;
 
     private TextInputLayout mEmailInputLayout;
 
     private final SharedPreferences mGlobalPreferences;
-
-    private FirebaseDynamicLinksService mFirebaseDynamicLinksService;
 
     private Router mRouter;
 
@@ -506,10 +499,6 @@ public class MaoniFeedbackHandler implements Handler {
         mGlobalPreferences =
                 context.getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                         Context.MODE_PRIVATE);
-        mDoorbellService =
-                NetworkUtils.createApiService(context, FEEDBACK_API_BASE_URL, DoorbellService.class);
-        mFirebaseDynamicLinksService = NetworkUtils.createApiService(context,
-                RouterCompanionAppConstants.FIREBASE_DYNAMIC_LINKS_BASE_URL, FirebaseDynamicLinksService.class);
     }
 
     @Override
