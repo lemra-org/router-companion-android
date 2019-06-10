@@ -83,7 +83,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!-- NFC is an option here. The app still functions if NFC isn't present -->
     <!-- &lt;uses-feature android:name="android.hardware.nfc" android:required="false" /&gt; -->
 
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+<!--    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />-->
+
+    <!-- Since Android Pie 9, ACCESS_COARSE_LOCATION permission is required to read WiFi SSIDs-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <!--
     This is a situation where we want a dependency but
@@ -93,9 +96,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
       -->
     <uses-permission
         android:name="android.permission.READ_PHONE_STATE"
-        tools:node="remove" />
-    <uses-permission
-        android:name="android.permission.ACCESS_COARSE_LOCATION"
         tools:node="remove" />
     <uses-permission
         android:name="android.permission.ACCESS_FINE_LOCATION"
@@ -110,6 +110,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"
         tools:node="remove" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.CHANGE_WIFI_STATE"
+        tools:node="remove" />
 
     <application
         android:name="org.rm3l.router_companion.RouterCompanionApplication"

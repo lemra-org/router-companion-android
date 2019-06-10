@@ -48,6 +48,8 @@ public final class RouterCompanionAppConstants {
         public static final int STORAGE = 4;
 
         public static final int STORAGE_LOCATION = 5;
+
+        public static final int ACCESS_COARSE_LOCATION = 6;
     }
 
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");

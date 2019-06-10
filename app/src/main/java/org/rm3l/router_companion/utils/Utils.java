@@ -35,6 +35,7 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.OLD_IS_FIRST
 import static org.rm3l.router_companion.RouterCompanionAppConstants.WAN_CYCLE_DAY_PREF;
 
 import android.Manifest;
+import android.Manifest.permission;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ApplicationErrorReport;
@@ -111,6 +112,7 @@ import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.maoni.Maoni;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants.Permissions;
 import org.rm3l.router_companion.RouterCompanionApplication;
 import org.rm3l.router_companion.donate.DonateActivity;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
@@ -656,6 +658,67 @@ public final class Utils {
         if (context == null) {
             return null;
         }
+        final Activity currentActivity = RouterCompanionApplication.getCurrentActivity();
+
+        //TODO Need to explicitly request permission to user "ACCESS_COARSE_LOCATION"
+        if (currentActivity != null &&
+                PermissionChecker.checkSelfPermission(context, permission.ACCESS_COARSE_LOCATION)
+                        != PermissionChecker.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(currentActivity,
+                    permission.ACCESS_COARSE_LOCATION)) {
+                SnackbarUtils.buildSnackbar(currentActivity,
+                        "Approximate Location Permission is required to read your WiFi Network name.",
+                        "OK", Snackbar.LENGTH_INDEFINITE,
+                        new SnackbarCallback() {
+                            @Override
+                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
+                                    throws Exception {
+                                //Request permission
+                                ActivityCompat.requestPermissions(currentActivity,
+                                        new String[]{permission.ACCESS_COARSE_LOCATION},
+                                        Permissions.ACCESS_COARSE_LOCATION);
+                            }
+
+                            @Override
+                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
+                                    throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventManual(int event, @Nullable Bundle bundle)
+                                    throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
+                                    throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
+                                    throws Exception {
+
+                            }
+
+                            @Override
+                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+                            }
+                        }, null, true);
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(currentActivity,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        Permissions.ACCESS_COARSE_LOCATION);
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+
         final ConnectivityManager connectivityManager =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager == null) {

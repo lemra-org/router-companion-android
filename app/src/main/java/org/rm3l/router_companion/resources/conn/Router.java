@@ -201,7 +201,9 @@ public class Router implements Serializable {
         }
     }
 
-    private class RouterShortcutAvatarDownloader implements Target {
+    private static class RouterShortcutAvatarDownloader implements Target {
+
+        private final String mRouterUuid;
 
         final int mIconSize;
 
@@ -214,9 +216,11 @@ public class Router implements Serializable {
         @Nullable
         private final Intent mOpenRouterShortcutIntent;
 
-        private RouterShortcutAvatarDownloader(@Nullable final Context applicationContext,
+        private RouterShortcutAvatarDownloader(@NonNull final Router router,
+                @Nullable final Context applicationContext,
                 @Nullable final Intent openRouterIntent,
                 @Nullable final Intent homeLauncherShortcutIntent) {
+            this.mRouterUuid = router.getUuid();
             this.mApplicationContext = applicationContext;
             this.mOpenRouterShortcutIntent = openRouterIntent;
             this.mHomeLauncherShortcutIntent = homeLauncherShortcutIntent;
@@ -285,7 +289,7 @@ public class Router implements Serializable {
         }
 
         private String getRouterUuid() {
-            return uuid;
+            return this.mRouterUuid;
         }
     }
 
@@ -1064,7 +1068,7 @@ public class Router implements Serializable {
                 try {
                     ImageUtils.downloadImageFromUrl(contextForshortcut,
                             getRouterAvatarUrl(contextForshortcut, this, mAvatarDownloadOpts),
-                            this.new RouterShortcutAvatarDownloader(contextForshortcut, shortcutIntent, addIntent),
+                            new RouterShortcutAvatarDownloader(this, contextForshortcut, shortcutIntent, addIntent),
                             null, null, null);
                 } catch (final Exception e) {
                     //No worries
@@ -1228,7 +1232,7 @@ public class Router implements Serializable {
         final SharedPreferences sharedPreferences =
                 ctx.getSharedPreferences(this.getUuid(), Context.MODE_PRIVATE);
         final Set<String> localSSIDLookupStringSet =
-                sharedPreferences.getStringSet(LOCAL_SSID_LOOKUPS, new HashSet<String>());
+                sharedPreferences.getStringSet(LOCAL_SSID_LOOKUPS, new HashSet<>());
         final List<LocalSSIDLookup> localSSIDLookups = new ArrayList<>(localSSIDLookupStringSet.size());
         final Gson gson = WakeOnLanTile.GSON_BUILDER.create();
         for (final String localSSIDLookupString : localSSIDLookupStringSet) {
