@@ -281,7 +281,7 @@ dependencies {
     implementation group: 'com.twofortyfouram', name: 'android-plugin-client-sdk-for-locale', version: "[4.0.3, 5.0["
     implementation group: 'com.twofortyfouram', name: 'android-spackle', version: "[2.0.0,4.0["
     androidTestImplementation group:'com.twofortyfouram', name:'android-test', version:'[6.0.1,7.0)'
-    androidTestImplementation group:'com.twofortyfouram', name:'android-assertion', version:'[2.0.0,3.0)'
+//    androidTestImplementation group:'com.twofortyfouram', name:'android-assertion', version:'[2.0.0,3.0)'
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.9@aar') {
         transitive = true
     }

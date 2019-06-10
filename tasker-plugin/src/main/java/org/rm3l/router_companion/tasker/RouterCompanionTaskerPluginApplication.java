@@ -1,5 +1,6 @@
 package org.rm3l.router_companion.tasker;
 
+import static com.facebook.stetho.Stetho.newInitializerBuilder;
 import static org.rm3l.router_companion.tasker.Constants.TAG;
 
 import android.app.Activity;
@@ -38,7 +39,13 @@ public class RouterCompanionTaskerPluginApplication extends Application
 
         if (BuildConfig.DEBUG) {
             //            LeakCanary.install(this);
-            Stetho.initializeWithDefaults(this);
+            // if using Robolectric in local unit test, thrown IOException.
+            // see https://github.com/facebook/stetho/issues/440
+            Stetho.initialize(
+                    newInitializerBuilder(this)
+                            .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+                            .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+                            .build());
         }
 
         // Set up Crashlytics, disabled for debug builds
