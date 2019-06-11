@@ -44,7 +44,6 @@ buildscript {
 
         playPublisherPlugin_version = '2.2.0'
         googlePlayServicesPlugin_version = '4.2.0'
-        okbuck_version = '0.47.2'
 
         maoni_version = '7.0.0'
         maoniDoorbell_version = '2.6.0-maoni_6.0.0'
@@ -69,15 +68,11 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.github.triplet.gradle:play-publisher:$playPublisherPlugin_version"
         classpath "com.google.gms:google-services:$googlePlayServicesPlugin_version"
-        classpath ("com.uber:okbuck:$okbuck_version") {
-            exclude module: 'gradle'
-        }
     }
 }
 
 apply plugin: 'com.gradle.build-scan'
 apply plugin: 'idea'
-apply plugin: 'com.uber.okbuck'
 apply plugin: 'kotlin'
 //apply plugin: 'kotlin-kapt'
 
@@ -180,25 +175,6 @@ idea.module {
 //kapt {
 //    useBuildCache = true
 //}
-
-okbuck {
-    lint {
-        disabled = true
-    }
-    buildToolVersion = buildTools_version
-    target = "android-$android_sdk"
-    buckProjects = project.subprojects
-    annotationProcessors = [
-            "local-apt-dependency": ['com.airbnb.deeplinkdispatch.DeepLinkProcessor']
-    ]
-//    wrapper {
-//        //Fork with kapt support
-//        repo = 'https://github.com/cwoodwar6/buck.git'
-//    }
-    //Issue with Kotlin: https://github.com/uber/okbuck/issues/798#issuecomment-476291448
-    // Set a specific buck binary or alternate buck distribution.
-    buckBinary = "com.github.rm3l:buck:fc8f977a04b2847c6707668a73320ad336d20527@pex"
-}
 
 buildScan {
     termsOfServiceUrl = 'https://gradle.com/terms-of-service'

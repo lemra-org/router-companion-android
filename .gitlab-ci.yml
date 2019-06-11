@@ -5,7 +5,7 @@ stages:
 
 
 ################################################################################
-# Build, using Buck (much faster than with Gradle)
+# Build
 ################################################################################
 build_project:
   image: registry.gitlab.com/lemra/router-companion-android/android-sdk:latest
@@ -20,9 +20,7 @@ build_project:
         || true
     - sysctl -p
 
-    - chmod +x ./gradlew ./buckw
-
-    - watchman watch-del $CI_PROJECT_DIR || true
+    - chmod +x ./gradlew
 
   # Note on caching: 
   # We should not rely upon the cache, as it is done on a best effort basis, 
@@ -34,54 +32,13 @@ build_project:
       - $GRADLE_USER_HOME/caches/
       - $GRADLE_USER_HOME/wrapper/
       - $GRADLE_USER_HOME/build-cache/
-      - buck-out
-      - .okbuck
-
-  variables:
-    EXTRA_OKBUCK_ARGS: '-Pandroid.debug.obsoleteApi=true --stacktrace --scan'
 
   script:
-    # This is because of the AAR issue below, we first run a 'buck target', 
-    # so Okbuck is run first if needed (thus dropping the 'buck-out' folder)
-    - bash ./buckw targets || true
-
-    # Some Google dependencies do not strictly follow the AAR spec 
-    # (which requires a 'res' folder to be present, even when empty)
-    # Buck is much stricter, and we need to manually create such folder.
-    - for nonStdAar in com.google.android.gms.play-services-ads-lite-license
-        com.google.android.gms.play-services-base-license
-        com.google.android.gms.play-services-basement-license
-        com.google.android.gms.play-services-tasks-license
-        com.google.firebase.firebase-analytics-impl-license
-        com.google.firebase.firebase-analytics-license
-        com.google.firebase.firebase-appindexing-license
-        com.google.firebase.firebase-common-license
-        com.google.firebase.firebase-core
-        com.google.firebase.firebase-iid-license ;
-      do
-        nonStdAarFullName="${nonStdAar}-15.0.1.aar";
-        mkdir -pv $CI_PROJECT_DIR'/buck-out/bin/.okbuck/cache/__unpack_'${nonStdAarFullName}'#aar_unzip__/res' ;
-        bash ./buckw build //.okbuck/cache:${nonStdAarFullName} || true ;
-        mkdir -pv $CI_PROJECT_DIR'/buck-out/bin/.okbuck/cache/__unpack_'${nonStdAarFullName}'#aar_unzip__/res' ;
-      done
-
-    - watchman watch-project $CI_PROJECT_DIR || true
-
-    # Temp. cmd to clean up Buck cache
-    - bash ./buckw clean || true
-
-    # - bash ./buckw build appAmazonDebug tasker-pluginAmazonDebug || ./gradlew :app:assembleAmazonDebug :tasker-plugin:assembleAmazonDebug
-    - bash ./buckw build appAmazonDebug || ./gradlew :app:assembleAmazonDebug
-    - bash ./buckw build tasker-pluginAmazonDebug || ./gradlew :tasker-plugin:assembleAmazonDebug
-
-    - ./gradlew testAmazonDebugUnitTest htmlDependencyReport
+    - ./gradlew :app:assembleAmazonDebug :tasker-plugin:assembleAmazonDebug testAmazonDebugUnitTest htmlDependencyReport
 
   artifacts:
     when: always
     paths:
-    - "buck-out/gen/app/*.apk"
-    - "buck-out/gen/tasker-plugin/*.apk"
-
     - app/build/reports
     - app/build/outputs/
     - app/build/doc
