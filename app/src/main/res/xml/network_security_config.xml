@@ -19,8 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
-<network-security-config>
-    <base-config cleartextTrafficPermitted="false" />
+<network-security-config xmlns:tools="http://schemas.android.com/tools">
+    <!-- Enable 'ClearText' traffic since we need to access the Web Management UI,
+     which may be accessible over HTTP (and not HTTPS).
+     Since it is not possible to set such policy at runtime, we need to enable ClearText.
+    -->
+    <base-config cleartextTrafficPermitted="true"
+        tools:ignore="InsecureBaseConfiguration" />
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">rm3l.org</domain>
         <domain includeSubdomains="false">www.geognos.com</domain>
