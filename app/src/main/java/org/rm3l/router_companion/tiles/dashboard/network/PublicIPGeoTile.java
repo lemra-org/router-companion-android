@@ -165,12 +165,12 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
     }
 
     @Override
-    public int getTileHeaderViewId() {
+    public Integer getTileHeaderViewId() {
         return R.id.tile_public_ip_geo_title_hdr;
     }
 
     @Override
-    public int getTileTitleViewId() {
+    public Integer getTileTitleViewId() {
         return R.id.tile_public_ip_geo_title;
     }
 

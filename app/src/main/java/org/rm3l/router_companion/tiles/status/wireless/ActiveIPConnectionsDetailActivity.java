@@ -762,19 +762,16 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     ReportingUtils.reportException(getApplicationContext(), e);
                 }
                 final Integer tcpConnectionDetailsResourceId = detailsResId;
-                final Function1<View, Unit> onClickFunction = new Function1<View, Unit>() {
-                    @Override
-                    public Unit invoke(final View view) {
-                        Utils.buildAlertDialog(
-                                ActiveIPConnectionsDetailActivity.this,
-                                tcpConnectionState,
-                                tcpConnectionDetailsResourceId != null ? getResources()
-                                        .getString(tcpConnectionDetailsResourceId) : tcpConnectionState,
-                                true,
-                                true)
-                                .show();
-                        return null;
-                    }
+                final Function1<View, Unit> onClickFunction = view -> {
+                    Utils.buildAlertDialog(
+                            ActiveIPConnectionsDetailActivity.this,
+                            tcpConnectionState,
+                            tcpConnectionDetailsResourceId != null ? getResources()
+                                    .getString(tcpConnectionDetailsResourceId) : tcpConnectionState,
+                            true,
+                            true)
+                            .show();
+                    return null;
                 };
                 ViewUtils.setClickable(tcpConnectionStateView, onClickFunction);
 //                ViewUtils.setClickable(tcpConnectionStateDetailedView, onClickFunction);

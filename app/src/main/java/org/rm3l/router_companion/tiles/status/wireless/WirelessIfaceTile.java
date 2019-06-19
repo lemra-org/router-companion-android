@@ -502,12 +502,12 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     }
 
     @Override
-    public int getTileHeaderViewId() {
+    public Integer getTileHeaderViewId() {
         return R.id.tile_status_wireless_iface_hdr;
     }
 
     @Override
-    public int getTileTitleViewId() {
+    public Integer getTileTitleViewId() {
         return R.id.tile_status_wireless_iface_title;
     }
 

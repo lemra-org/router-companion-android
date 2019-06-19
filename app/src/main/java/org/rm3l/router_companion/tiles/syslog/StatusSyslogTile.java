@@ -512,12 +512,12 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     }
 
     @Override
-    public int getTileHeaderViewId() {
+    public Integer getTileHeaderViewId() {
         return R.id.tile_status_router_syslog_hdr;
     }
 
     @Override
-    public int getTileTitleViewId() {
+    public Integer getTileTitleViewId() {
         return R.id.tile_status_router_syslog_title;
     }
 

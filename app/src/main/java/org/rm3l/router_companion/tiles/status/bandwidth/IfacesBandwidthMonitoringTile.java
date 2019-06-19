@@ -159,12 +159,12 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
     }
 
     @Override
-    public int getTileHeaderViewId() {
+    public Integer getTileHeaderViewId() {
         return R.id.tile_status_bandwidth_monitoring_hdr;
     }
 
     @Override
-    public int getTileTitleViewId() {
+    public Integer getTileTitleViewId() {
         return R.id.tile_status_bandwidth_monitoring_title;
     }
 

@@ -75,12 +75,12 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
     }
 
     @Override
-    public int getTileHeaderViewId() {
+    public Integer getTileHeaderViewId() {
         return R.id.tile_status_time_hdr;
     }
 
     @Override
-    public int getTileTitleViewId() {
+    public Integer getTileTitleViewId() {
         return R.id.tile_status_time_title;
     }
 

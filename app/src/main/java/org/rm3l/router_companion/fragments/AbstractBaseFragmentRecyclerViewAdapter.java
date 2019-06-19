@@ -71,15 +71,18 @@ public class AbstractBaseFragmentRecyclerViewAdapter
         }
         final boolean isThemeLight = ColorUtils.Companion.isThemeLight(mContext);
 
-        final TextView titleTextView =
-                (TextView) viewGroupLayout.findViewById(ddwrtTile.getTileTitleViewId());
-        ColorUtils.Companion.setTextColor(titleTextView, mRouter != null ? mRouter.getRouterFirmware() : null);
-        //        if (isThemeLight) {
-        //            if (titleTextView != null) {
-        //                titleTextView.setTextColor(ContextCompat.getColor(mContext,
-        //                        android.R.color.holo_blue_dark));
-        //            }
-        //        }
+        final Integer tileTitleViewId = ddwrtTile.getTileTitleViewId();
+        if (tileTitleViewId != null) {
+            final TextView titleTextView =
+                    viewGroupLayout.findViewById(tileTitleViewId);
+            ColorUtils.Companion.setTextColor(titleTextView, mRouter != null ? mRouter.getRouterFirmware() : null);
+            //        if (isThemeLight) {
+            //            if (titleTextView != null) {
+            //                titleTextView.setTextColor(ContextCompat.getColor(mContext,
+            //                        android.R.color.holo_blue_dark));
+            //            }
+            //        }
+        }
         viewGroupLayout.setBackgroundColor(
                 ContextCompat.getColor(mContext, android.R.color.transparent));
 

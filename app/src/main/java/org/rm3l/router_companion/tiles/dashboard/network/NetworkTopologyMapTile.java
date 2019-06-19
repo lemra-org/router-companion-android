@@ -123,13 +123,13 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
     }
 
     @Override
-    public int getTileHeaderViewId() {
+    public Integer getTileHeaderViewId() {
         //        return R.id.tile_network_map_hdr;
         return -1;
     }
 
     @Override
-    public int getTileTitleViewId() {
+    public Integer getTileTitleViewId() {
         return R.id.tile_network_map_title;
     }
 

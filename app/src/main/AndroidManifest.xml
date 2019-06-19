@@ -133,7 +133,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:value="AEdPqrEAAAAIex8fLj0PcvM6dwNd7Je9mgYuzCTRw4IZq5_jBQ" />
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="xxx"/>
+            android:value="ca-app-pub-3313772302702554~8335617623"/>
         <!-- This meta-data tag is required to use Google Play Services. -->
         <meta-data
             android:name="com.google.android.gms.version"

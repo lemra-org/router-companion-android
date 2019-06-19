@@ -203,12 +203,12 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo>
     }
 
     @Override
-    public int getTileHeaderViewId() {
+    public Integer getTileHeaderViewId() {
         return 0;
     }
 
     @Override
-    public int getTileTitleViewId() {
+    public Integer getTileTitleViewId() {
         return R.id.tile_overview_wan_total_traffic_title;
     }
 

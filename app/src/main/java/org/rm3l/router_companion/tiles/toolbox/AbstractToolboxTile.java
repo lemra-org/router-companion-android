@@ -110,13 +110,13 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
     }
 
     @Override
-    public int getTileHeaderViewId() {
+    public Integer getTileHeaderViewId() {
         return R.id.tile_toolbox_abstract_title;
     }
 
     @Override
-    public int getTileTitleViewId() {
-        return -1;
+    public Integer getTileTitleViewId() {
+        return null;
     }
 
     @Override

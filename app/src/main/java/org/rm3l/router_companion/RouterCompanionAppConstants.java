@@ -66,6 +66,10 @@ public final class RouterCompanionAppConstants {
     public static final String MOBFOX_INVENTORY_HASH = "";
 
     public static final String ADMOB_APP_ID = "xxx";
+    public static final String ADMOB_INTERSTITIAL_AD_UNIT_ID_DEBUG = "xxx";
+    public static final String ADMOB_INTERSTITIAL_SPLASH_ACTIVITY_AD_UNIT_ID = "xxx";
+    public static final String ADMOB_BANNER_AD_UNIT_ID_DEBUG = "xxx";
+    public static final String ADMOB_BANNER_ROUTER_COMPANION_ANDROID_AD_UNIT_ID_DEBUG = "xxx";
 
     //    public static final String MOBFOX_INVENTORY_HASH = "xxx";
     public static final String MOBFOX_INVENTORY_ID = "xxx";
@@ -289,11 +293,11 @@ public final class RouterCompanionAppConstants {
 
     public static final String DEMO_ROUTER_DNS = BuildConfig.APPLICATION_ID;
 
-    public static final long DELAY_BETWEEN_TWO_CONSECUTIVE_INTERSTITIAL_ADS_MINUTES = 20l;
+    public static final long DELAY_BETWEEN_TWO_CONSECUTIVE_INTERSTITIAL_ADS_MINUTES = 1L;
 
     public static final String IP_TO_PING_TO_CHECK_INTERNET_CONNECTIVITY = "8.8.8.8";
 
-    public static final long DRAWER_CLOSE_DELAY_MS = 10l;
+    public static final long DRAWER_CLOSE_DELAY_MS = 10L;
 
     public static final String GEO_IP_API_SERVER = "http://api.petabyet.com/geoip/";
 

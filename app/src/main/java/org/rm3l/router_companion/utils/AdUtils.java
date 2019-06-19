@@ -90,9 +90,9 @@ public final class AdUtils {
         long lastInterstitialAd =
                 ctx.getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                         Context.MODE_PRIVATE)
-                        .getLong(RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF, -1l);
-        return lastInterstitialAd < 0l || (TimeUnit.MINUTES.convert(
-                System.currentTimeMillis() - lastInterstitialAd, TimeUnit.MILLISECONDS)
+                        .getLong(RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF, -1L);
+        return lastInterstitialAd < 0L
+                || (TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - lastInterstitialAd)
                 >= DELAY_BETWEEN_TWO_CONSECUTIVE_INTERSTITIAL_ADS_MINUTES);
     }
 

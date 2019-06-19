@@ -97,9 +97,8 @@ import org.rm3l.router_companion.prefs.sort.DDWRTSortingStrategy;
 import org.rm3l.router_companion.prefs.sort.SortingStrategy;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.resources.conn.Router.RouterFirmware;
-import org.rm3l.router_companion.tiles.BannerAdTile;
+import org.rm3l.router_companion.tiles.ads.BannerAdTile;
 import org.rm3l.router_companion.tiles.DDWRTTile;
-import org.rm3l.router_companion.tiles.ads.AvocarrotNativeAdTile;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
@@ -1082,33 +1081,27 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                 if (size >= 2) {
                     final int randomMin;
                     if (size >= 3) {
-                        //                        this.fragmentTiles.add(new AvocarrotNativeAdTile(this, savedInstanceState, this.router));
                         randomMin = 2;
                     } else {
                         randomMin = 1;
                     }
                     this.fragmentTiles.addAll(tiles);
-                    //insert banner ad randomly
-                    if (RANDOM.nextBoolean()) {
-                        this.fragmentTiles.add(Math.max(randomMin, new Random().nextInt(size)),
-                                new AvocarrotNativeAdTile(this, savedInstanceState, this.router));
-                    }
+                    this.fragmentTiles.add(Math.max(randomMin, new Random().nextInt(size)),
+                            new BannerAdTile(this, savedInstanceState, this.router));
                 } else {
-                    if (RANDOM.nextBoolean()) {
-                        if (size == 1 && tiles.get(0) != null && !tiles.get(0).isEmbeddedWithinScrollView()) {
-                            //Add banner add first, then all other tiles (issue with AdminNVRAMTile)
-                            this.fragmentTiles.add(new BannerAdTile(this, savedInstanceState, this.router));
-                        } else {
-                            //Add banner add first, then all other tiles
-                            this.fragmentTiles.add(
-                                    new AvocarrotNativeAdTile(this, savedInstanceState, this.router));
-                        }
+                    if (size == 1 && tiles.get(0) != null && !tiles.get(0).isEmbeddedWithinScrollView()) {
+                        //Add banner add first, then all other tiles (issue with AdminNVRAMTile)
+                        this.fragmentTiles.add(new BannerAdTile(this, savedInstanceState, this.router));
+                    } else {
+                        //Add banner add first, then all other tiles
+                        this.fragmentTiles.add(
+                                new BannerAdTile(this, savedInstanceState, this.router));
                     }
 
                     this.fragmentTiles.addAll(tiles);
                 }
             } else {
-                this.fragmentTiles.add(new AvocarrotNativeAdTile(this, savedInstanceState, this.router));
+                this.fragmentTiles.add(new BannerAdTile(this, savedInstanceState, this.router));
             }
         } else {
             this.fragmentTiles = tiles;
@@ -1201,16 +1194,19 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                         //                                                R.color.cardview_light_background :
                         //                                                R.color.cardview_dark_background));
 
-                        final TextView titleTextView =
-                                (TextView) viewGroupLayout.findViewById(ddwrtTile.getTileTitleViewId());
-                        ColorUtils.Companion.setTextColor(titleTextView,
-                                router != null ? router.getRouterFirmware() : null);
-                        //                        if (isThemeLight) {
-                        //                            if (titleTextView != null) {
-                        //                                titleTextView.setTextColor(ContextCompat.getColor(activity,
-                        //                                        android.R.color.holo_blue_dark));
-                        //                            }
-                        //                        }
+                        final Integer tileTitleViewId = ddwrtTile.getTileTitleViewId();
+                        if (tileTitleViewId != null) {
+                            final TextView titleTextView =
+                                    viewGroupLayout.findViewById(tileTitleViewId);
+                            ColorUtils.Companion.setTextColor(titleTextView,
+                                    router != null ? router.getRouterFirmware() : null);
+                            //                        if (isThemeLight) {
+                            //                            if (titleTextView != null) {
+                            //                                titleTextView.setTextColor(ContextCompat.getColor(activity,
+                            //                                        android.R.color.holo_blue_dark));
+                            //                            }
+                            //                        }
+                        }
                         viewGroupLayout.setBackgroundColor(
                                 ContextCompat.getColor(activity, android.R.color.transparent));
 

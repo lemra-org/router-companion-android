@@ -286,12 +286,12 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
     }
 
     @Override
-    public int getTileHeaderViewId() {
+    public Integer getTileHeaderViewId() {
         return R.id.tile_services_wol_daemon_hdr;
     }
 
     @Override
-    public int getTileTitleViewId() {
+    public Integer getTileTitleViewId() {
         return R.id.tile_services_wol_daemon_title;
     }
 

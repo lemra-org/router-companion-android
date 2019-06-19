@@ -13,9 +13,9 @@ class ServiceNamesPortNumbersMappingLookupAction(router: Router,
                                                  val ports: Collection<Long>? = null,
                                                  val protocols: Collection<Protocol>? = null,
                                                  val services: Collection<String>? = null) :
-        AbstractRouterAction<Unit?>(router, listener, SERVICE_NAMES_PORT_NUMBERS_LOOKUP, globalSharedPreferences) {
+        AbstractRouterAction<Void?>(router, listener, SERVICE_NAMES_PORT_NUMBERS_LOOKUP, globalSharedPreferences) {
 
-    override fun doActionInBackground(): RouterActionResult<Unit?> {
+    override fun doActionInBackground(): RouterActionResult<Void?> {
         var exception: Exception? = null
         try {
             val routerStreamActionListener = listener as? RouterStreamActionListener

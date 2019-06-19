@@ -503,12 +503,12 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
     }
 
     @Override
-    public int getTileHeaderViewId() {
+    public Integer getTileHeaderViewId() {
         return R.id.tile_admin_nvram_hdr;
     }
 
     @Override
-    public int getTileTitleViewId() {
+    public Integer getTileTitleViewId() {
         return R.id.tile_admin_nvram_title;
     }
 

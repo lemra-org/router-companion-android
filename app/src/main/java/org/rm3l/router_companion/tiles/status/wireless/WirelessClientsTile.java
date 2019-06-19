@@ -1261,12 +1261,12 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
     }
 
     @Override
-    public int getTileHeaderViewId() {
+    public Integer getTileHeaderViewId() {
         return R.id.tile_status_wireless_clients_hdr;
     }
 
     @Override
-    public int getTileTitleViewId() {
+    public Integer getTileTitleViewId() {
         return R.id.tile_status_wireless_clients_title;
     }
 

@@ -66,12 +66,12 @@ public class AdminCommandsTile extends DDWRTTile<Void> {
     }
 
     @Override
-    public int getTileHeaderViewId() {
+    public Integer getTileHeaderViewId() {
         return -1;
     }
 
     @Override
-    public int getTileTitleViewId() {
+    public Integer getTileTitleViewId() {
         return R.id.tile_admin_commands_title;
     }
 

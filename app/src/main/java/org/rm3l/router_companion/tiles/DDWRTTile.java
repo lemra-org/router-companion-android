@@ -259,9 +259,13 @@ public abstract class DDWRTTile<T>
         return null; //Automatic
     }
 
-    public abstract int getTileHeaderViewId();
+    public Integer getTileHeaderViewId() {
+        return null;
+    }
 
-    public abstract int getTileTitleViewId();
+    public Integer getTileTitleViewId() {
+        return null;
+    }
 
     @Nullable
     public ViewGroup getViewGroupLayout() {
@@ -526,10 +530,14 @@ public abstract class DDWRTTile<T>
     protected abstract Loader<T> getLoader(int id, Bundle args);
 
     @Nullable
-    protected abstract String getLogTag();
+    protected String getLogTag() {
+        return null;
+    }
 
     @Nullable
-    protected abstract OnClickIntent getOnclickIntent();
+    protected OnClickIntent getOnclickIntent() {
+        return null;
+    }
 
     protected ViewGroup getParentViewGroup() {
         return parentViewGroup;
