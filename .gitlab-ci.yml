@@ -34,7 +34,7 @@ build_project:
       - $GRADLE_USER_HOME/build-cache/
 
   script:
-    - ./gradlew :app:assembleAmazonDebug :tasker-plugin:assembleAmazonDebug testAmazonDebugUnitTest htmlDependencyReport
+    - ./gradlew :app:assembleGoogleDebug :tasker-plugin:assembleGoogleDebug testGoogleDebugUnitTest htmlDependencyReport
 
   artifacts:
     when: always
