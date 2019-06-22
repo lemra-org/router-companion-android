@@ -2,36 +2,45 @@ package org.rm3l.router_companion
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.InterstitialAd
-import com.google.android.gms.ads.MobileAds
-import org.rm3l.ddwrt.BuildConfig
-import org.rm3l.router_companion.RouterCompanionAppConstants.ADMOB_INTERSTITIAL_SPLASH_ACTIVITY_AD_UNIT_ID
-import org.rm3l.router_companion.RouterCompanionAppConstants.ADMOB_INTERSTITIAL_AD_UNIT_ID_DEBUG
+import com.crashlytics.android.Crashlytics
+import com.mrgames13.jimdo.splashscreen.App.SplashScreenBuilder
+import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.mgmt.RouterManagementActivity
 
 class SplashActivity : AppCompatActivity() {
 
-    private lateinit var mInterstitialAd: InterstitialAd
+    companion object {
+        private val TAG = SplashActivity::class.java.simpleName
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        @Suppress("ConstantConditionIf")
-        if (BuildConfig.WITH_ADS) {
-            MobileAds.initialize(this, RouterCompanionAppConstants.ADMOB_APP_ID)
+        SplashScreenBuilder.getInstance(this)
+            .setVideo(R.raw.splash_animation)
+            .setImage(R.drawable.logo_ddwrt_companion)
+            .skipImage(true)
+            .setTitle("DD-WRT Companion")
+            .setSubtitle("Router management made easy")
+            .show()
+    }
 
-            mInterstitialAd = InterstitialAd(this)
-            mInterstitialAd.adUnitId =
-                if (BuildConfig.DEBUG) ADMOB_INTERSTITIAL_AD_UNIT_ID_DEBUG
-                else ADMOB_INTERSTITIAL_SPLASH_ACTIVITY_AD_UNIT_ID
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
 
-            mInterstitialAd.loadAd(AdRequest.Builder().build())
+        if (requestCode == SplashScreenBuilder.SPLASH_SCREEN_FINISHED) {
+            if (resultCode == RESULT_OK) {
+                Crashlytics.log(Log.DEBUG, TAG,
+                    "SPLASH_SCREEN_FINISHED: OK => SplashScreen finished without manual canceling")
+            } else if (resultCode == RESULT_CANCELED) {
+                Crashlytics.log(Log.DEBUG, TAG,
+                    "SPLASH_SCREEN_FINISHED: RESULT_CANCELED => SplashScreen finished through manual canceling")
+            }
         }
 
-        val intent = Intent(this, RouterManagementActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(this, RouterManagementActivity::class.java))
         finish()
     }
 }
