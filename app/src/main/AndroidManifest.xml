@@ -25,7 +25,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     package="org.rm3l.ddwrt">
 
     <uses-sdk
-        tools:overrideLibrary="com.readystatesoftware.chuck,com.facebook.stetho,cn.nekocode.resinspector,com.mobfox.sdk.all,sdk.mobfox.com.mobfoxandroidadaptermopub,sdk.mobfox.com.mobfoxandroidadapteradmob,com.mobfox.sdk,com.mobfox.sdk.interstitial,com.mobfox.sdk.nativeads" />
+        tools:overrideLibrary="com.readystatesoftware.chuck,com.facebook.stetho,cn.nekocode.resinspector" />
 
     <!-- "Normal Permission" -->
     <!-- To connect to the router, and donation providers such as Flattr, as well as Feedback Server -->
