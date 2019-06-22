@@ -84,7 +84,7 @@ public final class AdUtils {
     }
 
     public static boolean canDisplayInterstialAd(@Nullable final Context ctx) {
-        if ((!BuildConfig.WITH_ADS) || ctx == null) {
+        if ((!BuildConfig.WITH_ADS) || (!BuildConfig.WITH_INTERSTITIAL_ADS) || ctx == null) {
             return false;
         }
         long lastInterstitialAd =
