@@ -238,7 +238,7 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:1.0.0"
     implementation "androidx.annotation:annotation:1.0.2"
 
-    implementation('org.rm3l:maoni:6.0.0@aar') {
+    implementation("org.rm3l:maoni:${maoni_version}@aar") {
         transitive = true
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'design'
@@ -250,9 +250,9 @@ dependencies {
 //    exclude group: 'org.rm3l', module: 'maoni-email'
     }
 
-    implementation('org.rm3l:maoni-common:6.0.0')
+    implementation("org.rm3l:maoni-common:${maoni_version}")
 
-    implementation('org.rm3l:maoni-doorbell:2.6.0-maoni_6.0.0') {
+    implementation("org.rm3l:maoni-doorbell:${maoni_version}") {
         transitive = false
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'design'
@@ -264,7 +264,7 @@ dependencies {
     }
 
     //Send notifications on Slack as well
-//  implementation ('org.rm3l:maoni-slack:0.1.4') {
+//  implementation ('org.rm3l:maoni-slack:${maoni_version}') {
 //    transitive = true;
 //    exclude group: 'org.rm3l', module: 'maoni-common'
 //    exclude group: 'com.android.support', module: 'appcompat-v7'
