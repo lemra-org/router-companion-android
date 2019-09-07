@@ -44,6 +44,7 @@ apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'io.fabric'
 
 repositories {
+    jcenter()
     maven { url 'https://maven.fabric.io/public' }
 }
 
@@ -112,7 +113,7 @@ android {
         testApplicationId "org.rm3l.ddwrt.tasker.tests"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion android_sdk
 
         // Enabling multidex support.
@@ -250,9 +251,9 @@ dependencies {
 //    exclude group: 'org.rm3l', module: 'maoni-email'
     }
 
-    implementation("org.rm3l:maoni-common:${maoni_version}")
+    implementation("org.rm3l:maoni-common:${maoni_version}@aar")
 
-    implementation("org.rm3l:maoni-doorbell:${maoni_version}") {
+    implementation("org.rm3l:maoni-doorbell:${maoni_version}@aar") {
         transitive = false
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'design'
@@ -264,7 +265,7 @@ dependencies {
     }
 
     //Send notifications on Slack as well
-//  implementation ('org.rm3l:maoni-slack:${maoni_version}') {
+//  implementation ('org.rm3l:maoni-slack:${maoni_version}@aar') {
 //    transitive = true;
 //    exclude group: 'org.rm3l', module: 'maoni-common'
 //    exclude group: 'com.android.support', module: 'appcompat-v7'

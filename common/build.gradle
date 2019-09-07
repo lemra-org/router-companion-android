@@ -22,7 +22,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 19
         targetSdkVersion android_sdk
 
         // Enabling multidex support.

@@ -115,7 +115,7 @@ android {
         applicationId "org.rm3l.ddwrt"
         testApplicationId "org.rm3l.ddwrt.tests"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion android_sdk
 
         // Chooses the 'square' flavor from libraries that specify a 'shape'
@@ -280,16 +280,17 @@ repositories {
     //Statically added in the libs folder, to avoid surprises with this repository suddenly becoming unavailable
 //    url "https://repository-achartengine.forge.cloudbees.com/snapshot/"
 //  }
-    maven {
-        url 'http://dl.bintray.com/amulyakhare/maven'
-    }
+    jcenter()
+    google()
     mavenCentral()
     maven {
         url 'https://maven.fabric.io/public'
     }
-    maven { url "https://s3.amazonaws.com/avocarrot-android-builds/dist/" }
-
     maven { url 'http://dl.bintray.com/igenius-code/maven' }
+    maven {
+        url 'http://dl.bintray.com/amulyakhare/maven'
+    }
+    maven { url "https://s3.amazonaws.com/avocarrot-android-builds/dist/" }
 }
 
 /*
@@ -418,9 +419,9 @@ dependencies {
 //    exclude group: 'org.rm3l', module: 'maoni-email'
     }
 
-    implementation("org.rm3l:maoni-common:${maoni_version}")
+    implementation("org.rm3l:maoni-common:${maoni_version}@aar")
 
-    implementation("org.rm3l:maoni-doorbell:${maoni_version}") {
+    implementation("org.rm3l:maoni-doorbell:${maoni_version}@aar") {
         transitive = false
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'design'
@@ -432,7 +433,7 @@ dependencies {
     }
 
     //Send notifications on Slack as well
-//  implementation ("org.rm3l:maoni-slack:${maoni_version}") {
+//  implementation ("org.rm3l:maoni-slack:${maoni_version}@aar") {
 //    transitive = true;
 //    exclude group: 'org.rm3l', module: 'maoni-common'
 //    exclude group: 'com.android.support', module: 'appcompat-v7'

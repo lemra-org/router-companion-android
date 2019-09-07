@@ -45,7 +45,7 @@ buildscript {
         playPublisherPlugin_version = '2.2.0'
         googlePlayServicesPlugin_version = '4.2.0'
 
-        maoni_version = '8.0.2'
+        maoni_version = '8.0.5'
 
         leakCanaryVersion = '2.0-alpha-1'
     }
@@ -79,12 +79,27 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url "https://jitpack.io" }
+        maven {
+            url "https://jitpack.io"
+            content {
+                // this repository contains everything BUT artifacts with group starting with "my.company"
+                excludeGroupByRegex "org\\.rm3l.*"
+            }
+        }
+    }
+
+    task listRepos {
+        doLast {
+            println "Repositories:"
+            project.repositories.each { println "Name: " + it.name + "; url: " + it.url }
+        }
     }
 }
 
 subprojects {
     repositories {
+        google()
+        jcenter()
         maven { url 'http://clojars.org/repo' }
     }
 }
