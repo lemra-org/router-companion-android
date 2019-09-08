@@ -188,10 +188,11 @@ public final class WANTrafficUtils {
 
             int dayNum = 0;
             for (final String dailyInOutTraffData : dailyTraffDataList) {
+                Crashlytics.log(Log.DEBUG, TAG, "dailyInOutTraffData=<" + dailyInOutTraffData + ">");
                 if (dailyInOutTraffData == null) {
                     continue;
                 }
-                if (dailyInOutTraffData.contains("[")) {
+                if (dailyInOutTraffData.contains("[") || dailyInOutTraffData.contains("]")) {
                     continue;
                 }
                 final List<String> dailyInOutTraffDataList =
@@ -203,6 +204,9 @@ public final class WANTrafficUtils {
 
                 final String inTraff = dailyInOutTraffDataList.get(0);
                 final String outTraff = dailyInOutTraffDataList.get(1);
+                if (inTraff == null || inTraff.trim().isEmpty() || outTraff == null || outTraff.trim().isEmpty()) {
+                    continue;
+                }
 
                 final String sqliteFormattedDate = getSqliteFormattedDate(monthYear, dayNum);
                 if (Strings.isNullOrEmpty(sqliteFormattedDate)) {
