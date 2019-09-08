@@ -239,39 +239,8 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:1.0.0"
     implementation "androidx.annotation:annotation:1.0.2"
 
-    implementation("org.rm3l:maoni:${maoni_version}@aar") {
-        transitive = true
-        exclude group: 'com.android.support', module: 'appcompat-v7'
-        exclude group: 'com.android.support', module: 'design'
-        exclude group: 'com.android.support', module: 'support-v4'
-        exclude group: 'com.android.support', module: 'animated-vector-drawable'
-        exclude group: 'com.android.support', module: 'recyclerview-v7'
-        exclude group: 'com.android.support', module: 'support-annotations'
-        exclude group: 'com.android.support', module: 'support-compat'
-//    exclude group: 'org.rm3l', module: 'maoni-email'
-    }
-
-    implementation("org.rm3l:maoni-common:${maoni_version}@aar")
-
-    implementation("org.rm3l:maoni-doorbell:${maoni_version}@aar") {
-        transitive = false
-        exclude group: 'com.android.support', module: 'appcompat-v7'
-        exclude group: 'com.android.support', module: 'design'
-        exclude group: 'com.android.support', module: 'support-v4'
-        exclude group: 'com.android.support', module: 'animated-vector-drawable'
-        exclude group: 'com.android.support', module: 'recyclerview-v7'
-        exclude group: 'com.android.support', module: 'support-annotations'
-        exclude group: 'com.android.support', module: 'support-compat'
-    }
-
-    //Send notifications on Slack as well
-//  implementation ('org.rm3l:maoni-slack:${maoni_version}@aar') {
-//    transitive = true;
-//    exclude group: 'org.rm3l', module: 'maoni-common'
-//    exclude group: 'com.android.support', module: 'appcompat-v7'
-//    exclude group: 'com.android.support', module: 'design'
-//    exclude group: 'com.android.support', module: 'support-v4'
-//  }
+    implementation "org.rm3l:maoni:${maoni_version}"
+    implementation "org.rm3l:maoni-doorbell:${maoni_version}"
 
     implementation 'com.mikepenz:aboutlibraries:6.2.3'
 

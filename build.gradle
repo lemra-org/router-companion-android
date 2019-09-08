@@ -45,7 +45,7 @@ buildscript {
         playPublisherPlugin_version = '2.2.0'
         googlePlayServicesPlugin_version = '4.2.0'
 
-        maoni_version = '8.0.5'
+        maoni_version = '8.0.10'
 
         leakCanaryVersion = '2.0-alpha-1'
     }

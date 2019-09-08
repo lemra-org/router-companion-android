@@ -82,6 +82,7 @@
 # Maoni
 ##############################
 -keep class org.rm3l.maoni.common.model.** { *; }
+-keep class org.rm3l.maoni.email.MaoniEmailListener
 
 
 ##############################

@@ -233,7 +233,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
     }
 
     @SuppressLint("MissingSuperCall")
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         //No call for super(). Bug on API Level > 11.
     }
 
