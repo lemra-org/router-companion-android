@@ -139,10 +139,7 @@ private fun View.slideAnimator(start: Int, end: Int): ValueAnimator {
 fun TextView.setClickable(onClickFunction: (View?) -> Unit) {
     this.movementMethod = LinkMovementMethod.getInstance()
     val spans = this.text as Spannable
-    spans.setSpan(
-        object : ClickableSpan() {
-            override fun onClick(widget: View) = onClickFunction(widget)
-        },
-        0, spans.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-    )
+    spans.setSpan(object: ClickableSpan() {
+        override fun onClick(widget: View) = onClickFunction(widget)
+    }, 0, spans.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 }
