@@ -353,7 +353,8 @@ public final class RouterCompanionAppConstants {
     public static final String PROXY_SERVER_PASSWORD_AUTH_TOKEN_ENCODED =
             "Basic xxx";
 
-    public static final String SERVICE_NAMES_PORT_NUMBERS_API_SERVER_BASE_URL = "http://tools.rm3l.org:5280";
+    //TODO Switch to HTTPs => https://service-names-port-numbers.router-companion.app:5280
+    public static final String SERVICE_NAMES_PORT_NUMBERS_API_SERVER_BASE_URL = "http://service-names-port-numbers.services.rm3l.org:5280";
     public static final String SERVICE_NAMES_PORT_NUMBERS_API_SERVER_PASSWORD_AUTH_TOKEN_ENCODED =
             "Basic xxx";
 
