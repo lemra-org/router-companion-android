@@ -349,12 +349,11 @@ public final class RouterCompanionAppConstants {
 
     public static final String DDWRT_RELEASE_URL_FORMAT = (DDWRT_RELEASE_BASE_URL + "/%s/%s");
 
-    public static final String PROXY_SERVER_BASE_URL = "http://tools.rm3l.org:5180";
+    public static final String PROXY_SERVER_BASE_URL = "https://reverse-proxy.services.rm3l.org";
     public static final String PROXY_SERVER_PASSWORD_AUTH_TOKEN_ENCODED =
             "Basic xxx";
 
-    //TODO Switch to HTTPs => https://service-names-port-numbers.router-companion.app:5280
-    public static final String SERVICE_NAMES_PORT_NUMBERS_API_SERVER_BASE_URL = "http://service-names-port-numbers.services.rm3l.org:5280";
+    public static final String SERVICE_NAMES_PORT_NUMBERS_API_SERVER_BASE_URL = "https://service-names-port-numbers.services.rm3l.org";
     public static final String SERVICE_NAMES_PORT_NUMBERS_API_SERVER_PASSWORD_AUTH_TOKEN_ENCODED =
             "Basic xxx";
 
