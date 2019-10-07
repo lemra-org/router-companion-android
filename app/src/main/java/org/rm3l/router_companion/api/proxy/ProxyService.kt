@@ -10,7 +10,7 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 
 /**
- * Endpoints exposed by the proxy server located at http://tools.rm3l.org:5180
+ * Endpoints exposed by the proxy server located at https://reverse-proxy.services.rm3l.org (formerly, http://tools.rm3l.org:5180)
  */
 interface ProxyService {
 
