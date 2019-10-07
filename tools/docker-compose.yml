@@ -9,18 +9,23 @@ services:
   # MAC OUI
   #
   mac-oui:
-    image: klauspost/oui
+    image: schmunk42/nginx-redirect
     ports:
-      - "5000:5000"
+      - "5000:80"
     labels:
       org.rm3l.router_companion.service_name: "mac-oui"
       org.rm3l.router_companion.service_description: "Microservice for looking up manufacturers from MAC addresses"
       org.rm3l.router_companion.service_url: "http://tools.rm3l.org:5000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/fc:aa:14"]
-      interval: 1m30s
-      timeout: 10s
-      retries: 3
+    environment:
+      - SERVER_REDIRECT=mac-oui.services.rm3l.org
+      - SERVER_REDIRECT_SCHEME=https
+      - SERVER_REDIRECT_CODE=307
+      - SERVER_REDIRECT_POST_CODE=307
+    #healthcheck:
+    #  test: ["CMD", "curl", "-f", "http://localhost:5000/fc:aa:14"]
+    #  interval: 1m30s
+    #  timeout: 10s
+    #  retries: 3
     restart: always
     #   resources:
     #     limits:
