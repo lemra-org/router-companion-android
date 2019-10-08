@@ -79,7 +79,7 @@ prepare_production_environment:
   <<: *production_job_definition
   stage: pre_deploy
   script:
-    - ssh -p 1022 ci@rm3l.org "mkdir -p /home/ci/router-companion-android"
+    - ssh -p 1022 ci@ssh.rm3l.org "mkdir -p /home/ci/router-companion-android"
     - rsync -ravz -e 'ssh -p 1022' 
           --exclude='.git/' 
           --exclude='.gitlab-ci.yml' 
@@ -87,7 +87,7 @@ prepare_production_environment:
           --exclude='build' 
           --delete-excluded ./messaging 
           --delete-excluded ./tools 
-        ci@rm3l.org:/home/ci/router-companion-android
+        ci@ssh.rm3l.org:/home/ci/router-companion-android
 
 #
 # Deploy messaging containers
@@ -96,7 +96,7 @@ production_messaging:
   <<: *production_job_definition
   stage: deploy
   script:
-    - ssh -p 1022 ci@rm3l.org 
+    - ssh -p 1022 ci@ssh.rm3l.org 
         "cd /home/ci/router-companion-android/messaging && docker-compose -p router-companion-android-messaging pull && docker-compose -p router-companion-android-messaging up -d --build --remove-orphans"
 
 #
@@ -106,5 +106,5 @@ production_tools:
   <<: *production_job_definition
   stage: deploy
   script:
-    - ssh -p 1022 ci@rm3l.org 
+    - ssh -p 1022 ci@ssh.rm3l.org 
         "cd /home/ci/router-companion-android/tools && docker-compose -p router-companion-android-tools pull && docker-compose -p router-companion-android-tools up -d --build --remove-orphans"
