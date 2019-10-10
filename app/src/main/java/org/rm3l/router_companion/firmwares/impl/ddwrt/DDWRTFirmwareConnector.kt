@@ -427,20 +427,28 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
 
             dataRetrievalListener?.onProgressUpdate(40)
 
-            if (nvramSize != null && nvramSize.size >= 1) {
+            if (nvramSize != null && nvramSize.isNotEmpty()) {
                 val nvramSizeStr = nvramSize[0]
-                if (nvramSizeStr != null && nvramSizeStr.startsWith("size:")) {
+                if (nvramSizeStr?.startsWith("size:") == true) {
+                    //"size: 37189 bytes (28347 left)" => "size:", "37189", "bytes", "(28347", "left)"
                     val stringList = SPACE_SPLITTER.splitToList(nvramSizeStr)
                     if (stringList.size >= 5) {
-                        val nvramTotalBytes = stringList[1].trim { it <= ' ' }
+                        val nvramUsedBytes = stringList[1].trim { it <= ' ' }
                         val nvramLeftBytes = stringList[3].replace("(", "").trim { it <= ' ' }
                         try {
-                            val nvramTotalBytesLong = java.lang.Long.parseLong(nvramTotalBytes)
-                            val nvramLeftBytesLong = java.lang.Long.parseLong(nvramLeftBytes)
-                            val nvramUsedBytesLong = nvramTotalBytesLong - nvramLeftBytesLong
-                            nvramInfo.setProperty(NVRAMInfo.NVRAM_USED_PERCENT,
-                                    java.lang.Long.toString(
-                                            Math.min(100, 100 * nvramUsedBytesLong / nvramTotalBytesLong)))
+                            val nvramUsedBytesLong = nvramUsedBytes.toLong()
+                            val nvramLeftBytesLong = nvramLeftBytes.toLong()
+                            val nvramTotalBytesLong = nvramUsedBytesLong.plus(nvramLeftBytesLong)
+                            Crashlytics.log(Log.DEBUG, TAG,
+                                "<nvramUsedBytesLong, nvramLeftBytesLong, nvramTotalBytesLong> = " +
+                                        "<${nvramUsedBytesLong}, ${nvramLeftBytesLong}, ${nvramTotalBytesLong}>")
+                            if (nvramTotalBytesLong > 0L) {
+                                val nvramUsedPercent =
+                                    100L.coerceAtMost(100L.times(nvramUsedBytesLong).div(nvramTotalBytesLong))
+                                if (nvramUsedPercent >= 0) {
+                                    nvramInfo.setProperty(NVRAM_USED_PERCENT, nvramUsedPercent.toString())
+                                }
+                            }
                         } catch (e: NumberFormatException) {
                             e.printStackTrace()
                             Crashlytics.logException(e)

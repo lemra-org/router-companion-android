@@ -466,12 +466,12 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                         if (nvramSizeStr != null && nvramSizeStr.startsWith("size:")) {
                             final List<String> stringList = SPACE_SPLITTER.splitToList(nvramSizeStr);
                             if (stringList.size() >= 5) {
-                                final String nvramTotalBytes = stringList.get(1);
+                                final String nvramUsedBytes = stringList.get(1);
                                 final String nvramLeftBytes = stringList.get(3).replace("(", "");
                                 try {
-                                    final long nvramTotalBytesLong = Long.parseLong(nvramTotalBytes);
+                                    final long nvramUsedBytesLong = Long.parseLong(nvramUsedBytes);
                                     final long nvramLeftBytesLong = Long.parseLong(nvramLeftBytes);
-                                    final long nvramUsedBytesLong = nvramTotalBytesLong - nvramLeftBytesLong;
+                                    final long nvramTotalBytesLong = nvramUsedBytesLong + nvramLeftBytesLong;
                                     nvramInfo.setProperty(NVRAMInfo.Companion.getNVRAM_USED_PERCENT(),
                                             Long.toString(
                                                     Math.min(100, 100 * nvramUsedBytesLong / nvramTotalBytesLong)));

@@ -144,6 +144,7 @@ public class StorageUsageTile extends DDWRTTile<NVRAMInfo> {
                 try {
                     final String nvramUsedStr = data.getProperty(NVRAMInfo.Companion.getNVRAM_USED_PERCENT());
                     final int nvramUsed = Integer.parseInt(nvramUsedStr);
+                    Crashlytics.log(Log.DEBUG, StorageUsageTile.LOG_TAG, "nvramUsedStr=" + nvramUsedStr);
 
                     //Update colors as per the usage
                     //TODO Make these thresholds user-configurable (and perhaps display notifications if needed - cf. g service task)
