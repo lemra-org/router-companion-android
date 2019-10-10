@@ -58,20 +58,16 @@ public class StorageUsageTile extends DDWRTTile<NVRAMInfo> {
         red = ContextCompat.getColor(mParentFragmentActivity, R.color.win8_red);
         orange = ContextCompat.getColor(mParentFragmentActivity, R.color.win8_orange);
 
-        final View.OnClickListener onClickListener = new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                //Open Router State tab
-                if (mParentFragmentActivity instanceof DDWRTMainActivity) {
-                    ((DDWRTMainActivity) mParentFragmentActivity).selectItemInDrawer(2);
-                } else {
-                    //TODO Set proper flags ???
-                    final Intent intent = new Intent(mParentFragmentActivity, DDWRTMainActivity.class);
-                    intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
-                    intent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 2);
-                    mParentFragmentActivity.startActivity(intent);
-                }
+        final View.OnClickListener onClickListener = v -> {
+            //Open Router State tab
+            if (mParentFragmentActivity instanceof DDWRTMainActivity) {
+                ((DDWRTMainActivity) mParentFragmentActivity).selectItemInDrawer(2);
+            } else {
+                //TODO Set proper flags ???
+                final Intent intent = new Intent(mParentFragmentActivity, DDWRTMainActivity.class);
+                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
+                intent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 2);
+                mParentFragmentActivity.startActivity(intent);
             }
         };
 

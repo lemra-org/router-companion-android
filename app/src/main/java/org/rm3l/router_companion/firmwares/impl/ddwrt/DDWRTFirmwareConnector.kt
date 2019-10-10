@@ -25,6 +25,7 @@ import org.rm3l.router_companion.mgmt.RouterManagementActivity
 import org.rm3l.router_companion.resources.MonthlyCycleItem
 import org.rm3l.router_companion.resources.WANAccessPolicy
 import org.rm3l.router_companion.resources.conn.NVRAMInfo
+import org.rm3l.router_companion.resources.conn.NVRAMInfo.Companion.NVRAM_USED_PERCENT
 import org.rm3l.router_companion.resources.conn.Router
 import org.rm3l.router_companion.service.tasks.PublicIPChangesServiceTask
 import org.rm3l.router_companion.tiles.admin.accessrestrictions.AccessRestrictionsWANAccessTile
@@ -233,9 +234,10 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
         dataRetrievalListener?.onProgressUpdate(30)
 
         val cpuUsageData = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
-                "uptime | awk -F'average:' '{ print $2}'", GREP_MODEL_PROC_CPUINFO + "| wc -l")
+                "uptime | awk -F'average:' '{ print $2}'", "$GREP_MODEL_PROC_CPUINFO| wc -l"
+        )
 
-        return Arrays.asList<Array<String>>(memData, cpuUsageData)
+        return listOf(memData?: emptyArray(), cpuUsageData?: emptyArray())
     }
 
     @Throws(Exception::class)
@@ -245,20 +247,18 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
 
         val globalSharedPreferences = Utils.getGlobalSharedPreferences(context)
 
-        val nvramSize = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
+        val nvramSize:Array<String?>? = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
                 "/usr/sbin/nvram show 2>&1 1>/dev/null | grep \"size: \"")
         dataRetrievalListener?.onProgressUpdate(20)
 
-        val jffs2Size = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
+        val jffs2Size:Array<String?>? = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
                 "/bin/df -T | grep \"jffs2\"")
         dataRetrievalListener?.onProgressUpdate(30)
 
-        val cifsSize = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
+        val cifsSize:Array<String?>? = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
                 "/bin/df -T | grep \"cifs\"")
 
-        return parseDataForStorageUsageTile(
-                Arrays.asList<Array<String>>(nvramSize, jffs2Size, cifsSize),
-                dataRetrievalListener)
+        return parseDataForStorageUsageTile(listOf(nvramSize, jffs2Size, cifsSize), dataRetrievalListener)
     }
 
     @Throws(Exception::class)
@@ -401,7 +401,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
         }
 
         fun parseDataForStorageUsageTile(
-                dataForStorageUsageTile: List<Array<String>>?,
+                dataForStorageUsageTile: List<Array<String?>?>?,
                 dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
             if (dataForStorageUsageTile == null || dataForStorageUsageTile.isEmpty()) {
                 throw DDWRTNoDataException()
@@ -411,18 +411,16 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
 
             val nvramSize = dataForStorageUsageTile[0]
 
-            val jffs2Size: Array<String>?
-            if (dataForStorageUsageTile.size >= 2) {
-                jffs2Size = dataForStorageUsageTile[1]
+            val jffs2Size = if (dataForStorageUsageTile.size >= 2) {
+                dataForStorageUsageTile[1]
             } else {
-                jffs2Size = null
+                null
             }
 
-            val cifsSize: Array<String>?
-            if (dataForStorageUsageTile.size >= 3) {
-                cifsSize = dataForStorageUsageTile[2]
+            val cifsSize = if (dataForStorageUsageTile.size >= 3) {
+                dataForStorageUsageTile[2]
             } else {
-                cifsSize = null
+                null
             }
 
             dataRetrievalListener?.onProgressUpdate(40)
@@ -459,18 +457,18 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
             }
             dataRetrievalListener?.onProgressUpdate(50)
 
-            if (jffs2Size != null && jffs2Size.size >= 1) {
+            if (jffs2Size != null && jffs2Size.isNotEmpty()) {
                 //We may have more than one mountpoint - so sum everything up
                 var totalUsed: Long = 0
                 var totalSize: Long = 0
                 for (i in jffs2Size.indices) {
                     val jffs2SizeStr = jffs2Size[i]
-                    if (!Strings.isNullOrEmpty(jffs2SizeStr)) {
+                    if (jffs2SizeStr?.isNotBlank() == true) {
                         val stringList = SPACE_SPLITTER.splitToList(jffs2SizeStr)
                         if (stringList.size >= 7) {
                             try {
-                                totalSize += java.lang.Long.parseLong(stringList[2])
-                                totalUsed += java.lang.Long.parseLong(stringList[3])
+                                totalSize += stringList[2].toLong()
+                                totalUsed += stringList[3].toLong()
                             } catch (e: NumberFormatException) {
                                 e.printStackTrace()
                                 Crashlytics.logException(e)
@@ -478,27 +476,28 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
 
                         }
                     }
-                    dataRetrievalListener?.onProgressUpdate(Math.min(70, 50 + 5 * i))
+                    dataRetrievalListener?.onProgressUpdate(70.coerceAtMost(50 + 5 * i))
                 }
                 if (totalSize > 0) {
                     nvramInfo.setProperty(NVRAMInfo.STORAGE_JFFS2_USED_PERCENT,
-                            java.lang.Long.toString(Math.min(100, 100 * totalUsed / totalSize)))
+                        100L.coerceAtMost(100 * totalUsed / totalSize).toString()
+                    )
                 }
             }
             dataRetrievalListener?.onProgressUpdate(75)
 
-            if (cifsSize != null && cifsSize.size >= 1) {
+            if (cifsSize != null && cifsSize.isNotEmpty()) {
                 //We may have more than one mountpoint - so sum everything up
                 var totalUsed: Long = 0
                 var totalSize: Long = 0
                 for (i in cifsSize.indices) {
                     val cifsSizeStr = cifsSize[i]
-                    if (!Strings.isNullOrEmpty(cifsSizeStr)) {
+                    if (cifsSizeStr?.isNotBlank() == true) {
                         val stringList = SPACE_SPLITTER.splitToList(cifsSizeStr)
                         if (stringList.size >= 7) {
                             try {
-                                totalSize += java.lang.Long.parseLong(stringList[2])
-                                totalUsed += java.lang.Long.parseLong(stringList[3])
+                                totalSize += stringList[2].toLong()
+                                totalUsed += stringList[3].toLong()
                             } catch (e: NumberFormatException) {
                                 e.printStackTrace()
                                 Crashlytics.logException(e)
@@ -506,11 +505,12 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
 
                         }
                     }
-                    dataRetrievalListener?.onProgressUpdate(Math.min(87, 75 + 5 * i))
+                    dataRetrievalListener?.onProgressUpdate(87.coerceAtMost(75 + 5 * i))
                 }
                 if (totalSize > 0) {
                     nvramInfo.setProperty(NVRAMInfo.STORAGE_CIFS_USED_PERCENT,
-                            java.lang.Long.toString(Math.min(100, 100 * totalUsed / totalSize)))
+                        100L.coerceAtMost(100 * totalUsed / totalSize).toString()
+                    )
                 }
             }
             return nvramInfo

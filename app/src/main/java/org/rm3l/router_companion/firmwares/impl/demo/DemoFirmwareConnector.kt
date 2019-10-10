@@ -186,12 +186,12 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
         val random = Random()
         val totalSize = 44379 + random.nextInt(44379)
 
-        val nvramSize = Array(1, { _ -> "size: $totalSize bytes ${random.nextInt(totalSize)} left)" })
-        val jffs2Size = Array(1, { _ -> "/dev/mtdblock/5      jffs2          $totalSize      ${random.nextInt(totalSize)}     120000   30% /jffs" })
-        val cifsSize = Array(1, { _ -> "/dev/mtdblock/5      cifs          $totalSize      ${random.nextInt(totalSize)}     91300   50% /cifs" })
+        val nvramSize:Array<String?>? = Array(1, { _ -> "size: $totalSize bytes ${random.nextInt(totalSize)} left)" })
+        val jffs2Size:Array<String?>? = Array(1, { _ -> "/dev/mtdblock/5      jffs2          $totalSize      ${random.nextInt(totalSize)}     120000   30% /jffs" })
+        val cifsSize:Array<String?>? = Array(1, { _ -> "/dev/mtdblock/5      cifs          $totalSize      ${random.nextInt(totalSize)}     91300   50% /cifs" })
 
         return DDWRTFirmwareConnector.parseDataForStorageUsageTile(
-                Arrays.asList<Array<String>>(nvramSize, jffs2Size, cifsSize), dataRetrievalListener)
+                listOf(nvramSize, jffs2Size, cifsSize), dataRetrievalListener)
     }
 
     @Throws(Exception::class)
