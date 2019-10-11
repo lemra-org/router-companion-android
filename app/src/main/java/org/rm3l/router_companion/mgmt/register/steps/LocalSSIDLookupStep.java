@@ -87,7 +87,7 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {
 
-        this.dao = RouterManagementActivity.getDao(getContext());
+        this.dao = RouterManagementActivity.Companion.getDao(getContext());
 
         final Object tag = container.getTag();
         if (tag != null) {

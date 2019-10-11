@@ -48,7 +48,7 @@ import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.Comp
 import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.Companion.MONTHLY
 import org.rm3l.router_companion.job.speedtest.RouterSpeedTestAutoRunnerJob.Companion.WEEKLY
 import org.rm3l.router_companion.mgmt.RouterManagementActivity
-import org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED
+import org.rm3l.router_companion.mgmt.RouterManagementActivity.Companion.ROUTER_SELECTED
 import org.rm3l.router_companion.resources.SpeedTestResult
 import org.rm3l.router_companion.resources.conn.Router
 import org.rm3l.router_companion.utils.ReportingUtils

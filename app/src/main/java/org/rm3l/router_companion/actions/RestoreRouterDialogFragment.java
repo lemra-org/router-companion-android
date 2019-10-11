@@ -73,7 +73,7 @@ public class RestoreRouterDialogFragment extends DialogFragment {
                 new RestoreRouterDialogFragment();
 
         final Bundle args = new Bundle();
-        args.putString(ROUTER_SELECTED, routerUuid);
+        args.putString(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
 
         restoreRouterDialogFragment.setArguments(args);
         return restoreRouterDialogFragment;
@@ -100,8 +100,8 @@ public class RestoreRouterDialogFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mRouter = RouterManagementActivity.getDao(getActivity())
-                .getRouter(getArguments().getString(ROUTER_SELECTED));
+        mRouter = RouterManagementActivity.Companion.getDao(getActivity())
+                .getRouter(getArguments().getString(RouterManagementActivity.ROUTER_SELECTED));
 
         if (mRouter == null) {
             ReportingUtils.reportException(getContext(),

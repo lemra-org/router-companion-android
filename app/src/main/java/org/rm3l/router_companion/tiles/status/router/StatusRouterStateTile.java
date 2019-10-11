@@ -56,6 +56,7 @@ import org.rm3l.router_companion.actions.activity.OpenWebManagementPageActivity;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
+import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
@@ -166,7 +167,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                                                 //Otherwise, default to a classic WebView implementation
                                                 final Intent webManagementIntent = new Intent(mParentFragmentActivity,
                                                         OpenWebManagementPageActivity.class);
-                                                webManagementIntent.putExtra(ROUTER_SELECTED, routerUuid);
+                                                webManagementIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
                                                 webManagementIntent
                                                         .putExtra(OpenWebManagementPageActivity.URL_TO_OPEN,
                                                                 scmChangesetUrl);

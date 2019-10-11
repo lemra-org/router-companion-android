@@ -95,7 +95,7 @@ public class RouterActionsWidgetProvider extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
 
-        final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(context);
+        final DDWRTCompanionDAO dao = RouterManagementActivity.Companion.getDao(context);
 
         final String routerUuid =
                 RouterActionsWidgetConfigureActivity.loadRouterUuidPref(context, appWidgetId);
@@ -137,7 +137,7 @@ public class RouterActionsWidgetProvider extends AppWidgetProvider {
 
             //Launch Intent
             final Intent launchIntent = new Intent(context, DDWRTMainActivity.class);
-            launchIntent.putExtra(ROUTER_SELECTED, routerUuid);
+            launchIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
             launchIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             launchIntent.setAction(routerUuid + "-launch-" + System.currentTimeMillis());
             final PendingIntent launchPendingIntent =
@@ -147,7 +147,7 @@ public class RouterActionsWidgetProvider extends AppWidgetProvider {
             //Reboot Intent
             final Intent rebootIntent =
                     new Intent(context, RouterRebootWidgetConfirmationDialogFromWidgetActivity.class);
-            rebootIntent.putExtra(ROUTER_SELECTED, routerUuid);
+            rebootIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
             rebootIntent.putExtra(ConfirmDialogAsActivity.TITLE, "Reboot Router");
             rebootIntent.putExtra(ConfirmDialogAsActivity.MESSAGE,
                     String.format("Are you sure you wish to reboot router '%s' (%s)?", routerName, routerIp));

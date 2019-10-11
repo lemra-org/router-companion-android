@@ -174,7 +174,7 @@ public class RouterActionsWidgetConfigureActivity extends AppCompatActivity
 
         mSelectedRouterUuid = (TextView) findViewById(R.id.selected_router_uuid);
 
-        mDao = RouterManagementActivity.getDao(this);
+        mDao = RouterManagementActivity.Companion.getDao(this);
 
         mRoutersDropdown = (Spinner) findViewById(R.id.actions_widget_routers_dropdown);
 

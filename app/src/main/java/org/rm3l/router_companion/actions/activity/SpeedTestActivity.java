@@ -838,7 +838,7 @@ public class SpeedTestActivity extends AppCompatActivity
         final String routerSelectedUuid =
                 intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
         if (isNullOrEmpty(routerSelectedUuid)
-                || (mOriginalRouter = RouterManagementActivity.getDao(this).getRouter(routerSelectedUuid))
+                || (mOriginalRouter = RouterManagementActivity.Companion.getDao(this).getRouter(routerSelectedUuid))
                 == null) {
             Toast.makeText(this, "Missing Router - might have been removed?", Toast.LENGTH_SHORT).show();
             finish();
@@ -938,7 +938,7 @@ public class SpeedTestActivity extends AppCompatActivity
         mSpeedTestWanUlRaw = findViewById(R.id.speedtest_internet_ul_speed_raw_bytes);
         mWanUlTextView = findViewById(R.id.speedtest_internet_ul_speed);
 
-        mDao = RouterManagementActivity.getDao(this);
+        mDao = RouterManagementActivity.Companion.getDao(this);
 
         mRecyclerView = (RecyclerViewEmptySupport) findViewById(R.id.speedtest_results_recycler_view);
 

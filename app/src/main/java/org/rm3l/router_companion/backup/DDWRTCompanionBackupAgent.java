@@ -73,7 +73,7 @@ public class DDWRTCompanionBackupAgent extends BackupAgentHelper {
 
     @Override
     public void onCreate() {
-        dao = RouterManagementActivity.getDao(this);
+        dao = RouterManagementActivity.Companion.getDao(this);
 
         //Database
         final FileBackupHelper routers =

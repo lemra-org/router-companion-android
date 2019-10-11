@@ -152,7 +152,7 @@ public abstract class AbstractRouterAction<T>
                                 actionResult == null || actionResult.getException() == null ? 0 : -1);
 
                         //Record action
-                        RouterManagementActivity.getDao(context).recordAction(actionLog);
+                        RouterManagementActivity.Companion.getDao(context).recordAction(actionLog);
                     }
                 }
             }

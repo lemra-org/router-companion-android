@@ -88,7 +88,7 @@ public class RouterMemInfoActivity extends AppCompatActivity {
         final Intent intent = getIntent();
         mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
 
-        mRouter = RouterManagementActivity.getDao(this).getRouter(mRouterUuid);
+        mRouter = RouterManagementActivity.Companion.getDao(this).getRouter(mRouterUuid);
         if (mRouter == null) {
             Toast.makeText(this, "Whoops - Router not found. Has it been deleted?", Toast.LENGTH_SHORT)
                     .show();

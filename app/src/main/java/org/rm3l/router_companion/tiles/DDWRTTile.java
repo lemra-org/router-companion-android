@@ -184,7 +184,7 @@ public abstract class DDWRTTile<T>
             @Nullable Router router) {
         this.mParentFragment = parentFragment;
         this.mParentFragmentActivity = this.mParentFragment.getActivity();
-        mDao = RouterManagementActivity.getDao(mParentFragmentActivity);
+        mDao = RouterManagementActivity.Companion.getDao(mParentFragmentActivity);
         this.mParentFragmentPreferences = ((router != null && this.mParentFragmentActivity != null)
                 ? this.mParentFragmentActivity.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE)
                 : null);

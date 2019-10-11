@@ -28,6 +28,7 @@ import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener;
 import org.rm3l.router_companion.main.DDWRTMainActivity;
+import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
@@ -68,7 +69,7 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo> {
                 } else {
                     //TODO Set proper flags ???
                     final Intent intent = new Intent(mParentFragmentActivity, DDWRTMainActivity.class);
-                    intent.putExtra(ROUTER_SELECTED, mRouter.getUuid());
+                    intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
                     intent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 2);
                     mParentFragmentActivity.startActivity(intent);
                 }

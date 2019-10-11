@@ -139,7 +139,7 @@ public class RouterCompanionServiceImpl extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        this.mDao = RouterManagementActivity.getDao(this);
+        this.mDao = RouterManagementActivity.Companion.getDao(this);
     }
 
     @Nullable

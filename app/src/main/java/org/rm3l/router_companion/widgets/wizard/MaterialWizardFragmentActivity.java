@@ -37,9 +37,9 @@ public abstract class MaterialWizardFragmentActivity extends FragmentActivity {
 
         final Intent intent = getIntent();
         if (intent != null) {
-            final String routerSelected = intent.getStringExtra(ROUTER_SELECTED);
+            final String routerSelected = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
             if (routerSelected != null) {
-                final Router router = RouterManagementActivity.getDao(this).getRouter(routerSelected);
+                final Router router = RouterManagementActivity.Companion.getDao(this).getRouter(routerSelected);
                 ColorUtils.Companion.setAppTheme(this, router != null ? router.getRouterFirmware() : null, false);
             } else {
                 ColorUtils.Companion.setAppTheme(this, null, false);
@@ -66,9 +66,9 @@ public abstract class MaterialWizardFragmentActivity extends FragmentActivity {
         final ManageRouterWizard fragment = new ManageRouterWizard();
         final Bundle args = new Bundle();
         if (intent != null) {
-            final String routerSelected = intent.getStringExtra(ROUTER_SELECTED);
+            final String routerSelected = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
             if (routerSelected != null) {
-                args.putString(ROUTER_SELECTED, routerSelected);
+                args.putString(RouterManagementActivity.ROUTER_SELECTED, routerSelected);
             }
             final int routerWizardAction =
                     intent.getIntExtra(ROUTER_WIZARD_ACTION, RouterWizardAction.ADD);

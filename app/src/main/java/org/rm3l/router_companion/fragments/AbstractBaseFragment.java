@@ -196,7 +196,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
         final AbstractBaseFragment[] tabsToSort;
 
         RouterFirmware routerFirmwareForFragments;
-        final Router routerFromDao = RouterManagementActivity.getDao(activity).getRouter(router);
+        final Router routerFromDao = RouterManagementActivity.Companion.getDao(activity).getRouter(router);
         if (routerFromDao == null) {
             routerFirmwareForFragments = RouterFirmware.UNKNOWN;
         } else {
@@ -1051,7 +1051,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
 
         this.mLoaderIdsInUse = Maps.newConcurrentMap();
 
-        this.router = RouterManagementActivity.getDao(this.getActivity())
+        this.router = RouterManagementActivity.Companion.getDao(this.getActivity())
                 .getRouter(getArguments().getString(ROUTER_CONNECTION_INFO));
                 
         this.mDefaultLoader = new Loader<>(this.getActivity());

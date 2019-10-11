@@ -253,10 +253,10 @@ public class OpenWebManagementPageActivity extends WebActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mDao = RouterManagementActivity.getDao(this);
+        mDao = RouterManagementActivity.Companion.getDao(this);
 
         final Intent intent = getIntent();
-        String uuid = intent.getStringExtra(ROUTER_SELECTED);
+        String uuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
         if (uuid == null) {
             if (savedInstanceState != null) {
                 uuid = savedInstanceState.getString(SAVE_ROUTER_SELECTED);

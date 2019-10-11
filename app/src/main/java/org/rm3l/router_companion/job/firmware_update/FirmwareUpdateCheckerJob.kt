@@ -42,7 +42,7 @@ import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager
 import org.rm3l.router_companion.job.RouterCompanionJob
 import org.rm3l.router_companion.main.DDWRTMainActivity.SAVE_ROUTER_SELECTED
 import org.rm3l.router_companion.mgmt.RouterManagementActivity
-import org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED
+import org.rm3l.router_companion.mgmt.RouterManagementActivity.Companion.ROUTER_SELECTED
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO
 import org.rm3l.router_companion.multithreading.MultiThreadingManager
 import org.rm3l.router_companion.resources.conn.NVRAMInfo

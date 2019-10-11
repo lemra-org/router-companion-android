@@ -87,7 +87,7 @@ public class ImportAliasesDialogFragment extends DialogFragment {
                 new ImportAliasesDialogFragment();
 
         final Bundle args = new Bundle();
-        args.putString(ROUTER_SELECTED, routerUuid);
+        args.putString(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
 
         importAliasesDialogFragment.setArguments(args);
 
@@ -117,8 +117,8 @@ public class ImportAliasesDialogFragment extends DialogFragment {
 
         final Context context = getContext();
 
-        mRouter = RouterManagementActivity.getDao(context)
-                .getRouter(getArguments().getString(ROUTER_SELECTED));
+        mRouter = RouterManagementActivity.Companion.getDao(context)
+                .getRouter(getArguments().getString(RouterManagementActivity.ROUTER_SELECTED));
 
         if (mRouter == null) {
             ReportingUtils.reportException(context,

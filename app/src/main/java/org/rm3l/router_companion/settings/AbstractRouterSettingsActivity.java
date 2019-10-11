@@ -62,7 +62,7 @@ public abstract class AbstractRouterSettingsActivity extends AbstractDDWRTSettin
 
         boolean doFinish = false;
         //noinspection ConstantConditions
-        if ((mRouter = RouterManagementActivity.getDao(this).getRouter(this.mRouterUuid)) == null) {
+        if ((mRouter = RouterManagementActivity.Companion.getDao(this).getRouter(this.mRouterUuid)) == null) {
             Toast.makeText(this, "No router set or router no longer exists", Toast.LENGTH_LONG).show();
             doFinish = true;
         }

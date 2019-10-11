@@ -88,7 +88,7 @@ public class IPGeoActivity extends AppCompatActivity {
 
         mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
 
-        final Router router = RouterManagementActivity.getDao(this).getRouter(mRouterUuid);
+        final Router router = RouterManagementActivity.Companion.getDao(this).getRouter(mRouterUuid);
         ColorUtils.Companion.setAppTheme(this, router != null ? router.getRouterFirmware() : null, false);
 
         final boolean themeLight = ColorUtils.Companion.isThemeLight(this);

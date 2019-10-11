@@ -142,7 +142,7 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
             final String routerUuid = arguments.getString(RouterManagementActivity.ROUTER_SELECTED);
             final Router router;
             if (isNullOrEmpty(routerUuid)
-                    || (router = RouterManagementActivity.getDao(fragmentActivity).getRouter(routerUuid))
+                    || (router = RouterManagementActivity.Companion.getDao(fragmentActivity).getRouter(routerUuid))
                     == null) {
                 Toast.makeText(fragmentActivity, "Invalid Router", Toast.LENGTH_SHORT).show();
                 dismiss();
@@ -656,7 +656,7 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
 
         final String routerSelected = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
         if (Strings.isNullOrEmpty(routerSelected)
-                || (mRouter = RouterManagementActivity.getDao(this).getRouter(routerSelected)) == null) {
+                || (mRouter = RouterManagementActivity.Companion.getDao(this).getRouter(routerSelected)) == null) {
             Toast.makeText(this, "Missing Router - might have been removed?", Toast.LENGTH_SHORT).show();
             finish();
             return;

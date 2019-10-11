@@ -118,7 +118,7 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        this.dao = RouterManagementActivity.getDao(getContext());
+        this.dao = RouterManagementActivity.Companion.getDao(getContext());
 
         final Object tag = container.getTag();
         if (tag != null) {

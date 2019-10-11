@@ -130,7 +130,7 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         final Intent intent = getIntent();
         mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
-        final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(this);
+        final DDWRTCompanionDAO dao = RouterManagementActivity.Companion.getDao(this);
         final Router router;
         if ((router = dao.getRouter(mRouterUuid)) == null) {
             Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT)

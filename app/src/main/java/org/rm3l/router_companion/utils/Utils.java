@@ -965,7 +965,7 @@ public final class Utils {
     }
 
     public static void openFeedbackForm(final Activity activity, final String routerUuid) {
-        openFeedbackForm(activity, RouterManagementActivity.getDao(activity).getRouter(routerUuid));
+        openFeedbackForm(activity, RouterManagementActivity.Companion.getDao(activity).getRouter(routerUuid));
     }
 
     public static void openFeedbackForm(final Activity activity) {

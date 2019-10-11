@@ -25,13 +25,10 @@ import com.google.common.collect.ComparisonChain
 import com.google.common.collect.FluentIterable
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Maps
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Picasso.LoadedFrom
-import com.squareup.picasso.Target
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.RouterCompanionAppConstants
 import org.rm3l.router_companion.main.DDWRTMainActivity
-import org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED
+import org.rm3l.router_companion.mgmt.RouterManagementActivity.Companion.ROUTER_SELECTED
 import org.rm3l.router_companion.resources.Device
 import org.rm3l.router_companion.resources.Encrypted.d
 import org.rm3l.router_companion.resources.Encrypted.e

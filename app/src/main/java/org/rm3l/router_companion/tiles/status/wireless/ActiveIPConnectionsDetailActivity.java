@@ -1373,7 +1373,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         }
 
         mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
-        final Router router = RouterManagementActivity.getDao(this).getRouter(mRouterUuid);
+        final Router router = RouterManagementActivity.Companion.getDao(this).getRouter(mRouterUuid);
         if (router == null) {
             Toast.makeText(ActiveIPConnectionsDetailActivity.this,
                     "Internal Error - Unknown router! Please try again later", Toast.LENGTH_SHORT)

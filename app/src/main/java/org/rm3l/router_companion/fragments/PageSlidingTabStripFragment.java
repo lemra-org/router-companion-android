@@ -176,7 +176,7 @@ public class PageSlidingTabStripFragment extends Fragment {
         setRetainInstance(true);
 
         final String routerUuid = getArguments().getString(AbstractBaseFragment.ROUTER_CONNECTION_INFO);
-        mRouter = RouterManagementActivity.getDao(getActivity()).getRouter(routerUuid);
+        mRouter = RouterManagementActivity.Companion.getDao(getActivity()).getRouter(routerUuid);
 
         final SharedPreferences sharedPreferences =
                 getActivity().getSharedPreferences(routerUuid, Context.MODE_PRIVATE);

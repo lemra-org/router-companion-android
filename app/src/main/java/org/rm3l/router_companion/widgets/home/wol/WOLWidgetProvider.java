@@ -84,9 +84,9 @@ public class WOLWidgetProvider extends AppWidgetProvider {
         if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID
                 && (intentAction = intent.getAction()) != null) {
             final AppWidgetManager widgetManager = AppWidgetManager.getInstance(context);
-            final String routerUuid = intent.getStringExtra(ROUTER_SELECTED);
+            final String routerUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
             if (routerUuid != null) {
-                final Router router = RouterManagementActivity.getDao(context).getRouter(routerUuid);
+                final Router router = RouterManagementActivity.Companion.getDao(context).getRouter(routerUuid);
                 if (router == null) {
                     Toast.makeText(context, "Invalid Router - entry may have been dropped!",
                             Toast.LENGTH_SHORT).show();
@@ -111,7 +111,7 @@ public class WOLWidgetProvider extends AppWidgetProvider {
                                         if (device != null) {
                                             final Intent wakeIntent = new Intent(context,
                                                     RouterWolWidgetConfirmationDialogFromWidgetActivity.class);
-                                            wakeIntent.putExtra(ROUTER_SELECTED, routerUuid);
+                                            wakeIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
                                             wakeIntent.putExtra(HOSTS_TO_WAKE, intent.getStringExtra(HOSTS_TO_WAKE));
                                             wakeIntent.putExtra(ConfirmDialogAsActivity.TITLE, "Wake on LAN");
                                             wakeIntent.putExtra(ConfirmDialogAsActivity.MESSAGE, String.format(
@@ -154,7 +154,7 @@ public class WOLWidgetProvider extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
 
-        final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(context);
+        final DDWRTCompanionDAO dao = RouterManagementActivity.Companion.getDao(context);
 
         final String routerUuid = WOLWidgetConfigureActivity.loadRouterUuidPref(context, appWidgetId);
         final String routerName;
@@ -193,7 +193,7 @@ public class WOLWidgetProvider extends AppWidgetProvider {
             final Intent intent = new Intent(context, WOLWidgetService.class);
             // Add the app widget ID to the intent extras.
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-            intent.putExtra(ROUTER_SELECTED, routerUuid);
+            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
             // Set up the RemoteViews object to use a RemoteViews adapter.
             // This adapter connects
@@ -240,7 +240,7 @@ public class WOLWidgetProvider extends AppWidgetProvider {
 
             //Launch Intent
             final Intent launchIntent = new Intent(context, DDWRTMainActivity.class);
-            launchIntent.putExtra(ROUTER_SELECTED, routerUuid);
+            launchIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
             launchIntent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 9); //Open right on WOL Menu Item
             launchIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             launchIntent.setAction(routerUuid + "-launch-" + System.currentTimeMillis());
@@ -261,7 +261,7 @@ public class WOLWidgetProvider extends AppWidgetProvider {
                 wakeAllIntent.putExtra(ConfirmDialogAsActivity.MESSAGE,
                         "Are you sure you wish to attempt waking all hosts?");
             }
-            wakeAllIntent.putExtra(ROUTER_SELECTED, routerUuid);
+            wakeAllIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
             wakeAllIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             wakeAllIntent.setAction(routerUuid + "-wakeAll-" + System.currentTimeMillis());
             final PendingIntent wakeAllPendingIntent =

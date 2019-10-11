@@ -36,7 +36,7 @@ public class RouterRebootWidgetConfirmationDialogFromWidgetActivity
         final String routerUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
 
         if (routerUuid == null
-                || (mRouter = RouterManagementActivity.getDao(this).getRouter(routerUuid)) == null) {
+                || (mRouter = RouterManagementActivity.Companion.getDao(this).getRouter(routerUuid)) == null) {
             Toast.makeText(this, "Unknown Router. May have been removed. Please reconfigure the widget!",
                     Toast.LENGTH_SHORT).show();
             finish();

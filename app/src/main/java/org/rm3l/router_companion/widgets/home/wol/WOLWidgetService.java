@@ -88,7 +88,7 @@ class WOLRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory,
     @Override
     public void onCreate() {
 
-        mRouter = RouterManagementActivity.getDao(mContext).getRouter(mRouterUuid);
+        mRouter = RouterManagementActivity.Companion.getDao(mContext).getRouter(mRouterUuid);
         if (mRouter == null) {
             Crashlytics.log(Log.DEBUG, TAG, "onCreate: mRouter IS null");
         }

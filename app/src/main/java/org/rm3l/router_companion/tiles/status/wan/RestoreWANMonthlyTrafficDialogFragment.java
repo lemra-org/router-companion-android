@@ -91,7 +91,7 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
                 new RestoreWANMonthlyTrafficDialogFragment();
 
         final Bundle args = new Bundle();
-        args.putString(ROUTER_SELECTED, routerUuid);
+        args.putString(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
 
         restoreWANMonthlyTrafficDialogFragment.setArguments(args);
         return restoreWANMonthlyTrafficDialogFragment;
@@ -121,7 +121,8 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
 
         final FragmentActivity mCtx = getActivity();
         mRouter =
-                RouterManagementActivity.getDao(mCtx).getRouter(getArguments().getString(ROUTER_SELECTED));
+                RouterManagementActivity.Companion
+                        .getDao(mCtx).getRouter(getArguments().getString(RouterManagementActivity.ROUTER_SELECTED));
 
         if (mRouter == null) {
             Utils.reportException(null, new IllegalStateException(

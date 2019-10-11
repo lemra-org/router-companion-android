@@ -190,7 +190,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
             return;
         }
 
-        this.mDao = RouterManagementActivity.getDao(this);
+        this.mDao = RouterManagementActivity.Companion.getDao(this);
 
         final Intent intent = getIntent();
         if (intent.getBooleanExtra(DeepLink.IS_DEEP_LINK, false)) {

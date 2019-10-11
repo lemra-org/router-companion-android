@@ -21,7 +21,7 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.toast
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.mgmt.RouterManagementActivity
-import org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED
+import org.rm3l.router_companion.mgmt.RouterManagementActivity.Companion.ROUTER_SELECTED
 import org.rm3l.router_companion.resources.conn.Router
 import org.rm3l.router_companion.utils.Utils
 import org.rm3l.router_companion.utils.kotlin.setAppTheme

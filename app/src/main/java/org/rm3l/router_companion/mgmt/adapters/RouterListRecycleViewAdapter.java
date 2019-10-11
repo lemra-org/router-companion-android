@@ -351,7 +351,7 @@ public class RouterListRecycleViewAdapter
         this.mGlobalPreferences =
                 activity.getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                         Context.MODE_PRIVATE);
-        this.dao = RouterManagementActivity.getDao(activity);
+        this.dao = RouterManagementActivity.Companion.getDao(activity);
         resources = activity.getResources();
         selectedItems = new SparseBooleanArray();
 
@@ -961,7 +961,7 @@ public class RouterListRecycleViewAdapter
         final String routerUuid = router.getUuid();
 
         final Intent ddWrtMainIntent = new Intent(activity, DDWRTMainActivity.class);
-        ddWrtMainIntent.putExtra(ROUTER_SELECTED, routerUuid);
+        ddWrtMainIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
 
         final SharedPreferences routerSharedPreferences =
                 activity.getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
@@ -1049,7 +1049,7 @@ public class RouterListRecycleViewAdapter
 
         final Intent intent = new Intent(activity, ManageRouterFragmentActivity.class);
         intent.putExtra(RouterWizardAction.ROUTER_WIZARD_ACTION, RouterWizardAction.ADD);
-        activity.startActivityForResult(intent, NEW_ROUTER_ADDED);
+        activity.startActivityForResult(intent, RouterManagementActivity.NEW_ROUTER_ADDED);
     }
 
     private void openDuplicateRouterForm(@Nullable Router router) {
@@ -1079,9 +1079,9 @@ public class RouterListRecycleViewAdapter
             //            copyFragment.setArguments(args);
             //            copyFragment.show(fragmentManager, COPY_ROUTER);
             final Intent intent = new Intent(activity, ManageRouterFragmentActivity.class);
-            intent.putExtra(ROUTER_SELECTED, router.getUuid());
+            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, router.getUuid());
             intent.putExtra(RouterWizardAction.ROUTER_WIZARD_ACTION, RouterWizardAction.COPY);
-            activity.startActivityForResult(intent, NEW_ROUTER_ADDED);
+            activity.startActivityForResult(intent, RouterManagementActivity.NEW_ROUTER_ADDED);
         } else {
             Toast.makeText(activity, "Entry no longer exists", Toast.LENGTH_SHORT).show();
         }
@@ -1104,9 +1104,9 @@ public class RouterListRecycleViewAdapter
             //            updateFragment.show(fragmentManager, UPDATE_ROUTER_FRAGMENT_TAG);
 
             final Intent intent = new Intent(activity, ManageRouterFragmentActivity.class);
-            intent.putExtra(ROUTER_SELECTED, router.getUuid());
+            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, router.getUuid());
             intent.putExtra(RouterWizardAction.ROUTER_WIZARD_ACTION, RouterWizardAction.EDIT);
-            activity.startActivityForResult(intent, ROUTER_UPDATED);
+            activity.startActivityForResult(intent, RouterManagementActivity.ROUTER_UPDATED);
         } else {
             Toast.makeText(activity, "Entry no longer exists", Toast.LENGTH_SHORT).show();
         }
@@ -1148,7 +1148,7 @@ public class RouterListRecycleViewAdapter
 
     private void startActivity(Intent ddWrtMainIntent) {
         if (activity instanceof Activity) {
-            RouterManagementActivity.startActivity((Activity) activity, null, ddWrtMainIntent);
+            RouterManagementActivity.Companion.startActivity((Activity) activity, null, ddWrtMainIntent);
         } else {
             //Start in a much more classical way
             activity.startActivity(ddWrtMainIntent);

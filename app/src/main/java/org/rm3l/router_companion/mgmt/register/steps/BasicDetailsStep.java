@@ -138,7 +138,7 @@ public class BasicDetailsStep extends MaterialWizardStep {
         randomNameForCustomIcon = (UUID.randomUUID().toString() + ".router_icon");
 
         final Context context = getContext();
-        this.dao = RouterManagementActivity.getDao(context);
+        this.dao = RouterManagementActivity.Companion.getDao(context);
 
         final Object tag = container.getTag();
         if (tag != null) {

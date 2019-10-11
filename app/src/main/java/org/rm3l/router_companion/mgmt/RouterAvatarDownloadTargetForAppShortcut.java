@@ -67,7 +67,7 @@ class RouterAvatarDownloadTargetForAppShortcut implements Target {
             shortcutIntent.setAction(Intent.ACTION_VIEW);
             shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            shortcutIntent.putExtra(ROUTER_SELECTED, routerUuid);
+            shortcutIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
 
             final ShortcutInfo shortcut = new ShortcutInfo.Builder(mContext, routerUuid).setShortLabel(
                     TextUtils.isEmpty(routerName) ? (router.getRemoteIpAddress()

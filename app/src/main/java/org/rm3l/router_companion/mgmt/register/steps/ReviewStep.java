@@ -301,7 +301,7 @@ public class ReviewStep extends MaterialWizardStep {
             Bundle savedInstanceState) {
 
         final Context context = getContext();
-        this.dao = RouterManagementActivity.getDao(context);
+        this.dao = RouterManagementActivity.Companion.getDao(context);
 
         final Object tag = container.getTag();
         if (tag != null) {

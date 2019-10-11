@@ -50,7 +50,7 @@ import org.rm3l.router_companion.exceptions.DDWRTCompanionException
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException
 import org.rm3l.router_companion.firmwares.RemoteDataRetrievalListener
-import org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED
+import org.rm3l.router_companion.mgmt.RouterManagementActivity.Companion.ROUTER_SELECTED
 import org.rm3l.router_companion.resources.RouterData
 import org.rm3l.router_companion.resources.WANAccessPolicy
 import org.rm3l.router_companion.resources.conn.NVRAMInfo

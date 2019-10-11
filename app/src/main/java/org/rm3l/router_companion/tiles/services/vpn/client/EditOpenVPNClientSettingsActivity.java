@@ -108,7 +108,7 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
 
         final Intent intent = getIntent();
 
-        mRouterUuid = intent.getStringExtra(ROUTER_SELECTED);
+        mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
         if (isNullOrEmpty(mRouterUuid)) {
             Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT)
                     .show();
@@ -116,7 +116,7 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
             return;
         }
 
-        final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(this);
+        final DDWRTCompanionDAO dao = RouterManagementActivity.Companion.getDao(this);
         final Router router;
         if ((router = dao.getRouter(mRouterUuid)) == null) {
             Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT)
@@ -215,7 +215,7 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
         final Intent data = new Intent();
 
         //Resulting intent: NVRAM Info edited with user info
-        data.putExtra(ROUTER_SELECTED, mRouterUuid);
+        data.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
 
         final NVRAMInfo nvramVarsToUpdate = new NVRAMInfo();
         //Compare each variable

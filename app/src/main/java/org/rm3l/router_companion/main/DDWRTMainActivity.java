@@ -337,7 +337,7 @@ public class DDWRTMainActivity extends AppCompatActivity
         mClient = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
         //SQLite
-        this.dao = RouterManagementActivity.getDao(this);
+        this.dao = RouterManagementActivity.Companion.getDao(this);
         final Intent intent = getIntent();
         String uuid = null;
         if (intent.getBooleanExtra(DeepLink.IS_DEEP_LINK, false)) {
@@ -2139,7 +2139,7 @@ public class DDWRTMainActivity extends AppCompatActivity
             return;
         }
 
-        startActivityForResult(new Intent(this, ManageRouterFragmentActivity.class), NEW_ROUTER_ADDED);
+        startActivityForResult(new Intent(this, ManageRouterFragmentActivity.class), RouterManagementActivity.NEW_ROUTER_ADDED);
 
         //        final DialogFragment addFragment = new RouterAddDialogFragment();
         //        addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);

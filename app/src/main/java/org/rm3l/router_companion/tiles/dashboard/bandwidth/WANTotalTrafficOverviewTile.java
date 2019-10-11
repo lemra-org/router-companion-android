@@ -120,7 +120,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo>
             @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_overview_wan_total_traffic, null);
 
-        dao = RouterManagementActivity.getDao(mParentFragmentActivity);
+        dao = RouterManagementActivity.Companion.getDao(mParentFragmentActivity);
         isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
         //Create Options Menu
         final ImageButton tileMenu =
@@ -659,7 +659,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo>
 
         //TODO Set proper flags ???
         final Intent intent = new Intent(mParentFragmentActivity, DDWRTMainActivity.class);
-        intent.putExtra(ROUTER_SELECTED, mRouter.getUuid());
+        intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
         intent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 5);
         return new OnClickIntent(String.format("Loading traffic data breakdown for current cycle: '%s'",
                 cycleItem.getLabelWithYears()), intent, null);

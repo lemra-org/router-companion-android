@@ -19,14 +19,11 @@ import android.util.Patterns
 import com.crashlytics.android.Crashlytics
 import com.google.common.base.Objects
 import com.google.common.base.Strings.isNullOrEmpty
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Picasso.LoadedFrom
-import com.squareup.picasso.Target
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.RouterCompanionAppConstants
 import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager
 import org.rm3l.router_companion.main.DDWRTMainActivity
-import org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_SELECTED
+import org.rm3l.router_companion.mgmt.RouterManagementActivity.Companion.ROUTER_SELECTED
 import org.rm3l.router_companion.resources.Encrypted.d
 import org.rm3l.router_companion.resources.Encrypted.e
 import org.rm3l.router_companion.resources.conn.NVRAMInfo.Companion.WAN_IPADDR

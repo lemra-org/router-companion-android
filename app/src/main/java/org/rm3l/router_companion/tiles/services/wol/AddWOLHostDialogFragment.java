@@ -116,7 +116,7 @@ public class AddWOLHostDialogFragment extends DialogFragment {
         mRouterPreferences = (routerSelected != null ? activity.getSharedPreferences(routerSelected,
                 Context.MODE_PRIVATE) : null);
 
-        mRouter = RouterManagementActivity.getDao(activity).getRouter(routerSelected);
+        mRouter = RouterManagementActivity.Companion.getDao(activity).getRouter(routerSelected);
 
         bcastAddresses = arguments.getStringArrayList(BROADCAST_ADDRESSES);
 

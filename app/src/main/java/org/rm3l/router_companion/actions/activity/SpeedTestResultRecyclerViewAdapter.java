@@ -72,7 +72,7 @@ public class SpeedTestResultRecyclerViewAdapter
             final Router mRouter) {
         this.activity = activity;
         this.mRouter = mRouter;
-        this.mDao = RouterManagementActivity.getDao(activity);
+        this.mDao = RouterManagementActivity.Companion.getDao(activity);
     }
 
     @Override
