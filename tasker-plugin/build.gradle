@@ -232,12 +232,12 @@ dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation "androidx.appcompat:appcompat:1.0.2"
+    implementation "androidx.appcompat:appcompat:1.1.0"
     implementation "com.google.android.material:material:1.0.0"
     implementation "androidx.cardview:cardview:1.0.0"
-    implementation "androidx.preference:preference:1.0.0"
+    implementation "androidx.preference:preference:1.1.0"
     implementation "androidx.recyclerview:recyclerview:1.0.0"
-    implementation "androidx.annotation:annotation:1.0.2"
+    implementation "androidx.annotation:annotation:1.1.0"
 
     implementation "org.rm3l:maoni:${maoni_version}"
     implementation "org.rm3l:maoni-doorbell:${maoni_version}"
@@ -252,7 +252,7 @@ dependencies {
     implementation group: 'com.twofortyfouram', name: 'android-spackle', version: "[2.0.0,4.0["
     androidTestImplementation group:'com.twofortyfouram', name:'android-test', version:'[6.0.1,7.0)'
 //    androidTestImplementation group:'com.twofortyfouram', name:'android-assertion', version:'[2.0.0,3.0)'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.9.9@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
         transitive = true
     }
 
