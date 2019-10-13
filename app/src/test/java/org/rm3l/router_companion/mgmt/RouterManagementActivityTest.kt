@@ -7,8 +7,8 @@ import org.junit.Assert.*
 import org.junit.runner.*
 import org.rm3l.ddwrt.R
 import org.rm3l.maoni.ui.MaoniActivity
-import org.rm3l.router_companion.mgmt.RouterManagementActivity.NEW_ROUTER_ADDED
-import org.rm3l.router_companion.mgmt.RouterManagementActivity.ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE
+import org.rm3l.router_companion.mgmt.RouterManagementActivity.Companion.NEW_ROUTER_ADDED
+import org.rm3l.router_companion.mgmt.RouterManagementActivity.Companion.ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE
 import org.rm3l.router_companion.mgmt.register.ManageRouterFragmentActivity
 import org.rm3l.router_companion.settings.RouterManagementSettingsActivity
 import org.robolectric.Robolectric.setupActivity
