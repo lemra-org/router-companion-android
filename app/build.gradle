@@ -476,6 +476,8 @@ dependencies {
     implementation 'com.github.florent37:viewtooltip:1.0.8'
 
     implementation 'com.github.mrgames13:SplashScreen:1.0.3'
+
+    implementation "com.afollestad:assent:${assentPermissionsVersion}"
 }
 
 //play {
