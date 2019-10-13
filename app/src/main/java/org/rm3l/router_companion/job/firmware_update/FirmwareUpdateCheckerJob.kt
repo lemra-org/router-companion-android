@@ -190,14 +190,6 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                         Snackbar.LENGTH_LONG,
                                         object : SnackbarCallback {
                                             @Throws(Exception::class)
-                                            override fun onShowEvent(bundle: Bundle?) {
-                                            }
-
-                                            @Throws(Exception::class)
-                                            override fun onDismissEventSwipe(event: Int, bundle: Bundle?) {
-                                            }
-
-                                            @Throws(Exception::class)
                                             override fun onDismissEventActionClick(event: Int, bundle: Bundle?) {
                                                 if (result.first == null) {
                                                     Toast.makeText(activity, "Internal Error - please try again later",
@@ -216,18 +208,6 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                                                 activity.startActivity(intent)
                                                     }, false)
                                                 }
-                                            }
-
-                                            @Throws(Exception::class)
-                                            override fun onDismissEventTimeout(event: Int, token: Bundle?) {
-                                            }
-
-                                            @Throws(Exception::class)
-                                            override fun onDismissEventManual(event: Int, bundle: Bundle?) {
-                                            }
-
-                                            @Throws(Exception::class)
-                                            override fun onDismissEventConsecutive(event: Int, bundle: Bundle?) {
                                             }
                                         }, null, true)
                             } else {

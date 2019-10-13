@@ -457,28 +457,6 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
     }
 
     @Override
-    public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-            throws Exception {
-
-    }
-
-    @Override
-    public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-            throws Exception {
-
-    }
-
-    @Override
-    public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
-
-    }
-
-    @Override
-    public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
-
-    }
-
-    @Override
     public void onDismissEventTimeout(int event, @Nullable Bundle token) throws Exception {
         final String routerAction = token != null ? token.getString(WAN_MONTHLY_TRAFFIC_ACTION) : null;
         Crashlytics.log(Log.DEBUG, LOG_TAG,
@@ -593,11 +571,6 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
             e.printStackTrace();
             Utils.reportException(null, e);
         }
-    }
-
-    @Override
-    public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
     }
 
     private void displayMessage(final String msg, final Style style) {

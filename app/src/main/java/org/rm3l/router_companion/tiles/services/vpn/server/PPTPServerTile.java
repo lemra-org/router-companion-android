@@ -188,11 +188,6 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
                                             , mGlobalPreferences));
                         }
 
-                        @Override
-                        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
-                        }
-
                         private void cancel() {
                             mParentFragmentActivity.runOnUiThread(new Runnable() {
                                 @Override

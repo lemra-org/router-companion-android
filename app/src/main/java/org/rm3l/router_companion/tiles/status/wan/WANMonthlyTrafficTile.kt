@@ -255,11 +255,6 @@ class WANMonthlyTrafficTile(parentFragment: Fragment, arguments: Bundle?,
                                             }, mGlobalPreferences))
                         }
 
-                        @Throws(Exception::class)
-                        override fun onShowEvent(bundle: Bundle?) {
-
-                        }
-
                         private fun cancel() {
                             mParentFragmentActivity.runOnUiThread {
                                 try {
@@ -420,31 +415,6 @@ class WANMonthlyTrafficTile(parentFragment: Fragment, arguments: Bundle?,
                         ActivityCompat.requestPermissions(mParentFragmentActivity,
                                 arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                                 RouterCompanionAppConstants.Permissions.STORAGE)
-                    }
-
-                    @Throws(Exception::class)
-                    override fun onDismissEventConsecutive(event: Int, bundle: Bundle?) {
-
-                    }
-
-                    @Throws(Exception::class)
-                    override fun onDismissEventManual(event: Int, bundle: Bundle?) {
-
-                    }
-
-                    @Throws(Exception::class)
-                    override fun onDismissEventSwipe(event: Int, bundle: Bundle?) {
-
-                    }
-
-                    @Throws(Exception::class)
-                    override fun onDismissEventTimeout(event: Int, bundle: Bundle?) {
-
-                    }
-
-                    @Throws(Exception::class)
-                    override fun onShowEvent(bundle: Bundle?) {
-
                     }
                 }, null, true)
             } else {
@@ -634,26 +604,6 @@ class WANMonthlyTrafficTile(parentFragment: Fragment, arguments: Bundle?,
 
     override fun getTileTitleViewId(): Int {
         return R.id.tile_status_wan_monthly_traffic_title
-    }
-
-    @Throws(Exception::class)
-    override fun onDismissEventActionClick(event: Int, bundle: Bundle?) {
-
-    }
-
-    @Throws(Exception::class)
-    override fun onDismissEventConsecutive(event: Int, bundle: Bundle?) {
-
-    }
-
-    @Throws(Exception::class)
-    override fun onDismissEventManual(event: Int, bundle: Bundle?) {
-
-    }
-
-    @Throws(Exception::class)
-    override fun onDismissEventSwipe(event: Int, bundle: Bundle?) {
-
     }
 
     @Throws(Exception::class)
@@ -1036,11 +986,6 @@ class WANMonthlyTrafficTile(parentFragment: Fragment, arguments: Bundle?,
         Utils.displayMessage(mParentFragmentActivity,
                 String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(),
                         router.remoteIpAddress), Style.CONFIRM)
-    }
-
-    @Throws(Exception::class)
-    override fun onShowEvent(bundle: Bundle?) {
-
     }
 
     override fun getLoader(id: Int, args: Bundle?): Loader<NVRAMInfo>? {

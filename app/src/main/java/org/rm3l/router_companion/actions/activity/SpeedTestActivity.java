@@ -1086,35 +1086,6 @@ public class SpeedTestActivity extends AppCompatActivity
                                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                                         RouterCompanionAppConstants.Permissions.STORAGE);
                             }
-
-                            @Override
-                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventManual(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
-                            }
                         }, null, true);
             } else {
                 // No explanation needed, we can request the permission.
@@ -1379,35 +1350,6 @@ public class SpeedTestActivity extends AppCompatActivity
                                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                                         RouterCompanionAppConstants.Permissions.STORAGE);
                             }
-
-                            @Override
-                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventManual(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
-                            }
                         }, null, true);
             } else {
                 // No explanation needed, we can request the permission.
@@ -1483,28 +1425,6 @@ public class SpeedTestActivity extends AppCompatActivity
         }
 
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-            throws Exception {
-
-    }
-
-    @Override
-    public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-            throws Exception {
-
-    }
-
-    @Override
-    public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
-
-    }
-
-    @Override
-    public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
-
     }
 
     @Override

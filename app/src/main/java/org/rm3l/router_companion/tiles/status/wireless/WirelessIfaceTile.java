@@ -124,29 +124,6 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         }
 
         @Override
-        public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                throws Exception {
-
-        }
-
-        @Override
-        public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-                throws Exception {
-
-        }
-
-        @Override
-        public void onDismissEventManual(int event, @Nullable Bundle bundle)
-                throws Exception {
-
-        }
-
-        @Override
-        public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
-
-        }
-
-        @Override
         public void onDismissEventTimeout(int event, @Nullable Bundle token)
                 throws Exception {
             final String routerAction = token.getString(DDWRTMainActivity.ROUTER_ACTION);
@@ -246,11 +223,6 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                     }
                 });
             }
-        }
-
-        @Override
-        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
         }
     }
 
@@ -625,30 +597,6 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                             physicalInterfaceState.toString().toLowerCase(), phyIface, wifiSsid), "CANCEL",
                     Snackbar.LENGTH_LONG, new SnackbarCallback() {
                         @Override
-                        public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                                throws Exception {
-
-                        }
-
-                        @Override
-                        public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-                                throws Exception {
-
-                        }
-
-                        @Override
-                        public void onDismissEventManual(int event, @Nullable Bundle bundle)
-                                throws Exception {
-
-                        }
-
-                        @Override
-                        public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
-                                throws Exception {
-
-                        }
-
-                        @Override
                         public void onDismissEventTimeout(int event, @Nullable Bundle token)
                                 throws Exception {
                             try {
@@ -700,11 +648,6 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                             } catch (IllegalArgumentException | NullPointerException | IllegalStateException e) {
                                 e.printStackTrace();
                             }
-                        }
-
-                        @Override
-                        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
                         }
                     }, token, true);
             return true;

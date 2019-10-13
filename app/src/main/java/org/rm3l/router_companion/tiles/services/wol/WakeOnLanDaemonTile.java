@@ -207,10 +207,6 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
                                             , mGlobalPreferences));
                         }
 
-                        @Override
-                        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-                        }
-
                         private void cancel() {
                             mParentFragmentActivity.runOnUiThread(new Runnable() {
                                 @Override
@@ -293,28 +289,6 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
     @Override
     public Integer getTileTitleViewId() {
         return R.id.tile_services_wol_daemon_title;
-    }
-
-    @Override
-    public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-            throws Exception {
-
-    }
-
-    @Override
-    public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-            throws Exception {
-
-    }
-
-    @Override
-    public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
-
-    }
-
-    @Override
-    public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
-
     }
 
     @Override
@@ -505,11 +479,6 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
                 }
             });
         }
-    }
-
-    @Override
-    public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
     }
 
     @Nullable

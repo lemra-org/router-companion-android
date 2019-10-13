@@ -605,33 +605,6 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                                             String.format("WOL Request will be sent from router to %d hosts",
                                                     mCurrentDevicesList.size()), "CANCEL", Snackbar.LENGTH_LONG,
                                             new SnackbarCallback() {
-                                                @Override
-                                                public void onDismissEventActionClick(int event,
-                                                        @Nullable Bundle bundle)
-                                                        throws Exception {
-
-                                                }
-
-                                                @Override
-                                                public void onDismissEventConsecutive(int event,
-                                                        @Nullable Bundle bundle)
-                                                        throws Exception {
-
-                                                }
-
-                                                @Override
-                                                public void onDismissEventManual(int event,
-                                                        @Nullable Bundle bundle)
-                                                        throws Exception {
-
-                                                }
-
-                                                @Override
-                                                public void onDismissEventSwipe(int event,
-                                                        @Nullable Bundle bundle)
-                                                        throws Exception {
-
-                                                }
 
                                                 @Override
                                                 public void onDismissEventTimeout(int event,
@@ -748,12 +721,6 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                                                                 Style.ALERT);
                                                         Utils.reportException(null, e);
                                                     }
-                                                }
-
-                                                @Override
-                                                public void onShowEvent(@Nullable Bundle bundle)
-                                                        throws Exception {
-
                                                 }
                                             }, token, true);
 
@@ -1250,29 +1217,6 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
 
     private SnackbarCallback getSnackbarCb(final Device device) {
         return new SnackbarCallback() {
-            @Override
-            public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                    throws Exception {
-
-            }
-
-            @Override
-            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-                    throws Exception {
-
-            }
-
-            @Override
-            public void onDismissEventManual(int event, @Nullable Bundle bundle)
-                    throws Exception {
-
-            }
-
-            @Override
-            public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
-                    throws Exception {
-
-            }
 
             @Override
             public void onDismissEventTimeout(int event, @Nullable Bundle token)
@@ -1316,11 +1260,6 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                             Style.ALERT);
                     Utils.reportException(null, e);
                 }
-            }
-
-            @Override
-            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
             }
         };
     }

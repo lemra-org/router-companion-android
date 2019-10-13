@@ -262,11 +262,6 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                                             , mGlobalPreferences));
                         }
 
-                        @Override
-                        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
-                        }
-
                         private void cancel() {
                             mParentFragmentActivity.runOnUiThread(new Runnable() {
                                 @Override
@@ -948,35 +943,6 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                                 ActivityCompat.requestPermissions(mParentFragmentActivity,
                                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                                         RouterCompanionAppConstants.Permissions.STORAGE);
-                            }
-
-                            @Override
-                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventManual(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
                             }
                         }, null, true);
             } else {

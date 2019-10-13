@@ -254,11 +254,6 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
 
                         }
 
-                        @Override
-                        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
-                        }
-
                         private void cancel() {
                             mParentFragmentActivity.runOnUiThread(new Runnable() {
                                 @Override

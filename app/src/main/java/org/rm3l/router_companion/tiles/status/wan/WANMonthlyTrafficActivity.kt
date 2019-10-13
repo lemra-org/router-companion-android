@@ -325,31 +325,6 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                                 arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                                 RouterCompanionAppConstants.Permissions.STORAGE)
                     }
-
-                    @Throws(Exception::class)
-                    override fun onDismissEventConsecutive(event: Int, bundle: Bundle?) {
-
-                    }
-
-                    @Throws(Exception::class)
-                    override fun onDismissEventManual(event: Int, bundle: Bundle?) {
-
-                    }
-
-                    @Throws(Exception::class)
-                    override fun onDismissEventSwipe(event: Int, bundle: Bundle?) {
-
-                    }
-
-                    @Throws(Exception::class)
-                    override fun onDismissEventTimeout(event: Int, bundle: Bundle?) {
-
-                    }
-
-                    @Throws(Exception::class)
-                    override fun onShowEvent(bundle: Bundle?) {
-
-                    }
                 }, null, true)
             } else {
                 // No explanation needed, we can request the permission.

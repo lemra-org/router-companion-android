@@ -250,10 +250,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
         }
 
         @Override
-        public void onDismissEventConsecutive(int event, @Nullable Bundle token)
-                throws Exception {}
-
-        @Override
         public void onDismissEventManual(int event, @Nullable Bundle token)
                 throws Exception {
             handleActionCancellationOrFailureEvent(token);
@@ -591,38 +587,10 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                 }
             }
         }
-
-        @Override
-        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
-        }
     }
 
     private class MenuActionItemClickListener
             implements SnackbarCallback, RouterActionListener {
-
-        @Override
-        public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                throws Exception {
-
-        }
-
-        @Override
-        public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-                throws Exception {
-
-        }
-
-        @Override
-        public void onDismissEventManual(int event, @Nullable Bundle bundle)
-                throws Exception {
-
-        }
-
-        @Override
-        public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
-
-        }
 
         @Override
         public void onDismissEventTimeout(int event, @Nullable Bundle token)
@@ -687,11 +655,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
             Utils.displayMessage(mParentFragmentActivity,
                     String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(),
                             router.getRemoteIpAddress()), Style.CONFIRM);
-        }
-
-        @Override
-        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
         }
     }
 
@@ -1218,35 +1181,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                         Manifest.permission.ACCESS_COARSE_LOCATION
                                 }, RouterCompanionAppConstants.Permissions.STORAGE);
                             }
-
-                            @Override
-                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventManual(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-
-                            }
-
-                            @Override
-                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
-                            }
                         }, null, true);
             } else {
                 // No explanation needed, we can request the permission.
@@ -1268,34 +1202,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
     @Override
     public Integer getTileTitleViewId() {
         return R.id.tile_status_wireless_clients_title;
-    }
-
-    @Override
-    public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-            throws Exception {
-
-    }
-
-    @Override
-    public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-            throws Exception {
-
-    }
-
-    @Override
-    public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
-
-    }
-
-    @Override
-    public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
-
-    }
-
-    @Override
-    public void onDismissEventTimeout(final int event, @Nullable final Bundle bundle)
-            throws Exception {
-
     }
 
     /**
@@ -1761,11 +1667,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
         }
 
         return false;
-    }
-
-    @Override
-    public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
     }
 
     @Nullable

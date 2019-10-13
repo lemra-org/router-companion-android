@@ -396,40 +396,13 @@ public class NVRAMDataRecyclerViewAdapter
     }
 
     @Override
-    public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-            throws Exception {
-
-    }
-
-    @Override
-    public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-            throws Exception {
-
-    }
-
-    @Override
-    public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
-
-    }
-
-    @Override
-    public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
-
-    }
-
-    @Override
     public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
         //Update entry in remote router, and notify item changed
         //Background task
         MultiThreadingManager.getActionExecutor().execute(new AddOrEditNVRAMVariableTask(bundle));
     }
 
-    @Override
-    public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
-    }
-
-    public void setEntryList(@NonNull final Map<Object, Object> nvramInfo) {
+    void setEntryList(@NonNull final Map<Object, Object> nvramInfo) {
         this.entryList.clear();
         this.nvramInfo = nvramInfo;
         //Not needed at this point - so make sure value has been read prior to calling this method

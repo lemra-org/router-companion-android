@@ -204,11 +204,6 @@ public class WirelessIfacesTile extends IfacesTile {
                                             }, mGlobalPreferences, enable));
                         }
 
-                        @Override
-                        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
-                        }
-
                         private void cancel() {
                             mParentFragmentActivity.runOnUiThread(new Runnable() {
                                 @Override

@@ -614,20 +614,6 @@ internal class WANAccessRulesRecyclerViewAdapter(
                 String.format("Going to %sable WAN Access Policy: '%s'", if (newStatus) "en" else "dis",
                         wanAccessPolicy.name), "Undo", Snackbar.LENGTH_LONG, object : SnackbarCallback {
             @Throws(Exception::class)
-            override fun onShowEvent(bundle: Bundle?) {
-            }
-
-            @Throws(Exception::class)
-            override fun onDismissEventSwipe(event: Int, bundle: Bundle?) {
-                //revert
-            }
-
-            @Throws(Exception::class)
-            override fun onDismissEventActionClick(event: Int, bundle: Bundle?) {
-                //revert
-            }
-
-            @Throws(Exception::class)
             override fun onDismissEventTimeout(event: Int, bundle: Bundle?) {
                 Utils.displayMessage(tile.mParentFragmentActivity,
                         String.format("%sabling WAN Access Policy: '%s'...", if (newStatus) "En" else "Dis",
@@ -672,16 +658,6 @@ internal class WANAccessRulesRecyclerViewAdapter(
                                         }
                                     }
                                 }, tile.mGlobalPreferences, wanAccessPolicy, enableStatus))
-            }
-
-            @Throws(Exception::class)
-            override fun onDismissEventManual(event: Int, bundle: Bundle?) {
-                //Revert
-            }
-
-            @Throws(Exception::class)
-            override fun onDismissEventConsecutive(event: Int, bundle: Bundle?) {
-                //revert
             }
         }, null, true)
     }

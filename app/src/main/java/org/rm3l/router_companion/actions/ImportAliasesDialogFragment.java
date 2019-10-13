@@ -202,29 +202,6 @@ public class ImportAliasesDialogFragment extends DialogFragment {
                                 String.format("Going to start importing aliases for '%s' (%s)...",
                                         mRouter.getDisplayName(), mRouter.getRemoteIpAddress()), "Undo",
                                 Snackbar.LENGTH_SHORT, new SnackbarCallback() {
-                                    @Override
-                                    public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                                            throws Exception {
-
-                                    }
-
-                                    @Override
-                                    public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-                                            throws Exception {
-
-                                    }
-
-                                    @Override
-                                    public void onDismissEventManual(int event, @Nullable Bundle bundle)
-                                            throws Exception {
-
-                                    }
-
-                                    @Override
-                                    public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
-                                            throws Exception {
-
-                                    }
 
                                     @Override
                                     public void onDismissEventTimeout(int event, @Nullable Bundle bundle)

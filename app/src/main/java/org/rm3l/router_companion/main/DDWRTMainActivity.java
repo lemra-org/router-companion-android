@@ -1174,28 +1174,6 @@ public class DDWRTMainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-            throws Exception {
-
-    }
-
-    @Override
-    public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-            throws Exception {
-
-    }
-
-    @Override
-    public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
-
-    }
-
-    @Override
-    public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
-
-    }
-
-    @Override
     public void onDismissEventTimeout(int event, @Nullable Bundle token) throws Exception {
         final String routerAction = token != null ? token.getString(ROUTER_ACTION) : null;
         Crashlytics.log(Log.DEBUG, TAG, "routerAction: [" + routerAction + "]");
@@ -1615,40 +1593,11 @@ public class DDWRTMainActivity extends AppCompatActivity
                             mRouter.getRemoteIpAddress()), "CANCEL", Snackbar.LENGTH_SHORT,
                     new SnackbarCallback() {
                         @Override
-                        public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                                throws Exception {
-
-                        }
-
-                        @Override
-                        public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-                                throws Exception {
-
-                        }
-
-                        @Override
-                        public void onDismissEventManual(int event, @Nullable Bundle bundle)
-                                throws Exception {
-
-                        }
-
-                        @Override
-                        public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
-                                throws Exception {
-
-                        }
-
-                        @Override
                         public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
                                 throws Exception {
                             ActionManager.runTasks(
                                     new ClearARPCacheRouterAction(mRouter, DDWRTMainActivity.this,
                                             DDWRTMainActivity.this, mGlobalPreferences));
-                        }
-
-                        @Override
-                        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
                         }
                     }, null, true);
             return true;
@@ -1658,40 +1607,11 @@ public class DDWRTMainActivity extends AppCompatActivity
                             mRouter.getRemoteIpAddress()), "CANCEL", Snackbar.LENGTH_SHORT,
                     new SnackbarCallback() {
                         @Override
-                        public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                                throws Exception {
-
-                        }
-
-                        @Override
-                        public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-                                throws Exception {
-
-                        }
-
-                        @Override
-                        public void onDismissEventManual(int event, @Nullable Bundle bundle)
-                                throws Exception {
-
-                        }
-
-                        @Override
-                        public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
-                                throws Exception {
-
-                        }
-
-                        @Override
                         public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
                                 throws Exception {
                             ActionManager.runTasks(
                                     new ClearDNSCacheRouterAction(mRouter, DDWRTMainActivity.this,
                                             DDWRTMainActivity.this, mGlobalPreferences));
-                        }
-
-                        @Override
-                        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
                         }
                     }, null, true);
             return true;
@@ -1717,40 +1637,12 @@ public class DDWRTMainActivity extends AppCompatActivity
                     String.format("Web Server (httpd) will be %s on '%s' (%s)...", actionMessage,
                             mRouter.getDisplayName(), mRouter.getRemoteIpAddress()), "CANCEL",
                     Snackbar.LENGTH_SHORT, new SnackbarCallback() {
-                        @Override
-                        public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                                throws Exception {
-
-                        }
-
-                        @Override
-                        public void onDismissEventConsecutive(int event, @Nullable Bundle bundle)
-                                throws Exception {
-
-                        }
-
-                        @Override
-                        public void onDismissEventManual(int event, @Nullable Bundle bundle)
-                                throws Exception {
-
-                        }
-
-                        @Override
-                        public void onDismissEventSwipe(int event, @Nullable Bundle bundle)
-                                throws Exception {
-
-                        }
 
                         @Override
                         public void onDismissEventTimeout(int event, @Nullable Bundle bundle)
                                 throws Exception {
                             ActionManager.runTasks(new ManageHTTPdRouterAction(mRouter, DDWRTMainActivity.this,
                                     DDWRTMainActivity.this, mGlobalPreferences, action));
-                        }
-
-                        @Override
-                        public void onShowEvent(@Nullable Bundle bundle) throws Exception {
-
                         }
                     }, null, true);
             return true;
