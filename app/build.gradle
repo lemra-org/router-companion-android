@@ -477,7 +477,7 @@ dependencies {
 
     implementation 'com.github.mrgames13:SplashScreen:1.0.3'
 
-    implementation "com.afollestad:assent:${assentPermissionsVersion}"
+    implementation "com.karumi:dexter:${dexter_runtimePermissions_version}"
 }
 
 //play {

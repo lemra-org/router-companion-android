@@ -303,7 +303,7 @@ dependencies {
     }
     releaseImplementation 'com.readystatesoftware.chuck:library-no-op:1.1.0'
 
-    implementation "com.afollestad:assent:${assentPermissionsVersion}"
+    implementation "com.karumi:dexter:${dexter_runtimePermissions_version}"
 }
 
 //play {

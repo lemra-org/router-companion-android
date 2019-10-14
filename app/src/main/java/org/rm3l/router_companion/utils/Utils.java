@@ -612,10 +612,10 @@ public final class Utils {
 
     public static int getResId(String resourceName, Class<?> clazz) {
         try {
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, "XXX getResId(" + resourceName + ") : declaredFields for " + clazz + " : " +
-                        Arrays.toString(clazz.getDeclaredFields()));
-            }
+//            if (BuildConfig.DEBUG) {
+//                Log.d(TAG, "XXX getResId(" + resourceName + ") : declaredFields for " + clazz + " : " +
+//                        Arrays.toString(clazz.getDeclaredFields()));
+//            }
             final Field idField = clazz.getDeclaredField(resourceName);
             return idField.getInt(null);
         } catch (NoSuchFieldException e) {
