@@ -21,6 +21,8 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.Intent.CATEGORY_DEFAULT
 import android.net.Uri
 import android.provider.Settings
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.karumi.dexter.listener.single.PermissionListener
 
 class PermissionsUtils private constructor() {
 
@@ -43,7 +45,7 @@ class PermissionsUtils private constructor() {
 
         @JvmStatic
         fun requestAppPermissions(activity: Activity) {
-            requestPermission(
+            requestPermissions(
                 activity = activity,
                 permissions = REQUESTABLE_PERMISSIONS,
                 rationaleMessage = "Storage access is needed to reduce data usage and enable sharing.",
@@ -64,13 +66,11 @@ class PermissionsUtils private constructor() {
         }
 
         @JvmStatic
-        fun requestPermission(activity: Activity, permissions: Collection<String>, rationaleMessage: String,
+        fun requestPermissions(activity: Activity, permissions: Collection<String>, rationaleMessage: String,
                               snackbarActionText: String? = null,
                               @Snackbar.Duration snackbarDuration: Int = Snackbar.LENGTH_LONG,
                               snackbarCb : SnackbarCallback? = null) {
-            Dexter.withActivity(activity)
-                .withPermissions(permissions)
-                .withListener(object: BaseMultiplePermissionsListener() {
+            requestPermissions(activity, *permissions.toTypedArray(), listener=object: BaseMultiplePermissionsListener() {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         if (report?.areAllPermissionsGranted() == false) {
                             SnackbarUtils.buildSnackbar(activity, rationaleMessage,
@@ -82,6 +82,22 @@ class PermissionsUtils private constructor() {
                         }
                     }
                 })
+        }
+
+        @JvmStatic
+        fun requestPermissions(activity: Activity, vararg permissions: String, listener: MultiplePermissionsListener) {
+            Dexter.withActivity(activity)
+                .withPermissions(*permissions)
+                .withListener(listener)
+                .withErrorListener {error -> Crashlytics.log(Log.WARN, TAG, "Dexter reported an error: $error") }
+                .check()
+        }
+
+        @JvmStatic
+        fun requestPermission(activity: Activity, permission: String, listener: PermissionListener) {
+            Dexter.withActivity(activity)
+                .withPermission(permission)
+                .withListener(listener)
                 .withErrorListener {error -> Crashlytics.log(Log.WARN, TAG, "Dexter reported an error: $error") }
                 .check()
         }

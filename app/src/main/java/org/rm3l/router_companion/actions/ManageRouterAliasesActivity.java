@@ -66,8 +66,14 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.multi.BaseMultiplePermissionsListener;
+import com.karumi.dexter.listener.single.BasePermissionListener;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -87,6 +93,7 @@ import org.rm3l.router_companion.tiles.status.wireless.WirelessClientsTile;
 import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ImageUtils;
+import org.rm3l.router_companion.utils.PermissionsUtils;
 import org.rm3l.router_companion.utils.StorageUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
@@ -773,42 +780,6 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[],
-            int[] grantResults) {
-
-        switch (requestCode) {
-            case RouterCompanionAppConstants.Permissions.STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay!
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Yay! Permission granted for #" + requestCode);
-                    if (optionsMenu != null) {
-                        final MenuItem importMenuItem = optionsMenu.findItem(R.id.router_aliases_import);
-                        final MenuItem exportMenuItem = optionsMenu.findItem(R.id.router_aliases_export_all);
-                        importMenuItem.setEnabled(true);
-                        exportMenuItem.setEnabled(true);
-                    }
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Crashlytics.log(Log.WARN, LOG_TAG, "Boo! Permission denied for #" + requestCode);
-                    Utils.displayMessage(this, "Export/Import of local aliases will be unavailable",
-                            Style.INFO);
-                    if (optionsMenu != null) {
-                        final MenuItem importMenuItem = optionsMenu.findItem(R.id.router_aliases_import);
-                        final MenuItem exportMenuItem = optionsMenu.findItem(R.id.router_aliases_export_all);
-                        importMenuItem.setEnabled(false);
-                        exportMenuItem.setEnabled(false);
-                    }
-                }
-                return;
-            }
-            default:
-                break;
-        }
-    }
-
-    @Override
     public void onClick(View view) {
         if (view == null) {
             return;
@@ -830,38 +801,39 @@ public class ManageRouterAliasesActivity extends AppCompatActivity
 
         this.optionsMenu = menu;
 
-        //Permission requests
-        final int rwExternalStoragePermissionCheck =
-                PermissionChecker.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                SnackbarUtils.buildSnackbar(this,
-                        "Storage access is required to import / export local aliases.", "OK",
-                        Snackbar.LENGTH_INDEFINITE, new SnackbarCallback() {
-                            @Override
-                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-                                //Request permission
-                                ActivityCompat.requestPermissions(ManageRouterAliasesActivity.this,
-                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                        RouterCompanionAppConstants.Permissions.STORAGE);
-                            }
-                        }, null, true);
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        RouterCompanionAppConstants.Permissions.STORAGE);
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }
+        PermissionsUtils.requestPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                new BasePermissionListener() {
+
+                    @Override
+                    public void onPermissionGranted(final PermissionGrantedResponse response) {
+                        // permission was granted, yay!
+                        if (optionsMenu != null) {
+                            final MenuItem importMenuItem = optionsMenu.findItem(R.id.router_aliases_import);
+                            final MenuItem exportMenuItem = optionsMenu.findItem(R.id.router_aliases_export_all);
+                            importMenuItem.setEnabled(true);
+                            exportMenuItem.setEnabled(true);
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+                        // permission denied, boo! Disable the
+                        // functionality that depends on this permission.
+                        if (response.isPermanentlyDenied()) {
+                            //TODO Display Snackbar + Open Settings Button
+                        } else {
+                            Utils.displayMessage(ManageRouterAliasesActivity.this,
+                                    "Export/Import of local aliases will be unavailable",
+                                    Style.INFO);
+                        }
+                        if (optionsMenu != null) {
+                            final MenuItem importMenuItem = optionsMenu.findItem(R.id.router_aliases_import);
+                            final MenuItem exportMenuItem = optionsMenu.findItem(R.id.router_aliases_export_all);
+                            importMenuItem.setEnabled(false);
+                            exportMenuItem.setEnabled(false);
+                        }
+                    }
+                });
 
         //Search
         final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
