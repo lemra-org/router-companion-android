@@ -23,6 +23,8 @@ import android.net.Uri
 import android.provider.Settings
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
+import org.rm3l.router_companion.common.utils.ActivityUtils
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style
 
 class PermissionsUtils private constructor() {
 
@@ -52,15 +54,8 @@ class PermissionsUtils private constructor() {
                 snackbarActionText = "Settings",
                 snackbarDuration = Snackbar.LENGTH_INDEFINITE,
                 snackbarCb = object: SnackbarCallback {
-                    override fun onDismissEventActionClick(event: Int, bundle: Bundle?) {
-                        val myAppSettings = Intent(
-                            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                            Uri.parse("package:${activity.packageName}")
-                        )
-                        myAppSettings.addCategory(CATEGORY_DEFAULT)
-                        myAppSettings.flags = FLAG_ACTIVITY_NEW_TASK
-                        activity.startActivity(myAppSettings)
-                    }
+                    override fun onDismissEventActionClick(event: Int, bundle: Bundle?) =
+                        ActivityUtils.openApplicationSettings(activity)
                 }
             )
         }
@@ -100,6 +95,39 @@ class PermissionsUtils private constructor() {
                 .withListener(listener)
                 .withErrorListener {error -> Crashlytics.log(Log.WARN, TAG, "Dexter reported an error: $error") }
                 .check()
+        }
+
+        @JvmStatic
+        fun requestPermissions(activity: Activity, permissions: Collection<String>,
+                                        onPermissionGranted: ()->Unit,
+                                        onPermissionDeniedMessage: String? = null,
+                                        onPermissionPermantentlyDeniedMessage: String? = null,
+                                        onPermissionDenied: ()->Unit ) {
+            requestPermissions(activity, *permissions.toTypedArray(), listener=object: BaseMultiplePermissionsListener() {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    if (report?.areAllPermissionsGranted() == true) {
+                        onPermissionGranted()
+                    } else {
+                        if (report?.isAnyPermissionPermanentlyDenied == true) {
+                            SnackbarUtils.buildSnackbar(
+                                activity,
+                                onPermissionPermantentlyDeniedMessage,
+                                "Settings",
+                                Snackbar.LENGTH_LONG,
+                                object : SnackbarCallback {
+                                    override fun onDismissEventActionClick(event: Int, bundle: Bundle?) {
+                                        ActivityUtils.openApplicationSettings(activity)
+                                    }
+                                }, null, true
+                            )
+                        } else {
+                            Utils.displayMessage(activity, onPermissionDeniedMessage, Style.INFO)
+                        }
+                        onPermissionDenied()
+                    }
+                }
+            })
+
         }
     }
 }
