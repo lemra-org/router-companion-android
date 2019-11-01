@@ -368,7 +368,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
             this.openAddRouterForm()
         } else {
             if (!welcomeScreen!!.show(savedInstanceState)) {
-                //TODO Already shown => request permissions now
+                //Already shown => request permissions now
                 PermissionsUtils.requestAppPermissions(this)
             } //otherwise we wait for this to finish to request permissions
         }
