@@ -7,8 +7,11 @@ import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.UNINSTALL_SHORTCUT
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.app.Activity
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import androidx.core.content.ContextCompat
 import com.crashlytics.android.Crashlytics
 import com.google.android.material.snackbar.Snackbar
 import com.karumi.dexter.Dexter
@@ -145,5 +148,9 @@ class PermissionsUtils private constructor() {
             })
 
         }
+
+        @JvmStatic
+        fun isPermissionGranted(context: Context, permission: String) =
+            ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
     }
 }
