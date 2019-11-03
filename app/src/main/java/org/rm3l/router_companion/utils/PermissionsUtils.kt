@@ -93,6 +93,18 @@ class PermissionsUtils private constructor() {
         }
 
         @JvmStatic
+        fun requestPermissionWithNoCallback(activity: Activity,
+                                             permission: String,
+                                             onPermissionDeniedMessage: String? = null) =
+            requestPermissions(activity, listOf(permission), {Unit}, {Unit}, onPermissionDeniedMessage)
+
+        @JvmStatic
+        fun requestPermissionsWithNoCallback(activity: Activity,
+                               permissions: Collection<String>,
+                               onPermissionDeniedMessage: String? = null) =
+            requestPermissions(activity, permissions, {Unit}, {Unit}, onPermissionDeniedMessage)
+
+        @JvmStatic
         fun requestPermissions(activity: Activity,
                                permissions: Collection<String>,
                                onPermissionGranted: ()->Unit?,
