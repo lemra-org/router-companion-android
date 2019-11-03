@@ -1312,10 +1312,8 @@ public class SpeedTestActivity extends AppCompatActivity
             this.startActivity(settingsActivity);
             return true;
         } else if (itemId == R.id.router_speedtest_share){
-            //TODO Request permission here and share file
             PermissionsUtils.requestPermissions(this, Collections.singletonList(permission.WRITE_EXTERNAL_STORAGE),
                     () -> {
-                      //TODO Handle this here, once permissions are granted
                         final List<SpeedTestResult> speedTestResultsByRouter =
                                 mDao.getSpeedTestResultsByRouter(mOriginalRouter.getUuid());
                         mFileToShare = new File(getCacheDir(), Utils.getEscapedFileName(
