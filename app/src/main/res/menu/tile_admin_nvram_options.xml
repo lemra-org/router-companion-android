@@ -47,7 +47,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <item
         android:id="@+id/tile_admin_nvram_share"
-        android:actionProviderClass="android.widget.ShareActionProvider"
         android:icon="@drawable/ic_share_white_24dp"
         android:orderInCategory="4"
         android:title="@string/share"
