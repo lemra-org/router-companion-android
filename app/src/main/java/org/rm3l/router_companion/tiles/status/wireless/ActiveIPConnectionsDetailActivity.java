@@ -36,34 +36,27 @@ import static org.rm3l.router_companion.utils.Utils.getEscapedFileName;
 import static org.rm3l.router_companion.utils.Utils.nullOrEmptyTo;
 import static org.rm3l.router_companion.utils.Utils.truncateText;
 
-import android.Manifest;
+import android.Manifest.permission;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.app.ActivityCompat;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.app.LoaderManager.LoaderCallbacks;
 import androidx.loader.content.AsyncTaskLoader;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.loader.content.Loader;
-import androidx.core.content.PermissionChecker;
-import androidx.core.view.MenuItemCompat;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.ShareActionProvider;
 import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -140,12 +133,11 @@ import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.NetworkUtils;
+import org.rm3l.router_companion.utils.PermissionsUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.kotlin.JsonElementUtils;
 import org.rm3l.router_companion.utils.kotlin.ViewUtils;
-import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
-import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import org.rm3l.router_companion.utils.tuple.Pair;
 import org.rm3l.router_companion.widgets.RecyclerViewEmptySupport;
@@ -1339,8 +1331,6 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
     private String mRouterWanPublicIp;
 
-    private ShareActionProvider mShareActionProvider;
-
     private RecyclerView.Adapter mStatsAdapter;
 
     private RecyclerView.LayoutManager mStatsLayoutManager;
@@ -1549,76 +1539,10 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
-            @NonNull int[] grantResults) {
-
-        switch (requestCode) {
-            case RouterCompanionAppConstants.Permissions.STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay!
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Yay! Permission granted for #" + requestCode);
-                    if (optionsMenu != null) {
-                        final MenuItem menuItem =
-                                optionsMenu.findItem(R.id.tile_status_active_ip_connections_share);
-                        menuItem.setEnabled(true);
-                    }
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Crashlytics.log(Log.WARN, LOG_TAG, "Boo! Permission denied for #" + requestCode);
-                    Utils.displayMessage(this, "Sharing of IP Connections Data will be unavailable",
-                            Style.INFO);
-                    if (optionsMenu != null) {
-                        final MenuItem menuItem = optionsMenu.findItem(R.id.tile_status_active_ip_connections_share);
-                        menuItem.setEnabled(false);
-                    }
-                }
-                return;
-            }
-            default:
-                break;
-        }
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.tile_status_active_ip_connections_options, menu);
 
         this.optionsMenu = menu;
-
-        //Permission requests
-        final int rwExternalStoragePermissionCheck =
-                PermissionChecker.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                SnackbarUtils.buildSnackbar(this,
-                        "Storage access is required to share data about active IP connections.", "OK",
-                        Snackbar.LENGTH_INDEFINITE, new SnackbarCallback() {
-                            @Override
-                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-                                //Request permission
-                                ActivityCompat.requestPermissions(ActiveIPConnectionsDetailActivity.this,
-                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                        RouterCompanionAppConstants.Permissions.STORAGE);
-                            }
-                        }, null, true);
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        RouterCompanionAppConstants.Permissions.STORAGE);
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }
 
         //Search
         final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -1632,59 +1556,12 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         final ImageView closeButton = searchView.findViewById(R.id.search_close_btn);
         if (closeButton != null) {
             // Set on click listener
-            closeButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Reset views
-                    //Hide it now
-                    searchView.setIconified(true);
-                }
+            closeButton.setOnClickListener(v -> {
+                //Reset views
+                //Hide it now
+                searchView.setIconified(true);
             });
         }
-
-        final MenuItem shareMenuItem = menu.findItem(R.id.tile_status_active_ip_connections_share);
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareMenuItem);
-        if (mShareActionProvider == null) {
-            mShareActionProvider = new ShareActionProvider(this);
-            MenuItemCompat.setActionProvider(shareMenuItem, mShareActionProvider);
-        }
-
-        if (PermissionChecker.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED) {
-
-            mFileToShare = new File(getCacheDir(), getEscapedFileName(
-                    String.format("%s on Router %s on %s", mTitle, nullToEmpty(mRouterRemoteIp),
-                            mObservationDate)) + ".txt");
-
-            Exception exception = null;
-            OutputStream outputStream = null;
-            try {
-                outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));
-                //noinspection ConstantConditions
-                outputStream.write(mActiveIPConnectionsMultiLine.getBytes());
-            } catch (IOException e) {
-                exception = e;
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (outputStream != null) {
-                        outputStream.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (exception != null) {
-                Utils.displayMessage(this,
-                        "Error while trying to share Active IP Connections - please try again later",
-                        Style.ALERT);
-                return true;
-            }
-
-            setShareFile(mFileToShare);
-        }
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -1697,7 +1574,65 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         } else if (i == R.id.action_feedback) {
             Utils.openFeedbackForm(this, mRouterUuid);
             return true;
-        } else {
+        } else if (i == R.id.tile_status_active_ip_connections_share) {
+            PermissionsUtils.requestPermissions(this, Collections.singletonList(permission.WRITE_EXTERNAL_STORAGE),
+                    () -> {
+                        mFileToShare = new File(getCacheDir(), getEscapedFileName(
+                                String.format("%s on Router %s on %s", mTitle, nullToEmpty(mRouterRemoteIp),
+                                        mObservationDate)) + ".txt");
+
+                        Exception exception = null;
+                        OutputStream outputStream = null;
+                        try {
+                            outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));
+                            //noinspection ConstantConditions
+                            outputStream.write(mActiveIPConnectionsMultiLine.getBytes());
+                        } catch (IOException e) {
+                            exception = e;
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                if (outputStream != null) {
+                                    outputStream.close();
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        if (exception != null) {
+                            Utils.displayMessage(this,
+                                    "Error while trying to share Active IP Connections - please try again later",
+                                    Style.ALERT);
+                            return null;
+                        }
+
+                        final Uri uriForFile =
+                                FileProvider.getUriForFile(this, RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY, mFileToShare);
+
+                        final Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+                        sendIntent.putExtra(Intent.EXTRA_SUBJECT,
+                                "Active IP Connections on Router '" + mRouterRemoteIp + "' on " + mObservationDate);
+                        String body = "";
+                        if (!isNullOrEmpty(mConnectedHost)) {
+                            body = (mTitle + " on " + mObservationDate);
+                        }
+                        body += Utils.getShareIntentFooter();
+
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, fromHtml(body.replaceAll("\n", "<br/>")));
+
+                        sendIntent.setDataAndType(uriForFile, "text/html");
+                        //        sendIntent.setType("text/plain");
+                        sendIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to)));
+
+                        return null;
+                    },
+                    () -> null,
+                    "Storage access is required to share data about active IP connections");
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -1712,51 +1647,6 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                 return;
             }
             adapter.getFilter().filter(query);
-        }
-    }
-
-    private void setShareFile(File file) {
-        if (mShareActionProvider == null) {
-            return;
-        }
-
-        final Uri uriForFile =
-                FileProvider.getUriForFile(this, RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY, file);
-
-        mShareActionProvider.setOnShareTargetSelectedListener(
-                new ShareActionProvider.OnShareTargetSelectedListener() {
-                    @Override
-                    public boolean onShareTargetSelected(ShareActionProvider source, Intent intent) {
-                        grantUriPermission(intent.getComponent().getPackageName(), uriForFile,
-                                Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        return true;
-                    }
-                });
-
-        final Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
-        sendIntent.setType("text/html");
-        sendIntent.putExtra(Intent.EXTRA_SUBJECT,
-                "Active IP Connections on Router '" + mRouterRemoteIp + "' on " + mObservationDate);
-        String body = "";
-        if (!isNullOrEmpty(mConnectedHost)) {
-            body = (mTitle + " on " + mObservationDate);
-        }
-        body += Utils.getShareIntentFooter();
-
-        sendIntent.putExtra(Intent.EXTRA_TEXT, fromHtml(body.replaceAll("\n", "<br/>")));
-
-        sendIntent.setData(uriForFile);
-        //        sendIntent.setType("text/plain");
-        sendIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        setShareIntent(sendIntent);
-    }
-
-    // Call to update the share intent
-    private void setShareIntent(Intent shareIntent) {
-        if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(shareIntent);
         }
     }
 
