@@ -977,43 +977,6 @@ public final class Utils {
         ReportingUtils.reportException(context, error);
     }
 
-    public static void requestAppPermissions(@NonNull final Activity activity) {
-        //Permission requests
-
-        // WRITE_EXTERNAL_STORAGE (includes READ_EXTERNAL_STORAGE)
-        final int rwExternalStoragePermissionCheck =
-                PermissionChecker.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                SnackbarUtils.buildSnackbar(activity,
-                        "Storage access is needed to reduce data usage and enable sharing.", "OK",
-                        Snackbar.LENGTH_INDEFINITE, new SnackbarCallback() {
-                            @Override
-                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-                                //Request permission
-                                ActivityCompat.requestPermissions(activity,
-                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                        RouterCompanionAppConstants.Permissions.STORAGE);
-                            }
-                        }, null, true);
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(activity,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        RouterCompanionAppConstants.Permissions.STORAGE);
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }
-    }
-
     public static void requestBackup(@Nullable final Context ctx) {
         if (ctx == null) {
             return;
