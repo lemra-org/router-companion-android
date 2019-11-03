@@ -368,8 +368,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
             this.openAddRouterForm()
         } else {
             if (!welcomeScreen!!.show(savedInstanceState)) {
-                //Already shown => request permissions now
-                PermissionsUtils.requestAppPermissions(this)
+                Crashlytics.log(Log.DEBUG, LOG_TAG, "Welcome screen already shown")
             } //otherwise we wait for this to finish to request permissions
         }
     }
@@ -471,7 +470,6 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                         ).show()
                     }
                 }
-                PermissionsUtils.requestAppPermissions(this)
                 initOpenAddRouterFormIfNecessary()
             }
             else -> Crashlytics.log(Log.WARN, LOG_TAG, "Unhandled activity result: $resultCode")
