@@ -7,7 +7,6 @@ import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.UNINSTALL_SHORTCUT
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.crashlytics.android.Crashlytics
@@ -17,10 +16,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.listener.multi.BaseMultiplePermissionsListener
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import android.content.Intent.CATEGORY_DEFAULT
-import android.net.Uri
-import android.provider.Settings
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
 import org.rm3l.router_companion.common.utils.ActivityUtils
@@ -98,11 +93,20 @@ class PermissionsUtils private constructor() {
         }
 
         @JvmStatic
+        fun requestPermissions(activity: Activity,
+                               permissions: Collection<String>,
+                               onPermissionGranted: ()->Unit?,
+                               onPermissionDenied: ()->Unit?,
+                               onPermissionDeniedMessage: String? = null) =
+            requestPermissions(activity, permissions, onPermissionGranted,
+                onPermissionDeniedMessage, onPermissionDeniedMessage, onPermissionDenied)
+
+        @JvmStatic
         fun requestPermissions(activity: Activity, permissions: Collection<String>,
-                                        onPermissionGranted: ()->Unit,
+                                        onPermissionGranted: ()->Unit?,
                                         onPermissionDeniedMessage: String? = null,
                                         onPermissionPermantentlyDeniedMessage: String? = null,
-                                        onPermissionDenied: ()->Unit ) {
+                                        onPermissionDenied: ()->Unit? ) {
             requestPermissions(activity, *permissions.toTypedArray(), listener=object: BaseMultiplePermissionsListener() {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     if (report?.areAllPermissionsGranted() == true) {

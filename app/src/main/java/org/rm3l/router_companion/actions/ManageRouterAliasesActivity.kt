@@ -838,9 +838,8 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                     importAliases.show(supportFragmentManager, IMPORT_ALIASES_FRAGMENT_TAG)
                     Unit
                 },
-                "Storage access required!",
-                "Storage access required!",
-                { Unit }
+                { Unit },
+                "Storage access required to perform this action!"
             )
             return true
         } else if (itemId == R.id.router_aliases_export_all) {
