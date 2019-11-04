@@ -5,7 +5,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.net.DhcpInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
@@ -24,11 +23,9 @@ import android.view.ViewParent;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.gson.Gson;
 import java.util.ArrayList;
@@ -42,6 +39,7 @@ import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.router_companion.mgmt.register.resources.RouterWizardAction;
 import org.rm3l.router_companion.resources.conn.Router;
+import org.rm3l.router_companion.utils.NetworkUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.ViewGroupUtils;
 import org.rm3l.router_companion.widgets.wizard.MaterialWizard;
@@ -134,24 +132,21 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
                             android.R.drawable.ic_menu_close_clear_cancel, 0);
 
                     localSsidView.setText(obj.toString());
-                    localSsidView.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View v, MotionEvent event) {
-                            final int DRAWABLE_RIGHT = 2;
+                    localSsidView.setOnTouchListener((v1, event) -> {
+                        final int DRAWABLE_RIGHT = 2;
 
-                            if (event.getAction() == MotionEvent.ACTION_UP) {
-                                if (event.getRawX() >= (localSsidView.getRight()
-                                        - localSsidView.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        if (event.getAction() == MotionEvent.ACTION_UP) {
+                            if (event.getRawX() >= (localSsidView.getRight()
+                                    - localSsidView.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
 
-                                    //Remove view from container layout
-                                    final ViewParent parent = localSsidView.getParent();
-                                    if (parent instanceof LinearLayout) {
-                                        ((LinearLayout) parent).removeView(localSsidView);
-                                    }
+                                //Remove view from container layout
+                                final ViewParent parent = localSsidView.getParent();
+                                if (parent instanceof LinearLayout) {
+                                    ((LinearLayout) parent).removeView(localSsidView);
                                 }
                             }
-                            return true;
                         }
+                        return true;
                     });
 
                     localSSIDLookupDetailedView.addView(localSsidView);
@@ -163,12 +158,8 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
             }
         }
 
-        useLocalSSIDLookupCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                fallBackToPrimaryCb.setChecked(!isChecked);
-            }
-        });
+        useLocalSSIDLookupCb.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> fallBackToPrimaryCb.setChecked(!isChecked));
 
         useLocalSSIDLookupCb.setChecked(useLocalSSIDLookup);
 
@@ -189,59 +180,47 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
                         inflater.inflate(R.layout.activity_router_add_local_ssid_lookup, null);
 
                 final WifiManager wifiManager =
-                        (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                final TextInputLayout ssidTil = (TextInputLayout) addLocalSsidLookupDialogView.findViewById(
+                        getActivity() == null ?
+                                null :
+                                (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                final TextInputLayout ssidTil = addLocalSsidLookupDialogView.findViewById(
                         R.id.router_add_local_ssid_lookup_ssid_til);
                 final AutoCompleteTextView ssidAutoCompleteView =
-                        (AutoCompleteTextView) addLocalSsidLookupDialogView.findViewById(
+                        addLocalSsidLookupDialogView.findViewById(
                                 R.id.router_add_local_ssid_lookup_ssid);
-
-                try {
-                    if (wifiManager != null) {
-                        final List<ScanResult> results = wifiManager.getScanResults();
-                        ssidAutoCompleteView.setAdapter(
-                                new ArrayAdapter<>(activity, android.R.layout.simple_list_item_1,
-                                        FluentIterable.from(results).transform(new Function<ScanResult, String>() {
-                                            @Override
-                                            public String apply(@Nullable ScanResult input) {
-                                                if (input == null) {
-                                                    return null;
-                                                }
-                                                return input.SSID;
-                                            }
-                                        }).toArray(String.class)));
-                    }
-                    //Fill with current network SSID
-                    String wifiName = Utils.getWifiName(activity);
-                    if (wifiName != null && wifiName.startsWith("\"") && wifiName.endsWith("\"")) {
-                        wifiName = wifiName.substring(1, wifiName.length() - 1);
-                    }
-                    ssidAutoCompleteView.setText(wifiName, EDITABLE);
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                    //No worries
-                }
-
-                final TextInputLayout ipTil = (TextInputLayout) addLocalSsidLookupDialogView.findViewById(
+                final TextInputLayout ipTil = addLocalSsidLookupDialogView.findViewById(
                         R.id.router_add_local_ssid_lookup_ip_til);
-                final EditText ipEditText = (EditText) addLocalSsidLookupDialogView.findViewById(
+                final EditText ipEditText = addLocalSsidLookupDialogView.findViewById(
                         R.id.router_add_local_ssid_lookup_ip);
-                //Fill with network gateway IP
-                try {
+
+                NetworkUtils.getWifiName(activity, wifiName -> {
                     if (wifiManager != null) {
+                        //Fill with network gateway IP
                         final DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
                         if (dhcpInfo != null) {
                             ipEditText.setText(Utils.decimalToIp4(dhcpInfo.gateway), EDITABLE);
                         }
-                    }
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                    //No worries
-                }
 
-                final TextInputLayout portTil = (TextInputLayout) addLocalSsidLookupDialogView.findViewById(
+                        final List<ScanResult> results = wifiManager.getScanResults();
+                        ssidAutoCompleteView.setAdapter(
+                                new ArrayAdapter<>(activity, android.R.layout.simple_list_item_1,
+                                        FluentIterable.from(results).transform(input -> {
+                                            if (input == null) {
+                                                return null;
+                                            }
+                                            return input.SSID;
+                                        }).toArray(String.class)));
+                    }
+                    if (wifiName != null && wifiName.startsWith("\"") && wifiName.endsWith("\"")) {
+                        wifiName = wifiName.substring(1, wifiName.length() - 1);
+                    }
+                    ssidAutoCompleteView.setText(wifiName, EDITABLE);
+                    return null;
+                });
+
+                final TextInputLayout portTil = addLocalSsidLookupDialogView.findViewById(
                         R.id.router_add_local_ssid_lookup_port_til);
-                final EditText portEditText = (EditText) addLocalSsidLookupDialogView.findViewById(
+                final EditText portEditText = addLocalSsidLookupDialogView.findViewById(
                         R.id.router_add_local_ssid_lookup_port);
                 portEditText.setText(port, EDITABLE);
 
@@ -253,19 +232,13 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
                                                 + "This would speed up router data retrieval from the app when at home.")
                                 .setView(addLocalSsidLookupDialogView)
                                 .setCancelable(true)
-                                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        //Do nothing here because we override this button later to change the close behaviour.
-                                        //However, we still need this because on older versions of Android unless we
-                                        //pass a handler the button doesn't get instantiated
-                                    }
+                                .setPositiveButton("Add", (dialog, which) -> {
+                                    //Do nothing here because we override this button later to change the close behaviour.
+                                    //However, we still need this because on older versions of Android unless we
+                                    //pass a handler the button doesn't get instantiated
                                 })
-                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        //Cancelled - nothing more to do!
-                                    }
+                                .setNegativeButton("Cancel", (dialog, which) -> {
+                                    //Cancelled - nothing more to do!
                                 })
                                 .create();
 

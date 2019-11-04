@@ -9,16 +9,28 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.SERVICE_NAME
 import static org.rm3l.router_companion.RouterCompanionAppConstants.SERVICE_NAMES_PORT_NUMBERS_API_SERVER_PASSWORD_AUTH_TOKEN_ENCODED;
 import static org.rm3l.router_companion.feedback.maoni.MaoniFeedbackHandler.FEEDBACK_API_BASE_URL;
 
+import android.Manifest;
+import android.Manifest.permission;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.util.Base64;
 import android.util.Log;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.PermissionChecker;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
+import com.google.android.material.snackbar.Snackbar;
 import com.readystatesoftware.chuck.ChuckInterceptor;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -26,6 +38,7 @@ import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
+import org.rm3l.router_companion.RouterCompanionAppConstants.Permissions;
 import org.rm3l.router_companion.RouterCompanionApplication;
 import org.rm3l.router_companion.api.feedback.DoorbellService;
 import org.rm3l.router_companion.api.iana.ServiceNamePortNumbersService;
@@ -33,7 +46,10 @@ import org.rm3l.router_companion.api.proxy.ProxyService;
 import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.FirebaseDynamicLinksService;
 import org.rm3l.router_companion.api.urlshortener.is_gd.IsGdService;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
+import org.rm3l.router_companion.utils.Utils.OperationCallback;
 import org.rm3l.router_companion.utils.retrofit.RetryCallAdapterFactory;
+import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -162,6 +178,61 @@ public final class NetworkUtils {
     }
 
     private NetworkUtils() {
+    }
+
+    public static void getWifiName(@Nullable Activity currentActivity, @NonNull OperationCallback<String, Void> callback) {
+        if (currentActivity == null) {
+            callback.run(null);
+            return;
+        }
+
+        PermissionsUtils.requestPermissions(currentActivity, Collections.singletonList(permission.ACCESS_COARSE_LOCATION),
+                () -> {
+                    final ConnectivityManager connectivityManager =
+                            (ConnectivityManager) currentActivity.getApplicationContext()
+                                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+                    if (connectivityManager == null) {
+                        callback.run(null);
+                        return null;
+                    }
+
+                    final NetworkInfo myNetworkInfo = connectivityManager.getActiveNetworkInfo();
+                    if (myNetworkInfo == null || myNetworkInfo.getType() != ConnectivityManager.TYPE_WIFI) {
+                        callback.run(null);
+                        return null;
+                    }
+
+                    //        final NetworkInfo myNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                    if (!myNetworkInfo.isConnected()) {
+                        callback.run(null);
+                        return null;
+                    }
+
+                    final WifiManager wifiManager = (WifiManager) currentActivity.getApplicationContext()
+                            .getSystemService(Context.WIFI_SERVICE);
+                    if (wifiManager == null) {
+                        callback.run(null);
+                        return null;
+                    }
+                    final WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                    if (wifiInfo == null) {
+                        callback.run(null);
+                        return null;
+                    }
+                    String ssid = wifiInfo.getSSID();
+                    if (ssid == null || "<unknown ssid>".equals(ssid)) {
+                        //Try using extra-info
+                        final String extraInfo = myNetworkInfo.getExtraInfo();
+                        final int length;
+                        if (extraInfo != null && (length = extraInfo.length()) >= 2) {
+                            ssid = extraInfo.substring(1, length -1);
+                        }
+                    }
+                    callback.run(ssid);
+                    return null;
+                },
+                () -> null,
+                "Approximate Location Permission is required to read your WiFi Network name.");
     }
 
     public static class AuthenticationInterceptor implements Interceptor {
