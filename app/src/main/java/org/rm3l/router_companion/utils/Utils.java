@@ -102,6 +102,7 @@ import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -612,10 +613,10 @@ public final class Utils {
 
     public static int getResId(String resourceName, Class<?> clazz) {
         try {
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, "XXX getResId(" + resourceName + ") : declaredFields for " + clazz + " : " +
-                        Arrays.toString(clazz.getDeclaredFields()));
-            }
+//            if (BuildConfig.DEBUG) {
+//                Log.d(TAG, "XXX getResId(" + resourceName + ") : declaredFields for " + clazz + " : " +
+//                        Arrays.toString(clazz.getDeclaredFields()));
+//            }
             final Field idField = clazz.getDeclaredField(resourceName);
             return idField.getInt(null);
         } catch (NoSuchFieldException e) {
@@ -660,38 +661,16 @@ public final class Utils {
         }
         final Activity currentActivity = RouterCompanionApplication.getCurrentActivity();
 
-        //TODO Need to explicitly request permission to user "ACCESS_COARSE_LOCATION"
-        if (currentActivity != null &&
-                PermissionChecker.checkSelfPermission(context, permission.ACCESS_COARSE_LOCATION)
-                        != PermissionChecker.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(currentActivity,
-                    permission.ACCESS_COARSE_LOCATION)) {
-                SnackbarUtils.buildSnackbar(currentActivity,
-                        "Approximate Location Permission is required to read your WiFi Network name.",
-                        "OK", Snackbar.LENGTH_INDEFINITE,
-                        new SnackbarCallback() {
-                            @Override
-                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-                                //Request permission
-                                ActivityCompat.requestPermissions(currentActivity,
-                                        new String[]{permission.ACCESS_COARSE_LOCATION},
-                                        Permissions.ACCESS_COARSE_LOCATION);
-                            }
-                        }, null, true);
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(currentActivity,
-                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        Permissions.ACCESS_COARSE_LOCATION);
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
+        if (currentActivity == null) {
+            return "<unknown ssid>";
+        }
+
+        if (!PermissionsUtils.isPermissionGranted(context, permission.ACCESS_COARSE_LOCATION)) {
+            return "<unknown ssid>";
         }
 
         final ConnectivityManager connectivityManager =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager) currentActivity.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager == null) {
             return null;
         }
@@ -706,7 +685,7 @@ public final class Utils {
             return null;
         }
 
-        final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        final WifiManager wifiManager = (WifiManager) currentActivity.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if (wifiManager == null) {
             return null;
         }
@@ -727,7 +706,7 @@ public final class Utils {
     }
 
     @Nullable
-    public static String guessAppropriateEncoding(@NonNull final CharSequence contents) {
+    static String guessAppropriateEncoding(@NonNull final CharSequence contents) {
         // Very crude at the moment
         for (int i = 0; i < contents.length(); i++) {
             if (contents.charAt(i) > 0xFF) {
@@ -977,43 +956,6 @@ public final class Utils {
         ReportingUtils.reportException(context, error);
     }
 
-    public static void requestAppPermissions(@NonNull final Activity activity) {
-        //Permission requests
-
-        // WRITE_EXTERNAL_STORAGE (includes READ_EXTERNAL_STORAGE)
-        final int rwExternalStoragePermissionCheck =
-                PermissionChecker.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                SnackbarUtils.buildSnackbar(activity,
-                        "Storage access is needed to reduce data usage and enable sharing.", "OK",
-                        Snackbar.LENGTH_INDEFINITE, new SnackbarCallback() {
-                            @Override
-                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-                                //Request permission
-                                ActivityCompat.requestPermissions(activity,
-                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                        RouterCompanionAppConstants.Permissions.STORAGE);
-                            }
-                        }, null, true);
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(activity,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        RouterCompanionAppConstants.Permissions.STORAGE);
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }
-    }
-
     public static void requestBackup(@Nullable final Context ctx) {
         if (ctx == null) {
             return;
@@ -1124,5 +1066,10 @@ public final class Utils {
         if (ipPart < 0 || ipPart > 255) {
             throw new IllegalArgumentException("Invalid IPv4 part");
         }
+    }
+
+    @FunctionalInterface
+    public interface OperationCallback<INPUT_TYPE, OUTPUT_TYPE> {
+        OUTPUT_TYPE run(INPUT_TYPE result);
     }
 }

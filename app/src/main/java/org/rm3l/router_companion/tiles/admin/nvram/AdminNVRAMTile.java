@@ -26,27 +26,23 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING;
 import static org.rm3l.router_companion.utils.Utils.fromHtml;
 
-import android.Manifest;
+import android.Manifest.permission;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.loader.content.AsyncTaskLoader;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.loader.content.Loader;
-import androidx.core.content.PermissionChecker;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -62,7 +58,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
-import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
@@ -76,6 +71,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -92,54 +88,47 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.status.router.StatusRouterSpaceUsageTile;
 import org.rm3l.router_companion.utils.ColorUtils;
+import org.rm3l.router_companion.utils.PermissionsUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 import org.rm3l.router_companion.utils.Utils;
-import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
-import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style;
 import org.rm3l.router_companion.widgets.RecyclerViewEmptySupport;
 
 public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuItemClickListener {
 
-    public static final String NVRAM_SIZE = AdminNVRAMTile.class.getSimpleName() + "::nvram_size";
+    static final String NVRAM_SIZE = AdminNVRAMTile.class.getSimpleName() + "::nvram_size";
 
-    public static final Comparator<Object> COMPARATOR_STRING_CASE_INSENSITIVE =
-            new Comparator<Object>() {
-                @Override
-                public int compare(Object o1, Object o2) {
-                    if (o1 == o2) {
-                        return 0;
-                    }
-                    if (o1 == null) {
-                        return -1;
-                    }
-                    if (o2 == null) {
-                        return 1;
-                    }
-                    return o1.toString().compareToIgnoreCase(o2.toString());
+    private static final Comparator<Object> COMPARATOR_STRING_CASE_INSENSITIVE =
+            (o1, o2) -> {
+                if (o1 == o2) {
+                    return 0;
                 }
+                if (o1 == null) {
+                    return -1;
+                }
+                if (o2 == null) {
+                    return 1;
+                }
+                return o1.toString().compareToIgnoreCase(o2.toString());
             };
 
-    public static final Comparator<Object> COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE =
-            new Comparator<Object>() {
-                @Override
-                public int compare(Object o1, Object o2) {
-                    if (o1 == o2) {
-                        return 0;
-                    }
-                    if (o1 == null) {
-                        return 1;
-                    }
-                    if (o2 == null) {
-                        return -1;
-                    }
-                    return o2.toString().compareToIgnoreCase(o1.toString());
+    private static final Comparator<Object> COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE =
+            (o1, o2) -> {
+                if (o1 == o2) {
+                    return 0;
                 }
+                if (o1 == null) {
+                    return 1;
+                }
+                if (o2 == null) {
+                    return -1;
+                }
+                return o2.toString().compareToIgnoreCase(o1.toString());
             };
 
     public static final String SORT = "sort";
 
-    public static final Joiner.MapJoiner PROPERTIES_JOINER_TO_FILE =
+    private static final Joiner.MapJoiner PROPERTIES_JOINER_TO_FILE =
             Joiner.on('\n').withKeyValueSeparator("=");
 
     private static final String LOG_TAG = AdminNVRAMTile.class.getSimpleName();
@@ -160,8 +149,6 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
     private final RecyclerViewEmptySupport mRecyclerView;
 
-    private ShareActionProvider mShareActionProvider;
-
     private final BiMap<Integer, Integer> sortIds = HashBiMap.create();
 
     public AdminNVRAMTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
@@ -173,7 +160,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         sortIds.put(R.id.tile_admin_nvram_sort_desc, 13);
 
         this.mNvramInfoDefaultSorting = new NVRAMInfo();
-        mRecyclerView = (RecyclerViewEmptySupport) layout.findViewById(R.id.tile_admin_nvram_ListView);
+        mRecyclerView = layout.findViewById(R.id.tile_admin_nvram_ListView);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -254,13 +241,6 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                 if (currentSortMenuItem != null) {
                     currentSortMenuItem.setEnabled(false);
                 }
-
-                // Locate MenuItem with ShareActionProvider
-                final MenuItem shareMenuItem = menu.findItem(R.id.tile_admin_nvram_share);
-
-                // Fetch and store ShareActionProvider
-                mShareActionProvider = (ShareActionProvider) shareMenuItem.getActionProvider();
-
                 popup.show();
             }
         });
@@ -424,40 +404,6 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                 return false;
             }
         });
-
-        //Permission requests
-        final int rwExternalStoragePermissionCheck =
-                PermissionChecker.checkSelfPermission(mParentFragmentActivity,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(mParentFragmentActivity,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                // Show an expanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                SnackbarUtils.buildSnackbar(mParentFragmentActivity,
-                        "Storage access permission is needed, so you can easily share NVRAM data. ", "OK",
-                        Snackbar.LENGTH_INDEFINITE, new SnackbarCallback() {
-                            @Override
-                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-                                //Request permission
-                                ActivityCompat.requestPermissions(mParentFragmentActivity,
-                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                        RouterCompanionAppConstants.Permissions.STORAGE);
-                            }
-                        }, null, true);
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(mParentFragmentActivity,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        RouterCompanionAppConstants.Permissions.STORAGE);
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }
     }
 
     public boolean canChildScrollUp() {
@@ -632,7 +578,6 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                 editor.apply();
             }
 
-        } else {
         }
 
         if (itemId != R.id.tile_admin_nvram_share) {
@@ -692,50 +637,62 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
             }
         } else {
 
-            if (PermissionChecker.checkSelfPermission(mParentFragmentActivity,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                Utils.displayMessage(mParentFragmentActivity,
-                        "This feature requires permission to write to devices storage!", Style.ALERT);
-                return true;
-            }
+            PermissionsUtils.requestPermissions(mParentFragmentActivity, Collections.singletonList(permission.WRITE_EXTERNAL_STORAGE),
+                    () -> {
+                        //Share action
+                        final Map<Object, Object> nvramInfo =
+                                ((NVRAMDataRecyclerViewAdapter) mAdapter).getNvramInfo();
+                        if (nvramInfo == null || nvramInfo.isEmpty()) {
+                            Utils.displayMessage(mParentFragmentActivity, "Nothing to share!", Style.ALERT);
+                            return null;
+                        }
 
-            //Share action
-            final Map<Object, Object> nvramInfo =
-                    ((NVRAMDataRecyclerViewAdapter) mAdapter).getNvramInfo();
-            if (nvramInfo == null || nvramInfo.isEmpty()) {
-                Utils.displayMessage(mParentFragmentActivity, "Nothing to share!", Style.ALERT);
-                return true;
-            }
+                        Exception exception = null;
+                        File file = new File(mParentFragmentActivity.getCacheDir(), Utils.getEscapedFileName(
+                                String.format("nvram_data_%s_%s_%s", mRouter.getUuid(), mRouter.getName(),
+                                        mRouter.getRemoteIpAddress())) + ".txt");
+                        OutputStream outputStream = null;
+                        try {
+                            outputStream = new BufferedOutputStream(new FileOutputStream(file, false));
+                            outputStream.write(PROPERTIES_JOINER_TO_FILE.join(nvramInfo).getBytes());
+                        } catch (IOException e) {
+                            exception = e;
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                if (outputStream != null) {
+                                    outputStream.close();
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
 
-            Exception exception = null;
-            File file = new File(mParentFragmentActivity.getCacheDir(), Utils.getEscapedFileName(
-                    String.format("nvram_data_%s_%s_%s", mRouter.getUuid(), mRouter.getName(),
-                            mRouter.getRemoteIpAddress())) + ".txt");
-            OutputStream outputStream = null;
-            try {
-                outputStream = new BufferedOutputStream(new FileOutputStream(file, false));
-                outputStream.write(PROPERTIES_JOINER_TO_FILE.join(nvramInfo).getBytes());
-            } catch (IOException e) {
-                exception = e;
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (outputStream != null) {
-                        outputStream.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+                        if (exception != null) {
+                            Utils.displayMessage(mParentFragmentActivity,
+                                    "Error while trying to share file - please try again later", Style.ALERT);
+                            return null;
+                        }
 
-            if (exception != null) {
-                Utils.displayMessage(mParentFragmentActivity,
-                        "Error while trying to share file - please try again later", Style.ALERT);
-                return true;
-            }
+                        final Uri uriForFile = FileProvider.getUriForFile(mParentFragmentActivity,
+                                RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY, file);
 
-            setShareFile(file);
+                        final Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, String.format("NVRAM Variables from Router '%s'",
+                                mRouter.getCanonicalHumanReadableName()));
 
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, fromHtml(Utils.getShareIntentFooter()));
+
+                        sendIntent.setDataAndType(uriForFile, "text/html");
+                        sendIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        mParentFragmentActivity.startActivity(Intent.createChooser(sendIntent,
+                                mParentFragmentActivity.getResources().getText(R.string.send_to)));
+                        return null;
+                    },
+                    () -> null,
+                    "Storage access permission is needed, so you can easily share NVRAM data");
             return true;
         }
 
@@ -851,47 +808,5 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
     @Override
     protected OnClickIntent getOnclickIntent() {
         return null;
-    }
-
-    private void setShareFile(File file) {
-        if (mShareActionProvider == null) {
-            return;
-        }
-
-        final Uri uriForFile = FileProvider.getUriForFile(mParentFragmentActivity,
-                RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY, file);
-
-        mShareActionProvider.setOnShareTargetSelectedListener(
-                new ShareActionProvider.OnShareTargetSelectedListener() {
-                    @Override
-                    public boolean onShareTargetSelected(ShareActionProvider source, Intent intent) {
-                        mParentFragmentActivity.grantUriPermission(intent.getComponent().getPackageName(),
-                                uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        return true;
-                    }
-                });
-
-        final Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.setType("text/html");
-        sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
-        if (mRouter != null) {
-            sendIntent.putExtra(Intent.EXTRA_SUBJECT, String.format("NVRAM Variables from Router '%s'",
-                    mRouter.getCanonicalHumanReadableName()));
-        }
-
-        sendIntent.putExtra(Intent.EXTRA_TEXT, fromHtml(Utils.getShareIntentFooter()));
-
-        sendIntent.setData(uriForFile);
-        //        sendIntent.setType("text/plain");
-        sendIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        setShareIntent(sendIntent);
-    }
-
-    // Call to update the share intent
-    private void setShareIntent(Intent shareIntent) {
-        if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(shareIntent);
-        }
     }
 }

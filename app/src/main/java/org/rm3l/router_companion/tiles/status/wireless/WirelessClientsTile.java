@@ -909,180 +909,152 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
             //Set menu background to white
             tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
         }
-        tileMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
-                popup.setOnMenuItemClickListener(WirelessClientsTile.this);
-                final MenuInflater inflater = popup.getMenuInflater();
-                final Menu menu = popup.getMenu();
-                inflater.inflate(R.menu.tile_status_wireless_clients_options, menu);
+        tileMenu.setOnClickListener(v -> {
+            final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
+            popup.setOnMenuItemClickListener(WirelessClientsTile.this);
+            final MenuInflater inflater = popup.getMenuInflater();
+            final Menu menu = popup.getMenu();
+            inflater.inflate(R.menu.tile_status_wireless_clients_options, menu);
 
-                //Disable menu item from preference
-                if (mParentFragmentPreferences != null) {
-                    if (mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS),
-                            false)) {
-                        menu.findItem(R.id.tile_status_wireless_clients_hide_inactive_hosts).setChecked(true);
-                    }
-                    if (mParentFragmentPreferences.getBoolean(getFormattedPrefKey(WIRELESS_DEVICES_ONLY),
-                            false)) {
-                        menu.findItem(R.id.tile_status_wireless_clients_wireless_devices_only).setChecked(true);
-                    }
+            //Disable menu item from preference
+            if (mParentFragmentPreferences != null) {
+                if (mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS),
+                        false)) {
+                    menu.findItem(R.id.tile_status_wireless_clients_hide_inactive_hosts).setChecked(true);
                 }
-
-                final MenuItem rtMenuItem =
-                        menu.findItem(R.id.tile_status_wireless_clients_realtime_graphs);
-                if (mParentFragmentPreferences != null) {
-                    rtMenuItem.setVisible(true);
-                    rtMenuItem.setEnabled(
-                            mParentFragmentPreferences.contains(getFormattedPrefKey(RT_GRAPHS)));
-                    rtMenuItem.setChecked(
-                            mParentFragmentPreferences.getBoolean(getFormattedPrefKey(RT_GRAPHS), false));
-                    rtMenuItem.setVisible(false);
-                } else {
-                    rtMenuItem.setVisible(false);
+                if (mParentFragmentPreferences.getBoolean(getFormattedPrefKey(WIRELESS_DEVICES_ONLY),
+                        false)) {
+                    menu.findItem(R.id.tile_status_wireless_clients_wireless_devices_only).setChecked(true);
                 }
+            }
 
-                final MenuItem showOnlyHostsWithWANAccessDisabledMenuItem = menu.findItem(
-                        R.id.tile_status_wireless_clients_show_only_hosts_with_wan_access_disabled);
-                //If no devices with WAN Access Disabled, disable the corresponding menu item
-                final boolean atLeastOneDeviceWithNoWANAccess =
-                        Sets.filter(mDevices, new Predicate<Device>() {
-                            @Override
-                            public boolean apply(Device input) {
-                                return (input.getWanAccessState() == Device.WANAccessState.WAN_ACCESS_DISABLED);
-                            }
-                        }).size() > 0;
-                final boolean wanAccessTogglePref =
-                        mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
-                                getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false);
-                if (!atLeastOneDeviceWithNoWANAccess) {
-                    showOnlyHostsWithWANAccessDisabledMenuItem.setChecked(false);
-                    if (wanAccessTogglePref) {
-                        mParentFragmentPreferences.edit()
-                                .putBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false)
-                                .apply();
-                    }
-                } else {
-                    //Mark as checked
-                    showOnlyHostsWithWANAccessDisabledMenuItem.setChecked(wanAccessTogglePref);
-                }
+            final MenuItem rtMenuItem =
+                    menu.findItem(R.id.tile_status_wireless_clients_realtime_graphs);
+            if (mParentFragmentPreferences != null) {
+                rtMenuItem.setVisible(true);
+                rtMenuItem.setEnabled(
+                        mParentFragmentPreferences.contains(getFormattedPrefKey(RT_GRAPHS)));
+                rtMenuItem.setChecked(
+                        mParentFragmentPreferences.getBoolean(getFormattedPrefKey(RT_GRAPHS), false));
+                rtMenuItem.setVisible(false);
+            } else {
+                rtMenuItem.setVisible(false);
+            }
 
-                showOnlyHostsWithWANAccessDisabledMenuItem.setEnabled(atLeastOneDeviceWithNoWANAccess);
-
-                if (mParentFragmentPreferences != null) {
-                    final Integer currentSortStrategy = sortIds.inverse()
-                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORTING_STRATEGY), -1));
-                    if (currentSortStrategy != null && currentSortStrategy > 0) {
-                        final MenuItem currentSortMenuItem = menu.findItem(currentSortStrategy);
-                        if (currentSortMenuItem != null) {
-                            currentSortMenuItem.setEnabled(false);
-                            currentSortMenuItem.setChecked(true);
+            final MenuItem showOnlyHostsWithWANAccessDisabledMenuItem = menu.findItem(
+                    R.id.tile_status_wireless_clients_show_only_hosts_with_wan_access_disabled);
+            //If no devices with WAN Access Disabled, disable the corresponding menu item
+            final boolean atLeastOneDeviceWithNoWANAccess =
+                    Sets.filter(mDevices, new Predicate<Device>() {
+                        @Override
+                        public boolean apply(Device input) {
+                            return (input.getWanAccessState() == Device.WANAccessState.WAN_ACCESS_DISABLED);
                         }
+                    }).size() > 0;
+            final boolean wanAccessTogglePref =
+                    mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
+                            getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false);
+            if (!atLeastOneDeviceWithNoWANAccess) {
+                showOnlyHostsWithWANAccessDisabledMenuItem.setChecked(false);
+                if (wanAccessTogglePref) {
+                    mParentFragmentPreferences.edit()
+                            .putBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false)
+                            .apply();
+                }
+            } else {
+                //Mark as checked
+                showOnlyHostsWithWANAccessDisabledMenuItem.setChecked(wanAccessTogglePref);
+            }
+
+            showOnlyHostsWithWANAccessDisabledMenuItem.setEnabled(atLeastOneDeviceWithNoWANAccess);
+
+            if (mParentFragmentPreferences != null) {
+                final Integer currentSortStrategy = sortIds.inverse()
+                        .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORTING_STRATEGY), -1));
+                if (currentSortStrategy != null && currentSortStrategy > 0) {
+                    final MenuItem currentSortMenuItem = menu.findItem(currentSortStrategy);
+                    if (currentSortMenuItem != null) {
+                        currentSortMenuItem.setEnabled(false);
+                        currentSortMenuItem.setChecked(true);
                     }
                 }
+            }
 
-                final boolean activeIpConnectionsMenuItemEnabled =
-                        (activeIPConnections != null && activeIPConnections.length > 0);
-                mActiveIpConnectionsMenuItem =
-                        menu.findItem(R.id.tile_status_wireless_clients_view_active_ip_connections);
-                mActiveIpConnectionsMenuItem.setEnabled(activeIpConnectionsMenuItemEnabled);
-                if (activeIpConnectionsMenuItemEnabled) {
-                    mActiveIpConnectionsMenuItem.setTitle(
-                            mParentFragmentActivity.getResources().getString(R.string.view_active_ip_connections)
-                                    + " ("
-                                    + activeIPConnections.length
-                                    + ")");
-                    mActiveIpConnectionsMenuItem.setOnMenuItemClickListener(
-                            new MenuItem.OnMenuItemClickListener() {
-                                @Override
-                                public boolean onMenuItemClick(MenuItem item) {
-                                    final Intent intent =
-                                            new Intent(mParentFragmentActivity,
-                                                    ActiveIPConnectionsDetailActivity.class);
-                                    intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT,
-                                            activeIPConnections);
-                                    intent.putExtra(NVRAMInfo.PUBLIC_IPADDR, mRouterWanPublicIp);
-                                    intent.putExtra(NVRAMInfo.Companion.getWAN_IPADDR(),mRouterWanIp);
-                                    intent.putExtra(NVRAMInfo.Companion.getROUTER_NAME(), mRouterName);
-                                    intent.putExtra(NVRAMInfo.Companion.getLAN_IPADDR(), mRouterLanIp);
-                                    intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
-                                    intent.putExtra(ActiveIPConnectionsDetailActivity.ROUTER_REMOTE_IP,
-                                            mRouter.getRemoteIpAddress());
-                                    intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE,
-                                            new Date().toString());
+            final boolean activeIpConnectionsMenuItemEnabled =
+                    (activeIPConnections != null && activeIPConnections.length > 0);
+            mActiveIpConnectionsMenuItem =
+                    menu.findItem(R.id.tile_status_wireless_clients_view_active_ip_connections);
+            mActiveIpConnectionsMenuItem.setEnabled(activeIpConnectionsMenuItemEnabled);
+            if (activeIpConnectionsMenuItemEnabled) {
+                mActiveIpConnectionsMenuItem.setTitle(
+                        mParentFragmentActivity.getResources().getString(R.string.view_active_ip_connections)
+                                + " ("
+                                + activeIPConnections.length
+                                + ")");
+                mActiveIpConnectionsMenuItem.setOnMenuItemClickListener(
+                        new MenuItem.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                final Intent intent =
+                                        new Intent(mParentFragmentActivity,
+                                                ActiveIPConnectionsDetailActivity.class);
+                                intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT,
+                                        activeIPConnections);
+                                intent.putExtra(NVRAMInfo.PUBLIC_IPADDR, mRouterWanPublicIp);
+                                intent.putExtra(NVRAMInfo.Companion.getWAN_IPADDR(),mRouterWanIp);
+                                intent.putExtra(NVRAMInfo.Companion.getROUTER_NAME(), mRouterName);
+                                intent.putExtra(NVRAMInfo.Companion.getLAN_IPADDR(), mRouterLanIp);
+                                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
+                                intent.putExtra(ActiveIPConnectionsDetailActivity.ROUTER_REMOTE_IP,
+                                        mRouter.getRemoteIpAddress());
+                                intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE,
+                                        new Date().toString());
 
-                                    final HashMap<String, String> currentIpToHostNameResolverMap =
-                                            new HashMap<String, String>();
-                                    for (final Device device : mDevices) {
-                                        if (device == null) {
-                                            continue;
-                                        }
-                                        currentIpToHostNameResolverMap.put(device.getIpAddress(), device.getName());
+                                final HashMap<String, String> currentIpToHostNameResolverMap =
+                                        new HashMap<String, String>();
+                                for (final Device device : mDevices) {
+                                    if (device == null) {
+                                        continue;
                                     }
+                                    currentIpToHostNameResolverMap.put(device.getIpAddress(), device.getName());
+                                }
 
-                                    intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER,
-                                            currentIpToHostNameResolverMap);
+                                intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER,
+                                        currentIpToHostNameResolverMap);
 
-                                    if (BuildConfig.WITH_ADS
-                                            && mInterstitialAdForActiveIPConnections != null
-                                            && AdUtils.canDisplayInterstialAd(mParentFragmentActivity)) {
+                                if (BuildConfig.WITH_ADS
+                                        && mInterstitialAdForActiveIPConnections != null
+                                        && AdUtils.canDisplayInterstialAd(mParentFragmentActivity)) {
 
-                                        mInterstitialAdForActiveIPConnections.setAdListener(new AdListener() {
-                                            @Override
-                                            public void onAdClosed() {
-                                                final AdRequest adRequest = AdUtils
-                                                        .buildAdRequest(mParentFragmentActivity);
-                                                if (adRequest != null) {
-                                                    mInterstitialAdForActiveIPConnections.loadAd(adRequest);
-                                                }
-                                                mParentFragmentActivity.startActivity(intent);
+                                    mInterstitialAdForActiveIPConnections.setAdListener(new AdListener() {
+                                        @Override
+                                        public void onAdClosed() {
+                                            final AdRequest adRequest = AdUtils
+                                                    .buildAdRequest(mParentFragmentActivity);
+                                            if (adRequest != null) {
+                                                mInterstitialAdForActiveIPConnections.loadAd(adRequest);
                                             }
-
-                                            @Override
-                                            public void onAdOpened() {
-                                                //Save preference
-                                                mGlobalPreferences.edit()
-                                                        .putLong(
-                                                                RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
-                                                                System.currentTimeMillis())
-                                                        .apply();
-                                            }
-                                        });
-
-                                        if (mInterstitialAdForActiveIPConnections.isLoaded()) {
-                                            mInterstitialAdForActiveIPConnections.show();
-                                        } else {
-                                            //noinspection ConstantConditions
-                                            final AlertDialog alertDialog =
-                                                    Utils.buildAlertDialog(mParentFragmentActivity, null,
-                                                            "Loading...", false,
-                                                            false);
-                                            alertDialog.show();
-                                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(
-                                                    Gravity.CENTER_HORIZONTAL);
-                                            new Handler().postDelayed(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    try {
-                                                        mParentFragmentActivity.startActivity(intent);
-                                                    } catch (final Exception e) {
-                                                        Toast.makeText(mParentFragmentActivity,
-                                                                "Internal error - issue will be reported. Sorry for the inconvenience: "
-                                                                        + e.getMessage(),
-                                                                Toast.LENGTH_SHORT).show();
-                                                        Utils.reportException(mParentFragmentActivity, e);
-                                                    } finally {
-                                                        alertDialog.cancel();
-                                                    }
-                                                }
-                                            }, 1000);
+                                            mParentFragmentActivity.startActivity(intent);
                                         }
+
+                                        @Override
+                                        public void onAdOpened() {
+                                            //Save preference
+                                            mGlobalPreferences.edit()
+                                                    .putLong(
+                                                            RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
+                                                            System.currentTimeMillis())
+                                                    .apply();
+                                        }
+                                    });
+
+                                    if (mInterstitialAdForActiveIPConnections.isLoaded()) {
+                                        mInterstitialAdForActiveIPConnections.show();
                                     } else {
                                         //noinspection ConstantConditions
                                         final AlertDialog alertDialog =
-                                                Utils.buildAlertDialog(mParentFragmentActivity, null, "Loading...",
-                                                        false,
+                                                Utils.buildAlertDialog(mParentFragmentActivity, null,
+                                                        "Loading...", false,
                                                         false);
                                         alertDialog.show();
                                         ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(
@@ -1104,14 +1076,39 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                             }
                                         }, 1000);
                                     }
-
-                                    return true;
+                                } else {
+                                    //noinspection ConstantConditions
+                                    final AlertDialog alertDialog =
+                                            Utils.buildAlertDialog(mParentFragmentActivity, null, "Loading...",
+                                                    false,
+                                                    false);
+                                    alertDialog.show();
+                                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(
+                                            Gravity.CENTER_HORIZONTAL);
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                mParentFragmentActivity.startActivity(intent);
+                                            } catch (final Exception e) {
+                                                Toast.makeText(mParentFragmentActivity,
+                                                        "Internal error - issue will be reported. Sorry for the inconvenience: "
+                                                                + e.getMessage(),
+                                                        Toast.LENGTH_SHORT).show();
+                                                Utils.reportException(mParentFragmentActivity, e);
+                                            } finally {
+                                                alertDialog.cancel();
+                                            }
+                                        }
+                                    }, 1000);
                                 }
-                            });
-                }
 
-                popup.show();
+                                return true;
+                            }
+                        });
             }
+
+            popup.show();
         });
 
         ((TextView) layout.findViewById(
@@ -2468,12 +2465,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                     updateProgressBarViewSeparator(70);
                     synchronized (usageDataLock) {
 
-                        mParentFragmentActivity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mProgressBar.setProgress(70);
-                                mProgressBarDesc.setText("Retrieving bandwidth monitoring data...");
-                            }
+                        mParentFragmentActivity.runOnUiThread(() -> {
+                            mProgressBar.setProgress(70);
+                            mProgressBarDesc.setText("Retrieving bandwidth monitoring data...");
                         });
 
                         try {

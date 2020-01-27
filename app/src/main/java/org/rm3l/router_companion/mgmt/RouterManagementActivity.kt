@@ -64,6 +64,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter
@@ -106,6 +107,7 @@ import org.rm3l.router_companion.settings.RouterManagementSettingsActivity
 import org.rm3l.router_companion.utils.AdUtils
 import org.rm3l.router_companion.utils.ColorUtils
 import org.rm3l.router_companion.utils.ImageUtils
+import org.rm3l.router_companion.utils.PermissionsUtils
 import org.rm3l.router_companion.utils.Utils
 import org.rm3l.router_companion.utils.customtabs.CustomTabActivityHelper
 import org.rm3l.router_companion.utils.kotlin.*
@@ -346,8 +348,6 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
         //      .unsubscribeFromTopic(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES);
         //}
 
-        Utils.requestAppPermissions(this)
-
         //No need to restart the background service each time - this is correctly handled by Android
         //        BootReceiver.doStartBackgroundServiceIfNeeded(this);
 
@@ -367,7 +367,9 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
             mCloseOnActionDone = intent.getBooleanExtra(CLOSE_ON_ACTION_DONE, false)
             this.openAddRouterForm()
         } else {
-            welcomeScreen!!.show(savedInstanceState)
+            if (!welcomeScreen!!.show(savedInstanceState)) {
+                Crashlytics.log(Log.DEBUG, LOG_TAG, "Welcome screen already shown")
+            } //otherwise we wait for this to finish to request permissions
         }
     }
 
@@ -470,8 +472,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                 }
                 initOpenAddRouterFormIfNecessary()
             }
-            else -> {
-            }
+            else -> Crashlytics.log(Log.WARN, LOG_TAG, "Unhandled activity result: $resultCode")
         }
         super.onActivityResult(requestCode, resultCode, data)
     }

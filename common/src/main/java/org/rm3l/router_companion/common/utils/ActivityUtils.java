@@ -1,10 +1,13 @@
 package org.rm3l.router_companion.common.utils;
 
+import static android.content.Intent.CATEGORY_DEFAULT;
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static android.net.Uri.parse;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.provider.Settings;
 import androidx.annotation.NonNull;
 import android.widget.Toast;
 
@@ -25,7 +28,7 @@ public final class ActivityUtils {
             return;
         }
         // We found the activity now start the activity
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
         try {
             ctx.startActivity(intent);
         } catch (final ActivityNotFoundException anfe) {
@@ -42,6 +45,14 @@ public final class ActivityUtils {
             ctx.startActivity(new Intent(Intent.ACTION_VIEW,
                     parse("https://play.google.com/store/apps/details?id=" + packageName)));
         }
+    }
+
+    public static void openApplicationSettings(@NonNull final Context ctx) {
+        final Intent appSettingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                parse(String.format("package:%s", ctx.getPackageName())));
+        appSettingsIntent.addCategory(CATEGORY_DEFAULT);
+        appSettingsIntent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+        ctx.startActivity(appSettingsIntent);
     }
 
     private ActivityUtils() {

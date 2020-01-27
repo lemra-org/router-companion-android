@@ -6,18 +6,15 @@ import static com.google.common.base.Strings.nullToEmpty;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.google.android.material.snackbar.Snackbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.loader.content.AsyncTaskLoader;
 import androidx.core.content.ContextCompat;
 import androidx.loader.content.Loader;
-import androidx.core.content.PermissionChecker;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -28,6 +25,7 @@ import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Throwables;
 import java.util.ArrayList;
+import java.util.Collections;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -45,10 +43,9 @@ import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.status.wireless.ActiveIPConnectionsDetailActivity;
 import org.rm3l.router_companion.utils.ColorUtils;
+import org.rm3l.router_companion.utils.PermissionsUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
-import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
-import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 import org.rm3l.router_companion.widgets.map.MyOwnItemizedOverlay;
 
 /**
@@ -57,6 +54,9 @@ import org.rm3l.router_companion.widgets.map.MyOwnItemizedOverlay;
 public class PublicIPGeoTile extends DDWRTTile<None> {
 
     private static final String TAG = PublicIPGeoTile.class.getSimpleName();
+
+    public static final String STORAGE_PERMISSION_REQUEST_MESSAGE
+            = "Storage access is required to cache and display map tiles. Tap to give permissions.";
 
     private boolean isThemeLight;
 
@@ -74,64 +74,23 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
 
         isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
-        //Permission requests
-        final int rwExternalStoragePermissionCheck =
-                PermissionChecker.checkSelfPermission(mParentFragmentActivity,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(mParentFragmentActivity,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                // Show an expanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                SnackbarUtils.buildSnackbar(mParentFragmentActivity,
-                        "Storage access is required to cache and display map tiles.", "OK",
-                        Snackbar.LENGTH_INDEFINITE, new SnackbarCallback() {
-                            @Override
-                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle)
-                                    throws Exception {
-                                //Request permission
-                                ActivityCompat.requestPermissions(mParentFragmentActivity,
-                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                        RouterCompanionAppConstants.Permissions.STORAGE);
-                            }
-                        }, null, true);
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(mParentFragmentActivity,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        RouterCompanionAppConstants.Permissions.STORAGE);
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }
-
         final View mapThumbnailView = layout.findViewById(R.id.tile_public_ip_geo_container);
 
-        zoomMapButton = (ImageButton) layout.findViewById(R.id.tile_public_ip_geo_title_zoom);
-        zoomMapButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View zoomMapButtonView) {
-                //Open IPGeoActivity with zoom effect
-                if (isNullOrEmpty(mWanPublicIP)) {
-                    Toast.makeText(mParentFragmentActivity, "WAN Public IP Unknown at this time",
-                            Toast.LENGTH_LONG).show();
-                }
-                final Intent intent = new Intent(mParentFragmentActivity, IPGeoActivity.class);
-                intent.putExtra(IPGeoActivity.PUBLIC_IP_TO_DISPLAY, mWanPublicIP);
-                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
-
-                final ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeScaleUpAnimation(mapThumbnailView, 0, 0,
-                                mapThumbnailView.getWidth(), mapThumbnailView.getHeight());
-                ActivityCompat.startActivity(mParentFragmentActivity, intent, options.toBundle());
-
-                //                mParentFragmentActivity.startActivity(intent);
-                //                mParentFragmentActivity.overridePendingTransition(
-                //                        R.anim.zoom_enter, R.anim.zoom_exit);
+        zoomMapButton = layout.findViewById(R.id.tile_public_ip_geo_title_zoom);
+        zoomMapButton.setOnClickListener(zoomMapButtonView -> {
+            //Open IPGeoActivity with zoom effect
+            if (isNullOrEmpty(mWanPublicIP)) {
+                Toast.makeText(mParentFragmentActivity, "WAN Public IP Unknown at this time",
+                        Toast.LENGTH_LONG).show();
             }
+            final Intent intent = new Intent(mParentFragmentActivity, IPGeoActivity.class);
+            intent.putExtra(IPGeoActivity.PUBLIC_IP_TO_DISPLAY, mWanPublicIP);
+            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getUuid());
+
+            final ActivityOptionsCompat options =
+                    ActivityOptionsCompat.makeScaleUpAnimation(mapThumbnailView, 0, 0,
+                            mapThumbnailView.getWidth(), mapThumbnailView.getHeight());
+            ActivityCompat.startActivity(mParentFragmentActivity, intent, options.toBundle());
         });
     }
 
@@ -192,7 +151,7 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
             }
 
             final TextView errorPlaceHolderView =
-                    (TextView) this.layout.findViewById(R.id.tile_public_ip_geo_error);
+                    this.layout.findViewById(R.id.tile_public_ip_geo_error);
 
             if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
@@ -202,7 +161,7 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
 
                 //Update last sync
                 final RelativeTimeTextView lastSyncView =
-                        (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                        layout.findViewById(R.id.tile_last_sync);
                 lastSyncView.setReferenceTime(mLastSync);
                 lastSyncView.setPrefix("Last sync: ");
             }
@@ -213,24 +172,47 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                 errorPlaceHolderView.setText(
                         "Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
                 final Context parentContext = this.mParentFragmentActivity;
-                errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View v) {
-                        //noinspection ThrowableResultOfMethodCallIgnored
-                        if (rootCause != null) {
-                            Toast.makeText(parentContext, rootCause.getMessage(), Toast.LENGTH_LONG).show();
-                        }
+                errorPlaceHolderView.setOnClickListener(v -> {
+                    //noinspection ThrowableResultOfMethodCallIgnored
+                    if (rootCause != null) {
+                        Toast.makeText(parentContext, rootCause.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
                 updateProgressBarWithError();
             } else if (exception == null) {
+                final MapView map = layout.findViewById(R.id.tile_public_ip_geo_map);
 
-                final MapView map = (MapView) layout.findViewById(R.id.tile_public_ip_geo_map);
+                if (!PermissionsUtils.isPermissionGranted(mParentFragmentActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    errorPlaceHolderView.setText(STORAGE_PERMISSION_REQUEST_MESSAGE);
+                    errorPlaceHolderView.setOnClickListener(v -> {
+                        PermissionsUtils.requestPermissions(mParentFragmentActivity,
+                                Collections.singletonList(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                                () -> {
+                                    mParentFragmentActivity.runOnUiThread(() -> {
+                                        errorPlaceHolderView.setVisibility(View.GONE);
+                                        map.invalidate();
+                                    });
+                                    return null;
+                                },
+                                () -> {
+                                    mParentFragmentActivity.runOnUiThread(() -> {
+                                        errorPlaceHolderView.setText(STORAGE_PERMISSION_REQUEST_MESSAGE);
+                                        errorPlaceHolderView.setVisibility(View.VISIBLE);
+                                        map.invalidate();
+                                    });
+                                    return null;
+                                },
+                                "Storage access is required to display and cache map tiles");
+                    });
+                    errorPlaceHolderView.setVisibility(View.VISIBLE);
+                    updateProgressBarWithError();
+                } else {
+                    errorPlaceHolderView.setVisibility(View.GONE);
+                }
+
                 map.setTileSource(RouterCompanionAppConstants.TILE_SOURCE);
 
-                //Night mode
-                //                map.getController().setInvertedTiles(!isThemeLight);
                 map.getOverlayManager()
                         .getTilesOverlay()
                         .setColorFilter(isThemeLight ? null : TilesOverlay.INVERT_COLORS);
@@ -305,14 +287,10 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                     }
                     nbRunsLoader++;
 
-                    mParentFragmentActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+                    mParentFragmentActivity.runOnUiThread(() ->
                             zoomMapButton.setImageDrawable(ContextCompat.getDrawable(mParentFragmentActivity,
-                                    isThemeLight ? R.drawable.ic_zoom_out_map_black_24dp
-                                            : R.drawable.ic_zoom_out_map_white_24dp));
-                        }
-                    });
+                            isThemeLight ? R.drawable.ic_zoom_out_map_black_24dp
+                                    : R.drawable.ic_zoom_out_map_white_24dp)));
 
                     updateProgressBarViewSeparator(0);
 
