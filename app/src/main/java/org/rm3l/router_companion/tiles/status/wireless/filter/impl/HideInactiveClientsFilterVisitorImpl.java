@@ -39,19 +39,14 @@ public class HideInactiveClientsFilterVisitorImpl implements ClientsFilterVisito
     @NonNull
     @Override
     public Set<Device> visit(@NonNull Set<Device> devices) {
-        return Sets.filter(devices, new Predicate<Device>() {
-            @Override
-            public boolean apply(Device device) {
-                if (!hideInactive) {
-                    return true;
-                } else {
-                    if (device.isActive()) {
-                        return true;
-                    }
-                }
-
+        return Sets.filter(devices, device -> {
+            if (device == null) {
                 return false;
             }
+            if (!hideInactive) {
+                return true;
+            }
+            return device.isActive();
         });
     }
 }
