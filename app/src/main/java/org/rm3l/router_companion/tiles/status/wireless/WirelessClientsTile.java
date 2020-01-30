@@ -1424,8 +1424,22 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                     }
                 }
 
-                //TODO Apply visitors first
-                mAdapter.setDevices(new ArrayList<>(mDevices));
+                //Filters
+                Set<Device> filteredDevices = new HideInactiveClientsFilterVisitorImpl(
+                        mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
+                                getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false)).visit(mDevices);
+
+                filteredDevices = new ShowWirelessDevicesOnlyClientsFilterVisitorImpl(
+                        mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
+                                getFormattedPrefKey(WIRELESS_DEVICES_ONLY), false)).visit(filteredDevices);
+
+                filteredDevices = new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(
+                        mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
+                                getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false)).visit(filteredDevices);
+
+                filteredDevices = applyCurrentSortingStrategy(filteredDevices);
+
+                mAdapter.setDevices(new ArrayList<>(filteredDevices));
                 mAdapter.notifyDataSetChanged();
 
                 ((TextView) layout.findViewById(
@@ -1434,38 +1448,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                 ((TextView) layout.findViewById(
                         R.id.tile_status_wireless_clients_blocked_clients_num))
                         .setText(String.valueOf(nbBlockedClients));
-
-                //Filters
-                Set<Device> newDevices = new HideInactiveClientsFilterVisitorImpl(
-                        mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
-                                getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false)).visit(mDevices);
-
-                newDevices = new ShowWirelessDevicesOnlyClientsFilterVisitorImpl(
-                        mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
-                                getFormattedPrefKey(WIRELESS_DEVICES_ONLY), false)).visit(newDevices);
-
-                newDevices = new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(
-                        mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
-                                getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false)).visit(newDevices);
-
-                newDevices = applyCurrentSortingStrategy(newDevices);
-
-                //                int i = 0;
-                //                for (final Device dev : newDevices) {
-                //                    final View view = currentDevicesViewsMap.get(dev);
-                //                    if (view != null) {
-                //                        clientsContainer.addView(view, i++);
-                //                    }
-                //                }
-
-                //                final Button showMore = (Button) this.layout.findViewById(R.id.tile_status_wireless_clients_show_more);
-                //                //Whether to display 'Show more' button
-                //                if (data.getDevicesCount() > MAX_CLIENTS_TO_SHOW_IN_TILE) {
-                //                    showMore.setVisibility(View.VISIBLE);
-                //                    showMore.setOnClickListener(this);
-                //                } else {
-                //                    showMore.setVisibility(View.GONE);
-                //                }
 
                 //Update last sync
                 final RelativeTimeTextView lastSyncView =
@@ -1569,7 +1551,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
             final boolean hideInactive = !item.isChecked();
             Set<Device> newDevices =
                     new HideInactiveClientsFilterVisitorImpl(hideInactive).visit(mDevices);
-            newDevices = new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(
+            newDevices = new ShowWirelessDevicesOnlyClientsFilterVisitorImpl(
                     mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
                             getFormattedPrefKey(WIRELESS_DEVICES_ONLY), false)).visit(newDevices);
             newDevices = new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(
