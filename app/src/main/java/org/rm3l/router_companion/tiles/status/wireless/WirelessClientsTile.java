@@ -1551,7 +1551,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
             final boolean hideInactive = !item.isChecked();
             Set<Device> newDevices =
                     new HideInactiveClientsFilterVisitorImpl(hideInactive).visit(mDevices);
-            newDevices = new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(
+            newDevices = new ShowWirelessDevicesOnlyClientsFilterVisitorImpl(
                     mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
                             getFormattedPrefKey(WIRELESS_DEVICES_ONLY), false)).visit(newDevices);
             newDevices = new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(

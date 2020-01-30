@@ -19,14 +19,15 @@
  *
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
-package org.rm3l.router_companion.tiles.status.wireless.filter;
+package org.rm3l.router_companion.tiles.status.wireless.filter.impl
 
-import androidx.annotation.NonNull;
-import java.util.Set;
-import org.rm3l.router_companion.resources.Device;
+import org.rm3l.router_companion.resources.Device
+import org.rm3l.router_companion.tiles.status.wireless.filter.ClientsFilterVisitor
 
-public interface ClientsFilterVisitor {
-
-    @NonNull
-    Set<Device> visit(@NonNull final Set<Device> devices);
+class ShowOnlyWirelessClientsFilterVisitorImpl(private val mShowOnlyWirelessClients: Boolean) :
+    ClientsFilterVisitor {
+    override fun visit(devices: Set<Device>) =
+        devices.filter {
+            !mShowOnlyWirelessClients || it.wirelessConnectionInfo == null
+        }.toSet()
 }
