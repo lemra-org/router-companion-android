@@ -47,7 +47,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import java.util.HashSet;
@@ -227,7 +227,7 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
             editor.apply();
         }
 
-        Crashlytics.log(Log.DEBUG, TAG, "vars that have changed: " + nvramVarsToUpdate);
+        FirebaseCrashlytics.getInstance().log("vars that have changed: " + nvramVarsToUpdate);
 
         //Set extra
         data.putExtra(WOL_DAEMON_NVRAMINFO, nvramVarsToUpdate);

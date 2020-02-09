@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.ImageView;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import org.rm3l.router_companion.utils.ColorUtils;
 
 /**
@@ -98,7 +98,7 @@ public class LineView extends ImageView {
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "onDraw: (startX, startY, stopX, stopY) = ("
+        FirebaseCrashlytics.getInstance().log( "onDraw: (startX, startY, stopX, stopY) = ("
                 + startX
                 + ", "
                 + startY

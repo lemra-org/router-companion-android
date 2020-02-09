@@ -38,7 +38,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -133,7 +133,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
             @Nullable NVRAMInfo data) {
         try {
             //Set tiles
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished: loader=" + loader + " / data=" + data);
 
             layout.findViewById(R.id.tile_status_router_router_cpu_loading_view).setVisibility(View.GONE);
             layout.findViewById(R.id.tile_status_router_router_cpu_speed).setVisibility(View.VISIBLE);
@@ -226,7 +226,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                 updateProgressBarWithSuccess();
             }
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
             doneWithLoaderInstance(this, loader);
@@ -250,7 +250,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
 
                 try {
 
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+                    FirebaseCrashlytics.getInstance().log( "Init background loader for "
                             + StatusRouterCPUTile.class
                             + ": routerInfo="
                             + mRouter
@@ -292,7 +292,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                                 .trimResults()
                                 .splitToList(nullToEmpty(nvramInfo.getProperty(
                                         NVRAMInfo.Companion.getCPU_CLOCK_FREQ())));
-                        Crashlytics.log(Log.DEBUG, LOG_TAG, "strings for cpu clock: " + strings);
+                        FirebaseCrashlytics.getInstance().log( "strings for cpu clock: " + strings);
                         if (strings != null && strings.size() > 0) {
                             nvramInfo.setProperty(NVRAMInfo.Companion.getCPU_CLOCK_FREQ(), strings.get(0));
                         }

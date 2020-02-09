@@ -7,14 +7,13 @@ import static org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHAR
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.util.Log;
-import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
-import com.crashlytics.android.answers.CustomEvent;
-import com.crashlytics.android.answers.RatingEvent;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.analytics.FirebaseAnalytics.Param;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.util.Map;
 import org.rm3l.ddwrt.BuildConfig;
 
@@ -55,38 +54,40 @@ public final class ReportingUtils {
 
     public static final String EVENT_FEEDBACK = "Feedback";
 
-    public static void reportContentViewEvent(@NonNull final ContentViewEvent contentViewEvent) {
-        Answers.getInstance().logContentView(contentViewEvent);
-    }
-
     public static void reportEvent(@NonNull final String eventName,
             @Nullable final Map<String, Object> attributes) {
 
-        Crashlytics.log(Log.INFO, TAG, "eventName: [" + eventName + "]");
+        FirebaseCrashlytics.getInstance().log("eventName: [" + eventName + "]");
         if (isNullOrEmpty(eventName)) {
             return;
         }
-        final CustomEvent customEvent =
-                new CustomEvent(eventName).putCustomAttribute("DEBUG", Boolean.toString(BuildConfig.DEBUG))
-                        .putCustomAttribute("WITH_ADS", Boolean.toString(BuildConfig.WITH_ADS));
-
-        if (attributes != null) {
-            for (final Map.Entry<String, Object> entry : attributes.entrySet()) {
-                final String key = entry.getKey();
-                if (key == null) {
-                    continue;
-                }
-                final Object value = entry.getValue();
-                if (value instanceof Number) {
-                    customEvent.putCustomAttribute(key, (Number) value);
-                } else if (value instanceof String) {
-                    customEvent.putCustomAttribute(key, (String) value);
-                } else if (value != null) {
-                    customEvent.putCustomAttribute(key, value.toString());
-                }
-            }
-        }
-        Answers.getInstance().logCustom(customEvent);
+//        final CustomEvent customEvent =
+//                new CustomEvent(eventName).putCustomAttribute("DEBUG", Boolean.toString(BuildConfig.DEBUG))
+//                        .putCustomAttribute("WITH_ADS", Boolean.toString(BuildConfig.WITH_ADS));
+//
+//        if (attributes != null) {
+//            for (final Map.Entry<String, Object> entry : attributes.entrySet()) {
+//                final String key = entry.getKey();
+//                if (key == null) {
+//                    continue;
+//                }
+//                final Object value = entry.getValue();
+//                if (value instanceof Number) {
+//                    customEvent.putCustomAttribute(key, (Number) value);
+//                } else if (value instanceof String) {
+//                    customEvent.putCustomAttribute(key, (String) value);
+//                } else if (value != null) {
+//                    customEvent.putCustomAttribute(key, value.toString());
+//                }
+//            }
+//        }
+//        Answers.getInstance().logCustom(customEvent);
+        //TODO cf. https://firebase.google.com/docs/crashlytics/switch-to-analytics.md?authuser=1&platform=android
+//        Bundle bundle = new Bundle();
+//        bundle.putString(Param.ITEM_NAME, onClickIntent.getComponent() != null ? onClickIntent.getComponent()
+//                .getShortClassName() : "???");
+//        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Tile OnClick");
+//        bundle.putString(Param.ITEM_ID, this.getClass().getSimpleName());
     }
 
     public static void reportException(@Nullable final Context context,
@@ -108,17 +109,17 @@ public final class ReportingUtils {
                     //Crashlytics Notification
                     final String acraEmailAddr = sharedPreferences.getString(ACRA_USER_EMAIL, null);
                     if (!isNullOrEmpty(acraEmailAddr)) {
-                        Crashlytics.setUserEmail(acraEmailAddr);
+                        FirebaseCrashlytics.getInstance().setUserId(acraEmailAddr);
                     }
                 }
             }
-            Crashlytics.logException(error);
+            FirebaseCrashlytics.getInstance().recordException(error);
         }
     }
 
-    public static void reportRatingEvent(@NonNull final RatingEvent ratingEvent) {
-        Answers.getInstance().logRating(ratingEvent);
-    }
+//    public static void reportRatingEvent(@NonNull final RatingEvent ratingEvent) {
+//        Answers.getInstance().logRating(ratingEvent);
+//    }
 
     private ReportingUtils() {
     }

@@ -32,7 +32,7 @@ import android.widget.NumberPicker;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -216,7 +216,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo>
     public void onLoadFinished(Loader<NVRAMInfo> loader, NVRAMInfo data) {
         try {
             //Set tiles
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished: loader=" + loader + " / data=" + data);
 
             layout.findViewById(R.id.tile_overview_wan_total_traffic_loading_view)
                     .setVisibility(View.GONE);
@@ -335,7 +335,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo>
                 updateProgressBarWithSuccess();
             }
         } finally {
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished(): done loading!");
             mRefreshing.set(false);
             doneWithLoaderInstance(this, loader);
         }
@@ -506,7 +506,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo>
                     mCycle = (mParentFragmentPreferences != null ? mParentFragmentPreferences.getString(
                             getFormattedPrefKey(CYCLE), CYCLE_MONTH) : null);
 
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+                    FirebaseCrashlytics.getInstance().log( "Init background loader for "
                             + WANTotalTrafficOverviewTile.class
                             + ": routerInfo="
                             + mRouter

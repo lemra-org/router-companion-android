@@ -37,7 +37,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Strings;
 import java.io.File;
@@ -296,7 +296,7 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
             Uri uri;
             if (resultData != null) {
                 uri = resultData.getData();
-                Crashlytics.log(Log.INFO, LOG_TAG, "Uri: " + uri.toString());
+                FirebaseCrashlytics.getInstance().log("Uri: " + uri.toString());
                 final AlertDialog d = (AlertDialog) getDialog();
 
                 if (d != null) {
@@ -459,7 +459,7 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
     @Override
     public void onDismissEventTimeout(int event, @Nullable Bundle token) throws Exception {
         final String routerAction = token != null ? token.getString(WAN_MONTHLY_TRAFFIC_ACTION) : null;
-        Crashlytics.log(Log.DEBUG, LOG_TAG,
+        FirebaseCrashlytics.getInstance().log(
                 "WAN Monthly Traffic Data Action: [" + routerAction + "]");
         if (isNullOrEmpty(routerAction)) {
             return;

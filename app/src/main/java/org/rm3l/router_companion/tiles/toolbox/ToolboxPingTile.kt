@@ -25,7 +25,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.EditText
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.actions.AbstractRouterAction
 import org.rm3l.router_companion.actions.PingFromRouterAction

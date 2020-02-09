@@ -7,7 +7,7 @@ import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -41,7 +41,7 @@ public final class NetworkUtils {
             .removalListener(new RemovalListener<String, Retrofit>() {
                 @Override
                 public void onRemoval(@NonNull RemovalNotification<String, Retrofit> notification) {
-                    Crashlytics.log(Log.DEBUG, TAG,
+                    FirebaseCrashlytics.getInstance().log(
                             "onRemoval(" + notification.getKey() + ") - cause: " + notification.getCause());
                 }
             })
@@ -99,7 +99,7 @@ public final class NetworkUtils {
                         new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
                             @Override
                             public void log(String message) {
-                                Crashlytics.log(Log.DEBUG, TAG, message);
+                                FirebaseCrashlytics.getInstance().log(message);
                             }
                         });
                 interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);

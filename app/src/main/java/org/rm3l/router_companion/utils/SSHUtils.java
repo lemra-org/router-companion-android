@@ -37,7 +37,7 @@ import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -93,22 +93,22 @@ public final class SSHUtils {
         public void log(int level, String message) {
             switch (level) {
                 case INFO:
-                    Crashlytics.log(Log.INFO, LOG_TAG, "[INFO] " + message);
+                    FirebaseCrashlytics.getInstance().log("[INFO] " + message);
                     break;
                 case WARN:
-                    Crashlytics.log(Log.WARN, LOG_TAG, "[WARN] " + message);
+                    FirebaseCrashlytics.getInstance().log( "[WARN] " + message);
                     break;
                 case ERROR:
-                    Crashlytics.log(Log.ERROR, LOG_TAG, "[ERROR] " + message);
+                    FirebaseCrashlytics.getInstance().log( "[ERROR] " + message);
                     break;
                 case FATAL:
-                    Crashlytics.log(Log.ERROR, LOG_TAG, "[FATAL] " + message);
+                    FirebaseCrashlytics.getInstance().log( "[FATAL] " + message);
                     break;
                 case DEBUG:
-                    Crashlytics.log(Log.ERROR, LOG_TAG, "[DEBUG] " + message);
+                    FirebaseCrashlytics.getInstance().log( "[DEBUG] " + message);
                     break;
                 default:
-                    Crashlytics.log(Log.ERROR, LOG_TAG, "[" + level + "] " + message);
+                    FirebaseCrashlytics.getInstance().log( "[" + level + "] " + message);
                     break;
             }
         }
@@ -273,7 +273,7 @@ public final class SSHUtils {
             routerStreamActionListener.notifyRouterActionProgress(routerAction, routerCopy, 0, null);
         }
 
-        Crashlytics.log(Log.DEBUG, TAG, "getManualProperty: <router="
+        FirebaseCrashlytics.getInstance().log("getManualProperty: <router="
                 + router
                 + " / cmdToExecute="
                 + Arrays.toString(cmdToExecute)
@@ -349,7 +349,7 @@ public final class SSHUtils {
     public static String[] getManualProperty(Context ctx, @NonNull final Router router,
             SharedPreferences globalPreferences, @Nullable final Joiner cmdSeparatorJoiner,
             @NonNull final String... cmdToExecute) throws Exception {
-        Crashlytics.log(Log.DEBUG, TAG, "getManualProperty: <router="
+        FirebaseCrashlytics.getInstance().log("getManualProperty: <router="
                 + router
                 + " / cmdToExecute="
                 + Arrays.toString(cmdToExecute)
@@ -559,7 +559,7 @@ public final class SSHUtils {
     public static int runCommands(Context context, @NonNull SharedPreferences globalSharedPreferences,
             @NonNull final Router router, @NonNull final Joiner commandsJoiner,
             @NonNull final String... cmdToExecute) throws Exception {
-        Crashlytics.log(Log.DEBUG, TAG, "runCommands: <router="
+        FirebaseCrashlytics.getInstance().log("runCommands: <router="
                 + router
                 + " / cmdToExecute="
                 + Arrays.toString(cmdToExecute)
@@ -599,7 +599,7 @@ public final class SSHUtils {
                 e.printStackTrace();
                 return -100;
             }
-            //            Crashlytics.log(Log.DEBUG, TAG, "output: " + Arrays.toString(output));
+            //            FirebaseCrashlytics.getInstance().log("output: " + Arrays.toString(output));
 
             //Line below does not return the actual status
             //            return channelExec.getExitStatus();
@@ -626,7 +626,7 @@ public final class SSHUtils {
     public static boolean scpFrom(Context ctx, @Nullable final Router router,
             SharedPreferences globalPreferences, @NonNull final String fromRemotePath,
             @NonNull final String toLocalPath, boolean skipDataSyncPreferene) throws Exception {
-        Crashlytics.log(Log.DEBUG, TAG, "scpFrom: <router="
+        FirebaseCrashlytics.getInstance().log("scpFrom: <router="
                 + router
                 + " / fromRemotePath="
                 + fromRemotePath
@@ -648,7 +648,7 @@ public final class SSHUtils {
         InputStream in = null;
 
         String command = "scp -q -o StrictHostKeyChecking=no -f " + fromRemotePath;
-        Crashlytics.log(Log.DEBUG, TAG, "scpTo: command=[" + command + "]");
+        FirebaseCrashlytics.getInstance().log("scpTo: command=[" + command + "]");
 
         try {
             final Session jschSession = router.getSSHSession();
@@ -778,7 +778,7 @@ public final class SSHUtils {
     public static boolean scpTo(Context ctx, @Nullable final Router router,
             SharedPreferences globalPreferences, @NonNull final String fromLocalPath,
             @NonNull final String toRemotePath) throws Exception {
-        Crashlytics.log(Log.DEBUG, TAG, "scpTo: <router="
+        FirebaseCrashlytics.getInstance().log("scpTo: <router="
                 + router
                 + " / fromLocalPath="
                 + fromLocalPath
@@ -797,7 +797,7 @@ public final class SSHUtils {
         InputStream in = null;
 
         String command = "scp -q -o StrictHostKeyChecking=no -t " + toRemotePath;
-        Crashlytics.log(Log.DEBUG, TAG, "scpTo: command=[" + command + "]");
+        FirebaseCrashlytics.getInstance().log("scpTo: command=[" + command + "]");
 
         try {
             final Session jschSession = router.getSSHSession();
@@ -913,10 +913,10 @@ public final class SSHUtils {
                 sb.append((char) c);
             } while (c != '\n');
             if (b == 1) { // error
-                Crashlytics.log(Log.ERROR, TAG, sb.toString());
+                FirebaseCrashlytics.getInstance().log( sb.toString());
             }
             if (b == 2) { // fatal error
-                Crashlytics.log(Log.ERROR, TAG, sb.toString());
+                FirebaseCrashlytics.getInstance().log( sb.toString());
             }
         }
         return b;

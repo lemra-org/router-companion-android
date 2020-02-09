@@ -11,7 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Throwables;
 import org.rm3l.ddwrt.R;
@@ -50,7 +50,7 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
 
         try {
             //Set tiles
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished: loader=" + loader + " / data=" + data);
 
             layout.findViewById(R.id.tile_overview_uptime_loading_view).setVisibility(View.GONE);
             layout.findViewById(R.id.tile_overview_uptime_gridLayout).setVisibility(View.VISIBLE);
@@ -145,7 +145,7 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
                 updateProgressBarWithSuccess();
             }
         } finally {
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished(): done loading!");
             mRefreshing.set(false);
             doneWithLoaderInstance(this, loader);
         }
@@ -160,7 +160,7 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
             @Override
             public NVRAMInfo loadInBackground() {
                 try {
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+                    FirebaseCrashlytics.getInstance().log( "Init background loader for "
                             + UptimeTile.class
                             + ": routerInfo="
                             + mRouter

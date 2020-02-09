@@ -28,7 +28,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.gson.Gson;
@@ -147,7 +147,7 @@ public class ReviewStep extends MaterialWizardStep {
         protected void onPostExecute(@NonNull
                 CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router> result) {
             if (!isAdded()) {
-                Crashlytics.log(Log.WARN, TAG, "Fragment no longer attached to activity");
+                FirebaseCrashlytics.getInstance().log( "Fragment no longer attached to activity");
                 this.cancel(true);
             }
             if (checkingConnectionDialog != null) {
@@ -315,7 +315,7 @@ public class ReviewStep extends MaterialWizardStep {
                 e.printStackTrace();
             }
         }
-        Crashlytics.log(Log.DEBUG, TAG,
+        FirebaseCrashlytics.getInstance().log(
                 "<routerSelected=" + routerSelected + ",action=" + action + ">");
 
         final View v = inflater.inflate(R.layout.wizard_manage_router_4_review, container, false);
@@ -565,7 +565,7 @@ public class ReviewStep extends MaterialWizardStep {
             usernameView.setText(isNullOrEmpty(username) ? "-" : username);
             passwordView.setText(isNullOrEmpty(password) ? "-" : password);
             privkeyButtonHintView.setText(isNullOrEmpty(privkeyButtonHint) ? "-" : privkeyButtonHint);
-            Crashlytics.log(Log.DEBUG, TAG, "authMethod: [" + authMethod + "]");
+            FirebaseCrashlytics.getInstance().log("authMethod: [" + authMethod + "]");
             if (authMethod != null) {
                 authMethodHidden.setText(authMethod);
             }
@@ -631,7 +631,7 @@ public class ReviewStep extends MaterialWizardStep {
                     break;
                 }
             }
-            Crashlytics.log(Log.DEBUG, TAG, "fwPositionInStringArrayValues="
+            FirebaseCrashlytics.getInstance().log("fwPositionInStringArrayValues="
                     + fwPositionInStringArrayValues
                     + ", for '"
                     + routerFirmware
@@ -645,7 +645,7 @@ public class ReviewStep extends MaterialWizardStep {
                         context.getResources().getStringArray(R.array.router_firmwares_array_values);
                 if (fwPositionInStringArrayValues < fwStringArray.length) {
                     final String fwSelection = fwStringArray[fwPositionInStringArrayValues];
-                    Crashlytics.log(Log.DEBUG, TAG,
+                    FirebaseCrashlytics.getInstance().log(
                             "fwSelection=" + fwSelection + ", for '" + routerFirmware + "'");
                     if ("auto".equals(fwSelection)) {
                         router.setRouterFirmware(Router.RouterFirmware.AUTO);
@@ -676,10 +676,10 @@ public class ReviewStep extends MaterialWizardStep {
             //            JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("SC");
             //            KeyPair kp;
             //            if (object instanceof PEMEncryptedKeyPair) {
-            //                Crashlytics.log(Log.DEBUG, LOG_TAG, "Encrypted key - we will use provided password");
+            //                FirebaseCrashlytics.getInstance().log( "Encrypted key - we will use provided password");
             //                kp = converter.getKeyPair(((PEMEncryptedKeyPair) object).decryptKeyPair(decProv));
             //            } else {
-            //                Crashlytics.log(Log.DEBUG, LOG_TAG, "Unencrypted key - no password needed");
+            //                FirebaseCrashlytics.getInstance().log( "Unencrypted key - no password needed");
             //                kp = converter.getKeyPair((PEMKeyPair) object);
             //            }
             //            final PrivateKey privateKey = \"fake-key\";
@@ -753,7 +753,7 @@ public class ReviewStep extends MaterialWizardStep {
         }
 
         final Object authMethodObj = wizardContext.get("authMethod");
-        Crashlytics.log(Log.DEBUG, TAG, "authMethodObj: " + authMethodObj);
+        FirebaseCrashlytics.getInstance().log("authMethodObj: " + authMethodObj);
         if (authMethodObj != null) {
             try {
                 authMethod = authMethodObj.toString();
@@ -766,7 +766,7 @@ public class ReviewStep extends MaterialWizardStep {
         routerCustomIconPath = customIconPathObj != null ? customIconPathObj.toString() : null;
 
         final Object routerIconMethodObj = wizardContext.get("routerIconMethod");
-        Crashlytics.log(Log.DEBUG, TAG, "routerIconMethodObj: " + routerIconMethodObj);
+        FirebaseCrashlytics.getInstance().log("routerIconMethodObj: " + routerIconMethodObj);
         if (routerIconMethodObj != null) {
             try {
                 routerIconMethod = routerIconMethodObj.toString();

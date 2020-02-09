@@ -31,7 +31,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -79,7 +79,7 @@ public abstract class WebActivity extends AppCompatActivity
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             final PackageInfo currentWebViewPackage = WebView.getCurrentWebViewPackage();
-            Crashlytics.log(Log.INFO, TAG, "WebView version: " +
+            FirebaseCrashlytics.getInstance().log("WebView version: " +
                     (currentWebViewPackage != null ? currentWebViewPackage.versionName : "N/A"));
         }
 

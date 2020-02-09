@@ -47,7 +47,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import java.util.HashSet;
@@ -486,7 +486,7 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
             nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_STATIC(), staticKey);
         }
 
-        Crashlytics.log(Log.DEBUG, TAG, "vars that have changed: " + nvramVarsToUpdate);
+        FirebaseCrashlytics.getInstance().log("vars that have changed: " + nvramVarsToUpdate);
 
         //Set extra
         data.putExtra(OpenVPNClientTile.OPENVPNCL_NVRAMINFO, nvramVarsToUpdate);

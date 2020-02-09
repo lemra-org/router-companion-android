@@ -11,7 +11,7 @@ import android.content.pm.PackageManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.util.Log;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import java.util.List;
@@ -46,7 +46,7 @@ public final class Utils {
 
             return null;
         } finally {
-            Crashlytics.log(Log.DEBUG, Constants.TAG,
+            FirebaseCrashlytics.getInstance().log(
                     "ddwrtCompanionAppPackageInfo = " + ddwrtCompanionAppPackage);
         }
     }
@@ -75,7 +75,7 @@ public final class Utils {
         try {
             return packageManager.getPackageInfo(packagename, PackageManager.GET_ACTIVITIES);
         } catch (final PackageManager.NameNotFoundException e) {
-            Crashlytics.log(Log.WARN, Constants.TAG,
+            FirebaseCrashlytics.getInstance().log(
                     "Package not installed: " + packagename + ". " +
                             Throwables.getRootCause(e).getMessage());
             return null;

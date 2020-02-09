@@ -37,7 +37,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -197,7 +197,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
             @Nullable NVRAMInfo data) {
         try {
             //Set tiles
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished: loader=" + loader + " / data=" + data);
 
             layout.findViewById(R.id.tile_status_wan_traffic_loading_view).setVisibility(View.GONE);
             layout.findViewById(R.id.tile_status_wan_traffic_gridLayout).setVisibility(View.VISIBLE);
@@ -285,7 +285,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
                 updateProgressBarWithSuccess();
             }
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
             doneWithLoaderInstance(this, loader);
@@ -302,7 +302,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
             public NVRAMInfo loadInBackground() {
 
                 try {
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+                    FirebaseCrashlytics.getInstance().log( "Init background loader for "
                             + WANConfigTile.class
                             + ": routerInfo="
                             + mRouter

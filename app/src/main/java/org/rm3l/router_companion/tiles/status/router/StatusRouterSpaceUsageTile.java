@@ -36,7 +36,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -128,7 +128,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
             @Nullable NVRAMInfo data) {
         try {
             //Set tiles
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished: loader=" + loader + " / data=" + data);
 
             layout.findViewById(R.id.tile_status_router_router_space_usage_loading_view)
                     .setVisibility(View.GONE);
@@ -226,7 +226,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                         pbText.setVisibility(View.GONE);
                     }
                 } catch (NumberFormatException e) {
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "NumberFormatException" + e.getMessage());
+                    FirebaseCrashlytics.getInstance().log( "NumberFormatException" + e.getMessage());
                     pb.setVisibility(View.GONE);
                     pbText.setVisibility(View.GONE);
                 }
@@ -259,7 +259,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                 updateProgressBarWithSuccess();
             }
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
             doneWithLoaderInstance(this, loader);
@@ -275,7 +275,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
             public NVRAMInfo loadInBackground() {
 
                 try {
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+                    FirebaseCrashlytics.getInstance().log( "Init background loader for "
                             + StatusRouterSpaceUsageTile.class
                             + ": routerInfo="
                             + mRouter
@@ -316,7 +316,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
 
                     updateProgressBarViewSeparator(20);
 
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
+                    FirebaseCrashlytics.getInstance().log( "catProcMounts: " + Arrays.toString(catProcMounts));
                     String cifsMountPoint = null;
                     if (catProcMounts != null && catProcMounts.length >= 1) {
                         final List<String> nvramUsageList = NVRAM_SIZE_SPLITTER.splitToList(catProcMounts[0]);
@@ -395,7 +395,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                                             "df -h " + itemToDf + " | grep -v Filessytem | grep \"" + itemToDf
                                                     + "\"");
                         }
-                        Crashlytics.log(Log.DEBUG, LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
+                        FirebaseCrashlytics.getInstance().log( "catProcMounts: " + Arrays.toString(catProcMounts));
                         if (itemToDfResult != null && itemToDfResult.length > 0) {
                             final List<String> procMountLineItem =
                                     Splitter.on(" ").omitEmptyStrings().trimResults().splitToList(itemToDfResult[0]);

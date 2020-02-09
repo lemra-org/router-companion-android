@@ -27,7 +27,7 @@ import static com.google.common.base.Charsets.UTF_8;
 import androidx.annotation.Nullable;
 import android.util.Base64;
 import android.util.Log;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -100,7 +100,7 @@ public class Encrypted {
             e = ibse;
         }
 
-        Crashlytics.log(Log.ERROR, LOG_TAG, "Failed to decrypt: " + e);
+        FirebaseCrashlytics.getInstance().log( "Failed to decrypt: " + e);
         throw new IllegalStateException(e);
     }
 
@@ -135,7 +135,7 @@ public class Encrypted {
             e = ibse;
         }
 
-        Crashlytics.log(Log.ERROR, LOG_TAG, "Failed to encrypt: " + e);
+        FirebaseCrashlytics.getInstance().log( "Failed to encrypt: " + e);
         throw new IllegalStateException(e);
     }
 

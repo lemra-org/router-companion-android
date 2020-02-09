@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import org.rm3l.router_companion.RouterCompanionApplication;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.utils.Utils;
@@ -30,7 +30,7 @@ public class SendFeedbackBroadcastReceiver extends BroadcastReceiver {
         final Activity currentActivity = RouterCompanionApplication.getCurrentActivity();
         if (currentActivity == null) {
             Toast.makeText(context, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
-            Crashlytics.log(Log.WARN, TAG, "Unable to retrieve current activity");
+            FirebaseCrashlytics.getInstance().log( "Unable to retrieve current activity");
             return;
         }
         Utils.openFeedbackForm(currentActivity,

@@ -37,7 +37,7 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
@@ -117,7 +117,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
 
         final long nbRunsLoader = wakeOnLanTile != null ? wakeOnLanTile.getNbRunsLoader() : 0;
 
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+        FirebaseCrashlytics.getInstance().log( "Init background loader for "
                 + WakeOnLanTile.class
                 + ": routerInfo="
                 + mRouter
@@ -207,7 +207,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                 wakeOnLanTile.updateProgressBarViewSeparator(60);
             }
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "output: " + Arrays.toString(output));
+            FirebaseCrashlytics.getInstance().log( "output: " + Arrays.toString(output));
 
             if (output == null || output.length == 0) {
                 if (output == null) {
@@ -308,7 +308,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                             wakeOnLanTile.mParentFragmentActivity, mRouter, macToDevice.values());
                 } catch (final Exception e) {
                     //No worries
-                    Crashlytics.log(Log.WARN, LOG_TAG, "Failed to generate connected hosts notification: " + e.getMessage());
+                    FirebaseCrashlytics.getInstance().log( "Failed to generate connected hosts notification: " + e.getMessage());
                     Utils.reportException(mParentFragmentActivity, e);
                 }
                 //                new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -463,7 +463,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
             return new RouterData<ArrayList<Device>>() {
             }.setData(mDevices);
         } catch (@NonNull final Exception e) {
-            Crashlytics.log(Log.ERROR, LOG_TAG,
+            FirebaseCrashlytics.getInstance().log(
                     e.getMessage() + ": " + Throwables.getStackTraceAsString(e));
             return new RouterData<ArrayList<Device>>() {
             }.setException(e);
@@ -561,7 +561,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
     public void onLoadFinished(Loader<RouterData<ArrayList<Device>>> loader,
             RouterData<ArrayList<Device>> data) {
         try {
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished: loader=" + loader + " / data=" + data);
 
             isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
@@ -612,7 +612,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                                                         throws Exception {
                                                     final String routerAction =
                                                             token != null ? token.getString(ROUTER_ACTION) : null;
-                                                    Crashlytics.log(Log.DEBUG, LOG_TAG,
+                                                    FirebaseCrashlytics.getInstance().log(
                                                             "routerAction: [" + routerAction + "]");
                                                     if (isNullOrEmpty(routerAction)) {
                                                         return;
@@ -1087,7 +1087,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                 updateProgressBarWithSuccess();
             }
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
             doneWithLoaderInstance(this, loader);
@@ -1222,7 +1222,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
             public void onDismissEventTimeout(int event, @Nullable Bundle token)
                     throws Exception {
                 final String routerAction = token != null ? token.getString(ROUTER_ACTION) : null;
-                Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
+                FirebaseCrashlytics.getInstance().log( "routerAction: [" + routerAction + "]");
                 if (isNullOrEmpty(routerAction)) {
                     return;
                 }

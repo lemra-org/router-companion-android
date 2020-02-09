@@ -71,7 +71,7 @@ import android.widget.Toast;
 import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter;
 import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperViewHolder;
 import co.paulburke.android.itemtouchhelperdemo.helper.OnStartDragListener;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
@@ -661,7 +661,7 @@ public class RouterListRecycleViewAdapter
 
         if (Strings.isNullOrEmpty(routerModelStr) || Utils.isDemoRouter(routerAt)) {
             if (Strings.isNullOrEmpty(routerModelStr)) {
-                Crashlytics.log("Router Model could not be detected");
+                FirebaseCrashlytics.getInstance().log("Router Model could not be detected");
             }
             holder.routerAvatarImage.setImageResource(
                     Utils.isDemoRouter(routerAt) ? R.drawable.demo_router : R.drawable.router);
@@ -759,7 +759,7 @@ public class RouterListRecycleViewAdapter
 
         final int position = viewHolder.getAdapterPosition();
 
-        Crashlytics.log(Log.DEBUG, TAG, "XXX onItemDismiss: position = " + position);
+        FirebaseCrashlytics.getInstance().log("XXX onItemDismiss: position = " + position);
 
         final Router router = routersList.get(position);
 
@@ -784,8 +784,7 @@ public class RouterListRecycleViewAdapter
                             @Override
                             public void onClick(View v) {
                                 //                        final int position = viewHolder.getAdapterPosition();
-                                Crashlytics
-                                        .log(Log.DEBUG, TAG, "XXX onItemDismiss UNDO Click: position = " + position);
+                                FirebaseCrashlytics.getInstance().log("XXX onItemDismiss UNDO Click: position = " + position);
 
                                 //Unarchive
                                 router.setArchived(false);
@@ -839,7 +838,7 @@ public class RouterListRecycleViewAdapter
             final int existingOrderIndex = router.getOrderIndex();
             router.setOrderIndex(orderIdx);
             dao.updateRouter(router);
-            Crashlytics.log(Log.DEBUG, TAG, "XXX Router '"
+            FirebaseCrashlytics.getInstance().log("XXX Router '"
                     + router.getCanonicalHumanReadableName()
                     + "' new position: "
                     + existingOrderIndex

@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.loader.content.AsyncTaskLoader;
 import androidx.loader.content.Loader;
 import android.util.Log;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Splitter;
 import java.util.List;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
@@ -44,7 +44,7 @@ public class WANConfigTileOpenWrt extends WANConfigTile {
             public NVRAMInfo loadInBackground() {
 
                 try {
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+                    FirebaseCrashlytics.getInstance().log( "Init background loader for "
                             + WANConfigTile.class
                             + ": routerInfo="
                             + mRouter

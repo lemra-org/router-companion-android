@@ -31,7 +31,7 @@ import androidx.fragment.app.Fragment;
 import androidx.loader.content.AsyncTaskLoader;
 import androidx.loader.content.Loader;
 import android.util.Log;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
@@ -66,7 +66,7 @@ public class StatusRouterStateTileOpenWrt extends StatusRouterStateTile {
             public NVRAMInfo loadInBackground() {
 
                 try {
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+                    FirebaseCrashlytics.getInstance().log( "Init background loader for "
                             + StatusRouterStateTile.class
                             + ": routerInfo="
                             + mRouter

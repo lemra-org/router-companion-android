@@ -5,7 +5,7 @@ import android.content.Context
 import android.text.TextUtils
 import android.util.Log
 import android.util.Patterns
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.common.base.Splitter
 import com.google.common.base.Strings
 import org.apache.commons.net.ftp.FTPClient
@@ -437,7 +437,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                             val nvramUsedBytesLong = nvramUsedBytes.toLong()
                             val nvramLeftBytesLong = nvramLeftBytes.toLong()
                             val nvramTotalBytesLong = nvramUsedBytesLong.plus(nvramLeftBytesLong)
-                            Crashlytics.log(Log.DEBUG, TAG,
+                            FirebaseCrashlytics.getInstance().log(
                                 "<nvramUsedBytesLong, nvramLeftBytesLong, nvramTotalBytesLong> = " +
                                         "<${nvramUsedBytesLong}, ${nvramLeftBytesLong}, ${nvramTotalBytesLong}>")
                             if (nvramTotalBytesLong > 0L) {
@@ -449,7 +449,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                             }
                         } catch (e: NumberFormatException) {
                             e.printStackTrace()
-                            Crashlytics.logException(e)
+                            FirebaseCrashlytics.getInstance().recordException(e)
                         }
 
                     }
@@ -471,7 +471,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                                 totalUsed += stringList[3].toLong()
                             } catch (e: NumberFormatException) {
                                 e.printStackTrace()
-                                Crashlytics.logException(e)
+                                FirebaseCrashlytics.getInstance().recordException(e)
                             }
 
                         }
@@ -500,7 +500,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                                 totalUsed += stringList[3].toLong()
                             } catch (e: NumberFormatException) {
                                 e.printStackTrace()
-                                Crashlytics.logException(e)
+                                FirebaseCrashlytics.getInstance().recordException(e)
                             }
 
                         }
@@ -642,7 +642,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                 }
             }
 
-            Crashlytics.log(Log.DEBUG, AccessRestrictionsWANAccessTile.LOG_TAG, "wanAccessPolicy: " + wanAccessPolicy)
+            FirebaseCrashlytics.getInstance().log("wanAccessPolicy: " + wanAccessPolicy)
 
             wanAccessPolicies.add(wanAccessPolicy)
 
@@ -661,7 +661,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
         var ftp: FTPClient? = null
         try {
             val currentFwVerLong = currentFwVer?.split("-")?.get(0)?.toLongOrNull()
-            Crashlytics.log(Log.DEBUG, TAG,
+            FirebaseCrashlytics.getInstance().log(
                     "<currentFwVer, currentFwVerLong>=<$currentFwVer,$currentFwVerLong>")
             //Now browse the DD-WRT update website and check for the most recent
             ftp = FTPClient()
@@ -670,10 +670,10 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
             //ftp.configure(config );
             ftp.connect(DDWRT_RELEASE_REMOTE_HOST)
             val reply = ftp.replyCode
-            Crashlytics.log(Log.INFO, TAG, "Connected to FTP Server: $DDWRT_RELEASE_REMOTE_HOST. replyCode=$reply")
+            FirebaseCrashlytics.getInstance().log("Connected to FTP Server: $DDWRT_RELEASE_REMOTE_HOST. replyCode=$reply")
             if (!FTPReply.isPositiveCompletion(reply)) {
                 ftp.disconnect()
-                Crashlytics.log(Log.INFO, TAG, "Disconnected from FTP Server: $DDWRT_RELEASE_REMOTE_HOST")
+                FirebaseCrashlytics.getInstance().log("Disconnected from FTP Server: $DDWRT_RELEASE_REMOTE_HOST")
                 throw IllegalStateException("Server refused connection. Please try again later...")
             }
             ftp.login("anonymous", "anonymous")
@@ -681,7 +681,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
             val directories = ftp.listDirectories()
             val newerReleases = directories.
                     map {
-                        Crashlytics.log(Log.DEBUG, TAG, "Found dir: ${it.name}")
+                        FirebaseCrashlytics.getInstance().log("Found dir: ${it.name}")
                         it.name
                     }
                     .map { it to ftp!!.listDirectories(it).toList() }
@@ -695,7 +695,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                                             year.trim().toInt(),
                                             "${releaseByDaySplitList[0]}-${releaseByDaySplitList[1]}-${releaseByDaySplitList[2]}",
                                             releaseByDaySplitList[3])
-                                    Crashlytics.log(Log.DEBUG, TAG,
+                                    FirebaseCrashlytics.getInstance().log(
                                             "Found release for year: $year : $releaseByDayName =>  $ddwrtRelease")
                                     ddwrtRelease
                                 }

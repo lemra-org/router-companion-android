@@ -21,7 +21,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Throwables;
 import java.util.ArrayList;
@@ -107,8 +107,8 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
     @Override
     public void onLoadFinished(Loader<None> loader, None data) {
         try {//Set tiles
-            Crashlytics.log(Log.DEBUG, TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
-            Crashlytics.log(Log.DEBUG, TAG,
+            FirebaseCrashlytics.getInstance().log("onLoadFinished: loader=" + loader + " / data=" + data);
+            FirebaseCrashlytics.getInstance().log(
                     String.format("<mWanPublicIP=%s, mIPWhoisInfoWithGeo=%s>", mWanPublicIP,
                             mIPWhoisInfoWithGeo));
 
@@ -256,7 +256,7 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                 updateProgressBarWithSuccess();
             }
         } finally {
-            Crashlytics.log(Log.DEBUG, TAG, "onLoadFinished(): done loading!");
+            FirebaseCrashlytics.getInstance().log("onLoadFinished(): done loading!");
             mRefreshing.set(false);
             doneWithLoaderInstance(this, loader);
         }
@@ -273,7 +273,7 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
 
                 try {
 
-                    Crashlytics.log(Log.DEBUG, TAG, "Init background loader for "
+                    FirebaseCrashlytics.getInstance().log("Init background loader for "
                             + PublicIPGeoTile.class
                             + ": routerInfo="
                             + mRouter

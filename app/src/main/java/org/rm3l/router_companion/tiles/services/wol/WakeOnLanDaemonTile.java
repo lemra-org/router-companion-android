@@ -23,7 +23,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -295,7 +295,7 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
     public void onDismissEventTimeout(int event, @Nullable Bundle token) throws Exception {
         final String routerAction =
                 token != null ? token.getString(DDWRTMainActivity.ROUTER_ACTION) : null;
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
+        FirebaseCrashlytics.getInstance().log( "routerAction: [" + routerAction + "]");
         if (isNullOrEmpty(routerAction)) {
             return;
         }
@@ -319,7 +319,7 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
     @Override
     public void onLoadFinished(Loader<NVRAMInfo> loader, NVRAMInfo data) {
         try {
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished: loader=" + loader + " / data=" + data);
 
             layout.findViewById(R.id.tile_services_wol_daemon_header_loading_view)
                     .setVisibility(View.GONE);
@@ -416,7 +416,7 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
                 updateProgressBarWithSuccess();
             }
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
             doneWithLoaderInstance(this, loader);
@@ -491,7 +491,7 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
             public NVRAMInfo loadInBackground() {
 
                 try {
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+                    FirebaseCrashlytics.getInstance().log( "Init background loader for "
                             + WakeOnLanDaemonTile.class
                             + ": routerInfo="
                             + mRouter

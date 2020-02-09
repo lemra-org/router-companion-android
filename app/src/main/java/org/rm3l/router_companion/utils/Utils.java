@@ -83,7 +83,7 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 import cn.nekocode.resinspector.ResourceInspector;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -201,15 +201,15 @@ public final class Utils {
             final NetworkInfo activeNetworkInfo =
                     connMgr.getActiveNetworkInfo(); //default route to outgoing connections
             if (activeNetworkInfo == null) {
-                Crashlytics.log(Log.DEBUG, TAG, "No active connection");
+                FirebaseCrashlytics.getInstance().log("No active connection");
                 throw new DDWRTCompanionException("An active network connection is needed");
             }
 
             //Just for debugging
             if (activeNetworkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-                Crashlytics.log(Log.DEBUG, TAG, "Active Network Connection Type: WIFI");
+                FirebaseCrashlytics.getInstance().log("Active Network Connection Type: WIFI");
             } else if (activeNetworkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
-                Crashlytics.log(Log.DEBUG, TAG, "Active Network Connection Type: MOBILE");
+                FirebaseCrashlytics.getInstance().log("Active Network Connection Type: MOBILE");
             }
             //END Debugging
 
@@ -249,14 +249,14 @@ public final class Utils {
         //            final boolean isWifiConn = wifiNetworkInfo.isConnected();
         //            final NetworkInfo mobileNetworkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
         //            final boolean isMobileConn = mobileNetworkInfo.isConnected();
-        //            Crashlytics.log(Log.DEBUG, TAG, "Wifi connected: " + isWifiConn);
-        //            Crashlytics.log(Log.DEBUG, TAG, "Mobile connected: " + isMobileConn);
+        //            FirebaseCrashlytics.getInstance().log("Wifi connected: " + isWifiConn);
+        //            FirebaseCrashlytics.getInstance().log("Mobile connected: " + isMobileConn);
         //            if (isMobileConn && !isWifiConn) {
         //                throw new DDWRTDataSyncOnMobileNetworkNotAllowedException
         //                        ("Data Sync on Mobile Networks disabled!");
         //            }
         //        }
-        Crashlytics.log(Log.DEBUG, TAG, "Data Sync Allowed By Usage Preference!");
+        FirebaseCrashlytics.getInstance().log("Data Sync Allowed By Usage Preference!");
     }
 
     @NonNull
@@ -338,7 +338,7 @@ public final class Utils {
 
                     @Override
                     public void onRateAppShowing(AppRate appRate, View view) {
-                        Crashlytics.log(Log.DEBUG, TAG, "onRateAppShowing");
+                        FirebaseCrashlytics.getInstance().log("onRateAppShowing");
                     }
                 })
                 .theme(ColorUtils.Companion.isThemeLight(activity) ? AppRateTheme.DARK : AppRateTheme.LIGHT)
@@ -834,7 +834,7 @@ public final class Utils {
 
         final boolean isFirstLaunch =
                 defaultSharedPreferences.getBoolean(FIRST_APP_LAUNCH_PREF_KEY, true);
-        Crashlytics.log(Log.INFO, TAG, "isFirstLaunch: " + isFirstLaunch);
+        FirebaseCrashlytics.getInstance().log("isFirstLaunch: " + isFirstLaunch);
         final SharedPreferences.Editor editor = defaultSharedPreferences.edit();
         if (isFirstLaunch) {
             //Store flag
@@ -965,7 +965,7 @@ public final class Utils {
         //                .getBoolean(DATA_SYNC_BACKUP_PREF, true)) {
         //            new BackupManager(ctx).dataChanged();
         //        } else {
-        //            Crashlytics.log(Log.DEBUG, TAG, "Backup disabled by user!");
+        //            FirebaseCrashlytics.getInstance().log("Backup disabled by user!");
         //        }
     }
 

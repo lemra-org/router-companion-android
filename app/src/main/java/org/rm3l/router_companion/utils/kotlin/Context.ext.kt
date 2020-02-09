@@ -18,7 +18,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY
 import org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_THEME
 import org.rm3l.router_companion.RouterCompanionAppConstants.THEMING_PREF
@@ -62,7 +62,7 @@ fun Activity.openFeedbackForm(routerUuid: String? = null) =
 fun Activity.openFeedbackForm(router: Router? = null) = Utils.openFeedbackForm(this, router)
 
 fun Activity.restartWholeApplication(waitMessage: CharSequence? = null, delayMillis: Long? = null) {
-    Crashlytics.log(Log.INFO, this::class.java.simpleName, "Restarting whole Android Application : ${waitMessage ?:""}...")
+    FirebaseCrashlytics.getInstance().log("Restarting whole Android Application : ${waitMessage ?:""}...")
     val alertDialog = ProgressDialog.show(this, waitMessage, "App will restart. Please wait...", true)
     Handler().postDelayed({
         alertDialog.cancel()
@@ -75,7 +75,7 @@ fun Activity.restartWholeApplication(waitMessage: CharSequence? = null, delayMil
 }
 
 fun Activity.finishAndReload(waitMessage: String? = null, delayMillis: Long? = null, operationBeforeRestart: Runnable? = null) {
-    Crashlytics.log(Log.INFO, this::class.java.simpleName,
+    FirebaseCrashlytics.getInstance().log(
             "Finishing and reloading current activity (${this::class.java}): ${waitMessage ?:""}...")
     val alertDialog = ProgressDialog.show(this, waitMessage, "Please wait...", true)
 //    val alertDialog = Utils.buildAlertDialog(this, null,

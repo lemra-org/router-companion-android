@@ -8,7 +8,7 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.util.Log;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import java.text.ParseException;
@@ -146,7 +146,7 @@ public final class WANTrafficUtils {
             final long end) {
         final String cycleStart = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER.format(new Date(start));
         final String cycleEnd = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER.format(new Date(end));
-        Crashlytics.log(Log.DEBUG, TAG,
+        FirebaseCrashlytics.getInstance().log(
                 "<cycleStart,cycleEnd>=<" + cycleStart + "," + cycleStart + ">");
         return dao.getWANTrafficDataByRouterBetweenDates(router, cycleStart, cycleEnd);
     }
@@ -188,7 +188,7 @@ public final class WANTrafficUtils {
 
             int dayNum = 0;
             for (final String dailyInOutTraffData : dailyTraffDataList) {
-                Crashlytics.log(Log.DEBUG, TAG, "dailyInOutTraffData=<" + dailyInOutTraffData + ">");
+                FirebaseCrashlytics.getInstance().log("dailyInOutTraffData=<" + dailyInOutTraffData + ">");
                 if (dailyInOutTraffData == null) {
                     continue;
                 }

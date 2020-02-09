@@ -36,7 +36,7 @@ import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
@@ -191,7 +191,7 @@ public class OpenWebManagementPageActivity extends WebActivity {
         }
 
         private boolean canConnect(@NonNull final String urlStr) {
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "--> Trying GET '" + urlStr + "'");
+            FirebaseCrashlytics.getInstance().log( "--> Trying GET '" + urlStr + "'");
             HttpURLConnection urlConnection = null;
             try {
                 final URL url = new URL(urlStr + "/Management.asp");
@@ -217,11 +217,11 @@ public class OpenWebManagementPageActivity extends WebActivity {
                         }
                     }
                 }
-                Crashlytics.log(Log.DEBUG, LOG_TAG, "GET " + urlStr + " : " + statusCode);
+                FirebaseCrashlytics.getInstance().log( "GET " + urlStr + " : " + statusCode);
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
-                Crashlytics.log(Log.DEBUG, LOG_TAG, "Didn't succeed in GET'ing " + urlStr);
+                FirebaseCrashlytics.getInstance().log( "Didn't succeed in GET'ing " + urlStr);
                 return false;
             } finally {
                 if (urlConnection != null) {
@@ -368,7 +368,7 @@ public class OpenWebManagementPageActivity extends WebActivity {
                     WebResourceError error) {
                 final int errorCode = error.getErrorCode();
                 final CharSequence description = error.getDescription();
-                Crashlytics.log(Log.DEBUG, LOG_TAG,
+                FirebaseCrashlytics.getInstance().log(
                         "GOT Page error : code : " + errorCode + ", Desc : " + description);
                 showError(OpenWebManagementPageActivity.this, errorCode);
             }

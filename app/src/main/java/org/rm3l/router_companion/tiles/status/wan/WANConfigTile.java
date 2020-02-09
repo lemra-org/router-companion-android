@@ -46,7 +46,7 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -170,7 +170,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
             @Nullable NVRAMInfo data) {
         try {
             //Set tiles
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished: loader=" + loader + " / data=" + data);
 
             layout.findViewById(R.id.tile_status_wan_config_loading_view).setVisibility(View.GONE);
             layout.findViewById(R.id.tile_status_wan_config_gridLayout).setVisibility(View.VISIBLE);
@@ -345,7 +345,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
                 updateProgressBarWithSuccess();
             }
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
             doneWithLoaderInstance(this, loader);
@@ -532,7 +532,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
                                 true);
                     }
 
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+                    FirebaseCrashlytics.getInstance().log( "Init background loader for "
                             + WANConfigTile.class
                             + ": routerInfo="
                             + mRouter
@@ -678,7 +678,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
                                     //            applicationName != null ? applicationName
                                     //                : BuildConfig.APPLICATION_ID, BuildConfig.VERSION_NAME,
                                     //            PublicIPInfo.ICANHAZIP_HOST, PublicIPInfo.ICANHAZIP_PORT));
-                                    Crashlytics.log(Log.DEBUG, LOG_TAG,
+                                    FirebaseCrashlytics.getInstance().log(
                                             "wanPublicIpCmdStatus: " + Arrays.toString(wanPublicIpCmdStatus));
                                     if (wanPublicIpCmdStatus.length == 0) {
                                         nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
@@ -724,7 +724,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
                                                     //    PublicIPInfo.ICANHAZPTR_HOST, PublicIPInfo.ICANHAZPTR_PORT)
                                             );
 
-                                    Crashlytics.log(Log.DEBUG, LOG_TAG,
+                                    FirebaseCrashlytics.getInstance().log(
                                             "revDnsCmdStatus: " + Arrays.toString(revDnsCmdStatus));
 
                                     if (revDnsCmdStatus != null && revDnsCmdStatus.length > 0) {

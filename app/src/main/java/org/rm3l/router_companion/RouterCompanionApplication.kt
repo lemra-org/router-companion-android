@@ -36,8 +36,7 @@ import android.util.Log
 import android.widget.ImageView
 import com.airbnb.deeplinkdispatch.DeepLinkHandler
 //import com.avocarrot.sdk.Avocarrot
-import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.core.CrashlyticsCore
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.evernote.android.job.JobConfig
 import com.evernote.android.job.JobManager
 import com.facebook.stetho.Stetho
@@ -45,7 +44,6 @@ import com.facebook.stetho.Stetho.newInitializerBuilder
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.squareup.picasso.Picasso
-import io.fabric.sdk.android.Fabric
 import org.rm3l.ddwrt.BuildConfig
 import org.rm3l.ddwrt.BuildConfig.FLAVOR
 import org.rm3l.ddwrt.R
@@ -87,17 +85,14 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
         // Set up Crashlytics, disabled for debug builds for if user has explicitly requested so
         val autoCrashReportingEnabled = appPreferences.getBoolean(ACRA_ENABLE, true)
         Log.i(TAG, "autoCrashReportingEnabled=" + autoCrashReportingEnabled)
-        val crashlyticsKit = Crashlytics.Builder()
-                .core(CrashlyticsCore.Builder()
-                        .disabled(BuildConfig.DEBUG || !autoCrashReportingEnabled)
-                        .build())
-                .build()
-        Fabric.with(this, crashlyticsKit)
-        Crashlytics.setBool("DEBUG", BuildConfig.DEBUG)
-        Crashlytics.setBool("WITH_ADS", BuildConfig.WITH_ADS)
+
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(autoCrashReportingEnabled && !BuildConfig.DEBUG)
+
+        FirebaseCrashlytics.getInstance().setCustomKey("DEBUG", BuildConfig.DEBUG)
+        FirebaseCrashlytics.getInstance().setCustomKey("WITH_ADS", BuildConfig.WITH_ADS)
 
         val acraEmailAddr = appPreferences.getString(RouterCompanionAppConstants.ACRA_USER_EMAIL, null)
-        Crashlytics.setUserEmail(acraEmailAddr)
+        FirebaseCrashlytics.getInstance().setUserId(acraEmailAddr)
 
         mDebugResourceInspectorEnabled = appPreferences.getBoolean(DEBUG_RESOURCE_INSPECTOR_PREF_KEY, false)
 
@@ -217,20 +212,20 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
             BackgroundService.schedule()
             FirmwareUpdateCheckerJob.schedule()
         } catch (e: Exception) {
-            Crashlytics.log(Log.WARN, TAG, "JobManager reported an error => no job scheduling feature then: " + e.message)
-            Crashlytics.logException(e)
+            FirebaseCrashlytics.getInstance().log( "JobManager reported an error => no job scheduling feature then: " + e.message)
+            FirebaseCrashlytics.getInstance().recordException(e)
         }
 
     }
 
     override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
-        Crashlytics.log(Log.DEBUG, TAG, "onActivityCreated: " + activity?.javaClass?.canonicalName)
+        FirebaseCrashlytics.getInstance().log("onActivityCreated: ${activity?.javaClass?.canonicalName}")
         mCurrentActivity = WeakReference(activity)
     }
 
     override fun onActivityDestroyed(activity: Activity?) {
-        Crashlytics.log(Log.DEBUG, TAG,
-                "onActivityDestroyed: " + activity?.javaClass?.canonicalName)
+        FirebaseCrashlytics.getInstance().log(
+                "onActivityDestroyed: ${activity?.javaClass?.canonicalName}")
         mCurrentActivity?.clear()
 //        if (mCurrentActivity != null) {
 //            mCurrentActivity!!.clear()
@@ -238,7 +233,7 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
     }
 
     override fun onActivityPaused(activity: Activity?) {
-        Crashlytics.log(Log.DEBUG, TAG, "onActivityPaused: " + activity?.javaClass?.canonicalName)
+        FirebaseCrashlytics.getInstance().log("onActivityPaused: ${activity?.javaClass?.canonicalName}")
         mCurrentActivity?.clear()
 //        if (mCurrentActivity != null) {
 //            mCurrentActivity!!.clear()
@@ -246,12 +241,12 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
     }
 
     override fun onActivityResumed(activity: Activity?) {
-        Crashlytics.log(Log.DEBUG, TAG, "onActivityResumed: " + activity?.javaClass?.canonicalName)
+        FirebaseCrashlytics.getInstance().log("onActivityResumed: " + activity?.javaClass?.canonicalName)
         mCurrentActivity = WeakReference(activity)
     }
 
     override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {
-        Crashlytics.log(Log.DEBUG, TAG,
+        FirebaseCrashlytics.getInstance().log(
                 "onActivitySaveInstanceState: " + activity?.javaClass?.canonicalName)
 //        if (mCurrentActivity != null) {
 //            mCurrentActivity!!.clear()
@@ -260,12 +255,12 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
     }
 
     override fun onActivityStarted(activity: Activity?) {
-        Crashlytics.log(Log.DEBUG, TAG, "onActivityStarted: " + activity?.javaClass?.canonicalName)
+        FirebaseCrashlytics.getInstance().log("onActivityStarted: " + activity?.javaClass?.canonicalName)
         mCurrentActivity = WeakReference(activity)
     }
 
     override fun onActivityStopped(activity: Activity?) {
-        Crashlytics.log(Log.DEBUG, TAG, "onActivityStopped: " + activity?.javaClass?.canonicalName)
+        FirebaseCrashlytics.getInstance().log("onActivityStopped: " + activity?.javaClass?.canonicalName)
 //        if (mCurrentActivity != null) {
 //            mCurrentActivity!!.clear()
 //        }

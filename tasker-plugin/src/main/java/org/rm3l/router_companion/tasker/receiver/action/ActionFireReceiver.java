@@ -29,7 +29,7 @@ import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.twofortyfouram.locale.sdk.client.receiver.AbstractPluginSettingReceiver;
 import org.rm3l.router_companion.tasker.BuildConfig;
 import org.rm3l.router_companion.tasker.Constants;
@@ -42,7 +42,7 @@ public final class ActionFireReceiver extends AbstractPluginSettingReceiver {
 
     @Override
     protected void firePluginSetting(@NonNull final Context context, @NonNull final Bundle bundle) {
-        Crashlytics.log(Log.DEBUG, Constants.TAG, "bundle: " + bundle);
+        FirebaseCrashlytics.getInstance().log( "bundle: " + bundle);
 
         try {
             final PackageInfo packageInfo =
@@ -99,7 +99,7 @@ public final class ActionFireReceiver extends AbstractPluginSettingReceiver {
                 try {
                     supportedCommand = SupportedCommand.valueOf(commandSupportedName);
                 } catch (IllegalArgumentException iae) {
-                    Crashlytics.logException(iae);
+                    FirebaseCrashlytics.getInstance().recordException(iae);
                     Toast.makeText(context, "Internal Error - please try again later", Toast.LENGTH_SHORT)
                             .show();
                     return;
@@ -133,7 +133,7 @@ public final class ActionFireReceiver extends AbstractPluginSettingReceiver {
 
             final String deepLinkUrl = deeplinkStringBuilder.toString();
 
-            Crashlytics.log(Log.DEBUG, Constants.TAG,
+            FirebaseCrashlytics.getInstance().log(
                     String.format("\n- appPackage = [%s]\n- deepLinkUrl = [%s]", appPackage, deepLinkUrl));
 
             final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(deepLinkUrl));
@@ -144,18 +144,18 @@ public final class ActionFireReceiver extends AbstractPluginSettingReceiver {
             intent.putExtra("ORIGIN_INTENT", pendingIntent);
             intent.putExtra("CREATOR_PKG", BuildConfig.APPLICATION_ID);
 
-            Crashlytics.log(Log.DEBUG, Constants.TAG, "pendingIntent: " + pendingIntent);
+            FirebaseCrashlytics.getInstance().log( "pendingIntent: " + pendingIntent);
             try {
                 pendingIntent.send();
             } catch (PendingIntent.CanceledException e) {
-                Crashlytics.logException(e);
+                FirebaseCrashlytics.getInstance().recordException(e);
                 Toast.makeText(context, "Internal Error - please try again later", Toast.LENGTH_SHORT)
                         .show();
                 //            e.printStackTrace();
             }
             //        context.startActivity(intent);
         } catch (final DDWRTCompanionPackageVersionRequiredNotFoundException e) {
-            Crashlytics.logException(e);
+            FirebaseCrashlytics.getInstance().recordException(e);
             Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
             return;
         }

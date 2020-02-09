@@ -8,7 +8,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import androidx.annotation.Nullable;
 import android.util.Log;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -145,7 +145,7 @@ public class RouterCompanionServiceImpl extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        Crashlytics.log(Log.DEBUG, TAG, "onBind");
+        FirebaseCrashlytics.getInstance().log("onBind");
         return mBinder;
     }
 }

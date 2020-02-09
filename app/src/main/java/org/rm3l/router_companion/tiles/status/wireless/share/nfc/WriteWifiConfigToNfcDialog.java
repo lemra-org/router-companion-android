@@ -20,7 +20,7 @@ import android.widget.Toast;
 import be.brunoparmentier.wifikeyshare.model.WifiAuthType;
 import be.brunoparmentier.wifikeyshare.model.WifiNetwork;
 import be.brunoparmentier.wifikeyshare.utils.NfcUtils;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.util.Arrays;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.tiles.status.wireless.share.WifiSharingActivity;
@@ -197,7 +197,7 @@ public class WriteWifiConfigToNfcDialog extends AlertDialog implements View.OnCl
                                 + ndef.getMaxSize()
                                 + " bytes.";
                         setViewText(mLabelView, errorMsg);
-                        Crashlytics.log(Log.ERROR, TAG, errorMsg);
+                        FirebaseCrashlytics.getInstance().log( errorMsg);
                         return;
                     }
 
@@ -212,13 +212,13 @@ public class WriteWifiConfigToNfcDialog extends AlertDialog implements View.OnCl
                     setViewText(mCancelButton, R.string.done_label);
                 } else {
                     setViewText(mLabelView, R.string.status_tag_not_writable);
-                    Crashlytics.log(Log.ERROR, TAG, "Tag is not writable");
+                    FirebaseCrashlytics.getInstance().log( "Tag is not writable");
                 }
             } else {
                 setViewText(mLabelView, "NFC tag is not writeable because it does not support NDEF. "
                         + "Please use a different one supporting NDEF technology.");
                 final String[] techList = tag.getTechList();
-                Crashlytics.log(Log.ERROR, TAG,
+                FirebaseCrashlytics.getInstance().log(
                         "Tag does not support NDEF. Tech List: " + Arrays.toString(techList));
             }
         } catch (Exception e) {

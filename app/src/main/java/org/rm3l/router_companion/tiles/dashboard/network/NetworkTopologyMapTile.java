@@ -29,7 +29,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
@@ -139,7 +139,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
         try {
             //Set tiles
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished: loader=" + loader + " / data=" + data);
 
             final TextView wanInternetTextView =
                     (TextView) layout.findViewById(R.id.tile_network_map_wan_internet_text);
@@ -354,7 +354,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                 updateProgressBarWithSuccess();
             }
         } finally {
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished(): done loading!");
             mRefreshing.set(false);
             try {
                 //Destroy temporary SSH session
@@ -380,7 +380,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
                     isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+                    FirebaseCrashlytics.getInstance().log( "Init background loader for "
                             + NetworkTopologyMapTile.class
                             + ": routerInfo="
                             + mRouter

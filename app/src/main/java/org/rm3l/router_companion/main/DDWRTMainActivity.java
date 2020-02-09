@@ -85,7 +85,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.airbnb.deeplinkdispatch.DeepLink;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.appindexing.Action;
@@ -555,7 +555,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                             return false;
                         }
                         final long profileIdentifier = profile.getIdentifier();
-                        Crashlytics.log(Log.DEBUG, TAG, "OnAccountHeaderListener: " + profileIdentifier);
+                        FirebaseCrashlytics.getInstance().log("OnAccountHeaderListener: " + profileIdentifier);
                         if (profileIdentifier == ADD_NEW_ROUTER || profileIdentifier == MANAGE_ROUTERS) {
                             //Already handled
                             return true;
@@ -865,7 +865,7 @@ public class DDWRTMainActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Crashlytics.log(Log.DEBUG, TAG,
+        FirebaseCrashlytics.getInstance().log(
                 "onActivityResult(" + requestCode + "," + resultCode + "," + data);
         // Check which request we're responding to
         switch (requestCode) {
@@ -1036,11 +1036,11 @@ public class DDWRTMainActivity extends AppCompatActivity
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay!
-                    Crashlytics.log(Log.DEBUG, TAG, "Yay! Permission granted for #" + requestCode);
+                    FirebaseCrashlytics.getInstance().log("Yay! Permission granted for #" + requestCode);
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Crashlytics.log(Log.WARN, TAG, "Boo! Permission denied for #" + requestCode);
+                    FirebaseCrashlytics.getInstance().log( "Boo! Permission denied for #" + requestCode);
                     Utils.displayMessage(this, "Data caching will be unavailable", Style.INFO);
                 }
                 return;
@@ -1164,19 +1164,19 @@ public class DDWRTMainActivity extends AppCompatActivity
     @Override
     public void onCustomTabsConnected() {
         //We may make UI changes
-        Crashlytics.log(Log.DEBUG, TAG, "onCustomTabsConnected");
+        FirebaseCrashlytics.getInstance().log("onCustomTabsConnected");
     }
 
     @Override
     public void onCustomTabsDisconnected() {
         //We may make UI changes
-        Crashlytics.log(Log.DEBUG, TAG, "onCustomTabsDisconnected");
+        FirebaseCrashlytics.getInstance().log("onCustomTabsDisconnected");
     }
 
     @Override
     public void onDismissEventTimeout(int event, @Nullable Bundle token) throws Exception {
         final String routerAction = token != null ? token.getString(ROUTER_ACTION) : null;
-        Crashlytics.log(Log.DEBUG, TAG, "routerAction: [" + routerAction + "]");
+        FirebaseCrashlytics.getInstance().log("routerAction: [" + routerAction + "]");
         if (!isNullOrEmpty(routerAction)) {
             handleRouterAction(routerAction);
         } else {
@@ -1383,7 +1383,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                 }
 
                 private boolean canConnect(@NonNull final String urlStr) {
-                    Crashlytics.log(Log.DEBUG, TAG, "--> Trying GET '" + urlStr + "'");
+                    FirebaseCrashlytics.getInstance().log("--> Trying GET '" + urlStr + "'");
                     HttpURLConnection urlConnection = null;
                     try {
                         final URL url = new URL(urlStr + "/Management.asp");
@@ -1409,11 +1409,11 @@ public class DDWRTMainActivity extends AppCompatActivity
                                 }
                             }
                         }
-                        Crashlytics.log(Log.DEBUG, TAG, "GET " + urlStr + " : " + statusCode);
+                        FirebaseCrashlytics.getInstance().log("GET " + urlStr + " : " + statusCode);
                         return true;
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Crashlytics.log(Log.DEBUG, TAG, "Didn't succeed in GET'ing " + urlStr);
+                        FirebaseCrashlytics.getInstance().log("Didn't succeed in GET'ing " + urlStr);
                         return false;
                     } finally {
                         if (urlConnection != null) {
@@ -1678,7 +1678,7 @@ public class DDWRTMainActivity extends AppCompatActivity
     @Override
     public void onPageScrolled(int position, float positionOffset,
             int positionOffsetPixels) {
-        Crashlytics.log(Log.DEBUG, TAG, "onPageScrolled @" + position);
+        FirebaseCrashlytics.getInstance().log("onPageScrolled @" + position);
     }
 
     /**
@@ -1719,7 +1719,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                     .withEmail(newRouter.getRemoteIpAddress() + ":" + newRouter.getRemotePort());
 
             final String routerModel = Router.getRouterModel(this, newRouter);
-            Crashlytics.log(Log.DEBUG, TAG, "routerModel: " + routerModel);
+            FirebaseCrashlytics.getInstance().log("routerModel: " + routerModel);
             if (!(isNullOrEmpty(routerModel) || "-".equalsIgnoreCase(routerModel))) {
                 if (Utils.isDemoRouter(newRouter)) {
                     newProfile.withIcon(R.drawable.demo_router);
@@ -1767,7 +1767,7 @@ public class DDWRTMainActivity extends AppCompatActivity
     public void startActivityForResult(Intent intent, DDWRTTile.ActivityResultListener listener) {
 
         if (mCurrentActivityResultListener != null) {
-            Crashlytics.log(Log.ERROR, TAG,
+            FirebaseCrashlytics.getInstance().log(
                     "Activity trying to start more than one activity at a time...");
             return;
         }
@@ -2043,7 +2043,7 @@ public class DDWRTMainActivity extends AppCompatActivity
 
     private void selectItem(int position, int tabPosition) {
 
-        Crashlytics.log(Log.DEBUG, TAG, "selectItem @" + position);
+        FirebaseCrashlytics.getInstance().log("selectItem @" + position);
         if (position < 0) {
             return;
         }

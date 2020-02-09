@@ -28,7 +28,7 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.util.Log;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
@@ -90,7 +90,7 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
             }
 
             if (globalSharedPreferences.getBoolean(DEBUG_MODE, false)) {
-                Crashlytics.log(Log.DEBUG, LOG_TAG, "cmdList: " + cmdList);
+                FirebaseCrashlytics.getInstance().log( "cmdList: " + cmdList);
             }
 
             // Seems there is a limit on the number of characters we can pass to the SSH server console

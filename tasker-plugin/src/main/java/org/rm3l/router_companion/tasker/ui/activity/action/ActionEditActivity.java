@@ -54,7 +54,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Throwables;
 import com.mikepenz.aboutlibraries.Libs;
 import com.mikepenz.aboutlibraries.LibsBuilder;
@@ -95,7 +95,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
          * is called once the bind succeeds
          */
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Crashlytics.log(Log.DEBUG, Constants.TAG, "Service connected");
+            FirebaseCrashlytics.getInstance().log( "Service connected");
             routerCompanionService = IRouterCompanionService.Stub.asInterface(service);
 
             mErrorPlaceholder.setVisibility(View.GONE);
@@ -109,7 +109,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
                 try {
                     actionsByOrigin = routerCompanionService.getActionsByOrigin(BuildConfig.APPLICATION_ID);
                 } catch (RemoteException e) {
-                    Crashlytics.logException(e);
+                    FirebaseCrashlytics.getInstance().recordException(e);
                     e.printStackTrace();
                     Toast.makeText(ActionEditActivity.this, "Internal Error - please try again later",
                             Toast.LENGTH_LONG).show();
@@ -120,7 +120,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
                     return;
                 }
                 final int nbActionsForThisPackage = (actionsByOrigin != null ? actionsByOrigin.size() : 0);
-                Crashlytics.log(Log.DEBUG, Constants.TAG, "Found " + nbActionsForThisPackage +
+                FirebaseCrashlytics.getInstance().log( "Found " + nbActionsForThisPackage +
                         " action runs against DD-WRT Companion Lite app.");
                 if (nbActionsForThisPackage > MAX_ACTION_RUNS_FREE_VERSION) {
                     final String text =
@@ -128,7 +128,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
                                     + MAX_ACTION_RUNS_FREE_VERSION
                                     + " action runs. "
                                     + "Please consider upgrading to DD-WRT Companion premium app to support this initiative!");
-                    Crashlytics.log(Log.DEBUG, Constants.TAG, text);
+                    FirebaseCrashlytics.getInstance().log( text);
                     mErrorPlaceholder.setText(text);
                     mErrorPlaceholder.setVisibility(View.VISIBLE);
                     Toast.makeText(ActionEditActivity.this, text, Toast.LENGTH_LONG).show();
@@ -142,7 +142,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
             try {
                 allRouters = routerCompanionService.getAllRouters();
             } catch (RemoteException e) {
-                Crashlytics.logException(e);
+                FirebaseCrashlytics.getInstance().recordException(e);
                 e.printStackTrace();
                 Toast.makeText(ActionEditActivity.this, "Internal Error - please try again later",
                         Toast.LENGTH_SHORT).show();
@@ -214,13 +214,13 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
                             try {
                                 ActionEditActivity.this.startActivityForResult(intent, REGISTER_ROUTER_REQUEST);
                             } catch (final ActivityNotFoundException anfe) {
-                                Crashlytics.logException(anfe);
+                                FirebaseCrashlytics.getInstance().recordException(anfe);
                                 ActivityUtils.openPlayStoreForPackage(ActionEditActivity.this, "org.rm3l.ddwrt");
                                 mRoutersDropdown.setSelection(0);
                             }
                         } catch (final DDWRTCompanionPackageVersionRequiredNotFoundException e) {
                             Toast.makeText(ActionEditActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-                            Crashlytics.logException(e);
+                            FirebaseCrashlytics.getInstance().recordException(e);
                             mErrorPlaceholder.setText(e.getMessage());
                             mErrorPlaceholder.setVisibility(View.VISIBLE);
                             mRoutersDropdown.setSelection(0);
@@ -351,11 +351,11 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
 
                 mCommandConfigurationVariable.setChecked(mPreviousBundleCommandCustomIsVariable);
 
-                Crashlytics.log(Log.DEBUG, Constants.TAG,
+                FirebaseCrashlytics.getInstance().log(
                         "mPreviousBundleCommandCustomIsVariable: " + mPreviousBundleCommandCustomIsVariable);
-                Crashlytics.log(Log.DEBUG, Constants.TAG, "mPreviousBundleCommandCustomVariableName: "
+                FirebaseCrashlytics.getInstance().log( "mPreviousBundleCommandCustomVariableName: "
                         + mPreviousBundleCommandCustomVariableName);
-                Crashlytics.log(Log.DEBUG, Constants.TAG,
+                FirebaseCrashlytics.getInstance().log(
                         "mPreviousBundleCommandCustomCmd: " + mPreviousBundleCommandCustomCmd);
 
                 if (mPreviousBundleCommandCustomIsVariable) {
@@ -383,7 +383,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
 
         /*** is called once the remote service is no longer available */
         public void onServiceDisconnected(ComponentName name) { //
-            Crashlytics.log(Log.WARN, Constants.TAG, "Service has unexpectedly disconnected");
+            FirebaseCrashlytics.getInstance().log( "Service has unexpectedly disconnected");
             mErrorPlaceholder.setText(
                     "Connection to DD-WRT Companion application unexpectedly disconnected. Please reload and try again.");
             mErrorPlaceholder.setVisibility(View.VISIBLE);
@@ -815,7 +815,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
     public void onPostCreateWithPreviousResult(@NonNull final Bundle previousBundle,
             @NonNull final String previousBlurb) {
 
-        Crashlytics.log(Log.DEBUG, Constants.TAG, "previousBundle: " + previousBundle);
+        FirebaseCrashlytics.getInstance().log( "previousBundle: " + previousBundle);
 
         mPreviousBundleIntVersionCode = previousBundle.getInt(BUNDLE_EXTRA_INT_VERSION_CODE);
 

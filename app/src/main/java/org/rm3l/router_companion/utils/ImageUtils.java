@@ -20,7 +20,7 @@ import android.widget.ImageView;
 import android.widget.RemoteViews;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Strings;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -316,7 +316,7 @@ public final class ImageUtils {
                     errorPlaceHolderRes, new Callback() {
                         @Override
                         public void onError(Exception e) {
-                            Crashlytics.log(Log.DEBUG, TAG, "onError: " + url);
+                            FirebaseCrashlytics.getInstance().log("onError: " + url);
                             Utils.reportException(context, e);
                             reportException(null, new MissingRouterModelImageException(
                                     routerModel + " (" + routerModelNormalized + ")"));
@@ -330,7 +330,7 @@ public final class ImageUtils {
                         @Override
                         public void onSuccess() {
                             //Great!
-                            Crashlytics.log(Log.DEBUG, TAG, "onSuccess: " + url);
+                            FirebaseCrashlytics.getInstance().log("onSuccess: " + url);
 
                             //Report event
                             final Map<String, Object> eventMap = new HashMap<>();

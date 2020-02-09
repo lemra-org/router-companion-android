@@ -25,7 +25,7 @@ import android.util.Base64;
 import android.util.Log;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.PermissionChecker;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.android.material.snackbar.Snackbar;
 import com.readystatesoftware.chuck.ChuckInterceptor;
@@ -149,7 +149,7 @@ public final class NetworkUtils {
 
         if (BuildConfig.DEBUG) {
             final HttpLoggingInterceptor interceptor =
-                    new HttpLoggingInterceptor(message -> Crashlytics.log(Log.DEBUG, TAG, message));
+                    new HttpLoggingInterceptor(message -> FirebaseCrashlytics.getInstance().log(message));
             interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
             builder.addInterceptor(interceptor);
 

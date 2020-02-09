@@ -73,7 +73,7 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -238,7 +238,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
         private void handleActionCancellationOrFailureEvent(final @Nullable Bundle token) {
             try {
                 final String routerActionStr = token != null ? token.getString(ROUTER_ACTION) : null;
-                Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerActionStr + "]");
+                FirebaseCrashlytics.getInstance().log( "routerAction: [" + routerActionStr + "]");
                 if (isNullOrEmpty(routerActionStr)) {
                     return;
                 }
@@ -264,7 +264,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
         public void onDismissEventTimeout(int event, @Nullable Bundle token)
                 throws Exception {
             final String routerAction = token != null ? token.getString(ROUTER_ACTION) : null;
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
+            FirebaseCrashlytics.getInstance().log( "routerAction: [" + routerAction + "]");
             if (isNullOrEmpty(routerAction)) {
                 return;
             }
@@ -596,7 +596,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
         public void onDismissEventTimeout(int event, @Nullable Bundle token)
                 throws Exception {
             final String routerAction = token != null ? token.getString(ROUTER_ACTION) : null;
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
+            FirebaseCrashlytics.getInstance().log( "routerAction: [" + routerAction + "]");
             if (isNullOrEmpty(routerAction)) {
                 return;
             }
@@ -713,7 +713,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                     .removalListener(new RemovalListener<String, MACOUIVendor>() {
                         @Override
                         public void onRemoval(@NonNull RemovalNotification<String, MACOUIVendor> notification) {
-                            Crashlytics.log(Log.DEBUG, LOG_TAG,
+                            FirebaseCrashlytics.getInstance().log(
                                     "onRemoval(" + notification.getKey() + ") - cause: " + notification.getCause());
                         }
                     })
@@ -1245,7 +1245,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
 
         try {
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished: loader=" + loader + " / data=" + data);
 
             //noinspection ThrowableResultOfMethodCallIgnored
             if (data == null || (data.getDevices().isEmpty()
@@ -1489,7 +1489,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                 tileMenu.setVisibility(View.VISIBLE);
             }
         } finally {
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished(): done loading!");
             mRefreshing.set(false);
 
             mProgressBarDesc.setText(null);
@@ -1659,7 +1659,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
 
                 isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
-                Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+                FirebaseCrashlytics.getInstance().log( "Init background loader for "
                         + WirelessClientsTile.class
                         + ": routerInfo="
                         + mRouter
@@ -1806,7 +1806,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                         e.printStackTrace();
                     }
 
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "broadcastAddresses: " + broadcastAddresses);
+                    FirebaseCrashlytics.getInstance().log( "broadcastAddresses: " + broadcastAddresses);
 
                     final Multimap<String, String> phyToWlIfaces = ArrayListMultimap.create();
                     try {
@@ -1853,7 +1853,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                 }
                             }
                         }
-                        Crashlytics.log(Log.DEBUG, LOG_TAG, "phyToWlIfaces: " + phyToWlIfaces);
+                        FirebaseCrashlytics.getInstance().log( "phyToWlIfaces: " + phyToWlIfaces);
                     } catch (final Exception e) {
                         //No worries
                         e.printStackTrace();
@@ -1876,7 +1876,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                         devices.setActiveClientsNum(activeClients.length);
                     }
 
-                    Crashlytics.log(Log.DEBUG, LOG_TAG,
+                    FirebaseCrashlytics.getInstance().log(
                             "activeClients: " + (activeClients != null ? activeClients.length : "NULL"));
 
                     updateProgressBarViewSeparator(30);
@@ -1895,7 +1895,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                         devices.setActiveDhcpLeasesNum(activeDhcpLeases.length);
                     }
 
-                    Crashlytics.log(Log.DEBUG, LOG_TAG,
+                    FirebaseCrashlytics.getInstance().log(
                             "activeDhcpLeases: " + Arrays.toString(activeDhcpLeases));
 
                     updateProgressBarViewSeparator(40);
@@ -1914,7 +1914,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                         devices.setActiveIPConnections(activeIPConnections.length);
                     }
 
-                    Crashlytics.log(Log.DEBUG, LOG_TAG,
+                    FirebaseCrashlytics.getInstance().log(
                             "#activeIPConnections: " + (activeIPConnections != null ? activeIPConnections.length
                                     : "NULL"));
 
@@ -2008,7 +2008,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                                     + "done");
                         }
 
-                        Crashlytics.log(Log.DEBUG, LOG_TAG,
+                        FirebaseCrashlytics.getInstance().log(
                                 "useAtheros= " + useAtheros + " / assocList: " + Arrays.toString(assocList));
 
                         if (assocList != null) {
@@ -2035,7 +2035,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                 }
                             }
                         }
-                        Crashlytics.log(Log.DEBUG, LOG_TAG,
+                        FirebaseCrashlytics.getInstance().log(
                                 "wirelessIfaceAssocList: " + wirelessIfaceAssocList);
                     } catch (final Exception e) {
                         //No worries
@@ -2058,7 +2058,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                     //                                    "\",$4,$2,$1}'",
                     //                            "/bin/echo done");
                     //
-                    //                    Crashlytics.log(Log.DEBUG, LOG_TAG, "output: " + Arrays.toString(output));
+                    //                    FirebaseCrashlytics.getInstance().log( "output: " + Arrays.toString(output));
 
                     //                    if (output == null || output.length == 0) {
                     //                        if (output == null) {
@@ -2086,7 +2086,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                     final ArrayList<Device> devicesFetchUsingWakeOnLanTileData =
                             devicesFetchUsingWakeOnLanTile.getData();
                     if (devicesFetchUsingWakeOnLanTileData == null) {
-                        Crashlytics.log(Log.DEBUG, LOG_TAG, "devicesFetchUsingWakeOnLanTileData == NULL");
+                        FirebaseCrashlytics.getInstance().log( "devicesFetchUsingWakeOnLanTileData == NULL");
                     } else {
                         for (final Device device : devicesFetchUsingWakeOnLanTileData) {
                             if (device == null) {
@@ -2150,7 +2150,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                                                 macAddress.toUpperCase(), iface,
                                                                 macAddress.toUpperCase(), iface,
                                                                 iface));
-                                        Crashlytics.log(Log.DEBUG, LOG_TAG,
+                                        FirebaseCrashlytics.getInstance().log(
                                                 "ssidAndrssiAndSNROutput: " + Arrays
                                                         .toString(ssidAndrssiAndSNROutput));
                                         if (ssidAndrssiAndSNROutput == null || ssidAndrssiAndSNROutput.length == 0) {
@@ -2177,7 +2177,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                                                         realWlIface));
                                             }
                                         }
-                                        Crashlytics.log(Log.DEBUG, LOG_TAG,
+                                        FirebaseCrashlytics.getInstance().log(
                                                 "ssidAndrssiAndSNROutput: " + Arrays
                                                         .toString(ssidAndrssiAndSNROutput));
                                         if (ssidAndrssiAndSNROutput != null) {
@@ -2326,7 +2326,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                     ////                                                                    "/bin/echo \" \"; /usr/sbin/wl -i `/usr/sbin/nvram get %s_ifname` noise || /usr/sbin/wl_atheros -i `/usr/sbin/nvram get %s_ifname` noise ) | " +
                     ////                                                                    "/usr/bin/tr -d '\\n' | /usr/bin/awk '{print $1-$2}'",
                     ////                                                            iface, macAddress.toUpperCase(), iface, macAddress.toUpperCase(), iface, iface));
-                    ////                                            Crashlytics.log(Log.DEBUG, LOG_TAG, "ssidAndrssiAndSNROutput: " + Arrays.toString(ssidAndrssiAndSNROutput));
+                    ////                                            FirebaseCrashlytics.getInstance().log( "ssidAndrssiAndSNROutput: " + Arrays.toString(ssidAndrssiAndSNROutput));
                     ////                                            if (ssidAndrssiAndSNROutput == null || ssidAndrssiAndSNROutput.length == 0) {
                     ////                                                //Try again. iface might represent the actual physical interface. We must try to fetch the wl one instead
                     ////                                                if (!isNullOrEmpty(realWlIface)) {
@@ -2342,7 +2342,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                     ////                                                                    realWlIface, macAddress.toUpperCase(), realWlIface, macAddress.toUpperCase(), realWlIface, realWlIface));
                     ////                                                }
                     ////                                            }
-                    ////                                            Crashlytics.log(Log.DEBUG, LOG_TAG, "ssidAndrssiAndSNROutput: " + Arrays.toString(ssidAndrssiAndSNROutput));
+                    ////                                            FirebaseCrashlytics.getInstance().log( "ssidAndrssiAndSNROutput: " + Arrays.toString(ssidAndrssiAndSNROutput));
                     ////                                            if (ssidAndrssiAndSNROutput != null) {
                     ////                                                if (ssidAndrssiAndSNROutput.length >= 1) {
                     ////                                                    wirelessConnectionInfo.setSsid(ssidAndrssiAndSNROutput[0]);
@@ -2442,7 +2442,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
 
                     String remoteChecksum = RouterCompanionAppConstants.EMPTY_STRING;
 
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Before usageDataLock");
+                    FirebaseCrashlytics.getInstance().log( "Before usageDataLock");
 
                     updateProgressBarViewSeparator(70);
                     synchronized (usageDataLock) {
@@ -2460,7 +2460,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                 final File file =
                                         getClientsUsageDataFile(mParentFragmentActivity, mRouter.getUuid());
                                 mUsageDbBackupPath = file.getAbsolutePath();
-                                Crashlytics.log(Log.DEBUG, LOG_TAG, "mUsageDbBackupPath: " + mUsageDbBackupPath);
+                                FirebaseCrashlytics.getInstance().log( "mUsageDbBackupPath: " + mUsageDbBackupPath);
 
                                 //Compute checksum of remote script, and see if usage DB exists remotely
                                 final String[] remoteMd5ChecksumAndUsageDBCheckOutput =
@@ -2477,7 +2477,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                     remoteChecksum = nullToEmpty(remoteMd5ChecksumAndUsageDBCheckOutput[0]).trim();
                                     final String doesUsageDataExistRemotely =
                                             remoteMd5ChecksumAndUsageDBCheckOutput[1];
-                                    Crashlytics.log(Log.DEBUG, LOG_TAG,
+                                    FirebaseCrashlytics.getInstance().log(
                                             "doesUsageDataExistRemotely: " + doesUsageDataExistRemotely);
                                     if (doesUsageDataExistRemotely != null && file.exists() && !"0".equals(
                                             doesUsageDataExistRemotely.trim())) {
@@ -2495,7 +2495,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                         /** http://www.dd-wrt.com/phpBB2/viewtopic.php?t=75275 */
 
                         //Copy wrtbwmon file to remote host (/tmp/), if needed
-                        Crashlytics.log(Log.DEBUG, LOG_TAG,
+                        FirebaseCrashlytics.getInstance().log(
                                 "[COPY] Copying monitoring script to remote router, if needed...");
                         wrtbwmonScriptPath = new File(mParentFragmentActivity.getCacheDir(),
                                 WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME);
@@ -2507,11 +2507,11 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
 
                         //Compare MD5 checksum locally on remotely. If any differences, overwrite the remote one
                         final String localChecksum = Files.hash(wrtbwmonScriptPath, Hashing.md5()).toString();
-                        Crashlytics.log(Log.DEBUG, LOG_TAG,
+                        FirebaseCrashlytics.getInstance().log(
                                 String.format("<localChecksum=%s , remoteChecksum=%s>", localChecksum,
                                         remoteChecksum));
                         if (!remoteChecksum.equalsIgnoreCase(localChecksum)) {
-                            Crashlytics.log(Log.INFO, LOG_TAG,
+                            FirebaseCrashlytics.getInstance().log(
                                     "Local and remote Checksums for the per-client monitoring script are different "
                                             + "=> uploading the local one...");
                             SSHUtils.scpTo(mParentFragmentActivity, mRouter, mGlobalPreferences,
@@ -2520,7 +2520,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                         }
 
                         //Run Setup (does not matter if already done)
-                        Crashlytics.log(Log.DEBUG, LOG_TAG, "[EXEC] Running per-IP bandwidth monitoring...");
+                        FirebaseCrashlytics.getInstance().log( "[EXEC] Running per-IP bandwidth monitoring...");
 
                         final String[] usageDbOutLines =
                                 SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
@@ -2546,7 +2546,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                         //                                "rm -f " + USAGE_DB_OUT,
                                         String.format("rm -f %s", USAGE_DB_OUT));
 
-                        Crashlytics.log(Log.DEBUG, LOG_TAG,
+                        FirebaseCrashlytics.getInstance().log(
                                 "usageDbOutLines: " + Arrays.toString(usageDbOutLines));
 
                         if (usageDbOutLines != null) {
@@ -2581,7 +2581,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                 final List<String> splitToList =
                                         Splitter.on(",").omitEmptyStrings().splitToList(usageDbOutLine);
                                 if (splitToList.size() < 6) {
-                                    Crashlytics.log(Log.WARN, LOG_TAG,
+                                    FirebaseCrashlytics.getInstance().log(
                                             "Line split should have more than 6 elements: " + splitToList);
                                     continue;
                                 }
@@ -2649,7 +2649,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                         }
                     }
 
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "AFTER usageDataLock");
+                    FirebaseCrashlytics.getInstance().log( "AFTER usageDataLock");
 
                     updateProgressBarViewSeparator(90);
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
@@ -2711,7 +2711,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                     final boolean disableBackup =
                             (mParentFragmentPreferences != null && mParentFragmentPreferences.getBoolean(
                                     "disableUsageDataAutoBackup", false));
-                    Crashlytics.log(Log.DEBUG, LOG_TAG,
+                    FirebaseCrashlytics.getInstance().log(
                             "disableBackup= " + disableBackup + " - mUsageDbBackupPath: " + mUsageDbBackupPath);
                     if (!disableBackup) {
                         try {
@@ -2751,12 +2751,12 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                         mRouter, deviceCollection);
                     } catch (final Exception e) {
                         //No worries
-                        Crashlytics.log(Log.WARN, LOG_TAG,
+                        FirebaseCrashlytics.getInstance().log(
                                 "Failed to generate connected hosts notification: " + e.getMessage());
                         Utils.reportException(mParentFragmentActivity, e);
                     }
 
-                    Crashlytics.log(Log.DEBUG, LOG_TAG,
+                    FirebaseCrashlytics.getInstance().log(
                             "Discovered a total of " + devices.getDevicesCount() + " device(s)!");
 
                     //Finish by saving BW data at each run

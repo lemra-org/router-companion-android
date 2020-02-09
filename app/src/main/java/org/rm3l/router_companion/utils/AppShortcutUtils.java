@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.pm.ShortcutManager;
 import android.os.Build;
 import androidx.annotation.Nullable;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 /**
  * Created by rm3l on 02/12/2016.

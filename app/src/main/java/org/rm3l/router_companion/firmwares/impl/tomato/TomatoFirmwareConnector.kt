@@ -3,7 +3,7 @@ package org.rm3l.router_companion.firmwares.impl.tomato
 import android.content.Context
 import android.text.TextUtils
 import android.util.Patterns
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.common.base.Splitter
 import com.google.common.base.Strings
 import org.rm3l.router_companion.RouterCompanionAppConstants
@@ -292,7 +292,7 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
                                             Math.min(100, 100 * nvramUsedBytesLong / nvramTotalBytesLong)))
                         } catch (e: NumberFormatException) {
                             e.printStackTrace()
-                            Crashlytics.logException(e)
+                            FirebaseCrashlytics.getInstance().recordException(e)
                         }
 
                     }
@@ -314,7 +314,7 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
                                 totalUsed += java.lang.Long.parseLong(stringList[3])
                             } catch (e: NumberFormatException) {
                                 e.printStackTrace()
-                                Crashlytics.logException(e)
+                                FirebaseCrashlytics.getInstance().recordException(e)
                             }
 
                         }
@@ -342,7 +342,7 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
                                 totalUsed += java.lang.Long.parseLong(stringList[3])
                             } catch (e: NumberFormatException) {
                                 e.printStackTrace()
-                                Crashlytics.logException(e)
+                                FirebaseCrashlytics.getInstance().recordException(e)
                             }
 
                         }

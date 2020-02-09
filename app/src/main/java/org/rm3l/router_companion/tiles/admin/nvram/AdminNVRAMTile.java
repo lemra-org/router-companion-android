@@ -60,7 +60,7 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
@@ -439,7 +439,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
         try {
             //Set tiles
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished: loader=" + loader + " / data=" + data);
 
             layout.findViewById(R.id.tile_admin_nvram_menu).setVisibility(View.VISIBLE);
             layout.findViewById(R.id.tile_admin_nvram_toolbar).setVisibility(View.VISIBLE);
@@ -548,7 +548,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                 updateProgressBarWithSuccess();
             }
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
             doneWithLoaderInstance(this, loader);
@@ -709,7 +709,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
             public None loadInBackground() {
 
                 try {
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+                    FirebaseCrashlytics.getInstance().log( "Init background loader for "
                             + AdminNVRAMTile.class
                             + ": routerInfo="
                             + mRouter

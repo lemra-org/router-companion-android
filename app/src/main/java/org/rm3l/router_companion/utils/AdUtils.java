@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -113,7 +113,7 @@ public final class AdUtils {
             Utils.reportException(null, e);
         }
 
-        Crashlytics.log(Log.DEBUG, TAG, "deviceIdForAdMob: [" + obj + "]");
+        FirebaseCrashlytics.getInstance().log("deviceIdForAdMob: [" + obj + "]");
 
         return (obj != null ? obj.toString() : null);
     }

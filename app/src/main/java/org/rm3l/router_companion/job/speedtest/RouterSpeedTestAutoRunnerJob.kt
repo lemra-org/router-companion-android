@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.core.util.Pair
 import android.util.Log
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.evernote.android.job.DailyJob
 import com.evernote.android.job.DailyJob.DailyJobResult.CANCEL
 import com.evernote.android.job.DailyJob.DailyJobResult.SUCCESS
@@ -113,7 +113,7 @@ class RouterSpeedTestAutoRunnerJob {
             cancelAllSchedules(routerUuid)
             //This is a premium feature
             if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                Crashlytics.log(Log.DEBUG, LOG_TAG, "Speed Test auto measures feature is *premium*!")
+                FirebaseCrashlytics.getInstance().log( "Speed Test auto measures feature is *premium*!")
                 return
             }
 
@@ -133,7 +133,7 @@ class RouterSpeedTestAutoRunnerJob {
         @JvmStatic
         @Throws(Exception::class)
         fun runPing(context: Context, mOriginalRouter: Router, mRouterCopy: Router, server: String?): PingRTT {
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "runPing: " + server)
+            FirebaseCrashlytics.getInstance().log( "runPing: " + server)
 
             if (server.isNullOrBlank()) {
                 throw IllegalArgumentException("No Server specified")
@@ -196,7 +196,7 @@ class RouterSpeedTestAutoRunnerJob {
         @Throws(Exception::class)
         fun doRunSpeedTest(context: Context, routerUuid: String?) {
             val executionDate = Date()
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "executionDate: " + executionDate)
+            FirebaseCrashlytics.getInstance().log( "executionDate: " + executionDate)
             if (routerUuid == null) {
                 throw IllegalArgumentException("routerUuid must not be NULL")
             }
@@ -209,17 +209,17 @@ class RouterSpeedTestAutoRunnerJob {
             val mDao = RouterManagementActivity.getDao(context)
             val mOriginalRouter = mDao.getRouter(routerUuid)
             if (mOriginalRouter == null || mOriginalRouter.isArchived) {
-                Crashlytics.log(Log.WARN, LOG_TAG, "router NOT found (NULL or archived): $routerUuid")
+                FirebaseCrashlytics.getInstance().log( "router NOT found (NULL or archived): $routerUuid")
                 return
             }
             val isDemoRouter = Utils.isDemoRouter(mOriginalRouter)
             if (isDemoRouter || BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                 if (mDao.getSpeedTestResultsByRouter(mOriginalRouter.uuid).size >= MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION) {
                     if (isDemoRouter) {
-                        Crashlytics.log(Log.DEBUG, LOG_TAG, "You cannot have more than $MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION " +
+                        FirebaseCrashlytics.getInstance().log( "You cannot have more than $MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION " +
                                 "Speed Test results for the Demo Router: $routerUuid")
                     } else {
-                        Crashlytics.log(Log.DEBUG, LOG_TAG, "[PREMIUM] Save more SpeedTest runs: $routerUuid")
+                        FirebaseCrashlytics.getInstance().log( "[PREMIUM] Save more SpeedTest runs: $routerUuid")
                     }
                     return
                 }
@@ -323,7 +323,7 @@ class RouterSpeedTestAutoRunnerJob {
                 }
                 Arrays.sort(mPossibleFileSizes)
 
-                Crashlytics.log(Log.DEBUG, LOG_TAG,
+                FirebaseCrashlytics.getInstance().log(
                         "mPossibleFileSizes: " + Arrays.toString(mPossibleFileSizes))
 
                 for (possibleFileSize in mPossibleFileSizes) {
@@ -353,7 +353,7 @@ class RouterSpeedTestAutoRunnerJob {
 
                     if (cmdExecOutput == null || cmdExecOutput.size < 2 || "0" != Strings.nullToEmpty(cmdExecOutput[cmdExecOutput.size - 1]).trim({ it <= ' ' })) {
                         val speedTestException = SpeedTestException("Failed to download data: " + remoteFileName + "MB")
-                        Crashlytics.logException(speedTestException)
+                        FirebaseCrashlytics.getInstance().recordException(speedTestException)
                         throw speedTestException
                     }
 
@@ -361,7 +361,7 @@ class RouterSpeedTestAutoRunnerJob {
                     try {
                         elapsedSeconds = java.lang.Long.parseLong(Strings.nullToEmpty(cmdExecOutput[cmdExecOutput.size - 2]).trim({ it <= ' ' }))
                     } catch (nfe: NumberFormatException) {
-                        Crashlytics.logException(nfe)
+                        FirebaseCrashlytics.getInstance().recordException(nfe)
                         throw SpeedTestException("Unexpected output - please try again later.")
                     }
 
@@ -369,7 +369,7 @@ class RouterSpeedTestAutoRunnerJob {
                         throw SpeedTestException("Unexpected output - please try again later.")
                     }
 
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, String.format(Locale.US,
+                    FirebaseCrashlytics.getInstance().log( String.format(Locale.US,
                             "[SpeedTest] Downloaded %d MB of data in %d seconds. Download URL is: \"%s\"",
                             possibleFileSize, elapsedSeconds, completeServerUrl))
 
@@ -467,13 +467,13 @@ class RouterSpeedTestRunnerDailyJob : DailyJob(), RouterCompanionJob {
             val routerUuid = params.extras.getString(ROUTER_SELECTED, null) ?: return CANCEL
             val router = RouterManagementActivity.getDao(context).getRouter(routerUuid)
             if (router == null || router.isArchived) {
-                Crashlytics.log(Log.WARN, TAG, "router is NULL or archived => cancelling daily job")
+                FirebaseCrashlytics.getInstance().log( "router is NULL or archived => cancelling daily job")
                 return CANCEL
             }
             RouterSpeedTestAutoRunnerJob.doRunSpeedTest(context, routerUuid)
         } catch (e: Exception) {
             //Reschedule
-            Crashlytics.logException(e)
+            FirebaseCrashlytics.getInstance().recordException(e)
         }
         return SUCCESS
     }
@@ -499,9 +499,9 @@ class RouterSpeedTestRunnerPeriodicJob : Job(), RouterCompanionJob {
                         MONTHLY -> TimeUnit.DAYS.toMillis(31L)
                         else -> null
                     }
-            Crashlytics.log(Log.WARN, TAG, "intervalMs : $intervalMs")
+            FirebaseCrashlytics.getInstance().log( "intervalMs : $intervalMs")
             if (intervalMs == null) {
-                Crashlytics.log(Log.WARN, TAG, "intervalMs is NULL => nothing scheduled")
+                FirebaseCrashlytics.getInstance().log( "intervalMs is NULL => nothing scheduled")
                 return
             }
             JobRequest.Builder(RouterSpeedTestAutoRunnerJob.getActualRouterJobTag(TAG, routerUuid))
@@ -519,14 +519,14 @@ class RouterSpeedTestRunnerPeriodicJob : Job(), RouterCompanionJob {
             val routerUuid = params.extras.getString(ROUTER_SELECTED, null) ?: return Result.FAILURE
             val router = RouterManagementActivity.getDao(context).getRouter(routerUuid)
             if (router == null || router.isArchived) {
-                Crashlytics.log(Log.WARN, TAG, "router is NULL or archived => cancelling periodic job")
+                FirebaseCrashlytics.getInstance().log( "router is NULL or archived => cancelling periodic job")
                 return Result.FAILURE
             }
             RouterSpeedTestAutoRunnerJob.doRunSpeedTest(context,
                     params.extras.getString(ROUTER_SELECTED, null))
         } catch (e: Exception) {
             //Reschedule
-            Crashlytics.logException(e)
+            FirebaseCrashlytics.getInstance().recordException(e)
         }
         return Result.SUCCESS
     }

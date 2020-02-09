@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import org.rm3l.router_companion.utils.ReportingUtils;
 
 /**

@@ -61,7 +61,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.recyclerview.widget.DividerItemDecoration;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -175,7 +175,7 @@ public class SpeedTestActivity extends AppCompatActivity
 
             executionDate = new Date();
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "executionDate: " + executionDate);
+            FirebaseCrashlytics.getInstance().log( "executionDate: " + executionDate);
 
             Exception exception = null;
             try {
@@ -317,7 +317,7 @@ public class SpeedTestActivity extends AppCompatActivity
 
                 Pair<Long, Long> pairAcceptedForComputation = null;
 
-                Crashlytics.log(Log.DEBUG, LOG_TAG,
+                FirebaseCrashlytics.getInstance().log(
                         "mPossibleFileSizes: " + Arrays.toString(activity.mPossibleFileSizes));
 
                 int pg = 2;
@@ -389,7 +389,7 @@ public class SpeedTestActivity extends AppCompatActivity
                         throw new SpeedTestException("Unexpected output - please try again later.");
                     }
 
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, String.format(Locale.US,
+                    FirebaseCrashlytics.getInstance().log( String.format(Locale.US,
                             "[SpeedTest] Downloaded %d MB of data in %d seconds. Download URL is: \"%s\"",
                             possibleFileSize, elapsedSeconds, completeServerUrl));
 
@@ -439,7 +439,7 @@ public class SpeedTestActivity extends AppCompatActivity
         @Override
         protected void onCancelled(
                 AbstractRouterAction.RouterActionResult<Void> voidRouterActionResult) {
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onCancelled");
+            FirebaseCrashlytics.getInstance().log( "onCancelled");
             activity.errorPlaceholder.setText("Aborted");
             activity.errorPlaceholder.setVisibility(View.VISIBLE);
             resetEverything(true);
@@ -448,7 +448,7 @@ public class SpeedTestActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(
                 AbstractRouterAction.RouterActionResult<Void> voidRouterActionResult) {
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onPostExecute");
+            FirebaseCrashlytics.getInstance().log( "onPostExecute");
 
             if (voidRouterActionResult != null) {
                 final Exception exception = voidRouterActionResult.getException();
@@ -539,7 +539,7 @@ public class SpeedTestActivity extends AppCompatActivity
             }
             final Integer progressCode = values[0];
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "progressCode: " + progressCode);
+            FirebaseCrashlytics.getInstance().log( "progressCode: " + progressCode);
 
             if (progressCode == null) {
                 return;
@@ -666,7 +666,7 @@ public class SpeedTestActivity extends AppCompatActivity
         }
 
         private void resetEverything(final boolean enableSwipeRefresh) {
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "resetEverything(" + enableSwipeRefresh + ")");
+            FirebaseCrashlytics.getInstance().log( "resetEverything(" + enableSwipeRefresh + ")");
             try {
                 activity.internetRouterLink.setBackgroundColor(activity.defaultColorForPaths);
                 activity.routerLanLink.setBackgroundColor(activity.defaultColorForPaths);
