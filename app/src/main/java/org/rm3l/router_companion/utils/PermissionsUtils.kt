@@ -12,7 +12,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import androidx.core.content.ContextCompat
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.android.material.snackbar.Snackbar
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -82,7 +82,7 @@ class PermissionsUtils private constructor() {
             Dexter.withActivity(activity)
                 .withPermissions(*permissions)
                 .withListener(listener)
-                .withErrorListener {error -> Crashlytics.log(Log.WARN, TAG, "Dexter reported an error: $error") }
+                .withErrorListener {error -> FirebaseCrashlytics.getInstance().log( "Dexter reported an error: $error") }
                 .check()
         }
 
@@ -91,7 +91,7 @@ class PermissionsUtils private constructor() {
             Dexter.withActivity(activity)
                 .withPermission(permission)
                 .withListener(listener)
-                .withErrorListener {error -> Crashlytics.log(Log.WARN, TAG, "Dexter reported an error: $error") }
+                .withErrorListener {error -> FirebaseCrashlytics.getInstance().log( "Dexter reported an error: $error") }
                 .check()
         }
 

@@ -14,7 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import org.rm3l.ddwrt.BuildConfig;
@@ -74,7 +74,7 @@ public class WOLWidgetProvider extends AppWidgetProvider {
     @Override
     public void onReceive(final Context context, final Intent intent) {
 
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "onReceive: " + intent);
+        FirebaseCrashlytics.getInstance().log( "onReceive: " + intent);
 
         final int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);

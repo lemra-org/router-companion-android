@@ -59,7 +59,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import be.brunoparmentier.wifikeyshare.utils.NfcUtils;
 import com.amulyakhare.textdrawable.TextDrawable;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -127,7 +127,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         public void onDismissEventTimeout(int event, @Nullable Bundle token)
                 throws Exception {
             final String routerAction = token.getString(DDWRTMainActivity.ROUTER_ACTION);
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
+            FirebaseCrashlytics.getInstance().log( "routerAction: [" + routerAction + "]");
             if (isNullOrEmpty(routerAction)) {
                 return;
             }
@@ -164,7 +164,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         @Override
         public void onResultCode(int resultCode, Intent data) {
             try {
-                Crashlytics.log(Log.DEBUG, LOG_TAG, "onResultCode: " + resultCode);
+                FirebaseCrashlytics.getInstance().log( "onResultCode: " + resultCode);
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         final NVRAMInfo newNvramInfoData =
@@ -414,7 +414,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
     public void buildView(@Nullable NVRAMInfo data) {
 
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "buildView: " + iface + " / data=" + data);
+        FirebaseCrashlytics.getInstance().log( "buildView: " + iface + " / data=" + data);
 
         layout.findViewById(R.id.tile_status_wireless_iface_loading_view).setVisibility(View.GONE);
         layout.findViewById(R.id.tile_status_wireless_iface_gridlayout).setVisibility(View.VISIBLE);
@@ -526,14 +526,14 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
             @Nullable NVRAMInfo data) {
         try {
             //Set tiles
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader);
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished: loader=" + loader);
 
             buildView(data);
 
             //        doneWithLoaderInstance(this, loader,
             //                R.id.tile_status_wireless_iface_togglebutton_title, R.id.tile_status_wireless_iface_togglebutton_separator);
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
             doneWithLoaderInstance(this, loader);
@@ -602,7 +602,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                             try {
                                 final Serializable phyInterfaceStateSer =
                                         token != null ? token.getSerializable(PHYSICAL_IFACE_STATE_ACTION) : null;
-                                Crashlytics.log(Log.DEBUG, LOG_TAG,
+                                FirebaseCrashlytics.getInstance().log(
                                         "phyInterfaceStateSer: [" + phyInterfaceStateSer + "]");
                                 if (!(phyInterfaceStateSer instanceof PhysicalInterfaceState)) {
                                     return;
@@ -700,7 +700,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
             public NVRAMInfo loadInBackground() {
 
                 try {
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+                    FirebaseCrashlytics.getInstance().log( "Init background loader for "
                             + WirelessIfaceTile.class
                             + ": routerInfo="
                             + mRouter
@@ -714,7 +714,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                         //Force Manual Refresh
                         if (mWirelessSecurityFormOpened.get()) {
                             //Skip run
-                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
+                            FirebaseCrashlytics.getInstance().log( "Skip loader run");
                             return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                         }
                     } else {

@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 class RecyclerViewEmptySupport : RecyclerView {
 
@@ -13,20 +13,20 @@ class RecyclerViewEmptySupport : RecyclerView {
 
     private val observer = object : RecyclerView.AdapterDataObserver() {
         override fun onChanged() {
-            Crashlytics.log(Log.DEBUG, TAG, "onChanged")
+            FirebaseCrashlytics.getInstance().log("onChanged")
             super.onChanged()
             checkIfEmpty()
         }
 
         override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-            Crashlytics.log(Log.DEBUG, TAG,
+            FirebaseCrashlytics.getInstance().log(
                     "onItemRangeInserted($positionStart, $itemCount)")
             super.onItemRangeInserted(positionStart, itemCount)
             checkIfEmpty()
         }
 
         override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
-            Crashlytics.log(Log.DEBUG, TAG,
+            FirebaseCrashlytics.getInstance().log(
                     "onItemRangeInserted($positionStart, $itemCount)")
             super.onItemRangeRemoved(positionStart, itemCount)
             checkIfEmpty()

@@ -54,7 +54,7 @@ import android.widget.NumberPicker
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.github.curioustechizen.ago.RelativeTimeTextView
 import com.google.common.base.Optional
 import com.google.common.base.Strings.isNullOrEmpty
@@ -609,7 +609,7 @@ class WANMonthlyTrafficTile(parentFragment: Fragment, arguments: Bundle?,
     @Throws(Exception::class)
     override fun onDismissEventTimeout(event: Int, token: Bundle?) {
         val routerAction = token?.getString(WAN_MONTHLY_TRAFFIC_ACTION)
-        Crashlytics.log(Log.DEBUG, LOG_TAG,
+        FirebaseCrashlytics.getInstance().log(
                 "WAN Monthly Traffic Data Action: [$routerAction]")
         if (routerAction.isNullOrBlank()) {
             return
@@ -758,7 +758,7 @@ class WANMonthlyTrafficTile(parentFragment: Fragment, arguments: Bundle?,
     override fun onLoadFinished(loader: Loader<NVRAMInfo>, data: NVRAMInfo?) {
         var data = data
         try {
-            Crashlytics.log(Log.DEBUG, LOG_TAG,
+            FirebaseCrashlytics.getInstance().log(
                     "onLoadFinished: loader=$loader / data=$data / data=$data")
 
             setLoadingViewVisibility(View.GONE)
@@ -967,7 +967,7 @@ class WANMonthlyTrafficTile(parentFragment: Fragment, arguments: Bundle?,
                 }
             }
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!")
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished(): done loading!")
         } finally {
             mRefreshing.set(false)
             doneWithLoaderInstance(this, loader)
@@ -1002,7 +1002,7 @@ class WANMonthlyTrafficTile(parentFragment: Fragment, arguments: Bundle?,
 
                     mIsThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity)
 
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+                    FirebaseCrashlytics.getInstance().log( "Init background loader for "
                             + WANMonthlyTrafficTile::class.java
                             + ": routerInfo="
                             + mRouter
@@ -1016,7 +1016,7 @@ class WANMonthlyTrafficTile(parentFragment: Fragment, arguments: Bundle?,
                         //Force Manual Refresh
                         if (isToggleStateActionRunning.get()) {
                             //Skip run
-                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run")
+                            FirebaseCrashlytics.getInstance().log( "Skip loader run")
                             throw DDWRTTileAutoRefreshNotAllowedException()
                         }
                     } else {

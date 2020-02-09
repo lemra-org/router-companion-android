@@ -11,7 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.text.TextUtils;
 import android.util.Log;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import java.util.Collections;
@@ -48,7 +48,7 @@ class RouterAvatarDownloadTargetForAppShortcut implements Target {
     @Override
     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
         if (mContext == null || router == null) {
-            Crashlytics.log(Log.WARN, TAG, "mContext == null || router == null");
+            FirebaseCrashlytics.getInstance().log( "mContext == null || router == null");
             return;
         }
 
@@ -56,7 +56,7 @@ class RouterAvatarDownloadTargetForAppShortcut implements Target {
 
             final ShortcutManager shortcutManager = mContext.getSystemService(ShortcutManager.class);
             if (shortcutManager == null) {
-                Crashlytics.log(Log.WARN, TAG, "shortcutManager == null");
+                FirebaseCrashlytics.getInstance().log( "shortcutManager == null");
                 return;
             }
             final String routerUuid = router.getUuid();

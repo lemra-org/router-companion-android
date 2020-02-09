@@ -17,7 +17,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 import com.airbnb.deeplinkdispatch.DeepLink;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import java.io.File;
@@ -182,7 +182,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
         if (!getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE).getBoolean(
                 SECURITY_THIRD_PARTY_INTEGRATION, false)) {
             //User disabled 3rd-party integration => abort right away
-            Crashlytics.log(Log.WARN, LOG_TAG, "User disabled 3rd-party integration");
+            FirebaseCrashlytics.getInstance().log( "User disabled 3rd-party integration");
             Toast.makeText(this,
                     "DD-WRT Companion: Action denied because user disabled 3rd-party integration.",
                     Toast.LENGTH_LONG).show();
@@ -201,7 +201,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                 //Check password
                 final String pinCode = mParameters.getString("pinCode");
                 if (TextUtils.isEmpty(pinCode)) {
-                    Crashlytics.log(Log.WARN, LOG_TAG, "PIN Code is blank");
+                    FirebaseCrashlytics.getInstance().log( "PIN Code is blank");
 
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(this, "PIN Code is blank", Toast.LENGTH_SHORT).show();
@@ -216,7 +216,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                     return;
                 }
                 if (!AppLockManager.getInstance().getAppLock().verifyPassword(pinCode)) {
-                    Crashlytics.log(Log.WARN, LOG_TAG, "Invalid PIN Code");
+                    FirebaseCrashlytics.getInstance().log( "Invalid PIN Code");
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(this, "Invalid PIN Code", Toast.LENGTH_SHORT).show();
                     }
@@ -241,7 +241,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                 if (resultCode == RESULT_OK) {
                     handleParametersUponPasswordCheck();
                 } else {
-                    Crashlytics.log(Log.WARN, LOG_TAG, "PIN Code Request did not succeed");
+                    FirebaseCrashlytics.getInstance().log( "PIN Code Request did not succeed");
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(this, "PIN Code Request did not succeed", Toast.LENGTH_SHORT).show();
                     }
@@ -256,7 +256,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
 
     private boolean handleParametersUponPasswordCheck() {
         if (this.mParameters == null) {
-            Crashlytics.log(Log.WARN, LOG_TAG, "Parameters NULL");
+            FirebaseCrashlytics.getInstance().log( "Parameters NULL");
             if (BuildConfig.DEBUG) {
                 Toast.makeText(this, "Parameters NULL", Toast.LENGTH_SHORT).show();
             }
@@ -265,7 +265,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
         }
         final String origin = mParameters.getString("origin");
         if (TextUtils.isEmpty(origin)) {
-            Crashlytics.log(Log.WARN, LOG_TAG, "Origin cannot be blank");
+            FirebaseCrashlytics.getInstance().log( "Origin cannot be blank");
             if (BuildConfig.DEBUG) {
                 Toast.makeText(this, "Origin cannot be blank", Toast.LENGTH_SHORT).show();
             }
@@ -295,7 +295,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
         }
 
         if (mRouters.isEmpty()) {
-            Crashlytics.log(Log.WARN, LOG_TAG,
+            FirebaseCrashlytics.getInstance().log(
                     "No routers found matching this query: " + routerUuidOrRouterName);
             if (BuildConfig.DEBUG) {
                 Toast.makeText(this, "No routers found matching this query: " + routerUuidOrRouterName,
@@ -351,7 +351,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                 case EXEC_CUSTOM:
                     final String cmd = Strings.nullToEmpty(mParameters.getString("cmd")).toLowerCase();
                     if (cmd.isEmpty()) {
-                        Crashlytics.log(Log.WARN, LOG_TAG, "Missing Custom Command");
+                        FirebaseCrashlytics.getInstance().log( "Missing Custom Command");
                         if (BuildConfig.DEBUG) {
                             Toast.makeText(this, "Missing Custom Command", Toast.LENGTH_SHORT).show();
                         }
@@ -366,7 +366,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                     final String resourceFile =
                             Strings.nullToEmpty(mParameters.getString("file")).toLowerCase();
                     if (resourceFile.isEmpty()) {
-                        Crashlytics.log(Log.WARN, LOG_TAG, "Missing path to file");
+                        FirebaseCrashlytics.getInstance().log( "Missing path to file");
                         if (BuildConfig.DEBUG) {
                             Toast.makeText(this, "Missing path to file", Toast.LENGTH_SHORT).show();
                         }
@@ -375,7 +375,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                     }
                     final File filePath = new File(resourceFile);
                     if (!filePath.exists()) {
-                        Crashlytics.log(Log.WARN, LOG_TAG, "File does not exist: " + resourceFile);
+                        FirebaseCrashlytics.getInstance().log( "File does not exist: " + resourceFile);
                         if (BuildConfig.DEBUG) {
                             Toast.makeText(this, "File does not exist: " + resourceFile, Toast.LENGTH_SHORT)
                                     .show();
@@ -447,7 +447,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                 case WOL: {
                     final String deviceMac = Strings.nullToEmpty(mParameters.getString("mac")).toLowerCase();
                     if (deviceMac.isEmpty()) {
-                        Crashlytics.log(Log.WARN, LOG_TAG, "Missing MAC");
+                        FirebaseCrashlytics.getInstance().log( "Missing MAC");
                         if (BuildConfig.DEBUG) {
                             Toast.makeText(this, "Missing MAC", Toast.LENGTH_SHORT).show();
                         }
@@ -469,7 +469,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                 @Override
                                 public void onRouterActionFailure(@NonNull RouterAction routerAction,
                                         @NonNull Router router, @Nullable Exception exception) {
-                                    Crashlytics.log(Log.ERROR, LOG_TAG, "Error on action: " + routerAction);
+                                    FirebaseCrashlytics.getInstance().log( "Error on action: " + routerAction);
                                     routerActionListener.onRouterActionFailure(routerAction, router, exception);
                                 }
 
@@ -477,7 +477,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                 public void onRouterActionSuccess(@NonNull RouterAction routerAction,
                                         @NonNull Router router, Object returnData) {
                                     if (!(returnData instanceof Map)) {
-                                        Crashlytics.log(Log.ERROR, LOG_TAG, "returnData is NOT an instance of Map");
+                                        FirebaseCrashlytics.getInstance().log( "returnData is NOT an instance of Map");
                                         routerActionListener.onRouterActionFailure(routerAction, router,
                                                 new IllegalStateException("returnData is NOT an instance of Map"));
                                         return;
@@ -485,7 +485,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                     final Map resultMap = (Map) returnData;
                                     final Object resultForRouter = resultMap.get(router.getUuid());
                                     if (!(resultForRouter instanceof String[])) {
-                                        Crashlytics.log(Log.ERROR, LOG_TAG,
+                                        FirebaseCrashlytics.getInstance().log(
                                                 "resultForRouter is NOT an instance of String[]");
                                         routerActionListener.onRouterActionFailure(routerAction, router,
                                                 new IllegalStateException(
@@ -494,7 +494,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                     }
                                     final String[] wanAndLanBroadcast = (String[]) resultForRouter;
                                     if (wanAndLanBroadcast.length == 0) {
-                                        Crashlytics.log(Log.ERROR, LOG_TAG, "No broadcast address found");
+                                        FirebaseCrashlytics.getInstance().log( "No broadcast address found");
                                         routerActionListener.onRouterActionFailure(routerAction, router,
                                                 new IllegalStateException("No broadcast address found"));
                                         return;
@@ -609,7 +609,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                     final String policyName =
                             Strings.nullToEmpty(mParameters.getString("policy")).toLowerCase();
                     if (policyName.isEmpty()) {
-                        Crashlytics.log(Log.WARN, LOG_TAG, "Missing policy");
+                        FirebaseCrashlytics.getInstance().log( "Missing policy");
                         if (BuildConfig.DEBUG) {
                             Toast.makeText(this, "Missing Policy", Toast.LENGTH_SHORT).show();
                         }
@@ -623,7 +623,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                 @Override
                                 public void onRouterActionFailure(@NonNull RouterAction routerAction,
                                         @NonNull Router router, @Nullable Exception exception) {
-                                    Crashlytics.log(Log.ERROR, LOG_TAG, "Error on action: " + routerAction);
+                                    FirebaseCrashlytics.getInstance().log( "Error on action: " + routerAction);
                                     routerActionListener.onRouterActionFailure(routerAction, router, exception);
                                 }
 
@@ -631,7 +631,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                 public void onRouterActionSuccess(@NonNull RouterAction routerAction,
                                         @NonNull Router router, Object returnData) {
                                     if (!(returnData instanceof Map)) {
-                                        Crashlytics.log(Log.ERROR, LOG_TAG, "returnData is NOT an instance of Map");
+                                        FirebaseCrashlytics.getInstance().log( "returnData is NOT an instance of Map");
                                         routerActionListener.onRouterActionFailure(routerAction, router,
                                                 new IllegalStateException("returnData is NOT an instance of Map"));
                                         return;
@@ -639,7 +639,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                     final Map resultMap = (Map) returnData;
                                     final Object resultForRouter = resultMap.get(router.getUuid());
                                     if (!(resultForRouter instanceof String[])) {
-                                        Crashlytics.log(Log.ERROR, LOG_TAG,
+                                        FirebaseCrashlytics.getInstance().log(
                                                 "resultForRouter is NOT an instance of String[]");
                                         routerActionListener.onRouterActionFailure(routerAction, router,
                                                 new IllegalStateException(
@@ -648,7 +648,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                     }
                                     final String[] policies = (String[]) resultForRouter;
                                     if (policies.length == 0) {
-                                        Crashlytics.log(Log.ERROR, LOG_TAG, "No Policy found");
+                                        FirebaseCrashlytics.getInstance().log( "No Policy found");
                                         routerActionListener.onRouterActionFailure(routerAction, router,
                                                 new IllegalArgumentException("No Policy found"));
                                         return;
@@ -657,7 +657,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                     final NVRAMInfo nvramInfo = NVRAMParser.parseNVRAMOutput(policies);
                                     Properties properties;
                                     if (nvramInfo == null || (properties = nvramInfo.getData()) == null) {
-                                        Crashlytics.log(Log.ERROR, LOG_TAG, "No Policy found");
+                                        FirebaseCrashlytics.getInstance().log( "No Policy found");
                                         routerActionListener.onRouterActionFailure(routerAction, router,
                                                 new IllegalArgumentException("No Policy found"));
                                         return;
@@ -735,7 +735,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                 case DISABLE_DEVICE_WAN_ACCESS: {
                     final String deviceMac = Strings.nullToEmpty(mParameters.getString("mac")).toLowerCase();
                     if (deviceMac.isEmpty()) {
-                        Crashlytics.log(Log.WARN, LOG_TAG, "Missing MAC");
+                        FirebaseCrashlytics.getInstance().log( "Missing MAC");
                         if (BuildConfig.DEBUG) {
                             Toast.makeText(this, "Missing MAC", Toast.LENGTH_SHORT).show();
                         }
@@ -756,7 +756,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                 break;
 
                 default:
-                    Crashlytics.log(Log.WARN, LOG_TAG, "Unknown action: [" + action + "]");
+                    FirebaseCrashlytics.getInstance().log( "Unknown action: [" + action + "]");
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(this, "Unknown action: [" + action + "]", Toast.LENGTH_SHORT).show();
                     }

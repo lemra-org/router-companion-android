@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.twofortyfouram.assertion.BundleAssertions;
 import com.twofortyfouram.log.Lumberjack;
 import com.twofortyfouram.spackle.AppBuildInfo;
@@ -144,7 +144,7 @@ public final class PluginBundleValues {
             result.putString(BUNDLE_OUTPUT_VARIABLE_NAME, returnOutputVariableName.toString());
         }
 
-        Crashlytics.log(Log.DEBUG, TAG, "result: " + result);
+        FirebaseCrashlytics.getInstance().log("result: " + result);
 
         return result;
     }
@@ -209,7 +209,7 @@ public final class PluginBundleValues {
      */
     public static boolean isBundleValid(@Nullable final Bundle bundle) {
         if (null == bundle) {
-            Crashlytics.log(Log.WARN, TAG, "null == bundle");
+            FirebaseCrashlytics.getInstance().log( "null == bundle");
             return false;
         }
 
@@ -245,7 +245,7 @@ public final class PluginBundleValues {
             return true;
         } catch (final AssertionError e) {
             Lumberjack.e("Bundle failed verification%s", e); //$NON-NLS-1$
-            Crashlytics.logException(e);
+            FirebaseCrashlytics.getInstance().recordException(e);
             return false;
         }
     }

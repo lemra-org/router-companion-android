@@ -23,7 +23,7 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.github.curioustechizen.ago.RelativeTimeTextView
 import com.google.common.base.Splitter
 import com.google.common.base.Strings
@@ -215,7 +215,7 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
         return object : AsyncTaskLoader<WANAccessPoliciesRouterData>(this.mParentFragmentActivity) {
             override fun loadInBackground(): WANAccessPoliciesRouterData? {
                 try {
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+                    FirebaseCrashlytics.getInstance().log( "Init background loader for "
                             + AccessRestrictionsWANAccessTile::class.java
                             + ": routerInfo=$mRouter / nbRunsLoader=$nbRunsLoader")
 
@@ -254,7 +254,7 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
 
         try {
             //Set tiles
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=$loader / data=$data")
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished: loader=$loader / data=$data")
 
             if (data == null) {
                 data = WANAccessPoliciesRouterData().setException(
@@ -306,7 +306,7 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
                 updateProgressBarWithSuccess()
             }
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!")
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished(): done loading!")
         } finally {
             mRefreshing.set(false)
             doneWithLoaderInstance(this, loader)
@@ -397,7 +397,7 @@ internal class WANAccessRulesRecyclerViewAdapter(
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         if (position < 0 || position >= wanAccessPolicies.size) {
-            Crashlytics.log(Log.DEBUG, AccessRestrictionsWANAccessTile.LOG_TAG, "invalid position for WAN Access Policy Adapter")
+            FirebaseCrashlytics.getInstance().log("invalid position for WAN Access Policy Adapter")
             return
         }
         val wanAccessPolicy = wanAccessPolicies[position]

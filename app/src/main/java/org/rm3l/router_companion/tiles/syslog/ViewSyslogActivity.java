@@ -62,7 +62,7 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
@@ -402,7 +402,7 @@ public class ViewSyslogActivity extends AppCompatActivity
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay!
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Yay! Permission granted for #" + requestCode);
+                    FirebaseCrashlytics.getInstance().log( "Yay! Permission granted for #" + requestCode);
                     if (optionsMenu != null) {
                         final MenuItem menuItem = optionsMenu.findItem(R.id.tile_status_syslog_full_share);
                         menuItem.setEnabled(true);
@@ -410,7 +410,7 @@ public class ViewSyslogActivity extends AppCompatActivity
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Crashlytics.log(Log.WARN, LOG_TAG, "Boo! Permission denied for #" + requestCode);
+                    FirebaseCrashlytics.getInstance().log( "Boo! Permission denied for #" + requestCode);
                     Utils.displayMessage(this, "Sharing of Router logs will be unavailable", Style.INFO);
                     if (optionsMenu != null) {
                         final MenuItem menuItem = optionsMenu.findItem(R.id.tile_status_syslog_full_share);
@@ -671,7 +671,7 @@ public class ViewSyslogActivity extends AppCompatActivity
 
         final List<? extends CharSequence> currentLogs = mLogsAtomicRef.get();
         if (currentLogs == null || currentLogs.isEmpty()) {
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "Sharing unavailable - no data");
+            FirebaseCrashlytics.getInstance().log( "Sharing unavailable - no data");
             return;
         }
 

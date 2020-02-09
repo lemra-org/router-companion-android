@@ -48,7 +48,7 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.github.florent37.viewtooltip.ViewTooltip
 import com.github.florent37.viewtooltip.ViewTooltip.ALIGN
 import com.github.florent37.viewtooltip.ViewTooltip.Position
@@ -189,7 +189,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
         try {
             mCycleItem = Gson().fromJson(wanCycleStr, MonthlyCycleItem::class.java)
         } catch (jse: JsonSyntaxException) {
-            Crashlytics.log(Log.ERROR, LOG_TAG,
+            FirebaseCrashlytics.getInstance().log(
                     "JsonSyntaxException while trying to read wanCycleStr: " + wanCycleStr)
             jse.printStackTrace()
             Utils.reportException(this, jse)
@@ -250,7 +250,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay!
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Yay! Permission granted for #" + requestCode)
+                    FirebaseCrashlytics.getInstance().log( "Yay! Permission granted for #" + requestCode)
                     if (optionsMenu != null) {
                         val menuItem = optionsMenu!!.findItem(R.id.tile_status_wan_monthly_traffic_share)
                         menuItem.isEnabled = true
@@ -258,7 +258,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Crashlytics.log(Log.WARN, LOG_TAG, "Boo! Permission denied for #" + requestCode)
+                    FirebaseCrashlytics.getInstance().log( "Boo! Permission denied for #" + requestCode)
                     Utils.displayMessage(this, "Sharing of WAN Traffic Data will be unavailable", Style.INFO)
                     if (optionsMenu != null) {
                         val menuItem = optionsMenu!!.findItem(R.id.tile_status_wan_monthly_traffic_share)
@@ -424,7 +424,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 if (this.mChartView != null) {
                     this.mChartView!!.zoomIn()
                 } else {
-                    Crashlytics.log(Log.WARN, LOG_TAG, "mChartView is NULL")
+                    FirebaseCrashlytics.getInstance().log( "mChartView is NULL")
                     Toast.makeText(this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show()
                 }
                 return true
@@ -434,7 +434,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 if (this.mChartView != null) {
                     this.mChartView!!.zoomOut()
                 } else {
-                    Crashlytics.log(Log.WARN, LOG_TAG, "mChartView is NULL")
+                    FirebaseCrashlytics.getInstance().log( "mChartView is NULL")
                     Toast.makeText(this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show()
                 }
                 return true
@@ -444,7 +444,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 if (this.mChartView != null) {
                     this.mChartView!!.zoomReset()
                 } else {
-                    Crashlytics.log(Log.WARN, LOG_TAG, "mChartView is NULL")
+                    FirebaseCrashlytics.getInstance().log( "mChartView is NULL")
                     Toast.makeText(this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show()
                 }
                 return true
@@ -736,15 +736,15 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                             try {
                                 existingTooltip?.close()
                             } catch (e: Exception) {
-                                Crashlytics.logException(e)
+                                FirebaseCrashlytics.getInstance().recordException(e)
                             } finally {
                                 viewTooltip.show()
                             }
                         } else {
-                            Crashlytics.log(Log.WARN, LOG_TAG, "Unhandled series index: " + seriesIndex)
+                            FirebaseCrashlytics.getInstance().log( "Unhandled series index: " + seriesIndex)
                         }
                     } else {
-                        Crashlytics.log(Log.WARN, LOG_TAG,
+                        FirebaseCrashlytics.getInstance().log(
                                 "xAxisValue=$xAxisValue: out of X axis bounds: $daysLength")
                     }
                 } else {
@@ -752,7 +752,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                     try {
                         existingTooltip?.close()
                     } catch (e: Exception) {
-                        Crashlytics.logException(e)
+                        FirebaseCrashlytics.getInstance().recordException(e)
                     }
 
                 }

@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mrgames13.jimdo.splashscreen.App.SplashScreenBuilder
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.mgmt.RouterManagementActivity
@@ -32,10 +32,10 @@ class SplashActivity : AppCompatActivity() {
 
         if (requestCode == SplashScreenBuilder.SPLASH_SCREEN_FINISHED) {
             if (resultCode == RESULT_OK) {
-                Crashlytics.log(Log.DEBUG, TAG,
+                FirebaseCrashlytics.getInstance().log(
                     "SPLASH_SCREEN_FINISHED: OK => SplashScreen finished without manual canceling")
             } else if (resultCode == RESULT_CANCELED) {
-                Crashlytics.log(Log.DEBUG, TAG,
+                FirebaseCrashlytics.getInstance().log(
                     "SPLASH_SCREEN_FINISHED: RESULT_CANCELED => SplashScreen finished through manual canceling")
             }
         }

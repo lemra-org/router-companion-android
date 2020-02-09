@@ -46,7 +46,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Strings;
 import java.util.Map;
 import java.util.Set;
@@ -212,7 +212,7 @@ public abstract class AbstractDDWRTSettingsActivity extends AppCompatActivity {
      */
     protected static void bindPreferenceSummaryToValue(Preference preference) {
         if (preference == null) {
-            Crashlytics.log(Log.WARN, TAG, "bindPreferenceSummaryToValue called with a NULL preference!");
+            FirebaseCrashlytics.getInstance().log( "bindPreferenceSummaryToValue called with a NULL preference!");
             return;
         }
         // Set the listener to watch for value changes.

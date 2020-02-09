@@ -26,7 +26,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -172,7 +172,7 @@ public abstract class MaterialWizard extends WizardFragment
         if (arguments != null) {
             final String routerUuid = arguments.getString(RouterManagementActivity.ROUTER_SELECTED);
             final int routerWizardAction = arguments.getInt(ROUTER_WIZARD_ACTION, RouterWizardAction.ADD);
-            Crashlytics.log(routerUuid);
+            FirebaseCrashlytics.getInstance().log(routerUuid);
             mPager.setTag(RouterWizardAction.GSON_BUILDER.create()
                     .toJson(
                             new RouterWizardAction().setAction(routerWizardAction).setRouterUuid(routerUuid)));
@@ -195,7 +195,7 @@ public abstract class MaterialWizard extends WizardFragment
     public void onStart() {
         super.onStart();
         //final Bus busInstance = BusSingleton.getBusInstance();
-        //Crashlytics.log(Log.DEBUG, LOG_TAG, "onStart: Register on bus (" + busInstance + ")");
+        //FirebaseCrashlytics.getInstance().log( "onStart: Register on bus (" + busInstance + ")");
         //busInstance.register(this);
     }
 
@@ -208,20 +208,20 @@ public abstract class MaterialWizard extends WizardFragment
     @Override
     public void onStop() {
         //final Bus busInstance = BusSingleton.getBusInstance();
-        //Crashlytics.log(Log.DEBUG, LOG_TAG, "onStop: Unregister from bus (" + busInstance + ")");
+        //FirebaseCrashlytics.getInstance().log( "onStop: Unregister from bus (" + busInstance + ")");
         //busInstance.unregister(this);
         super.onStop();
     }
 
     @Override
     public final void onClick(View v) {
-        Crashlytics.log("onclick");
+        FirebaseCrashlytics.getInstance().log("onclick");
         final MaterialWizardStep currentStep = (MaterialWizardStep) wizard.getCurrentStep();
 
         final int viewId = v.getId();
         if (viewId == R.id.wizard_next_button) {//Tell the wizard to go to next step
             final Boolean stepValidated = currentStep.validateStep(wizard);
-            Crashlytics.log("stepValidated: " + stepValidated);
+            FirebaseCrashlytics.getInstance().log("stepValidated: " + stepValidated);
             if (stepValidated != null && stepValidated) {
                 currentStep.onExitSynchronous(WizardStep.EXIT_NEXT);
                 wizard.goNext();
@@ -256,7 +256,7 @@ public abstract class MaterialWizard extends WizardFragment
     @Override
     public void onPageSelected(int position) {
         if (position < 0 || position >= dotsCount) {
-            Crashlytics.log(Log.WARN, LOG_TAG,
+            FirebaseCrashlytics.getInstance().log(
                     "Invalid position: " + position + " - max dots length is " + dotsCount);
             return;
         }
@@ -316,7 +316,7 @@ public abstract class MaterialWizard extends WizardFragment
     //@Subscribe
     public void wizardStepVisibleToUser(final WizardStepVisibleToUserEvent event) {
         final String eventStepTitle = event.getStepTitle();
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "wizardStepVisibleToUser(" + eventStepTitle + ")");
+        FirebaseCrashlytics.getInstance().log( "wizardStepVisibleToUser(" + eventStepTitle + ")");
         wizardSubTitle.setText(eventStepTitle);
     }
 
@@ -370,7 +370,7 @@ public abstract class MaterialWizard extends WizardFragment
 
         final PagerAdapter adapter;
         if (mPager == null || (adapter = mPager.getAdapter()) == null) {
-            Crashlytics.log(Log.WARN, LOG_TAG, "No pager or pager adapter => no dots in wizard!");
+            FirebaseCrashlytics.getInstance().log( "No pager or pager adapter => no dots in wizard!");
             return;
         }
         dotsCount = adapter.getCount();

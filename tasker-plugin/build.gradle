@@ -20,18 +20,20 @@
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
 
+import com.google.gms.googleservices.GoogleServicesPlugin
+
 /**
  * Gradle build file*/
 buildscript {
     repositories {
-        maven { url 'https://maven.fabric.io/public' }
-        maven { url 'http://dl.bintray.com/amulyakhare/maven' }
+        google()
         mavenCentral()
+        maven { url 'http://dl.bintray.com/amulyakhare/maven' }
     }
 
     dependencies {
         //noinspection GradleDynamicVersion
-        classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.0.0-beta02'
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6'
     }
 }
@@ -41,11 +43,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.getkeepsafe.dexcount'
-apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.crashlytics'
 
 repositories {
     jcenter()
-    maven { url 'https://maven.fabric.io/public' }
+    google()
 }
 
 //apply plugin: 'com.github.triplet.play'
@@ -252,9 +254,7 @@ dependencies {
     implementation group: 'com.twofortyfouram', name: 'android-spackle', version: "[2.0.0,4.0["
     androidTestImplementation group:'com.twofortyfouram', name:'android-test', version:'[6.0.1,7.0)'
 //    androidTestImplementation group:'com.twofortyfouram', name:'android-assertion', version:'[2.0.0,3.0)'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
-        transitive = true
-    }
+    implementation 'com.google.firebase:firebase-crashlytics:17.0.0-beta01'
 
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.google.guava:guava:27.1-android'
@@ -313,3 +313,9 @@ dependencies {
 //    uploadImages = false
 //    errorOnSizeLimit = true
 //}
+
+// Add to the bottom of the file
+apply plugin: 'com.google.gms.google-services'
+
+//Workaround from https://github.com/invertase/react-native-firebase/issues/1155#issuecomment-395944013
+GoogleServicesPlugin.config.disableVersionCheck = true

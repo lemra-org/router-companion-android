@@ -70,7 +70,7 @@ import android.widget.Toast
 import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter
 import co.paulburke.android.itemtouchhelperdemo.helper.OnStartDragListener
 import com.airbnb.deeplinkdispatch.DeepLink
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.evernote.android.job.JobManager
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdView
@@ -368,7 +368,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
             this.openAddRouterForm()
         } else {
             if (!welcomeScreen!!.show(savedInstanceState)) {
-                Crashlytics.log(Log.DEBUG, LOG_TAG, "Welcome screen already shown")
+                FirebaseCrashlytics.getInstance().log( "Welcome screen already shown")
             } //otherwise we wait for this to finish to request permissions
         }
     }
@@ -386,8 +386,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (mPreferences!!.getBoolean(DEBUG_MODE, false)) {
-            Crashlytics.log(
-                Log.DEBUG, LOG_TAG,
+            FirebaseCrashlytics.getInstance().log(
                 "onActivityResult($requestCode,$resultCode,$data"
             )
         }
@@ -412,13 +411,12 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                     //Reset Crashlytics user email addr
                     val acraEmailAddr =
                         this.mPreferences!!.getString(RouterCompanionAppConstants.ACRA_USER_EMAIL, null)
-                    Crashlytics.setUserEmail(acraEmailAddr)
+                    FirebaseCrashlytics.getInstance().setUserId(acraEmailAddr)
 
                     val currentUserChoiceForAutoCrashReporting = this.mPreferences!!.getBoolean(ACRA_ENABLE, true)
                     if (this.mAutoCrashReports != currentUserChoiceForAutoCrashReporting) {
                         //Restart activity
-                        Crashlytics.log(
-                            Log.DEBUG, LOG_TAG,
+                        FirebaseCrashlytics.getInstance().log(
                             "<mAutoCrashReports,currentUserChoiceForAutoCrashReporting>=<" +
                                     mAutoCrashReports + "," + currentUserChoiceForAutoCrashReporting + ">"
                         )
@@ -472,7 +470,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                 }
                 initOpenAddRouterFormIfNecessary()
             }
-            else -> Crashlytics.log(Log.WARN, LOG_TAG, "Unhandled activity result: $resultCode")
+            else -> FirebaseCrashlytics.getInstance().log( "Unhandled activity result: $resultCode")
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -673,7 +671,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
         val debugResourceInspector = mPreferences!!.getBoolean(
             DEBUG_RESOURCE_INSPECTOR_PREF_KEY, false
         )
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "XXX debug_resourceInspector: $debugResourceInspector")
+        FirebaseCrashlytics.getInstance().log( "XXX debug_resourceInspector: $debugResourceInspector")
         menu.findItem(R.id.debug_resourceinspector).isChecked = debugResourceInspector
 
         val donateMenuItem = menu.findItem(R.id.router_list_donate)
@@ -711,12 +709,12 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
 
     override fun onCustomTabsConnected() {
         //We may make UI changes
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "onCustomTabsConnected")
+        FirebaseCrashlytics.getInstance().log( "onCustomTabsConnected")
     }
 
     override fun onCustomTabsDisconnected() {
         //We may make UI changes
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "onCustomTabsDisconnected")
+        FirebaseCrashlytics.getInstance().log( "onCustomTabsDisconnected")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -758,8 +756,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                 Toast.makeText(this, "[Chuck] Not implemented", Toast.LENGTH_SHORT).show()
                 //Preferator.launch(this);
             } else {
-                Crashlytics.log(
-                    Log.WARN, LOG_TAG,
+                FirebaseCrashlytics.getInstance().log(
                     "[DEBUG] SharedPreferences menu option should not be visible..."
                 )
             }
@@ -768,8 +765,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
             if (BuildConfig.DEBUG) {
                 startActivity(Chuck.getLaunchIntent(this))
             } else {
-                Crashlytics.log(
-                    Log.WARN, LOG_TAG,
+                FirebaseCrashlytics.getInstance().log(
                     "[DEBUG] 'Chuck' menu option should not be visible..."
                 )
             }
@@ -787,8 +783,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                 )
                 this.restartWholeApplication(waitMessage, null)
             } else {
-                Crashlytics.log(
-                    Log.WARN, LOG_TAG,
+                FirebaseCrashlytics.getInstance().log(
                     "[DEBUG] ResourceInspector menu option should not be visible..."
                 )
             }
@@ -799,8 +794,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                     welcomeScreen!!.forceShow()
                 }
             } else {
-                Crashlytics.log(
-                    Log.WARN, LOG_TAG,
+                FirebaseCrashlytics.getInstance().log(
                     "[DEBUG] 'Force-show welcome screen' menu option should not be visible..."
                 )
             }
@@ -820,12 +814,11 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                 if (nbRoutersRestored > 0) {
                     doRefreshRoutersListWithSpinner(DATA_SET_CHANGED, null)
                     val msg = "[DEBUG] Restored $nbRoutersRestored routers."
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, msg)
+                    FirebaseCrashlytics.getInstance().log( msg)
                     Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Crashlytics.log(
-                    Log.WARN, LOG_TAG,
+                FirebaseCrashlytics.getInstance().log(
                     "[DEBUG] 'Restore deleted routers' menu option should not be visible..."
                 )
             }
@@ -846,8 +839,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                         .show()
                 }
             } else {
-                Crashlytics.log(
-                    Log.WARN, LOG_TAG,
+                FirebaseCrashlytics.getInstance().log(
                     "[DEBUG] 'Run Jobs right away' menu option should not be visible..."
                 )
             }
@@ -872,8 +864,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                 Toast.makeText(this, "Requested cancellation for: $jobTags", Toast.LENGTH_LONG)
                     .show()
             } else {
-                Crashlytics.log(
-                    Log.WARN, LOG_TAG,
+                FirebaseCrashlytics.getInstance().log(
                     "[DEBUG] 'Cancel ALL jobs' menu option should not be visible..."
                 )
             }
@@ -1408,8 +1399,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                                 router.orderIndex = previousOrderIdx + 1
                             }
                             val newOrderIndex = router.orderIndex
-                            Crashlytics.log(
-                                Log.DEBUG, LOG_TAG, "XXX Router '"
+                            FirebaseCrashlytics.getInstance().log("XXX Router '"
                                         + router.canonicalHumanReadableName
                                         + "' "
                                         + "new position: "

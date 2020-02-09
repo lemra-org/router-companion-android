@@ -24,7 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
@@ -303,7 +303,7 @@ public class RouterActionsWidgetConfigureActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Crashlytics.log(Log.DEBUG, TAG,
+        FirebaseCrashlytics.getInstance().log(
                 "onActivityResult(" + requestCode + "," + resultCode + "," + data);
 
         // Check which request we're responding to

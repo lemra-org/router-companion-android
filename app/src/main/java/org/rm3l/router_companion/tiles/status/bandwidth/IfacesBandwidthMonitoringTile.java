@@ -43,7 +43,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -170,7 +170,7 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
 
     @Override
     public void onLoadFinished(Loader<None> loader, None data) {
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+        FirebaseCrashlytics.getInstance().log( "onLoadFinished: loader=" + loader + " / data=" + data);
 
         try {
             final boolean isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
@@ -325,7 +325,7 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
                 }
             }
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
             doneLoading(loader);
@@ -342,7 +342,7 @@ ip6tnl0:       0       0    0    0    0     0          0         0        0     
             public None loadInBackground() {
 
                 try {
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+                    FirebaseCrashlytics.getInstance().log( "Init background loader for "
                             + BandwidthMonitoringTile.class
                             + ": routerInfo="
                             + mRouter

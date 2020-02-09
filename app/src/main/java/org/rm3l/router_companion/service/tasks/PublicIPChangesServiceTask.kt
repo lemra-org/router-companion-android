@@ -16,7 +16,7 @@ import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.util.Log
 import android.util.Patterns
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.common.base.Objects
 import com.google.common.base.Strings.isNullOrEmpty
 import org.rm3l.ddwrt.R
@@ -93,7 +93,7 @@ class PublicIPChangesServiceTask(ctx: Context) : AbstractBackgroundServiceTask(c
             if (!globalSharedPreferences
                     .getStringSet(RouterCompanionAppConstants.NOTIFICATIONS_CHOICE_PREF, emptySet())!!
                     .contains(PublicIPChangesServiceTask::class.java.simpleName)) {
-                Crashlytics.log(Log.DEBUG, LOG_TAG, "PublicIPChangesServiceTask notifications disabled")
+                FirebaseCrashlytics.getInstance().log( "PublicIPChangesServiceTask notifications disabled")
                 return
             }
 
@@ -115,8 +115,8 @@ class PublicIPChangesServiceTask(ctx: Context) : AbstractBackgroundServiceTask(c
                 }
             }
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "(wanIpFromPrefs,wanIp)=($wanIpFromPrefs,$wanIp)")
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "(wanPublicIpFromPrefs,wanPublicIp)=($wanPublicIpFromPrefs,$wanPublicIp)")
+            FirebaseCrashlytics.getInstance().log( "(wanIpFromPrefs,wanIp)=($wanIpFromPrefs,$wanIp)")
+            FirebaseCrashlytics.getInstance().log( "(wanPublicIpFromPrefs,wanPublicIp)=($wanPublicIpFromPrefs,$wanPublicIp)")
 
             if (!(Objects.equal(wanPublicIp, wanPublicIpFromPrefs) && Objects.equal(wanIp,
                     wanIpFromPrefs))) {
@@ -143,7 +143,7 @@ class PublicIPChangesServiceTask(ctx: Context) : AbstractBackgroundServiceTask(c
                 val notificationsEnabled = routerPreferences.getBoolean(
                         RouterCompanionAppConstants.NOTIFICATIONS_ENABLE, true)
 
-                Crashlytics.log(Log.DEBUG, LOG_TAG, "NOTIFICATIONS_ENABLE=" + notificationsEnabled)
+                FirebaseCrashlytics.getInstance().log( "NOTIFICATIONS_ENABLE=" + notificationsEnabled)
 
                 val mNotificationManager = mCtx.getSystemService(
                         Context.NOTIFICATION_SERVICE) as NotificationManager

@@ -41,7 +41,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -533,7 +533,7 @@ public class WirelessIfacesTile extends IfacesTile {
                             }
                         });
 
-                        Crashlytics.log(Log.DEBUG, TAG,
+                        FirebaseCrashlytics.getInstance().log(
                                 "Building view for iface " + mWirelessIfaceTile.getIface());
                         try {
                             new android.os.AsyncTask<Void, Void, NVRAMInfo>() {

@@ -29,7 +29,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ScrollView;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 @Deprecated
 public class VerticalScrollView extends ScrollView {
@@ -39,7 +39,7 @@ public class VerticalScrollView extends ScrollView {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "VerticalScrollView.YScrollDetector#onScroll");
+            FirebaseCrashlytics.getInstance().log( "VerticalScrollView.YScrollDetector#onScroll");
             return Math.abs(distanceY) > Math.abs(distanceX);
         }
     }
@@ -58,7 +58,7 @@ public class VerticalScrollView extends ScrollView {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "VerticalScrollView#onInterceptTouchEvent");
+        FirebaseCrashlytics.getInstance().log( "VerticalScrollView#onInterceptTouchEvent");
         return super.onInterceptTouchEvent(ev) && mGestureDetector.onTouchEvent(ev);
     }
 }

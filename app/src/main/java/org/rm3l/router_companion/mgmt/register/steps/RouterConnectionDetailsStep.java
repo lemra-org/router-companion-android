@@ -31,7 +31,7 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
 import java.util.Map;
@@ -349,7 +349,7 @@ public class RouterConnectionDetailsStep extends MaterialWizardStep {
             Uri uri;
             if (resultData != null) {
                 uri = resultData.getData();
-                Crashlytics.log(Log.INFO, LOG_TAG, "Uri: " + uri.toString());
+                FirebaseCrashlytics.getInstance().log("Uri: " + uri.toString());
                 Cursor uriCursor = null;
 
                 try {

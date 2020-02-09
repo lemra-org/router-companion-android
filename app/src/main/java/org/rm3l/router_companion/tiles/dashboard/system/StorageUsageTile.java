@@ -13,7 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.google.common.base.Throwables;
@@ -97,7 +97,7 @@ public class StorageUsageTile extends DDWRTTile<NVRAMInfo> {
     public void onLoadFinished(Loader<NVRAMInfo> loader, NVRAMInfo data) {
         try {
             //Set tiles
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished: loader=" + loader + " / data=" + data);
 
             layout.findViewById(R.id.tile_dashboard_storage_loading_view).setVisibility(View.GONE);
             mNVRAMArcProgress.setVisibility(View.VISIBLE);
@@ -140,7 +140,7 @@ public class StorageUsageTile extends DDWRTTile<NVRAMInfo> {
                 try {
                     final String nvramUsedStr = data.getProperty(NVRAMInfo.Companion.getNVRAM_USED_PERCENT());
                     final int nvramUsed = Integer.parseInt(nvramUsedStr);
-                    Crashlytics.log(Log.DEBUG, StorageUsageTile.LOG_TAG, "nvramUsedStr=" + nvramUsedStr);
+                    FirebaseCrashlytics.getInstance().log("nvramUsedStr=" + nvramUsedStr);
 
                     //Update colors as per the usage
                     //TODO Make these thresholds user-configurable (and perhaps display notifications if needed - cf. g service task)
@@ -222,7 +222,7 @@ public class StorageUsageTile extends DDWRTTile<NVRAMInfo> {
                 updateProgressBarWithSuccess();
             }
         } finally {
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
+            FirebaseCrashlytics.getInstance().log( "onLoadFinished(): done loading!");
             mRefreshing.set(false);
             doneWithLoaderInstance(this, loader);
         }
@@ -238,7 +238,7 @@ public class StorageUsageTile extends DDWRTTile<NVRAMInfo> {
             public NVRAMInfo loadInBackground() {
 
                 try {
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+                    FirebaseCrashlytics.getInstance().log( "Init background loader for "
                             + StatusRouterMemoryTile.class
                             + ": routerInfo="
                             + mRouter

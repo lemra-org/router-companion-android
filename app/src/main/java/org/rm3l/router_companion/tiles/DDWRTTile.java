@@ -44,8 +44,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.answers.ContentViewEvent;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.analytics.FirebaseAnalytics.Param;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
@@ -309,10 +310,16 @@ public abstract class DDWRTTile<T>
 
             onClickIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-            ReportingUtils.reportContentViewEvent(new ContentViewEvent().putContentType("Tile OnClick")
-                    .putContentName(onClickIntent.getComponent() != null ? onClickIntent.getComponent()
-                            .getShortClassName() : "???")
-                    .putContentId(this.getClass().getSimpleName()));
+            Bundle bundle = new Bundle();
+            bundle.putString(Param.ITEM_NAME, onClickIntent.getComponent() != null ? onClickIntent.getComponent()
+                    .getShortClassName() : "???");
+            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Tile OnClick");
+            bundle.putString(Param.ITEM_ID, this.getClass().getSimpleName());
+
+//            ReportingUtils.reportContentViewEvent(new ContentViewEvent().putContentType("Tile OnClick")
+//                    .putContentName(onClickIntent.getComponent() != null ? onClickIntent.getComponent()
+//                            .getShortClassName() : "???")
+//                    .putContentId(this.getClass().getSimpleName()));
 
             if (BuildConfig.WITH_ADS
                     && mTileClickInterstitialAd != null
@@ -411,7 +418,7 @@ public abstract class DDWRTTile<T>
      */
     @Override
     public final void onLoaderReset(Loader<T> loader) {
-        Crashlytics.log(Log.DEBUG, getLogTag(), "onLoaderReset: loader=" + loader);
+        FirebaseCrashlytics.getInstance().log("onLoaderReset: loader=" + loader);
         loader.abandon();
     }
 
@@ -489,7 +496,7 @@ public abstract class DDWRTTile<T>
                 }, nextRunMillis);
             }
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, String.format("onLoadFinished(): done loading: %s"
+            FirebaseCrashlytics.getInstance().log( String.format("onLoadFinished(): done loading: %s"
                     + "\n"
                     + "-> schedNextRun: %s\n"
                     + "->this.mLoaderStopped: %s"
@@ -508,7 +515,7 @@ public abstract class DDWRTTile<T>
         final boolean isAutoRefreshEnabled =
                 (this.mParentFragmentPreferences != null && this.mParentFragmentPreferences.getBoolean(
                         AUTO_REFRESH_PREF, false));
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "isAutoRefreshEnabled: " + isAutoRefreshEnabled);
+        FirebaseCrashlytics.getInstance().log( "isAutoRefreshEnabled: " + isAutoRefreshEnabled);
         doneWithLoaderInstance(tile, loader,
                 isAutoRefreshEnabled ? (this.mParentFragmentPreferences != null
                         ? this.mParentFragmentPreferences.

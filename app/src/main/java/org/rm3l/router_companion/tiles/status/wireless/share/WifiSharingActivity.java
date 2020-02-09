@@ -25,7 +25,7 @@ import android.widget.Toast;
 import be.brunoparmentier.wifikeyshare.model.WifiAuthType;
 import be.brunoparmentier.wifikeyshare.model.WifiNetwork;
 import be.brunoparmentier.wifikeyshare.utils.NfcUtils;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Strings;
 import java.util.List;
@@ -380,7 +380,7 @@ public class WifiSharingActivity extends AppCompatActivity {
         try {
             nfcIntentFilters[0].addDataType("*/*"); // Handle all MIME based dispatches.
         } catch (IntentFilter.MalformedMimeTypeException e) {
-            Crashlytics.log(Log.ERROR, TAG, "setupForegroundDispatch: " + e.getMessage());
+            FirebaseCrashlytics.getInstance().log( "setupForegroundDispatch: " + e.getMessage());
         }
 
         /* Initialize the tech lists used to perform matching for dispatching of the

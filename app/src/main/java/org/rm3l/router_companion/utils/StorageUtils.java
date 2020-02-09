@@ -5,7 +5,7 @@ import android.os.Environment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.util.Log;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.io.File;
 import org.rm3l.router_companion.exceptions.StorageException;
 
@@ -20,12 +20,12 @@ public final class StorageUtils {
         final String absolutePath = dir.getAbsolutePath();
         if (!dir.exists()) {
             if (!dir.mkdirs()) {
-                Crashlytics.log(Log.ERROR, TAG, "Failed to create " + absolutePath + " directory");
+                FirebaseCrashlytics.getInstance().log( "Failed to create " + absolutePath + " directory");
                 throw new StorageException("Failed to create directory " + absolutePath);
             }
         } else {
             if (!dir.isDirectory()) {
-                Crashlytics.log(Log.ERROR, TAG, "'" + absolutePath + "' is not a directory");
+                FirebaseCrashlytics.getInstance().log( "'" + absolutePath + "' is not a directory");
                 throw new StorageException("Failed to create directory " + absolutePath);
             }
         }

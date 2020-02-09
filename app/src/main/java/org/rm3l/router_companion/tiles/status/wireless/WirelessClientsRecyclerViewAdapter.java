@@ -41,7 +41,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.amulyakhare.textdrawable.TextDrawable;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.Sets;
@@ -791,7 +791,7 @@ public class WirelessClientsRecyclerViewAdapter extends
         });
 
         final long lastSeen = device.getLastSeen();
-        Crashlytics.log(Log.DEBUG, LOG_TAG,
+        FirebaseCrashlytics.getInstance().log(
                 "XXX lastSeen for '" + macAddress + "' =[" + lastSeen + "]");
         if (lastSeen <= 0) {
             holder.lastSeenRowView.setText(EMPTY_VALUE_TO_DISPLAY);

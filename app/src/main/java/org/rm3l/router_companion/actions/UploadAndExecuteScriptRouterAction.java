@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.util.Log;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Strings;
 import java.util.UUID;
 import org.rm3l.router_companion.common.resources.audit.ActionLog;
@@ -53,7 +53,7 @@ public class UploadAndExecuteScriptRouterAction extends AbstractRouterAction<Str
 
         Exception exception = null;
         try {
-            Crashlytics.log(Log.INFO, LOG_TAG,
+            FirebaseCrashlytics.getInstance().log(
                     String.format("File upload: [%s] => [%s]", mFileAbsolutePath, mRemoteFileAbsolutePath));
 
             if (!SSHUtils.scpTo(mContext, router, globalSharedPreferences, mFileAbsolutePath,

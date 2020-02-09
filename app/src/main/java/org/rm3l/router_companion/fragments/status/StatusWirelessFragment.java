@@ -31,7 +31,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.loader.content.Loader;
 import android.util.Log;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -70,7 +70,7 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
     public static Collection<WirelessIfaceTile> getWirelessIfaceTiles(@NonNull final Bundle args,
             FragmentActivity activity, Fragment parentFragment, Router router) {
         try {
-            Crashlytics.log(Log.DEBUG, LOG_TAG,
+            FirebaseCrashlytics.getInstance().log(
                     "Init background loader for " + StatusWirelessFragment.class + ": routerInfo=" + router);
 
             SharedPreferences sharedPreferences =

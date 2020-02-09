@@ -15,7 +15,7 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.util.Log
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.common.base.Function
 import com.google.common.base.Objects
 import com.google.common.base.Splitter
@@ -73,7 +73,7 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
                 "awk 'NR>1{print \"$MAP_KEYWORD\",$4,$1,\"*\"}' /proc/net/arp",
                 "arp -a | awk '{print \"$MAP_KEYWORD\",$4,$2,$1}'", "echo done")
 
-        Crashlytics.log(Log.DEBUG, TAG, "output: " + Arrays.toString(output))
+        FirebaseCrashlytics.getInstance().log("output: " + Arrays.toString(output))
 
         if (output == null || output.isEmpty()) {
             if (output == null) {
@@ -189,12 +189,12 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
                     Context.MODE_PRIVATE)
                     .getStringSet(RouterCompanionAppConstants.NOTIFICATIONS_CHOICE_PREF, HashSet<String>())!!
                     .contains(ConnectedHostsServiceTask::class.java.simpleName)) {
-                Crashlytics.log(Log.DEBUG, TAG, "ConnectedHostsServiceTask notifications disabled")
+                FirebaseCrashlytics.getInstance().log("ConnectedHostsServiceTask notifications disabled")
                 return
             }
 
             if (router == null) {
-                Crashlytics.log(Log.WARN, TAG, "router == null")
+                FirebaseCrashlytics.getInstance().log( "router == null")
                 return
             }
 
@@ -208,8 +208,8 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
             val onlyActiveHosts = mRouterPreferences.getBoolean(
                     RouterCompanionAppConstants.NOTIFICATIONS_CONNECTED_HOSTS_ACTIVE_ONLY, true)
 
-            Crashlytics.log(Log.DEBUG, TAG, "onlyActiveHosts=" + onlyActiveHosts)
-            Crashlytics.log(Log.DEBUG, TAG, "deviceCollection=" + deviceCollection)
+            FirebaseCrashlytics.getInstance().log("onlyActiveHosts=" + onlyActiveHosts)
+            FirebaseCrashlytics.getInstance().log("deviceCollection=" + deviceCollection)
 
             val devicesCollFiltered = FluentIterable.from(
                     deviceCollection)
@@ -274,7 +274,7 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
 
             }
 
-            Crashlytics.log(Log.DEBUG, TAG, "<sizeFiltered,previousConnectedHosts.size()>=<"
+            FirebaseCrashlytics.getInstance().log("<sizeFiltered,previousConnectedHosts.size()>=<"
                     + sizeFiltered
                     + ","
                     + previousConnectedHosts.size
@@ -285,8 +285,8 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
                 updateNotification = true
             } else {
 
-                Crashlytics.log(Log.DEBUG, TAG, "devicesCollFiltered: " + devicesCollFiltered)
-                Crashlytics.log(Log.DEBUG, TAG, "previousConnectedHosts: " + previousConnectedHosts)
+                FirebaseCrashlytics.getInstance().log("devicesCollFiltered: " + devicesCollFiltered)
+                FirebaseCrashlytics.getInstance().log("previousConnectedHosts: " + previousConnectedHosts)
 
                 //Now compare if anything has changed
                 for (newDevice in devicesCollFiltered) {
@@ -323,7 +323,7 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
                 }
             }
 
-            Crashlytics.log(Log.DEBUG, TAG, "updateNotification=" + updateNotification)
+            FirebaseCrashlytics.getInstance().log("updateNotification=" + updateNotification)
 
             //Build the String Set to save in preferences
             val stringImmutableSet = FluentIterable.from(devicesCollFiltered).transform(
@@ -351,7 +351,7 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
 
             Utils.requestBackup(mCtx)
 
-            Crashlytics.log(Log.DEBUG, TAG, "NOTIFICATIONS_ENABLE=" + mRouterPreferences.getBoolean(
+            FirebaseCrashlytics.getInstance().log("NOTIFICATIONS_ENABLE=" + mRouterPreferences.getBoolean(
                     RouterCompanionAppConstants.NOTIFICATIONS_ENABLE, true))
 
             if (sizeFiltered == 0 || !mRouterPreferences.getBoolean(

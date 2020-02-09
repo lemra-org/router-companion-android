@@ -27,7 +27,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.NonNull;
 import android.util.Log;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -370,11 +370,11 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
             //Loop because we do not know which version users will be converting from or to
             final Collection<String> upgradeToSqlCollection = DATABASE_UPGRADES.get(upgradeTo);
             if (!(upgradeToSqlCollection == null || upgradeToSqlCollection.isEmpty())) {
-                Crashlytics.log(Log.DEBUG, TAG,
+                FirebaseCrashlytics.getInstance().log(
                         "\t--> Performing DB Upgrade " + oldVersion + "=>" + upgradeTo);
                 for (final String upgradeToSql : upgradeToSqlCollection) {
                     if (!Strings.isNullOrEmpty(upgradeToSql)) {
-                        Crashlytics.log(Log.DEBUG, TAG, "\t\t>>> upgradeToSql: " + upgradeToSql);
+                        FirebaseCrashlytics.getInstance().log("\t\t>>> upgradeToSql: " + upgradeToSql);
                         db.execSQL(upgradeToSql);
                     }
                 }

@@ -1,7 +1,7 @@
 package org.rm3l.router_companion.firmwares
 
 import android.content.Context
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.rm3l.router_companion.resources.MonthlyCycleItem
 import org.rm3l.router_companion.resources.conn.NVRAMInfo
 import org.rm3l.router_companion.resources.conn.Router
@@ -46,13 +46,13 @@ abstract class AbstractRouterFirmwareConnector {
                             RemoteDataRetrievalListener::class.java)
                     .invoke(this, context, router, dataRetrievalListener) as NVRAMInfo
         } catch (e: IllegalAccessException) {
-            Crashlytics.logException(e)
+            FirebaseCrashlytics.getInstance().recordException(e)
             throw IllegalStateException(e)
         } catch (e: InvocationTargetException) {
-            Crashlytics.logException(e)
+            FirebaseCrashlytics.getInstance().recordException(e)
             throw IllegalStateException(e)
         } catch (e: NoSuchMethodException) {
-            Crashlytics.logException(e)
+            FirebaseCrashlytics.getInstance().recordException(e)
             throw IllegalStateException(e)
         }
 

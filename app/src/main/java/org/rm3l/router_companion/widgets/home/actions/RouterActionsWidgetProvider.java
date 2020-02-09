@@ -11,7 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.main.DDWRTMainActivity;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
@@ -62,7 +62,7 @@ public class RouterActionsWidgetProvider extends AppWidgetProvider {
         final int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
 
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "onReceive: " + intent);
+        FirebaseCrashlytics.getInstance().log( "onReceive: " + intent);
 
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             super.onReceive(context, intent);

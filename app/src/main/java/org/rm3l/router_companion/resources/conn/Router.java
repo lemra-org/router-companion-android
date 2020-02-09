@@ -58,7 +58,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
@@ -742,7 +742,7 @@ public class Router implements Serializable {
     public static void openSSHConsole(@Nullable final Router router,
             @Nullable final Context context) {
         if (router == null || context == null) {
-            Crashlytics.log(Log.DEBUG, TAG, "Internal Error: either router or context are null");
+            FirebaseCrashlytics.getInstance().log("Internal Error: either router or context are null");
             Toast.makeText(context, "Internal Error. Please try again later.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -840,7 +840,7 @@ public class Router implements Serializable {
                         final RemovalCause removalCause = notification.getCause();
                         final RouterForSessionCache routerForSessionCache = notification.getKey();
                         if (routerForSessionCache != null) {
-                            Crashlytics.log(Log.INFO, TAG, "Removal Notification for <"
+                            FirebaseCrashlytics.getInstance().log("Removal Notification for <"
                                     + routerForSessionCache.router
                                     + ">. Cause : "
                                     + removalCause);
@@ -961,7 +961,7 @@ public class Router implements Serializable {
                         break;
                     }
                 }
-                Crashlytics.log(Log.DEBUG, TAG, "addHomeScreenShortcut - Pinned shortcut for router " +
+                FirebaseCrashlytics.getInstance().log("addHomeScreenShortcut - Pinned shortcut for router " +
                         canonicalHumanReadableName + "(" + routerUuid + "): exists=" + exists);
                 if (exists) {
                     final ShortcutInfo pinShortcutInfo =
@@ -1017,7 +1017,7 @@ public class Router implements Serializable {
                                                 break;
                                             }
                                         }
-                                        Crashlytics.log(Log.DEBUG, TAG, "Pinned shortcut for router " +
+                                        FirebaseCrashlytics.getInstance().log("Pinned shortcut for router " +
                                                 canonicalHumanReadableName + "(" + routerUuid + "): exists="
                                                 + exists);
                                         if (exists) {

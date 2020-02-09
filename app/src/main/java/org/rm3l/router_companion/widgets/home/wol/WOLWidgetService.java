@@ -14,7 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -90,39 +90,39 @@ class WOLRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory,
 
         mRouter = RouterManagementActivity.Companion.getDao(mContext).getRouter(mRouterUuid);
         if (mRouter == null) {
-            Crashlytics.log(Log.DEBUG, TAG, "onCreate: mRouter IS null");
+            FirebaseCrashlytics.getInstance().log("onCreate: mRouter IS null");
         }
     }
 
     @Override
     public void onDestroy() {
-        Crashlytics.log(Log.DEBUG, TAG, "onDestroy");
+        FirebaseCrashlytics.getInstance().log("onDestroy");
     }
 
     @Override
     public int getCount() {
-        Crashlytics.log(Log.DEBUG, TAG, "getCount");
+        FirebaseCrashlytics.getInstance().log("getCount");
 
         return mWidgetItems.size();
     }
 
     @Override
     public long getItemId(int position) {
-        Crashlytics.log(Log.DEBUG, TAG, "getItemId(" + position + ")");
+        FirebaseCrashlytics.getInstance().log("getItemId(" + position + ")");
 
         return position;
     }
 
     @Override
     public RemoteViews getLoadingView() {
-        Crashlytics.log(Log.DEBUG, TAG, "getLoadingView");
+        FirebaseCrashlytics.getInstance().log("getLoadingView");
         // We aren't going to return a default loading view in this sample
         return null;
     }
 
     @Override
     public RemoteViews getViewAt(int position) {
-        Crashlytics.log(Log.DEBUG, TAG, "getViewAt(" + position + ")");
+        FirebaseCrashlytics.getInstance().log("getViewAt(" + position + ")");
 
         // we use getCount here so that it doesn't return null when empty
         final int count = getCount();
@@ -184,14 +184,14 @@ class WOLRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory,
 
     @Override
     public int getViewTypeCount() {
-        Crashlytics.log(Log.DEBUG, TAG, "getLoadingView");
+        FirebaseCrashlytics.getInstance().log("getLoadingView");
         // Technically, we have only one type of view
         return 1;
     }
 
     @Override
     public boolean hasStableIds() {
-        Crashlytics.log(Log.DEBUG, TAG, "hasStableIds");
+        FirebaseCrashlytics.getInstance().log("hasStableIds");
 
         return true;
     }
@@ -204,7 +204,7 @@ class WOLRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory,
     @Override
     public void onLoadComplete(@Nullable Loader<RouterData<ArrayList<Device>>> loader,
             @Nullable RouterData<ArrayList<Device>> data) {
-        Crashlytics.log(Log.DEBUG, TAG, "onLoadComplete: data=" + data);
+        FirebaseCrashlytics.getInstance().log("onLoadComplete: data=" + data);
 
         mWidgetItems.clear();
         if (data != null) {

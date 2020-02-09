@@ -5,7 +5,7 @@ import static org.rm3l.router_companion.widgets.wizard.MaterialWizard.CURRENT_WI
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -100,7 +100,7 @@ public abstract class MaterialWizardStep extends WizardStep implements WizardSte
         //            if (isVisibleToUser) {
         //                busInstance.register(this);
         //                this.onVisibleToUser();
-        //                Crashlytics.log(Log.DEBUG, LOG_TAG,
+        //                FirebaseCrashlytics.getInstance().log(
         //                        "POST event wizardStepVisibleToUser(" + getWizardStepTitle() + ") on bus " +
         //                                busInstance);
         //                busInstance.post(
@@ -176,7 +176,7 @@ public abstract class MaterialWizardStep extends WizardStep implements WizardSte
         // your logic
         //busInstance.register(this);
         this.onVisibleToUser();
-        //Crashlytics.log(Log.DEBUG, LOG_TAG,
+        //FirebaseCrashlytics.getInstance().log(
         //    "POST event wizardStepVisibleToUser(" + getWizardStepTitle() + ") on bus " + busInstance);
         //busInstance.post(new WizardStepVisibleToUserEvent(this.getWizardStepTitle()));
     }

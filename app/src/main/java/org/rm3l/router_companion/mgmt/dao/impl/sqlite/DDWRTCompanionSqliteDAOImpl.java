@@ -87,7 +87,7 @@ import android.database.sqlite.SQLiteDatabase;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.util.Log;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -249,7 +249,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         final DDWRTCompanionSqliteDAOImpl instance = getInstance();
         try {
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "Delete Router with uuid: " + uuid);
+            FirebaseCrashlytics.getInstance().log( "Delete Router with uuid: " + uuid);
             instance.openDatabase()
                     .delete(TABLE_ROUTERS, String.format(ROUTER_UUID + "='%s'", uuid), null);
 
@@ -283,7 +283,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         final DDWRTCompanionSqliteDAOImpl instance = getInstance();
         try {
 
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "Delete WAN Traffic Data for Router: " + router);
+            FirebaseCrashlytics.getInstance().log( "Delete WAN Traffic Data for Router: " + router);
             instance.openDatabase()
                     .delete(TABLE_WAN_TRAFFIC, String.format(TABLE_WAN_TRAFFIC_ROUTER_UUID + "='%s'", router),
                             null);
@@ -684,7 +684,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                     (isNullOrEmpty(router.getUuid()) ? UUID.randomUUID().toString() : router.getUuid());
             final long insertId = instance.openDatabase()
                     .insertOrThrow(TABLE_ROUTERS, null, getContentValuesFromRouter(uuid, router));
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "insertRouter(" + uuid + " => " + insertId + ")");
+            FirebaseCrashlytics.getInstance().log( "insertRouter(" + uuid + " => " + insertId + ")");
             final Router newRouter = getRouter(uuid);
 
             //Report
@@ -803,7 +803,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             final int update = instance.openDatabase()
                     .update(TABLE_ROUTERS, getContentValuesFromRouter(uuid, router),
                             String.format(ROUTER_UUID + "='%s'", uuid), null);
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "updateRouter(" + uuid + " => " + update + ")");
+            FirebaseCrashlytics.getInstance().log( "updateRouter(" + uuid + " => " + update + ")");
             final Router routerUpdated = getRouter(uuid);
 
             //Report

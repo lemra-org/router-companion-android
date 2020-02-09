@@ -74,7 +74,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
@@ -282,8 +282,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                         }
                     }
                     if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                        Crashlytics
-                                .log(Log.WARN, LOG_TAG, "Service names / port numbers lookup is a premium feature");
+                        FirebaseCrashlytics.getInstance().log("Service names / port numbers lookup is a premium feature");
                     } else {
                         try {
                             final Response<RecordListResponse> response = ServiceNamePortNumbersServiceKt.query(
@@ -339,7 +338,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                             totalConnectionsCount
                                     - currentIdx) / (double) totalConnectionsCount))
                             : ((double) currentIdx / (double) totalConnectionsCount))).intValue();
-                    Crashlytics.log(Log.DEBUG, LOG_TAG,
+                    FirebaseCrashlytics.getInstance().log(
                             String.format("<currentIdx=%d , totalConnectionsCount=%d , progress=%d%%>",
                                     currentIdx, totalConnectionsCount, progress));
                     activeIPConnectionsDetailActivity.runOnUiThread(new Runnable() {
@@ -510,7 +509,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             Exception exception = null;
             if (result == null || (exception = result.getException()) != null) {
                 //Error - hide stats sliding layout
-                Crashlytics.log(Log.DEBUG, LOG_TAG,
+                FirebaseCrashlytics.getInstance().log(
                         "Error: " + (exception != null ? exception.getMessage() : "No data or Result is NULL"));
                 if (exception != null) {
                     exception.printStackTrace();
@@ -665,7 +664,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             final CardView cardView = holder.cardView;
             final IPConntrack ipConntrackRow = mActiveIPConnections.get(position);
             if (ipConntrackRow == null) {
-                Crashlytics.log(Log.ERROR, LOG_TAG, "Invalid active IP Connection @ " + position);
+                FirebaseCrashlytics.getInstance().log( "Invalid active IP Connection @ " + position);
                 cardView.setVisibility(View.GONE);
                 return;
             }
@@ -749,7 +748,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                             tcpConnectionState.replaceAll("-", "_").replaceAll(" ", "_")),
                             R.string.class);
                 } catch (final Exception e) {
-                    Crashlytics.log(Log.WARN, LOG_TAG,
+                    FirebaseCrashlytics.getInstance().log(
                             "No resource ID found in string.xml for TCP Connection State: " + tcpConnectionState);
                     ReportingUtils.reportException(getApplicationContext(), e);
                 }
@@ -1223,7 +1222,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                         @Override
                         public void onRemoval(
                                 @NonNull RemovalNotification<Pair<Long, Protocol>, Collection<Record>> notification) {
-                            Crashlytics.log(Log.DEBUG, LOG_TAG,
+                            FirebaseCrashlytics.getInstance().log(
                                     "onRemoval(" + notification.getKey() + ") - cause: " + notification.getCause());
                         }
                     })
@@ -1239,7 +1238,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                             }
                             if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                                 //Premium feature only
-                                Crashlytics.log(Log.WARN, LOG_TAG,
+                                FirebaseCrashlytics.getInstance().log(
                                         "Service names / port numbers lookup is a premium feature");
                                 return Collections.emptyList();
                             }
@@ -1265,7 +1264,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     .removalListener(new RemovalListener<String, IPWhoisInfo>() {
                         @Override
                         public void onRemoval(@NonNull RemovalNotification<String, IPWhoisInfo> notification) {
-                            Crashlytics.log(Log.DEBUG, LOG_TAG,
+                            FirebaseCrashlytics.getInstance().log(
                                     "onRemoval(" + notification.getKey() + ") - cause: " + notification.getCause());
                         }
                     })

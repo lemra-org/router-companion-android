@@ -51,7 +51,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.mikepenz.aboutlibraries.Libs;
 import com.mikepenz.aboutlibraries.LibsBuilder;
 import java.text.DateFormat;
@@ -144,7 +144,7 @@ public class RouterCompanionTaskerPluginLaunchActivity extends AppCompatActivity
                     || actionLogs == null
                     || position >= actionLogs.size()
                     || actionLogs.get(position) == null) {
-                Crashlytics.log(Log.WARN, Constants.TAG,
+                FirebaseCrashlytics.getInstance().log(
                         "position < 0 || actionLogs == null || position >= actionLogs.size() || "
                                 + "actionLogs.get("
                                 + position
@@ -181,7 +181,7 @@ public class RouterCompanionTaskerPluginLaunchActivity extends AppCompatActivity
                     holder.dateTv.setText(DateFormat.getDateTimeInstance()
                             .format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).parse(actionLogDate)));
                 } catch (final ParseException e) {
-                    Crashlytics.logException(e);
+                    FirebaseCrashlytics.getInstance().recordException(e);
                     holder.dateTv.setText("-");
                 }
             }
@@ -198,7 +198,7 @@ public class RouterCompanionTaskerPluginLaunchActivity extends AppCompatActivity
                                                 routerInfo.getRemotePort()));
                     }
                 } catch (RemoteException e) {
-                    Crashlytics.logException(e);
+                    FirebaseCrashlytics.getInstance().recordException(e);
                     routerDisplayName = null;
                 }
             }
@@ -263,7 +263,7 @@ public class RouterCompanionTaskerPluginLaunchActivity extends AppCompatActivity
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
-            Crashlytics.log(Log.DEBUG, Constants.TAG, "Service connected");
+            FirebaseCrashlytics.getInstance().log( "Service connected");
             mErrorView.setVisibility(View.GONE);
             routerCompanionService = IRouterCompanionService.Stub.asInterface(service);
 
@@ -278,13 +278,13 @@ public class RouterCompanionTaskerPluginLaunchActivity extends AppCompatActivity
                 mHistoryAdapter.setActionLogs(
                         routerCompanionService.getActionsByOrigin(BuildConfig.APPLICATION_ID));
             } catch (RemoteException e) {
-                Crashlytics.logException(e);
+                FirebaseCrashlytics.getInstance().recordException(e);
             }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            Crashlytics.log(Log.WARN, Constants.TAG, "Service has unexpectedly disconnected");
+            FirebaseCrashlytics.getInstance().log( "Service has unexpectedly disconnected");
             routerCompanionService = null;
             mHistoryAdapter.setService(null);
             mErrorView.setText(
@@ -448,7 +448,7 @@ public class RouterCompanionTaskerPluginLaunchActivity extends AppCompatActivity
                 bindService(intent, conn, Context.BIND_AUTO_CREATE);
             }
         } catch (final DDWRTCompanionPackageVersionRequiredNotFoundException e) {
-            Crashlytics.logException(e);
+            FirebaseCrashlytics.getInstance().recordException(e);
             mErrorView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

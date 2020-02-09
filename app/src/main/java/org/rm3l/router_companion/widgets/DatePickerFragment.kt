@@ -10,7 +10,7 @@ import android.os.Parcelable
 import androidx.fragment.app.DialogFragment
 import android.util.Log
 import android.widget.DatePicker
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 const val DATE_PICKER_LISTENER = "DATE_PICKER_LISTENER"
 const val START_MILLIS = "START_MILLIS"
@@ -41,7 +41,7 @@ class DatePickerFragment: DialogFragment(), OnDateSetListener {
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        Crashlytics.log(Log.DEBUG, TAG, "No-op onDateSet: <year,month,dayOfMonth>=<$year,$month,$dayOfMonth>")
+        FirebaseCrashlytics.getInstance().log("No-op onDateSet: <year,month,dayOfMonth>=<$year,$month,$dayOfMonth>")
     }
 
     companion object {

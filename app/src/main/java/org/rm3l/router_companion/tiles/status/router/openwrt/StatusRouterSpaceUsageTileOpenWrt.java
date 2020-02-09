@@ -29,7 +29,7 @@ import androidx.loader.content.AsyncTaskLoader;
 import androidx.loader.content.Loader;
 import android.util.Log;
 import android.widget.TextView;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class StatusRouterSpaceUsageTileOpenWrt extends StatusRouterSpaceUsageTil
             public NVRAMInfo loadInBackground() {
 
                 try {
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for "
+                    FirebaseCrashlytics.getInstance().log( "Init background loader for "
                             + StatusRouterSpaceUsageTile.class
                             + ": routerInfo="
                             + mRouter
@@ -164,7 +164,7 @@ public class StatusRouterSpaceUsageTileOpenWrt extends StatusRouterSpaceUsageTil
                         final String[] itemToDfResult =
                                 SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                         "df -h " + itemToDf + " | grep -v Filessytem | grep \"" + itemToDf + "\"");
-                        Crashlytics.log(Log.DEBUG, LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
+                        FirebaseCrashlytics.getInstance().log( "catProcMounts: " + Arrays.toString(catProcMounts));
                         if (itemToDfResult != null && itemToDfResult.length > 0) {
                             final List<String> procMountLineItem =
                                     Splitter.on(" ").omitEmptyStrings().trimResults().splitToList(itemToDfResult[0]);

@@ -30,7 +30,7 @@ import androidx.annotation.StyleRes
 import androidx.core.content.ContextCompat
 import android.util.Log
 import android.widget.TextView
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.common.base.Strings
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
@@ -71,7 +71,7 @@ class ColorUtils private constructor() {
         private val colorsCache: LoadingCache<String, Int> = CacheBuilder.newBuilder()
                 .maximumSize(30)
                 .removalListener(RemovalListener<String, Int> { notification ->
-                    Crashlytics.log(Log.DEBUG, TAG,
+                    FirebaseCrashlytics.getInstance().log(
                             "onRemoval(" + notification.key + ") - cause: " + notification.cause)
                 })
                 .build(object : CacheLoader<String, Int>() {
@@ -180,7 +180,7 @@ class ColorUtils private constructor() {
                                     Strings.nullToEmpty(themeSuffix)),
                             R.color::class.java)
                 } catch (e: Exception) {
-                    Crashlytics.logException(e)
+                    FirebaseCrashlytics.getInstance().recordException(e)
                     null
                 }
 
@@ -261,7 +261,7 @@ class ColorUtils private constructor() {
                             R.color::class.java)
                     view.setTextColor(ContextCompat.getColor(context, textColorResId))
                 } catch (e: Exception) {
-                    Crashlytics.logException(e)
+                    FirebaseCrashlytics.getInstance().recordException(e)
                     setDefaultTextColor(view)
                 }
 

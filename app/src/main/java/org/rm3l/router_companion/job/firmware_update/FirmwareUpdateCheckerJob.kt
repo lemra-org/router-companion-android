@@ -18,7 +18,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import android.util.Log
 import android.widget.Toast
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.evernote.android.job.DailyJob
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobManager
@@ -73,13 +73,13 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
         fun schedule() {
             //This is a premium feature
             if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                Crashlytics.log(Log.DEBUG, TAG, "Firmware Build Updates feature is *premium*!")
+                FirebaseCrashlytics.getInstance().log("Firmware Build Updates feature is *premium*!")
                 return
             }
 
             if (JobManager.instance().getAllJobRequestsForTag(TAG).isNotEmpty()) {
                 // job already scheduled, nothing to do
-                Crashlytics.log(Log.DEBUG, TAG, "job $TAG already scheduled => nothing to do!")
+                FirebaseCrashlytics.getInstance().log("job $TAG already scheduled => nothing to do!")
                 return
             }
             val builder = JobRequest.Builder(TAG)
@@ -154,13 +154,13 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                 }
                                 return newReleaseDLLink to null
                             } catch (e: Exception) {
-                                Crashlytics.logException(e)
+                                FirebaseCrashlytics.getInstance().recordException(e)
                                 return null to e
                             }
                         }
 
                         override fun thenDoUiRelatedWork(result: Pair<String?, Exception?>?) {
-                            Crashlytics.log(Log.DEBUG, TAG, "result: $result")
+                            FirebaseCrashlytics.getInstance().log("result: $result")
                             alertDialog.cancel()
                             if (result == null) {
                                 Utils.displayMessage(activity,
@@ -194,7 +194,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                                 if (result.first == null) {
                                                     Toast.makeText(activity, "Internal Error - please try again later",
                                                             Toast.LENGTH_SHORT).show()
-                                                    Crashlytics.logException(FirmwareUpdateFoundButWithNoUrlException("Firmware update: no URL"))
+                                                    FirebaseCrashlytics.getInstance().recordException(FirmwareUpdateFoundButWithNoUrlException("Firmware update: no URL"))
                                                 } else {
                                                     val url = result.first!!
                                                     CustomTabActivityHelper.openCustomTab(activity,
@@ -230,7 +230,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
             //First check if user is interested in getting updates
             val notificationChoices = globalPreferences?.getStringSet(NOTIFICATIONS_CHOICE_PREF, emptySet())
             if (notificationChoices?.contains(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES) != true) {
-                Crashlytics.log(Log.DEBUG, TAG, "Not interested at this time in Firmware Build Updates!")
+                FirebaseCrashlytics.getInstance().log("Not interested at this time in Firmware Build Updates!")
                 //Check next day
                 return true
             }
@@ -250,7 +250,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                             else RouterFirmwareConnectorManager.getConnector(router)
                                     .manuallyCheckForFirmwareUpdateAndReturnDownloadLink(currentFwVer)
                         } catch (e: Exception) {
-                            Crashlytics.logException(e)
+                            FirebaseCrashlytics.getInstance().recordException(e)
                             null
                         }
                         mapped
@@ -328,7 +328,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
 
                         } catch (e: Exception) {
                             //No worries - go on with the next
-                            Crashlytics.logException(e)
+                            FirebaseCrashlytics.getInstance().recordException(e)
                         }
                     }
             return true
@@ -338,7 +338,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                              downloadLink: String, newReleaseVersion: String?) {
 
             if (newReleaseVersion.isNullOrBlank()) {
-                Crashlytics.log(Log.WARN, TAG, "newReleaseVersion is NULL or blank - skipping notification.")
+                FirebaseCrashlytics.getInstance().log( "newReleaseVersion is NULL or blank - skipping notification.")
                 return
             }
 
@@ -346,7 +346,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
             val latestFirmwareReleaseNotified = routerPreferences?.getString(LATEST_FIRMWARE_RELEASE_NOTIFIED_PREF,
                     null)
             if (newReleaseVersion.equals(latestFirmwareReleaseNotified)) {
-                Crashlytics.log(Log.INFO, TAG,
+                FirebaseCrashlytics.getInstance().log(
                         "Firmware release ${router.canonicalHumanReadableName}/$newReleaseVersion already notified" +
                                 " => skipping notification.")
                 return
@@ -412,11 +412,11 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
     override fun onRunDailyJob(params: Params): DailyJobResult {
         try {
             if (!handleJob(context, params)) {
-                Crashlytics.log(Log.WARN, TAG,
+                FirebaseCrashlytics.getInstance().log(
                         "Today (${Date()}) execution did not succeed => hopefully it will succeeed tomorrow...")
             }
         } catch (e: Exception) {
-            Crashlytics.logException(e)
+            FirebaseCrashlytics.getInstance().recordException(e)
         }
         return DailyJobResult.SUCCESS
     }
@@ -434,7 +434,7 @@ class FirmwareUpdateCheckerOneShotJob : Job(), RouterCompanionJob {
             params.extras.putBoolean(MANUAL_REQUEST, true)
             if (FirmwareUpdateCheckerJob.handleJob(context, params)) Result.SUCCESS else Result.FAILURE
         } catch (e: Exception) {
-            Crashlytics.logException(e)
+            FirebaseCrashlytics.getInstance().recordException(e)
             Result.FAILURE
         }
     }

@@ -38,7 +38,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import java.security.MessageDigest;
@@ -193,7 +193,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
                 new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        Crashlytics.log(Log.DEBUG, LOG_TAG, "onItemSelected @" + position);
+                        FirebaseCrashlytics.getInstance().log( "onItemSelected @" + position);
                         if (position == 0) {
                             hideAllDetailedViews();
                         } else {
@@ -1038,7 +1038,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
             editor.apply();
         }
 
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "vars that have changed: " + nvramVarsToUpdate);
+        FirebaseCrashlytics.getInstance().log( "vars that have changed: " + nvramVarsToUpdate);
 
         //Set extra
         data.putExtra(WL_SECURITY_NVRAMINFO, nvramVarsToUpdate);
@@ -1278,7 +1278,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
         final String wepEncryption = mNvramInfo.getProperty(this.mPhyIface + "_wep_bit");
         position = (wepEncryption != null ? wepEncryptionValues.get(wepEncryption) : null);
         if (!wepEncryptionValues.containsKey(wepEncryption)) {
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "mNvramInfo: " + mNvramInfo);
+            FirebaseCrashlytics.getInstance().log( "mNvramInfo: " + mNvramInfo);
             Utils.reportException(null,
                     new IllegalStateException("Unknown wepEncryption: " + wepEncryption));
         }
@@ -1331,12 +1331,12 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
     }
 
     private void showDetailedViewAt(final int position) {
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "showDetailedViewAt @" + position);
+        FirebaseCrashlytics.getInstance().log( "showDetailedViewAt @" + position);
 
         boolean wepVisible = false;
         for (int i = 0; i < mDetailedViews.length; i++) {
             final int detailedViewId = mDetailedViews[i];
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "<i,detailedViewId>=<" + i + "," + detailedViewId + ">");
+            FirebaseCrashlytics.getInstance().log( "<i,detailedViewId>=<" + i + "," + detailedViewId + ">");
 
             final View detailedView = findViewById(detailedViewId);
             if (detailedView == null) {

@@ -8,11 +8,9 @@ import android.app.Application;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import android.util.Log;
-import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.core.CrashlyticsCore;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.facebook.stetho.Stetho;
 import com.twofortyfouram.log.Lumberjack;
-import io.fabric.sdk.android.Fabric;
 import java.lang.ref.WeakReference;
 
 /**
@@ -49,24 +47,21 @@ public class RouterCompanionTaskerPluginApplication extends Application
         }
 
         // Set up Crashlytics, disabled for debug builds
-        final Crashlytics crashlyticsKit = new Crashlytics.Builder()
-                .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
-                .build();
-        Fabric.with(this, crashlyticsKit);
-        Crashlytics.setBool("DEBUG", BuildConfig.DEBUG);
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG);
+        FirebaseCrashlytics.getInstance().setCustomKey("DEBUG", BuildConfig.DEBUG);
 
         Lumberjack.init(getApplicationContext());
     }
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        Crashlytics.log(Log.DEBUG, TAG, "onActivityCreated: " + activity.getClass().getCanonicalName());
+        FirebaseCrashlytics.getInstance().log("onActivityCreated: " + activity.getClass().getCanonicalName());
         mCurrentActivity = new WeakReference<>(activity);
     }
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-        Crashlytics.log(Log.DEBUG, TAG,
+        FirebaseCrashlytics.getInstance().log(
                 "onActivityDestroyed: " + activity.getClass().getCanonicalName());
         mCurrentActivity.clear();
         // cancel all scheduled Croutons: Workaround until there's a way to detach the Activity from Crouton while
@@ -76,32 +71,32 @@ public class RouterCompanionTaskerPluginApplication extends Application
 
     @Override
     public void onActivityPaused(Activity activity) {
-        Crashlytics.log(Log.DEBUG, TAG, "onActivityPaused: " + activity.getClass().getCanonicalName());
+        FirebaseCrashlytics.getInstance().log("onActivityPaused: " + activity.getClass().getCanonicalName());
         mCurrentActivity.clear();
     }
 
     @Override
     public void onActivityResumed(Activity activity) {
-        Crashlytics.log(Log.DEBUG, TAG, "onActivityResumed: " + activity.getClass().getCanonicalName());
+        FirebaseCrashlytics.getInstance().log("onActivityResumed: " + activity.getClass().getCanonicalName());
         mCurrentActivity = new WeakReference<>(activity);
     }
 
     @Override
     public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-        Crashlytics.log(Log.DEBUG, TAG,
+        FirebaseCrashlytics.getInstance().log(
                 "onActivitySaveInstanceState: " + activity.getClass().getCanonicalName());
         mCurrentActivity.clear();
     }
 
     @Override
     public void onActivityStarted(Activity activity) {
-        Crashlytics.log(Log.DEBUG, TAG, "onActivityStarted: " + activity.getClass().getCanonicalName());
+        FirebaseCrashlytics.getInstance().log("onActivityStarted: " + activity.getClass().getCanonicalName());
         mCurrentActivity = new WeakReference<>(activity);
     }
 
     @Override
     public void onActivityStopped(Activity activity) {
-        Crashlytics.log(Log.DEBUG, TAG, "onActivityStopped: " + activity.getClass().getCanonicalName());
+        FirebaseCrashlytics.getInstance().log("onActivityStopped: " + activity.getClass().getCanonicalName());
         mCurrentActivity.clear();
     }
 

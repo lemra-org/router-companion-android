@@ -42,7 +42,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.android.common.view.SlidingTabLayout;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.util.ArrayList;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
@@ -98,7 +98,7 @@ public class PageSlidingTabStripFragment extends Fragment {
         @Override
         public Fragment getItem(int position) {
             if (this.tabs.length <= position) {
-                Crashlytics.log(Log.ERROR, TAG, "tabs contains less than " + position + " items");
+                FirebaseCrashlytics.getInstance().log( "tabs contains less than " + position + " items");
                 return null;
             }
             return this.tabs[position];
@@ -108,11 +108,11 @@ public class PageSlidingTabStripFragment extends Fragment {
         @Override
         public CharSequence getPageTitle(int position) {
             if (this.tabs.length <= position) {
-                Crashlytics.log(Log.ERROR, TAG, "tabs contains less than " + position + " items");
+                FirebaseCrashlytics.getInstance().log( "tabs contains less than " + position + " items");
                 return null;
             }
             final AbstractBaseFragment tab = this.tabs[position];
-            Crashlytics.log(Log.DEBUG, TAG, "Tab @position #" + position + ": " + tab);
+            FirebaseCrashlytics.getInstance().log("Tab @position #" + position + ": " + tab);
             if (tab == null) {
                 return null;
             }

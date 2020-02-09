@@ -3,7 +3,7 @@ package org.rm3l.router_companion.service
 import android.content.Context
 import android.net.ConnectivityManager
 import android.util.Log
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.evernote.android.job.DailyJob
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobManager
@@ -34,7 +34,7 @@ class BackgroundService: DailyJob(), RouterCompanionJob {
         fun schedule() {
             if (!JobManager.instance().getAllJobRequestsForTag(TAG).isEmpty()) {
                 // job already scheduled, nothing to do
-                Crashlytics.log(Log.DEBUG, TAG, "job $TAG already scheduled => nothing to do!")
+                FirebaseCrashlytics.getInstance().log("job $TAG already scheduled => nothing to do!")
                 return
             }
             val builder = JobRequest.Builder(TAG)
@@ -73,7 +73,7 @@ class BackgroundService: DailyJob(), RouterCompanionJob {
                 tasks.add(RouterInfoForFeedbackServiceTask(context))
                 tasks.add(RouterWebInterfaceParametersUpdaterServiceTask(context))
                 if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                    Crashlytics.log(Log.DEBUG, TAG,
+                    FirebaseCrashlytics.getInstance().log(
                             "ConnectedHostsServiceTask and PublicIPChangesServiceTask background notifications" +
                                     " are *Premium* features!")
                 } else {
@@ -81,7 +81,7 @@ class BackgroundService: DailyJob(), RouterCompanionJob {
                     val notificationsChoiceSet = globalPreferences?.getStringSet(
                             RouterCompanionAppConstants.NOTIFICATIONS_CHOICE_PREF,
                             emptySet()) ?: emptySet()
-                    Crashlytics.log(Log.DEBUG, TAG, "notificationsChoiceSet: " + notificationsChoiceSet)
+                    FirebaseCrashlytics.getInstance().log("notificationsChoiceSet: " + notificationsChoiceSet)
                     if (notificationsChoiceSet.contains(ConnectedHostsServiceTask::class.java.simpleName)) {
                         tasks.add(ConnectedHostsServiceTask(context))
                     }
@@ -95,12 +95,12 @@ class BackgroundService: DailyJob(), RouterCompanionJob {
                 for (router in allRouters) {
                     //Execute tasks available for notifications
                     for (backgroundServiceTask in tasks) {
-                        Crashlytics.log(Log.DEBUG, TAG,
+                        FirebaseCrashlytics.getInstance().log(
                                 ">>> Running task: ${backgroundServiceTask.javaClass} on router $router")
                         try {
                             backgroundServiceTask.runBackgroundServiceTask(router)
                         } catch (e: Exception) {
-                            Crashlytics.logException(e)
+                            FirebaseCrashlytics.getInstance().recordException(e)
                         }
                     }
                 }
@@ -117,11 +117,11 @@ class BackgroundService: DailyJob(), RouterCompanionJob {
                     .getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_BG_SERVICE_ENABLE, false)) {
                 handleJob(context, params)
             } else {
-                Crashlytics.log(Log.DEBUG, TAG, "Background Service disabled (user choice)");
+                FirebaseCrashlytics.getInstance().log("Background Service disabled (user choice)");
             }
         } catch (e: Exception) {
             //No worries
-            Crashlytics.logException(e)
+            FirebaseCrashlytics.getInstance().recordException(e)
         }
         return DailyJobResult.SUCCESS
     }

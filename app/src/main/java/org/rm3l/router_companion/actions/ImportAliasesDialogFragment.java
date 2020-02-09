@@ -37,7 +37,7 @@ import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
@@ -359,7 +359,7 @@ public class ImportAliasesDialogFragment extends DialogFragment {
             Uri uri;
             if (resultData != null) {
                 uri = resultData.getData();
-                Crashlytics.log(Log.INFO, LOG_TAG, "Uri: " + uri.toString());
+                FirebaseCrashlytics.getInstance().log("Uri: " + uri.toString());
                 final AlertDialog d = (AlertDialog) getDialog();
 
                 if (d != null) {

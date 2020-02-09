@@ -46,7 +46,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Collections2;
@@ -172,7 +172,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
     public static AbstractBaseFragment[] getFragments(@NonNull Activity activity,
             @NonNull final Resources resources, int parentSectionNumber, String sortingStrategy,
             @Nullable final String router) {
-        Crashlytics.log(Log.DEBUG, LOG_TAG,
+        FirebaseCrashlytics.getInstance().log(
                 "getFragments(" + parentSectionNumber + ", " + sortingStrategy + ")");
 
         final Class sortingStrategyClass;
@@ -188,7 +188,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
 
         if (exception != null) {
             //Default one
-            Crashlytics.log(Log.WARN, LOG_TAG,
+            FirebaseCrashlytics.getInstance().log(
                     "An error occurred - using DDWRTSortingStrategy default strategy: " + exception);
             sortingStrategyInstance = new DDWRTSortingStrategy();
         }
@@ -1056,10 +1056,10 @@ public abstract class AbstractBaseFragment<T> extends Fragment
                 
         this.mDefaultLoader = new Loader<>(this.getActivity());
 
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "onCreate() loaderIdsInUse: " + mLoaderIdsInUse);
+        FirebaseCrashlytics.getInstance().log( "onCreate() loaderIdsInUse: " + mLoaderIdsInUse);
         //        if (savedInstanceState != null) {
         //            final ArrayList<Integer> loaderIdsSaved = savedInstanceState.getIntegerArrayList(STATE_LOADER_IDS);
-        //            Crashlytics.log(Log.DEBUG,  LOG_TAG, "onCreate() loaderIdsSaved: " + loaderIdsSaved);
+        //            FirebaseCrashlytics.getInstance().log("onCreate() loaderIdsSaved: " + loaderIdsSaved);
         //            if (loaderIdsSaved != null) {
         //                //Destroy existing IDs, if any, as new loaders will get created in onResume()
         //                final LoaderManager loaderManager = getLoaderManager();
