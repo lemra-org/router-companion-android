@@ -40,6 +40,7 @@ import com.evernote.android.job.JobConfig
 import com.evernote.android.job.JobManager
 import com.facebook.stetho.Stetho
 import com.facebook.stetho.Stetho.newInitializerBuilder
+import com.google.firebase.FirebaseApp
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.squareup.picasso.Picasso
@@ -75,6 +76,8 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
 
     override fun onCreate() {
         super.onCreate()
+
+        FirebaseApp.initializeApp(this)
 
         val appPreferences = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
 
