@@ -2,21 +2,31 @@
 
 
 <resources>
-    <string name="define_deeplinkdispatch" translatable="false" />
-    <!-- Author section -->
-    <string name="library_deeplinkdispatch_author" translatable="false">Airbnb Inc.</string>
-    <string name="library_deeplinkdispatch_authorWebsite" translatable="false">https://www.airbnb.com/about/about-us</string>
-    <!-- Library section -->
-    <string name="library_deeplinkdispatch_libraryName" translatable="false">DeepLinkDispatch</string>
-    <string name="library_deeplinkdispatch_libraryDescription" translatable="false">A simple, annotation-based library for making deep link handling better on Android</string>
-    <string name="library_deeplinkdispatch_libraryWebsite" translatable="false">https://medium.com/airbnb-engineering/deeplinkdispatch-778bc2fd54b7</string>
-    <string name="library_deeplinkdispatch_libraryVersion" translatable="false">3.1.0</string>
-    <!-- OpenSource section -->
-    <string name="library_deeplinkdispatch_isOpenSource" translatable="false">true</string>
-    <string name="library_deeplinkdispatch_repositoryLink" translatable="false">https://github.com/airbnb/DeepLinkDispatch</string>
-    <!-- ClassPath for autoDetect section -->
-    <!--<string translatable="false" name="library_deeplinkdispatch_classPath">com.facebook.deeplinkdispatch</string>-->
-    <!-- License section -->
-    <string name="library_deeplinkdispatch_licenseId" translatable="false">apache_2_0</string>
-    <!-- Custom variables section -->
+	<string name="define_deeplinkdispatch" translatable="false" />
+	<!-- Author section -->
+	<string name="library_deeplinkdispatch_author"
+		translatable="false">Airbnb Inc.</string>
+	<string name="library_deeplinkdispatch_authorWebsite"
+		translatable="false">https://www.airbnb.com/about/about-us</string>
+	<!-- Library section -->
+	<string name="library_deeplinkdispatch_libraryName"
+		translatable="false">DeepLinkDispatch</string>
+	<string name="library_deeplinkdispatch_libraryDescription"
+		translatable="false">A simple, annotation-based library for making deep link
+		handling better on Android</string>
+	<string name="library_deeplinkdispatch_libraryWebsite"
+		translatable="false">https://medium.com/airbnb-engineering/deeplinkdispatch-778bc2fd54b7</string>
+	<string name="library_deeplinkdispatch_libraryVersion"
+		translatable="false">3.1.0</string>
+	<!-- OpenSource section -->
+	<string name="library_deeplinkdispatch_isOpenSource"
+		translatable="false">true</string>
+	<string name="library_deeplinkdispatch_repositoryLink"
+		translatable="false">https://github.com/airbnb/DeepLinkDispatch</string>
+	<!-- ClassPath for autoDetect section -->
+	<!--<string translatable="false" name="library_deeplinkdispatch_classPath">com.facebook.deeplinkdispatch</string> -->
+	<!-- License section -->
+	<string name="library_deeplinkdispatch_licenseId"
+		translatable="false">apache_2_0</string>
+	<!-- Custom variables section -->
 </resources>

@@ -4,11 +4,11 @@ package org.rm3l.router_companion.api.iana
  * Created by rm3l on 28/11/17.
  */
 
-//Problem with deserialization of Kotlin Data classes with Retrofit and Gson:
-//https://xrubio.com/2019/04/the-case-of-deserialization-of-a-kotlin-data-class/
+// Problem with deserialization of Kotlin Data classes with Retrofit and Gson:
+// https://xrubio.com/2019/04/the-case-of-deserialization-of-a-kotlin-data-class/
 //
-//Gson does not make use of accessors, and Proguard (R8) tends to drop non-public class members
-//cf. https://github.com/google/gson/issues/232
+// Gson does not make use of accessors, and Proguard (R8) tends to drop non-public class members
+// cf. https://github.com/google/gson/issues/232
 
 class RecordListResponse(@JvmField val data: Data) {
     fun getData() = data
@@ -27,18 +27,19 @@ class Data(@JvmField val records: List<Record>) {
 }
 
 class Record @JvmOverloads constructor(
-        @JvmField val serviceName: String? = null /*Service Name*/,
-        @JvmField val portNumber: Long? = null /*Port Number*/,
-        @JvmField val transportProtocol: Protocol? = null /*Transport Protocol*/,
-        @JvmField val description: String? = null /*Description*/,
-        @JvmField val assignee: Person? = null /*Assignee*/,
-        @JvmField val contact: Person? = null /*Contact*/,
-        @JvmField val registrationDate: String? = null /*Registration Date*/,
-        @JvmField val modificationDate: String? = null /*Modification Date*/,
-        @JvmField val reference: String? = null /*Reference*/,
-        @JvmField val serviceCode: String? = null /*Service Code*/,
-        @JvmField val knownUnauthorizedUses: String? = null /*Unauthorized Uses*/,
-        @JvmField val assignmentNotes: String? = null /*Assignment Notes*/) {
+    @JvmField val serviceName: String? = null /*Service Name*/,
+    @JvmField val portNumber: Long? = null /*Port Number*/,
+    @JvmField val transportProtocol: Protocol? = null /*Transport Protocol*/,
+    @JvmField val description: String? = null /*Description*/,
+    @JvmField val assignee: Person? = null /*Assignee*/,
+    @JvmField val contact: Person? = null /*Contact*/,
+    @JvmField val registrationDate: String? = null /*Registration Date*/,
+    @JvmField val modificationDate: String? = null /*Modification Date*/,
+    @JvmField val reference: String? = null /*Reference*/,
+    @JvmField val serviceCode: String? = null /*Service Code*/,
+    @JvmField val knownUnauthorizedUses: String? = null /*Unauthorized Uses*/,
+    @JvmField val assignmentNotes: String? = null /*Assignment Notes*/
+) {
 
     fun getServiceName() = serviceName
     fun getPortNumber() = portNumber
@@ -62,11 +63,12 @@ class Record @JvmOverloads constructor(
 }
 
 class Person @JvmOverloads constructor (
-        @JvmField val id: String,
-        @JvmField val name: String,
-        @JvmField val org: String? = null,
-        @JvmField val uri: String? = null,
-        @JvmField val updated: String? = null) {
+    @JvmField val id: String,
+    @JvmField val name: String,
+    @JvmField val org: String? = null,
+    @JvmField val uri: String? = null,
+    @JvmField val updated: String? = null
+) {
 
     fun getId() = id
     fun getName() = name

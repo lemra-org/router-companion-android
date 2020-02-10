@@ -1,73 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+	<group android:checkableBehavior="single">
 
-        <item
-            android:id="@+id/activity_main_nav_drawer_overview"
-            android:icon="@drawable/ic_action_dashboard"
-            android:title="Overview" />
+		<item android:id="@+id/activity_main_nav_drawer_overview"
+			android:icon="@drawable/ic_action_dashboard" android:title="Overview" />
 
-        <item android:title="Status">
-            <menu>
-                <item
-                    android:id="@+id/activity_main_nav_drawer_status_status"
-                    android:icon="@drawable/ic_action_action_info"
-                    android:title="Status" />
-                <item
-                    android:id="@+id/activity_main_nav_drawer_status_wireless"
-                    android:icon="@drawable/ic_action_device_signal_wifi_3_bar"
-                    android:title="Wireless" />
-                <item
-                    android:id="@+id/activity_main_nav_drawer_status_clients"
-                    android:icon="@drawable/ic_action_devices"
-                    android:title="Clients" />
-                <item
-                    android:id="@+id/activity_main_nav_drawer_status_monitoring"
-                    android:icon="@drawable/ic_action_trending_up"
-                    android:title="Monitoring" />
-            </menu>
-        </item>
+		<item android:title="Status">
+			<menu>
+				<item android:id="@+id/activity_main_nav_drawer_status_status"
+					android:icon="@drawable/ic_action_action_info"
+					android:title="Status" />
+				<item
+					android:id="@+id/activity_main_nav_drawer_status_wireless"
+					android:icon="@drawable/ic_action_device_signal_wifi_3_bar"
+					android:title="Wireless" />
+				<item android:id="@+id/activity_main_nav_drawer_status_clients"
+					android:icon="@drawable/ic_action_devices" android:title="Clients" />
+				<item
+					android:id="@+id/activity_main_nav_drawer_status_monitoring"
+					android:icon="@drawable/ic_action_trending_up"
+					android:title="Monitoring" />
+			</menu>
+		</item>
 
-        <item android:title="Services">
-            <menu>
-                <item
-                    android:id="@+id/activity_main_nav_drawer_services_openvpn"
-                    android:icon="@drawable/ic_action_openvpn"
-                    android:title="OpenVPN" />
-                <item
-                    android:id="@+id/activity_main_nav_drawer_services_pptp"
-                    android:icon="@drawable/ic_action_communication_vpn_key"
-                    android:title="PPTP" />
-                <item
-                    android:id="@+id/activity_main_nav_drawer_services_wol"
-                    android:icon="@drawable/ic_action_wol_3"
-                    android:title="Wake On LAN" />
-            </menu>
-        </item>
+		<item android:title="Services">
+			<menu>
+				<item
+					android:id="@+id/activity_main_nav_drawer_services_openvpn"
+					android:icon="@drawable/ic_action_openvpn" android:title="OpenVPN" />
+				<item android:id="@+id/activity_main_nav_drawer_services_pptp"
+					android:icon="@drawable/ic_action_communication_vpn_key"
+					android:title="PPTP" />
+				<item android:id="@+id/activity_main_nav_drawer_services_wol"
+					android:icon="@drawable/ic_action_wol_3"
+					android:title="Wake On LAN" />
+			</menu>
+		</item>
 
-        <item android:title="Admin Area">
-            <menu>
-                <item
-                    android:id="@+id/activity_main_nav_drawer_admin_commands"
-                    android:icon="@drawable/ic_action_terminal"
-                    android:title="Commands" />
-                <item
-                    android:id="@+id/activity_main_nav_drawer_admin_nvram"
-                    android:icon="@drawable/ic_action_ram_3"
-                    android:title="NVRAM" />
-            </menu>
-        </item>
+		<item android:title="Admin Area">
+			<menu>
+				<item android:id="@+id/activity_main_nav_drawer_admin_commands"
+					android:icon="@drawable/ic_action_terminal"
+					android:title="Commands" />
+				<item android:id="@+id/activity_main_nav_drawer_admin_nvram"
+					android:icon="@drawable/ic_action_ram_3" android:title="NVRAM" />
+			</menu>
+		</item>
 
-        <item android:title="Toolbox">
-            <menu>
-                <item
-                    android:id="@+id/activity_main_nav_drawer_toolbox_network"
-                    android:icon="@drawable/ic_action_network"
-                    android:title="Network" />
-            </menu>
-        </item>
+		<item android:title="Toolbox">
+			<menu>
+				<item
+					android:id="@+id/activity_main_nav_drawer_toolbox_network"
+					android:icon="@drawable/ic_action_network" android:title="Network" />
+			</menu>
+		</item>
 
-    </group>
+	</group>
 
 </menu>

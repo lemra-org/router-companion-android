@@ -23,9 +23,7 @@
 package org.rm3l.router_companion.fragments.admin
 
 import android.os.Bundle
-import java.util.Arrays
 import org.rm3l.router_companion.fragments.AbstractBaseFragment
-import org.rm3l.router_companion.tiles.DDWRTTile
 import org.rm3l.router_companion.tiles.admin.commands.AdminCommandsTile
 
 /**
@@ -36,6 +34,6 @@ class AdminCommandsFragment : AbstractBaseFragment<Void>() {
     override fun getTiles(savedInstanceState: Bundle?) =
         listOf(AdminCommandsTile(this, savedInstanceState, this.router))
 
-    //Disabled, as swipe refresh actually does not make sense in this kind of fragment
+    // Disabled, as swipe refresh actually does not make sense in this kind of fragment
     override fun isSwipeRefreshLayoutEnabled() = false
 }

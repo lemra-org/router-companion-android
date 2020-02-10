@@ -1,41 +1,39 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-Copyright (c) 2016 Armel Soro
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
--->
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (c) 2016 Armel Soro 
+	Permission is hereby granted, free of charge, to any person obtaining a copy 
+	of this software and associated documentation files (the "Software"), to 
+	deal in the Software without restriction, including without limitation the 
+	rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
+	sell copies of the Software, and to permit persons to whom the Software is 
+	furnished to do so, subject to the following conditions: The above copyright 
+	notice and this permission notice shall be included in all copies or substantial 
+	portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY 
+	OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
+	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+	IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+	DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, 
+	ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+	DEALINGS IN THE SOFTWARE. -->
 
 <resources>
-    <string name="define_kotlin" translatable="false" />
-    <!-- Author section -->
-    <string name="library_kotlin_author" translatable="false">JetBrains</string>
-    <string name="library_kotlin_authorWebsite" translatable="false">https://www.jetbrains.com/</string>
-    <!-- Library section -->
-    <string name="library_kotlin_libraryName" translatable="false">Kotlin</string>
-    <string name="library_kotlin_libraryDescription" translatable="false">Programming language for JVM &amp; Android</string>
-    <string name="library_kotlin_libraryWebsite" translatable="false">https://kotlinlang.org/</string>
-    <string name="library_kotlin_libraryVersion" translatable="false">1.1.4-3</string>
-    <!-- OpenSource section -->
-    <string name="library_kotlin_isOpenSource" translatable="false">true</string>
-    <string name="library_kotlin_repositoryLink" translatable="false">https://github.com/JetBrains/kotlin</string>
-    <!-- ClassPath for autoDetect section -->
-    <!--<string translatable="false" name="library_kotlin_classPath">com.facebook.kotlin</string>-->
-    <!-- License section -->
-    <string name="library_kotlin_licenseId" translatable="false">apache_2_0</string>
-    <!-- Custom variables section -->
+	<string name="define_kotlin" translatable="false" />
+	<!-- Author section -->
+	<string name="library_kotlin_author" translatable="false">JetBrains</string>
+	<string name="library_kotlin_authorWebsite" translatable="false">https://www.jetbrains.com/</string>
+	<!-- Library section -->
+	<string name="library_kotlin_libraryName" translatable="false">Kotlin</string>
+	<string name="library_kotlin_libraryDescription"
+		translatable="false">Programming language for JVM &amp; Android</string>
+	<string name="library_kotlin_libraryWebsite"
+		translatable="false">https://kotlinlang.org/</string>
+	<string name="library_kotlin_libraryVersion"
+		translatable="false">1.1.4-3</string>
+	<!-- OpenSource section -->
+	<string name="library_kotlin_isOpenSource" translatable="false">true</string>
+	<string name="library_kotlin_repositoryLink"
+		translatable="false">https://github.com/JetBrains/kotlin</string>
+	<!-- ClassPath for autoDetect section -->
+	<!--<string translatable="false" name="library_kotlin_classPath">com.facebook.kotlin</string> -->
+	<!-- License section -->
+	<string name="library_kotlin_licenseId" translatable="false">apache_2_0</string>
+	<!-- Custom variables section -->
 </resources>

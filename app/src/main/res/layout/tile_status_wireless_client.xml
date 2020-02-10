@@ -1,678 +1,547 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
-
-Copyright (C) 2014  Armel Soro
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
-
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/tile_status_wireless_client_card_view"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp"
-    android:clickable="true"
-    android:focusable="true"
-    card_view:cardElevation="6dp"
-    card_view:cardMaxElevation="6dp"
-    android:foreground="?android:attr/selectableItemBackground">
-    <!--card_view:cardPreventCornerOverlap="true"-->
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:baselineAligned="false">
-
-        <RelativeLayout
-            android:layout_margin="4dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:id="@+id/tile_status_wireless_client_first_glance_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/avatar"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginLeft="2dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginStart="2dp"
-                    android:contentDescription="@string/avatar" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <RelativeLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/tile_status_wireless_client_device_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentStart="true"
-                            android:layout_alignParentTop="true"
-                            android:layout_gravity="start"
-                            android:ellipsize="end"
-                            android:maxLength="10"
-                            android:scrollHorizontally="true"
-                            android:textAppearance="?android:textAppearanceMedium"
-                            android:textIsSelectable="true" />
-
-                        <LinearLayout
-                            android:id="@+id/tile_status_wireless_client_network_traffic_placeholder"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_toLeftOf="@+id/tile_status_wireless_client_you_and_menu"
-                            android:layout_toStartOf="@+id/tile_status_wireless_client_you_and_menu"
-                            android:layout_toEndOf="@+id/tile_status_wireless_client_device_name"
-                            android:layout_toRightOf="@+id/tile_status_wireless_client_device_name"
-                            android:gravity="center"
-                            android:orientation="horizontal"
-                            android:scrollHorizontally="true" />
-
-                        <ImageView
-                            android:id="@+id/tile_status_wireless_client_blocked"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_centerInParent="true"
-                            android:layout_toEndOf="@+id/tile_status_wireless_client_network_traffic_placeholder"
-                            android:layout_toRightOf="@+id/tile_status_wireless_client_network_traffic_placeholder"
-                            android:src="@drawable/ic_action_content_block"
-                            android:contentDescription="@string/blocked" />
-
-                        <LinearLayout
-                            android:id="@+id/tile_status_wireless_client_you_and_menu"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:gravity="end">
-
-                            <TextView
-                                android:id="@+id/tile_status_wireless_client_device_this"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="start"
-                                android:layout_weight="1"
-                                android:ellipsize="end"
-                                android:maxLines="1"
-                                android:scrollHorizontally="true"
-                                android:text="@string/you"
-                                android:textAppearance="?android:textAppearanceSmall"
-                                android:textColor="@color/yellow"
-                                android:textStyle="bold"
-                                android:visibility="gone" />
-
-                            <ImageButton
-                                android:visibility="gone"
-                                android:id="@+id/tile_status_wireless_client_device_menu"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="end"
-                                android:background="@android:color/transparent"
-                                android:contentDescription="@string/menu"
-                                android:src="@drawable/abs__ic_menu_moreoverflow_holo_light" />
-
-                        </LinearLayout>
-
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/tile_status_wireless_client_device_mac"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentStart="true"
-                            android:textIsSelectable="true" />
-
-                        <TextView
-                            android:id="@+id/tile_status_wireless_client_device_ip"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:textIsSelectable="true" />
-
-                    </RelativeLayout>
-
-                    <TextView
-                        android:id="@+id/tile_status_wireless_client_device_details_nic_manufacturer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginBottom="4dp"
-                        android:ellipsize="end"
-                        android:gravity="center_horizontal"
-                        android:maxLines="1"
-                        android:text="@string/loading"
-                        android:textIsSelectable="true" />
-
-                    <ImageButton
-                        android:id="@+id/expand_collapse"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_horizontal"
-                        android:background="@null"
-                        android:src="@drawable/ic_expand_more_black_24dp"
-                        android:contentDescription="@string/expand_collapse"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/tile_status_wireless_client_device_details_placeholder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tile_status_wireless_client_first_glance_view"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <GridLayout
-                android:id="@+id/tile_status_wireless_client_device_details_oui_lastseen_table"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tile_status_wireless_client_first_glance_view"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:columnCount="3"
-                android:stretchColumns="*"
-                android:visibility="gone">
-
-                <!-- Full Name -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/system_name"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:id="@+id/tile_status_wireless_client_device_details_system_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
-
-                    android:textIsSelectable="true" />
-
-                <!-- Alias -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/alias"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:id="@+id/tile_status_wireless_client_device_details_alias"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
-
-                    android:textIsSelectable="true" />
-
-                <!-- Network Card Manufacturer -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/nic_manufacturer"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/tile_status_wireless_client_device_details_oui_addr"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
-
-                    android:textIsSelectable="true"
-                    android:visibility="gone" />
-
-                <!-- Last Seen -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:text="@string/last_seen"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <com.github.curioustechizen.ago.RelativeTimeTextView
-                    android:id="@+id/tile_status_wireless_client_device_details_lastseen"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="4dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
-
-                    android:textIsSelectable="true" />
-
-                <!-- SSID (If any) -->
-                <TextView
-                    android:id="@+id/tile_status_wireless_client_device_details_wireless_network_ssid_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Wireless Network"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tile_status_wireless_client_device_details_wireless_network_ssid_sep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:id="@+id/tile_status_wireless_client_device_details_wireless_network_ssid"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
-
-                    android:textIsSelectable="true" />
-
-                <!-- Signal Strength (If any) -->
-                <TextView
-                    android:id="@+id/tile_status_wireless_client_device_details_wireless_network_signal_strength_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Signal Strength"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tile_status_wireless_client_device_details_wireless_network_signal_strength_sep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <!--<org.rm3l.ddwrt.widgets.TextProgressBar-->
-                <!--android:id="@+id/tile_status_wireless_client_device_details_wireless_network_snr"-->
-                <!--style="?android:attr/progressBarStyleHorizontal"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="15dp"-->
-                <!--android:layout_gravity="start"-->
-                <!--android:gravity="start"-->
-                <!--android:minHeight="15dp"-->
-                <!--android:maxHeight="16dp"-->
-                <!--android:indeterminate="false"-->
-                <!--android:max="100"-->
-                <!--android:progress="0"-->
-                <!--components:textSize="12sp"/>-->
-                <ProgressBar
-                    android:id="@+id/tile_status_wireless_client_device_details_wireless_network_signal_strength"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:gravity="start"
-                    android:indeterminate="false"
-                    android:max="100"
-                    android:progress="0" />
-
-                <!-- RSSI (If any) -->
-                <TextView
-                    android:id="@+id/tile_status_wireless_client_device_details_wireless_network_rssi_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="RSSI"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tile_status_wireless_client_device_details_wireless_network_rssi_sep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:id="@+id/tile_status_wireless_client_device_details_wireless_network_rssi"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
-
-                    android:textIsSelectable="true" />
-
-                <!-- SNR Margin -->
-                <TextView
-                    android:id="@+id/tile_status_wireless_client_device_details_wireless_network_snr_margin_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="SNR Margin"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tile_status_wireless_client_device_details_wireless_network_snr_margin_sep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:id="@+id/tile_status_wireless_client_device_details_wireless_network_snr_margin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
-
-                    android:textIsSelectable="true" />
-
-                <!-- Total Upload -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/total_upload"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:id="@+id/tile_status_wireless_client_device_details_total_upload"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
-
-                    android:textIsSelectable="true" />
-
-                <!-- Total Download -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/total_download"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:id="@+id/tile_status_wireless_client_device_details_total_download"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
-
-                    android:textIsSelectable="true" />
-
-                <!-- Active IP Connections -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/num_active_ip_connections"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:id="@+id/tile_status_wireless_client_device_details_active_ip_connections_num"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
-
-                    android:textIsSelectable="true" />
-
-                <!-- WAN Access State -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/wan_access"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:id="@+id/tile_status_wireless_client_device_details_wan_access"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
-
-                    android:textIsSelectable="true" />
-
-            </GridLayout>
-
-                <LinearLayout
-                    android:id="@+id/tile_status_wireless_client_device_details_graph_placeholder"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal"
-                    android:visibility="gone" />
-
-                <LinearLayout
-                    android:id="@+id/tile_status_wireless_client_device_details_graph_legend"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <View
-                        android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series1_bar"
-                        android:layout_width="15dp"
-                        android:layout_height="2dp" />
-
-                    <TextView
-                        android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series1_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginRight="10dp"
-                        android:textAppearance="?android:textAppearanceSmall" />
-
-                    <View
-                        android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series2_bar"
-                        android:layout_width="15dp"
-                        android:layout_height="2dp" />
-
-                    <TextView
-                        android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series2_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceSmall" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/tile_status_wireless_client_device_details_no_data"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tile_status_wireless_client_device_details_placeholder"
-                android:gravity="center_horizontal"
-                android:text="\nNo Data"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:textIsSelectable="true"
-                android:visibility="gone" />
-
-        </RelativeLayout>
-
-        <!-- TODO -->
-        <LinearLayout
-            android:id="@+id/tile_status_wireless_client_card_view_actions_background"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:layout_weight="1"
-                android:layout_margin="5dp"
-                android:id="@+id/tile_status_wireless_client_card_view_actions_set_alias"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@android:color/transparent"
-                android:contentDescription="Set Alias"
-                android:src="@drawable/ic_edit_white_24dp"/>
-            <ImageButton
-                android:layout_weight="1"
-                android:layout_margin="5dp"
-                android:id="@+id/tile_status_wireless_client_card_view_actions_wake_on_lan"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@android:color/transparent"
-                android:contentDescription="Wake On LAN"
-                android:src="@drawable/ic_alarm_on_white_24dp"/>
-            <ImageButton
-                android:layout_weight="1"
-                android:layout_margin="5dp"
-                android:id="@+id/tile_status_wireless_client_card_view_actions_view_ip_conn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@android:color/transparent"
-                android:contentDescription="View IP Connections"
-                android:src="@drawable/ic_view_list_white_24dp"/>
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:layout_weight="1"
-                android:layout_margin="5dp"
-                android:id="@+id/tile_status_wireless_client_card_view_actions_toggle_internet_access"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@android:color/transparent"
-                android:contentDescription="Internet Access"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:checked="false"
-                android:enabled="false"
-                android:textOff="OFF"
-                android:textOn="ON"/>
-
-            <ImageButton
-                android:id="@+id/tile_status_wireless_client_card_view_actions_more_menu"
-                android:visibility="gone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|center"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/menu"
-                android:src="@drawable/ic_more_horiz_white_24dp"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
+
+<androidx.cardview.widget.CardView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:card_view="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/tile_status_wireless_client_card_view"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content" android:layout_marginBottom="5dp"
+	android:clickable="true" android:focusable="true"
+	card_view:cardElevation="6dp" card_view:cardMaxElevation="6dp"
+	android:foreground="?android:attr/selectableItemBackground">
+	<!--card_view:cardPreventCornerOverlap="true" -->
+
+	<LinearLayout android:layout_width="match_parent"
+		android:layout_height="wrap_content" android:orientation="vertical"
+		android:baselineAligned="false">
+
+		<RelativeLayout android:layout_margin="4dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+
+			<LinearLayout
+				android:id="@+id/tile_status_wireless_client_first_glance_view"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
+
+				<ImageView android:id="@+id/avatar"
+					android:layout_width="30dp" android:layout_height="30dp"
+					android:layout_marginEnd="5dp" android:layout_marginLeft="2dp"
+					android:layout_marginRight="5dp" android:layout_marginStart="2dp"
+					android:contentDescription="@string/avatar" />
+
+				<LinearLayout android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:orientation="vertical">
+
+					<RelativeLayout android:layout_width="wrap_content"
+						android:layout_height="wrap_content">
+
+						<TextView
+							android:id="@+id/tile_status_wireless_client_device_name"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_alignParentLeft="true"
+							android:layout_alignParentStart="true"
+							android:layout_alignParentTop="true"
+							android:layout_gravity="start" android:ellipsize="end"
+							android:maxLength="10" android:scrollHorizontally="true"
+							android:textAppearance="?android:textAppearanceMedium"
+							android:textIsSelectable="true" />
+
+						<LinearLayout
+							android:id="@+id/tile_status_wireless_client_network_traffic_placeholder"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_alignParentTop="true"
+							android:layout_gravity="center_horizontal"
+							android:layout_toLeftOf="@+id/tile_status_wireless_client_you_and_menu"
+							android:layout_toStartOf="@+id/tile_status_wireless_client_you_and_menu"
+							android:layout_toEndOf="@+id/tile_status_wireless_client_device_name"
+							android:layout_toRightOf="@+id/tile_status_wireless_client_device_name"
+							android:gravity="center" android:orientation="horizontal"
+							android:scrollHorizontally="true" />
+
+						<ImageView
+							android:id="@+id/tile_status_wireless_client_blocked"
+							android:layout_width="30dp" android:layout_height="30dp"
+							android:layout_centerInParent="true"
+							android:layout_toEndOf="@+id/tile_status_wireless_client_network_traffic_placeholder"
+							android:layout_toRightOf="@+id/tile_status_wireless_client_network_traffic_placeholder"
+							android:src="@drawable/ic_action_content_block"
+							android:contentDescription="@string/blocked" />
+
+						<LinearLayout
+							android:id="@+id/tile_status_wireless_client_you_and_menu"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_alignParentEnd="true"
+							android:layout_alignParentRight="true" android:gravity="end">
+
+							<TextView
+								android:id="@+id/tile_status_wireless_client_device_this"
+								android:layout_width="0dp" android:layout_height="wrap_content"
+								android:layout_gravity="start" android:layout_weight="1"
+								android:ellipsize="end" android:maxLines="1"
+								android:scrollHorizontally="true" android:text="@string/you"
+								android:textAppearance="?android:textAppearanceSmall"
+								android:textColor="@color/yellow" android:textStyle="bold"
+								android:visibility="gone" />
+
+							<ImageButton android:visibility="gone"
+								android:id="@+id/tile_status_wireless_client_device_menu"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_gravity="end"
+								android:background="@android:color/transparent"
+								android:contentDescription="@string/menu"
+								android:src="@drawable/abs__ic_menu_moreoverflow_holo_light" />
+
+						</LinearLayout>
+
+					</RelativeLayout>
+
+					<RelativeLayout android:layout_width="wrap_content"
+						android:layout_height="wrap_content">
+
+						<TextView
+							android:id="@+id/tile_status_wireless_client_device_mac"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_alignParentLeft="true"
+							android:layout_alignParentStart="true"
+							android:textIsSelectable="true" />
+
+						<TextView
+							android:id="@+id/tile_status_wireless_client_device_ip"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_alignParentEnd="true"
+							android:layout_alignParentRight="true"
+							android:textIsSelectable="true" />
+
+					</RelativeLayout>
+
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_nic_manufacturer"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center_horizontal"
+						android:layout_marginBottom="4dp" android:ellipsize="end"
+						android:gravity="center_horizontal" android:maxLines="1"
+						android:text="@string/loading" android:textIsSelectable="true" />
+
+					<ImageButton android:id="@+id/expand_collapse"
+						android:layout_width="match_parent"
+						android:layout_height="match_parent"
+						android:layout_gravity="center_horizontal"
+						android:background="@null"
+						android:src="@drawable/ic_expand_more_black_24dp"
+						android:contentDescription="@string/expand_collapse" />
+
+				</LinearLayout>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/tile_status_wireless_client_device_details_placeholder"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_below="@+id/tile_status_wireless_client_first_glance_view"
+				android:orientation="vertical" android:visibility="gone">
+
+				<GridLayout
+					android:id="@+id/tile_status_wireless_client_device_details_oui_lastseen_table"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_below="@+id/tile_status_wireless_client_first_glance_view"
+					android:layout_marginTop="@dimen/activity_vertical_margin"
+					android:columnCount="3" android:stretchColumns="*"
+					android:visibility="gone">
+
+					<!-- Full Name -->
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/system_name" android:textStyle="bold" />
+
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+						android:layout_marginRight="8.0dip"
+						android:text="@string/one_space" />
+
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_system_name"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="start" android:layout_marginBottom="4dp"
+						android:ellipsize="end" android:gravity="start"
+						android:text="@string/loading" android:textIsSelectable="true" />
+
+					<!-- Alias -->
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content" android:text="@string/alias"
+						android:textStyle="bold" />
+
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+						android:layout_marginRight="8.0dip"
+						android:text="@string/one_space" />
+
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_alias"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="start" android:layout_marginBottom="4dp"
+						android:ellipsize="end" android:gravity="start"
+						android:text="@string/loading" android:textIsSelectable="true" />
+
+					<!-- Network Card Manufacturer -->
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/nic_manufacturer" android:textStyle="bold"
+						android:visibility="gone" />
+
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+						android:layout_marginRight="8.0dip"
+						android:text="@string/one_space" android:visibility="gone" />
+
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_oui_addr"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="start" android:layout_marginBottom="4dp"
+						android:ellipsize="end" android:gravity="start"
+						android:text="@string/loading" android:textIsSelectable="true"
+						android:visibility="gone" />
+
+					<!-- Last Seen -->
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginBottom="4dp" android:text="@string/last_seen"
+						android:textStyle="bold" />
+
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center" android:layout_marginBottom="4dp"
+						android:layout_marginLeft="8.0dip"
+						android:layout_marginRight="8.0dip"
+						android:text="@string/one_space" />
+
+					<com.github.curioustechizen.ago.RelativeTimeTextView
+						android:id="@+id/tile_status_wireless_client_device_details_lastseen"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="start" android:layout_marginBottom="4dp"
+						android:ellipsize="end" android:gravity="start"
+						android:text="@string/loading" android:textIsSelectable="true" />
+
+					<!-- SSID (If any) -->
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_wireless_network_ssid_title"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="Wireless Network" android:textStyle="bold" />
+
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_wireless_network_ssid_sep"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+						android:layout_marginRight="8.0dip"
+						android:text="@string/one_space" />
+
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_wireless_network_ssid"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="start" android:ellipsize="end"
+						android:gravity="start" android:text="@string/loading"
+
+						android:textIsSelectable="true" />
+
+					<!-- Signal Strength (If any) -->
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_wireless_network_signal_strength_title"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="Signal Strength" android:textStyle="bold" />
+
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_wireless_network_signal_strength_sep"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+						android:layout_marginRight="8.0dip"
+						android:text="@string/one_space" />
+
+					<!--<org.rm3l.ddwrt.widgets.TextProgressBar -->
+					<!--android:id="@+id/tile_status_wireless_client_device_details_wireless_network_snr" -->
+					<!--style="?android:attr/progressBarStyleHorizontal" -->
+					<!--android:layout_width="wrap_content" -->
+					<!--android:layout_height="15dp" -->
+					<!--android:layout_gravity="start" -->
+					<!--android:gravity="start" -->
+					<!--android:minHeight="15dp" -->
+					<!--android:maxHeight="16dp" -->
+					<!--android:indeterminate="false" -->
+					<!--android:max="100" -->
+					<!--android:progress="0" -->
+					<!--components:textSize="12sp"/> -->
+					<ProgressBar
+						android:id="@+id/tile_status_wireless_client_device_details_wireless_network_signal_strength"
+						style="?android:attr/progressBarStyleHorizontal"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="start" android:gravity="start"
+						android:indeterminate="false" android:max="100"
+						android:progress="0" />
+
+					<!-- RSSI (If any) -->
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_wireless_network_rssi_title"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content" android:text="RSSI"
+						android:textStyle="bold" />
+
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_wireless_network_rssi_sep"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+						android:layout_marginRight="8.0dip"
+						android:text="@string/one_space" />
+
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_wireless_network_rssi"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="start" android:ellipsize="end"
+						android:gravity="start" android:text="@string/loading"
+
+						android:textIsSelectable="true" />
+
+					<!-- SNR Margin -->
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_wireless_network_snr_margin_title"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content" android:text="SNR Margin"
+						android:textStyle="bold" />
+
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_wireless_network_snr_margin_sep"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+						android:layout_marginRight="8.0dip"
+						android:text="@string/one_space" />
+
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_wireless_network_snr_margin"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="start" android:ellipsize="end"
+						android:gravity="start" android:text="@string/loading"
+
+						android:textIsSelectable="true" />
+
+					<!-- Total Upload -->
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/total_upload" android:textStyle="bold" />
+
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+						android:layout_marginRight="8.0dip"
+						android:text="@string/one_space" />
+
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_total_upload"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="start" android:ellipsize="end"
+						android:gravity="start" android:text="@string/loading"
+
+						android:textIsSelectable="true" />
+
+					<!-- Total Download -->
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/total_download" android:textStyle="bold" />
+
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+						android:layout_marginRight="8.0dip"
+						android:text="@string/one_space" />
+
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_total_download"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="start" android:ellipsize="end"
+						android:gravity="start" android:text="@string/loading"
+
+						android:textIsSelectable="true" />
+
+					<!-- Active IP Connections -->
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/num_active_ip_connections"
+						android:textStyle="bold" />
+
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+						android:layout_marginRight="8.0dip"
+						android:text="@string/one_space" />
+
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_active_ip_connections_num"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="start" android:ellipsize="end"
+						android:gravity="start" android:text="@string/loading"
+
+						android:textIsSelectable="true" />
+
+					<!-- WAN Access State -->
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/wan_access" android:textStyle="bold" />
+
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+						android:layout_marginRight="8.0dip"
+						android:text="@string/one_space" />
+
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_wan_access"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="start" android:ellipsize="end"
+						android:gravity="start" android:text="@string/loading"
+
+						android:textIsSelectable="true" />
+
+				</GridLayout>
+
+				<LinearLayout
+					android:id="@+id/tile_status_wireless_client_device_details_graph_placeholder"
+					android:layout_width="match_parent" android:layout_height="300dp"
+					android:layout_marginTop="10dp" android:orientation="horizontal"
+					android:visibility="gone" />
+
+				<LinearLayout
+					android:id="@+id/tile_status_wireless_client_device_details_graph_legend"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal">
+
+					<View
+						android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series1_bar"
+						android:layout_width="15dp" android:layout_height="2dp" />
+
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series1_text"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginEnd="10dp" android:layout_marginRight="10dp"
+						android:textAppearance="?android:textAppearanceSmall" />
+
+					<View
+						android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series2_bar"
+						android:layout_width="15dp" android:layout_height="2dp" />
+
+					<TextView
+						android:id="@+id/tile_status_wireless_client_device_details_graph_legend_series2_text"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:textAppearance="?android:textAppearanceSmall" />
+
+				</LinearLayout>
+
+			</LinearLayout>
+
+			<TextView
+				android:id="@+id/tile_status_wireless_client_device_details_no_data"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_below="@+id/tile_status_wireless_client_device_details_placeholder"
+				android:gravity="center_horizontal" android:text="\nNo Data"
+				android:textAppearance="?android:textAppearanceSmall"
+				android:textIsSelectable="true" android:visibility="gone" />
+
+		</RelativeLayout>
+
+		<!-- TODO -->
+		<LinearLayout
+			android:id="@+id/tile_status_wireless_client_card_view_actions_background"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:orientation="horizontal">
+
+			<ImageButton android:layout_weight="1"
+				android:layout_margin="5dp"
+				android:id="@+id/tile_status_wireless_client_card_view_actions_set_alias"
+				android:layout_width="0dp" android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:background="@android:color/transparent"
+				android:contentDescription="Set Alias"
+				android:src="@drawable/ic_edit_white_24dp" />
+			<ImageButton android:layout_weight="1"
+				android:layout_margin="5dp"
+				android:id="@+id/tile_status_wireless_client_card_view_actions_wake_on_lan"
+				android:layout_width="0dp" android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:background="@android:color/transparent"
+				android:contentDescription="Wake On LAN"
+				android:src="@drawable/ic_alarm_on_white_24dp" />
+			<ImageButton android:layout_weight="1"
+				android:layout_margin="5dp"
+				android:id="@+id/tile_status_wireless_client_card_view_actions_view_ip_conn"
+				android:layout_width="0dp" android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:background="@android:color/transparent"
+				android:contentDescription="View IP Connections"
+				android:src="@drawable/ic_view_list_white_24dp" />
+
+			<androidx.appcompat.widget.SwitchCompat
+				android:layout_weight="1" android:layout_margin="5dp"
+				android:id="@+id/tile_status_wireless_client_card_view_actions_toggle_internet_access"
+				android:layout_width="0dp" android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:background="@android:color/transparent"
+				android:contentDescription="Internet Access"
+				android:textAppearance="?android:textAppearanceSmall"
+				android:checked="false" android:enabled="false"
+				android:textOff="OFF" android:textOn="ON" />
+
+			<ImageButton
+				android:id="@+id/tile_status_wireless_client_card_view_actions_more_menu"
+				android:visibility="gone" android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="end|center"
+				android:background="@android:color/transparent"
+				android:contentDescription="@string/menu"
+				android:src="@drawable/ic_more_horiz_white_24dp" />
+
+		</LinearLayout>
+
+	</LinearLayout>
 
 </androidx.cardview.widget.CardView>

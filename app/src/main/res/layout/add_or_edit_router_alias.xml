@@ -1,115 +1,92 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
 
-Copyright (C) 2014  Armel Soro
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content" android:orientation="vertical">
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+	<LinearLayout
+		android:id="@+id/add_or_edit_router_alias_notification_viewgroup"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" android:orientation="vertical" />
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+	<ScrollView android:layout_width="match_parent"
+		android:layout_height="wrap_content" android:scrollbars="none">
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+		<LinearLayout android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:layout_marginTop="10dp"
+			android:orientation="vertical">
 
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
+			<!--<TextView -->
+			<!--android:layout_width="wrap_content" -->
+			<!--android:layout_height="wrap_content" -->
+			<!--android:layout_marginLeft="4dp" -->
+			<!--android:layout_marginRight="4dp" -->
+			<!--android:textAppearance="?android:textAppearanceMedium" -->
+			<!--android:text="MAC Address"/> -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+			<com.google.android.material.textfield.TextInputLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" android:layout_marginLeft="4dp"
+				android:layout_marginStart="4dp">
 
-    <LinearLayout
-        android:id="@+id/add_or_edit_router_alias_notification_viewgroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" />
+				<com.google.android.material.textfield.TextInputEditText
+					android:id="@+id/add_or_edit_router_alias_mac"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginBottom="16dp" android:layout_marginLeft="4dp"
+					android:layout_marginRight="4dp" android:layout_marginTop="4dp"
+					android:layout_weight="1"
+					android:drawableBottom="@android:color/holo_blue_dark"
+					android:hint="MAC Address, e.g., aa:bb:cc:dd:ee:ff"
+					android:imeOptions="flagNoExtractUi"
+					android:inputType="textNoSuggestions"
+					android:isScrollContainer="true" android:selectAllOnFocus="true">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none">
+					<requestFocus />
+				</com.google.android.material.textfield.TextInputEditText>
+			</com.google.android.material.textfield.TextInputLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical">
+			<!--<TextView -->
+			<!--android:id="@+id/add_or_edit_router_alias_value_textview" -->
+			<!--android:layout_marginLeft="4dp" -->
+			<!--android:layout_marginRight="4dp" -->
+			<!--android:layout_width="wrap_content" -->
+			<!--android:layout_height="wrap_content" -->
+			<!--android:textAppearance="?android:textAppearanceMedium" -->
+			<!--android:text="Alias"/> -->
 
-            <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="4dp"-->
-            <!--android:layout_marginRight="4dp"-->
-            <!--android:textAppearance="?android:textAppearanceMedium"-->
-            <!--android:text="MAC Address"/>-->
+			<com.google.android.material.textfield.TextInputLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" android:layout_marginLeft="4dp"
+				android:layout_marginStart="4dp">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginStart="4dp">
+				<com.google.android.material.textfield.TextInputEditText
+					android:id="@+id/add_or_edit_router_alias_value"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginBottom="16dp" android:layout_marginLeft="4dp"
+					android:layout_marginRight="4dp" android:layout_marginTop="4dp"
+					android:layout_weight="1"
+					android:drawableBottom="@android:color/holo_blue_dark"
+					android:hint="Local Alias, e.g., Julie's Phone"
+					android:imeOptions="flagNoExtractUi"
+					android:inputType="textNoSuggestions"
+					android:isScrollContainer="true" android:selectAllOnFocus="true" />
+			</com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/add_or_edit_router_alias_mac"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_weight="1"
-                    android:drawableBottom="@android:color/holo_blue_dark"
-                    android:hint="MAC Address, e.g., aa:bb:cc:dd:ee:ff"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="textNoSuggestions"
-                    android:isScrollContainer="true"
-                    android:selectAllOnFocus="true">
+		</LinearLayout>
 
-                    <requestFocus />
-                </com.google.android.material.textfield.TextInputEditText>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!--<TextView-->
-            <!--android:id="@+id/add_or_edit_router_alias_value_textview"-->
-            <!--android:layout_marginLeft="4dp"-->
-            <!--android:layout_marginRight="4dp"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:textAppearance="?android:textAppearanceMedium"-->
-            <!--android:text="Alias"/>-->
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginStart="4dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/add_or_edit_router_alias_value"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_weight="1"
-                    android:drawableBottom="@android:color/holo_blue_dark"
-                    android:hint="Local Alias, e.g., Julie's Phone"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="textNoSuggestions"
-                    android:isScrollContainer="true"
-                    android:selectAllOnFocus="true" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </LinearLayout>
-
-    </ScrollView>
+	</ScrollView>
 
 </LinearLayout>

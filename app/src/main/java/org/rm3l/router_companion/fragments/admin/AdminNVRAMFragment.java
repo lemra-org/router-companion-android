@@ -33,34 +33,36 @@ import org.rm3l.router_companion.tiles.admin.nvram.AdminNVRAMTile;
 
 /**
  * 'Admin > NVRAM' fragment
- * <p/>
+ *
+ * <p>
  */
 public class AdminNVRAMFragment extends AbstractBaseFragment {
 
-    private List<DDWRTTile> tiles = null;
+  private List<DDWRTTile> tiles = null;
 
-    @Override
-    protected boolean canChildScrollUp() {
-        final List<DDWRTTile> tiles = this.getTiles(null);
-        if (tiles == null || tiles.isEmpty()) {
-            return false;
-        }
-        final DDWRTTile tile = tiles.get(0);
-        return (tile instanceof AdminNVRAMTile && ((AdminNVRAMTile) tile).canChildScrollUp());
+  @Override
+  protected boolean canChildScrollUp() {
+    final List<DDWRTTile> tiles = this.getTiles(null);
+    if (tiles == null || tiles.isEmpty()) {
+      return false;
     }
+    final DDWRTTile tile = tiles.get(0);
+    return (tile instanceof AdminNVRAMTile && ((AdminNVRAMTile) tile).canChildScrollUp());
+  }
 
-    @NonNull
-    protected int getRootViewType() {
-        return RootViewType_LINEAR_LAYOUT;
-    }
+  @NonNull
+  protected int getRootViewType() {
+    return RootViewType_LINEAR_LAYOUT;
+  }
 
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        if (tiles == null) {
-            tiles = Collections.<DDWRTTile>singletonList(
-                    new AdminNVRAMTile(this, savedInstanceState, this.router));
-        }
-        return tiles;
+  @Nullable
+  @Override
+  protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    if (tiles == null) {
+      tiles =
+          Collections.<DDWRTTile>singletonList(
+              new AdminNVRAMTile(this, savedInstanceState, this.router));
     }
+    return tiles;
+  }
 }

@@ -1,130 +1,97 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
+<androidx.cardview.widget.CardView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:card_view="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/nvram_entry_cardview"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content" android:layout_marginBottom="5dp"
+	android:layout_marginEnd="7dp" android:layout_marginLeft="7dp"
+	android:layout_marginRight="7dp" android:layout_marginStart="7dp"
+	android:layout_marginTop="10dp" android:clickable="true"
+	android:focusable="true" card_view:cardElevation="6dp"
+	card_view:cardMaxElevation="6dp"
+	android:foreground="?android:attr/selectableItemBackground"
+	card_view:cardPreventCornerOverlap="true"
+	card_view:contentPaddingBottom="@dimen/activity_vertical_margin"
+	card_view:contentPaddingLeft="10dp"
+	card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin"
+	card_view:contentPaddingTop="@dimen/activity_vertical_margin">
 
-Copyright (C) 2014  Armel Soro
+	<LinearLayout android:layout_width="match_parent"
+		android:layout_height="match_parent" android:orientation="vertical">
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+		<LinearLayout android:layout_width="match_parent"
+			android:layout_height="match_parent" android:orientation="horizontal">
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+			<ImageView android:id="@+id/avatar"
+				android:layout_width="50dp" android:layout_height="50dp"
+				android:layout_marginEnd="15dp" android:layout_marginLeft="2dp"
+				android:layout_marginRight="15dp" android:layout_marginStart="2dp"
+				android:contentDescription="@string/avatar" />
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+			<RelativeLayout android:layout_width="match_parent"
+				android:layout_height="match_parent">
 
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nvram_entry_cardview"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp"
-    android:layout_marginEnd="7dp"
-    android:layout_marginLeft="7dp"
-    android:layout_marginRight="7dp"
-    android:layout_marginStart="7dp"
-    android:layout_marginTop="10dp"
-    android:clickable="true"
-    android:focusable="true"
-    card_view:cardElevation="6dp"
-    card_view:cardMaxElevation="6dp"
-    android:foreground="?android:attr/selectableItemBackground"
-    card_view:cardPreventCornerOverlap="true"
-    card_view:contentPaddingBottom="@dimen/activity_vertical_margin"
-    card_view:contentPaddingLeft="10dp"
-    card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin"
-    card_view:contentPaddingTop="@dimen/activity_vertical_margin">
+				<TextView android:id="@+id/nvram_key"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_alignParentLeft="true"
+					android:layout_alignParentStart="true"
+					android:layout_toLeftOf="@+id/nvram_var_menu"
+					android:layout_toStartOf="@+id/nvram_var_menu"
+					android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+				<ImageButton android:id="@+id/nvram_var_menu"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentEnd="true"
+					android:layout_alignParentRight="true"
+					android:layout_alignParentTop="true"
+					android:layout_gravity="end|top" android:layout_marginBottom="5dp"
+					android:background="@android:color/transparent"
+					android:contentDescription="@string/menu"
+					android:src="@drawable/abs__ic_menu_moreoverflow_holo_light" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+			</RelativeLayout>
 
-            <ImageView
-                android:id="@+id/avatar"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginLeft="2dp"
-                android:layout_marginRight="15dp"
-                android:layout_marginStart="2dp"
-                android:contentDescription="@string/avatar" />
+		</LinearLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+		<RelativeLayout android:layout_width="match_parent"
+			android:layout_height="match_parent" android:layout_marginLeft="60dp"
+			android:layout_marginStart="60dp" android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/nvram_key"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_toLeftOf="@+id/nvram_var_menu"
-                    android:layout_toStartOf="@+id/nvram_var_menu"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+			<TextView android:id="@+id/nvram_value"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentStart="true"
+				android:layout_marginEnd="30dp" android:layout_marginRight="30dp"
+				android:ellipsize="end" android:maxLines="10" />
 
-                <ImageButton
-                    android:id="@+id/nvram_var_menu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_gravity="end|top"
-                    android:layout_marginBottom="5dp"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/menu"
-                    android:src="@drawable/abs__ic_menu_moreoverflow_holo_light" />
-
-            </RelativeLayout>
-
-        </LinearLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="60dp"
-            android:layout_marginStart="60dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/nvram_value"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginEnd="30dp"
-                android:layout_marginRight="30dp"
-                android:ellipsize="end"
-                android:maxLines="10" />
-
-            <ImageButton
-                android:id="@+id/nvram_var_remove_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_gravity="end|bottom"
-                android:background="?android:selectableItemBackground"
-                android:contentDescription="@string/remove"
-                android:src="@drawable/ic_action_action_delete" />
+			<ImageButton android:id="@+id/nvram_var_remove_btn"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_alignParentBottom="true"
+				android:layout_alignParentEnd="true"
+				android:layout_alignParentRight="true"
+				android:layout_gravity="end|bottom"
+				android:background="?android:selectableItemBackground"
+				android:contentDescription="@string/remove"
+				android:src="@drawable/ic_action_action_delete" />
 
 
-        </RelativeLayout>
+		</RelativeLayout>
 
-    </LinearLayout>
+	</LinearLayout>
 
 </androidx.cardview.widget.CardView>

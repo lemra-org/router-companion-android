@@ -1,165 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
-    xmlns:sothree="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/sliding_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="bottom"
-    sothree:umanoDragView="@+id/active_ip_connections_stats"
-    sothree:umanoOverlay="true"
-    sothree:umanoPanelHeight="60dp"
-    sothree:umanoParallaxOffset="100dp"
-    sothree:umanoScrollableView="@+id/tile_status_active_ip_connections_stats_recycler_view"
-    sothree:umanoShadowHeight="4dp"
-    tools:context="org.rm3l.router_companion.tiles.status.wireless.ActiveIPConnectionsDetailActivity">
+<com.sothree.slidinguppanel.SlidingUpPanelLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:ads="http://schemas.android.com/apk/res-auto"
+	xmlns:sothree="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/sliding_layout" android:layout_width="match_parent"
+	android:layout_height="match_parent" android:gravity="bottom"
+	sothree:umanoDragView="@+id/active_ip_connections_stats"
+	sothree:umanoOverlay="true" sothree:umanoPanelHeight="60dp"
+	sothree:umanoParallaxOffset="100dp"
+	sothree:umanoScrollableView="@+id/tile_status_active_ip_connections_stats_recycler_view"
+	sothree:umanoShadowHeight="4dp"
+	tools:context="org.rm3l.router_companion.tiles.status.wireless.ActiveIPConnectionsDetailActivity">
 
-    <!-- MAIN CONTENT -->
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+	<!-- MAIN CONTENT -->
+	<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" android:orientation="vertical">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/tile_status_active_ip_connections_view_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:minHeight="?attr/actionBarSize" />
+		<androidx.appcompat.widget.Toolbar
+			android:id="@+id/tile_status_active_ip_connections_view_toolbar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="?attr/colorPrimary"
+			android:minHeight="?attr/actionBarSize" />
 
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/tile_status_active_ip_connections_view_adView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"
-            android:visibility="gone"
-            ads:adSize="BANNER"
-            ads:adUnitId="@string/banner_ad_unit_id_active_ip_connections" />
+		<com.google.android.gms.ads.AdView
+			android:id="@+id/tile_status_active_ip_connections_view_adView"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal"
+			android:layout_marginBottom="5dp" android:layout_marginTop="5dp"
+			android:visibility="gone" ads:adSize="BANNER"
+			ads:adUnitId="@string/banner_ad_unit_id_active_ip_connections" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+		<RelativeLayout android:layout_width="match_parent"
+			android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/tile_status_active_ip_connections_view_loadingview_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/tile_status_active_ip_connections_view_loadingview"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:textStyle="italic"
-                android:visibility="visible" />
+			<TextView
+				android:id="@+id/tile_status_active_ip_connections_view_loadingview_text"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_above="@+id/tile_status_active_ip_connections_view_loadingview"
+				android:layout_centerInParent="true" android:gravity="center"
+				android:textStyle="italic" android:visibility="visible" />
 
-            <ProgressBar
-                android:id="@+id/tile_status_active_ip_connections_view_loadingview"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_marginEnd="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginStart="10dp"
-                android:indeterminate="false"
-                android:indeterminateOnly="false"
-                android:max="100"
-                android:progress="0"
-                android:visibility="visible" />
+			<ProgressBar
+				android:id="@+id/tile_status_active_ip_connections_view_loadingview"
+				style="?android:attr/progressBarStyleHorizontal"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_centerInParent="true" android:layout_marginEnd="10dp"
+				android:layout_marginLeft="10dp" android:layout_marginRight="10dp"
+				android:layout_marginStart="10dp" android:indeterminate="false"
+				android:indeterminateOnly="false" android:max="100"
+				android:progress="0" android:visibility="visible" />
 
-            <LinearLayout
-                android:id="@+id/tile_status_active_ip_connections_view_recyclerview_linearlayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="gone">
+			<LinearLayout
+				android:id="@+id/tile_status_active_ip_connections_view_recyclerview_linearlayout"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent" android:orientation="vertical"
+				android:visibility="gone">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+				<RelativeLayout android:layout_width="match_parent"
+					android:layout_height="match_parent">
 
-                    <TextView
-                        android:id="@+id/empty_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:text="No IP Connection"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textIsSelectable="false"
-                        android:layout_centerInParent="true"
-                        android:visibility="gone"/>
-                        <!--android:drawableTop="@drawable/ram_black_and_white"/>-->
+					<TextView android:id="@+id/empty_view"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content" android:gravity="center"
+						android:layout_gravity="center" android:text="No IP Connection"
+						android:textAppearance="?android:attr/textAppearanceMedium"
+						android:textIsSelectable="false"
+						android:layout_centerInParent="true" android:visibility="gone" />
+					<!--android:drawableTop="@drawable/ram_black_and_white"/> -->
 
-                    <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
-                        android:id="@+id/tile_status_active_ip_connections_recycler_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginBottom="63dp"
-                        android:scrollbars="vertical" />
-                </RelativeLayout>
-            </LinearLayout>
+					<org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
+						android:id="@+id/tile_status_active_ip_connections_recycler_view"
+						android:layout_width="match_parent"
+						android:layout_height="match_parent"
+						android:layout_marginBottom="63dp" android:scrollbars="vertical" />
+				</RelativeLayout>
+			</LinearLayout>
 
-        </RelativeLayout>
+		</RelativeLayout>
 
-    </LinearLayout>
+	</LinearLayout>
 
-    <!-- Sliding Up Panel -->
-    <LinearLayout
-        android:id="@+id/active_ip_connections_stats"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="vertical">
+	<!-- Sliding Up Panel -->
+	<LinearLayout
+		android:id="@+id/active_ip_connections_stats"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" android:clickable="true"
+		android:focusable="true" android:orientation="vertical">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
+		<RelativeLayout android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="10dp" android:layout_marginLeft="10dp"
+			android:layout_marginStart="10dp" android:layout_marginTop="10dp"
+			android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/active_ip_connections_stats_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:text="Computing Stats..."
-                android:textAppearance="?android:textAppearanceLarge"
-                android:textColor="@color/primaryColor" />
+			<TextView
+				android:id="@+id/active_ip_connections_stats_title"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentStart="true"
+				android:text="Computing Stats..."
+				android:textAppearance="?android:textAppearanceLarge"
+				android:textColor="@color/primaryColor" />
 
-            <ProgressBar
-                android:id="@+id/activity_ip_connections_stats_loading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:visibility="visible" />
+			<ProgressBar
+				android:id="@+id/activity_ip_connections_stats_loading"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentEnd="true"
+				android:layout_alignParentRight="true" android:visibility="visible" />
 
-        </RelativeLayout>
+		</RelativeLayout>
 
-        <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
-            android:id="@+id/tile_status_active_ip_connections_stats_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical" />
+		<org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
+			android:id="@+id/tile_status_active_ip_connections_stats_recycler_view"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent" android:scrollbars="vertical" />
 
-        <TextView
-            android:id="@+id/tile_status_active_ip_connections_stats_recycler_view_empty_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="No Data"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textIsSelectable="true" />
+		<TextView
+			android:id="@+id/tile_status_active_ip_connections_stats_recycler_view_empty_view"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent" android:layout_gravity="center"
+			android:gravity="center" android:text="No Data"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textIsSelectable="true" />
 
-    </LinearLayout>
+	</LinearLayout>
 
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>

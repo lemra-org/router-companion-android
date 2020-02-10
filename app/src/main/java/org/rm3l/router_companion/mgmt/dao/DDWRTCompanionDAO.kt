@@ -51,11 +51,16 @@ interface DDWRTCompanionDAO {
 
     fun isWANTrafficDataPresent(router: String, date: String): Boolean
 
-    fun getWANTrafficDataByRouterByDate(router: String,
-                                        date: String): List<WANTrafficData>
+    fun getWANTrafficDataByRouterByDate(
+        router: String,
+        date: String
+    ): List<WANTrafficData>
 
-    fun getWANTrafficDataByRouterBetweenDates(router: String,
-                                              dateLower: String, dateHigher: String): List<WANTrafficData>
+    fun getWANTrafficDataByRouterBetweenDates(
+        router: String,
+        dateLower: String,
+        dateHigher: String
+    ): List<WANTrafficData>
 
     fun deleteWANTrafficDataByRouter(router: String)
 
@@ -76,11 +81,22 @@ interface DDWRTCompanionDAO {
 
     fun getActionsByRouterByOrigin(routerUuid: String, origin: String): Collection<ActionLog>
 
-    fun getActionsByOrigin(origin: String, predicate: String, groupBy: String,
-                           having: String, orderBy: String): Collection<ActionLog>
+    fun getActionsByOrigin(
+        origin: String,
+        predicate: String,
+        groupBy: String,
+        having: String,
+        orderBy: String
+    ): Collection<ActionLog>
 
-    fun getActionsByRouterByOrigin(routerUuid: String, origin: String,
-                                   predicate: String, groupBy: String, having: String, orderBy: String): Collection<ActionLog>
+    fun getActionsByRouterByOrigin(
+        routerUuid: String,
+        origin: String,
+        predicate: String,
+        groupBy: String,
+        having: String,
+        orderBy: String
+    ): Collection<ActionLog>
 
     fun clearActionsLogByOrigin(origin: String)
 

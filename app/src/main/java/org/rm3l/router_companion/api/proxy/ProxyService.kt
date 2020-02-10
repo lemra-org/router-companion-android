@@ -1,8 +1,6 @@
 package org.rm3l.router_companion.api.proxy
 
 import com.google.gson.JsonElement
-import org.rm3l.ddwrt.BuildConfig
-import org.rm3l.router_companion.resources.IPWhoisInfo
 import org.rm3l.router_companion.utils.retrofit.Retry
 import retrofit2.Call
 import retrofit2.http.Body

@@ -7,14 +7,12 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.Drawable
 import android.media.AudioManager
 import android.net.Uri
 import androidx.core.app.NotificationCompat
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
-import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.common.base.Function
 import com.google.common.base.Objects
@@ -66,9 +64,9 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
         val routerPreferences = mCtx.getSharedPreferences(router.templateUuidOrUuid, Context.MODE_PRIVATE)
 
         val output = SSHUtils.getManualProperty(mCtx, router, globalPreferences,
-                "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \""
-                        + MAP_KEYWORD
-                        + "\",$1,$3 ,$2}'",
+                "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \"" +
+                        MAP_KEYWORD +
+                        "\",$1,$3 ,$2}'",
                 "awk '{print \"$MAP_KEYWORD\",$2,$3,$4}' /tmp/dnsmasq.leases",
                 "awk 'NR>1{print \"$MAP_KEYWORD\",$4,$1,\"*\"}' /proc/net/arp",
                 "arp -a | awk '{print \"$MAP_KEYWORD\",$4,$2,$1}'", "echo done")
@@ -88,7 +86,7 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
         var ipAddress: String?
         val betweenParenthesisPattern = Pattern.compile("\\((.*?)\\)")
 
-        //Active clients
+        // Active clients
         val activeClients = SSHUtils.getManualProperty(mCtx, router, globalPreferences,
                 "arp -a 2>/dev/null")
 
@@ -99,10 +97,10 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
             val `as` = splitter.splitToList(stdoutLine)
             if (`as`.size >= 4 && MAP_KEYWORD == `as`[0]) {
                 val macAddress = Strings.nullToEmpty(`as`[1]).toLowerCase()
-                if (isNullOrEmpty(macAddress)
-                        || "00:00:00:00:00:00" == macAddress
-                        || macAddress.contains("incomplete", ignoreCase = true)) {
-                    //Skip clients with incomplete ARP set-up
+                if (isNullOrEmpty(macAddress) ||
+                        "00:00:00:00:00:00" == macAddress ||
+                        macAddress.contains("incomplete", ignoreCase = true)) {
+                    // Skip clients with incomplete ARP set-up
                     continue
                 }
 
@@ -122,7 +120,7 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
                     device.systemName = systemName
                 }
 
-                //Alias from SharedPreferences
+                // Alias from SharedPreferences
                 if (routerPreferences != null) {
                     val deviceAlias = routerPreferences.getString(macAddress, null)
                     if (!isNullOrEmpty(deviceAlias)) {
@@ -152,7 +150,7 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
 
         for ((macAddr, deviceCollection) in macToDeviceOutput.asMap()) {
             for (device in deviceCollection) {
-                //Consider the one that has a Name, if any
+                // Consider the one that has a Name, if any
                 if (!isNullOrEmpty(device.systemName)) {
                     macToDevice.put(macAddr, device)
                     break
@@ -171,7 +169,7 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
             routerModelUpdaterServiceTask.runBackgroundServiceTask(router)
         } catch (e: Exception) {
             Utils.reportException(mCtx, e)
-            //No worries
+            // No worries
         } finally {
             generateConnectedHostsNotification(mCtx, router, macToDevice.values)
         }
@@ -181,9 +179,11 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
 
         private val TAG = ConnectedHostsServiceTask::class.java.simpleName
 
-        fun generateConnectedHostsNotification(mCtx: Context,
-                                               router: Router?,
-                                               deviceCollection: Collection<Device>) {
+        fun generateConnectedHostsNotification(
+            mCtx: Context,
+            router: Router?,
+            deviceCollection: Collection<Device>
+        ) {
 
             if (!mCtx.getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                     Context.MODE_PRIVATE)
@@ -194,7 +194,7 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
             }
 
             if (router == null) {
-                FirebaseCrashlytics.getInstance().log( "router == null")
+                FirebaseCrashlytics.getInstance().log("router == null")
                 return
             }
 
@@ -250,7 +250,7 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
                         continue
                     }
 
-                    //IP Address may change as well
+                    // IP Address may change as well
                     val deviceFromJson = Device(macAddress.toString())
 
                     val ipAddr = objFromJson[IP_ADDRESS]
@@ -258,7 +258,7 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
                         deviceFromJson.ipAddress = ipAddr.toString()
                     }
 
-                    //Display name may change too
+                    // Display name may change too
                     val displayName = objFromJson[DEVICE_NAME_FOR_NOTIFICATION]
                     if (displayName != null) {
                         deviceFromJson.deviceNameForNotification = displayName.toString()
@@ -266,19 +266,18 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
 
                     previousConnectedHosts.add(deviceFromJson)
                 } catch (e: Exception) {
-                    //No worries
+                    // No worries
                     e.printStackTrace()
                     ReportingUtils.reportException(null,
                             IllegalStateException("Failed to decode and parse JSON: " + devStrEncrypted, e))
                 }
-
             }
 
-            FirebaseCrashlytics.getInstance().log("<sizeFiltered,previousConnectedHosts.size()>=<"
-                    + sizeFiltered
-                    + ","
-                    + previousConnectedHosts.size
-                    + ">")
+            FirebaseCrashlytics.getInstance().log("<sizeFiltered,previousConnectedHosts.size()>=<" +
+                    sizeFiltered +
+                    "," +
+                    previousConnectedHosts.size +
+                    ">")
 
             var updateNotification = false
             if (sizeFiltered != previousConnectedHosts.size) {
@@ -288,7 +287,7 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
                 FirebaseCrashlytics.getInstance().log("devicesCollFiltered: " + devicesCollFiltered)
                 FirebaseCrashlytics.getInstance().log("previousConnectedHosts: " + previousConnectedHosts)
 
-                //Now compare if anything has changed
+                // Now compare if anything has changed
                 for (newDevice in devicesCollFiltered) {
                     if (newDevice == null) {
                         continue
@@ -307,7 +306,7 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
                             continue
                         }
                         deviceFound = true
-                        //Device found - now analyze if something has changed
+                        // Device found - now analyze if something has changed
                         if (!(Objects.equal(deviceIpAddress, previousConnectedHost.ipAddress) && Objects.equal(
                                 deviceDisplayName,
                                 previousConnectedHost.deviceNameForNotification))) {
@@ -316,7 +315,7 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
                         }
                     }
                     if (deviceHasChanged || !deviceFound) {
-                        //This is a new device or an updated one - so update is needed
+                        // This is a new device or an updated one - so update is needed
                         updateNotification = true
                         break
                     }
@@ -325,7 +324,7 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
 
             FirebaseCrashlytics.getInstance().log("updateNotification=" + updateNotification)
 
-            //Build the String Set to save in preferences
+            // Build the String Set to save in preferences
             val stringImmutableSet = FluentIterable.from(devicesCollFiltered).transform(
                     Function<Device, String> { device ->
                         if (device == null) {
@@ -361,19 +360,23 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
 
                 if (updateNotification) {
                     val largeIcon = Router.loadRouterAvatarUrlSync(mCtx, router, Router.mAvatarDownloadOpts)
-                    doNotify(mCtx, router, largeIcon?:BitmapFactory.decodeResource(mCtx.resources,
+                    doNotify(mCtx, router, largeIcon ?: BitmapFactory.decodeResource(mCtx.resources,
                             R.mipmap.ic_launcher_ddwrt_companion), sizeFiltered, devicesCollFiltered)
                 }
             }
         }
 
-        private fun doNotify(mCtx: Context, router: Router, largeIcon: Bitmap,
-                             sizeFiltered: Int,
-                             devicesCollFiltered: Collection<Device>) {
+        private fun doNotify(
+            mCtx: Context,
+            router: Router,
+            largeIcon: Bitmap,
+            sizeFiltered: Int,
+            devicesCollFiltered: Collection<Device>
+        ) {
             val resultIntent = Intent(mCtx, DDWRTMainActivity::class.java)
             resultIntent.putExtra(ROUTER_SELECTED, router.uuid)
             resultIntent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED,
-                    4) //Open right on Clients Section
+                    4) // Open right on Clients Section
             // Because clicking the notification opens a new ("special") activity, there's
             // no need to create an artificial back stack.
             val resultPendingIntent = PendingIntent.getActivity(mCtx, 0, resultIntent,
@@ -400,7 +403,7 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
                     .setContentIntent(resultPendingIntent)
             //                                .setDefaults(Notification.DEFAULT_ALL);
 
-            //Notification sound, if required
+            // Notification sound, if required
             val sharedPreferences = mCtx.getSharedPreferences(
                     RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                     Context.MODE_PRIVATE)
@@ -431,14 +434,14 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
             inboxStyle.setBigContentTitle(newDevicesTitle)
 
             if (sizeFiltered == 1) {
-                //Only one device
+                // Only one device
                 val device = devicesCollFiltered.iterator().next()
                 val deviceAliasOrSystemName = device.aliasOrSystemName
 
                 //                                mBuilder.setContentTitle(deviceNameToDisplay);
 
                 //                                inboxStyle.setBigContentTitle(deviceNameToDisplay);
-                //Name
+                // Name
                 if (!isNullOrEmpty(deviceAliasOrSystemName)) {
                     val nameLine = String.format("Name   %s", deviceAliasOrSystemName)
                     val nameSpannable = SpannableString(nameLine)
@@ -447,14 +450,14 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
                     inboxStyle.addLine(nameSpannable)
                 }
 
-                //IP Address
+                // IP Address
                 val ipLine = String.format("IP   %s", device.ipAddress)
                 val ipSpannable = SpannableString(ipLine)
                 ipSpannable.setSpan(StyleSpan(android.graphics.Typeface.BOLD), 0, "IP".length,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 inboxStyle.addLine(ipSpannable)
 
-                //MAC Address
+                // MAC Address
                 val macLine = String.format("MAC   %s", device.macAddress)
                 val macSpannable = SpannableString(macLine)
                 macSpannable.setSpan(StyleSpan(android.graphics.Typeface.BOLD), 0, "MAC".length,
@@ -463,7 +466,7 @@ class ConnectedHostsServiceTask(context: Context) : AbstractBackgroundServiceTas
 
                 val macouiVendorDetails = device.macouiVendorDetails
                 if (macouiVendorDetails != null) {
-                    //NIC Manufacturer
+                    // NIC Manufacturer
                     val ouiLine = String.format("NIC Man.   %s",
                             Strings.nullToEmpty(macouiVendorDetails.company))
                     val ouiSpannable = SpannableString(ouiLine)

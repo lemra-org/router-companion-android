@@ -26,6 +26,9 @@ import org.rm3l.router_companion.resources.conn.Router;
 
 public interface RouterStreamActionListener extends RouterActionListener {
 
-    public void notifyRouterActionProgress(@NonNull final RouterAction routerAction,
-            @NonNull final Router router, final int progress, String partialOutput);
+  public void notifyRouterActionProgress(
+      @NonNull final RouterAction routerAction,
+      @NonNull final Router router,
+      final int progress,
+      String partialOutput);
 }

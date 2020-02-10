@@ -29,7 +29,8 @@ import org.rm3l.router_companion.actions.NsLookupFromRouterAction
 import org.rm3l.router_companion.resources.conn.Router
 
 class ToolboxNsLookupTile(
-    parentFragment: Fragment, arguments: Bundle?,
+    parentFragment: Fragment,
+    arguments: Bundle?,
     router: Router?
 ) : AbstractToolboxTile(parentFragment, arguments, router) {
 

@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/container" android:layout_width="match_parent"
+	android:layout_height="match_parent" android:orientation="vertical">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/activity_feedback_email_input_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_margin">
+	<com.google.android.material.textfield.TextInputLayout
+		android:id="@+id/activity_feedback_email_input_layout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="@dimen/activity_vertical_margin">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/activity_feedback_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Your email address"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="textEmailAddress"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
+		<com.google.android.material.textfield.TextInputEditText
+			android:id="@+id/activity_feedback_email"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Your email address"
+			android:imeOptions="flagNoExtractUi"
+			android:inputType="textEmailAddress" android:maxLines="1" />
+	</com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

@@ -34,60 +34,66 @@ import org.rm3l.router_companion.utils.SSHUtils;
 
 public class DisableWANAccessRouterAction extends AbstractRouterAction<Void> {
 
-    @NonNull
-    private final Context mContext;
+  @NonNull private final Context mContext;
 
-    @NonNull
-    private final Device mDevice;
+  @NonNull private final Device mDevice;
 
-    public DisableWANAccessRouterAction(Router router, @NonNull Context context,
-            @Nullable RouterActionListener listener, @NonNull SharedPreferences globalSharedPreferences,
-            @NonNull Device device) {
-        super(router, listener, RouterAction.DISABLE_WAN_ACCESS, globalSharedPreferences);
-        this.mContext = context;
-        this.mDevice = device;
+  public DisableWANAccessRouterAction(
+      Router router,
+      @NonNull Context context,
+      @Nullable RouterActionListener listener,
+      @NonNull SharedPreferences globalSharedPreferences,
+      @NonNull Device device) {
+    super(router, listener, RouterAction.DISABLE_WAN_ACCESS, globalSharedPreferences);
+    this.mContext = context;
+    this.mDevice = device;
+  }
+
+  @NonNull
+  @Override
+  protected RouterActionResult<Void> doActionInBackground() {
+    Exception exception = null;
+    try {
+      final String macAddr = mDevice.getMacAddress();
+      final int exitStatus =
+          SSHUtils.runCommands(
+              mContext,
+              globalSharedPreferences,
+              router,
+              "iptables -L "
+                  + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN
+                  + " | grep -i \""
+                  + macAddr
+                  + "\" > /dev/null 2>&1; "
+                  + "if [ $? -ne 0 ]; then "
+                  + "iptables -A "
+                  + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN
+                  + " -m mac --mac-source \""
+                  + macAddr
+                  + "\" -j DROP; "
+                  + "fi");
+      if (exitStatus != 0) {
+        throw new IllegalStateException();
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      exception = e;
     }
 
-    @NonNull
-    @Override
-    protected RouterActionResult<Void> doActionInBackground() {
-        Exception exception = null;
-        try {
-            final String macAddr = mDevice.getMacAddress();
-            final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router,
-                    "iptables -L "
-                            + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN
-                            + " | grep -i \""
-                            + macAddr
-                            + "\" > /dev/null 2>&1; "
-                            + "if [ $? -ne 0 ]; then "
-                            + "iptables -A "
-                            + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN
-                            + " -m mac --mac-source \""
-                            + macAddr
-                            + "\" -j DROP; "
-                            + "fi");
-            if (exitStatus != 0) {
-                throw new IllegalStateException();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            exception = e;
-        }
+    return new RouterActionResult<>(null, exception);
+  }
 
-        return new RouterActionResult<>(null, exception);
-    }
+  @Override
+  protected ActionLog getActionLog() {
+    return super.getActionLog()
+        .setActionData(
+            String.format(
+                "Device: %s (%s)", mDevice.getAliasOrSystemName(), mDevice.getMacAddress()));
+  }
 
-    @Override
-    protected ActionLog getActionLog() {
-        return super.getActionLog()
-                .setActionData(String.format("Device: %s (%s)", mDevice.getAliasOrSystemName(),
-                        mDevice.getMacAddress()));
-    }
-
-    @Nullable
-    @Override
-    protected Context getContext() {
-        return mContext;
-    }
+  @Nullable
+  @Override
+  protected Context getContext() {
+    return mContext;
+  }
 }

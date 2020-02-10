@@ -1,185 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/router_add_content_scroll_view"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="20dp">
+<androidx.core.widget.NestedScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/router_add_content_scroll_view"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" android:layout_margin="20dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+	<LinearLayout android:layout_width="match_parent"
+		android:layout_height="wrap_content" android:orientation="vertical">
 
-        <!-- Connection Protocol -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="Connection Protocol" />
+		<!-- Connection Protocol -->
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="@dimen/activity_vertical_margin"
+			android:text="Connection Protocol" />
 
-        <Spinner
-            android:id="@+id/router_add_proto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:entries="@array/router_connection_protocols_array"
-            android:imeOptions="flagNoExtractUi"
-            android:prompt="@string/router_connection_proto_select" />
+		<Spinner android:id="@+id/router_add_proto"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal"
+			android:entries="@array/router_connection_protocols_array"
+			android:imeOptions="flagNoExtractUi"
+			android:prompt="@string/router_connection_proto_select" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/router_add_port_input_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="@dimen/activity_vertical_margin">
+		<com.google.android.material.textfield.TextInputLayout
+			android:id="@+id/router_add_port_input_layout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:layout_marginLeft="4dp"
+			android:layout_marginStart="4dp"
+			android:layout_marginTop="@dimen/activity_vertical_margin">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/router_add_port"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:ems="10"
-                android:hint="@string/router_add_port"
-                android:imeOptions="flagNoExtractUi"
-                android:inputType="numberSigned"
-                android:maxLines="1"
-                android:selectAllOnFocus="true"
-                android:text="@string/router_add_default_ssh_port" />
-        </com.google.android.material.textfield.TextInputLayout>
+			<com.google.android.material.textfield.TextInputEditText
+				android:id="@+id/router_add_port"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="4dp" android:ems="10"
+				android:hint="@string/router_add_port"
+				android:imeOptions="flagNoExtractUi"
+				android:inputType="numberSigned" android:maxLines="1"
+				android:selectAllOnFocus="true"
+				android:text="@string/router_add_default_ssh_port" />
+		</com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/router_add_username_input_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="@dimen/activity_vertical_margin">
+		<com.google.android.material.textfield.TextInputLayout
+			android:id="@+id/router_add_username_input_layout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:layout_marginLeft="4dp"
+			android:layout_marginStart="4dp"
+			android:layout_marginTop="@dimen/activity_vertical_margin">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/router_add_username"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:hint="SSH Login"
-                android:imeOptions="flagNoExtractUi"
-                android:inputType="text"
-                android:maxLines="1"
-                android:selectAllOnFocus="true"
-                android:text="root" />
-        </com.google.android.material.textfield.TextInputLayout>
+			<com.google.android.material.textfield.TextInputEditText
+				android:id="@+id/router_add_username"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="4dp" android:hint="SSH Login"
+				android:imeOptions="flagNoExtractUi" android:inputType="text"
+				android:maxLines="1" android:selectAllOnFocus="true"
+				android:text="root" />
+		</com.google.android.material.textfield.TextInputLayout>
 
-        <!-- SSH Authentication Method selection -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="SSH Authentication Method" />
+		<!-- SSH Authentication Method selection -->
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:layout_marginLeft="4dp"
+			android:layout_marginStart="4dp"
+			android:layout_marginTop="@dimen/activity_vertical_margin"
+			android:text="SSH Authentication Method" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:orientation="vertical">
+		<LinearLayout android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:layout_marginLeft="4dp"
+			android:layout_marginStart="4dp" android:orientation="vertical">
 
-            <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/router_add_ssh_auth_method"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+			<RadioGroup
+				xmlns:android="http://schemas.android.com/apk/res/android"
+				android:id="@+id/router_add_ssh_auth_method"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
 
-                <RadioButton
-                    android:id="@+id/router_add_ssh_auth_method_none"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="None" />
+				<RadioButton
+					android:id="@+id/router_add_ssh_auth_method_none"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:text="None" />
 
-                <RadioButton
-                    android:id="@+id/router_add_ssh_auth_method_password"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="Password" />
+				<RadioButton
+					android:id="@+id/router_add_ssh_auth_method_password"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:checked="true"
+					android:text="Password" />
 
-                <RadioButton
-                    android:id="@+id/router_add_ssh_auth_method_privkey"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Private key" />
-            </RadioGroup>
+				<RadioButton
+					android:id="@+id/router_add_ssh_auth_method_privkey"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:text="Private key" />
+			</RadioGroup>
 
-            <!-- Private key -->
-            <TextView
-                android:id="@+id/router_add_privkey_hdr"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="Private key (in OpenSSH format)"
-                android:visibility="gone" />
+			<!-- Private key -->
+			<TextView android:id="@+id/router_add_privkey_hdr"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:layout_marginLeft="4dp"
+				android:layout_marginStart="4dp"
+				android:layout_marginTop="@dimen/activity_vertical_margin"
+				android:text="Private key (in OpenSSH format)"
+				android:visibility="gone" />
 
-            <Button
-                android:id="@+id/router_add_privkey"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:hint="@string/router_add_path_to_privkey"
-                android:visibility="gone" />
+			<Button android:id="@+id/router_add_privkey"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="4dp" android:layout_marginLeft="4dp"
+				android:layout_marginRight="4dp"
+				android:hint="@string/router_add_path_to_privkey"
+				android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/router_add_privkey_error_msg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:textColor="@color/win8_red"
-                android:visibility="gone" />
+			<TextView android:id="@+id/router_add_privkey_error_msg"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="4dp" android:layout_marginLeft="4dp"
+				android:layout_marginRight="4dp" android:textColor="@color/win8_red"
+				android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/router_add_privkey_path"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
+			<TextView android:id="@+id/router_add_privkey_path"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" android:visibility="gone" />
 
-            <!-- Password-->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/router_add_password_input_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginStart="4dp">
+			<!-- Password -->
+			<com.google.android.material.textfield.TextInputLayout
+				android:id="@+id/router_add_password_input_layout"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" android:layout_marginLeft="4dp"
+				android:layout_marginStart="4dp">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/router_add_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:hint="@string/password_or_passphrase_hint"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="textPassword"
-                    android:maxLines="1"
-                    android:selectAllOnFocus="true" />
-            </com.google.android.material.textfield.TextInputLayout>
+				<com.google.android.material.textfield.TextInputEditText
+					android:id="@+id/router_add_password"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginLeft="4dp" android:layout_marginRight="4dp"
+					android:hint="@string/password_or_passphrase_hint"
+					android:imeOptions="flagNoExtractUi"
+					android:inputType="textPassword" android:maxLines="1"
+					android:selectAllOnFocus="true" />
+			</com.google.android.material.textfield.TextInputLayout>
 
-            <CheckBox
-                android:id="@+id/router_add_password_show_checkbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:checked="false"
-                android:text="Show Password" />
+			<CheckBox
+				android:id="@+id/router_add_password_show_checkbox"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="4dp" android:layout_marginLeft="4dp"
+				android:layout_marginRight="4dp" android:checked="false"
+				android:text="Show Password" />
 
-        </LinearLayout>
+		</LinearLayout>
 
-    </LinearLayout>
+	</LinearLayout>
 </androidx.core.widget.NestedScrollView>

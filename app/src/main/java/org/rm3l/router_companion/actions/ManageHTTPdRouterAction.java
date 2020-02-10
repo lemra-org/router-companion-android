@@ -30,66 +30,75 @@ import org.rm3l.router_companion.utils.SSHUtils;
 
 public class ManageHTTPdRouterAction extends AbstractRouterAction<Void> {
 
-    public static final int START = 1;
+  public static final int START = 1;
 
-    public static final int STOP = 2;
+  public static final int STOP = 2;
 
-    public static final int RESTART = 3;
+  public static final int RESTART = 3;
 
-    @NonNull
-    private final Context mContext;
+  @NonNull private final Context mContext;
 
-    private final int mHTTPdAction;
+  private final int mHTTPdAction;
 
-    public ManageHTTPdRouterAction(Router router, @NonNull Context context,
-            @Nullable RouterActionListener listener,
-            @NonNull final SharedPreferences globalSharedPreferences, final int httpdAction) {
-        super(router, listener, httpdAction == START ? RouterAction.START_HTTPD
-                : httpdAction == STOP ? RouterAction.STOP_HTTPD
-                        : httpdAction == RESTART ? RouterAction.RESTART_HTTPD
-                                : RouterAction.HTTPD_UNKNOWN_ACTION, globalSharedPreferences);
-        this.mContext = context;
-        this.mHTTPdAction = httpdAction;
+  public ManageHTTPdRouterAction(
+      Router router,
+      @NonNull Context context,
+      @Nullable RouterActionListener listener,
+      @NonNull final SharedPreferences globalSharedPreferences,
+      final int httpdAction) {
+    super(
+        router,
+        listener,
+        httpdAction == START
+            ? RouterAction.START_HTTPD
+            : httpdAction == STOP
+                ? RouterAction.STOP_HTTPD
+                : httpdAction == RESTART
+                    ? RouterAction.RESTART_HTTPD
+                    : RouterAction.HTTPD_UNKNOWN_ACTION,
+        globalSharedPreferences);
+    this.mContext = context;
+    this.mHTTPdAction = httpdAction;
+  }
+
+  @NonNull
+  @Override
+  protected RouterActionResult<Void> doActionInBackground() {
+
+    Exception exception = null;
+    try {
+
+      final String action;
+      switch (mHTTPdAction) {
+        case STOP:
+          action = "/sbin/stopservice httpd";
+          break;
+        case START:
+          action = "/sbin/startservice httpd";
+          break;
+        case RESTART:
+          action = "/sbin/stopservice httpd ; /sbin/startservice httpd";
+          break;
+        default:
+          throw new IllegalArgumentException("Unknown action");
+      }
+
+      final int exitStatus =
+          SSHUtils.runCommands(mContext, globalSharedPreferences, router, action);
+      if (exitStatus != 0) {
+        throw new IllegalStateException();
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      exception = e;
     }
 
-    @NonNull
-    @Override
-    protected RouterActionResult<Void> doActionInBackground() {
+    return new RouterActionResult<>(null, exception);
+  }
 
-        Exception exception = null;
-        try {
-
-            final String action;
-            switch (mHTTPdAction) {
-                case STOP:
-                    action = "/sbin/stopservice httpd";
-                    break;
-                case START:
-                    action = "/sbin/startservice httpd";
-                    break;
-                case RESTART:
-                    action = "/sbin/stopservice httpd ; /sbin/startservice httpd";
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unknown action");
-            }
-
-            final int exitStatus =
-                    SSHUtils.runCommands(mContext, globalSharedPreferences, router, action);
-            if (exitStatus != 0) {
-                throw new IllegalStateException();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            exception = e;
-        }
-
-        return new RouterActionResult<>(null, exception);
-    }
-
-    @Nullable
-    @Override
-    protected Context getContext() {
-        return mContext;
-    }
+  @Nullable
+  @Override
+  protected Context getContext() {
+    return mContext;
+  }
 }

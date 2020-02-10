@@ -10,7 +10,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import androidx.core.content.ContextCompat
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.android.material.snackbar.Snackbar
@@ -51,7 +50,7 @@ class PermissionsUtils private constructor() {
                 rationaleMessage = "Storage access is needed to reduce data usage and enable sharing.",
                 snackbarActionText = "Settings",
                 snackbarDuration = Snackbar.LENGTH_INDEFINITE,
-                snackbarCb = object: SnackbarCallback {
+                snackbarCb = object : SnackbarCallback {
                     override fun onDismissEventActionClick(event: Int, bundle: Bundle?) =
                         ActivityUtils.openApplicationSettings(activity)
                 }
@@ -59,11 +58,15 @@ class PermissionsUtils private constructor() {
         }
 
         @JvmStatic
-        fun requestPermissions(activity: Activity, permissions: Collection<String>, rationaleMessage: String,
-                              snackbarActionText: String? = null,
-                              @Snackbar.Duration snackbarDuration: Int = Snackbar.LENGTH_LONG,
-                              snackbarCb : SnackbarCallback? = null) {
-            requestPermissions(activity, *permissions.toTypedArray(), listener=object: BaseMultiplePermissionsListener() {
+        fun requestPermissions(
+            activity: Activity,
+            permissions: Collection<String>,
+            rationaleMessage: String,
+            snackbarActionText: String? = null,
+            @Snackbar.Duration snackbarDuration: Int = Snackbar.LENGTH_LONG,
+            snackbarCb: SnackbarCallback? = null
+        ) {
+            requestPermissions(activity, *permissions.toTypedArray(), listener = object : BaseMultiplePermissionsListener() {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         if (report?.areAllPermissionsGranted() == false) {
                             SnackbarUtils.buildSnackbar(activity, rationaleMessage,
@@ -82,7 +85,7 @@ class PermissionsUtils private constructor() {
             Dexter.withActivity(activity)
                 .withPermissions(*permissions)
                 .withListener(listener)
-                .withErrorListener {error -> FirebaseCrashlytics.getInstance().log( "Dexter reported an error: $error") }
+                .withErrorListener { error -> FirebaseCrashlytics.getInstance().log("Dexter reported an error: $error") }
                 .check()
         }
 
@@ -91,38 +94,47 @@ class PermissionsUtils private constructor() {
             Dexter.withActivity(activity)
                 .withPermission(permission)
                 .withListener(listener)
-                .withErrorListener {error -> FirebaseCrashlytics.getInstance().log( "Dexter reported an error: $error") }
+                .withErrorListener { error -> FirebaseCrashlytics.getInstance().log("Dexter reported an error: $error") }
                 .check()
         }
 
         @JvmStatic
-        fun requestPermissionWithNoCallback(activity: Activity,
-                                             permission: String,
-                                             onPermissionDeniedMessage: String? = null) =
-            requestPermissions(activity, listOf(permission), {Unit}, {Unit}, onPermissionDeniedMessage)
+        fun requestPermissionWithNoCallback(
+            activity: Activity,
+            permission: String,
+            onPermissionDeniedMessage: String? = null
+        ) =
+            requestPermissions(activity, listOf(permission), { Unit }, { Unit }, onPermissionDeniedMessage)
 
         @JvmStatic
-        fun requestPermissionsWithNoCallback(activity: Activity,
-                               permissions: Collection<String>,
-                               onPermissionDeniedMessage: String? = null) =
-            requestPermissions(activity, permissions, {Unit}, {Unit}, onPermissionDeniedMessage)
+        fun requestPermissionsWithNoCallback(
+            activity: Activity,
+            permissions: Collection<String>,
+            onPermissionDeniedMessage: String? = null
+        ) =
+            requestPermissions(activity, permissions, { Unit }, { Unit }, onPermissionDeniedMessage)
 
         @JvmStatic
-        fun requestPermissions(activity: Activity,
-                               permissions: Collection<String>,
-                               onPermissionGranted: ()->Unit?,
-                               onPermissionDenied: ()->Unit?,
-                               onPermissionDeniedMessage: String? = null) =
+        fun requestPermissions(
+            activity: Activity,
+            permissions: Collection<String>,
+            onPermissionGranted: () -> Unit?,
+            onPermissionDenied: () -> Unit?,
+            onPermissionDeniedMessage: String? = null
+        ) =
             requestPermissions(activity, permissions, onPermissionGranted,
                 onPermissionDeniedMessage, onPermissionDeniedMessage, onPermissionDenied)
 
         @JvmStatic
-        fun requestPermissions(activity: Activity, permissions: Collection<String>,
-                                        onPermissionGranted: ()->Unit?,
-                                        onPermissionDeniedMessage: String? = null,
-                                        onPermissionPermantentlyDeniedMessage: String? = null,
-                                        onPermissionDenied: ()->Unit? ) {
-            requestPermissions(activity, *permissions.toTypedArray(), listener=object: BaseMultiplePermissionsListener() {
+        fun requestPermissions(
+            activity: Activity,
+            permissions: Collection<String>,
+            onPermissionGranted: () -> Unit?,
+            onPermissionDeniedMessage: String? = null,
+            onPermissionPermantentlyDeniedMessage: String? = null,
+            onPermissionDenied: () -> Unit?
+        ) {
+            requestPermissions(activity, *permissions.toTypedArray(), listener = object : BaseMultiplePermissionsListener() {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     if (report?.areAllPermissionsGranted() == true) {
                         onPermissionGranted()
@@ -146,7 +158,6 @@ class PermissionsUtils private constructor() {
                     }
                 }
             })
-
         }
 
         @JvmStatic

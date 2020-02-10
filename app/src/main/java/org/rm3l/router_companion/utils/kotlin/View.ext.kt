@@ -49,14 +49,14 @@ fun View.setBackgroundColorFromRouterFirmware(routerFirmware: RouterFirmware?) {
     if (primaryColor != null) {
         this.setBackgroundColor(ContextCompat.getColor(this.context, primaryColor))
     } else {
-        //TODO Fix colors
+        // TODO Fix colors
         this.setBackgroundColor(ContextCompat.getColor(this.context, R.color.transparent_semi))
     }
 }
 
 fun ViewGroup.expand(expandCollapseButton: ImageButton? = null) {
     this.visible()
-    val widthSpec = View.MeasureSpec.makeMeasureSpec(ViewGroupUtils.getParent(this)?.width?:0,
+    val widthSpec = View.MeasureSpec.makeMeasureSpec(ViewGroupUtils.getParent(this)?.width ?: 0,
             View.MeasureSpec.EXACTLY)
     val heightSpec = View.MeasureSpec.makeMeasureSpec(this.computeFullHeight(), View.MeasureSpec.AT_MOST)
     this.measure(widthSpec, heightSpec)
@@ -76,7 +76,7 @@ fun View.collapse(expandCollapseButton: ImageButton? = null) {
     mAnimator.addListener(object : AnimatorListener {
 
         override fun onAnimationEnd(animation: Animator?) {
-            //Height=0, but it set visibility to GONE
+            // Height=0, but it set visibility to GONE
             this@collapse.gone()
         }
 
@@ -97,7 +97,7 @@ fun ViewGroup.computeFullHeight(): Int {
     val specWidth = View.MeasureSpec.makeMeasureSpec(0 /* any */, View.MeasureSpec.UNSPECIFIED)
     val specHeight = View.MeasureSpec.makeMeasureSpec(0 /* any */, View.MeasureSpec.UNSPECIFIED)
     this.measure(specWidth, specHeight)
-    var totalHeight = 0//this.getMeasuredHeight();
+    var totalHeight = 0 // this.getMeasuredHeight();
     val initialVisibility = this.visibility
     this.visibility = View.VISIBLE
     val numberOfChildren = this.childCount
@@ -121,7 +121,7 @@ fun ViewGroup.computeFullHeight(): Int {
 private fun View.slideAnimator(start: Int, end: Int): ValueAnimator {
     val animator = ValueAnimator.ofInt(start, end)
     animator.addUpdateListener { valueAnimator ->
-        //Update Height
+        // Update Height
         val value = valueAnimator.animatedValue as Int
         val layoutParams = this@slideAnimator.layoutParams
         layoutParams.height = value
@@ -133,7 +133,7 @@ private fun View.slideAnimator(start: Int, end: Int): ValueAnimator {
 fun TextView.setClickable(onClickFunction: (View?) -> Unit) {
     this.movementMethod = LinkMovementMethod.getInstance()
     val spans = this.text as Spannable
-    spans.setSpan(object: ClickableSpan() {
+    spans.setSpan(object : ClickableSpan() {
         override fun onClick(widget: View?) = onClickFunction(widget)
     }, 0, spans.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 }

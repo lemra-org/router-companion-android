@@ -33,18 +33,16 @@ import org.rm3l.router_companion.tiles.status.router.StatusRouterMemoryTile;
 import org.rm3l.router_companion.tiles.status.router.StatusRouterSpaceUsageTile;
 import org.rm3l.router_companion.tiles.status.router.StatusRouterStateTile;
 
-/**
- *
- */
+/** */
 public class StatusRouterFragment extends AbstractBaseFragment {
 
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Arrays.<DDWRTTile>asList(
-                new StatusRouterStateTile(this, savedInstanceState, this.router),
-                new StatusRouterCPUTile(this, savedInstanceState, this.router),
-                new StatusRouterMemoryTile(this, savedInstanceState, this.router),
-                new StatusRouterSpaceUsageTile(this, savedInstanceState, this.router));
-    }
+  @Nullable
+  @Override
+  protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    return Arrays.<DDWRTTile>asList(
+        new StatusRouterStateTile(this, savedInstanceState, this.router),
+        new StatusRouterCPUTile(this, savedInstanceState, this.router),
+        new StatusRouterMemoryTile(this, savedInstanceState, this.router),
+        new StatusRouterSpaceUsageTile(this, savedInstanceState, this.router));
+  }
 }

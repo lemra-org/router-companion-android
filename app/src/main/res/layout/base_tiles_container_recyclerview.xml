@@ -1,54 +1,38 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
 
-Copyright (C) 2014  Armel Soro
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" android:layout_margin="20dp">
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+	<LinearLayout
+		android:id="@+id/tiles_container_linearlayout"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" android:orientation="vertical"
+		android:visibility="gone" />
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+	<org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
+		android:id="@+id/tiles_container_recyclerview"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" android:scrollbars="vertical" />
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="20dp">
-
-    <LinearLayout
-        android:id="@+id/tiles_container_linearlayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone" />
-
-    <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
-        android:id="@+id/tiles_container_recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical" />
-
-    <TextView
-        android:id="@+id/empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:text="No tiles."
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textIsSelectable="false"
-        android:layout_centerInParent="true"
-        android:visibility="gone" />
-    <!--android:drawableTop="@drawable/router_black_and_white"-->
+	<TextView android:id="@+id/empty_view"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" android:gravity="center"
+		android:layout_gravity="center" android:text="No tiles."
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textIsSelectable="false" android:layout_centerInParent="true"
+		android:visibility="gone" />
+	<!--android:drawableTop="@drawable/router_black_and_white" -->
 
 </RelativeLayout>

@@ -1,610 +1,458 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
 
-Copyright (C) 2014  Armel Soro
+<androidx.cardview.widget.CardView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:card_view="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/tile_status_wireless_iface"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content" android:clickable="true"
+	card_view:cardElevation="6dp" card_view:cardMaxElevation="6dp"
+	android:foreground="?android:attr/selectableItemBackground"
+	card_view:cardPreventCornerOverlap="true"
+	card_view:contentPaddingBottom="@dimen/activity_vertical_margin"
+	card_view:contentPaddingLeft="10dp"
+	card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin"
+	card_view:contentPaddingTop="@dimen/activity_vertical_margin"
+	android:focusable="true">
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+	<LinearLayout android:layout_width="match_parent"
+		android:layout_height="wrap_content" android:layout_weight="0.74"
+		android:orientation="vertical">
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+		<RelativeLayout
+			android:id="@+id/tile_status_wireless_iface_hdr"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:paddingTop="4.0dip">
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+			<TextView android:id="@+id/tile_status_wireless_iface_title"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentStart="true" android:ellipsize="end"
+				android:maxLines="1"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:textIsSelectable="true" android:textStyle="bold" />
 
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
+			<ImageView android:id="@+id/avatar"
+				android:layout_width="30dp" android:layout_height="30dp"
+				android:layout_centerInParent="true"
+				android:contentDescription="@string/avatar" />
 
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/tile_status_wireless_iface"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:clickable="true"
-    card_view:cardElevation="6dp"
-    card_view:cardMaxElevation="6dp"
-    android:foreground="?android:attr/selectableItemBackground"
-    card_view:cardPreventCornerOverlap="true"
-    card_view:contentPaddingBottom="@dimen/activity_vertical_margin"
-    card_view:contentPaddingLeft="10dp"
-    card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin"
-    card_view:contentPaddingTop="@dimen/activity_vertical_margin"
-    android:focusable="true">
+			<LinearLayout android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentEnd="true"
+				android:layout_alignParentRight="true">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.74"
-        android:orientation="vertical">
+				<TextView android:id="@+id/tile_status_wireless_iface_ssid"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:maxLines="1" android:text="@string/fetching_ssid"
+					android:textAppearance="?android:textAppearanceSmall"
+					android:textColor="@color/ddwrt_green"
+					android:textIsSelectable="true" />
 
-        <RelativeLayout
-            android:id="@+id/tile_status_wireless_iface_hdr"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="4.0dip">
+				<ImageButton
+					android:id="@+id/tile_status_wireless_iface_menu"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:background="@android:color/transparent"
+					android:contentDescription="@string/menu"
+					android:src="@drawable/abs__ic_menu_moreoverflow_holo_light" />
 
-            <TextView
-                android:id="@+id/tile_status_wireless_iface_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textIsSelectable="true"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:id="@+id/avatar"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_centerInParent="true"
-                android:contentDescription="@string/avatar" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true">
-
-                <TextView
-                    android:id="@+id/tile_status_wireless_iface_ssid"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:maxLines="1"
-                    android:text="@string/fetching_ssid"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    android:textColor="@color/ddwrt_green"
-                    android:textIsSelectable="true" />
-
-                <ImageButton
-                    android:id="@+id/tile_status_wireless_iface_menu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/menu"
-                    android:src="@drawable/abs__ic_menu_moreoverflow_holo_light" />
-
-            </LinearLayout>
+			</LinearLayout>
 
 
-        </RelativeLayout>
+		</RelativeLayout>
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1.0dip"
-            android:layout_marginBottom="8.0dip"
-            android:layout_marginTop="8.0dip"
-            android:background="#ffcccccc" />
+		<View android:layout_width="fill_parent"
+			android:layout_height="1.0dip" android:layout_marginBottom="8.0dip"
+			android:layout_marginTop="8.0dip" android:background="#ffcccccc" />
 
-        <!-- Error message placeholder -->
-        <TextView
-            android:id="@+id/tile_status_wireless_iface_error"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="1"
-            android:text="@string/error_placeholder"
-            android:textColor="@color/ddwrt_purple"
-            android:textIsSelectable="true"
-            android:textStyle="bold"
-            android:visibility="gone" />
+		<!-- Error message placeholder -->
+		<TextView android:id="@+id/tile_status_wireless_iface_error"
+			android:layout_width="300dp" android:layout_height="wrap_content"
+			android:layout_gravity="center" android:ellipsize="end"
+			android:gravity="center" android:maxLines="1"
+			android:text="@string/error_placeholder"
+			android:textColor="@color/ddwrt_purple"
+			android:textIsSelectable="true" android:textStyle="bold"
+			android:visibility="gone" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+		<RelativeLayout android:layout_width="match_parent"
+			android:layout_height="wrap_content">
 
-            <GridLayout
-                android:id="@+id/tile_status_wireless_iface_gridlayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:columnCount="3">
+			<GridLayout
+				android:id="@+id/tile_status_wireless_iface_gridlayout"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:columnCount="3">
 
-                <!-- Ifname -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/wireless_iface_iface"
-                    android:textStyle="bold" />
+				<!-- Ifname -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/wireless_iface_iface"
+					android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                <TextView
-                    android:id="@+id/tile_status_wireless_iface_ifname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:checked="false"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
+				<TextView
+					android:id="@+id/tile_status_wireless_iface_ifname"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:checked="false" android:ellipsize="end"
+					android:gravity="start" android:text="@string/loading"
 
-                    android:textIsSelectable="true" />
+					android:textIsSelectable="true" />
 
-                <!-- Iface State -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/iface_state"
-                    android:textStyle="bold" />
+				<!-- Iface State -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/iface_state" android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                <TextView
-                    android:id="@+id/tile_status_wireless_iface_state"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:checked="false"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
+				<TextView
+					android:id="@+id/tile_status_wireless_iface_state"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:checked="false" android:ellipsize="end"
+					android:gravity="start" android:text="@string/loading"
 
-                    android:textIsSelectable="true" />
+					android:textIsSelectable="true" />
 
-                <!-- Radio : disabled for now-->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/wireless_iface_radio"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
+				<!-- Radio : disabled for now -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/wireless_iface_radio"
+					android:textStyle="bold" android:visibility="gone" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:visibility="gone" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" android:visibility="gone" />
 
-                <CheckBox
-                    android:id="@+id/tile_status_wireless_iface_radio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:checked="false"
-                    android:ellipsize="end"
-                    android:enabled="false"
-                    android:gravity="start"
+				<CheckBox
+					android:id="@+id/tile_status_wireless_iface_radio"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:checked="false" android:ellipsize="end"
+					android:enabled="false" android:gravity="start"
 
-                    android:visibility="gone" />
+					android:visibility="gone" />
 
-                <!-- SSID -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/SSID"
-                    android:textStyle="bold" />
+				<!-- SSID -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:text="@string/SSID"
+					android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                <TextView
-                    android:id="@+id/tile_status_wireless_iface_details_ssid"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:checked="false"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
+				<TextView
+					android:id="@+id/tile_status_wireless_iface_details_ssid"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:checked="false" android:ellipsize="end"
+					android:gravity="start" android:text="@string/loading"
 
-                    android:textIsSelectable="true" />
+					android:textIsSelectable="true" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/wireless_iface_mac"
-                    android:textStyle="bold" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/wireless_iface_mac" android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                <TextView
-                    android:id="@+id/tile_status_wireless_iface_mac_address"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
+				<TextView
+					android:id="@+id/tile_status_wireless_iface_mac_address"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
-                    android:textIsSelectable="true" />
+				<!-- Mode -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/wireless_iface_mode" android:textStyle="bold" />
 
-                <!-- Mode -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/wireless_iface_mode"
-                    android:textStyle="bold" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+				<TextView android:id="@+id/tile_status_wireless_iface_mode"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
-                <TextView
-                    android:id="@+id/tile_status_wireless_iface_mode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
+				<!-- Network -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/wireless_iface_network"
+					android:textStyle="bold" />
 
-                    android:textIsSelectable="true" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                <!-- Network -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/wireless_iface_network"
-                    android:textStyle="bold" />
+				<TextView
+					android:id="@+id/tile_status_wireless_iface_network"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+				<!-- Channel -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/wireless_iface_channel"
+					android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tile_status_wireless_iface_network"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                    android:textIsSelectable="true" />
+				<TextView
+					android:id="@+id/tile_status_wireless_iface_channel"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
-                <!-- Channel -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/wireless_iface_channel"
-                    android:textStyle="bold" />
+				<!-- Temperature -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/wireless_iface_temperature"
+					android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                <TextView
-                    android:id="@+id/tile_status_wireless_iface_channel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
-
-                    android:textIsSelectable="true" />
-
-                <!-- Temperature -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/wireless_iface_temperature"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:id="@+id/tile_status_wireless_iface_temperature"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
-
-                    android:textIsSelectable="true" />
+				<TextView
+					android:id="@+id/tile_status_wireless_iface_temperature"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
 
-                <!--&lt;!&ndash; Rate &ndash;&gt;-->
-                <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="@string/wireless_iface_rate"-->
-                <!--android:textStyle="bold" />-->
+				<!--&lt;!&ndash; Rate &ndash;&gt; -->
+				<!--<TextView -->
+				<!--android:layout_width="wrap_content" -->
+				<!--android:layout_height="wrap_content" -->
+				<!--android:text="@string/wireless_iface_rate" -->
+				<!--android:textStyle="bold" /> -->
 
-                <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:layout_marginLeft="8.0dip"-->
-                <!--android:layout_marginRight="8.0dip"-->
-                <!--android:text="@string/one_space" />-->
+				<!--<TextView -->
+				<!--android:layout_width="wrap_content" -->
+				<!--android:layout_height="wrap_content" -->
+				<!--android:layout_gravity="center" -->
+				<!--android:layout_marginLeft="8.0dip" -->
+				<!--android:layout_marginRight="8.0dip" -->
+				<!--android:text="@string/one_space" /> -->
 
-                <!--<TextView-->
-                <!--android:id="@+id/tile_status_wireless_iface_rate"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="start"-->
-                <!--android:ellipsize="end"-->
-                <!--android:gravity="start"-->
+				<!--<TextView -->
+				<!--android:id="@+id/tile_status_wireless_iface_rate" -->
+				<!--android:layout_width="wrap_content" -->
+				<!--android:layout_height="wrap_content" -->
+				<!--android:layout_gravity="start" -->
+				<!--android:ellipsize="end" -->
+				<!--android:gravity="start" -->
                 <!---->
-                <!--android:text="@string/loading"/>-->
+				<!--android:text="@string/loading"/> -->
 
-                <!-- BW In -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Bandwidth In (RX)"
-                    android:textStyle="bold" />
+				<!-- BW In -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Bandwidth In (RX)" android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                <TextView
-                    android:id="@+id/tile_status_wireless_iface_rx_rate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
+				<TextView
+					android:id="@+id/tile_status_wireless_iface_rx_rate"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
-                    android:textIsSelectable="true" />
+				<!-- BW Out -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Bandwidth Out (TX)" android:textStyle="bold" />
 
-                <!-- BW Out -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Bandwidth Out (TX)"
-                    android:textStyle="bold" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+				<TextView
+					android:id="@+id/tile_status_wireless_iface_tx_rate"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
-                <TextView
-                    android:id="@+id/tile_status_wireless_iface_tx_rate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
+				<!-- Packets In -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:text="RX Packets"
+					android:textStyle="bold" />
 
-                    android:textIsSelectable="true" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                <!-- Packets In -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="RX Packets"
-                    android:textStyle="bold" />
+				<TextView
+					android:id="@+id/tile_status_wireless_iface_rx_packets"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+				<!-- Packets Out -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:text="TX Packets"
+					android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tile_status_wireless_iface_rx_packets"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                    android:textIsSelectable="true" />
+				<TextView
+					android:id="@+id/tile_status_wireless_iface_tx_packets"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
-                <!-- Packets Out -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TX Packets"
-                    android:textStyle="bold" />
+				<!-- TX Power -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/wireless_iface_tx_power"
+					android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                <TextView
-                    android:id="@+id/tile_status_wireless_iface_tx_packets"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
+				<TextView
+					android:id="@+id/tile_status_wireless_iface_tx_power"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
-                    android:textIsSelectable="true" />
+				<!-- Noise -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/wireless_iface_noise_dBm"
+					android:textStyle="bold" />
 
-                <!-- TX Power -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/wireless_iface_tx_power"
-                    android:textStyle="bold" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:id="@+id/tile_status_wireless_iface_tx_power"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
-
-                    android:textIsSelectable="true" />
-
-                <!-- Noise -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/wireless_iface_noise_dBm"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:id="@+id/tile_status_wireless_iface_noise_dBm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
-
-                    android:textIsSelectable="true" />
+				<TextView
+					android:id="@+id/tile_status_wireless_iface_noise_dBm"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
 
-                <!-- Security Mode -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp"
-                    android:text="@string/wireless_iface_security_mode"
-                    android:textStyle="bold" />
+				<!-- Security Mode -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginBottom="15dp"
+					android:text="@string/wireless_iface_security_mode"
+					android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="15dp"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginBottom="15dp"
+					android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                <TextView
-                    android:id="@+id/tile_status_wireless_iface_encryption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="15dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="-"
+				<TextView
+					android:id="@+id/tile_status_wireless_iface_encryption"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:layout_marginBottom="15dp" android:ellipsize="end"
+					android:gravity="start" android:text="-"
 
-                    android:textIsSelectable="true" />
+					android:textIsSelectable="true" />
 
-            </GridLayout>
+			</GridLayout>
 
-            <ProgressBar
-                android:id="@+id/tile_status_wireless_iface_loading_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
+			<ProgressBar
+				android:id="@+id/tile_status_wireless_iface_loading_view"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerInParent="true" />
 
-            <!--<com.github.curioustechizen.ago.RelativeTimeTextView-->
-            <!--android:layout_below="@+id/    -->
-            <!--android:layout_marginTop="5dp"-->
-            <!--android:id="@+id/tile_last_sync"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="end|bottom"-->
-            <!--android:textStyle="italic"-->
-            <!--android:textAppearance="?android:textAppearanceSmall"-->
-            <!--android:ellipsize="end"-->
-            <!--android:gravity="end"-->
+			<!--<com.github.curioustechizen.ago.RelativeTimeTextView -->
+			<!--android:layout_below="@+id/ -->
+			<!--android:layout_marginTop="5dp" -->
+			<!--android:id="@+id/tile_last_sync" -->
+			<!--android:layout_width="wrap_content" -->
+			<!--android:layout_height="wrap_content" -->
+			<!--android:layout_gravity="end|bottom" -->
+			<!--android:textStyle="italic" -->
+			<!--android:textAppearance="?android:textAppearanceSmall" -->
+			<!--android:ellipsize="end" -->
+			<!--android:gravity="end" -->
             <!---->
-            <!--android:text="Last sync: "/>-->
+			<!--android:text="Last sync: "/> -->
 
-        </RelativeLayout>
+		</RelativeLayout>
 
-    </LinearLayout>
+	</LinearLayout>
 </androidx.cardview.widget.CardView>

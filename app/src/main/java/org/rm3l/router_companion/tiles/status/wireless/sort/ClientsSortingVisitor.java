@@ -27,6 +27,6 @@ import org.rm3l.router_companion.resources.Device;
 
 public interface ClientsSortingVisitor {
 
-    @NonNull
-    Set<Device> visit(@NonNull final Set<Device> devices);
+  @NonNull
+  Set<Device> visit(@NonNull final Set<Device> devices);
 }

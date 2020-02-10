@@ -1,76 +1,50 @@
-<!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
-
-Copyright (C) 2014  Armel Soro
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
+<!-- DD-WRT Companion is a mobile app that lets you connect to, monitor and 
+	manage your DD-WRT routers on the go. Copyright (C) 2014 Armel Soro This 
+	program is free software: you can redistribute it and/or modify it under 
+	the terms of the GNU General Public License as published by the Free Software 
+	Foundation, either version 3 of the License, or (at your option) any later 
+	version. This program is distributed in the hope that it will be useful, 
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+	or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for 
+	more details. You should have received a copy of the GNU General Public License 
+	along with this program. If not, see <http://www.gnu.org/licenses/>. Contact 
+	Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.activity.main.RouterCompanionTaskerPluginLaunchActivity">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:context=".ui.activity.main.RouterCompanionTaskerPluginLaunchActivity">
 
-    <item
-        android:alphabeticShortcut="l"
-        android:icon="@drawable/ic_launch_white_24dp"
-        android:orderInCategory="1"
-        android:title="@string/app_launcher"
-        app:showAsAction="ifRoom">
+	<item android:alphabeticShortcut="l"
+		android:icon="@drawable/ic_launch_white_24dp"
+		android:orderInCategory="1" android:title="@string/app_launcher"
+		app:showAsAction="ifRoom">
 
-        <menu>
+		<menu>
 
-            <item
-                android:id="@+id/launch_tasker"
-                android:alphabeticShortcut="t"
-                android:orderInCategory="1"
-                android:title="@string/launch_tasker"
-                app:showAsAction="never" />
+			<item android:id="@+id/launch_tasker"
+				android:alphabeticShortcut="t" android:orderInCategory="1"
+				android:title="@string/launch_tasker" app:showAsAction="never" />
 
-            <item
-                android:id="@+id/launch_ddwrt_companion"
-                android:alphabeticShortcut="d"
-                android:orderInCategory="2"
-                android:title="@string/launch_ddwrt_companion"
-                app:showAsAction="never" />
+			<item android:id="@+id/launch_ddwrt_companion"
+				android:alphabeticShortcut="d" android:orderInCategory="2"
+				android:title="@string/launch_ddwrt_companion"
+				app:showAsAction="never" />
 
-        </menu>
+		</menu>
 
-    </item>
+	</item>
 
-    <item
-        android:id="@+id/ddwrt_companion_tasker_feedback"
-        android:alphabeticShortcut="f"
-        android:orderInCategory="11"
-        android:title="@string/send_feedback"
-        app:showAsAction="never" />
+	<item android:id="@+id/ddwrt_companion_tasker_feedback"
+		android:alphabeticShortcut="f" android:orderInCategory="11"
+		android:title="@string/send_feedback" app:showAsAction="never" />
 
-    <item
-        android:id="@+id/ddwrt_companion_tasker_about"
-        android:alphabeticShortcut="a"
-        android:orderInCategory="12"
-        android:title="@string/about"
-        app:showAsAction="never" />
+	<item android:id="@+id/ddwrt_companion_tasker_about"
+		android:alphabeticShortcut="a" android:orderInCategory="12"
+		android:title="@string/about" app:showAsAction="never" />
 
-    <item
-        android:id="@+id/exit"
-        android:alphabeticShortcut="e"
-        android:orderInCategory="100"
-        android:title="@string/exit"
-        app:showAsAction="never" />
+	<item android:id="@+id/exit" android:alphabeticShortcut="e"
+		android:orderInCategory="100" android:title="@string/exit"
+		app:showAsAction="never" />
 
 </menu>

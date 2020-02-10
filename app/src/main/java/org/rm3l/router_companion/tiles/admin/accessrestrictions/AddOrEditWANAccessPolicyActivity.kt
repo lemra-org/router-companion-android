@@ -111,8 +111,11 @@ class AddOrEditWANAccessPolicyActivity : AppCompatActivity() {
      */
     class PlaceholderFragment : Fragment() {
 
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                                  savedInstanceState: Bundle?): View? {
+        override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+        ): View? {
             val rootView = inflater.inflate(R.layout.fragment_add_or_edit_wan_access_policy, container,
                     false)
             val textView = rootView.find<TextView>(R.id.section_label)

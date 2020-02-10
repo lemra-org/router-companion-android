@@ -2,21 +2,29 @@
 
 
 <resources>
-    <string name="define_androidago" translatable="false" />
-    <!-- Author section -->
-    <string name="library_androidago_author" translatable="false">Kiran Rao</string>
-    <string name="library_androidago_authorWebsite" translatable="false">http://kiranrao.in/blog</string>
-    <!-- Library section -->
-    <string name="library_androidago_libraryName" translatable="false">android-ago</string>
-    <string name="library_androidago_libraryDescription" translatable="false">An Android TextView that always displays an auto refreshing relative time span with respect to a reference time</string>
-    <string name="library_androidago_libraryWebsite" translatable="false">https://github.com/curioustechizen/android-ago</string>
-    <string name="library_androidago_libraryVersion" translatable="false">1.3.4</string>
-    <!-- OpenSource section -->
-    <string name="library_androidago_isOpenSource" translatable="false">true</string>
-    <string name="library_androidago_repositoryLink" translatable="false">https://github.com/curioustechizen/android-ago</string>
-    <!-- ClassPath for autoDetect section -->
-    <!--<string translatable="false" name="library_androidago_classPath">com.facebook.androidago</string>-->
-    <!-- License section -->
-    <string name="library_androidago_licenseId" translatable="false">apache_2_0</string>
-    <!-- Custom variables section -->
+	<string name="define_androidago" translatable="false" />
+	<!-- Author section -->
+	<string name="library_androidago_author" translatable="false">Kiran Rao</string>
+	<string name="library_androidago_authorWebsite"
+		translatable="false">http://kiranrao.in/blog</string>
+	<!-- Library section -->
+	<string name="library_androidago_libraryName"
+		translatable="false">android-ago</string>
+	<string name="library_androidago_libraryDescription"
+		translatable="false">An Android TextView that always displays an auto
+		refreshing relative time span with respect to a reference time</string>
+	<string name="library_androidago_libraryWebsite"
+		translatable="false">https://github.com/curioustechizen/android-ago</string>
+	<string name="library_androidago_libraryVersion"
+		translatable="false">1.3.4</string>
+	<!-- OpenSource section -->
+	<string name="library_androidago_isOpenSource"
+		translatable="false">true</string>
+	<string name="library_androidago_repositoryLink"
+		translatable="false">https://github.com/curioustechizen/android-ago</string>
+	<!-- ClassPath for autoDetect section -->
+	<!--<string translatable="false" name="library_androidago_classPath">com.facebook.androidago</string> -->
+	<!-- License section -->
+	<string name="library_androidago_licenseId" translatable="false">apache_2_0</string>
+	<!-- Custom variables section -->
 </resources>

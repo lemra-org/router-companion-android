@@ -35,15 +35,21 @@ import java.util.Arrays
 class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
 
     @Throws(Exception::class)
-    override fun getDataForNetworkTopologyMapTile(context: Context,
-                                                  router: Router, dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
+    override fun getDataForNetworkTopologyMapTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo {
         return NetworkTopologyMapTileWorker.getDataForNetworkTopologyMapTile(context, router,
                 dataRetrievalListener)
     }
 
     @Throws(Exception::class)
-    override fun getWanPublicIpAddress(context: Context, router: Router,
-                                       dataRetrievalListener: RemoteDataRetrievalListener?): String? {
+    override fun getWanPublicIpAddress(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): String? {
         return SSHUtils.loadWanPublicIPFrom(context, router, null, dataRetrievalListener)
     }
 
@@ -60,31 +66,43 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
     }
 
     @Throws(Exception::class)
-    override fun getDataForWANTotalTrafficOverviewTile(context: Context,
-                                                       router: Router, cycleItem: MonthlyCycleItem,
-                                                       dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
+    override fun getDataForWANTotalTrafficOverviewTile(
+        context: Context,
+        router: Router,
+        cycleItem: MonthlyCycleItem,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo {
         return NVRAMInfo()
     }
 
     @Throws(Exception::class)
-    override fun getDataForUptimeTile(context: Context, router: Router,
-                                      dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
-        //Same implementation as in DD-WRT
+    override fun getDataForUptimeTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo {
+        // Same implementation as in DD-WRT
         return RouterFirmwareConnectorManager.getConnector(Router.RouterFirmware.DDWRT)
                 .getDataFor(context, router, UptimeTile::class.java, dataRetrievalListener)
     }
 
     @Throws(Exception::class)
-    override fun getDataForMemoryAndCpuUsageTile(context: Context,
-                                                 router: Router, dataRetrievalListener: RemoteDataRetrievalListener?): List<Array<String>> {
-        //Same implementation as in DD-WRT
+    override fun getDataForMemoryAndCpuUsageTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): List<Array<String>> {
+        // Same implementation as in DD-WRT
         return RouterFirmwareConnectorManager.getConnector(Router.RouterFirmware.DDWRT)
                 .getDataForMemoryAndCpuUsageTile(context, router, dataRetrievalListener)
     }
 
     @Throws(Exception::class)
-    override fun getDataForStorageUsageTile(context: Context, router: Router,
-                                            dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
+    override fun getDataForStorageUsageTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo {
         dataRetrievalListener?.onProgressUpdate(10)
 
         val globalSharedPreferences = Utils.getGlobalSharedPreferences(context)
@@ -114,10 +132,12 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
     override fun getWanIpAddress(context: Context, router: Router) = SSHUtils.getNVRamInfoFromRouter(context, router,
             Utils.getGlobalSharedPreferences(context), NVRAMInfo.WAN_IPADDR)?.getProperty(NVRAMInfo.WAN_IPADDR)
 
-
     @Throws(Exception::class)
-    override fun getDataForStatusRouterStateTile(context: Context, router: Router,
-                                                 dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
+    override fun getDataForStatusRouterStateTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo {
 
         val globalSharedPreferences = Utils.getGlobalSharedPreferences(context)
 
@@ -138,23 +158,23 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
         }
 
         updateProgressBarViewSeparator(dataRetrievalListener, 50)
-        //date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))
-        //date -d @$(sed -n '/^btime /s///p' /proc/stat)
-        //Add FW, Kernel and Uptime
+        // date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))
+        // date -d @$(sed -n '/^btime /s///p' /proc/stat)
+        // Add FW, Kernel and Uptime
         val otherCmds = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
-                //date
+                // date
                 "date",
-                //date since last reboot
-                "date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) )) || "
-                        + " awk -vuptimediff=\"$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))\" "
-                        + " 'BEGIN { print strftime(\"%Y-%m-%d %H:%M:%S\", uptimediff); }' ",
-                //elapsed from current date
+                // date since last reboot
+                "date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) )) || " +
+                        " awk -vuptimediff=\"$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))\" " +
+                        " 'BEGIN { print strftime(\"%Y-%m-%d %H:%M:%S\", uptimediff); }' ",
+                // elapsed from current date
                 "uptime | awk -F'up' '{print $2}' | awk -F'users' '{print $1}' | awk -F'load' '{print $1}'",
                 "uname -a", "cat /etc/motd 2>&1| tail -n 1")
 
         if (otherCmds != null) {
             if (otherCmds.size >= 1) {
-                //date
+                // date
                 nvramInfo.setProperty(NVRAMInfo.CURRENT_DATE, otherCmds[0])
             }
             if (otherCmds.size >= 3) {
@@ -170,7 +190,7 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
             }
 
             if (otherCmds.size >= 4) {
-                //Kernel
+                // Kernel
                 otherCmds[3]?.let {
                     val valueWithoutGnuLinux = it.replace("GNU/Linux", "")
                     nvramInfo?.setProperty(NVRAMInfo.KERNEL,
@@ -182,7 +202,7 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
             }
 
             if (otherCmds.size >= 5) {
-                //Firmware
+                // Firmware
                 val fwString = otherCmds[4]
                 nvramInfo.setProperty(NVRAMInfo.FIRMWARE, fwString)
             }
@@ -194,7 +214,7 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
                 true)
 
         if (checkActualInternetConnectivity) {
-            //Now get public IP Address
+            // Now get public IP Address
             updateProgressBarViewSeparator(dataRetrievalListener, 80)
             try {
                 val wanPublicIp = this.getWanPublicIpAddress(context, router, null)
@@ -226,7 +246,7 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
         if (TextUtils.isEmpty(changeset)) {
             return null
         }
-        //Assume version format is always: x.y.z
+        // Assume version format is always: x.y.z
         val stringList = Splitter.on(".").omitEmptyStrings().trimResults().splitToList(changeset)
         if (stringList.size < 2) {
             return null
@@ -248,8 +268,9 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
         val TOMATO_CHANGELOG_BASE_URL = TOMATO_WEBSITE + "/tomato_"
 
         private fun parseDataForStorageUsageTile(
-                dataForStorageUsageTile: List<Array<String>>?,
-                dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
+            dataForStorageUsageTile: List<Array<String>>?,
+            dataRetrievalListener: RemoteDataRetrievalListener?
+        ): NVRAMInfo {
             if (dataForStorageUsageTile == null || dataForStorageUsageTile.isEmpty()) {
                 throw DDWRTNoDataException()
             }
@@ -294,14 +315,13 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
                             e.printStackTrace()
                             FirebaseCrashlytics.getInstance().recordException(e)
                         }
-
                     }
                 }
             }
             dataRetrievalListener?.onProgressUpdate(50)
 
             if (jffs2Size != null && jffs2Size.size >= 1) {
-                //We may have more than one mountpoint - so sum everything up
+                // We may have more than one mountpoint - so sum everything up
                 var totalUsed: Long = 0
                 var totalSize: Long = 0
                 for (i in jffs2Size.indices) {
@@ -316,7 +336,6 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
                                 e.printStackTrace()
                                 FirebaseCrashlytics.getInstance().recordException(e)
                             }
-
                         }
                     }
                     dataRetrievalListener?.onProgressUpdate(Math.min(70, 50 + 5 * i))
@@ -329,7 +348,7 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
             dataRetrievalListener?.onProgressUpdate(75)
 
             if (cifsSize != null && cifsSize.size >= 1) {
-                //We may have more than one mountpoint - so sum everything up
+                // We may have more than one mountpoint - so sum everything up
                 var totalUsed: Long = 0
                 var totalSize: Long = 0
                 for (i in cifsSize.indices) {
@@ -344,7 +363,6 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
                                 e.printStackTrace()
                                 FirebaseCrashlytics.getInstance().recordException(e)
                             }
-
                         }
                     }
                     dataRetrievalListener?.onProgressUpdate(Math.min(87, 75 + 5 * i))
@@ -358,15 +376,17 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
         }
     }
 
-    override fun getWANAccessPolicies(context: Context, router: Router,
-                                      dataRetrievalListener: RemoteDataRetrievalListener?): WANAccessPoliciesRouterData? {
-        //Kotlin's TODO throws an Error
-        throw UnsupportedOperationException("not implemented yet") //To change body of created functions use File | Settings | File Templates.
+    override fun getWANAccessPolicies(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): WANAccessPoliciesRouterData? {
+        // Kotlin's TODO throws an Error
+        throw UnsupportedOperationException("not implemented yet") // To change body of created functions use File | Settings | File Templates.
     }
 
     override fun manuallyCheckForFirmwareUpdateAndReturnDownloadLink(currentFwVer: String?): FirmwareRelease? {
-        //Kotlin's TODO throws an Error
+        // Kotlin's TODO throws an Error
         throw UnsupportedOperationException("not implemented yet")
     }
-
 }

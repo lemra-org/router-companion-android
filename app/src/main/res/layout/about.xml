@@ -1,92 +1,65 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
 
-Copyright (C) 2014  Armel Soro
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:scrollbars="none">
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:orientation="vertical">
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+		<TableLayout android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:stretchColumns="*">
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+			<TableRow>
 
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
+				<ImageView android:layout_width="wrap_content"
+					android:layout_height="200dp" android:layout_gravity="center"
+					android:contentDescription="@string/app_name"
+					android:src="@mipmap/ic_launcher_ddwrt_companion" />
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:scrollbars="none">
+				<TextView android:id="@+id/info_text"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent" android:layout_gravity="center"
+					android:gravity="center" android:textIsSelectable="true" />
+			</TableRow>
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical">
+			<TableRow>
 
-        <TableLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:stretchColumns="*">
+				<TextView android:id="@+id/contributors"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content" android:layout_margin="8dip"
+					android:layout_span="2" android:textIsSelectable="true"
+					android:textSize="13sp" />
+			</TableRow>
 
-            <TableRow>
+			<TableRow>
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="200dp"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/app_name"
-                    android:src="@mipmap/ic_launcher_ddwrt_companion" />
+				<TextView android:id="@+id/legal_text"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content" android:layout_margin="8dip"
+					android:layout_span="2" android:textColor="#cccccc"
+					android:textIsSelectable="true" android:textSize="12sp"
+					android:textStyle="italic" />
+			</TableRow>
 
-                <TextView
-                    android:id="@+id/info_text"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:textIsSelectable="true" />
-            </TableRow>
+		</TableLayout>
 
-            <TableRow>
+		<Button android:id="@+id/oss_licenses"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Open Source Licenses" />
 
-                <TextView
-                    android:id="@+id/contributors"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dip"
-                    android:layout_span="2"
-                    android:textIsSelectable="true"
-                    android:textSize="13sp" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    android:id="@+id/legal_text"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dip"
-                    android:layout_span="2"
-                    android:textColor="#cccccc"
-                    android:textIsSelectable="true"
-                    android:textSize="12sp"
-                    android:textStyle="italic" />
-            </TableRow>
-
-        </TableLayout>
-
-        <Button
-            android:id="@+id/oss_licenses"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Open Source Licenses" />
-
-    </LinearLayout>
+	</LinearLayout>
 
 </ScrollView>

@@ -127,7 +127,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
         }
 
         override fun onStart() {
-            super.onStart()    //super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
+            super.onStart() // super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
 
             val d = dialog as AlertDialog?
             if (d != null) {
@@ -138,14 +138,14 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                 mAliasView.setText(this.mAlias, TextView.BufferType.EDITABLE)
 
                 d.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(View.OnClickListener { view ->
-                    //Validate data
+                    // Validate data
                     val macEditText = d.findViewById<View>(R.id.add_or_edit_router_alias_mac) as EditText
                     val macValue = macEditText.text
 
                     val macValueToPersist = nullToEmpty(macValue.toString())?.toLowerCase()
 
                     if (Strings.isNullOrEmpty(macValueToPersist)) {
-                        //Crouton
+                        // Crouton
                         Utils.displayMessage(
                             activity!!, "MAC Address is required", ALERT,
                             d.findViewById<View>(
@@ -153,7 +153,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                             ) as ViewGroup
                         )
                         macEditText.requestFocus()
-                        //Open Keyboard
+                        // Open Keyboard
                         val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                         imm?.showSoftInput(macEditText, 0)
                         return@OnClickListener
@@ -166,7 +166,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                             ) as ViewGroup
                         )
                         macEditText.requestFocus()
-                        //Open Keyboard
+                        // Open Keyboard
                         val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                         imm?.showSoftInput(macEditText, 0)
                         return@OnClickListener
@@ -174,7 +174,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                     val aliasEditText = d.findViewById<View>(R.id.add_or_edit_router_alias_value) as EditText
 
                     if (TextUtils.isEmpty(aliasEditText.text)) {
-                        //Crouton
+                        // Crouton
                         Utils.displayMessage(
                             activity!!, "Alias cannot be blank", ALERT,
                             d.findViewById<View>(
@@ -182,7 +182,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                             ) as ViewGroup
                         )
                         aliasEditText.requestFocus()
-                        //Open Keyboard
+                        // Open Keyboard
                         val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                         imm?.showSoftInput(aliasEditText, 0)
                         return@OnClickListener
@@ -223,9 +223,9 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                 .setPositiveButton(
                     if (isNewAlias) "Set Alias" else "Update Alias"
                 ) { dialog, id ->
-                    //Do nothing here because we override this button later to change the close behaviour.
-                    //However, we still need this because on older versions of Android unless we
-                    //pass a handler the button doesn't get instantiated
+                    // Do nothing here because we override this button later to change the close behaviour.
+                    // However, we still need this because on older versions of Android unless we
+                    // pass a handler the button doesn't get instantiated
                 }
                 .setNegativeButton(R.string.cancel) { dialog, id -> getDialog()!!.cancel() }
 
@@ -240,7 +240,8 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
 
             fun newInstance(
                 router: Router,
-                mMacAddr: CharSequence?, mAlias: CharSequence?,
+                mMacAddr: CharSequence?,
+                mAlias: CharSequence?,
                 onClickListener: DialogInterface.OnClickListener
             ): AddOrUpdateRouterAliasDialogFragment {
                 val addOrUpdateRouterAliasDialogFragment = AddOrUpdateRouterAliasDialogFragment()
@@ -259,7 +260,8 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
 
     internal class RouterAliasesListRecyclerViewAdapter(
         private val context: ManageRouterAliasesActivity?,
-        private val mRouter: Router) : RecyclerView.Adapter<RouterAliasesListRecyclerViewAdapter.ViewHolder>(), Filterable {
+        private val mRouter: Router
+    ) : RecyclerView.Adapter<RouterAliasesListRecyclerViewAdapter.ViewHolder>(), Filterable {
 
         private var aliasesColl: List<Pair<String, String>>? = null
 
@@ -297,7 +299,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                     if (TextUtils.isEmpty(constraint)) {
                         oReturn.values = aliases
                     } else {
-                        //Filter aliases list
+                        // Filter aliases list
                         oReturn.values = FluentIterable.from(aliases).filter(Predicate { input ->
                             if (input == null) {
                                 return@Predicate false
@@ -313,7 +315,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                             val containsIgnoreCase = macAddr.toLowerCase().contains(
                                 constraintLowerCase
                             ) || alias.toLowerCase().contains(constraintLowerCase)
-                            //final boolean containsIgnoreCase =
+                            // final boolean containsIgnoreCase =
                             //    containsIgnoreCase(macAddr, constraint) || containsIgnoreCase(alias,
                             //        constraint);
 
@@ -321,13 +323,13 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                                 return@Predicate true
                             }
 
-                            //Otherwise check OUI
+                            // Otherwise check OUI
                             var macouiVendor: MACOUIVendor? = null
                             try {
                                 macouiVendor = WirelessClientsTile.mMacOuiVendorLookupCache
                                     .getIfPresent(macAddr)
                             } catch (e: Exception) {
-                                //No worries
+                                // No worries
                             }
 
                             if (macouiVendor == null) {
@@ -335,7 +337,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                             }
                             val company = macouiVendor.company ?: return@Predicate false
                             company.toLowerCase().contains(constraint.toString().toLowerCase())
-                            //return (macouiVendor != null && containsIgnoreCase(macouiVendor.getCompany(),
+                            // return (macouiVendor != null && containsIgnoreCase(macouiVendor.getCompany(),
                             //    constraint));
                         }).toList()
                     }
@@ -383,21 +385,20 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                 holder.avatarImageView.visibility = View.GONE
             }
 
-            //Update OUI in a background thread - as this is likely to infer network call
+            // Update OUI in a background thread - as this is likely to infer network call
             MultiThreadingManager.getResolutionTasksExecutor().execute(object : UiRelatedTask<MACOUIVendor>() {
 
                 override fun doWork(): MACOUIVendor? {
                     try {
                         return WirelessClientsTile.mMacOuiVendorLookupCache.get(mac!!)
                     } catch (e: Exception) {
-                        //No worries
+                        // No worries
                         return null
                     }
-
                 }
 
                 override fun thenDoUiRelatedWork(macouiVendor: MACOUIVendor?) {
-                    //Hide loading wheel
+                    // Hide loading wheel
                     holder.ouiLoadingSpinner.visibility = View.GONE
                     if (macouiVendor != null) {
                         holder.oui.text = macouiVendor.company
@@ -418,7 +419,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                     notifyItemRemoved(position)
                 }
                 .setNegativeButton("Cancel") { _, _ ->
-                    //Cancelled - nothing more to do!
+                    // Cancelled - nothing more to do!
                 }
                 .create()
 
@@ -438,7 +439,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
             val isThemeLight = ColorUtils.isThemeLight(this.context)
 
             if (!isThemeLight) {
-                //Set menu background to white
+                // Set menu background to white
                 holder.aliasMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark)
             }
 
@@ -459,12 +460,12 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
             // ...
             val cardView = v.findViewById<View>(R.id.router_alias_item_cardview) as CardView
             if (ColorUtils.isThemeLight(context)) {
-                //Light
+                // Light
                 cardView.setCardBackgroundColor(
                     ContextCompat.getColor(context!!, R.color.cardview_light_background)
                 )
             } else {
-                //Default is Dark
+                // Default is Dark
                 cardView.setCardBackgroundColor(
                     ContextCompat.getColor(context!!, R.color.cardview_dark_background)
                 )
@@ -480,7 +481,9 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
         }
 
         private fun showRouterAliasPopupMenu(
-            v: View, mac: String?, aliasStr: String?,
+            v: View,
+            mac: String?,
+            aliasStr: String?,
             removeAliasEntryDialog: AlertDialog
         ) {
             val popup = PopupMenu(context, v)
@@ -603,7 +606,8 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {}
 
             override fun onScrolled(
-                recyclerView: RecyclerView, firstVisibleItem: Int,
+                recyclerView: RecyclerView,
+                firstVisibleItem: Int,
                 visibleItemCount: Int
             ) {
                 var enable = false
@@ -651,7 +655,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
 
         this.optionsMenu = menu
 
-        //Search
+        // Search
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
 
         val searchView = menu.findItem(R.id.router_aliases_list_refresh_search).actionView as SearchView
@@ -663,14 +667,14 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
         // Get the search close button image view
         val closeButton = searchView.findViewById<View>(R.id.search_close_btn) as ImageView?
         closeButton?.setOnClickListener {
-            //Reset views
+            // Reset views
             val adapter = mAdapter as RouterAliasesListRecyclerViewAdapter?
             adapter!!.setAliasesColl(
                 FluentIterable.from(Router.getAliases(this@ManageRouterAliasesActivity, mRouter))
                     .toList()
             )
             adapter.notifyDataSetChanged()
-            //Hide it now
+            // Hide it now
             searchView.isIconified = true
         }
 
@@ -682,7 +686,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
 
         when (bundle?.getInt(MAIN_ACTIVITY_ACTION) ?: return) {
             RouterActions.EXPORT_ALIASES -> {
-                //Load all aliases from preferences
+                // Load all aliases from preferences
                 if (mRouterPreferences == null) {
                     return
                 }
@@ -696,11 +700,11 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                     if (isNullOrEmpty(key) || value == null) {
                         continue
                     }
-                    //Check whether key is a MAC-Address
+                    // Check whether key is a MAC-Address
                     if (!Utils.MAC_ADDRESS.matcher(key).matches()) {
                         continue
                     }
-                    //This is a MAC Address - collect it right away!
+                    // This is a MAC Address - collect it right away!
                     aliases[key] = nullToEmpty(value.toString())
                 }
 
@@ -736,7 +740,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                     Color.WHITE, Snackbar.LENGTH_LONG, object : SnackbarCallback {
                         @Throws(Exception::class)
                         override fun onDismissEventActionClick(event: Int, bundle: Bundle?) {
-                            //Share button clicked - share file
+                            // Share button clicked - share file
                             try {
                                 if (!outputFile.exists()) {
                                     Utils.displayMessage(
@@ -749,7 +753,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                                     )
                                     return
                                 }
-                                //Now allow user to share file if needed
+                                // Now allow user to share file if needed
                                 val uriForFile = FileProvider.getUriForFile(
                                     this@ManageRouterAliasesActivity,
                                     RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY, outputFile
@@ -787,21 +791,20 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                             } catch (e: Exception) {
                                 e.printStackTrace()
                                 Utils.reportException(this@ManageRouterAliasesActivity, e)
-                                //No worries, but notify user
+                                // No worries, but notify user
                                 Utils.displayMessage(
                                     this@ManageRouterAliasesActivity,
                                     "Internal Error - please try again later or share file manually!",
                                     ALERT
                                 )
                             }
-
                         }
                     }, null, true
                 )
             }
             else -> {
             }
-        }//Ignored
+        } // Ignored
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -870,7 +873,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                 .setCancelable(true)
                 .setPositiveButton("Proceed!") { dialog, which ->
                     val editor = mRouterPreferences!!.edit()
-                    //Iterate over all possible aliases
+                    // Iterate over all possible aliases
                     val aliases = Router.getAliases(this@ManageRouterAliasesActivity, mRouter)
                     for (alias in aliases) {
                         if (alias == null) {
@@ -882,7 +885,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                     doRefreshRoutersListWithSpinner(RecyclerViewRefreshCause.DATA_SET_CHANGED, null)
                 }
                 .setNegativeButton("Cancel") { dialogInterface, i ->
-                    //Cancelled - nothing more to do!
+                    // Cancelled - nothing more to do!
                 }
                 .create()
                 .show()
@@ -916,7 +919,6 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
 
     @Throws(Exception::class)
     override fun onShowEvent(bundle: Bundle?) {
-
     }
 
     fun setRefreshActionButtonState(refreshing: Boolean) {
@@ -986,7 +988,8 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
 
         private fun displayRouterAliasDialog(
             activity: ManageRouterAliasesActivity,
-            macAddress: String?, currentAlias: String?,
+            macAddress: String?,
+            currentAlias: String?,
             onClickListener: DialogInterface.OnClickListener
         ) {
             val fragment = AddOrUpdateRouterAliasDialogFragment.newInstance(

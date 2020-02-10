@@ -11,78 +11,82 @@ import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.utils.SSHUtils;
 
-/**
- * Created by rm3l on 02/06/15.
- */
+/** Created by rm3l on 02/06/15. */
 public class EraseWANMonthlyTrafficRouterAction extends AbstractRouterAction<Void> {
 
-    @NonNull
-    private final Context mContext;
+  @NonNull private final Context mContext;
 
-    public EraseWANMonthlyTrafficRouterAction(Router router, @NonNull Context context,
-            @Nullable RouterActionListener listener,
-            @NonNull final SharedPreferences globalSharedPreferences) {
-        super(router, listener, RouterAction.DELETE_WAN_TRAFF, globalSharedPreferences);
-        this.mContext = context;
-    }
+  public EraseWANMonthlyTrafficRouterAction(
+      Router router,
+      @NonNull Context context,
+      @Nullable RouterActionListener listener,
+      @NonNull final SharedPreferences globalSharedPreferences) {
+    super(router, listener, RouterAction.DELETE_WAN_TRAFF, globalSharedPreferences);
+    this.mContext = context;
+  }
 
-    @NonNull
-    @Override
-    protected RouterActionResult<Void> doActionInBackground() {
-        Exception exception = null;
-        try {
+  @NonNull
+  @Override
+  protected RouterActionResult<Void> doActionInBackground() {
+    Exception exception = null;
+    try {
 
-            final NVRAMInfo nvramInfo =
-                    SSHUtils.getNVRamInfoFromRouter(mContext, router, globalSharedPreferences, "traff-.*");
+      final NVRAMInfo nvramInfo =
+          SSHUtils.getNVRamInfoFromRouter(mContext, router, globalSharedPreferences, "traff-.*");
 
-            if (nvramInfo == null) {
-                throw new IllegalStateException("Failed to fetch WAN Traffic Data from Router");
-            }
+      if (nvramInfo == null) {
+        throw new IllegalStateException("Failed to fetch WAN Traffic Data from Router");
+      }
 
-            final List<String> nvramKeysToUnset = new ArrayList<>();
+      final List<String> nvramKeysToUnset = new ArrayList<>();
 
-            @SuppressWarnings("ConstantConditions") final Set<Object> keys = nvramInfo.getData().keySet();
+      @SuppressWarnings("ConstantConditions")
+      final Set<Object> keys = nvramInfo.getData().keySet();
 
-            for (final Object key : keys) {
-                if (key == null) {
-                    continue;
-                }
-
-                final String keyToString = key.toString();
-                if (!keyToString.toLowerCase().startsWith("traff-")) {
-                    continue;
-                }
-                //if (!StringUtils.startsWithIgnoreCase(keyToString, "traff-")) {
-                //  continue;
-                //}
-
-                if (keyToString.length() != 13) {
-                    continue;
-                }
-
-                nvramKeysToUnset.add("nvram unset \"" + keyToString + "\"");
-            }
-
-            if (!nvramKeysToUnset.isEmpty()) {
-
-                final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router,
-                        nvramKeysToUnset.toArray(new String[nvramKeysToUnset.size()]));
-
-                if (exitStatus != 0) {
-                    throw new IllegalStateException();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            exception = e;
+      for (final Object key : keys) {
+        if (key == null) {
+          continue;
         }
 
-        return new RouterActionResult<>(null, exception);
+        final String keyToString = key.toString();
+        if (!keyToString.toLowerCase().startsWith("traff-")) {
+          continue;
+        }
+        // if (!StringUtils.startsWithIgnoreCase(keyToString, "traff-")) {
+        //  continue;
+        // }
+
+        if (keyToString.length() != 13) {
+          continue;
+        }
+
+        nvramKeysToUnset.add("nvram unset \"" + keyToString + "\"");
+      }
+
+      if (!nvramKeysToUnset.isEmpty()) {
+
+        final int exitStatus =
+            SSHUtils.runCommands(
+                mContext,
+                globalSharedPreferences,
+                router,
+                nvramKeysToUnset.toArray(new String[nvramKeysToUnset.size()]));
+
+        if (exitStatus != 0) {
+          throw new IllegalStateException();
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      exception = e;
     }
 
-    @Nullable
-    @Override
-    protected Context getContext() {
-        return mContext;
-    }
+    return new RouterActionResult<>(null, exception);
+  }
+
+  @Nullable
+  @Override
+  protected Context getContext() {
+    return mContext;
+  }
 }

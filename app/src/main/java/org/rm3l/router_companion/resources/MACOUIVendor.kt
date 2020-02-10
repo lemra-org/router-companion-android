@@ -59,10 +59,10 @@ class MACOUIVendor {
         get() = if (data != null) data!!.getManufacturer() else null
 
     val isNone: Boolean
-        get() = data == null || (data!!.getAddress() == null || data!!.getAddress()!!.isEmpty())
-                && data!!.getCountry() == null
-                && data!!.getManufacturer() == null
-                && data!!.getPrefix() == null
+        get() = data == null || (data!!.getAddress() == null || data!!.getAddress()!!.isEmpty()) &&
+                data!!.getCountry() == null &&
+                data!!.getManufacturer() == null &&
+                data!!.getPrefix() == null
 
     override fun toString(): String {
         return "MACOUIVendor{data='$data'}"

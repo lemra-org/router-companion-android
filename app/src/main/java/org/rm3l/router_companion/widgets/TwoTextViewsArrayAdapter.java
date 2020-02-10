@@ -8,68 +8,66 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import org.rm3l.ddwrt.R;
 
-/**
- * Created by rm3l on 10/10/15.
- */
+/** Created by rm3l on 10/10/15. */
 public class TwoTextViewsArrayAdapter extends ArrayAdapter {
 
-    static class ViewHolder {
+  static class ViewHolder {
 
-        TextView text1;
+    TextView text1;
 
-        TextView text2;
+    TextView text2;
+  }
+
+  static class ViewHolder2 {
+
+    TextView text1;
+
+    TextView text2;
+  }
+
+  private LayoutInflater inflater;
+
+  public TwoTextViewsArrayAdapter(Context context, int textViewResourceId) {
+    super(context, textViewResourceId);
+    inflater = LayoutInflater.from(context);
+  }
+
+  public View getDropDownView(int position, View convertView, ViewGroup parent) {
+    ViewHolder2 holder;
+
+    if (convertView == null) {
+      holder = new ViewHolder2();
+      convertView = inflater.inflate(R.layout.spinner_text_layout, null);
+      holder.text1 = (TextView) convertView.findViewById(R.id.title);
+      holder.text2 = (TextView) convertView.findViewById(R.id.subtitle);
+      convertView.setTag(R.layout.spinner_text_layout, holder);
+    } else {
+      holder = (ViewHolder2) convertView.getTag(R.layout.spinner_text_layout);
     }
 
-    static class ViewHolder2 {
+    holder.text1.setText("Position: ");
+    holder.text2.setText(position);
 
-        TextView text1;
+    return convertView;
+  }
 
-        TextView text2;
+  @Override
+  public View getView(int position, View convertView, ViewGroup parent) {
+    ViewHolder holder;
+
+    if (convertView == null) {
+      holder = new ViewHolder();
+      convertView = inflater.inflate(R.layout.spinner_text_layout, null);
+      holder.text1 = (TextView) convertView.findViewById(R.id.title);
+      holder.text2 = (TextView) convertView.findViewById(R.id.subtitle);
+      convertView.setTag(R.layout.spinner_text_layout, holder);
+    } else {
+      holder = (ViewHolder) convertView.getTag(R.layout.spinner_text_layout);
     }
 
-    private LayoutInflater inflater;
+    holder.text1.setText("Position: ");
+    holder.text2.setText(position);
 
-    public TwoTextViewsArrayAdapter(Context context, int textViewResourceId) {
-        super(context, textViewResourceId);
-        inflater = LayoutInflater.from(context);
-    }
-
-    public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        ViewHolder2 holder;
-
-        if (convertView == null) {
-            holder = new ViewHolder2();
-            convertView = inflater.inflate(R.layout.spinner_text_layout, null);
-            holder.text1 = (TextView) convertView.findViewById(R.id.title);
-            holder.text2 = (TextView) convertView.findViewById(R.id.subtitle);
-            convertView.setTag(R.layout.spinner_text_layout, holder);
-        } else {
-            holder = (ViewHolder2) convertView.getTag(R.layout.spinner_text_layout);
-        }
-
-        holder.text1.setText("Position: ");
-        holder.text2.setText(position);
-
-        return convertView;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-
-        if (convertView == null) {
-            holder = new ViewHolder();
-            convertView = inflater.inflate(R.layout.spinner_text_layout, null);
-            holder.text1 = (TextView) convertView.findViewById(R.id.title);
-            holder.text2 = (TextView) convertView.findViewById(R.id.subtitle);
-            convertView.setTag(R.layout.spinner_text_layout, holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag(R.layout.spinner_text_layout);
-        }
-
-        holder.text1.setText("Position: ");
-        holder.text2.setText(position);
-
-        return convertView;
-    }
+    return convertView;
+  }
 }

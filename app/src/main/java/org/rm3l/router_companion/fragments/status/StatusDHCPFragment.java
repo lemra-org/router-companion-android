@@ -30,14 +30,12 @@ import org.rm3l.router_companion.fragments.AbstractBaseFragment;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.status.lan.DHCPStatusTile;
 
-/**
- *
- */
+/** */
 public class StatusDHCPFragment extends AbstractBaseFragment {
 
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Arrays.<DDWRTTile>asList(new DHCPStatusTile(this, savedInstanceState, this.router));
-    }
+  @Nullable
+  @Override
+  protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    return Arrays.<DDWRTTile>asList(new DHCPStatusTile(this, savedInstanceState, this.router));
+  }
 }

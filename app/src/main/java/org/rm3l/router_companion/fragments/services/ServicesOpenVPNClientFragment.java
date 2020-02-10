@@ -30,15 +30,13 @@ import org.rm3l.router_companion.fragments.AbstractBaseFragment;
 import org.rm3l.router_companion.tiles.DDWRTTile;
 import org.rm3l.router_companion.tiles.services.vpn.client.OpenVPNClientTile;
 
-/**
- * TODO
- */
+/** TODO */
 public class ServicesOpenVPNClientFragment extends AbstractBaseFragment {
 
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Collections.<DDWRTTile>singletonList(
-                new OpenVPNClientTile(this, savedInstanceState, this.router));
-    }
+  @Nullable
+  @Override
+  protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    return Collections.<DDWRTTile>singletonList(
+        new OpenVPNClientTile(this, savedInstanceState, this.router));
+  }
 }

@@ -31,44 +31,45 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
-import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.widget.ScrollView;
+import androidx.annotation.NonNull;
 
 /**
  * Custom ScrollView
  *
- * @see <a href="http://stackoverflow.com/questions/25791057/android-textview-inside-scrollview-how-to-limit-height">http://stackoverflow.com/questions/25791057/android-textview-inside-scrollview-how-to-limit-height</a>
+ * @see <a
+ *     href="http://stackoverflow.com/questions/25791057/android-textview-inside-scrollview-how-to-limit-height">http://stackoverflow.com/questions/25791057/android-textview-inside-scrollview-how-to-limit-height</a>
  */
 public class ScrollViewWithLimitedHeight extends ScrollView {
 
-    public static final int MAX_HEIGHT = 500; // 500dp
+  public static final int MAX_HEIGHT = 500; // 500dp
 
-    public ScrollViewWithLimitedHeight(Context context) {
-        super(context);
-    }
+  public ScrollViewWithLimitedHeight(Context context) {
+    super(context);
+  }
 
-    public ScrollViewWithLimitedHeight(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
+  public ScrollViewWithLimitedHeight(Context context, AttributeSet attrs) {
+    super(context, attrs);
+  }
 
-    public ScrollViewWithLimitedHeight(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
+  public ScrollViewWithLimitedHeight(Context context, AttributeSet attrs, int defStyleAttr) {
+    super(context, attrs, defStyleAttr);
+  }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public ScrollViewWithLimitedHeight(Context context, AttributeSet attrs, int defStyleAttr,
-            int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
+  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+  public ScrollViewWithLimitedHeight(
+      Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    super(context, attrs, defStyleAttr, defStyleRes);
+  }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        heightMeasureSpec = makeMeasureSpec(dpToPx(getResources(), MAX_HEIGHT), AT_MOST);
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
+  @Override
+  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    heightMeasureSpec = makeMeasureSpec(dpToPx(getResources(), MAX_HEIGHT), AT_MOST);
+    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+  }
 
-    private int dpToPx(@NonNull final Resources res, final int dp) {
-        return (int) applyDimension(COMPLEX_UNIT_DIP, dp, res.getDisplayMetrics());
-    }
+  private int dpToPx(@NonNull final Resources res, final int dp) {
+    return (int) applyDimension(COMPLEX_UNIT_DIP, dp, res.getDisplayMetrics());
+  }
 }

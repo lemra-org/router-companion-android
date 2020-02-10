@@ -45,98 +45,106 @@ import org.rm3l.router_companion.utils.ReportingUtils;
 
 public class DDWRTCompanionBackupAgent extends BackupAgentHelper {
 
-    class DDWRTCompanionBackupException extends DDWRTCompanionException {
+  class DDWRTCompanionBackupException extends DDWRTCompanionException {
 
-        DDWRTCompanionBackupException(@Nullable Throwable throwable) {
-            super(throwable);
-        }
+    DDWRTCompanionBackupException(@Nullable Throwable throwable) {
+      super(throwable);
     }
+  }
 
-    class DDWRTCompanionBackupRestoreException extends DDWRTCompanionException {
+  class DDWRTCompanionBackupRestoreException extends DDWRTCompanionException {
 
-        DDWRTCompanionBackupRestoreException(@Nullable Throwable throwable) {
-            super(throwable);
-        }
+    DDWRTCompanionBackupRestoreException(@Nullable Throwable throwable) {
+      super(throwable);
     }
+  }
 
-    public static final String ROUTERS_DB = "routersDB";
+  public static final String ROUTERS_DB = "routersDB";
 
-    public static final String PREFERENCES = "preferences";
+  public static final String PREFERENCES = "preferences";
 
-    public static final String USAGE_DATA = "usageData";
+  public static final String USAGE_DATA = "usageData";
 
-    public static final String ROUTER_PREFERENCES = "routerPreferences";
+  public static final String ROUTER_PREFERENCES = "routerPreferences";
 
-    private static final String LOG_TAG = DDWRTCompanionBackupAgent.class.getSimpleName();
+  private static final String LOG_TAG = DDWRTCompanionBackupAgent.class.getSimpleName();
 
-    private DDWRTCompanionDAO dao;
+  private DDWRTCompanionDAO dao;
 
-    @Override
-    public void onCreate() {
-        dao = RouterManagementActivity.Companion.getDao(this);
+  @Override
+  public void onCreate() {
+    dao = RouterManagementActivity.Companion.getDao(this);
 
-        //Database
-        final FileBackupHelper routers =
-                new FileBackupHelper(this, "../databases/" + DDWRTCompanionSqliteOpenHelper.DATABASE_NAME);
-        addHelper(ROUTERS_DB, routers);
+    // Database
+    final FileBackupHelper routers =
+        new FileBackupHelper(this, "../databases/" + DDWRTCompanionSqliteOpenHelper.DATABASE_NAME);
+    addHelper(ROUTERS_DB, routers);
 
-        //Preferences
-        final SharedPreferencesBackupHelper prefs = new SharedPreferencesBackupHelper(this,
-                RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY);
-        addHelper(PREFERENCES, prefs);
+    // Preferences
+    final SharedPreferencesBackupHelper prefs =
+        new SharedPreferencesBackupHelper(
+            this, RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY);
+    addHelper(PREFERENCES, prefs);
+  }
+
+  @Override
+  public void onBackup(
+      ParcelFileDescriptor oldState, BackupDataOutput data, ParcelFileDescriptor newState)
+      throws IOException {
+    try {
+      final List<Router> allRouters = dao.getAllRouters();
+
+      if (allRouters != null) {
+        final Collection<String> routerUuids =
+            Collections2.transform(
+                allRouters,
+                new Function<Router, String>() {
+                  @Override
+                  public String apply(Router input) {
+                    // We use router uuid as shared preference group name for this router.
+                    return input.getUuid();
+                  }
+                });
+        addFileHelper(ROUTER_PREFERENCES, routerUuids.toArray(new String[routerUuids.size()]));
+
+        // Usage Data
+        final Collection<String> pathsToRoutersUsageDataFiles =
+            Collections2.transform(
+                routerUuids,
+                new Function<String, String>() {
+                  @Override
+                  public String apply(String input) {
+                    return String.format(
+                        "../files/%s_Usage_%s.bak", BuildConfig.APPLICATION_ID, input);
+                  }
+                });
+        addFileHelper(
+            USAGE_DATA,
+            pathsToRoutersUsageDataFiles.toArray(new String[pathsToRoutersUsageDataFiles.size()]));
+      }
+
+      super.onBackup(oldState, data, newState);
+    } catch (final Exception e) {
+      e.printStackTrace();
+      ReportingUtils.reportException(this, new DDWRTCompanionBackupException(e));
     }
+  }
 
-    @Override
-    public void onBackup(ParcelFileDescriptor oldState, BackupDataOutput data,
-            ParcelFileDescriptor newState) throws IOException {
-        try {
-            final List<Router> allRouters = dao.getAllRouters();
-
-            if (allRouters != null) {
-                final Collection<String> routerUuids =
-                        Collections2.transform(allRouters, new Function<Router, String>() {
-                            @Override
-                            public String apply(Router input) {
-                                // We use router uuid as shared preference group name for this router.
-                                return input.getUuid();
-                            }
-                        });
-                addFileHelper(ROUTER_PREFERENCES, routerUuids.toArray(new String[routerUuids.size()]));
-
-                //Usage Data
-                final Collection<String> pathsToRoutersUsageDataFiles =
-                        Collections2.transform(routerUuids, new Function<String, String>() {
-                            @Override
-                            public String apply(String input) {
-                                return String.format("../files/%s_Usage_%s.bak", BuildConfig.APPLICATION_ID, input);
-                            }
-                        });
-                addFileHelper(USAGE_DATA,
-                        pathsToRoutersUsageDataFiles.toArray(new String[pathsToRoutersUsageDataFiles.size()]));
-            }
-
-            super.onBackup(oldState, data, newState);
-        } catch (final Exception e) {
-            e.printStackTrace();
-            ReportingUtils.reportException(this, new DDWRTCompanionBackupException(e));
-        }
+  @Override
+  public void onRestore(BackupDataInput data, int appVersionCode, ParcelFileDescriptor newState)
+      throws IOException {
+    try {
+      super.onRestore(data, appVersionCode, newState);
+    } catch (final Exception e) {
+      e.printStackTrace();
+      ReportingUtils.reportException(this, new DDWRTCompanionBackupRestoreException(e));
     }
+  }
 
-    @Override
-    public void onRestore(BackupDataInput data, int appVersionCode, ParcelFileDescriptor newState)
-            throws IOException {
-        try {
-            super.onRestore(data, appVersionCode, newState);
-        } catch (final Exception e) {
-            e.printStackTrace();
-            ReportingUtils.reportException(this, new DDWRTCompanionBackupRestoreException(e));
-        }
+  private void addFileHelper(@NonNull final String keyPrefix, @NonNull final String... files) {
+    if (files.length == 0) {
+      return;
     }
-
-    private void addFileHelper(@NonNull final String keyPrefix, @NonNull final String... files) {
-        if (files.length == 0) {
-            return;
-        }
-        addHelper(keyPrefix, new FileBackupHelper(this, files));
-    }
+    addHelper(keyPrefix, new FileBackupHelper(this, files));
+  }
 }

@@ -17,7 +17,7 @@ class RouterCompanionJobCreator : JobCreator {
     override fun create(tag: String): Job? {
         var actualTag: String = tag
         if (tag.startsWith(RouterSpeedTestAutoRunnerJob.JOB_TAG_PREFIX)) {
-            //Speed test job have a different format: "$JOB_TAG_PREFIX${TAG}$JOB_TAG_SEPARATOR$routerUuid"
+            // Speed test job have a different format: "$JOB_TAG_PREFIX${TAG}$JOB_TAG_SEPARATOR$routerUuid"
             actualTag = actualTag.substring(RouterSpeedTestAutoRunnerJob.JOB_TAG_PREFIX.length)
                     .split(RouterSpeedTestAutoRunnerJob.JOB_TAG_SEPARATOR)[0]
         }

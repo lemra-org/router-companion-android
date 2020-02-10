@@ -3,7 +3,6 @@ package org.rm3l.router_companion.widgets
 import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 

@@ -1,70 +1,47 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
-
-Copyright (C) 2014  Armel Soro
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/tile_wan_monthly_traffic_backup"
-        android:icon="@drawable/ic_action_action_backup"
-        android:orderInCategory="1"
-        android:title="Backup"
-        app:showAsAction="ifRoom">
+	<item android:id="@+id/tile_wan_monthly_traffic_backup"
+		android:icon="@drawable/ic_action_action_backup"
+		android:orderInCategory="1" android:title="Backup"
+		app:showAsAction="ifRoom">
 
-        <menu>
-            <item
-                android:id="@+id/tile_wan_monthly_traffic_backup_raw"
-                android:orderInCategory="1"
-                android:title="as Raw File"
-                app:showAsAction="ifRoom" />
+		<menu>
+			<item android:id="@+id/tile_wan_monthly_traffic_backup_raw"
+				android:orderInCategory="1" android:title="as Raw File"
+				app:showAsAction="ifRoom" />
 
-            <item
-                android:id="@+id/tile_wan_monthly_traffic_backup_csv"
-                android:orderInCategory="2"
-                android:title="as CSV File"
-                app:showAsAction="ifRoom" />
-        </menu>
+			<item android:id="@+id/tile_wan_monthly_traffic_backup_csv"
+				android:orderInCategory="2" android:title="as CSV File"
+				app:showAsAction="ifRoom" />
+		</menu>
 
-    </item>
+	</item>
 
-    <item
-        android:id="@+id/tile_wan_monthly_traffic_restore"
-        android:icon="@drawable/ic_action_action_restore"
-        android:orderInCategory="2"
-        android:title="Restore"
-        app:showAsAction="ifRoom" />
+	<item android:id="@+id/tile_wan_monthly_traffic_restore"
+		android:icon="@drawable/ic_action_action_restore"
+		android:orderInCategory="2" android:title="Restore"
+		app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/tile_wan_monthly_traffic_delete"
-        android:icon="@drawable/ic_action_remove_ddwrt_companion"
-        android:orderInCategory="3"
-        android:title="Delete"
-        app:showAsAction="ifRoom" />
+	<item android:id="@+id/tile_wan_monthly_traffic_delete"
+		android:icon="@drawable/ic_action_remove_ddwrt_companion"
+		android:orderInCategory="3" android:title="Delete"
+		app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/tile_wan_monthly_traffic_change_cycle"
-        android:checkable="false"
-        android:orderInCategory="4"
-        android:title="Change monthly cycle..."
-        app:showAsAction="ifRoom" />
+	<item android:id="@+id/tile_wan_monthly_traffic_change_cycle"
+		android:checkable="false" android:orderInCategory="4"
+		android:title="Change monthly cycle..." app:showAsAction="ifRoom" />
 
 </menu>

@@ -2,7 +2,6 @@ package org.rm3l.router_companion
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mrgames13.jimdo.splashscreen.App.SplashScreenBuilder

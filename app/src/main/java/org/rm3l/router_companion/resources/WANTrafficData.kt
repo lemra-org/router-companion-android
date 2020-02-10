@@ -6,11 +6,12 @@ import org.rm3l.router_companion.utils.Utils
 import java.util.Calendar
 
 data class WANTrafficData @JvmOverloads constructor(
-        val id: Long = -1L, //the internal id (in DB)
-        val router: String, //YYYY-MM-dd
-        val date: String,
-        val traffIn: Number,
-        val traffOut: Number) {
+    val id: Long = -1L, // the internal id (in DB)
+    val router: String, // YYYY-MM-dd
+    val date: String,
+    val traffIn: Number,
+    val traffOut: Number
+) {
 
     companion object {
 
@@ -18,8 +19,10 @@ data class WANTrafficData @JvmOverloads constructor(
         const val OUTBOUND = 1
 
         @JvmStatic
-        fun getCurrentWANCycle(ctx: Context?,
-                               routerPreferences: SharedPreferences?): MonthlyCycleItem {
+        fun getCurrentWANCycle(
+            ctx: Context?,
+            routerPreferences: SharedPreferences?
+        ): MonthlyCycleItem {
 
             val wanCycleDay = Utils.getWanCycleDay(routerPreferences)
 
@@ -30,11 +33,11 @@ data class WANTrafficData @JvmOverloads constructor(
             val end: Long
 
             if (today < wanCycleDay) {
-                //Example 1: wanCycleDay=30, and today is Feb 18 (and Feb has 28 days) => [Jan 30 - Feb 28]
-                //Example 2: wanCycleDay=30, and today is May 15 => [Apr 30 - May 29]
-                //Example 3: wanCycleDay=30, and today is Mar 18 (and Feb has 28 days) => [Feb 28 - Mar 29]
+                // Example 1: wanCycleDay=30, and today is Feb 18 (and Feb has 28 days) => [Jan 30 - Feb 28]
+                // Example 2: wanCycleDay=30, and today is May 15 => [Apr 30 - May 29]
+                // Example 3: wanCycleDay=30, and today is Mar 18 (and Feb has 28 days) => [Feb 28 - Mar 29]
 
-                //Start
+                // Start
                 val calendarForStartComputation = Calendar.getInstance()
                 calendarForStartComputation.add(Calendar.MONTH, -1)
                 val prevMonthActualMaximum = calendarForStartComputation.getActualMaximum(
@@ -46,7 +49,7 @@ data class WANTrafficData @JvmOverloads constructor(
                 }
                 start = calendarForStartComputation.timeInMillis
 
-                //End
+                // End
                 val calendarForEndComputation = Calendar.getInstance()
                 val currentMonthActualMaximum = calendarForEndComputation.getActualMaximum(
                         Calendar.DAY_OF_MONTH)
@@ -57,10 +60,10 @@ data class WANTrafficData @JvmOverloads constructor(
                 }
                 end = calendarForEndComputation.timeInMillis
             } else {
-                //Example 1: wanCycleDay=27, and today is Feb 29 (and Feb has 29 days) => [Feb 27 - Mar 26]
-                //Example 2: wanCycleDay=27, and today is May 31 => [May 27 - Jun 26]
+                // Example 1: wanCycleDay=27, and today is Feb 29 (and Feb has 29 days) => [Feb 27 - Mar 26]
+                // Example 2: wanCycleDay=27, and today is May 31 => [May 27 - Jun 26]
 
-                //Start
+                // Start
                 val calendarForStartComputation = Calendar.getInstance()
                 val currentMonthActualMaximum = calendarForStartComputation.getActualMaximum(
                         Calendar.DAY_OF_MONTH)
@@ -71,7 +74,7 @@ data class WANTrafficData @JvmOverloads constructor(
                 }
                 start = calendarForStartComputation.timeInMillis
 
-                //End
+                // End
                 val calendarForEndComputation = Calendar.getInstance()
                 calendarForEndComputation.add(Calendar.MONTH, 1)
                 val nextMonthActualMaximum = calendarForEndComputation.getActualMaximum(

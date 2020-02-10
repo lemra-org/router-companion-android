@@ -24,15 +24,16 @@ package org.rm3l.router_companion.donate;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import android.view.MenuItem;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.utils.ColorUtils;
-//import org.sufficientlysecure.donations.DonationsFragment;
+
+// import org.sufficientlysecure.donations.DonationsFragment;
 
 /**
  * Donation Activity: leverages the <a href="https://github.com/dschuermann/android-donations-lib"
@@ -42,107 +43,101 @@ import org.rm3l.router_companion.utils.ColorUtils;
  */
 public class DonateActivity extends FragmentActivity {
 
-    /**
-     * Google
-     */
-    private static final String GOOGLE_PUBKEY = \"fake-key\";
-            "xxx";
+  /** Google */
+  private static final String GOOGLE_PUBKEY = \"fake-key\";
+      "xxx";
 
-    private static final String[] GOOGLE_CATALOG = new String[]{
-            "ntpsync.donation.1", "ntpsync.donation.2", "ntpsync.donation.3", "ntpsync.donation.5",
-            "ntpsync.donation.8", "ntpsync.donation.13", "ntpsync.donation.21", "ntpsync.donation.34",
-            "ntpsync.donation.55", "ntpsync.donation.89"
-    };
+  private static final String[] GOOGLE_CATALOG =
+      new String[] {
+        "ntpsync.donation.1", "ntpsync.donation.2", "ntpsync.donation.3", "ntpsync.donation.5",
+        "ntpsync.donation.8", "ntpsync.donation.13", "ntpsync.donation.21", "ntpsync.donation.34",
+        "ntpsync.donation.55", "ntpsync.donation.89"
+      };
 
-    /**
-     * PayPal
-     */
-    private static final String PAYPAL_USER = "armel.soro@gmail.com";
+  /** PayPal */
+  private static final String PAYPAL_USER = "armel.soro@gmail.com";
 
-    private static final String PAYPAL_CURRENCY_CODE = "EUR";
+  private static final String PAYPAL_CURRENCY_CODE = "EUR";
 
-    /**
-     * Flattr
-     */
-    private static final String FLATTR_PROJECT_URL = "https://github.com/rm3l/ddwrt-companion";
+  /** Flattr */
+  private static final String FLATTR_PROJECT_URL = "https://github.com/rm3l/ddwrt-companion";
 
-    // FLATTR_URL without http:// !
-    private static final String FLATTR_URL = "flattr.com/thing/320749440571624a971910e970a638d7";
+  // FLATTR_URL without http:// !
+  private static final String FLATTR_URL = "flattr.com/thing/320749440571624a971910e970a638d7";
 
-    /**
-     * Bitcoin
-     */
-    private static final String BITCOIN_ADDRESS = "3NuYX1cWymrCNdMEF11fzyj2dcYvH4zniR";
+  /** Bitcoin */
+  private static final String BITCOIN_ADDRESS = "3NuYX1cWymrCNdMEF11fzyj2dcYvH4zniR";
 
-    private static final String DONATIONS_FRAGMENT = "donationsFragment";
+  private static final String DONATIONS_FRAGMENT = "donationsFragment";
 
-    /**
-     * Called when the activity is first created.
-     */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+  /** Called when the activity is first created. */
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
 
-        ColorUtils.Companion.setAppTheme(this, null, false);
+    ColorUtils.Companion.setAppTheme(this, null, false);
 
-        //        if (ColorUtils.isThemeLight(this)) {
-        //            //Light
-        //            setTheme(R.style.AppThemeLight);
-        ////            getWindow().getDecorView()
-        ////                    .setBackgroundColor(ContextCompat.getColor(this,
-        ////                            android.R.color.white));
-        //        } else {
-        //            //Default is Dark
-        //            setTheme(R.style.AppThemeDark);
-        //        }
+    //        if (ColorUtils.isThemeLight(this)) {
+    //            //Light
+    //            setTheme(R.style.AppThemeLight);
+    ////            getWindow().getDecorView()
+    ////                    .setBackgroundColor(ContextCompat.getColor(this,
+    ////                            android.R.color.white));
+    //        } else {
+    //            //Default is Dark
+    //            setTheme(R.style.AppThemeDark);
+    //        }
 
-        setContentView(R.layout.donations_activity);
+    setContentView(R.layout.donations_activity);
 
-        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        //        final DonationsFragment donationsFragment;
+    final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+    //        final DonationsFragment donationsFragment;
 
-        if (BuildConfig.DONATIONS_GOOGLE) {
-            //Activate Google Play In-App Billing solely
-            //            donationsFragment = DonationsFragment.newInstance(BuildConfig.DEBUG, true, GOOGLE_PUBKEY, GOOGLE_CATALOG,
-            //                    getResources().getStringArray(R.array.donation_google_catalog_values), false, null, null,
-            //                    null, false, null, null, false, null);
-        } else {
-            //            donationsFragment = DonationsFragment.newInstance(BuildConfig.DEBUG, false, null, null, null, true, PAYPAL_USER,
-            //                    PAYPAL_CURRENCY_CODE, getString(R.string.donation_paypal_item), true, FLATTR_PROJECT_URL, FLATTR_URL, true, BITCOIN_ADDRESS);
-        }
-
-        //        ft.replace(R.id.donations_activity_container, donationsFragment, DONATIONS_FRAGMENT);
-        ft.commit();
+    if (BuildConfig.DONATIONS_GOOGLE) {
+      // Activate Google Play In-App Billing solely
+      //            donationsFragment = DonationsFragment.newInstance(BuildConfig.DEBUG, true,
+      // GOOGLE_PUBKEY, GOOGLE_CATALOG,
+      //                    getResources().getStringArray(R.array.donation_google_catalog_values),
+      // false, null, null,
+      //                    null, false, null, null, false, null);
+    } else {
+      //            donationsFragment = DonationsFragment.newInstance(BuildConfig.DEBUG, false,
+      // null, null, null, true, PAYPAL_USER,
+      //                    PAYPAL_CURRENCY_CODE, getString(R.string.donation_paypal_item), true,
+      // FLATTR_PROJECT_URL, FLATTR_URL, true, BITCOIN_ADDRESS);
     }
 
-    /**
-     * Needed for Google Play In-app Billing. It uses startIntentSenderForResult(). The result is not
-     * propagated to
-     * the Fragment like in startActivityForResult(). Thus we need to propagate manually to our
-     * Fragment.
-     *
-     * @param requestCode the request code
-     * @param resultCode  the result code
-     * @param data        the data we got in return
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    //        ft.replace(R.id.donations_activity_container, donationsFragment, DONATIONS_FRAGMENT);
+    ft.commit();
+  }
 
-        final FragmentManager fragmentManager = getSupportFragmentManager();
-        final Fragment fragment = fragmentManager.findFragmentByTag(DONATIONS_FRAGMENT);
-        if (fragment != null) {
-            fragment.onActivityResult(requestCode, resultCode, data);
-        }
-    }
+  /**
+   * Needed for Google Play In-app Billing. It uses startIntentSenderForResult(). The result is not
+   * propagated to the Fragment like in startActivityForResult(). Thus we need to propagate manually
+   * to our Fragment.
+   *
+   * @param requestCode the request code
+   * @param resultCode the result code
+   * @param data the data we got in return
+   */
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+    final FragmentManager fragmentManager = getSupportFragmentManager();
+    final Fragment fragment = fragmentManager.findFragmentByTag(DONATIONS_FRAGMENT);
+    if (fragment != null) {
+      fragment.onActivityResult(requestCode, resultCode, data);
     }
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        onBackPressed();
+        return true;
+    }
+    return super.onOptionsItemSelected(item);
+  }
 }

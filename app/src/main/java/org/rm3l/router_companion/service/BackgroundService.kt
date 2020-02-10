@@ -2,7 +2,6 @@ package org.rm3l.router_companion.service
 
 import android.content.Context
 import android.net.ConnectivityManager
-import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.evernote.android.job.DailyJob
 import com.evernote.android.job.Job
@@ -24,7 +23,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by rm3l on 05/07/15.
  */
-class BackgroundService: DailyJob(), RouterCompanionJob {
+class BackgroundService : DailyJob(), RouterCompanionJob {
 
     companion object {
         @JvmField
@@ -67,7 +66,7 @@ class BackgroundService: DailyJob(), RouterCompanionJob {
                  * or because user settings (e.g., bandwidth caps) prevent your app
                  * from having a network connection.
                  */
-                //Do the actual work - no need to do so in a separate thread
+                // Do the actual work - no need to do so in a separate thread
                 val tasks: MutableList<AbstractBackgroundServiceTask> = arrayListOf()
                 tasks.add(RouterModelUpdaterServiceTask(context))
                 tasks.add(RouterInfoForFeedbackServiceTask(context))
@@ -77,7 +76,7 @@ class BackgroundService: DailyJob(), RouterCompanionJob {
                             "ConnectedHostsServiceTask and PublicIPChangesServiceTask background notifications" +
                                     " are *Premium* features!")
                 } else {
-                    //According to user preference
+                    // According to user preference
                     val notificationsChoiceSet = globalPreferences?.getStringSet(
                             RouterCompanionAppConstants.NOTIFICATIONS_CHOICE_PREF,
                             emptySet()) ?: emptySet()
@@ -89,11 +88,11 @@ class BackgroundService: DailyJob(), RouterCompanionJob {
                         tasks.add(PublicIPChangesServiceTask(context))
                     }
                 }
-                //Add any other tasks over here
+                // Add any other tasks over here
 
                 val allRouters = dao.allRouters
                 for (router in allRouters) {
-                    //Execute tasks available for notifications
+                    // Execute tasks available for notifications
                     for (backgroundServiceTask in tasks) {
                         FirebaseCrashlytics.getInstance().log(
                                 ">>> Running task: ${backgroundServiceTask.javaClass} on router $router")
@@ -117,17 +116,17 @@ class BackgroundService: DailyJob(), RouterCompanionJob {
                     .getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_BG_SERVICE_ENABLE, false)) {
                 handleJob(context, params)
             } else {
-                FirebaseCrashlytics.getInstance().log("Background Service disabled (user choice)");
+                FirebaseCrashlytics.getInstance().log("Background Service disabled (user choice)")
             }
         } catch (e: Exception) {
-            //No worries
+            // No worries
             FirebaseCrashlytics.getInstance().recordException(e)
         }
         return DailyJobResult.SUCCESS
     }
 }
 
-class BackgroundServiceOneShotJob: Job(), RouterCompanionJob {
+class BackgroundServiceOneShotJob : Job(), RouterCompanionJob {
 
     companion object {
         val TAG = BackgroundServiceOneShotJob::class.java.simpleName!!
@@ -141,5 +140,4 @@ class BackgroundServiceOneShotJob: Job(), RouterCompanionJob {
             Result.FAILURE
         }
     }
-
 }

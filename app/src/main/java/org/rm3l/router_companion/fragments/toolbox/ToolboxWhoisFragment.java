@@ -30,10 +30,10 @@ import org.rm3l.router_companion.tiles.toolbox.ToolboxWhoisTile;
 
 public class ToolboxWhoisFragment extends AbstractToolboxFragment {
 
-    @Nullable
-    @Override
-    protected List<DDWRTTile> doGetTiles(@Nullable Bundle savedInstanceState) {
-        return Collections.<DDWRTTile>singletonList(
-                new ToolboxWhoisTile(this, savedInstanceState, this.router));
-    }
+  @Nullable
+  @Override
+  protected List<DDWRTTile> doGetTiles(@Nullable Bundle savedInstanceState) {
+    return Collections.<DDWRTTile>singletonList(
+        new ToolboxWhoisTile(this, savedInstanceState, this.router));
+  }
 }

@@ -18,9 +18,11 @@ interface ServiceNamePortNumbersService {
 
         private val gson = GsonBuilder().create()
 
-        fun toGraphQLQuery(ports: Collection<Long>? = null,
-                           protocols: Collection<Protocol>? = null,
-                           services: Collection<String>? = null): GraphQLQuery {
+        fun toGraphQLQuery(
+            ports: Collection<Long>? = null,
+            protocols: Collection<Protocol>? = null,
+            services: Collection<String>? = null
+        ): GraphQLQuery {
             val graphQLQuery = "{\n" +
                     "records (filter: {ports: " +
                     gson.toJson(ports ?: emptyList<Long>()) +
@@ -40,7 +42,9 @@ interface ServiceNamePortNumbersService {
     }
 }
 
-fun ServiceNamePortNumbersService.query(ports: Collection<Long>? = null,
-                                        protocols: Collection<Protocol>? = null,
-                                        services: Collection<String>? = null) =
+fun ServiceNamePortNumbersService.query(
+    ports: Collection<Long>? = null,
+    protocols: Collection<Protocol>? = null,
+    services: Collection<String>? = null
+) =
         this.query(ServiceNamePortNumbersService.toGraphQLQuery(ports, protocols, services))

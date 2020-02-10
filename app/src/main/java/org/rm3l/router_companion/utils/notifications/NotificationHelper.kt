@@ -26,7 +26,7 @@ fun Router.createNotificationChannelGroup(context: Context) {
                 .getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         mNotificationManager.createNotificationChannelGroup(NotificationChannelGroup(group, name))
 
-        //Now create notification channels: Router Notifications (Connected Hosts, WAN IP Updates, ...)
+        // Now create notification channels: Router Notifications (Connected Hosts, WAN IP Updates, ...)
         val channelId = this.notificationChannelId
         val channelName = "Router Events"
         val channelDescription = "Events occurring in Router"
@@ -58,12 +58,12 @@ fun Context.createGeneralNotificationChannelGroup() {
         mNotificationManager.createNotificationChannelGroup(
                 NotificationChannelGroup(NOTIFICATION_GROUP_GENERAL_UPDATES, name))
 
-        //Create channels: for each type of router fw supported (DD-WRT, Tomato, ...)
+        // Create channels: for each type of router fw supported (DD-WRT, Tomato, ...)
         val generalChannels = RouterFirmware.values()
                 .filter {
                     when (it) {
                         DDWRT, TOMATO, DEMO -> true
-                        else -> false //TODO not supported for now
+                        else -> false // TODO not supported for now
                     }
                 }
                 .map {

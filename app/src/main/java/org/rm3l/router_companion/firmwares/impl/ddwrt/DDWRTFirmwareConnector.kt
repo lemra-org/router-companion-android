@@ -3,7 +3,6 @@ package org.rm3l.router_companion.firmwares.impl.ddwrt
 import android.annotation.SuppressLint
 import android.content.Context
 import android.text.TextUtils
-import android.util.Log
 import android.util.Patterns
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.common.base.Splitter
@@ -43,7 +42,6 @@ import org.rm3l.router_companion.utils.WANTrafficUtils.retrieveAndPersistMonthly
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.ArrayList
-import java.util.Arrays
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -55,15 +53,21 @@ const val SSH_LOGIN_ALWAYS_ROOT_MESSAGE = "SSH Login is always 'root' in DD-WRT 
 class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
 
     @Throws(Exception::class)
-    override fun getDataForNetworkTopologyMapTile(context: Context,
-                                                  router: Router, dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
+    override fun getDataForNetworkTopologyMapTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo {
         return NetworkTopologyMapTileWorker.getDataForNetworkTopologyMapTile(context, router,
                 dataRetrievalListener)
     }
 
     @Throws(Exception::class)
-    override fun getWanPublicIpAddress(context: Context, router: Router,
-                                       dataRetrievalListener: RemoteDataRetrievalListener?): String? {
+    override fun getWanPublicIpAddress(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): String? {
         return SSHUtils.loadWanPublicIPFrom(context, router, null, dataRetrievalListener)
     }
 
@@ -89,9 +93,12 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
     }
 
     @Throws(Exception::class)
-    override fun getDataForWANTotalTrafficOverviewTile(context: Context,
-                                                       router: Router, cycleItem: MonthlyCycleItem,
-                                                       dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
+    override fun getDataForWANTotalTrafficOverviewTile(
+        context: Context,
+        router: Router,
+        cycleItem: MonthlyCycleItem,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo {
 
         val dao = RouterManagementActivity.getDao(context)
         val globalSharedPreferences = Utils.getGlobalSharedPreferences(context)
@@ -101,7 +108,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
         val today = Date()
         val mCurrentMonth = DDWRT_TRAFF_DATA_SIMPLE_DATE_FORMAT.format(today)
 
-        //Also retrieve data for previous month and next month
+        // Also retrieve data for previous month and next month
         val cal1 = Calendar.getInstance()
         cal1.add(Calendar.MONTH, -1)
         val mPrevMonth = DDWRT_TRAFF_DATA_SIMPLE_DATE_FORMAT.format(cal1.time)
@@ -144,8 +151,11 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
     }
 
     @Throws(Exception::class)
-    override fun getDataForUptimeTile(context: Context, router: Router,
-                                      dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
+    override fun getDataForUptimeTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo {
         val globalSharedPreferences = Utils.getGlobalSharedPreferences(context)
 
         dataRetrievalListener?.onProgressUpdate(10)
@@ -165,7 +175,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                 if (uptimeListSize > 0) {
                     val first = uptimeList[0].trim { it <= ' ' }
                     if (first.contains("day", ignoreCase = true)) {
-                        //day
+                        // day
                         nvramInfo.setProperty(NVRAMInfo.UPTIME_DAYS,
                                 first.replace("days".toRegex(), "").replace("day".toRegex(), "").trim { it <= ' ' })
 
@@ -221,8 +231,11 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
     }
 
     @Throws(Exception::class)
-    override fun getDataForMemoryAndCpuUsageTile(context: Context,
-                                                 router: Router, dataRetrievalListener: RemoteDataRetrievalListener?): List<Array<String>> {
+    override fun getDataForMemoryAndCpuUsageTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): List<Array<String>> {
 
         dataRetrievalListener?.onProgressUpdate(10)
 
@@ -237,33 +250,39 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                 "uptime | awk -F'average:' '{ print $2}'", "$GREP_MODEL_PROC_CPUINFO| wc -l"
         )
 
-        return listOf(memData?: emptyArray(), cpuUsageData?: emptyArray())
+        return listOf(memData ?: emptyArray(), cpuUsageData ?: emptyArray())
     }
 
     @Throws(Exception::class)
-    override fun getDataForStorageUsageTile(context: Context, router: Router,
-                                            dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
+    override fun getDataForStorageUsageTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo {
         dataRetrievalListener?.onProgressUpdate(10)
 
         val globalSharedPreferences = Utils.getGlobalSharedPreferences(context)
 
-        val nvramSize:Array<String?>? = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
+        val nvramSize: Array<String?>? = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
                 "/usr/sbin/nvram show 2>&1 1>/dev/null | grep \"size: \"")
         dataRetrievalListener?.onProgressUpdate(20)
 
-        val jffs2Size:Array<String?>? = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
+        val jffs2Size: Array<String?>? = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
                 "/bin/df -T | grep \"jffs2\"")
         dataRetrievalListener?.onProgressUpdate(30)
 
-        val cifsSize:Array<String?>? = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
+        val cifsSize: Array<String?>? = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
                 "/bin/df -T | grep \"cifs\"")
 
         return parseDataForStorageUsageTile(listOf(nvramSize, jffs2Size, cifsSize), dataRetrievalListener)
     }
 
     @Throws(Exception::class)
-    override fun getDataForStatusRouterStateTile(context: Context, router: Router,
-                                                 dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
+    override fun getDataForStatusRouterStateTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo {
 
         val globalSharedPreferences = Utils.getGlobalSharedPreferences(context)
 
@@ -279,26 +298,26 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
         }
 
         updateProgressBarViewSeparator(dataRetrievalListener, 50)
-        //date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))
-        //date -d @$(sed -n '/^btime /s///p' /proc/stat)
+        // date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))
+        // date -d @$(sed -n '/^btime /s///p' /proc/stat)
         val otherCmds = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
-                //date
+                // date
                 "date",
-                //date since last reboot
-                "date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) )) || "
-                        + " awk -vuptimediff=\"$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))\" "
-                        + " 'BEGIN { print strftime(\"%Y-%m-%d %H:%M:%S\", uptimediff); }' ",
-                //elapsed from current date
+                // date since last reboot
+                "date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) )) || " +
+                        " awk -vuptimediff=\"$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))\" " +
+                        " 'BEGIN { print strftime(\"%Y-%m-%d %H:%M:%S\", uptimediff); }' ",
+                // elapsed from current date
                 "uptime | awk -F'up' '{print $2}' | awk -F'users' '{print $1}' | awk -F'load' '{print $1}'",
-                "uname -a", "echo \"`cat /tmp/loginprompt|grep DD-WRT|"
-                + "cut -d' ' -f1` `cat /tmp/loginprompt|grep DD-WRT|"
-                + "cut -d' ' -f2` (`cat /tmp/loginprompt|grep Release|cut -d' ' -f2`) "
-                + "`cat /tmp/loginprompt|grep DD-WRT|"
-                + "cut -d' ' -f3` - SVN rev: `/sbin/softwarerevision`\"")
+                "uname -a", "echo \"`cat /tmp/loginprompt|grep DD-WRT|" +
+                "cut -d' ' -f1` `cat /tmp/loginprompt|grep DD-WRT|" +
+                "cut -d' ' -f2` (`cat /tmp/loginprompt|grep Release|cut -d' ' -f2`) " +
+                "`cat /tmp/loginprompt|grep DD-WRT|" +
+                "cut -d' ' -f3` - SVN rev: `/sbin/softwarerevision`\"")
 
         if (otherCmds != null) {
             if (otherCmds.isNotEmpty()) {
-                //date
+                // date
                 nvramInfo.setProperty(NVRAMInfo.CURRENT_DATE, otherCmds[0])
             }
             if (otherCmds.size >= 3) {
@@ -314,7 +333,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
             }
 
             if (otherCmds.size >= 4) {
-                //Kernel
+                // Kernel
                 otherCmds[3]?.let {
                     val valueWithoutGnuLinux = it.replace("GNU/Linux", "")
                     nvramInfo?.setProperty(NVRAMInfo.KERNEL,
@@ -326,7 +345,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
             }
 
             if (otherCmds.size >= 5) {
-                //Firmware
+                // Firmware
                 val fwString = otherCmds[4]
                 nvramInfo.setProperty(NVRAMInfo.FIRMWARE, fwString)
 
@@ -336,9 +355,8 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                         nvramInfo.setProperty(NVRAMInfo.OS_VERSION,
                                 java.lang.Long.toString(java.lang.Long.parseLong(strings[1].trim { it <= ' ' })))
                     } catch (nfe: NumberFormatException) {
-                        //No worries
+                        // No worries
                     }
-
                 }
             }
         }
@@ -349,7 +367,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                 true)
 
         if (checkActualInternetConnectivity) {
-            //Now get public IP Address
+            // Now get public IP Address
             updateProgressBarViewSeparator(dataRetrievalListener, 80)
             try {
                 val wanPublicIp = this.getWanPublicIpAddress(context, router, null)
@@ -401,8 +419,9 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
         }
 
         fun parseDataForStorageUsageTile(
-                dataForStorageUsageTile: List<Array<String?>?>?,
-                dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
+            dataForStorageUsageTile: List<Array<String?>?>?,
+            dataRetrievalListener: RemoteDataRetrievalListener?
+        ): NVRAMInfo {
             if (dataForStorageUsageTile == null || dataForStorageUsageTile.isEmpty()) {
                 throw DDWRTNoDataException()
             }
@@ -428,7 +447,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
             if (nvramSize != null && nvramSize.isNotEmpty()) {
                 val nvramSizeStr = nvramSize[0]
                 if (nvramSizeStr?.startsWith("size:") == true) {
-                    //"size: 37189 bytes (28347 left)" => "size:", "37189", "bytes", "(28347", "left)"
+                    // "size: 37189 bytes (28347 left)" => "size:", "37189", "bytes", "(28347", "left)"
                     val stringList = SPACE_SPLITTER.splitToList(nvramSizeStr)
                     if (stringList.size >= 5) {
                         val nvramUsedBytes = stringList[1].trim { it <= ' ' }
@@ -439,7 +458,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                             val nvramTotalBytesLong = nvramUsedBytesLong.plus(nvramLeftBytesLong)
                             FirebaseCrashlytics.getInstance().log(
                                 "<nvramUsedBytesLong, nvramLeftBytesLong, nvramTotalBytesLong> = " +
-                                        "<${nvramUsedBytesLong}, ${nvramLeftBytesLong}, ${nvramTotalBytesLong}>")
+                                        "<$nvramUsedBytesLong, $nvramLeftBytesLong, $nvramTotalBytesLong>")
                             if (nvramTotalBytesLong > 0L) {
                                 val nvramUsedPercent =
                                     100L.coerceAtMost(100L.times(nvramUsedBytesLong).div(nvramTotalBytesLong))
@@ -451,14 +470,13 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                             e.printStackTrace()
                             FirebaseCrashlytics.getInstance().recordException(e)
                         }
-
                     }
                 }
             }
             dataRetrievalListener?.onProgressUpdate(50)
 
             if (jffs2Size != null && jffs2Size.isNotEmpty()) {
-                //We may have more than one mountpoint - so sum everything up
+                // We may have more than one mountpoint - so sum everything up
                 var totalUsed: Long = 0
                 var totalSize: Long = 0
                 for (i in jffs2Size.indices) {
@@ -473,7 +491,6 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                                 e.printStackTrace()
                                 FirebaseCrashlytics.getInstance().recordException(e)
                             }
-
                         }
                     }
                     dataRetrievalListener?.onProgressUpdate(70.coerceAtMost(50 + 5 * i))
@@ -487,7 +504,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
             dataRetrievalListener?.onProgressUpdate(75)
 
             if (cifsSize != null && cifsSize.isNotEmpty()) {
-                //We may have more than one mountpoint - so sum everything up
+                // We may have more than one mountpoint - so sum everything up
                 var totalUsed: Long = 0
                 var totalSize: Long = 0
                 for (i in cifsSize.indices) {
@@ -502,7 +519,6 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                                 e.printStackTrace()
                                 FirebaseCrashlytics.getInstance().recordException(e)
                             }
-
                         }
                     }
                     dataRetrievalListener?.onProgressUpdate(87.coerceAtMost(75 + 5 * i))
@@ -517,12 +533,15 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
         }
     }
 
-    override fun getWANAccessPolicies(context: Context, router: Router,
-                                      dataRetrievalListener: RemoteDataRetrievalListener?): WANAccessPoliciesRouterData? {
+    override fun getWANAccessPolicies(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): WANAccessPoliciesRouterData? {
         val wanAccessPolicies = ArrayList<WANAccessPolicy>()
 
         dataRetrievalListener?.onProgressUpdate(10)
-        //1- Get all rules first
+        // 1- Get all rules first
 
         /*
                     filter_rule10=$STAT:1$NAME:myPolicy10$DENY:1$$
@@ -559,7 +578,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
             if (key == null || value == null) {
                 continue
             }
-            //Skip empty rules
+            // Skip empty rules
             val valueStr = value.toString()
             if (Strings.isNullOrEmpty(valueStr)) {
                 continue
@@ -573,7 +592,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
             val statusSplitter = Splitter.on(
                     "\$NAME:").omitEmptyStrings().trimResults().splitToList(valueStr)
             if (!statusSplitter.isEmpty()) {
-                //myPolicy7$DENY:1$$
+                // myPolicy7$DENY:1$$
                 wanAccessPolicy.status = statusSplitter[0].replace("\$STAT:".toRegex(), "")
                 if (statusSplitter.size >= 2) {
                     val nameAndFollowingStr = statusSplitter[1]
@@ -584,7 +603,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                     if (!nameAndFollowingSplitter.isEmpty()) {
                         wanAccessPolicy.name = nameAndFollowingSplitter[0]
                         if (nameAndFollowingSplitter.size >= 2) {
-                            //1$$
+                            // 1$$
                             val s = nameAndFollowingSplitter[1].replace("\\$\\$".toRegex(), "")
                             if ("0" == s) {
                                 wanAccessPolicy.denyOrFilter = WANAccessPolicy.FILTER
@@ -598,7 +617,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                 wanAccessPolicy.status = WANAccessPolicy.STATUS_UNKNOWN
             }
 
-            //2- For each, retrieve Time of Day (TOD)
+            // 2- For each, retrieve Time of Day (TOD)
             nvramInfo = SSHUtils.getNVRamInfoFromRouter(context, router,
                     globalSharedPreferences, "filter_tod_buf" + keyNb)
 
@@ -663,11 +682,11 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
             val currentFwVerLong = currentFwVer?.split("-")?.get(0)?.toLongOrNull()
             FirebaseCrashlytics.getInstance().log(
                     "<currentFwVer, currentFwVerLong>=<$currentFwVer,$currentFwVerLong>")
-            //Now browse the DD-WRT update website and check for the most recent
+            // Now browse the DD-WRT update website and check for the most recent
             ftp = FTPClient()
-            //final FTPClientConfig config = new FTPClientConfig();
-            //config.setXXX(YYY); // change required options
-            //ftp.configure(config );
+            // final FTPClientConfig config = new FTPClientConfig();
+            // config.setXXX(YYY); // change required options
+            // ftp.configure(config );
             ftp.connect(DDWRT_RELEASE_REMOTE_HOST)
             val reply = ftp.replyCode
             FirebaseCrashlytics.getInstance().log("Connected to FTP Server: $DDWRT_RELEASE_REMOTE_HOST. replyCode=$reply")
@@ -679,8 +698,8 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
             ftp.login("anonymous", "anonymous")
             ftp.changeWorkingDirectory("betas")
             val directories = ftp.listDirectories()
-            val newerReleases = directories.
-                    map {
+            val newerReleases = directories
+                    .map {
                         FirebaseCrashlytics.getInstance().log("Found dir: ${it.name}")
                         it.name
                     }
@@ -709,7 +728,7 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
                     .toList()
             ftp.logout()
             if (newerReleases.isEmpty()) {
-                //No new release
+                // No new release
                 throw NoNewFirmwareUpdate()
             }
             return newerReleases.last()
@@ -723,8 +742,6 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
             }
         }
     }
-
-
 }
 
 @SuppressLint("SimpleDateFormat")

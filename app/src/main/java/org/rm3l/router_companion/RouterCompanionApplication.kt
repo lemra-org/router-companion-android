@@ -35,7 +35,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.util.Log
 import android.widget.ImageView
 import com.airbnb.deeplinkdispatch.DeepLinkHandler
-//import com.avocarrot.sdk.Avocarrot
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.evernote.android.job.JobConfig
 import com.evernote.android.job.JobManager
@@ -66,9 +65,6 @@ import org.rm3l.router_companion.welcome.GettingStartedActivity
 import org.wordpress.passcodelock.AppLockManager
 import java.lang.ref.WeakReference
 import java.util.Arrays
-
-//import com.facebook.stetho.dumpapp.DumperPlugin;
-//import com.facebook.stetho.inspector.protocol.ChromeDevtoolsDomain;
 
 /**
  * App Main Entry point.
@@ -150,7 +146,7 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
             DDWRTCompanionSqliteDAOImpl.initialize(applicationContext)
         }
 
-        //initialize and create the image loader logic (for MaterialDrawer, used throughout the app)
+        // initialize and create the image loader logic (for MaterialDrawer, used throughout the app)
         DrawerImageLoader.init(object : AbstractDrawerImageLoader() {
             override fun cancel(imageView: ImageView?) {
                 if (imageView != null) {
@@ -171,10 +167,10 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
             }
         })
 
-        //We must initialize Fabric prior to calling this
+        // We must initialize Fabric prior to calling this
         if (isFirstLaunch(this)) {
             val appOriginInstallerPackageName = Utils.getAppOriginInstallerPackageName(this)
-            //Report specific exception: this is to help me analyze whom this app is used by, and provide better device support!
+            // Report specific exception: this is to help me analyze whom this app is used by, and provide better device support!
 
             val eventMap = mutableMapOf<String, Any?>()
             val lastKnownVersionStr = appPreferences.getString(RouterCompanionAppConstants.LAST_KNOWN_VERSION, null)
@@ -200,22 +196,21 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
 
         org.osmdroid.config.Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
 
-        //General Notification Channel
+        // General Notification Channel
         this.createOrUpdateNotificationChannels()
 
-        //Job Scheduling
+        // Job Scheduling
         try {
             JobConfig.addLogger(RouterCompanionJobLogger())
             JobManager.create(this).addJobCreator(RouterCompanionJobCreator())
 
-            //Default jobs
+            // Default jobs
             BackgroundService.schedule()
             FirmwareUpdateCheckerJob.schedule()
         } catch (e: Exception) {
-            FirebaseCrashlytics.getInstance().log( "JobManager reported an error => no job scheduling feature then: " + e.message)
+            FirebaseCrashlytics.getInstance().log("JobManager reported an error => no job scheduling feature then: " + e.message)
             FirebaseCrashlytics.getInstance().recordException(e)
         }
-
     }
 
     override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {

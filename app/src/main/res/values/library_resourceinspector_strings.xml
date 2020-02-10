@@ -2,21 +2,32 @@
 
 
 <resources>
-    <string name="define_resourceinspector" translatable="false" />
-    <!-- Author section -->
-    <string name="library_resourceinspector_author" translatable="false">nekocode</string>
-    <string name="library_resourceinspector_authorWebsite" translatable="false">http://nekocode.cn</string>
-    <!-- Library section -->
-    <string name="library_resourceinspector_libraryName" translatable="false">ResourceInspector</string>
-    <string name="library_resourceinspector_libraryDescription" translatable="false">A debug tool to inspect used layout files of current Activity. This tool is helpful when you want to find out layout xml files used in current Activity from a large amount of resource files.</string>
-    <string name="library_resourceinspector_libraryWebsite" translatable="false">https://github.com/nekocode/ResourceInspector</string>
-    <string name="library_resourceinspector_libraryVersion" translatable="false">0.4</string>
-    <!-- OpenSource section -->
-    <string name="library_resourceinspector_isOpenSource" translatable="false">true</string>
-    <string name="library_resourceinspector_repositoryLink" translatable="false">https://github.com/nekocode/ResourceInspector</string>
-    <!-- ClassPath for autoDetect section -->
-    <!--<string translatable="false" name="library_resourceinspector_classPath">com.facebook.discreetapprate</string>-->
-    <!-- License section -->
-    <string name="library_resourceinspector_licenseId" translatable="false">apache_2_0</string>
-    <!-- Custom variables section -->
+	<string name="define_resourceinspector" translatable="false" />
+	<!-- Author section -->
+	<string name="library_resourceinspector_author"
+		translatable="false">nekocode</string>
+	<string name="library_resourceinspector_authorWebsite"
+		translatable="false">http://nekocode.cn</string>
+	<!-- Library section -->
+	<string name="library_resourceinspector_libraryName"
+		translatable="false">ResourceInspector</string>
+	<string name="library_resourceinspector_libraryDescription"
+		translatable="false">A debug tool to inspect used layout files of current
+		Activity. This tool is helpful when you want to find out layout xml
+		files used in current Activity from a large amount of resource files.</string>
+	<string name="library_resourceinspector_libraryWebsite"
+		translatable="false">https://github.com/nekocode/ResourceInspector</string>
+	<string name="library_resourceinspector_libraryVersion"
+		translatable="false">0.4</string>
+	<!-- OpenSource section -->
+	<string name="library_resourceinspector_isOpenSource"
+		translatable="false">true</string>
+	<string name="library_resourceinspector_repositoryLink"
+		translatable="false">https://github.com/nekocode/ResourceInspector</string>
+	<!-- ClassPath for autoDetect section -->
+	<!--<string translatable="false" name="library_resourceinspector_classPath">com.facebook.discreetapprate</string> -->
+	<!-- License section -->
+	<string name="library_resourceinspector_licenseId"
+		translatable="false">apache_2_0</string>
+	<!-- Custom variables section -->
 </resources>

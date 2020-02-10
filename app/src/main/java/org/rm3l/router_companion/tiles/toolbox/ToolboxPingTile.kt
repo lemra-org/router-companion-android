@@ -25,7 +25,6 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.EditText
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.actions.AbstractRouterAction
 import org.rm3l.router_companion.actions.PingFromRouterAction
@@ -33,7 +32,8 @@ import org.rm3l.router_companion.resources.conn.Router
 import org.rm3l.router_companion.utils.ReportingUtils
 
 class ToolboxPingTile(
-    parentFragment: Fragment, arguments: Bundle?,
+    parentFragment: Fragment,
+    arguments: Bundle?,
     router: Router?
 ) : AbstractToolboxTile(parentFragment, arguments, router) {
 
@@ -41,7 +41,7 @@ class ToolboxPingTile(
         layout.findViewById<View>(R.id.tile_toolbox_abstract_ping_packets_inputlayout).visibility = View.VISIBLE
     }
 
-    override fun getEditTextHint() =  R.string.ping_edit_text_hint
+    override fun getEditTextHint() = R.string.ping_edit_text_hint
 
     override fun getInfoText() = R.string.ping_info
 
@@ -53,7 +53,7 @@ class ToolboxPingTile(
             packetCount = Integer.parseInt(packetCountStr)
         } catch (e: Exception) {
             ReportingUtils.reportException(mParentFragmentActivity, e)
-            //No worries
+            // No worries
         }
 
         return PingFromRouterAction(

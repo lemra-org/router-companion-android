@@ -16,7 +16,6 @@ import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import android.util.Log
 import android.widget.Toast
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.evernote.android.job.DailyJob
@@ -28,13 +27,10 @@ import org.rm3l.ddwrt.BuildConfig
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.RouterCompanionAppConstants
 import org.rm3l.router_companion.RouterCompanionAppConstants.CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES
-import org.rm3l.router_companion.RouterCompanionAppConstants.FIREBASE_API_KEY
 import org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_CHOICE_PREF
 import org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_ENABLE
-import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.FirebaseDynamicLinksService
 import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.resources.DynamicLinkInfo
 import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.resources.ShortLinksDataRequest
-import org.rm3l.router_companion.api.urlshortener.is_gd.IsGdService
 import org.rm3l.router_companion.common.utils.ExceptionUtils
 import org.rm3l.router_companion.firmwares.FirmwareRelease
 import org.rm3l.router_companion.firmwares.NoNewFirmwareUpdate
@@ -71,7 +67,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
 
         @JvmStatic
         fun schedule() {
-            //This is a premium feature
+            // This is a premium feature
             if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                 FirebaseCrashlytics.getInstance().log("Firmware Build Updates feature is *premium*!")
                 return
@@ -92,8 +88,10 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
         }
 
         @JvmStatic
-        fun manualCheckForFirmwareUpdate(activity: Activity,
-                                         router: Router) {
+        fun manualCheckForFirmwareUpdate(
+            activity: Activity,
+            router: Router
+        ) {
             val alertDialog = ProgressDialog.show(activity, "Checking for firmware updates",
                     "Please wait...",
                     true)
@@ -101,13 +99,13 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                     object : UiRelatedTask<Pair<String?, Exception?>>() {
                         private var mNewerRelease: FirmwareRelease? = null
                         override fun doWork(): Pair<String?, Exception?> {
-                            //First determine current version
+                            // First determine current version
                             try {
                                 @Suppress("USELESS_ELVIS")
                                 val nvramInfo = RouterFirmwareConnectorManager.getConnector(router)
                                         .getDataFor(activity, router,
-                                                StatusRouterStateTile::class.java, null) ?:
-                                        throw IllegalStateException("Could not retrieve local data")
+                                                StatusRouterStateTile::class.java, null)
+                                        ?: throw IllegalStateException("Could not retrieve local data")
 
                                 val currentFwVer = nvramInfo.getProperty(NVRAMInfo.OS_VERSION,
                                         "")
@@ -117,7 +115,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                 mNewerRelease = RouterFirmwareConnectorManager.getConnector(router)
                                         .manuallyCheckForFirmwareUpdateAndReturnDownloadLink(currentFwVer)
                                 if (mNewerRelease == null) {
-                                    //No new update
+                                    // No new update
                                     throw IllegalStateException("Could not retrieve current firmware version")
                                 }
                                 var newReleaseDLLink: String? = mNewerRelease!!.getDirectLink()
@@ -133,7 +131,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                             newReleaseDLLink = response.body()!!.shortLink
                                             shortened = true
                                         } catch (e: Exception) {
-                                            //Do not worry about that => fallback to the original DL link
+                                            // Do not worry about that => fallback to the original DL link
                                             shortened = false
                                         }
                                     }
@@ -145,8 +143,8 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                                 NetworkUtils.checkResponseSuccessful(response)
                                                 newReleaseDLLink = response.body()!!.shorturl
                                                 shortened = true
-                                            } catch(e1: Exception) {
-                                                //Do not worry about that => fallback to the original DL link
+                                            } catch (e1: Exception) {
+                                                // Do not worry about that => fallback to the original DL link
                                                 shortened = false
                                             }
                                         }
@@ -185,7 +183,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                         ContextCompat.getColor(activity, R.color.win8_blue),
                                         "A new ${routerFirmware?.officialName ?: ""} Build (${mNewerRelease!!.version}) is available for '${router.canonicalHumanReadableName}'",
                                         Color.WHITE,
-                                        "View", //TODO Reconsider once we have an auto-upgrade firmware feature. Add link to perform the upgrade right away
+                                        "View", // TODO Reconsider once we have an auto-upgrade firmware feature. Add link to perform the upgrade right away
                                         Color.YELLOW,
                                         Snackbar.LENGTH_LONG,
                                         object : SnackbarCallback {
@@ -200,7 +198,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                                     CustomTabActivityHelper.openCustomTab(activity,
                                                             null, url, router.uuid, null,
                                                             { activity, _ ->
-                                                                //Otherwise, default to a classic WebView implementation
+                                                                // Otherwise, default to a classic WebView implementation
                                                                 val intent = Intent(activity,
                                                                         FirmwareReleaseDownloadPageActivity::class.java)
                                                                 intent.putExtra(ROUTER_SELECTED, router.uuid)
@@ -227,15 +225,15 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
             val firebaseDynamicLinksService = NetworkUtils.getFirebaseDynamicLinksService()
             val isGdService = NetworkUtils.getIsGdService()
 
-            //First check if user is interested in getting updates
+            // First check if user is interested in getting updates
             val notificationChoices = globalPreferences?.getStringSet(NOTIFICATIONS_CHOICE_PREF, emptySet())
             if (notificationChoices?.contains(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES) != true) {
                 FirebaseCrashlytics.getInstance().log("Not interested at this time in Firmware Build Updates!")
-                //Check next day
+                // Check next day
                 return true
             }
 
-            //Now keep only routers for which the user has accepted notifications
+            // Now keep only routers for which the user has accepted notifications
             val forceCheck = params?.extras?.getBoolean(MANUAL_REQUEST, false)
             val releaseAndGooGlLinksMap: MutableMap<String, String?> = mutableMapOf()
             routerDao.allRouters
@@ -296,7 +294,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                                 newReleaseDLLink = response.body()!!.shortLink
                                                 shortened = true
                                             } catch (e: Exception) {
-                                                //Do not worry about that => fallback to the original DL link
+                                                // Do not worry about that => fallback to the original DL link
                                                 shortened = false
                                             }
 
@@ -307,7 +305,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                                     newReleaseDLLink = response.body()!!.shorturl
                                                     shortened = true
                                                 } catch (e: Exception) {
-                                                    //Do not worry about that => fallback to the original DL link
+                                                    // Do not worry about that => fallback to the original DL link
                                                     shortened = false
                                                 }
                                             }
@@ -323,22 +321,26 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                             //                PendingIntent.FLAG_ONE_SHOT);
 
                             val largeIcon = Router.loadRouterAvatarUrlSync(context, router, Router.mAvatarDownloadOpts)
-                            doNotify(context, router, largeIcon?:BitmapFactory.decodeResource(context.resources,
+                            doNotify(context, router, largeIcon ?: BitmapFactory.decodeResource(context.resources,
                                     R.mipmap.ic_launcher_ddwrt_companion), downloadLink, newReleaseVersion)
-
                         } catch (e: Exception) {
-                            //No worries - go on with the next
+                            // No worries - go on with the next
                             FirebaseCrashlytics.getInstance().recordException(e)
                         }
                     }
             return true
         }
 
-        private fun doNotify(context: Context, router: Router, largeIcon: Bitmap,
-                             downloadLink: String, newReleaseVersion: String?) {
+        private fun doNotify(
+            context: Context,
+            router: Router,
+            largeIcon: Bitmap,
+            downloadLink: String,
+            newReleaseVersion: String?
+        ) {
 
             if (newReleaseVersion.isNullOrBlank()) {
-                FirebaseCrashlytics.getInstance().log( "newReleaseVersion is NULL or blank - skipping notification.")
+                FirebaseCrashlytics.getInstance().log("newReleaseVersion is NULL or blank - skipping notification.")
                 return
             }
 
@@ -374,7 +376,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
             val globalPreferences = context.getSharedPreferences(
                     RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
 
-            //Notification sound, if required
+            // Notification sound, if required
             val ringtoneUri = globalPreferences.getString(
                     RouterCompanionAppConstants.NOTIFICATIONS_SOUND, null)
             if (ringtoneUri != null) {
@@ -420,7 +422,6 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
         }
         return DailyJobResult.SUCCESS
     }
-
 }
 
 class FirmwareUpdateCheckerOneShotJob : Job(), RouterCompanionJob {
@@ -438,13 +439,12 @@ class FirmwareUpdateCheckerOneShotJob : Job(), RouterCompanionJob {
             Result.FAILURE
         }
     }
-
 }
 
-class FirmwareUpdateFoundButWithNoUrlException(message: String?, throwable: Throwable? = null):
+class FirmwareUpdateFoundButWithNoUrlException(message: String?, throwable: Throwable? = null) :
         RuntimeException(message, throwable)
 
-class FirmwareReleaseDownloadPageActivity: WebActivity() {
+class FirmwareReleaseDownloadPageActivity : WebActivity() {
 
     private var mDao: DDWRTCompanionDAO? = null
     private var mUrl: String? = null
@@ -476,13 +476,12 @@ class FirmwareReleaseDownloadPageActivity: WebActivity() {
         }
 
         mToolbar.subtitle = Router.getCanonicalHumanReadableNameWithEffectiveInfo(this, this.mRouter, false)
-
     }
 
     override fun isJavascriptEnabled() = false
 
     override fun getUrl(): String {
-        return this.mUrl?:""
+        return this.mUrl ?: ""
     }
 
     override fun getTitleResId() = null

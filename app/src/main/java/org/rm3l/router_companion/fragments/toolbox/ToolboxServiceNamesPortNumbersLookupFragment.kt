@@ -7,6 +7,5 @@ class ToolboxServiceNamesPortNumbersLookupFragment : AbstractToolboxFragment() {
 
     override fun doGetTiles(savedInstanceState: Bundle?) =
             listOf(
-                    ToolboxServiceNamesPortNumbersTile(this, savedInstanceState?:Bundle.EMPTY, this.router))
+                    ToolboxServiceNamesPortNumbersTile(this, savedInstanceState ?: Bundle.EMPTY, this.router))
 }
-

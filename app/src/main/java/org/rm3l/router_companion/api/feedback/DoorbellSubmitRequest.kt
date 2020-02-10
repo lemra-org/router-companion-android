@@ -1,6 +1,6 @@
 package org.rm3l.router_companion.api.feedback
 
-//cf. https://doorbell.io/docs/api
+// cf. https://doorbell.io/docs/api
 class DoorbellSubmitRequest @JvmOverloads constructor(
     /**
      * The email address of the user sending feedback

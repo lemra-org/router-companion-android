@@ -1,139 +1,104 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
 
-Copyright (C) 2014  Armel Soro
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:custom="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/tile_dashboard_storage"
+	android:layout_width="fill_parent" android:layout_height="wrap_content"
+	android:baselineAligned="false" android:orientation="horizontal">
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+	<LinearLayout android:layout_width="0dp"
+		android:layout_height="wrap_content" android:layout_weight="0.74"
+		android:orientation="vertical">
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+		<TextView android:id="@+id/tile_dashboard_storage_title"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:ellipsize="end"
+			android:maxLines="1" android:text="Storage Usage"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textStyle="bold" />
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+		<ProgressBar android:id="@+id/tile_progress_bar"
+			style="?android:attr/progressBarStyleHorizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="8.0dip"
+			android:layout_marginTop="8.0dip" android:indeterminate="false"
+			android:indeterminateOnly="false" />
 
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
+		<!-- Error message placeholder -->
+		<TextView android:id="@+id/tile_dashboard_storage_error"
+			android:layout_width="300dp" android:layout_height="wrap_content"
+			android:layout_gravity="center" android:ellipsize="end"
+			android:gravity="center" android:maxLines="1"
+			android:text="@string/error_placeholder"
+			android:textColor="@color/ddwrt_purple"
+			android:textIsSelectable="true" android:textStyle="bold"
+			android:visibility="gone" />
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/tile_dashboard_storage"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:baselineAligned="false"
-    android:orientation="horizontal">
+		<RelativeLayout android:layout_width="match_parent"
+			android:layout_height="160dp">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.74"
-        android:orientation="vertical">
+			<com.github.lzyzsd.circleprogress.ArcProgress
+				android:id="@+id/tile_dashboard_storage_nvram_arcprogress"
+				android:layout_width="80dp" android:layout_height="80dp"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentStart="true"
+				android:background="@android:color/transparent"
+				custom:arc_bottom_text="NVRAM"
+				custom:arc_finished_color="@color/arcprogress_finished"
+				custom:arc_max="100" custom:arc_progress="0"
+				custom:arc_unfinished_color="@color/arcprogress_unfinished" />
 
-        <TextView
-            android:id="@+id/tile_dashboard_storage_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="Storage Usage"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="bold" />
+			<com.github.lzyzsd.circleprogress.ArcProgress
+				android:id="@+id/tile_dashboard_storage_jffs2_arcprogress"
+				android:layout_width="80dp" android:layout_height="80dp"
+				android:layout_centerInParent="true"
+				android:background="@android:color/transparent"
+				custom:arc_bottom_text="JFFS2"
+				custom:arc_finished_color="@color/arcprogress_finished"
+				custom:arc_max="100" custom:arc_progress="0"
+				custom:arc_unfinished_color="@color/arcprogress_unfinished" />
 
-        <ProgressBar
-            android:id="@+id/tile_progress_bar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8.0dip"
-            android:layout_marginTop="8.0dip"
-            android:indeterminate="false"
-            android:indeterminateOnly="false" />
+			<com.github.lzyzsd.circleprogress.ArcProgress
+				android:id="@+id/tile_dashboard_storage_cifs_arcprogress"
+				android:layout_width="80dp" android:layout_height="80dp"
+				android:layout_alignParentEnd="true"
+				android:layout_alignParentRight="true"
+				android:background="@android:color/transparent"
+				custom:arc_bottom_text="CIFS"
+				custom:arc_finished_color="@color/arcprogress_finished"
+				custom:arc_max="100" custom:arc_progress="0"
+				custom:arc_unfinished_color="@color/arcprogress_unfinished" />
 
-        <!-- Error message placeholder -->
-        <TextView
-            android:id="@+id/tile_dashboard_storage_error"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="1"
-            android:text="@string/error_placeholder"
-            android:textColor="@color/ddwrt_purple"
-            android:textIsSelectable="true"
-            android:textStyle="bold"
-            android:visibility="gone" />
+			<ProgressBar
+				android:id="@+id/tile_dashboard_storage_loading_view"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerInParent="true" android:indeterminate="false" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="160dp">
+			<com.github.curioustechizen.ago.RelativeTimeTextView
+				android:id="@+id/tile_last_sync" android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentBottom="true"
+				android:layout_alignParentEnd="true"
+				android:layout_alignParentRight="true" android:ellipsize="end"
+				android:gravity="end" android:text="Last sync: "
+				android:textAppearance="?android:textAppearanceSmall"
+				android:textIsSelectable="true" android:textStyle="italic" />
 
-            <com.github.lzyzsd.circleprogress.ArcProgress
-                android:id="@+id/tile_dashboard_storage_nvram_arcprogress"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:background="@android:color/transparent"
-                custom:arc_bottom_text="NVRAM"
-                custom:arc_finished_color="@color/arcprogress_finished"
-                custom:arc_max="100"
-                custom:arc_progress="0"
-                custom:arc_unfinished_color="@color/arcprogress_unfinished" />
-
-            <com.github.lzyzsd.circleprogress.ArcProgress
-                android:id="@+id/tile_dashboard_storage_jffs2_arcprogress"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_centerInParent="true"
-                android:background="@android:color/transparent"
-                custom:arc_bottom_text="JFFS2"
-                custom:arc_finished_color="@color/arcprogress_finished"
-                custom:arc_max="100"
-                custom:arc_progress="0"
-                custom:arc_unfinished_color="@color/arcprogress_unfinished" />
-
-            <com.github.lzyzsd.circleprogress.ArcProgress
-                android:id="@+id/tile_dashboard_storage_cifs_arcprogress"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:background="@android:color/transparent"
-                custom:arc_bottom_text="CIFS"
-                custom:arc_finished_color="@color/arcprogress_finished"
-                custom:arc_max="100"
-                custom:arc_progress="0"
-                custom:arc_unfinished_color="@color/arcprogress_unfinished" />
-
-            <ProgressBar
-                android:id="@+id/tile_dashboard_storage_loading_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:indeterminate="false" />
-
-            <com.github.curioustechizen.ago.RelativeTimeTextView
-                android:id="@+id/tile_last_sync"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:ellipsize="end"
-                android:gravity="end"
-                android:text="Last sync: "
-                android:textAppearance="?android:textAppearanceSmall"
-                android:textIsSelectable="true"
-                android:textStyle="italic" />
-
-        </RelativeLayout>
+		</RelativeLayout>
 
 
-    </LinearLayout>
+	</LinearLayout>
 </LinearLayout>

@@ -1,41 +1,39 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-Copyright (c) 2016 Armel Soro
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
--->
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (c) 2016 Armel Soro 
+	Permission is hereby granted, free of charge, to any person obtaining a copy 
+	of this software and associated documentation files (the "Software"), to 
+	deal in the Software without restriction, including without limitation the 
+	rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
+	sell copies of the Software, and to permit persons to whom the Software is 
+	furnished to do so, subject to the following conditions: The above copyright 
+	notice and this permission notice shall be included in all copies or substantial 
+	portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY 
+	OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
+	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+	IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+	DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, 
+	ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+	DEALINGS IN THE SOFTWARE. -->
 
 <resources>
-    <string name="define_needle" translatable="false" />
-    <!-- Author section -->
-    <string name="library_needle_author" translatable="false">Zsolt Safrany</string>
-    <string name="library_needle_authorWebsite" translatable="false">https://plus.google.com/+ZsoltSafrany</string>
-    <!-- Library section -->
-    <string name="library_needle_libraryName" translatable="false">Needle</string>
-    <string name="library_needle_libraryDescription" translatable="false">Multithreading library for Android.</string>
-    <string name="library_needle_libraryWebsite" translatable="false">https://zsoltsafrany.github.io/needle/</string>
-    <string name="library_needle_libraryVersion" translatable="false">1.0.0</string>
-    <!-- OpenSource section -->
-    <string name="library_needle_isOpenSource" translatable="false">true</string>
-    <string name="library_needle_repositoryLink" translatable="false">https://github.com/ZsoltSafrany/needle</string>
-    <!-- ClassPath for autoDetect section -->
-    <!--<string translatable="false" name="library_needle_classPath">com.facebook.maoni</string>-->
-    <!-- License section -->
-    <string name="library_needle_licenseId" translatable="false">mit</string>
-    <!-- Custom variables section -->
+	<string name="define_needle" translatable="false" />
+	<!-- Author section -->
+	<string name="library_needle_author" translatable="false">Zsolt Safrany</string>
+	<string name="library_needle_authorWebsite" translatable="false">https://plus.google.com/+ZsoltSafrany</string>
+	<!-- Library section -->
+	<string name="library_needle_libraryName" translatable="false">Needle</string>
+	<string name="library_needle_libraryDescription"
+		translatable="false">Multithreading library for Android.</string>
+	<string name="library_needle_libraryWebsite"
+		translatable="false">https://zsoltsafrany.github.io/needle/</string>
+	<string name="library_needle_libraryVersion"
+		translatable="false">1.0.0</string>
+	<!-- OpenSource section -->
+	<string name="library_needle_isOpenSource" translatable="false">true</string>
+	<string name="library_needle_repositoryLink"
+		translatable="false">https://github.com/ZsoltSafrany/needle</string>
+	<!-- ClassPath for autoDetect section -->
+	<!--<string translatable="false" name="library_needle_classPath">com.facebook.maoni</string> -->
+	<!-- License section -->
+	<string name="library_needle_licenseId" translatable="false">mit</string>
+	<!-- Custom variables section -->
 </resources>

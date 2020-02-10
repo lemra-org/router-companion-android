@@ -1,110 +1,85 @@
-<?xml version="1.0" encoding="utf-8"?> <!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
+<?xml version="1.0" encoding="utf-8"?> <!-- DD-WRT Companion is a mobile app that lets you connect to, monitor and 
+	manage your DD-WRT routers on the go. Copyright (C) 2014 Armel Soro This 
+	program is free software: you can redistribute it and/or modify it under 
+	the terms of the GNU General Public License as published by the Free Software 
+	Foundation, either version 3 of the License, or (at your option) any later 
+	version. This program is distributed in the hope that it will be useful, 
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+	or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for 
+	more details. You should have received a copy of the GNU General Public License 
+	along with this program. If not, see <http://www.gnu.org/licenses/>. Contact 
+	Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:ads="http://schemas.android.com/apk/res-auto"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" android:orientation="vertical"
+	tools:context="org.rm3l.router_companion.help.HelpActivity">
 
-Copyright (C) 2014  Armel Soro
+	<androidx.appcompat.widget.Toolbar
+		android:id="@+id/web_toolbar" android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="?attr/colorPrimary"
+		android:minHeight="?attr/actionBarSize" />
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+	<com.google.android.gms.ads.AdView
+		android:id="@+id/web_adView" android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:layout_marginBottom="5dp" android:layout_marginTop="5dp"
+		android:visibility="gone" ads:adSize="BANNER"
+		ads:adUnitId="@string/banner_ad_unit_id_help" />
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+	<RelativeLayout android:layout_width="match_parent"
+		android:layout_height="match_parent">
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+		<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+			android:id="@+id/web_webview_swiperefresh"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
 
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="org.rm3l.router_companion.help.HelpActivity">
+			<WebView android:id="@+id/web_webview"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent" />
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/web_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize" />
+		</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/web_adView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:visibility="gone"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_unit_id_help" />
+		<com.google.android.material.floatingactionbutton.FloatingActionButton
+			android:id="@+id/button_check_updates"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentEnd="true"
+			android:layout_alignParentRight="true"
+			android:layout_gravity="end|bottom"
+			android:layout_margin="@dimen/fab_compat_margin"
+			android:layout_marginBottom="@dimen/add_button_margin"
+			android:layout_marginEnd="@dimen/add_button_margin"
+			android:layout_marginRight="@dimen/add_button_margin"
+			android:clickable="true"
+			android:contentDescription="@string/check_updates"
+			android:src="@drawable/ic_action_action_system_update_tv"
+			android:tint="@android:color/white" android:visibility="gone"
+			app:elevation="6dp" app:layout_anchorGravity="bottom|right|end"
+			app:pressedTranslationZ="12dp" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+		<!-- Error message placeholder -->
+		<TextView android:id="@+id/error_placeholder"
+			android:layout_width="300dp" android:layout_height="wrap_content"
+			android:layout_gravity="center" android:ellipsize="end"
+			android:gravity="center" android:maxLines="1"
+			android:text="@string/error_placeholder"
+			android:textColor="@color/ddwrt_purple"
+			android:textIsSelectable="true" android:textStyle="bold"
+			android:visibility="gone" />
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/web_webview_swiperefresh"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+		<ProgressBar android:id="@+id/loading_view"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true" android:indeterminate="false"
+			android:visibility="gone" />
 
-            <WebView
-                android:id="@+id/web_webview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/button_check_updates"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_gravity="end|bottom"
-            android:layout_margin="@dimen/fab_compat_margin"
-            android:layout_marginBottom="@dimen/add_button_margin"
-            android:layout_marginEnd="@dimen/add_button_margin"
-            android:layout_marginRight="@dimen/add_button_margin"
-            android:clickable="true"
-            android:contentDescription="@string/check_updates"
-            android:src="@drawable/ic_action_action_system_update_tv"
-            android:tint="@android:color/white"
-            android:visibility="gone"
-            app:elevation="6dp"
-            app:layout_anchorGravity="bottom|right|end"
-            app:pressedTranslationZ="12dp" />
-
-        <!-- Error message placeholder -->
-        <TextView
-            android:id="@+id/error_placeholder"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="1"
-            android:text="@string/error_placeholder"
-            android:textColor="@color/ddwrt_purple"
-            android:textIsSelectable="true"
-            android:textStyle="bold"
-            android:visibility="gone" />
-
-        <ProgressBar
-            android:id="@+id/loading_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:indeterminate="false"
-            android:visibility="gone" />
-
-    </RelativeLayout>
+	</RelativeLayout>
 
 </LinearLayout>

@@ -30,42 +30,40 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.rm3l.router_companion.fragments.AbstractBaseFragment;
 
-/**
- * Abstract Sorting strategy: Indicates the strategy to use for sorting tabs in the UI
- */
+/** Abstract Sorting strategy: Indicates the strategy to use for sorting tabs in the UI */
 public abstract class SortingStrategy {
 
-    public static final String DEFAULT = DDWRTSortingStrategy.class.getSimpleName();
+  public static final String DEFAULT = DDWRTSortingStrategy.class.getSimpleName();
 
-    @NonNull
-    public abstract String getDisplayName();
+  @NonNull
+  public abstract String getDisplayName();
 
-    @NonNull
-    public abstract String getShortDescription();
+  @NonNull
+  public abstract String getShortDescription();
 
-    @NonNull
-    public final AbstractBaseFragment[] sort(@NonNull final AbstractBaseFragment[] tabs) {
-        if (doCompare()) {
+  @NonNull
+  public final AbstractBaseFragment[] sort(@NonNull final AbstractBaseFragment[] tabs) {
+    if (doCompare()) {
 
-            final TreeMap<String, AbstractBaseFragment> tabsMap = Maps.newTreeMap(this.getComparator());
-            for (int i = 0; i < tabs.length; i++) {
-                final AbstractBaseFragment tab = tabs[i];
-                tabsMap.put(tab.getTabTitle().toString().toLowerCase(), tab);
-            }
+      final TreeMap<String, AbstractBaseFragment> tabsMap = Maps.newTreeMap(this.getComparator());
+      for (int i = 0; i < tabs.length; i++) {
+        final AbstractBaseFragment tab = tabs[i];
+        tabsMap.put(tab.getTabTitle().toString().toLowerCase(), tab);
+      }
 
-            final AbstractBaseFragment[] output = new AbstractBaseFragment[tabsMap.size()];
-            int j = 0;
-            for (Map.Entry<String, AbstractBaseFragment> ddWRTBaseFragmentEntry : tabsMap.entrySet()) {
-                output[j++] = ddWRTBaseFragmentEntry.getValue();
-            }
-            return output;
-        }
-
-        return tabs;
+      final AbstractBaseFragment[] output = new AbstractBaseFragment[tabsMap.size()];
+      int j = 0;
+      for (Map.Entry<String, AbstractBaseFragment> ddWRTBaseFragmentEntry : tabsMap.entrySet()) {
+        output[j++] = ddWRTBaseFragmentEntry.getValue();
+      }
+      return output;
     }
 
-    protected abstract boolean doCompare();
+    return tabs;
+  }
 
-    @Nullable
-    protected abstract Comparator<String> getComparator();
+  protected abstract boolean doCompare();
+
+  @Nullable
+  protected abstract Comparator<String> getComparator();
 }

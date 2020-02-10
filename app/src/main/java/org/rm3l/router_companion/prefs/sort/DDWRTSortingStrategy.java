@@ -26,34 +26,30 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.util.Comparator;
 
-/**
- * DDWRT-style order
- */
+/** DDWRT-style order */
 public class DDWRTSortingStrategy extends SortingStrategy {
 
-    @NonNull
-    @Override
-    public String getDisplayName() {
-        return "DD-WRT style";
-    }
+  @NonNull
+  @Override
+  public String getDisplayName() {
+    return "DD-WRT style";
+  }
 
-    @NonNull
-    @Override
-    public String getShortDescription() {
-        return "Same order as in DD-WRT Web Gui";
-    }
+  @NonNull
+  @Override
+  public String getShortDescription() {
+    return "Same order as in DD-WRT Web Gui";
+  }
 
-    @Override
-    protected boolean doCompare() {
-        /**
-         * Already in the order we want
-         */
-        return false;
-    }
+  @Override
+  protected boolean doCompare() {
+    /** Already in the order we want */
+    return false;
+  }
 
-    @Nullable
-    @Override
-    protected Comparator<String> getComparator() {
-        return null;
-    }
+  @Nullable
+  @Override
+  protected Comparator<String> getComparator() {
+    return null;
+  }
 }

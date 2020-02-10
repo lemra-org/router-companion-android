@@ -8,7 +8,6 @@ import android.app.DatePickerDialog
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.fragment.app.DialogFragment
-import android.util.Log
 import android.widget.DatePicker
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
@@ -17,7 +16,7 @@ const val START_MILLIS = "START_MILLIS"
 const val MIN_MILLIS = "MIN_MILLIS"
 const val MAX_MILLIS = "MAX_MILLIS"
 
-class DatePickerFragment: DialogFragment(), OnDateSetListener {
+class DatePickerFragment : DialogFragment(), OnDateSetListener {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val calendar = Calendar.getInstance()
@@ -26,7 +25,7 @@ class DatePickerFragment: DialogFragment(), OnDateSetListener {
             calendar.timeInMillis = bundleArguments.getLong(START_MILLIS)
         }
         val datePickerDialog = DatePickerDialog(activity,
-                bundleArguments?.getParcelable<AbstractDatePickerListener>(DATE_PICKER_LISTENER)?:this,
+                bundleArguments?.getParcelable<AbstractDatePickerListener>(DATE_PICKER_LISTENER) ?: this,
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH))
@@ -48,10 +47,12 @@ class DatePickerFragment: DialogFragment(), OnDateSetListener {
         private val TAG = DatePickerFragment::class.java.simpleName
 
         @JvmStatic
-        fun newInstance(datePickerListener: AbstractDatePickerListener,
-                        startFromMillis: Long? = null,
-                        minMillis: Long? = null,
-                        maxMillis: Long? = null):
+        fun newInstance(
+            datePickerListener: AbstractDatePickerListener,
+            startFromMillis: Long? = null,
+            minMillis: Long? = null,
+            maxMillis: Long? = null
+        ):
                 DatePickerFragment {
             val fragment = DatePickerFragment()
             val bundle = Bundle()
@@ -65,7 +66,7 @@ class DatePickerFragment: DialogFragment(), OnDateSetListener {
     }
 }
 
-abstract class AbstractDatePickerListener: OnDateSetListener, Parcelable {
+abstract class AbstractDatePickerListener : OnDateSetListener, Parcelable {
     override fun writeToParcel(dest: Parcel?, flags: Int) { /*no members => Nothing to do*/ }
     override fun describeContents() = 0
 }

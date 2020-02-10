@@ -3,7 +3,6 @@ package org.rm3l.router_companion.job.speedtest
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.core.util.Pair
-import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.evernote.android.job.DailyJob
 import com.evernote.android.job.DailyJob.DailyJobResult.CANCEL
@@ -111,9 +110,9 @@ class RouterSpeedTestAutoRunnerJob {
         @JvmStatic
         fun schedule(routerUuid: String, autoFlag: Boolean, schedule: String) {
             cancelAllSchedules(routerUuid)
-            //This is a premium feature
+            // This is a premium feature
             if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                FirebaseCrashlytics.getInstance().log( "Speed Test auto measures feature is *premium*!")
+                FirebaseCrashlytics.getInstance().log("Speed Test auto measures feature is *premium*!")
                 return
             }
 
@@ -133,7 +132,7 @@ class RouterSpeedTestAutoRunnerJob {
         @JvmStatic
         @Throws(Exception::class)
         fun runPing(context: Context, mOriginalRouter: Router, mRouterCopy: Router, server: String?): PingRTT {
-            FirebaseCrashlytics.getInstance().log( "runPing: " + server)
+            FirebaseCrashlytics.getInstance().log("runPing: " + server)
 
             if (server.isNullOrBlank()) {
                 throw IllegalArgumentException("No Server specified")
@@ -151,7 +150,7 @@ class RouterSpeedTestAutoRunnerJob {
                     String.format(Locale.US, PingFromRouterAction.PING_CMD_TO_FORMAT,
                             PingFromRouterAction.MAX_PING_PACKETS_TO_SEND, server))
             if (pingOutput == null || pingOutput.size < 2) {
-                //Nothing - abort right now with an error message
+                // Nothing - abort right now with an error message
                 throw SpeedTestException("Unable to contact remote server")
             }
 
@@ -166,9 +165,8 @@ class RouterSpeedTestAutoRunnerJob {
                         pingRTT.packetLoss = Integer.parseInt(packetLossStr.replace("% packet loss".toRegex(), "")).toFloat()
                     } catch (nfe: NumberFormatException) {
                         nfe.printStackTrace()
-                        //No worries
+                        // No worries
                     }
-
                 }
             }
 
@@ -196,30 +194,30 @@ class RouterSpeedTestAutoRunnerJob {
         @Throws(Exception::class)
         fun doRunSpeedTest(context: Context, routerUuid: String?) {
             val executionDate = Date()
-            FirebaseCrashlytics.getInstance().log( "executionDate: " + executionDate)
+            FirebaseCrashlytics.getInstance().log("executionDate: " + executionDate)
             if (routerUuid == null) {
                 throw IllegalArgumentException("routerUuid must not be NULL")
             }
             try {
                 ReportingUtils.reportEvent(ReportingUtils.EVENT_SPEEDTEST, mapOf("Action" to "Run"))
             } catch (e: Exception) {
-                //No worries
+                // No worries
             }
 
             val mDao = RouterManagementActivity.getDao(context)
             val mOriginalRouter = mDao.getRouter(routerUuid)
             if (mOriginalRouter == null || mOriginalRouter.isArchived) {
-                FirebaseCrashlytics.getInstance().log( "router NOT found (NULL or archived): $routerUuid")
+                FirebaseCrashlytics.getInstance().log("router NOT found (NULL or archived): $routerUuid")
                 return
             }
             val isDemoRouter = Utils.isDemoRouter(mOriginalRouter)
             if (isDemoRouter || BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                 if (mDao.getSpeedTestResultsByRouter(mOriginalRouter.uuid).size >= MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION) {
                     if (isDemoRouter) {
-                        FirebaseCrashlytics.getInstance().log( "You cannot have more than $MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION " +
+                        FirebaseCrashlytics.getInstance().log("You cannot have more than $MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION " +
                                 "Speed Test results for the Demo Router: $routerUuid")
                     } else {
-                        FirebaseCrashlytics.getInstance().log( "[PREMIUM] Save more SpeedTest runs: $routerUuid")
+                        FirebaseCrashlytics.getInstance().log("[PREMIUM] Save more SpeedTest runs: $routerUuid")
                     }
                     return
                 }
@@ -238,7 +236,7 @@ class RouterSpeedTestAutoRunnerJob {
                 var pingServerCountry = serverSetting
                 var wanLatencyResults: PingRTT? = null
                 if (ROUTER_SPEED_TEST_SERVER_AUTO == serverSetting) {
-                    //TODO Remove this block now that users can pick a server from a separate list
+                    // TODO Remove this block now that users can pick a server from a separate list
                     // (intended for auto-measurements solely)
                     // Iterate over each server to determine the closest one,
                     // in terms of ping latency
@@ -271,8 +269,8 @@ class RouterSpeedTestAutoRunnerJob {
                 } else {
 //                    pingServerCountry = serverSetting
                     if (ROUTER_SPEED_TEST_SERVER_RANDOM == serverSetting) {
-                        //TODO Remove this block now that users can pick a server from a separate list
-                        //Pick one randomly
+                        // TODO Remove this block now that users can pick a server from a separate list
+                        // Pick one randomly
                         val rowKeySet = SERVERS.rowKeySet()
                         pingServerCountry = Lists.newArrayList<String>(rowKeySet)[RANDOM.nextInt(rowKeySet.size)]
                     }
@@ -292,13 +290,13 @@ class RouterSpeedTestAutoRunnerJob {
                 }
                 speedTestResult.setWanPingRTT(wanLatencyResults)
 
-                //WAN DL / UL: algorithm here: https://speedof.me/howitworks.html
+                // WAN DL / UL: algorithm here: https://speedof.me/howitworks.html
                 val userDefinedRouterSpeedTestMaxFileSizeMB = mRouterPreferences?.getLong(ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB,
                         ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB_DEFAULT) ?: ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB_DEFAULT
                 val userDefinedRouterSpeedTestDurationThresholdSeconds =
                         mRouterPreferences?.getString(ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS,
-                                ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT)?.toLong() ?:
-                                ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT.toLong()
+                                ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT)?.toLong()
+                                ?: ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT.toLong()
 
                 var pairAcceptedForComputation: Pair<Long, Long>? = null
 
@@ -327,7 +325,7 @@ class RouterSpeedTestAutoRunnerJob {
                         "mPossibleFileSizes: " + Arrays.toString(mPossibleFileSizes))
 
                 for (possibleFileSize in mPossibleFileSizes) {
-                    //Measure time to download file of the specified type
+                    // Measure time to download file of the specified type
                     //
                     //                    final String remoteFileName = getRemoteFileName(possibleFileSize);
 
@@ -343,11 +341,11 @@ class RouterSpeedTestAutoRunnerJob {
                         cmdExecOutput = SSHUtils.getManualProperty(context, mRouterCopy,
                                 context.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
                                 Joiner.on(" && ").skipNulls(), "DATE_START=$(/bin/date +\"%s\")",
-                                //seconds since 1970-01-01 00:00:00 UTC
+                                // seconds since 1970-01-01 00:00:00 UTC
                                 String.format("/usr/bin/wget -qO /dev/null \"%s\" > /dev/null 2>&1 ",
                                         completeServerUrl), "DATE_END=$(/bin/date +\"%s\")",
-                                //seconds since 1970-01-01 00:00:00 UTC
-                                "/bin/echo $((\${DATE_END}-\${DATE_START}))", //number of seconds
+                                // seconds since 1970-01-01 00:00:00 UTC
+                                "/bin/echo $((\${DATE_END}-\${DATE_START}))", // number of seconds
                                 "/bin/echo $?")
                     }
 
@@ -369,7 +367,7 @@ class RouterSpeedTestAutoRunnerJob {
                         throw SpeedTestException("Unexpected output - please try again later.")
                     }
 
-                    FirebaseCrashlytics.getInstance().log( String.format(Locale.US,
+                    FirebaseCrashlytics.getInstance().log(String.format(Locale.US,
                             "[SpeedTest] Downloaded %d MB of data in %d seconds. Download URL is: \"%s\"",
                             possibleFileSize, elapsedSeconds, completeServerUrl))
 
@@ -377,7 +375,7 @@ class RouterSpeedTestAutoRunnerJob {
                     speedTestResult.setWanDLDuration(elapsedSeconds)
 
                     pairAcceptedForComputation = Pair.create(possibleFileSize, elapsedSeconds)
-                    //Stop conditions: time_to_dl >= threshold or fileSize >= possibleFileSize
+                    // Stop conditions: time_to_dl >= threshold or fileSize >= possibleFileSize
                     if (possibleFileSize >= userDefinedRouterSpeedTestMaxFileSizeMB || elapsedSeconds >= userDefinedRouterSpeedTestDurationThresholdSeconds) {
                         break
                     }
@@ -392,12 +390,12 @@ class RouterSpeedTestAutoRunnerJob {
                     speedTestResult.setWanDl(wanDl)
                 }
 
-                //3- WAN UL
+                // 3- WAN UL
                 //                publishProgress(TEST_WAN_UL);
-                //TODO //FIXME Use real data
+                // TODO //FIXME Use real data
                 speedTestResult.setWanUl(Random().nextInt(27) * 1024 xor 5)
 
-                //Persist speed test result
+                // Persist speed test result
                 val speedTestResultToPersist = SpeedTestResult(mOriginalRouter.uuid,
                         SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(executionDate),
                         server ?: "", speedTestResult.getWanPing()!!, speedTestResult.getWanDl()!!,
@@ -430,13 +428,11 @@ class RouterSpeedTestAutoRunnerJob {
 
                 mDao.insertSpeedTestResult(speedTestResultToPersist)
 
-                //Request Backup
+                // Request Backup
                 Utils.requestBackup(context)
-
             } finally {
                 mRouterCopy.destroyAllSessions()
             }
-
         }
     }
 }
@@ -467,12 +463,12 @@ class RouterSpeedTestRunnerDailyJob : DailyJob(), RouterCompanionJob {
             val routerUuid = params.extras.getString(ROUTER_SELECTED, null) ?: return CANCEL
             val router = RouterManagementActivity.getDao(context).getRouter(routerUuid)
             if (router == null || router.isArchived) {
-                FirebaseCrashlytics.getInstance().log( "router is NULL or archived => cancelling daily job")
+                FirebaseCrashlytics.getInstance().log("router is NULL or archived => cancelling daily job")
                 return CANCEL
             }
             RouterSpeedTestAutoRunnerJob.doRunSpeedTest(context, routerUuid)
         } catch (e: Exception) {
-            //Reschedule
+            // Reschedule
             FirebaseCrashlytics.getInstance().recordException(e)
         }
         return SUCCESS
@@ -499,9 +495,9 @@ class RouterSpeedTestRunnerPeriodicJob : Job(), RouterCompanionJob {
                         MONTHLY -> TimeUnit.DAYS.toMillis(31L)
                         else -> null
                     }
-            FirebaseCrashlytics.getInstance().log( "intervalMs : $intervalMs")
+            FirebaseCrashlytics.getInstance().log("intervalMs : $intervalMs")
             if (intervalMs == null) {
-                FirebaseCrashlytics.getInstance().log( "intervalMs is NULL => nothing scheduled")
+                FirebaseCrashlytics.getInstance().log("intervalMs is NULL => nothing scheduled")
                 return
             }
             JobRequest.Builder(RouterSpeedTestAutoRunnerJob.getActualRouterJobTag(TAG, routerUuid))
@@ -519,19 +515,18 @@ class RouterSpeedTestRunnerPeriodicJob : Job(), RouterCompanionJob {
             val routerUuid = params.extras.getString(ROUTER_SELECTED, null) ?: return Result.FAILURE
             val router = RouterManagementActivity.getDao(context).getRouter(routerUuid)
             if (router == null || router.isArchived) {
-                FirebaseCrashlytics.getInstance().log( "router is NULL or archived => cancelling periodic job")
+                FirebaseCrashlytics.getInstance().log("router is NULL or archived => cancelling periodic job")
                 return Result.FAILURE
             }
             RouterSpeedTestAutoRunnerJob.doRunSpeedTest(context,
                     params.extras.getString(ROUTER_SELECTED, null))
         } catch (e: Exception) {
-            //Reschedule
+            // Reschedule
             FirebaseCrashlytics.getInstance().recordException(e)
         }
         return Result.SUCCESS
     }
 }
-
 
 class RouterSpeedTestRunnerOneShotJob : Job(), RouterCompanionJob {
     override fun onRunJob(params: Params): Result {

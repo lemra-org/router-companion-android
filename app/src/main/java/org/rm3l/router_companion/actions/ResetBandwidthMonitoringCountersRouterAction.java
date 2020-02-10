@@ -33,41 +33,46 @@ import org.rm3l.router_companion.utils.SSHUtils;
 
 public class ResetBandwidthMonitoringCountersRouterAction extends AbstractRouterAction<Void> {
 
-    @NonNull
-    private final Context mContext;
+  @NonNull private final Context mContext;
 
-    public ResetBandwidthMonitoringCountersRouterAction(Router router, @NonNull Context context,
-            @Nullable RouterActionListener listener, @NonNull SharedPreferences globalSharedPreferences) {
-        super(router, listener, RESET_COUNTERS, globalSharedPreferences);
-        this.mContext = context;
+  public ResetBandwidthMonitoringCountersRouterAction(
+      Router router,
+      @NonNull Context context,
+      @Nullable RouterActionListener listener,
+      @NonNull SharedPreferences globalSharedPreferences) {
+    super(router, listener, RESET_COUNTERS, globalSharedPreferences);
+    this.mContext = context;
+  }
+
+  @NonNull
+  @Override
+  protected RouterActionResult<Void> doActionInBackground() {
+    Exception exception = null;
+    try {
+      final String[] exitStatus =
+          SSHUtils.getManualProperty(
+              mContext,
+              router,
+              globalSharedPreferences,
+              "rm -f " + WirelessClientsTile.USAGE_DB + "; echo $?");
+
+      if (exitStatus == null || exitStatus.length == 0) {
+        throw new IllegalStateException("Unable to get the Reset Command Status.");
+      }
+      if (!"0".equals(exitStatus[0])) {
+        throw new IllegalStateException("Command execution status: " + exitStatus[0]);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      exception = e;
     }
 
-    @NonNull
-    @Override
-    protected RouterActionResult<Void> doActionInBackground() {
-        Exception exception = null;
-        try {
-            final String[] exitStatus =
-                    SSHUtils.getManualProperty(mContext, router, globalSharedPreferences,
-                            "rm -f " + WirelessClientsTile.USAGE_DB + "; echo $?");
+    return new RouterActionResult<>(null, exception);
+  }
 
-            if (exitStatus == null || exitStatus.length == 0) {
-                throw new IllegalStateException("Unable to get the Reset Command Status.");
-            }
-            if (!"0".equals(exitStatus[0])) {
-                throw new IllegalStateException("Command execution status: " + exitStatus[0]);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            exception = e;
-        }
-
-        return new RouterActionResult<>(null, exception);
-    }
-
-    @Nullable
-    @Override
-    protected Context getContext() {
-        return mContext;
-    }
+  @Nullable
+  @Override
+  protected Context getContext() {
+    return mContext;
+  }
 }
