@@ -1,7 +1,5 @@
 package org.rm3l.router_companion.tiles.status.wireless.filter.impl
 
-import com.google.common.base.Predicate
-import com.google.common.collect.Sets
 import org.rm3l.router_companion.resources.Device
 import org.rm3l.router_companion.tiles.status.wireless.filter.ClientsFilterVisitor
 

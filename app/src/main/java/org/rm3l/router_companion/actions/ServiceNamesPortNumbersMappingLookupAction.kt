@@ -7,12 +7,14 @@ import org.rm3l.router_companion.api.iana.query
 import org.rm3l.router_companion.resources.conn.Router
 import org.rm3l.router_companion.utils.NetworkUtils
 
-class ServiceNamesPortNumbersMappingLookupAction(router: Router,
-                                                 listener: RouterActionListener?,
-                                                 globalSharedPreferences: SharedPreferences,
-                                                 val ports: Collection<Long>? = null,
-                                                 val protocols: Collection<Protocol>? = null,
-                                                 val services: Collection<String>? = null) :
+class ServiceNamesPortNumbersMappingLookupAction(
+    router: Router,
+    listener: RouterActionListener?,
+    globalSharedPreferences: SharedPreferences,
+    val ports: Collection<Long>? = null,
+    val protocols: Collection<Protocol>? = null,
+    val services: Collection<String>? = null
+) :
         AbstractRouterAction<Void?>(router, listener, SERVICE_NAMES_PORT_NUMBERS_LOOKUP, globalSharedPreferences) {
 
     override fun doActionInBackground(): RouterActionResult<Void?> {
@@ -26,7 +28,7 @@ class ServiceNamesPortNumbersMappingLookupAction(router: Router,
                     protocols = this.protocols,
                     services = this.services?.map { it.toLowerCase() }).execute()
             NetworkUtils.checkResponseSuccessful(response)
-            val body = response.body()?:throw IllegalStateException("Empty response")
+            val body = response.body() ?: throw IllegalStateException("Empty response")
             val records = body.data.records
             if (records.isEmpty()) {
                 throw IllegalArgumentException("No mapping found")
@@ -47,5 +49,4 @@ class ServiceNamesPortNumbersMappingLookupAction(router: Router,
         }
         return RouterActionResult(null, exception)
     }
-
 }

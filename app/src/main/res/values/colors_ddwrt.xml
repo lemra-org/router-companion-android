@@ -1,45 +1,35 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
-
-Copyright (C) 2014  Armel Soro
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
 <resources>
 
-    <color name="ddwrt_50">#B4D4F0</color>
-    <color name="ddwrt_100">#74B0E3</color>
-    <color name="ddwrt_200">#4595D9</color>
-    <color name="ddwrt_300">#2471B3</color>
-    <color name="ddwrt_400">#1F6199</color>
-    <color name="ddwrt_500">#1A5180</color>
-    <color name="ddwrt_600">#154167</color>
-    <color name="ddwrt_700">#10314D</color>
-    <color name="ddwrt_800">#0A2134</color>
-    <color name="ddwrt_900">#05111A</color>
-    <color name="ddwrt_A100">#B4D4F0</color>
-    <color name="ddwrt_A200">#74B0E3</color>
-    <color name="ddwrt_A400">#1F6199</color>
-    <color name="ddwrt_A700">#10314D</color>
+	<color name="ddwrt_50">#B4D4F0</color>
+	<color name="ddwrt_100">#74B0E3</color>
+	<color name="ddwrt_200">#4595D9</color>
+	<color name="ddwrt_300">#2471B3</color>
+	<color name="ddwrt_400">#1F6199</color>
+	<color name="ddwrt_500">#1A5180</color>
+	<color name="ddwrt_600">#154167</color>
+	<color name="ddwrt_700">#10314D</color>
+	<color name="ddwrt_800">#0A2134</color>
+	<color name="ddwrt_900">#05111A</color>
+	<color name="ddwrt_A100">#B4D4F0</color>
+	<color name="ddwrt_A200">#74B0E3</color>
+	<color name="ddwrt_A400">#1F6199</color>
+	<color name="ddwrt_A700">#10314D</color>
 
-    <color name="ddwrt_primary">@color/ddwrt_500</color>
-    <color name="ddwrt_tile_title">@color/ddwrt_200</color>
-    <color name="ddwrt_statusbar">@color/ddwrt_700</color>
+	<color name="ddwrt_primary">@color/ddwrt_500</color>
+	<color name="ddwrt_tile_title">@color/ddwrt_200</color>
+	<color name="ddwrt_statusbar">@color/ddwrt_700</color>
 
-    <color name="ddwrt_color_accent">@color/ddwrt_200</color>
+	<color name="ddwrt_color_accent">@color/ddwrt_200</color>
 
 </resources>

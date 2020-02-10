@@ -1,193 +1,136 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
 
-Copyright (C) 2014  Armel Soro
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/tile_status_time" android:layout_width="match_parent"
+	android:layout_height="wrap_content" android:baselineAligned="false"
+	android:orientation="vertical">
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+	<LinearLayout android:id="@+id/tile_status_time_hdr"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:paddingTop="4.0dip">
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+		<TextView android:id="@+id/tile_status_time_title"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:layout_gravity="start"
+			android:ellipsize="end" android:maxLines="1"
+			android:text="@string/time_settings"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textIsSelectable="true" android:textStyle="bold" />
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	</LinearLayout>
 
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
+	<ProgressBar android:id="@+id/tile_progress_bar"
+		style="?android:attr/progressBarStyleHorizontal"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="8.0dip" android:layout_marginTop="8.0dip"
+		android:indeterminate="false" android:indeterminateOnly="false" />
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tile_status_time"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:baselineAligned="false"
-    android:orientation="vertical">
+	<!-- Error message placeholder -->
+	<TextView android:id="@+id/tile_status_time_error"
+		android:layout_width="300dp" android:layout_height="wrap_content"
+		android:layout_gravity="center" android:ellipsize="end"
+		android:gravity="center" android:maxLines="1"
+		android:text="@string/error_placeholder"
+		android:textColor="@color/ddwrt_purple"
+		android:textIsSelectable="true" android:textStyle="bold"
+		android:visibility="gone" />
 
-    <LinearLayout
-        android:id="@+id/tile_status_time_hdr"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="4.0dip">
+	<RelativeLayout android:layout_width="match_parent"
+		android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/tile_status_time_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="@string/time_settings"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textIsSelectable="true"
-            android:textStyle="bold" />
+		<GridLayout android:id="@+id/tile_status_time_grid_layout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:columnCount="2"
+			android:visibility="gone">
 
-    </LinearLayout>
+			<!-- Time -->
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="8.0dip"
+				android:layout_marginRight="8.0dip" android:text="Time"
+				android:textStyle="bold" />
 
-    <ProgressBar
-        android:id="@+id/tile_progress_bar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8.0dip"
-        android:layout_marginTop="8.0dip"
-        android:indeterminate="false"
-        android:indeterminateOnly="false" />
+			<TextView android:id="@+id/tile_status_time_current_time"
+				android:layout_width="0dip" android:layout_gravity="fill_horizontal"
+				android:text="@string/loading" android:textIsSelectable="true" />
 
-    <!-- Error message placeholder -->
-    <TextView
-        android:id="@+id/tile_status_time_error"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:maxLines="1"
-        android:text="@string/error_placeholder"
-        android:textColor="@color/ddwrt_purple"
-        android:textIsSelectable="true"
-        android:textStyle="bold"
-        android:visibility="gone" />
+			<!-- NTP Client -->
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="8.0dip"
+				android:layout_marginRight="8.0dip"
+				android:text="@string/ntp_client" android:textStyle="bold" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+			<TextView android:id="@+id/tile_status_time_ntp_client"
+				android:layout_width="0dip" android:layout_gravity="fill_horizontal"
+				android:text="@string/loading" android:textIsSelectable="true" />
 
-        <GridLayout
-            android:id="@+id/tile_status_time_grid_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:visibility="gone">
+			<!-- Timezone -->
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="8.0dip"
+				android:layout_marginRight="8.0dip"
+				android:text="@string/ntp_timezone" android:textStyle="bold" />
 
-            <!-- Time -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="Time"
-                android:textStyle="bold" />
+			<TextView android:id="@+id/tile_status_time_ntp_timezone"
+				android:layout_width="0dip" android:layout_gravity="fill_horizontal"
+				android:text="@string/loading" android:textIsSelectable="true" />
 
-            <TextView
-                android:id="@+id/tile_status_time_current_time"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading"
-                android:textIsSelectable="true" />
+			<!-- Summer Time (DST) -->
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="8.0dip"
+				android:layout_marginRight="8.0dip"
+				android:text="@string/ntp_summer_time" android:textStyle="bold" />
 
-            <!-- NTP Client -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/ntp_client"
-                android:textStyle="bold" />
+			<TextView android:id="@+id/tile_status_time_summertime"
+				android:layout_width="0dip" android:layout_gravity="fill_horizontal"
+				android:text="@string/loading" android:textIsSelectable="true" />
 
-            <TextView
-                android:id="@+id/tile_status_time_ntp_client"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading"
-                android:textIsSelectable="true" />
+			<!-- NTP Server -->
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="8.0dip"
+				android:layout_marginRight="8.0dip"
+				android:text="@string/ntp_time_server" android:textStyle="bold" />
 
-            <!-- Timezone -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/ntp_timezone"
-                android:textStyle="bold" />
+			<TextView android:id="@+id/tile_status_time_time_server"
+				android:layout_width="0dip" android:layout_gravity="fill_horizontal"
+				android:text="@string/loading" android:textIsSelectable="true" />
 
-            <TextView
-                android:id="@+id/tile_status_time_ntp_timezone"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading"
-                android:textIsSelectable="true" />
+		</GridLayout>
 
-            <!-- Summer Time (DST) -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/ntp_summer_time"
-                android:textStyle="bold" />
+		<ProgressBar
+			android:id="@+id/tile_status_time_loading_view"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true" />
 
-            <TextView
-                android:id="@+id/tile_status_time_summertime"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading"
-                android:textIsSelectable="true" />
+		<com.github.curioustechizen.ago.RelativeTimeTextView
+			android:id="@+id/tile_last_sync" android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentEnd="true"
+			android:layout_alignParentRight="true"
+			android:layout_below="@+id/tile_status_time_grid_layout"
+			android:layout_marginTop="5dp" android:ellipsize="end"
+			android:gravity="end" android:maxLines="1"
+			android:text="@string/last_sync"
+			android:textAppearance="?android:textAppearanceSmall"
+			android:textIsSelectable="true" android:textStyle="italic" />
 
-            <!-- NTP Server -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/ntp_time_server"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tile_status_time_time_server"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading"
-                android:textIsSelectable="true" />
-
-        </GridLayout>
-
-        <ProgressBar
-            android:id="@+id/tile_status_time_loading_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
-
-        <com.github.curioustechizen.ago.RelativeTimeTextView
-            android:id="@+id/tile_last_sync"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/tile_status_time_grid_layout"
-            android:layout_marginTop="5dp"
-            android:ellipsize="end"
-            android:gravity="end"
-            android:maxLines="1"
-            android:text="@string/last_sync"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textIsSelectable="true"
-            android:textStyle="italic" />
-
-    </RelativeLayout>
+	</RelativeLayout>
 
 </LinearLayout>

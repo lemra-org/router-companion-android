@@ -27,31 +27,29 @@ import androidx.annotation.Nullable;
 import java.util.Collections;
 import java.util.Comparator;
 
-/**
- * Reverses the natural order of the elements.
- */
+/** Reverses the natural order of the elements. */
 public class ReverseNaturalOrderSortingStrategy extends SortingStrategy {
 
-    @NonNull
-    @Override
-    public String getDisplayName() {
-        return "Reverse Natural Ordering";
-    }
+  @NonNull
+  @Override
+  public String getDisplayName() {
+    return "Reverse Natural Ordering";
+  }
 
-    @NonNull
-    @Override
-    public String getShortDescription() {
-        return "Reverse Alphabetical";
-    }
+  @NonNull
+  @Override
+  public String getShortDescription() {
+    return "Reverse Alphabetical";
+  }
 
-    @Override
-    protected boolean doCompare() {
-        return true;
-    }
+  @Override
+  protected boolean doCompare() {
+    return true;
+  }
 
-    @Nullable
-    @Override
-    protected Comparator<String> getComparator() {
-        return Collections.reverseOrder();
-    }
+  @Nullable
+  @Override
+  protected Comparator<String> getComparator() {
+    return Collections.reverseOrder();
+  }
 }

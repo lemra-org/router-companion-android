@@ -1,55 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:layout_marginLeft="10dp"
-    android:layout_marginStart="10dp">
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" android:orientation="vertical"
+	android:layout_marginLeft="10dp" android:layout_marginStart="10dp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?android:textAppearanceLarge"
-        android:textStyle="bold"
-        android:text="How it works"
-        android:layout_marginTop="3dp"/>
+	<TextView android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		style="?android:textAppearanceLarge" android:textStyle="bold"
+		android:text="How it works" android:layout_marginTop="3dp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?android:textAppearanceMedium"
-        android:textStyle="bold"
-        android:text="Latency Test"
-        android:layout_marginTop="3dp"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Latency and packet loss rate are measured with a Ping request against the selected server."/>
+	<TextView android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		style="?android:textAppearanceMedium" android:textStyle="bold"
+		android:text="Latency Test" android:layout_marginTop="3dp" />
+	<TextView android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="Latency and packet loss rate are measured with a Ping request against the selected server." />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?android:textAppearanceMedium"
-        android:textStyle="bold"
-        android:text="Download Test"
-        android:layout_marginTop="3dp"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="It starts by downloading the smallest sample size (10MB) and watches the download duration. If it takes less than the threshold specified below (default: 8 seconds), next sample data will be tried. The download speed is then based on the last sample data downloaded."/>
+	<TextView android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		style="?android:textAppearanceMedium" android:textStyle="bold"
+		android:text="Download Test" android:layout_marginTop="3dp" />
+	<TextView android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="It starts by downloading the smallest sample size (10MB) and watches the download duration. If it takes less than the threshold specified below (default: 8 seconds), next sample data will be tried. The download speed is then based on the last sample data downloaded." />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?android:textAppearanceMedium"
-        android:textStyle="bold"
-        android:text="Automatic measurements"
-        android:layout_marginTop="3dp"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="This allows your mobile device to periodically instruct your router to perform speed tests against a specific location server. Tests are run once a day."/>
+	<TextView android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		style="?android:textAppearanceMedium" android:textStyle="bold"
+		android:text="Automatic measurements" android:layout_marginTop="3dp" />
+	<TextView android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="This allows your mobile device to periodically instruct your router to perform speed tests against a specific location server. Tests are run once a day." />
 
 
 

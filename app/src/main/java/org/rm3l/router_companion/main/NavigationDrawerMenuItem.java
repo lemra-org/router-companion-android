@@ -23,16 +23,16 @@ package org.rm3l.router_companion.main;
 
 public class NavigationDrawerMenuItem {
 
-    public boolean isHeader;
+  public boolean isHeader;
 
-    public String title;
+  public String title;
 
-    public NavigationDrawerMenuItem(String title, boolean header) {
-        this.title = title;
-        this.isHeader = header;
-    }
+  public NavigationDrawerMenuItem(String title, boolean header) {
+    this.title = title;
+    this.isHeader = header;
+  }
 
-    public NavigationDrawerMenuItem(String title) {
-        this(title, false);
-    }
+  public NavigationDrawerMenuItem(String title) {
+    this(title, false);
+  }
 }

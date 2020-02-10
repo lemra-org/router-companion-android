@@ -26,21 +26,20 @@ import static org.rm3l.router_companion.fragments.status.StatusWirelessFragment.
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.loader.content.AsyncTaskLoader;
-import androidx.core.content.ContextCompat;
-import androidx.loader.content.Loader;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.loader.content.AsyncTaskLoader;
+import androidx.loader.content.Loader;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.util.List;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
@@ -53,247 +52,253 @@ import org.rm3l.router_companion.tiles.status.wan.WANConfigTile;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 
-/**
- *
- */
+/** */
 public class IfacesTile extends DDWRTTile<NVRAMInfo> {
 
-    private static final String LOG_TAG = IfacesTile.class.getSimpleName();
+  private static final String LOG_TAG = IfacesTile.class.getSimpleName();
 
-    protected boolean isThemeLight;
+  protected boolean isThemeLight;
 
-    protected ProgressBar mProgressBar;
+  protected ProgressBar mProgressBar;
 
-    protected TextView mProgressBarDesc;
+  protected TextView mProgressBarDesc;
 
-    private long mLastSync;
+  private long mLastSync;
 
-    public IfacesTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
-        super(parentFragment, arguments, router, R.layout.tile_status_bandwidth_ifaces, null);
+  public IfacesTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
+    super(parentFragment, arguments, router, R.layout.tile_status_bandwidth_ifaces, null);
 
-        isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
+    isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
-        mProgressBar =
-                (ProgressBar) layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view);
-        mProgressBar.setMax(100);
-        mProgressBarDesc =
-                (TextView) layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view_desc);
+    mProgressBar =
+        (ProgressBar) layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view);
+    mProgressBar.setMax(100);
+    mProgressBarDesc =
+        (TextView) layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view_desc);
 
-        if (isThemeLight) {
-            mProgressBarDesc.setTextColor(ContextCompat.getColor(mParentFragmentActivity, R.color.black));
-        } else {
-            mProgressBarDesc.setTextColor(ContextCompat.getColor(mParentFragmentActivity, R.color.white));
+    if (isThemeLight) {
+      mProgressBarDesc.setTextColor(ContextCompat.getColor(mParentFragmentActivity, R.color.black));
+    } else {
+      mProgressBarDesc.setTextColor(ContextCompat.getColor(mParentFragmentActivity, R.color.white));
+    }
+    mProgressBarDesc.setText("Loading...");
+  }
+
+  public NVRAMInfo doLoadInBackground() {
+    try {
+      FirebaseCrashlytics.getInstance()
+          .log(
+              "Init background loader for "
+                  + WANConfigTile.class
+                  + ": routerInfo="
+                  + mRouter
+                  + " / nbRunsLoader="
+                  + nbRunsLoader);
+
+      if (mRefreshing.getAndSet(true)) {
+        return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+      }
+      nbRunsLoader++;
+
+      updateProgressBarViewSeparator(0);
+
+      mLastSync = System.currentTimeMillis();
+
+      final NVRAMInfo nvramInfo = new NVRAMInfo();
+
+      NVRAMInfo nvramInfoTmp = null;
+      try {
+        nvramInfoTmp =
+            SSHUtils.getNVRamInfoFromRouter(
+                mParentFragmentActivity,
+                mRouter,
+                mGlobalPreferences,
+                NVRAMInfo.Companion.getLAN_IFNAME(),
+                NVRAMInfo.Companion.getLAN_IFNAMES(),
+                NVRAMInfo.Companion.getWAN_IFNAME(),
+                NVRAMInfo.Companion.getLANDEVS());
+      } finally {
+        if (nvramInfoTmp != null) {
+          nvramInfo.putAll(nvramInfoTmp);
         }
-        mProgressBarDesc.setText("Loading...");
-    }
 
-    public NVRAMInfo doLoadInBackground() {
-        try {
-            FirebaseCrashlytics.getInstance().log( "Init background loader for "
-                    + WANConfigTile.class
-                    + ": routerInfo="
-                    + mRouter
-                    + " / nbRunsLoader="
-                    + nbRunsLoader);
-
-            if (mRefreshing.getAndSet(true)) {
-                return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
-            }
-            nbRunsLoader++;
-
-            updateProgressBarViewSeparator(0);
-
-            mLastSync = System.currentTimeMillis();
-
-            final NVRAMInfo nvramInfo = new NVRAMInfo();
-
-            NVRAMInfo nvramInfoTmp = null;
-            try {
-                nvramInfoTmp =
-                        SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences,
-                                NVRAMInfo.Companion.getLAN_IFNAME(), NVRAMInfo.Companion.getLAN_IFNAMES(),
-                                NVRAMInfo.Companion.getWAN_IFNAME(), NVRAMInfo.Companion.getLANDEVS());
-            } finally {
-                if (nvramInfoTmp != null) {
-                    nvramInfo.putAll(nvramInfoTmp);
-                }
-
-                String landevs = nvramInfo.getProperty(NVRAMInfo.Companion.getLANDEVS(), null);
-                if (Strings.isNullOrEmpty(landevs)) {
-                    //Atheros
-                    landevs = nvramInfo.getProperty(NVRAMInfo.Companion.getLAN_IFNAMES(), null);
-                    if (!Strings.isNullOrEmpty(landevs)) {
-                        //noinspection ConstantConditions
-                        nvramInfo.setProperty(NVRAMInfo.Companion.getLANDEVS(), landevs);
-                    }
-                }
-                if (landevs != null) {
-                    final List<String> splitToList = SPLITTER.splitToList(landevs);
-                    if (splitToList != null && !splitToList.isEmpty()) {
-
-                        for (final String landev : splitToList) {
-                            if (landev == null || landev.isEmpty() ||
-                                    landev.toLowerCase().startsWith("vlan")) {
-                                continue;
-                            }
-                            //Also get Virtual Interfaces
-                            try {
-                                final String landevVifsKeyword = landev + "_vifs";
-                                final NVRAMInfo landevVifsNVRAMInfo =
-                                        SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                                                mGlobalPreferences, landevVifsKeyword);
-                                if (landevVifsNVRAMInfo == null) {
-                                    continue;
-                                }
-                                final String landevVifsNVRAMInfoProp =
-                                        landevVifsNVRAMInfo.getProperty(landevVifsKeyword,
-                                                RouterCompanionAppConstants.EMPTY_STRING);
-                                if (landevVifsNVRAMInfoProp == null) {
-                                    continue;
-                                }
-                                final List<String> list = SPLITTER.splitToList(landevVifsNVRAMInfoProp);
-                                if (list == null) {
-                                    continue;
-                                }
-                                for (final String landevVif : list) {
-                                    if (landevVif == null || landevVif.isEmpty()) {
-                                        continue;
-                                    }
-                                    landevs += (" " + landevVif);
-                                }
-                            } catch (final Exception e) {
-                                e.printStackTrace();
-                                //No worries
-                            }
-                        }
-                    }
-
-                    nvramInfo.setProperty(NVRAMInfo.Companion.getLANDEVS(), landevs);
-                }
-            }
-
-            if (nvramInfo.isEmpty()) {
-                throw new DDWRTNoDataException("No Data");
-            }
-
-            return nvramInfo;
-        } catch (@NonNull final Exception e) {
-            e.printStackTrace();
-            return new NVRAMInfo().setException(e);
+        String landevs = nvramInfo.getProperty(NVRAMInfo.Companion.getLANDEVS(), null);
+        if (Strings.isNullOrEmpty(landevs)) {
+          // Atheros
+          landevs = nvramInfo.getProperty(NVRAMInfo.Companion.getLAN_IFNAMES(), null);
+          if (!Strings.isNullOrEmpty(landevs)) {
+            //noinspection ConstantConditions
+            nvramInfo.setProperty(NVRAMInfo.Companion.getLANDEVS(), landevs);
+          }
         }
-    }
+        if (landevs != null) {
+          final List<String> splitToList = SPLITTER.splitToList(landevs);
+          if (splitToList != null && !splitToList.isEmpty()) {
 
-    @Override
-    public Integer getTileHeaderViewId() {
-        return R.id.tile_status_bandwidth_ifaces_hdr;
-    }
-
-    @Override
-    public Integer getTileTitleViewId() {
-        return R.id.tile_status_bandwidth_ifaces_title;
-    }
-
-    @Override
-    public void onLoadFinished(@NonNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
-
-        try {
-            //Set tiles
-            FirebaseCrashlytics.getInstance().log( "onLoadFinished: loader=" + loader + " / data=" + data);
-
-            layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view).setVisibility(View.GONE);
-            layout.findViewById(R.id.tile_status_bandwidth_ifaces_togglebutton_container)
-                    .setVisibility(View.VISIBLE);
-
-            mProgressBar.setVisibility(View.GONE);
-            mProgressBarDesc.setVisibility(View.GONE);
-
-            if (data == null) {
-                data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
-            }
-
-            final TextView errorPlaceHolderView =
-                    (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_error);
-
-            final Exception exception = data.getException();
-
-            if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-
-                if (exception == null) {
-                    errorPlaceHolderView.setVisibility(View.GONE);
+            for (final String landev : splitToList) {
+              if (landev == null || landev.isEmpty() || landev.toLowerCase().startsWith("vlan")) {
+                continue;
+              }
+              // Also get Virtual Interfaces
+              try {
+                final String landevVifsKeyword = landev + "_vifs";
+                final NVRAMInfo landevVifsNVRAMInfo =
+                    SSHUtils.getNVRamInfoFromRouter(
+                        mParentFragmentActivity, mRouter, mGlobalPreferences, landevVifsKeyword);
+                if (landevVifsNVRAMInfo == null) {
+                  continue;
                 }
-
-                //LAN
-                final TextView lanIfaceView =
-                        (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_lan);
-                lanIfaceView.setText(data.getProperty(NVRAMInfo.Companion.getLAN_IFNAME(), "-"));
-
-                //WAN
-                final TextView wanIfaceView =
-                        (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wan);
-                wanIfaceView.setText(data.getProperty(NVRAMInfo.Companion.getWAN_IFNAME(), "-"));
-
-                //Wireless
-                final TextView wlIfaceView =
-                        (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless);
-                wlIfaceView.setText(data.getProperty(NVRAMInfo.Companion.getLANDEVS(), "-"));
-
-                //Update last sync
-                final RelativeTimeTextView lastSyncView =
-                        (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
-                lastSyncView.setReferenceTime(mLastSync);
-                lastSyncView.setPrefix("Last sync: ");
+                final String landevVifsNVRAMInfoProp =
+                    landevVifsNVRAMInfo.getProperty(
+                        landevVifsKeyword, RouterCompanionAppConstants.EMPTY_STRING);
+                if (landevVifsNVRAMInfoProp == null) {
+                  continue;
+                }
+                final List<String> list = SPLITTER.splitToList(landevVifsNVRAMInfoProp);
+                if (list == null) {
+                  continue;
+                }
+                for (final String landevVif : list) {
+                  if (landevVif == null || landevVif.isEmpty()) {
+                    continue;
+                  }
+                  landevs += (" " + landevVif);
+                }
+              } catch (final Exception e) {
+                e.printStackTrace();
+                // No worries
+              }
             }
+          }
 
-            if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+          nvramInfo.setProperty(NVRAMInfo.Companion.getLANDEVS(), landevs);
+        }
+      }
+
+      if (nvramInfo.isEmpty()) {
+        throw new DDWRTNoDataException("No Data");
+      }
+
+      return nvramInfo;
+    } catch (@NonNull final Exception e) {
+      e.printStackTrace();
+      return new NVRAMInfo().setException(e);
+    }
+  }
+
+  @Override
+  public Integer getTileHeaderViewId() {
+    return R.id.tile_status_bandwidth_ifaces_hdr;
+  }
+
+  @Override
+  public Integer getTileTitleViewId() {
+    return R.id.tile_status_bandwidth_ifaces_title;
+  }
+
+  @Override
+  public void onLoadFinished(@NonNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
+
+    try {
+      // Set tiles
+      FirebaseCrashlytics.getInstance().log("onLoadFinished: loader=" + loader + " / data=" + data);
+
+      layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view).setVisibility(View.GONE);
+      layout
+          .findViewById(R.id.tile_status_bandwidth_ifaces_togglebutton_container)
+          .setVisibility(View.VISIBLE);
+
+      mProgressBar.setVisibility(View.GONE);
+      mProgressBarDesc.setVisibility(View.GONE);
+
+      if (data == null) {
+        data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
+      }
+
+      final TextView errorPlaceHolderView =
+          (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_error);
+
+      final Exception exception = data.getException();
+
+      if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+
+        if (exception == null) {
+          errorPlaceHolderView.setVisibility(View.GONE);
+        }
+
+        // LAN
+        final TextView lanIfaceView =
+            (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_lan);
+        lanIfaceView.setText(data.getProperty(NVRAMInfo.Companion.getLAN_IFNAME(), "-"));
+
+        // WAN
+        final TextView wanIfaceView =
+            (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wan);
+        wanIfaceView.setText(data.getProperty(NVRAMInfo.Companion.getWAN_IFNAME(), "-"));
+
+        // Wireless
+        final TextView wlIfaceView =
+            (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless);
+        wlIfaceView.setText(data.getProperty(NVRAMInfo.Companion.getLANDEVS(), "-"));
+
+        // Update last sync
+        final RelativeTimeTextView lastSyncView =
+            (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+        lastSyncView.setReferenceTime(mLastSync);
+        lastSyncView.setPrefix("Last sync: ");
+      }
+
+      if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+        //noinspection ThrowableResultOfMethodCallIgnored
+        final Throwable rootCause = Throwables.getRootCause(exception);
+        errorPlaceHolderView.setText(
+            "Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
+        final Context parentContext = this.mParentFragmentActivity;
+        errorPlaceHolderView.setOnClickListener(
+            new View.OnClickListener() {
+              @Override
+              public void onClick(final View v) {
                 //noinspection ThrowableResultOfMethodCallIgnored
-                final Throwable rootCause = Throwables.getRootCause(exception);
-                errorPlaceHolderView.setText(
-                        "Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
-                final Context parentContext = this.mParentFragmentActivity;
-                errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View v) {
-                        //noinspection ThrowableResultOfMethodCallIgnored
-                        if (rootCause != null) {
-                            Toast.makeText(parentContext, rootCause.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-                errorPlaceHolderView.setVisibility(View.VISIBLE);
-                updateProgressBarWithError();
-            } else if (exception == null) {
-                updateProgressBarWithSuccess();
-            }
+                if (rootCause != null) {
+                  Toast.makeText(parentContext, rootCause.getMessage(), Toast.LENGTH_LONG).show();
+                }
+              }
+            });
+        errorPlaceHolderView.setVisibility(View.VISIBLE);
+        updateProgressBarWithError();
+      } else if (exception == null) {
+        updateProgressBarWithSuccess();
+      }
 
-            FirebaseCrashlytics.getInstance().log( "onLoadFinished(): done loading!");
-        } finally {
-            mRefreshing.set(false);
-            doneWithLoaderInstance(this, loader);
-        }
+      FirebaseCrashlytics.getInstance().log("onLoadFinished(): done loading!");
+    } finally {
+      mRefreshing.set(false);
+      doneWithLoaderInstance(this, loader);
     }
+  }
 
-    @Override
-    protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
-        return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
+  @Override
+  protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
+    return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 
-            @Nullable
-            @Override
-            public NVRAMInfo loadInBackground() {
+      @Nullable
+      @Override
+      public NVRAMInfo loadInBackground() {
 
-                return IfacesTile.this.doLoadInBackground();
-            }
-        };
-    }
+        return IfacesTile.this.doLoadInBackground();
+      }
+    };
+  }
 
-    @Override
-    protected String getLogTag() {
-        return LOG_TAG;
-    }
+  @Override
+  protected String getLogTag() {
+    return LOG_TAG;
+  }
 
-    @Nullable
-    @Override
-    protected OnClickIntent getOnclickIntent() {
-        //TODO
-        return null;
-    }
+  @Nullable
+  @Override
+  protected OnClickIntent getOnclickIntent() {
+    // TODO
+    return null;
+  }
 }

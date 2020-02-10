@@ -28,7 +28,6 @@ import android.graphics.Color
 import androidx.annotation.ColorRes
 import androidx.annotation.StyleRes
 import androidx.core.content.ContextCompat
-import android.util.Log
 import android.widget.TextView
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.common.base.Strings
@@ -41,7 +40,6 @@ import org.rm3l.router_companion.RouterCompanionAppConstants
 import org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_THEME
 import org.rm3l.router_companion.RouterCompanionAppConstants.THEMING_PREF
 import org.rm3l.router_companion.resources.conn.Router.RouterFirmware
-import java.util.HashSet
 import java.util.Random
 import java.util.concurrent.ExecutionException
 
@@ -79,7 +77,7 @@ class ColorUtils private constructor() {
                     override fun load(key: String): Int? {
                         val colorsToSkip = mutableSetOf<Int>()
 
-                        //We want our new color not to be similar to white or black
+                        // We want our new color not to be similar to white or black
                         colorsToSkip.add(Color.argb(255, 0, 0, 0))
                         colorsToSkip.add(Color.argb(255, 255, 255, 255))
 
@@ -100,11 +98,10 @@ class ColorUtils private constructor() {
                 Utils.reportException(null, e)
                 genColor(emptyList())
             }
-
         }
 
         fun genColor(colorsToSkip: Collection<Int>): Int {
-            //Generate a Random Color, excluding colors similar to the colors specified
+            // Generate a Random Color, excluding colors similar to the colors specified
             var aNextColor: Int
             var rNextColor: Int
             var gNextColor: Int
@@ -124,11 +121,13 @@ class ColorUtils private constructor() {
             return newColor
         }
 
-        fun isColorSimilarToAtLeastOne(color: Int,
-                                       colorsColl: Collection<Int>): Boolean {
+        fun isColorSimilarToAtLeastOne(
+            color: Int,
+            colorsColl: Collection<Int>
+        ): Boolean {
 
-            //Apply color maths to determine a color which is not visually similar to any of the existing ones.
-            //Based upon Euclidian distance in the ARGB color space.
+            // Apply color maths to determine a color which is not visually similar to any of the existing ones.
+            // Based upon Euclidian distance in the ARGB color space.
 
             val aColor = color shr 24 and 0xff
             val rColor = color shr 16 and 0xff
@@ -163,14 +162,16 @@ class ColorUtils private constructor() {
         }
 
         @ColorRes
-        private fun getActualColorRes(routerFirmware: RouterFirmware?,
-                                      themeSuffix: String?): Int? {
+        private fun getActualColorRes(
+            routerFirmware: RouterFirmware?,
+            themeSuffix: String?
+        ): Int? {
 
-            val useDefaultStyle = routerFirmware == null
-                    || RouterFirmware.AUTO == routerFirmware
-                    || RouterFirmware.UNKNOWN == routerFirmware
+            val useDefaultStyle = routerFirmware == null ||
+                    RouterFirmware.AUTO == routerFirmware ||
+                    RouterFirmware.UNKNOWN == routerFirmware
             if (useDefaultStyle) {
-                //What to return here? => default behavior
+                // What to return here? => default behavior
                 return null
             } else {
                 return try {
@@ -183,7 +184,6 @@ class ColorUtils private constructor() {
                     FirebaseCrashlytics.getInstance().recordException(e)
                     null
                 }
-
             }
         }
 
@@ -202,18 +202,21 @@ class ColorUtils private constructor() {
             return getActualColorRes(routerFirmware, "color_accent")
         }
 
-        fun <T : ContextWrapper> setAppTheme(activity: T,
-                                             routerFirmware: RouterFirmware?, transparentStatusBar: Boolean) {
+        fun <T : ContextWrapper> setAppTheme(
+            activity: T,
+            routerFirmware: RouterFirmware?,
+            transparentStatusBar: Boolean
+        ) {
 
-            val useDefaultStyle = routerFirmware == null
-                    || RouterFirmware.AUTO == routerFirmware
-                    || RouterFirmware.UNKNOWN == routerFirmware
+            val useDefaultStyle = routerFirmware == null ||
+                    RouterFirmware.AUTO == routerFirmware ||
+                    RouterFirmware.UNKNOWN == routerFirmware
             if (useDefaultStyle) {
                 setDefaultTheme(activity, transparentStatusBar)
             } else {
                 val themeLight = isThemeLight(activity)
                 try {
-                    //Determine style by introspection
+                    // Determine style by introspection
                     @StyleRes val styleResId: Int = Utils.getResId(
                             String.format("%s_AppTheme%s%s", routerFirmware!!.name,
                                     if (themeLight) "Light" else "Dark",
@@ -226,8 +229,10 @@ class ColorUtils private constructor() {
             }
         }
 
-        fun <T : ContextWrapper> setDefaultTheme(activity: T,
-                                                 transparentStatusBar: Boolean) {
+        fun <T : ContextWrapper> setDefaultTheme(
+            activity: T,
+            transparentStatusBar: Boolean
+        ) {
 
             if (isThemeLight(activity)) {
                 activity.setTheme(if (transparentStatusBar)
@@ -240,22 +245,24 @@ class ColorUtils private constructor() {
             }
         }
 
-        fun <T : TextView> setTextColor(view: T?,
-                                        routerFirmware: RouterFirmware?) {
+        fun <T : TextView> setTextColor(
+            view: T?,
+            routerFirmware: RouterFirmware?
+        ) {
 
             if (view == null) {
                 return
             }
 
-            val useDefaultStyle = routerFirmware == null
-                    || RouterFirmware.AUTO == routerFirmware
-                    || RouterFirmware.UNKNOWN == routerFirmware
+            val useDefaultStyle = routerFirmware == null ||
+                    RouterFirmware.AUTO == routerFirmware ||
+                    RouterFirmware.UNKNOWN == routerFirmware
             if (useDefaultStyle) {
                 setDefaultTextColor(view)
             } else {
                 val context = view.context
                 try {
-                    //Determine style by intropsection
+                    // Determine style by intropsection
                     @ColorRes val textColorResId: Int = Utils.getResId(
                             String.format("%s_tile_title", routerFirmware!!.name.toLowerCase()),
                             R.color::class.java)
@@ -264,7 +271,6 @@ class ColorUtils private constructor() {
                     FirebaseCrashlytics.getInstance().recordException(e)
                     setDefaultTextColor(view)
                 }
-
             }
         }
 

@@ -27,7 +27,7 @@ import org.rm3l.router_companion.resources.conn.Router;
 
 public interface RouterMgmtDialogListener {
 
-    void onRouterAdd(DialogFragment dialog, Router router, boolean error);
+  void onRouterAdd(DialogFragment dialog, Router router, boolean error);
 
-    void onRouterUpdated(DialogFragment dialog, int position, Router router, boolean error);
+  void onRouterUpdated(DialogFragment dialog, int position, Router router, boolean error);
 }

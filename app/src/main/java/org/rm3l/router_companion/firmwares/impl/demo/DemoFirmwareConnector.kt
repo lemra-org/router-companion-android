@@ -44,8 +44,11 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
     private val mGetWanPublicIpAddressCalls = AtomicLong(0)
 
     @Throws(Exception::class)
-    override fun getDataForNetworkTopologyMapTile(context: Context,
-                                                  router: Router, dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
+    override fun getDataForNetworkTopologyMapTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo {
         try {
             dataRetrievalListener?.onProgressUpdate(10)
             return NVRAMInfo().setProperty(NVRAMInfo.ROUTER_NAME, "Demo Router (Test Data)")
@@ -56,20 +59,23 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
                     .setProperty(NVRAMInfo.OPENVPNCL_REMOTEPORT, "1234")
                     .setProperty(NVRAMInfo.NB_ACTIVE_CLIENTS, Integer.toString(Random().nextInt(20)))
                     .setProperty(NVRAMInfo.NB_DHCP_LEASES, Integer.toString(Random().nextInt(30)))
-                    .setProperty(NVRAMInfo.INTERNET_CONNECTIVITY_PUBLIC_IP, "52."
-                            + (1 + Random().nextInt(252))
-                            + "."
-                            + (1 + Random().nextInt(252))
-                            + "."
-                            + (1 + Random().nextInt(252)))
+                    .setProperty(NVRAMInfo.INTERNET_CONNECTIVITY_PUBLIC_IP, "52." +
+                            (1 + Random().nextInt(252)) +
+                            "." +
+                            (1 + Random().nextInt(252)) +
+                            "." +
+                            (1 + Random().nextInt(252)))
         } finally {
             dataRetrievalListener?.doRegardlessOfStatus()
         }
     }
 
     @Throws(Exception::class)
-    override fun getWanPublicIpAddress(context: Context, router: Router,
-                                       dataRetrievalListener: RemoteDataRetrievalListener?): String? {
+    override fun getWanPublicIpAddress(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): String? {
 
         val nbRuns = mGetWanPublicIpAddressCalls.getAndIncrement()
 
@@ -109,9 +115,12 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
     }
 
     @Throws(Exception::class)
-    override fun getDataForWANTotalTrafficOverviewTile(context: Context,
-                                                       router: Router, cycleItem: MonthlyCycleItem,
-                                                       dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
+    override fun getDataForWANTotalTrafficOverviewTile(
+        context: Context,
+        router: Router,
+        cycleItem: MonthlyCycleItem,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo {
         dataRetrievalListener?.onProgressUpdate(50)
 
         val nvramInfo = NVRAMInfo().setProperty(NVRAMInfo.TTRAFF_ENABLE,
@@ -141,8 +150,11 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
     }
 
     @Throws(Exception::class)
-    override fun getDataForUptimeTile(context: Context, router: Router,
-                                      dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
+    override fun getDataForUptimeTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo {
 
         dataRetrievalListener?.onProgressUpdate(10)
 
@@ -150,27 +162,30 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
         val days = Integer.toString(random.nextInt(60))
         val hours = Integer.toString(random.nextInt(23))
         val minutes = Integer.toString(random.nextInt(59))
-        return NVRAMInfo().setProperty(NVRAMInfo.UPTIME, "22:31:45 up "
-                + days
-                + " days, "
-                + hours
-                + ":"
-                + minutes
-                + ", load average: 0.11, 0.10, 0.09")
+        return NVRAMInfo().setProperty(NVRAMInfo.UPTIME, "22:31:45 up " +
+                days +
+                " days, " +
+                hours +
+                ":" +
+                minutes +
+                ", load average: 0.11, 0.10, 0.09")
                 .setProperty(NVRAMInfo.UPTIME_DAYS, days)
                 .setProperty(NVRAMInfo.UPTIME_HOURS, hours)
                 .setProperty(NVRAMInfo.UPTIME_MINUTES, minutes)
     }
 
     @Throws(Exception::class)
-    override fun getDataForMemoryAndCpuUsageTile(context: Context,
-                                                 router: Router, dataRetrievalListener: RemoteDataRetrievalListener?): List<Array<String>> {
+    override fun getDataForMemoryAndCpuUsageTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): List<Array<String>> {
         val memTotal = 4096
         val memFree = Random().nextInt(memTotal + 1)
         val memUsageData = Array(3, { i ->
             when (i) {
-                0 -> "$memTotal kB" //MemTotal
-                1 -> "$memFree kB" //MemFree
+                0 -> "$memTotal kB" // MemTotal
+                1 -> "$memFree kB" // MemFree
                 2 -> "${Random().nextInt(100)}"
                 else -> ""
             }
@@ -181,22 +196,28 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
     }
 
     @Throws(Exception::class)
-    override fun getDataForStorageUsageTile(context: Context, router: Router,
-                                            dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
+    override fun getDataForStorageUsageTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo {
         val random = Random()
         val totalSize = 44379 + random.nextInt(44379)
 
-        val nvramSize:Array<String?>? = Array(1, { _ -> "size: $totalSize bytes ${random.nextInt(totalSize)} left)" })
-        val jffs2Size:Array<String?>? = Array(1, { _ -> "/dev/mtdblock/5      jffs2          $totalSize      ${random.nextInt(totalSize)}     120000   30% /jffs" })
-        val cifsSize:Array<String?>? = Array(1, { _ -> "/dev/mtdblock/5      cifs          $totalSize      ${random.nextInt(totalSize)}     91300   50% /cifs" })
+        val nvramSize: Array<String?>? = Array(1, { _ -> "size: $totalSize bytes ${random.nextInt(totalSize)} left)" })
+        val jffs2Size: Array<String?>? = Array(1, { _ -> "/dev/mtdblock/5      jffs2          $totalSize      ${random.nextInt(totalSize)}     120000   30% /jffs" })
+        val cifsSize: Array<String?>? = Array(1, { _ -> "/dev/mtdblock/5      cifs          $totalSize      ${random.nextInt(totalSize)}     91300   50% /cifs" })
 
         return DDWRTFirmwareConnector.parseDataForStorageUsageTile(
                 listOf(nvramSize, jffs2Size, cifsSize), dataRetrievalListener)
     }
 
     @Throws(Exception::class)
-    override fun getDataForStatusRouterStateTile(context: Context, router: Router,
-                                                 dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
+    override fun getDataForStatusRouterStateTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo {
 
         val nvramInfo = NVRAMInfo().setProperty(NVRAMInfo.ROUTER_NAME, ROUTER_NAME)
                 .setProperty(NVRAMInfo.WAN_IPADDR, WAN_IPADDR)
@@ -214,8 +235,8 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
         val otherCmds = Array(5,
                 { i ->
                     when (i) {
-                        0 -> date.toString() //current date
-                        1 -> cal.time.toString() //date since last reboot
+                        0 -> date.toString() // current date
+                        1 -> cal.time.toString() // date since last reboot
                         2 -> " 77 days, 11:00,  2 users, "
                         3 -> "Linux 2.4.37 #7583 Sat Oct 10 mips"
                         4 -> "DD-WRT v24-sp2 (10/10/09) - rev 7583"
@@ -223,10 +244,10 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
                     }
                 })
 
-        //date
+        // date
         nvramInfo.setProperty(NVRAMInfo.CURRENT_DATE, otherCmds[0])
 
-        //uptime
+        // uptime
         var uptime = otherCmds[1]
         val uptimeCmd = otherCmds[2]
         if (!Strings.isNullOrEmpty(uptimeCmd)) {
@@ -237,7 +258,7 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
         }
         nvramInfo.setProperty(NVRAMInfo.UPTIME, uptime)
 
-        //Kernel
+        // Kernel
         otherCmds[3].let {
             val valueWithoutGnuLinux = it.replace("GNU/Linux", "")
             nvramInfo.setProperty(NVRAMInfo.KERNEL,
@@ -247,7 +268,7 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
 //        StringUtils.replace(StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
 //            nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME), ""))
 
-        //Firmware
+        // Firmware
         val fwString = otherCmds[4]
         nvramInfo.setProperty(NVRAMInfo.FIRMWARE, fwString)
 
@@ -257,23 +278,22 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
                 nvramInfo.setProperty(NVRAMInfo.OS_VERSION,
                         java.lang.Long.toString(java.lang.Long.parseLong(strings[1].trim { it <= ' ' })))
             } catch (nfe: NumberFormatException) {
-                //No worries
+                // No worries
             }
-
         }
 
         updateProgressBarViewSeparator(dataRetrievalListener, 75)
 
         val nbRunsLoaderModulo = (nbRunsStatusRouterStateTile.getAndIncrement() % 5).toInt()
         if (nbRunsLoaderModulo == 0) {
-            //nbRunsLoader = 5k
+            // nbRunsLoader = 5k
             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP,
                     "52.64." + (1 + Random().nextInt(252)) + "." + (1 + Random().nextInt(252)))
         } else if (nbRunsLoaderModulo == 1) {
-            //nbRunsLoader = 5k + 1
+            // nbRunsLoader = 5k + 1
             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK)
         } else if (nbRunsLoaderModulo == 2) {
-            //nbRunsLoader = 5k + 2
+            // nbRunsLoader = 5k + 2
             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN)
         }
 
@@ -282,18 +302,18 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
 
     override fun getScmChangesetUrl(changeset: String): String? {
         val valuesAsList = ArrayList<RouterFirmware>(Router.RouterFirmware.getValuesAsList())
-        //Take any connector manager on file
+        // Take any connector manager on file
         Collections.shuffle(valuesAsList)
         for (routerFirmware in valuesAsList) {
             if (Router.RouterFirmware.DEMO == routerFirmware) {
-                //Avoid infinite recursion
+                // Avoid infinite recursion
                 continue
             }
             val routerFirmwareConnector: AbstractRouterFirmwareConnector
             try {
                 routerFirmwareConnector = RouterFirmwareConnectorManager.getConnector(routerFirmware)
             } catch (e: Exception) {
-                //ignored, e.g., if router firmware is not supported yet
+                // ignored, e.g., if router firmware is not supported yet
                 continue
             }
 
@@ -302,15 +322,18 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
         return null
     }
 
-    override fun getWANAccessPolicies(context: Context, router: Router,
-                                      dataRetrievalListener: RemoteDataRetrievalListener?): WANAccessPoliciesRouterData? {
+    override fun getWANAccessPolicies(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): WANAccessPoliciesRouterData? {
         val wanAccessPolicies = ArrayList<WANAccessPolicy>()
         (1..10).mapTo(wanAccessPolicies) {
             val wanAccessPolicy = WANAccessPolicy()
             wanAccessPolicy.number = it
             wanAccessPolicy.name = "myWanPolicy $it"
             wanAccessPolicy
-            //TODO Add other properties here
+            // TODO Add other properties here
         }
         val routerData = WANAccessPoliciesRouterData().setData(
                 wanAccessPolicies) as WANAccessPoliciesRouterData
@@ -321,10 +344,10 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
     override fun manuallyCheckForFirmwareUpdateAndReturnDownloadLink(currentFwVer: String?): FirmwareRelease? {
         val index = Random().nextInt(11)
         return when (index) {
-            4 -> throw UnsupportedOperationException("not implemented yet") //not implemented
+            4 -> throw UnsupportedOperationException("not implemented yet") // not implemented
             2 -> throw IllegalStateException("Error simulated!")
             1, 3, 5, 6, 7, 8 -> DemoFirmwareRelease(index)
-            else -> null //no update
+            else -> null // no update
         }
     }
 
@@ -346,5 +369,4 @@ data class DemoFirmwareRelease(val index: Int) : FirmwareRelease(index.toString(
             else -> "N/A"
         }
     }
-
 }

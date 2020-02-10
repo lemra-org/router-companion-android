@@ -22,8 +22,6 @@
 package org.rm3l.router_companion.fragments.toolbox
 
 import android.os.Bundle
-import java.util.Arrays
-import org.rm3l.router_companion.tiles.DDWRTTile
 import org.rm3l.router_companion.tiles.toolbox.ToolboxArpingTile
 
 class ToolboxArpingFragment : AbstractToolboxFragment() {

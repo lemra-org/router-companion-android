@@ -24,7 +24,6 @@ package org.rm3l.router_companion.widgets;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,31 +33,31 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 @Deprecated
 public class VerticalScrollView extends ScrollView {
 
-    // Return false if we're scrolling in the x direction
-    class YScrollDetector extends GestureDetector.SimpleOnGestureListener {
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            FirebaseCrashlytics.getInstance().log( "VerticalScrollView.YScrollDetector#onScroll");
-            return Math.abs(distanceY) > Math.abs(distanceX);
-        }
-    }
-
-    private static final String LOG_TAG = VerticalScrollView.class.getSimpleName();
-
-    View.OnTouchListener mGestureListener;
-
-    private GestureDetector mGestureDetector;
-
-    public VerticalScrollView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        mGestureDetector = new GestureDetector(context, new YScrollDetector());
-        setFadingEdgeLength(0);
-    }
+  // Return false if we're scrolling in the x direction
+  class YScrollDetector extends GestureDetector.SimpleOnGestureListener {
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        FirebaseCrashlytics.getInstance().log( "VerticalScrollView#onInterceptTouchEvent");
-        return super.onInterceptTouchEvent(ev) && mGestureDetector.onTouchEvent(ev);
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+      FirebaseCrashlytics.getInstance().log("VerticalScrollView.YScrollDetector#onScroll");
+      return Math.abs(distanceY) > Math.abs(distanceX);
     }
+  }
+
+  private static final String LOG_TAG = VerticalScrollView.class.getSimpleName();
+
+  View.OnTouchListener mGestureListener;
+
+  private GestureDetector mGestureDetector;
+
+  public VerticalScrollView(Context context, AttributeSet attrs) {
+    super(context, attrs);
+    mGestureDetector = new GestureDetector(context, new YScrollDetector());
+    setFadingEdgeLength(0);
+  }
+
+  @Override
+  public boolean onInterceptTouchEvent(MotionEvent ev) {
+    FirebaseCrashlytics.getInstance().log("VerticalScrollView#onInterceptTouchEvent");
+    return super.onInterceptTouchEvent(ev) && mGestureDetector.onTouchEvent(ev);
+  }
 }

@@ -2,7 +2,7 @@ package org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.resourc
 
 import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.resources.SuffixOption.UNGUESSABLE
 
-//https://firebase.google.com/docs/reference/dynamic-links/link-shortener
+// https://firebase.google.com/docs/reference/dynamic-links/link-shortener
 
 data class ShortLinksDataRequest @JvmOverloads constructor(
     var dynamicLinkInfo: DynamicLinkInfo,

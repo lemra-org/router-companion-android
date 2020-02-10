@@ -31,47 +31,53 @@ import org.rm3l.router_companion.utils.SSHUtils;
 
 public class ToggleWirelessRadioRouterAction extends AbstractRouterAction<Void> {
 
-    @NonNull
-    private final Context mContext;
+  @NonNull private final Context mContext;
 
-    private final boolean mEnable;
+  private final boolean mEnable;
 
-    public ToggleWirelessRadioRouterAction(Router router, @NonNull Context context,
-            @Nullable RouterActionListener listener,
-            @NonNull final SharedPreferences globalSharedPreferences, final boolean mEnable) {
-        super(router, listener, RouterAction.TOGGLE_WL_RADIO, globalSharedPreferences);
-        this.mContext = context;
-        this.mEnable = mEnable;
+  public ToggleWirelessRadioRouterAction(
+      Router router,
+      @NonNull Context context,
+      @Nullable RouterActionListener listener,
+      @NonNull final SharedPreferences globalSharedPreferences,
+      final boolean mEnable) {
+    super(router, listener, RouterAction.TOGGLE_WL_RADIO, globalSharedPreferences);
+    this.mContext = context;
+    this.mEnable = mEnable;
+  }
+
+  @NonNull
+  @Override
+  protected RouterActionResult<Void> doActionInBackground() {
+
+    Exception exception = null;
+    try {
+      final int exitStatus =
+          SSHUtils.runCommands(
+              mContext,
+              globalSharedPreferences,
+              router,
+              String.format("/usr/sbin/wl radio %s", mEnable ? "on" : "off"));
+
+      if (exitStatus != 0) {
+        throw new IllegalStateException();
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      exception = e;
     }
 
-    @NonNull
-    @Override
-    protected RouterActionResult<Void> doActionInBackground() {
+    return new RouterActionResult<>(null, exception);
+  }
 
-        Exception exception = null;
-        try {
-            final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router,
-                    String.format("/usr/sbin/wl radio %s", mEnable ? "on" : "off"));
+  @Override
+  protected ActionLog getActionLog() {
+    return super.getActionLog().setActionData("- Status: " + mEnable);
+  }
 
-            if (exitStatus != 0) {
-                throw new IllegalStateException();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            exception = e;
-        }
-
-        return new RouterActionResult<>(null, exception);
-    }
-
-    @Override
-    protected ActionLog getActionLog() {
-        return super.getActionLog().setActionData("- Status: " + mEnable);
-    }
-
-    @Nullable
-    @Override
-    protected Context getContext() {
-        return mContext;
-    }
+  @Nullable
+  @Override
+  protected Context getContext() {
+    return mContext;
+  }
 }

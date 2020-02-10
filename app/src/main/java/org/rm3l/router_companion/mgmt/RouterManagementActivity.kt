@@ -59,12 +59,10 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.ItemTouchHelper
 import android.text.TextUtils
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter
@@ -107,10 +105,16 @@ import org.rm3l.router_companion.settings.RouterManagementSettingsActivity
 import org.rm3l.router_companion.utils.AdUtils
 import org.rm3l.router_companion.utils.ColorUtils
 import org.rm3l.router_companion.utils.ImageUtils
-import org.rm3l.router_companion.utils.PermissionsUtils
 import org.rm3l.router_companion.utils.Utils
 import org.rm3l.router_companion.utils.customtabs.CustomTabActivityHelper
-import org.rm3l.router_companion.utils.kotlin.*
+import org.rm3l.router_companion.utils.kotlin.isThemeLight
+import org.rm3l.router_companion.utils.kotlin.setAppTheme
+import org.rm3l.router_companion.utils.kotlin.color
+import org.rm3l.router_companion.utils.kotlin.inflate
+import org.rm3l.router_companion.utils.kotlin.openFeedbackForm
+import org.rm3l.router_companion.utils.kotlin.restartWholeApplication
+import org.rm3l.router_companion.utils.kotlin.finishAndReload
+
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style
 import org.rm3l.router_companion.welcome.GettingStartedActivity
 import org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
@@ -164,7 +168,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //Dynamic shortcuts are not preserved during backup/restore
+        // Dynamic shortcuts are not preserved during backup/restore
         if (VERSION.SDK_INT >= VERSION_CODES.N_MR1) {
             val shortcutManager = getSystemService(ShortcutManager::class.java)
             // Application restored. Need to re-publish dynamic shortcuts.
@@ -189,8 +193,8 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
         val intent = intent
         handleIntent(intent)
 
-        //Default values are not set by default
-        //Android bug workaround: http://code.google.com/p/android/issues/detail?id=6641
+        // Default values are not set by default
+        // Android bug workaround: http://code.google.com/p/android/issues/detail?id=6641
         PreferenceManager.setDefaultValues(
             this, DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE,
             R.xml.router_management_settings, false
@@ -281,7 +285,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
 
         addNewButton = findViewById<View>(R.id.router_list_add) as FloatingActionButton
 
-        //Attach to recyclerview for scrolling effect
+        // Attach to recyclerview for scrolling effect
         //        addNewButton.attachToRecyclerView(mRecyclerView);
 
         addNewButton!!.setOnClickListener(this)
@@ -332,23 +336,23 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
         //                    }
         //                }
         //                mSwipeRefreshLayout.setEnabled(enable);
-        ////                super.onScrolled(recyclerView, dx, dy);
+        // //                super.onScrolled(recyclerView, dx, dy);
         //            }
         //        });
 
-        ////If needed, register to DD-WRT Build Updates
-        //final Set<String> notificationChoices =
+        // //If needed, register to DD-WRT Build Updates
+        // final Set<String> notificationChoices =
         //    this.mPreferences.getStringSet(NOTIFICATIONS_CHOICE_PREF, new HashSet<String>());
-        //if (notificationChoices.contains(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES)) {
+        // if (notificationChoices.contains(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES)) {
         //  //Subscribe to topic
         //  FirebaseMessaging.getInstance().subscribeToTopic(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES);
-        //} else {
+        // } else {
         //  //Unsubscribe from topic
         //  FirebaseMessaging.getInstance()
         //      .unsubscribeFromTopic(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES);
-        //}
+        // }
 
-        //No need to restart the background service each time - this is correctly handled by Android
+        // No need to restart the background service each time - this is correctly handled by Android
         //        BootReceiver.doStartBackgroundServiceIfNeeded(this);
 
         /* Use this when you want to run a background update check */
@@ -368,8 +372,8 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
             this.openAddRouterForm()
         } else {
             if (!welcomeScreen!!.show(savedInstanceState)) {
-                FirebaseCrashlytics.getInstance().log( "Welcome screen already shown")
-            } //otherwise we wait for this to finish to request permissions
+                FirebaseCrashlytics.getInstance().log("Welcome screen already shown")
+            } // otherwise we wait for this to finish to request permissions
         }
     }
 
@@ -380,7 +384,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
         //        }
         mCustomTabActivityHelper!!.bindCustomTabsService(this)
 
-        //#199: app shortcuts
+        // #199: app shortcuts
         setDynamicAppShortcuts()
     }
 
@@ -395,27 +399,27 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
             ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE -> {
                 // Make sure the request was successful and reload U if necessary
                 if (resultCode == Activity.RESULT_OK) {
-                    //If needed, register to DD-WRT Build Updates
-                    //final Set<String> notificationChoices =
+                    // If needed, register to DD-WRT Build Updates
+                    // final Set<String> notificationChoices =
                     //    this.mPreferences.getStringSet(NOTIFICATIONS_CHOICE_PREF, new HashSet<String>());
-                    //if (notificationChoices.contains(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES)) {
+                    // if (notificationChoices.contains(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES)) {
                     //  //Subscribe to topic
                     //  FirebaseMessaging.getInstance()
                     //      .subscribeToTopic(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES);
-                    //} else {
+                    // } else {
                     //  //Unsubscribe from topic
                     //  FirebaseMessaging.getInstance()
                     //      .unsubscribeFromTopic(CLOUD_MESSAGING_TOPIC_DDWRT_BUILD_UPDATES);
-                    //}
+                    // }
 
-                    //Reset Crashlytics user email addr
+                    // Reset Crashlytics user email addr
                     val acraEmailAddr =
                         this.mPreferences!!.getString(RouterCompanionAppConstants.ACRA_USER_EMAIL, null)
                     FirebaseCrashlytics.getInstance().setUserId(acraEmailAddr)
 
                     val currentUserChoiceForAutoCrashReporting = this.mPreferences!!.getBoolean(ACRA_ENABLE, true)
                     if (this.mAutoCrashReports != currentUserChoiceForAutoCrashReporting) {
-                        //Restart activity
+                        // Restart activity
                         FirebaseCrashlytics.getInstance().log(
                             "<mAutoCrashReports,currentUserChoiceForAutoCrashReporting>=<" +
                                     mAutoCrashReports + "," + currentUserChoiceForAutoCrashReporting + ">"
@@ -425,15 +429,15 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                             if (currentUserChoiceForAutoCrashReporting) "En" else "Dis"
                         )
                         this.restartWholeApplication(waitMessage, null)
-                    } else if (this.mCurrentTheme != this.mPreferences!!.getLong(THEMING_PREF, -1L)
-                        || this.mBackgroundServiceEnabled != this.mPreferences!!.getBoolean(
+                    } else if (this.mCurrentTheme != this.mPreferences!!.getLong(THEMING_PREF, -1L) ||
+                        this.mBackgroundServiceEnabled != this.mPreferences!!.getBoolean(
                             NOTIFICATIONS_BG_SERVICE_ENABLE, false
-                        )
-                        || this.mBackgroundServiceFrequency != this.mPreferences!!.getLong(
+                        ) ||
+                        this.mBackgroundServiceFrequency != this.mPreferences!!.getLong(
                             NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1L
                         )
                     ) {
-                        //Reload UI
+                        // Reload UI
                         this.finishAndReload("Reloading UI", null, null)
                     }
                 }
@@ -450,7 +454,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                 }
             }
             WelcomeHelper.DEFAULT_WELCOME_SCREEN_REQUEST -> {
-                //TODO
+                // TODO
                 val welcomeKey = \"fake-key\";
                 if (resultCode == Activity.RESULT_OK) {
                     // Code here will run if the welcome screen was completed
@@ -470,7 +474,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                 }
                 initOpenAddRouterFormIfNecessary()
             }
-            else -> FirebaseCrashlytics.getInstance().log( "Unhandled activity result: $resultCode")
+            else -> FirebaseCrashlytics.getInstance().log("Unhandled activity result: $resultCode")
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -494,7 +498,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
     }
 
     override fun onDestroy() {
-        //Dismiss existing dialog fragments, if any
+        // Dismiss existing dialog fragments, if any
         var fragment = supportFragmentManager.findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG)
         if (fragment is DialogFragment) {
             fragment.dismiss()
@@ -517,7 +521,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                 }
 
                 override fun onAdOpened() {
-                    //Save preference
+                    // Save preference
                     getSharedPreferences(
                         DEFAULT_SHARED_PREFERENCES_KEY,
                         Context.MODE_PRIVATE
@@ -586,12 +590,12 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
         //            }
         //
         //            //FIXME Uncomment once other firmwares are fully supported
-        ////            final Router.RouterFirmware routerFirmware = router.getRouterFirmware();
-        ////            if (routerFirmware == null || Router.RouterFirmware.UNKNOWN.equals(routerFirmware)) {
-        ////                Utils.displayMessage(this, "Router Firmware unknown or not supported (yet!). " +
-        ////                        "You may manually force the router firmware to use by editing this entry.", Style.ALERT);
-        ////                return;
-        ////            }
+        // //            final Router.RouterFirmware routerFirmware = router.getRouterFirmware();
+        // //            if (routerFirmware == null || Router.RouterFirmware.UNKNOWN.equals(routerFirmware)) {
+        // //                Utils.displayMessage(this, "Router Firmware unknown or not supported (yet!). " +
+        // //                        "You may manually force the router firmware to use by editing this entry.", Style.ALERT);
+        // //                return;
+        // //            }
         //            //FIXME End
         //
         //            final String routerUuid = router.getUuid();
@@ -628,9 +632,9 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
         //                if (mInterstitialAd.isLoaded()) {
         //                    mInterstitialAd.show();
         //                } else {
-        ////                    final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
-        ////                    alertDialog.show();
-        ////                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+        // //                    final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
+        // //                    alertDialog.show();
+        // //                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
         //                    final ProgressDialog alertDialog = ProgressDialog.show(RouterManagementActivity.this,
         //                            "Loading Router details", "Please wait...", true);
         //                    new Handler().postDelayed(new Runnable() {
@@ -643,9 +647,9 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
         //                }
         //
         //            } else {
-        ////                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
-        ////                alertDialog.show();
-        ////                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+        // //                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
+        // //                alertDialog.show();
+        // //                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
         //                final ProgressDialog alertDialog = ProgressDialog.show(RouterManagementActivity.this,
         //                        "Loading Router details", "Please wait...", true);
         //                new Handler().postDelayed(new Runnable() {
@@ -671,7 +675,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
         val debugResourceInspector = mPreferences!!.getBoolean(
             DEBUG_RESOURCE_INSPECTOR_PREF_KEY, false
         )
-        FirebaseCrashlytics.getInstance().log( "XXX debug_resourceInspector: $debugResourceInspector")
+        FirebaseCrashlytics.getInstance().log("XXX debug_resourceInspector: $debugResourceInspector")
         menu.findItem(R.id.debug_resourceinspector).isChecked = debugResourceInspector
 
         val donateMenuItem = menu.findItem(R.id.router_list_donate)
@@ -684,7 +688,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
             removeAdsMenuItem.isVisible = BuildConfig.WITH_ADS
         }
 
-        //Search
+        // Search
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
 
         val searchView = menu.findItem(R.id.router_list_refresh_search).actionView as SearchView
@@ -696,11 +700,11 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
         // Get the search close button image view
         val closeButton = searchView.findViewById<View>(R.id.search_close_btn) as ImageView
         closeButton.setOnClickListener {
-            //Reset views
+            // Reset views
             val adapter = mAdapter as RouterListRecycleViewAdapter?
             adapter!!.routersList = dao!!.allRouters
             adapter.notifyDataSetChanged()
-            //Hide it now
+            // Hide it now
             searchView.isIconified = true
         }
 
@@ -708,13 +712,13 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
     }
 
     override fun onCustomTabsConnected() {
-        //We may make UI changes
-        FirebaseCrashlytics.getInstance().log( "onCustomTabsConnected")
+        // We may make UI changes
+        FirebaseCrashlytics.getInstance().log("onCustomTabsConnected")
     }
 
     override fun onCustomTabsDisconnected() {
-        //We may make UI changes
-        FirebaseCrashlytics.getInstance().log( "onCustomTabsDisconnected")
+        // We may make UI changes
+        FirebaseCrashlytics.getInstance().log("onCustomTabsDisconnected")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -754,7 +758,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
         } else if (itemId == R.id.debug_open_sharedprefs) {
             if (BuildConfig.DEBUG) {
                 Toast.makeText(this, "[Chuck] Not implemented", Toast.LENGTH_SHORT).show()
-                //Preferator.launch(this);
+                // Preferator.launch(this);
             } else {
                 FirebaseCrashlytics.getInstance().log(
                     "[DEBUG] SharedPreferences menu option should not be visible..."
@@ -776,7 +780,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                 item.isChecked = !checked
                 val commit = mPreferences!!.edit().putBoolean(DEBUG_RESOURCE_INSPECTOR_PREF_KEY, !checked).commit()
                 Utils.requestBackup(this@RouterManagementActivity)
-                //Restart activity
+                // Restart activity
                 val waitMessage = String.format(
                     "%sabling ResourceInspector. Pref. update commit=%s",
                     if (checked) "Dis" else "En", commit
@@ -814,7 +818,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                 if (nbRoutersRestored > 0) {
                     doRefreshRoutersListWithSpinner(DATA_SET_CHANGED, null)
                     val msg = "[DEBUG] Restored $nbRoutersRestored routers."
-                    FirebaseCrashlytics.getInstance().log( msg)
+                    FirebaseCrashlytics.getInstance().log(msg)
                     Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
                 }
             } else {
@@ -850,7 +854,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                 val allRouters = dao!!.allRouters
                 for (jobTag in jobTags) {
                     JobManager.instance().cancelAllForTag(jobTag)
-                    //Also for speed-test jobs
+                    // Also for speed-test jobs
                     for (router in allRouters) {
                         JobManager.instance()
                             .cancelAllForTag(
@@ -893,9 +897,9 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
         } else if (itemId == R.id.router_list_feedback) {
             Utils.openFeedbackForm(this, "")
             return true
-        } else if (itemId == R.id.router_list_actions_restore_factory_defaults) {//TODO Hidden for now
+        } else if (itemId == R.id.router_list_actions_restore_factory_defaults) { // TODO Hidden for now
             return true
-        } else if (itemId == R.id.router_list_actions_firmwares_upgrade) {//TODO Hidden for now
+        } else if (itemId == R.id.router_list_actions_firmwares_upgrade) { // TODO Hidden for now
             return true
         } else if (itemId == R.id.router_list_remove_ads) {
             Utils.displayUpgradeMessageForAdsRemoval(this)
@@ -948,7 +952,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                                         val incrementAndGet = currentNum.incrementAndGet()
                                         numActionsWithNoSuccess.incrementAndGet()
                                         if (incrementAndGet >= totalNumOfDevices) {
-                                            //An error occurred
+                                            // An error occurred
                                             Utils.displayMessage(
                                                 this@RouterManagementActivity,
                                                 String.format(
@@ -966,13 +970,14 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
 
                                     override fun onRouterActionSuccess(
                                         routerAction: RouterAction,
-                                        router: Router, returnData: Any
+                                        router: Router,
+                                        returnData: Any
                                     ) {
                                         val incrementAndGet = currentNum.incrementAndGet()
                                         if (incrementAndGet >= totalNumOfDevices) {
                                             val numActionsThatDidNotSucceed = numActionsWithNoSuccess.get()
                                             if (numActionsThatDidNotSucceed > 0) {
-                                                //An error occurred
+                                                // An error occurred
                                                 if (numActionsThatDidNotSucceed < totalNumOfDevices) {
                                                     Utils.displayMessage(
                                                         this@RouterManagementActivity,
@@ -984,7 +989,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                                                         Style.INFO
                                                     )
                                                 } else {
-                                                    //No action succeeded
+                                                    // No action succeeded
                                                     Utils.displayMessage(
                                                         this@RouterManagementActivity,
                                                         String.format(
@@ -995,7 +1000,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                                                     )
                                                 }
                                             } else {
-                                                //No error
+                                                // No error
                                                 Utils.displayMessage(
                                                     this@RouterManagementActivity,
                                                     String.format(
@@ -1014,7 +1019,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                     }
                 }
                 .setNegativeButton("Cancel") { _, i ->
-                    //Cancelled - nothing more to do!
+                    // Cancelled - nothing more to do!
                 }
                 .create()
                 .show()
@@ -1045,22 +1050,22 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
 
     override fun onRouterAdd(dialog: DialogFragment?, router: Router?, error: Boolean) {
         if (!error) {
-            //Always added to the top
+            // Always added to the top
             doRefreshRoutersListWithSpinner(INSERTED, 0)
             mLayoutManager!!.scrollToPosition(0)
-            //Request Backup
+            // Request Backup
             Utils.requestBackup(this)
         }
     }
 
     override fun onRouterUpdated(dialog: DialogFragment, position: Int, router: Router, error: Boolean) {
         if (!error) {
-            //Refresh everything, as the order actually should remain the same
-            //Always added to the top
+            // Refresh everything, as the order actually should remain the same
+            // Always added to the top
             //            doRefreshRoutersListWithSpinner(RoutersListRefreshCause.UPDATED, position);
             doRefreshRoutersListWithSpinner(DATA_SET_CHANGED, position)
             mLayoutManager!!.scrollToPosition(position)
-            //Request Backup
+            // Request Backup
             Utils.requestBackup(this)
         }
     }
@@ -1385,8 +1390,8 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                 when (cause) {
                     DATA_SET_CHANGED -> this@RouterManagementActivity.mAdapter!!.notifyDataSetChanged()
                     INSERTED -> {
-                        //Rebuild list so as to add the new router on top
-                        //We assume the item with the highest id is the latest added,
+                        // Rebuild list so as to add the new router on top
+                        // We assume the item with the highest id is the latest added,
                         // and, as such, should be on top of the list
                         val routerList = ArrayList(allRouters)
                         routerList.sortWith(Comparator { o1, o2 -> o2.id - o1.id })
@@ -1399,13 +1404,13 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                                 router.orderIndex = previousOrderIdx + 1
                             }
                             val newOrderIndex = router.orderIndex
-                            FirebaseCrashlytics.getInstance().log("XXX Router '"
-                                        + router.canonicalHumanReadableName
-                                        + "' "
-                                        + "new position: "
-                                        + previousOrderIdx
-                                        + " => "
-                                        + newOrderIndex
+                            FirebaseCrashlytics.getInstance().log("XXX Router '" +
+                                        router.canonicalHumanReadableName +
+                                        "' " +
+                                        "new position: " +
+                                        previousOrderIdx +
+                                        " => " +
+                                        newOrderIndex
                             )
 
                             dao!!.updateRouter(router)
@@ -1472,11 +1477,11 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
         //            ((DialogFragment) addRouter).dismiss();
         //        }
 
-        //Display Donate Message if trying to add more than the max routers for Free version
+        // Display Donate Message if trying to add more than the max routers for Free version
         val allRouters = dao!!.allRouters
         //noinspection PointlessBooleanExpression,ConstantConditions
         if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS) && allRouters.size >= MAX_ROUTERS_FREE_VERSION) {
-            //Download the full version to unlock this version
+            // Download the full version to unlock this version
             Utils.displayUpgradeMessage(this, "Manage a new Router")
             return
         }
@@ -1496,7 +1501,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                 val maxRoutersEligibleForAppShortcuts = ArrayList<Router>(4)
                 val nonDemoRoutersEligibleForAppShortcuts = ArrayList<Router>(4)
                 for (i in 0..3) {
-                    //We have a limit of 5 app shortcuts (dynamic and static combined),
+                    // We have a limit of 5 app shortcuts (dynamic and static combined),
                     // and a static one is already added. So keep the 4 most recent only
                     if (i >= nbRoutersOnFile) {
                         break
@@ -1523,11 +1528,11 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
 
                     val shortcut = ShortcutInfo.Builder(this, routerUuid).setShortLabel(
                         if (routerName?.isBlank() == true)
-                            router.remoteIpAddress
-                                    + ":"
-                                    + router.remotePort
+                            router.remoteIpAddress +
+                                    ":" +
+                                    router.remotePort
                         else
-                            routerName?:""
+                            routerName ?: ""
                     )
                         .setLongLabel(routerCanonicalHumanReadableName)
                         .setIcon(
@@ -1543,9 +1548,9 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                 }
                 shortcutManager!!.dynamicShortcuts = shortcutInfoList
 
-                //Trigger download of avatars (for non-demo routers)
+                // Trigger download of avatars (for non-demo routers)
                 for (router in nonDemoRoutersEligibleForAppShortcuts) {
-                    //Leverage Picasso to fetch router icon, if available
+                    // Leverage Picasso to fetch router icon, if available
                     try {
 
                         ImageUtils.downloadImageFromUrl(
@@ -1558,10 +1563,9 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                             RouterAvatarDownloadTargetForAppShortcut(this, router, true), null, null, null
                         )
                     } catch (e: Exception) {
-                        //No worries
+                        // No worries
                         Utils.reportException(this, e)
                     }
-
                 }
             }
         }

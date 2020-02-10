@@ -1,283 +1,222 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
 
-Copyright (C) 2014  Armel Soro
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/tile_status_router_router_state"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content" android:baselineAligned="false"
+	android:orientation="vertical">
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+	<RelativeLayout
+		android:id="@+id/tile_status_router_router_state_hdr"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+		<TextView
+			android:id="@+id/tile_status_router_router_state_title"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentStart="true" android:ellipsize="end"
+			android:maxLines="1" android:paddingTop="4.0dip"
+			android:text="@string/one_space"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textIsSelectable="true" android:textStyle="bold" />
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+		<ProgressBar
+			android:id="@+id/tile_status_router_router_state_header_loading_view"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true" />
 
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
+	</RelativeLayout>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tile_status_router_router_state"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:baselineAligned="false"
-    android:orientation="vertical">
+	<ProgressBar android:id="@+id/tile_progress_bar"
+		style="?android:attr/progressBarStyleHorizontal"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="8.0dip" android:layout_marginTop="8.0dip"
+		android:indeterminate="false" android:indeterminateOnly="false" />
 
-    <RelativeLayout
-        android:id="@+id/tile_status_router_router_state_hdr"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+	<!-- Error message placeholder -->
+	<TextView
+		android:id="@+id/tile_status_router_router_state_error"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" android:layout_gravity="center"
+		android:ellipsize="end" android:gravity="center" android:maxLines="1"
+		android:text="@string/error_placeholder"
+		android:textColor="@color/ddwrt_purple"
+		android:textIsSelectable="true" android:textStyle="bold"
+		android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/tile_status_router_router_state_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:paddingTop="4.0dip"
-            android:text="@string/one_space"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textIsSelectable="true"
-            android:textStyle="bold" />
+	<RelativeLayout android:layout_width="match_parent"
+		android:layout_height="match_parent">
 
-        <ProgressBar
-            android:id="@+id/tile_status_router_router_state_header_loading_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
+		<GridLayout
+			android:id="@+id/tile_status_router_router_state_gridLayout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:columnCount="2"
+			android:visibility="gone">
 
-    </RelativeLayout>
+			<!-- Router Name -->
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="8.0dip"
+				android:layout_marginRight="8.0dip"
+				android:text="@string/router_state_name" android:textStyle="bold" />
 
-    <ProgressBar
-        android:id="@+id/tile_progress_bar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8.0dip"
-        android:layout_marginTop="8.0dip"
-        android:indeterminate="false"
-        android:indeterminateOnly="false" />
+			<TextView
+				android:id="@+id/tile_status_router_router_state_name"
+				android:layout_width="0dip" android:layout_gravity="fill_horizontal"
+				android:text="@string/loading" android:textIsSelectable="true" />
 
-    <!-- Error message placeholder -->
-    <TextView
-        android:id="@+id/tile_status_router_router_state_error"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:maxLines="1"
-        android:text="@string/error_placeholder"
-        android:textColor="@color/ddwrt_purple"
-        android:textIsSelectable="true"
-        android:textStyle="bold"
-        android:visibility="gone" />
+			<!-- Model -->
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="8.0dip"
+				android:layout_marginRight="8.0dip"
+				android:text="@string/router_state_model" android:textStyle="bold" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+			<TextView
+				android:id="@+id/tile_status_router_router_state_model"
+				android:layout_width="0dip" android:layout_gravity="fill_horizontal"
+				android:text="@string/loading" android:textIsSelectable="true" />
 
-        <GridLayout
-            android:id="@+id/tile_status_router_router_state_gridLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:visibility="gone">
+			<!-- OS Version -->
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="8.0dip"
+				android:layout_marginRight="8.0dip"
+				android:text="@string/router_state_os_version"
+				android:textStyle="bold" />
 
-            <!-- Router Name -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/router_state_name"
-                android:textStyle="bold" />
+			<TextView
+				android:id="@+id/tile_status_router_router_state_os_version"
+				android:layout_width="0dip" android:layout_gravity="fill_horizontal"
+				android:clickable="true" android:text="@string/loading"
+				android:textIsSelectable="true" />
 
-            <TextView
-                android:id="@+id/tile_status_router_router_state_name"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading"
-                android:textIsSelectable="true" />
+			<!-- FW -->
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="8.0dip"
+				android:layout_marginRight="8.0dip"
+				android:text="@string/router_state_firmware"
+				android:textStyle="bold" />
 
-            <!-- Model -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/router_state_model"
-                android:textStyle="bold" />
+			<TextView
+				android:id="@+id/tile_status_router_router_state_firmware"
+				android:layout_width="0dip" android:layout_gravity="fill_horizontal"
+				android:text="@string/loading" android:textIsSelectable="true" />
 
-            <TextView
-                android:id="@+id/tile_status_router_router_state_model"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading"
-                android:textIsSelectable="true" />
+			<!-- Kernel -->
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="8.0dip"
+				android:layout_marginRight="8.0dip"
+				android:text="@string/router_state_kernel" android:textStyle="bold" />
 
-            <!-- OS Version -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/router_state_os_version"
-                android:textStyle="bold" />
+			<TextView
+				android:id="@+id/tile_status_router_router_state_kernel"
+				android:layout_width="0dip" android:layout_gravity="fill_horizontal"
+				android:text="@string/loading" android:textIsSelectable="true" />
 
-            <TextView
-                android:id="@+id/tile_status_router_router_state_os_version"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:clickable="true"
-                android:text="@string/loading"
-                android:textIsSelectable="true" />
+			<!-- LAN IP -->
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="8.0dip"
+				android:layout_marginRight="8.0dip"
+				android:text="@string/router_state_lan_ip" android:textStyle="bold" />
 
-            <!-- FW -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/router_state_firmware"
-                android:textStyle="bold" />
+			<TextView
+				android:id="@+id/tile_status_router_router_state_lan_ip"
+				android:layout_width="0dip" android:layout_gravity="fill_horizontal"
+				android:text="@string/loading" android:textIsSelectable="true" />
 
-            <TextView
-                android:id="@+id/tile_status_router_router_state_firmware"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading"
-                android:textIsSelectable="true" />
+			<!-- WAN IP -->
+			<TextView
+				android:id="@+id/tile_status_router_router_state_wan_ip_title"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="8.0dip"
+				android:layout_marginRight="8.0dip" android:text="@string/wan_ip"
+				android:textStyle="bold" />
 
-            <!-- Kernel-->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/router_state_kernel"
-                android:textStyle="bold" />
+			<TextView
+				android:id="@+id/tile_status_router_router_state_wan_ip_detail"
+				android:layout_width="0dip" android:layout_gravity="fill_horizontal"
+				android:text="@string/loading" android:textIsSelectable="true" />
 
-            <TextView
-                android:id="@+id/tile_status_router_router_state_kernel"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading"
-                android:textIsSelectable="true" />
+			<!-- Public IP -->
+			<TextView
+				android:id="@+id/tile_status_router_router_state_internet_ip_title"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="8.0dip"
+				android:layout_marginRight="8.0dip" android:text="@string/public_ip"
+				android:textStyle="bold" />
 
-            <!-- LAN IP-->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/router_state_lan_ip"
-                android:textStyle="bold" />
+			<TextView
+				android:id="@+id/tile_status_router_router_state_internet_ip"
+				android:layout_width="0dip" android:layout_gravity="fill_horizontal"
+				android:text="@string/loading" android:textIsSelectable="true" />
 
-            <TextView
-                android:id="@+id/tile_status_router_router_state_lan_ip"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading"
-                android:textIsSelectable="true" />
+			<!-- Date/time -->
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="8.0dip"
+				android:layout_marginRight="8.0dip"
+				android:text="@string/router_state_date_time"
+				android:textStyle="bold" />
 
-            <!-- WAN IP-->
-            <TextView
-                android:id="@+id/tile_status_router_router_state_wan_ip_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/wan_ip"
-                android:textStyle="bold" />
+			<TextView
+				android:id="@+id/tile_status_router_router_state_datetime"
+				android:layout_width="0dip" android:layout_gravity="fill_horizontal"
+				android:text="@string/loading" android:textIsSelectable="true" />
 
-            <TextView
-                android:id="@+id/tile_status_router_router_state_wan_ip_detail"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading"
-                android:textIsSelectable="true" />
+			<!-- Uptime -->
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="8.0dip"
+				android:layout_marginRight="8.0dip"
+				android:text="@string/router_state_uptime" android:textStyle="bold" />
 
-            <!-- Public IP-->
-            <TextView
-                android:id="@+id/tile_status_router_router_state_internet_ip_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/public_ip"
-                android:textStyle="bold" />
+			<TextView
+				android:id="@+id/tile_status_router_router_state_uptime"
+				android:layout_width="0dip" android:layout_gravity="fill_horizontal"
+				android:text="@string/loading" android:textIsSelectable="true" />
 
-            <TextView
-                android:id="@+id/tile_status_router_router_state_internet_ip"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading"
-                android:textIsSelectable="true" />
+		</GridLayout>
 
-            <!-- Date/time-->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/router_state_date_time"
-                android:textStyle="bold" />
+		<ProgressBar
+			android:id="@+id/tile_status_router_router_state_loading_view"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true" />
 
-            <TextView
-                android:id="@+id/tile_status_router_router_state_datetime"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading"
-                android:textIsSelectable="true" />
+		<com.github.curioustechizen.ago.RelativeTimeTextView
+			android:id="@+id/tile_last_sync" android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentEnd="true"
+			android:layout_alignParentRight="true"
+			android:layout_below="@+id/tile_status_router_router_state_gridLayout"
+			android:layout_marginTop="5dp" android:ellipsize="end"
+			android:gravity="end" android:maxLines="1"
+			android:text="@string/last_sync"
+			android:textAppearance="?android:textAppearanceSmall"
+			android:textIsSelectable="true" android:textStyle="italic" />
 
-            <!-- Uptime-->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/router_state_uptime"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tile_status_router_router_state_uptime"
-                android:layout_width="0dip"
-                android:layout_gravity="fill_horizontal"
-                android:text="@string/loading"
-                android:textIsSelectable="true" />
-
-        </GridLayout>
-
-        <ProgressBar
-            android:id="@+id/tile_status_router_router_state_loading_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
-
-        <com.github.curioustechizen.ago.RelativeTimeTextView
-            android:id="@+id/tile_last_sync"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/tile_status_router_router_state_gridLayout"
-            android:layout_marginTop="5dp"
-            android:ellipsize="end"
-            android:gravity="end"
-            android:maxLines="1"
-            android:text="@string/last_sync"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textIsSelectable="true"
-            android:textStyle="italic" />
-
-    </RelativeLayout>
+	</RelativeLayout>
 
 </LinearLayout>

@@ -1,103 +1,83 @@
-<!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
+<!-- DD-WRT Companion is a mobile app that lets you connect to, monitor and 
+	manage your DD-WRT routers on the go. Copyright (C) 2014 Armel Soro This 
+	program is free software: you can redistribute it and/or modify it under 
+	the terms of the GNU General Public License as published by the Free Software 
+	Foundation, either version 3 of the License, or (at your option) any later 
+	version. This program is distributed in the hope that it will be useful, 
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+	or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for 
+	more details. You should have received a copy of the GNU General Public License 
+	along with this program. If not, see <http://www.gnu.org/licenses/>. Contact 
+	Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
 
-Copyright (C) 2014  Armel Soro
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:ads="http://schemas.android.com/apk/res-auto"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" android:fitsSystemWindows="true"
+	android:orientation="vertical"
+	tools:context="org.rm3l.router_companion.actions.ManageRouterAliasesActivity">
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+	<include
+		layout="@layout/activity_manage_router_aliases_toolbar" />
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+	<com.google.android.gms.ads.AdView
+		android:id="@+id/router_aliases_list_adView"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:layout_marginBottom="5dp" android:layout_marginTop="5dp"
+		android:visibility="gone" ads:adSize="BANNER"
+		ads:adUnitId="@string/banner_ad_unit_id_router_management_activity" />
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	<RelativeLayout android:layout_width="match_parent"
+		android:layout_height="match_parent">
 
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:orientation="vertical"
-    tools:context="org.rm3l.router_companion.actions.ManageRouterAliasesActivity">
-
-    <include layout="@layout/activity_manage_router_aliases_toolbar" />
-
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/router_aliases_list_adView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:visibility="gone"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_unit_id_router_management_activity" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/empty_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:text="There is no local alias right now.\nTap the '+' button to add a new one.\nAliases allow you to give names to your devices (identified by MAC Addresses), so you can easily identify them throughout the app. \nNote that you can also export/import aliases from the menu."
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textIsSelectable="false"
-            android:layout_centerInParent="true"
-            android:visibility="gone" />
-        <!--android:drawableTop="@drawable/router_black_and_white"-->
+		<TextView android:id="@+id/empty_view"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:gravity="center"
+			android:layout_gravity="center"
+			android:text="There is no local alias right now.\nTap the '+' button to add a new one.\nAliases allow you to give names to your devices (identified by MAC Addresses), so you can easily identify them throughout the app. \nNote that you can also export/import aliases from the menu."
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textIsSelectable="false" android:layout_centerInParent="true"
+			android:visibility="gone" />
+		<!--android:drawableTop="@drawable/router_black_and_white" -->
 
 
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:id="@+id/coordinatorLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+		<androidx.coordinatorlayout.widget.CoordinatorLayout
+			android:id="@+id/coordinatorLayout"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
 
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/swipeRefreshLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+			<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+				android:id="@+id/swipeRefreshLayout"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content">
 
-                <org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
-                    android:id="@+id/routerAliasesListView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scrollbars="vertical" />
+				<org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
+					android:id="@+id/routerAliasesListView"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent" android:scrollbars="vertical" />
 
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+			</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/router_alias_add"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_margin="@dimen/fab_margin"
-                android:clickable="true"
-                android:contentDescription="@string/router_add_new"
-                android:src="@drawable/ic_plus_white_24dp"
-                android:tint="@android:color/white"
-                app:elevation="6dp"
-                app:fabSize="normal"
-                app:layout_anchor="@id/routerAliasesListView"
-                app:layout_anchorGravity="end|bottom|right"
-                app:layout_behavior="org.rm3l.router_companion.widgets.ScrollAwareFABBehavior"
-                app:pressedTranslationZ="12dp"
-                android:focusable="true" />
+			<com.google.android.material.floatingactionbutton.FloatingActionButton
+				android:id="@+id/router_alias_add"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="bottom|end"
+				android:layout_margin="@dimen/fab_margin" android:clickable="true"
+				android:contentDescription="@string/router_add_new"
+				android:src="@drawable/ic_plus_white_24dp"
+				android:tint="@android:color/white" app:elevation="6dp"
+				app:fabSize="normal" app:layout_anchor="@id/routerAliasesListView"
+				app:layout_anchorGravity="end|bottom|right"
+				app:layout_behavior="org.rm3l.router_companion.widgets.ScrollAwareFABBehavior"
+				app:pressedTranslationZ="12dp" android:focusable="true" />
 
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
-    </RelativeLayout>
+		</androidx.coordinatorlayout.widget.CoordinatorLayout>
+	</RelativeLayout>
 
 </LinearLayout>

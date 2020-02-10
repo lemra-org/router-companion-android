@@ -42,96 +42,96 @@ import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.widgets.MySwitchPreference;
 
 /**
- * A {@link PreferenceActivity} that presents a set of application settings. On
- * handset devices, settings are presented as a single list. On tablets,
- * settings are split by category, with category headers shown to the left of
- * the list of settings.
- * <p/>
- * See <a href="http://developer.android.com/design/patterns/settings.html">
- * Android Design: Settings</a> for design guidelines and the <a
- * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
- * API Guide</a> for more information on developing a Settings UI.
+ * A {@link PreferenceActivity} that presents a set of application settings. On handset devices,
+ * settings are presented as a single list. On tablets, settings are split by category, with
+ * category headers shown to the left of the list of settings.
+ *
+ * <p>See <a href="http://developer.android.com/design/patterns/settings.html">Android Design:
+ * Settings</a> for design guidelines and the <a
+ * href="http://developer.android.com/guide/topics/ui/settings.html">Settings API Guide</a> for more
+ * information on developing a Settings UI.
  */
-
 @DeepLink({
-        "dd-wrt://routers/{routerUuid}/speedtest/settings",
-        "ddwrt://routers/{routerUuid}/speedtest/settings"
+  "dd-wrt://routers/{routerUuid}/speedtest/settings",
+  "ddwrt://routers/{routerUuid}/speedtest/settings"
 })
 public class RouterSpeedTestSettingsActivity extends AbstractRouterSettingsActivity {
 
-    public static class RouterSpeedTestSettingsFragment extends PreferenceFragment {
+  public static class RouterSpeedTestSettingsFragment extends PreferenceFragment {
 
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
 
-            // Load the preferences from an XML resource
-            addPreferencesFromResource(R.xml.router_speed_test_settings);
+      // Load the preferences from an XML resource
+      addPreferencesFromResource(R.xml.router_speed_test_settings);
 
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_SERVER));
-            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB));
-            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS));
-            //            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION));
-            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_MEASUREMENT_UNIT));
-            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS));
-            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SERVER));
-            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SCHEDULE));
+      // Bind the summaries of EditText/List/Dialog/Ringtone preferences
+      // to their values. When their values change, their summaries are
+      // updated to reflect the new value, per the Android Design
+      // guidelines.
+      bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_SERVER));
+      bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB));
+      bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS));
+      //
+      // bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION));
+      bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_MEASUREMENT_UNIT));
+      bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS));
+      bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SERVER));
+      bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SCHEDULE));
 
-            final MySwitchPreference autoMeasurementsSettings = (MySwitchPreference) findPreference(
-                    ROUTER_SPEED_TEST_AUTO_MEASUREMENTS);
-            final Preference autoMeasurementsServerSetting = findPreference(
-                    ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SERVER);
-            final Preference autoMeasurementsScheduleSetting = findPreference(
-                    ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SCHEDULE);
-            if (BuildConfig.WITH_ADS) {
-                autoMeasurementsSettings.setTitle("Automatic measurements (Upgrade to switch)");
-                autoMeasurementsSettings.setChecked(false);
-                autoMeasurementsSettings.setEnabled(false);
-                if (autoMeasurementsScheduleSetting != null) {
-                    autoMeasurementsScheduleSetting.setTitle("Schedule (Upgrade to switch)");
-                    autoMeasurementsScheduleSetting.setEnabled(false);
-                }
-                autoMeasurementsServerSetting.setTitle("Server for automatic measurements (Upgrade to switch)");
-                autoMeasurementsServerSetting.setEnabled(false);
-            } else {
-                autoMeasurementsSettings.setTitle("Automatic measurements");
-                autoMeasurementsSettings.setEnabled(true);
-                if (autoMeasurementsScheduleSetting != null) {
-                    autoMeasurementsScheduleSetting.setTitle("Schedule");
-                    autoMeasurementsScheduleSetting.setEnabled(true);
-                }
-                autoMeasurementsServerSetting.setTitle("Server for automatic measurements");
-                autoMeasurementsServerSetting.setEnabled(true);
-            }
+      final MySwitchPreference autoMeasurementsSettings =
+          (MySwitchPreference) findPreference(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS);
+      final Preference autoMeasurementsServerSetting =
+          findPreference(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SERVER);
+      final Preference autoMeasurementsScheduleSetting =
+          findPreference(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SCHEDULE);
+      if (BuildConfig.WITH_ADS) {
+        autoMeasurementsSettings.setTitle("Automatic measurements (Upgrade to switch)");
+        autoMeasurementsSettings.setChecked(false);
+        autoMeasurementsSettings.setEnabled(false);
+        if (autoMeasurementsScheduleSetting != null) {
+          autoMeasurementsScheduleSetting.setTitle("Schedule (Upgrade to switch)");
+          autoMeasurementsScheduleSetting.setEnabled(false);
         }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        final Intent intent = getIntent();
-        if (intent.getBooleanExtra(DeepLink.IS_DEEP_LINK, false)) {
-            //Deep link
-            final Bundle parameters = intent.getExtras();
-
-            final String routerUuid = parameters.getString("routerUuid");
-            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
+        autoMeasurementsServerSetting.setTitle(
+            "Server for automatic measurements (Upgrade to switch)");
+        autoMeasurementsServerSetting.setEnabled(false);
+      } else {
+        autoMeasurementsSettings.setTitle("Automatic measurements");
+        autoMeasurementsSettings.setEnabled(true);
+        if (autoMeasurementsScheduleSetting != null) {
+          autoMeasurementsScheduleSetting.setTitle("Schedule");
+          autoMeasurementsScheduleSetting.setEnabled(true);
         }
-        super.onCreate(savedInstanceState);
+        autoMeasurementsServerSetting.setTitle("Server for automatic measurements");
+        autoMeasurementsServerSetting.setEnabled(true);
+      }
     }
+  }
 
-    @NonNull
-    @Override
-    protected PreferenceFragment getPreferenceFragment() {
-        return new RouterSpeedTestSettingsFragment();
-    }
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    final Intent intent = getIntent();
+    if (intent.getBooleanExtra(DeepLink.IS_DEEP_LINK, false)) {
+      // Deep link
+      final Bundle parameters = intent.getExtras();
 
-    @NonNull
-    @Override
-    protected String getToolbarTitle() {
-        return "Speed Test Settings";
+      final String routerUuid = parameters.getString("routerUuid");
+      intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
     }
+    super.onCreate(savedInstanceState);
+  }
+
+  @NonNull
+  @Override
+  protected PreferenceFragment getPreferenceFragment() {
+    return new RouterSpeedTestSettingsFragment();
+  }
+
+  @NonNull
+  @Override
+  protected String getToolbarTitle() {
+    return "Speed Test Settings";
+  }
 }

@@ -35,44 +35,45 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 
-/**
- * Created by rm3l on 01/08/16.
- */
+/** Created by rm3l on 01/08/16. */
 public final class AWSUtils {
 
-    private static AWSCredentialsProvider credsProvider;
+  private static AWSCredentialsProvider credsProvider;
 
-    private static AmazonS3 s3Client;
+  private static AmazonS3 s3Client;
 
-    private static TransferUtility s3TransferUtility;
+  private static TransferUtility s3TransferUtility;
 
-    @NonNull
-    public static AWSCredentialsProvider getAWSCredentialsProvider(final Context context) {
-        if (credsProvider == null) {
-            credsProvider = new CognitoCachingCredentialsProvider(context, AWS_COGNITO_IDENTITY_POOL_ID,
-                    AWS_COGNITO_IDENTITY_POOL_REGION);
-        }
-        return credsProvider;
+  @NonNull
+  public static AWSCredentialsProvider getAWSCredentialsProvider(final Context context) {
+    if (credsProvider == null) {
+      credsProvider =
+          new CognitoCachingCredentialsProvider(
+              context, AWS_COGNITO_IDENTITY_POOL_ID, AWS_COGNITO_IDENTITY_POOL_REGION);
     }
+    return credsProvider;
+  }
 
-    @NonNull
-    public static AmazonS3 getAmazonS3Client(final Context context) {
-        if (s3Client == null) {
-            s3Client = new AmazonS3Client(getAWSCredentialsProvider(context), Region.getRegion(Regions.DEFAULT_REGION));
-            s3Client.setRegion(Region.getRegion(AWS_COGNITO_IDENTITY_POOL_REGION));
-        }
-        return s3Client;
+  @NonNull
+  public static AmazonS3 getAmazonS3Client(final Context context) {
+    if (s3Client == null) {
+      s3Client =
+          new AmazonS3Client(
+              getAWSCredentialsProvider(context), Region.getRegion(Regions.DEFAULT_REGION));
+      s3Client.setRegion(Region.getRegion(AWS_COGNITO_IDENTITY_POOL_REGION));
     }
+    return s3Client;
+  }
 
-    @NonNull
-    public static TransferUtility getTransferUtility(final Context context) {
-        if (s3TransferUtility == null) {
-            TransferNetworkLossHandler.getInstance(context);
-            s3TransferUtility = TransferUtility.builder().s3Client(getAmazonS3Client(context)).context(context).build();
-        }
-        return s3TransferUtility;
+  @NonNull
+  public static TransferUtility getTransferUtility(final Context context) {
+    if (s3TransferUtility == null) {
+      TransferNetworkLossHandler.getInstance(context);
+      s3TransferUtility =
+          TransferUtility.builder().s3Client(getAmazonS3Client(context)).context(context).build();
     }
+    return s3TransferUtility;
+  }
 
-    private AWSUtils() {
-    }
+  private AWSUtils() {}
 }

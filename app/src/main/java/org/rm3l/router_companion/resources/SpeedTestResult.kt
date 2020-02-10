@@ -14,7 +14,7 @@ class SpeedTestResult {
 
     private var router: String? = null
 
-    private //YYYY-MM-dd
+    private // YYYY-MM-dd
     var date: String? = null
 
     private var wanPing: Number? = null
@@ -54,10 +54,18 @@ class SpeedTestResult {
 
     private var connectionULDuration: Long? = null
 
-    constructor(router: String, date: String, server: String,
-                wanPing: Number, wanDl: Number, wanUl: Number,
-                connectionType: String?, connectionDl: Number?, connectionUl: Number?,
-                serverCountryCode: String?) {
+    constructor(
+        router: String,
+        date: String,
+        server: String,
+        wanPing: Number,
+        wanDl: Number,
+        wanUl: Number,
+        connectionType: String?,
+        connectionDl: Number?,
+        connectionUl: Number?,
+        serverCountryCode: String?
+    ) {
 
         this.router = router
         this.date = date
@@ -257,4 +265,3 @@ class SpeedTestResult {
         return this
     }
 }
-

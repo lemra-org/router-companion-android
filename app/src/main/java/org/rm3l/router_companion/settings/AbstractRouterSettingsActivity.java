@@ -28,9 +28,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.widget.Toast;
 import java.util.Locale;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.conn.Router;
@@ -38,85 +38,89 @@ import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
 
 /**
- * A {@link PreferenceActivity} that presents a set of application settings. On
- * handset devices, settings are presented as a single list. On tablets,
- * settings are split by category, with category headers shown to the left of
- * the list of settings.
- * <p/>
- * See <a href="http://developer.android.com/design/patterns/settings.html">
- * Android Design: Settings</a> for design guidelines and the <a
- * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
- * API Guide</a> for more information on developing a Settings UI.
+ * A {@link PreferenceActivity} that presents a set of application settings. On handset devices,
+ * settings are presented as a single list. On tablets, settings are split by category, with
+ * category headers shown to the left of the list of settings.
+ *
+ * <p>See <a href="http://developer.android.com/design/patterns/settings.html">Android Design:
+ * Settings</a> for design guidelines and the <a
+ * href="http://developer.android.com/guide/topics/ui/settings.html">Settings API Guide</a> for more
+ * information on developing a Settings UI.
  */
 public abstract class AbstractRouterSettingsActivity extends AbstractDDWRTSettingsActivity {
 
-    @Nullable
-    protected Router mRouter;
+  @Nullable protected Router mRouter;
 
-    @NonNull
-    protected String mRouterUuid;
+  @NonNull protected String mRouterUuid;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        this.mRouterUuid = getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    this.mRouterUuid = getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
 
-        boolean doFinish = false;
-        //noinspection ConstantConditions
-        if ((mRouter = RouterManagementActivity.Companion.getDao(this).getRouter(this.mRouterUuid)) == null) {
-            Toast.makeText(this, "No router set or router no longer exists", Toast.LENGTH_LONG).show();
-            doFinish = true;
-        }
-
-        //Need to call super.onCreate prior to calling finish()
-        super.onCreate(savedInstanceState);
-
-        if (doFinish) {
-            finish();
-        }
+    boolean doFinish = false;
+    //noinspection ConstantConditions
+    if ((mRouter = RouterManagementActivity.Companion.getDao(this).getRouter(this.mRouterUuid))
+        == null) {
+      Toast.makeText(this, "No router set or router no longer exists", Toast.LENGTH_LONG).show();
+      doFinish = true;
     }
 
-    @Override
-    public void finish() {
-        final Intent data = new Intent();
-        setResult(RESULT_OK, data);
+    // Need to call super.onCreate prior to calling finish()
+    super.onCreate(savedInstanceState);
 
-        super.finish();
+    if (doFinish) {
+      finish();
     }
+  }
 
-    @Override
-    public SharedPreferences getSharedPreferences(String name, int mode) {
-        if (isNullOrEmpty(this.mRouterUuid)) {
-            Toast.makeText(this, "Whoops - internal error. Issue will be reported!", Toast.LENGTH_LONG)
-                    .show();
-            ReportingUtils.reportException(null, new IllegalStateException(
-                    "RouterSettingsActivity: Router UUID is null: " + this.mRouterUuid));
-            finish();
-        }
-        return super.getSharedPreferences(this.mRouterUuid, mode);
+  @Override
+  public void finish() {
+    final Intent data = new Intent();
+    setResult(RESULT_OK, data);
+
+    super.finish();
+  }
+
+  @Override
+  public SharedPreferences getSharedPreferences(String name, int mode) {
+    if (isNullOrEmpty(this.mRouterUuid)) {
+      Toast.makeText(this, "Whoops - internal error. Issue will be reported!", Toast.LENGTH_LONG)
+          .show();
+      ReportingUtils.reportException(
+          null,
+          new IllegalStateException(
+              "RouterSettingsActivity: Router UUID is null: " + this.mRouterUuid));
+      finish();
     }
+    return super.getSharedPreferences(this.mRouterUuid, mode);
+  }
 
-    @NonNull
-    @Override
-    protected abstract PreferenceFragment getPreferenceFragment();
+  @NonNull
+  @Override
+  protected abstract PreferenceFragment getPreferenceFragment();
 
-    @Nullable
-    @Override
-    protected String getRouterUuid() {
-        return mRouterUuid;
+  @Nullable
+  @Override
+  protected String getRouterUuid() {
+    return mRouterUuid;
+  }
+
+  @Nullable
+  @Override
+  protected String getToolbarSubtitle() {
+    if (mRouter == null) {
+      return null;
     }
+    return String.format(
+        Locale.US,
+        "%s (%s:%d)",
+        mRouter.getDisplayName(),
+        mRouter.getRemoteIpAddress(),
+        mRouter.getRemotePort());
+  }
 
-    @Nullable
-    @Override
-    protected String getToolbarSubtitle() {
-        if (mRouter == null) {
-            return null;
-        }
-        return String.format(Locale.US, "%s (%s:%d)", mRouter.getDisplayName(),
-                mRouter.getRemoteIpAddress(), mRouter.getRemotePort());
-    }
-
-    @Override
-    protected void setAppTheme() {
-        ColorUtils.Companion.setAppTheme(this, mRouter.getRouterFirmware(), false);
-    }
+  @Override
+  protected void setAppTheme() {
+    ColorUtils.Companion.setAppTheme(this, mRouter.getRouterFirmware(), false);
+  }
 }

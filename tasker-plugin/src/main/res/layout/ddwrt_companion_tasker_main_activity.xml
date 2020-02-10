@@ -1,208 +1,162 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
 
-Copyright (C) 2014  Armel Soro
+<com.sothree.slidinguppanel.SlidingUpPanelLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:sothree="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/sliding_layout" android:layout_width="match_parent"
+	android:layout_height="match_parent" android:gravity="bottom"
+	sothree:umanoDragView="@+id/tasker_main_history"
+	sothree:umanoOverlay="true" sothree:umanoPanelHeight="60dp"
+	sothree:umanoParallaxOffset="100dp"
+	sothree:umanoScrollableView="@+id/tasker_main_history_recyclerview"
+	sothree:umanoShadowHeight="4dp"
+	tools:context=".ui.activity.main.RouterCompanionTaskerPluginLaunchActivity">
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+	<!-- MAIN CONTENT -->
+	<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" android:orientation="vertical">
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+		<androidx.appcompat.widget.Toolbar
+			android:id="@+id/toolbar" android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="?attr/colorPrimary"
+			android:minHeight="?attr/actionBarSize" />
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+		<!-- Error message placeholder -->
+		<TextView android:id="@+id/error_placeholder"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:layout_gravity="center"
+			android:layout_marginTop="7dp" android:ellipsize="end"
+			android:gravity="center" android:text="Error"
+			android:textColor="@color/ddwrt_purple" android:textStyle="bold"
+			android:visibility="gone" />
 
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
+		<ScrollView android:layout_width="match_parent"
+			android:layout_height="match_parent" android:layout_margin="15dp">
 
-<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:sothree="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/sliding_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="bottom"
-    sothree:umanoDragView="@+id/tasker_main_history"
-    sothree:umanoOverlay="true"
-    sothree:umanoPanelHeight="60dp"
-    sothree:umanoParallaxOffset="100dp"
-    sothree:umanoScrollableView="@+id/tasker_main_history_recyclerview"
-    sothree:umanoShadowHeight="4dp"
-    tools:context=".ui.activity.main.RouterCompanionTaskerPluginLaunchActivity">
+			<LinearLayout android:layout_width="match_parent"
+				android:layout_height="wrap_content" android:orientation="vertical">
 
-    <!-- MAIN CONTENT -->
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+				<TextView android:layout_width="match_parent"
+					android:layout_height="wrap_content" android:text="@string/about"
+					android:textAppearance="?android:textAppearanceLarge"
+					android:textColor="@color/primaryColor" />
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:minHeight="?attr/actionBarSize" />
+				<View android:layout_width="match_parent"
+					android:layout_height="1dp" android:layout_marginBottom="5dp"
+					android:background="@color/primaryColor" />
 
-        <!-- Error message placeholder -->
-        <TextView
-            android:id="@+id/error_placeholder"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="7dp"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:text="Error"
-            android:textColor="@color/ddwrt_purple"
-            android:textStyle="bold"
-            android:visibility="gone" />
+				<TextView android:id="@+id/tasker_main_about_textview"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:textAppearance="?android:textAppearanceMedium" />
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="15dp">
+				<TextView android:id="@+id/tasker_main_history_textview"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/main_activity_app_description_history"
+					android:textAppearance="?android:textAppearanceMedium" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+				<Button android:id="@+id/tasker_main_launch_tasker_btn"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="10dp"
+					android:text="@string/launch_tasker"
+					android:textColor="@color/white" android:theme="@style/MyButton"
+					android:visibility="gone" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/about"
-                    android:textAppearance="?android:textAppearanceLarge"
-                    android:textColor="@color/primaryColor" />
+				<Button
+					android:id="@+id/tasker_main_launch_ddwrt_companion_btn"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginBottom="15dp" android:layout_marginTop="5dp"
+					android:text="@string/launch_ddwrt_companion"
+					android:textColor="@color/white" android:theme="@style/MyButton"
+					android:visibility="gone" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@color/primaryColor" />
+			</LinearLayout>
 
-                <TextView
-                    android:id="@+id/tasker_main_about_textview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:textAppearanceMedium" />
+		</ScrollView>
 
-                <TextView
-                    android:id="@+id/tasker_main_history_textview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/main_activity_app_description_history"
-                    android:textAppearance="?android:textAppearanceMedium" />
+	</LinearLayout>
 
-                <Button
-                    android:id="@+id/tasker_main_launch_tasker_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/launch_tasker"
-                    android:textColor="@color/white"
-                    android:theme="@style/MyButton"
-                    android:visibility="gone" />
+	<!-- Sliding Up Panel -->
+	<LinearLayout android:id="@+id/tasker_main_history"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" android:clickable="true"
+		android:focusable="false" android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/tasker_main_launch_ddwrt_companion_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp"
-                    android:layout_marginTop="5dp"
-                    android:text="@string/launch_ddwrt_companion"
-                    android:textColor="@color/white"
-                    android:theme="@style/MyButton"
-                    android:visibility="gone" />
+		<RelativeLayout android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:layout_margin="10dp">
 
-            </LinearLayout>
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentStart="true"
+				android:layout_marginLeft="7dp" android:layout_marginStart="7dp"
+				android:text="@string/history"
+				android:textAppearance="?android:textAppearanceLarge"
+				android:textColor="@color/primaryColor" />
 
-        </ScrollView>
+			<LinearLayout android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentEnd="true"
+				android:layout_alignParentRight="true"
+				android:orientation="horizontal">
 
-    </LinearLayout>
+				<ImageButton
+					android:id="@+id/tasker_main_history_refresh"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="10dp" android:layout_marginRight="10dp"
+					android:background="?android:attr/selectableItemBackground"
+					android:contentDescription="@string/refresh"
+					android:src="@drawable/ic_refresh_white_24dp" />
 
-    <!-- Sliding Up Panel -->
-    <LinearLayout
-        android:id="@+id/tasker_main_history"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="true"
-        android:focusable="false"
-        android:orientation="vertical">
+				<ImageButton
+					android:id="@+id/tasker_main_history_clear_all"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="10dp" android:layout_marginRight="10dp"
+					android:background="?android:attr/selectableItemBackground"
+					android:contentDescription="@string/delete_all"
+					android:src="@drawable/ic_clear_all_white_24dp" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp">
+			</LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="7dp"
-                android:layout_marginStart="7dp"
-                android:text="@string/history"
-                android:textAppearance="?android:textAppearanceLarge"
-                android:textColor="@color/primaryColor" />
+		</RelativeLayout>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:orientation="horizontal">
+		<RelativeLayout android:layout_width="match_parent"
+			android:layout_height="match_parent">
 
-                <ImageButton
-                    android:id="@+id/tasker_main_history_refresh"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:contentDescription="@string/refresh"
-                    android:src="@drawable/ic_refresh_white_24dp" />
+			<androidx.recyclerview.widget.RecyclerView
+				android:id="@+id/tasker_main_history_recyclerview"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent" android:scrollbars="vertical" />
 
-                <ImageButton
-                    android:id="@+id/tasker_main_history_clear_all"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:contentDescription="@string/delete_all"
-                    android:src="@drawable/ic_clear_all_white_24dp" />
+			<TextView
+				android:id="@+id/tasker_main_history_recyclerview_empty_view"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_centerInParent="true" android:layout_gravity="center"
+				android:background="@color/white" android:gravity="center"
+				android:text="@string/no_recent_history"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
 
-            </LinearLayout>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/tasker_main_history_recyclerview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="vertical" />
-
-            <TextView
-                android:id="@+id/tasker_main_history_recyclerview_empty_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center"
-                android:background="@color/white"
-                android:gravity="center"
-                android:text="@string/no_recent_history"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        </RelativeLayout>
-    </LinearLayout>
+		</RelativeLayout>
+	</LinearLayout>
 
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>

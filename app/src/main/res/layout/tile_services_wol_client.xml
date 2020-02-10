@@ -1,144 +1,117 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
 
-Copyright (C) 2014  Armel Soro
+<androidx.cardview.widget.CardView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:card_view="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/tile_services_wol_client_card_view"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content" android:clickable="true"
+	android:foreground="?android:attr/selectableItemBackground"
+	card_view:cardPreventCornerOverlap="true"
+	card_view:contentPaddingBottom="@dimen/activity_vertical_margin"
+	card_view:contentPaddingLeft="10dp"
+	card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin"
+	card_view:contentPaddingTop="@dimen/activity_vertical_margin"
+	card_view:cardElevation="6dp" card_view:cardMaxElevation="6dp"
+	android:focusable="true">
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+	<RelativeLayout android:layout_width="wrap_content"
+		android:layout_height="wrap_content">
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+		<LinearLayout
+			android:id="@+id/tile_services_wol_client_first_glance_view"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:orientation="vertical">
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+			<RelativeLayout android:layout_width="wrap_content"
+				android:layout_height="wrap_content">
 
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
-
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/tile_services_wol_client_card_view"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:clickable="true"
-    android:foreground="?android:attr/selectableItemBackground"
-    card_view:cardPreventCornerOverlap="true"
-    card_view:contentPaddingBottom="@dimen/activity_vertical_margin"
-    card_view:contentPaddingLeft="10dp"
-    card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin"
-    card_view:contentPaddingTop="@dimen/activity_vertical_margin"
-    card_view:cardElevation="6dp"
-    card_view:cardMaxElevation="6dp"
-    android:focusable="true">
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:id="@+id/tile_services_wol_client_first_glance_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/tile_services_wol_client_device_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_gravity="start"
-                    android:layout_toLeftOf="@+id/tile_services_wol_client_you_and_menu"
-                    android:layout_toStartOf="@+id/tile_services_wol_client_you_and_menu"
-                    android:ellipsize="end"
-                    android:maxLength="17"
-                    android:scrollHorizontally="true"
-                    android:textAppearance="?android:textAppearanceMedium"
-                    android:textIsSelectable="true" />
+				<TextView
+					android:id="@+id/tile_services_wol_client_device_name"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentLeft="true"
+					android:layout_alignParentStart="true"
+					android:layout_alignParentTop="true" android:layout_gravity="start"
+					android:layout_toLeftOf="@+id/tile_services_wol_client_you_and_menu"
+					android:layout_toStartOf="@+id/tile_services_wol_client_you_and_menu"
+					android:ellipsize="end" android:maxLength="17"
+					android:scrollHorizontally="true"
+					android:textAppearance="?android:textAppearanceMedium"
+					android:textIsSelectable="true" />
 
 
-                <LinearLayout
-                    android:id="@+id/tile_services_wol_client_you_and_menu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:gravity="end">
+				<LinearLayout
+					android:id="@+id/tile_services_wol_client_you_and_menu"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentEnd="true"
+					android:layout_alignParentRight="true" android:gravity="end">
 
-                    <TextView
-                        android:id="@+id/tile_services_wol_client_device_this"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:scrollHorizontally="true"
-                        android:text="@string/you"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        android:textColor="@color/yellow"
-                        android:textStyle="bold"
-                        android:visibility="gone" />
+					<TextView
+						android:id="@+id/tile_services_wol_client_device_this"
+						android:layout_width="0dp" android:layout_height="wrap_content"
+						android:layout_gravity="start" android:layout_weight="1"
+						android:ellipsize="end" android:maxLines="1"
+						android:scrollHorizontally="true" android:text="@string/you"
+						android:textAppearance="?android:textAppearanceSmall"
+						android:textColor="@color/yellow" android:textStyle="bold"
+						android:visibility="gone" />
 
-                    <ImageButton
-                        android:id="@+id/tile_services_wol_client_device_menu"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:background="@android:color/transparent"
-                        android:contentDescription="@string/menu"
-                        android:src="@drawable/abs__ic_menu_moreoverflow_holo_light" />
+					<ImageButton
+						android:id="@+id/tile_services_wol_client_device_menu"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content" android:layout_gravity="end"
+						android:background="@android:color/transparent"
+						android:contentDescription="@string/menu"
+						android:src="@drawable/abs__ic_menu_moreoverflow_holo_light" />
 
-                </LinearLayout>
+				</LinearLayout>
 
-            </RelativeLayout>
+			</RelativeLayout>
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+			<RelativeLayout android:layout_width="wrap_content"
+				android:layout_height="wrap_content">
 
-                <TextView
-                    android:id="@+id/tile_services_wol_client_device_mac"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:textIsSelectable="true" />
+				<TextView
+					android:id="@+id/tile_services_wol_client_device_mac"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentLeft="true"
+					android:layout_alignParentStart="true"
+					android:textIsSelectable="true" />
 
-                <TextView
-                    android:id="@+id/tile_services_wol_client_device_ip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:textIsSelectable="true" />
+				<TextView
+					android:id="@+id/tile_services_wol_client_device_ip"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentEnd="true"
+					android:layout_alignParentRight="true"
+					android:textIsSelectable="true" />
 
-            </RelativeLayout>
+			</RelativeLayout>
 
-            <TextView
-                android:id="@+id/tile_services_wol_client_device_details_nic_manufacturer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="4dp"
-                android:ellipsize="end"
-                android:gravity="center_horizontal"
-                android:maxLines="1"
-                android:text="@string/loading"
-                android:textIsSelectable="true" />
+			<TextView
+				android:id="@+id/tile_services_wol_client_device_details_nic_manufacturer"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal"
+				android:layout_marginBottom="4dp" android:ellipsize="end"
+				android:gravity="center_horizontal" android:maxLines="1"
+				android:text="@string/loading" android:textIsSelectable="true" />
 
-        </LinearLayout>
+		</LinearLayout>
 
-    </RelativeLayout>
+	</RelativeLayout>
 
 </androidx.cardview.widget.CardView>

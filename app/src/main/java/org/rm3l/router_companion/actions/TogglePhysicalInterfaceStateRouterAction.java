@@ -32,64 +32,71 @@ import org.rm3l.router_companion.utils.SSHUtils;
 
 public class TogglePhysicalInterfaceStateRouterAction extends AbstractRouterAction<Void> {
 
-    public enum PhysicalInterfaceState {
-        UP, DOWN
+  public enum PhysicalInterfaceState {
+    UP,
+    DOWN
+  }
+
+  public static final int PhysicalInterfaceState_UP = 1;
+
+  public static final int PhysicalInterfaceState_DOWN = 2;
+
+  @NonNull private final Context mContext;
+
+  private final String mPhyIface;
+
+  private final PhysicalInterfaceState mState;
+
+  public TogglePhysicalInterfaceStateRouterAction(
+      Router router,
+      @NonNull Context context,
+      @Nullable RouterActionListener listener,
+      @NonNull final SharedPreferences globalSharedPreferences,
+      @Nullable final String mPhyIface,
+      @NonNull final PhysicalInterfaceState mState) {
+    super(router, listener, RouterAction.TOGGLE_PHY_IFACE_STATE, globalSharedPreferences);
+    this.mContext = context;
+    this.mPhyIface = mPhyIface;
+    this.mState = mState;
+  }
+
+  @NonNull
+  @Override
+  protected RouterActionResult<Void> doActionInBackground() {
+
+    Exception exception = null;
+    try {
+      if (Strings.isNullOrEmpty(this.mPhyIface)) {
+        throw new IllegalArgumentException("Unspecified physical interface");
+      }
+
+      final int exitStatus =
+          SSHUtils.runCommands(
+              mContext,
+              globalSharedPreferences,
+              router,
+              String.format("/sbin/ifconfig %s %s", mPhyIface, mState.toString().toLowerCase()));
+
+      if (exitStatus != 0) {
+        throw new IllegalStateException();
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      exception = e;
     }
 
-    public static final int PhysicalInterfaceState_UP = 1;
+    return new RouterActionResult<>(null, exception);
+  }
 
-    public static final int PhysicalInterfaceState_DOWN = 2;
+  @Override
+  protected ActionLog getActionLog() {
+    return super.getActionLog()
+        .setActionData(String.format("- Physical iface: %s\n" + "- State: %s", mPhyIface, mState));
+  }
 
-    @NonNull
-    private final Context mContext;
-
-    private final String mPhyIface;
-
-    private final PhysicalInterfaceState mState;
-
-    public TogglePhysicalInterfaceStateRouterAction(Router router, @NonNull Context context,
-            @Nullable RouterActionListener listener,
-            @NonNull final SharedPreferences globalSharedPreferences, @Nullable final String mPhyIface,
-            @NonNull final PhysicalInterfaceState mState) {
-        super(router, listener, RouterAction.TOGGLE_PHY_IFACE_STATE, globalSharedPreferences);
-        this.mContext = context;
-        this.mPhyIface = mPhyIface;
-        this.mState = mState;
-    }
-
-    @NonNull
-    @Override
-    protected RouterActionResult<Void> doActionInBackground() {
-
-        Exception exception = null;
-        try {
-            if (Strings.isNullOrEmpty(this.mPhyIface)) {
-                throw new IllegalArgumentException("Unspecified physical interface");
-            }
-
-            final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router,
-                    String.format("/sbin/ifconfig %s %s", mPhyIface, mState.toString().toLowerCase()));
-
-            if (exitStatus != 0) {
-                throw new IllegalStateException();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            exception = e;
-        }
-
-        return new RouterActionResult<>(null, exception);
-    }
-
-    @Override
-    protected ActionLog getActionLog() {
-        return super.getActionLog()
-                .setActionData(String.format("- Physical iface: %s\n" + "- State: %s", mPhyIface, mState));
-    }
-
-    @Nullable
-    @Override
-    protected Context getContext() {
-        return mContext;
-    }
+  @Nullable
+  @Override
+  protected Context getContext() {
+    return mContext;
+  }
 }

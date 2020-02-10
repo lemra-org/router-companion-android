@@ -1,399 +1,277 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
 
-Copyright (C) 2014  Armel Soro
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="wrap_content"
+	android:baselineAligned="false" android:orientation="horizontal">
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+	<LinearLayout android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:layout_weight="0.74"
+		android:orientation="vertical">
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+		<RelativeLayout
+			android:id="@+id/tile_services_pptp_client_hdr"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:paddingTop="4.0dip">
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+			<RelativeLayout android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:paddingTop="4.0dip">
 
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
+				<TextView android:id="@+id/tile_services_pptp_client_title"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_alignParentLeft="true"
+					android:layout_alignParentStart="true" android:ellipsize="end"
+					android:maxLines="1" android:text="PPTP Client"
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:textStyle="bold" />
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:baselineAligned="false"
-    android:orientation="horizontal">
+				<androidx.appcompat.widget.SwitchCompat
+					android:id="@+id/tile_services_pptp_client_status"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentEnd="true"
+					android:layout_alignParentRight="true" android:checked="false"
+					android:textAppearance="?android:textAppearanceSmall"
+					android:textOff="OFF" android:textOn="ON" android:visibility="gone" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.74"
-        android:orientation="vertical">
+			</RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/tile_services_pptp_client_hdr"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="4.0dip">
+			<ProgressBar
+				android:id="@+id/tile_services_pptp_client_header_loading_view"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerInParent="true" />
 
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="4.0dip">
+		</RelativeLayout>
 
-                <TextView
-                    android:id="@+id/tile_services_pptp_client_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:text="PPTP Client"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textStyle="bold" />
+		<ProgressBar android:id="@+id/tile_progress_bar"
+			style="?android:attr/progressBarStyleHorizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="8.0dip"
+			android:layout_marginTop="8.0dip" android:indeterminate="false"
+			android:indeterminateOnly="false" />
 
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/tile_services_pptp_client_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:checked="false"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    android:textOff="OFF"
-                    android:textOn="ON"
-                    android:visibility="gone" />
+		<!-- Error message placeholder -->
+		<TextView android:id="@+id/tile_services_pptp_client_error"
+			android:layout_width="300dp" android:layout_height="wrap_content"
+			android:layout_gravity="center" android:ellipsize="end"
+			android:gravity="center" android:maxLines="1"
+			android:text="@string/error_placeholder"
+			android:textColor="@color/ddwrt_purple"
+			android:textIsSelectable="true" android:textStyle="bold"
+			android:visibility="gone" />
 
-            </RelativeLayout>
+		<!-- Error message placeholder -->
+		<TextView android:id="@+id/tile_services_pptp_client_note"
+			android:layout_width="300dp" android:layout_height="wrap_content"
+			android:layout_gravity="center" android:ellipsize="end"
+			android:gravity="center" android:maxLines="1"
+			android:text="Tap anywhere in this tile to edit Settings"
+			android:textAppearance="?android:textAppearanceSmall"
+			android:textStyle="italic" android:visibility="gone" />
 
-            <ProgressBar
-                android:id="@+id/tile_services_pptp_client_header_loading_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
+		<TextView android:layout_width="300dp"
+			android:layout_height="wrap_content" android:layout_gravity="center"
+			android:ellipsize="end" android:gravity="center" android:maxLines="1"
+			android:text="@string/one_space" />
 
-        </RelativeLayout>
+		<RelativeLayout android:layout_width="match_parent"
+			android:layout_height="wrap_content">
 
-        <ProgressBar
-            android:id="@+id/tile_progress_bar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8.0dip"
-            android:layout_marginTop="8.0dip"
-            android:indeterminate="false"
-            android:indeterminateOnly="false" />
+			<GridLayout
+				android:id="@+id/tile_services_pptp_client_grid_layout"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:columnCount="3"
+				android:visibility="gone">
 
-        <!-- Error message placeholder -->
-        <TextView
-            android:id="@+id/tile_services_pptp_client_error"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="1"
-            android:text="@string/error_placeholder"
-            android:textColor="@color/ddwrt_purple"
-            android:textIsSelectable="true"
-            android:textStyle="bold"
-            android:visibility="gone" />
+				<!-- Status -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:text="Status"
+					android:textStyle="bold" />
 
-        <!-- Error message placeholder -->
-        <TextView
-            android:id="@+id/tile_services_pptp_client_note"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="1"
-            android:text="Tap anywhere in this tile to edit Settings"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textStyle="italic"
-            android:visibility="gone" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-        <TextView
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="1"
-            android:text="@string/one_space" />
+				<TextView android:id="@+id/tile_services_pptp_client_state"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+				<!-- Server IP/Name -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Server IP or DNS Name" android:textStyle="bold" />
 
-            <GridLayout
-                android:id="@+id/tile_services_pptp_client_grid_layout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:columnCount="3"
-                android:visibility="gone">
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                <!-- Status -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Status"
-                    android:textStyle="bold" />
+				<TextView
+					android:id="@+id/tile_services_pptp_client_server_ip_name"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+				<!-- Remote Subnet -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:text="Remote Subnet"
+					android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tile_services_pptp_client_state"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                    android:textIsSelectable="true" />
+				<TextView
+					android:id="@+id/tile_services_pptp_client_remote_subnet"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
-                <!-- Server IP/Name -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Server IP or DNS Name"
-                    android:textStyle="bold" />
+				<!-- Remote Subnet Mask -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Remote Subnet Mask" android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                <TextView
-                    android:id="@+id/tile_services_pptp_client_server_ip_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
+				<TextView
+					android:id="@+id/tile_services_pptp_client_remote_subnet_mask"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
-                    android:textIsSelectable="true" />
+				<!-- MPPE Encyption -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:text="MPPE Encryption"
+					android:textStyle="bold" />
 
-                <!-- Remote Subnet -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Remote Subnet"
-                    android:textStyle="bold" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+				<TextView
+					android:id="@+id/tile_services_pptp_client_mppe_encryption"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
-                <TextView
-                    android:id="@+id/tile_services_pptp_client_remote_subnet"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
+				<!-- MTU -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:text="MTU"
+					android:textStyle="bold" />
 
-                    android:textIsSelectable="true" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                <!-- Remote Subnet Mask -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Remote Subnet Mask"
-                    android:textStyle="bold" />
+				<TextView android:id="@+id/tile_services_pptp_client_mtu"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+				<!-- MRU -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:text="MRU"
+					android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tile_services_pptp_client_remote_subnet_mask"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                    android:textIsSelectable="true" />
-
-                <!-- MPPE Encyption -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="MPPE Encryption"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:id="@+id/tile_services_pptp_client_mppe_encryption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
-
-                    android:textIsSelectable="true" />
-
-                <!-- MTU -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="MTU"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:id="@+id/tile_services_pptp_client_mtu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
-
-                    android:textIsSelectable="true" />
-
-                <!-- MRU -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="MRU"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:id="@+id/tile_services_pptp_client_mru"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
-
-                    android:textIsSelectable="true" />
+				<TextView android:id="@+id/tile_services_pptp_client_mru"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
 
-                <!-- NAT -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="NAT"
-                    android:textStyle="bold" />
+				<!-- NAT -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:text="NAT"
+					android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                <TextView
-                    android:id="@+id/tile_services_pptp_client_nat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
+				<TextView android:id="@+id/tile_services_pptp_client_nat"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
-                    android:textIsSelectable="true" />
+				<!-- Username -->
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:text="Username"
+					android:textStyle="bold" />
 
-                <!-- Username -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Username"
-                    android:textStyle="bold" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center" android:layout_marginLeft="8.0dip"
+					android:layout_marginRight="8.0dip"
+					android:text="@string/one_space" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+				<TextView
+					android:id="@+id/tile_services_pptp_client_username"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="start"
+					android:ellipsize="end" android:gravity="start"
+					android:text="@string/loading" android:textIsSelectable="true" />
 
-                <TextView
-                    android:id="@+id/tile_services_pptp_client_username"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:text="@string/loading"
+			</GridLayout>
 
-                    android:textIsSelectable="true" />
+			<ProgressBar
+				android:id="@+id/tile_services_pptp_client_loading_view"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerInParent="true" />
 
-            </GridLayout>
+		</RelativeLayout>
 
-            <ProgressBar
-                android:id="@+id/tile_services_pptp_client_loading_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
+		<com.github.curioustechizen.ago.RelativeTimeTextView
+			android:id="@+id/tile_last_sync" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:layout_gravity="end"
+			android:layout_marginTop="5dp" android:ellipsize="end"
+			android:gravity="end" android:text="Last sync: "
+			android:textAppearance="?android:textAppearanceSmall"
+			android:textIsSelectable="true" android:textStyle="italic" />
 
-        </RelativeLayout>
-
-        <com.github.curioustechizen.ago.RelativeTimeTextView
-            android:id="@+id/tile_last_sync"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="5dp"
-            android:ellipsize="end"
-            android:gravity="end"
-            android:text="Last sync: "
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textIsSelectable="true"
-
-            android:textStyle="italic" />
-
-    </LinearLayout>
+	</LinearLayout>
 </LinearLayout>

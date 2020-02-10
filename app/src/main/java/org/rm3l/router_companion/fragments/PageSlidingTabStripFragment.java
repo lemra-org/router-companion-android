@@ -30,17 +30,16 @@ import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.core.content.ContextCompat;
-import androidx.viewpager.widget.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import com.android.common.view.SlidingTabLayout;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.util.ArrayList;
@@ -60,212 +59,229 @@ import org.rm3l.router_companion.utils.ColorUtils;
  */
 public class PageSlidingTabStripFragment extends Fragment {
 
-    public static class FragmentTabsAdapter extends FragmentStatePagerAdapter {
+  public static class FragmentTabsAdapter extends FragmentStatePagerAdapter {
 
-        @NonNull
-        final AbstractBaseFragment[] tabs;
+    @NonNull final AbstractBaseFragment[] tabs;
 
-        private final int parentSectionNumber;
+    private final int parentSectionNumber;
 
-        private final Resources resources;
+    private final Resources resources;
 
-        public FragmentTabsAdapter(PageSlidingTabStripFragment pageSlidingTabStripFragment,
-                final int sectionNumber, FragmentManager fm, Resources resources, String sortingStrategy,
-                @Nullable final String routerUuid) {
-            super(fm);
-            this.parentSectionNumber = sectionNumber;
-            this.resources = resources;
-            this.tabs = AbstractBaseFragment.getFragments(pageSlidingTabStripFragment.getActivity(),
-                    this.resources, this.parentSectionNumber, sortingStrategy, routerUuid);
-        }
-
-        public FragmentTabsAdapter(final Activity activity, final int sectionNumber, FragmentManager fm,
-                Resources resources, String sortingStrategy, @Nullable final String routerUuid) {
-            super(fm);
-            this.parentSectionNumber = sectionNumber;
-            this.resources = resources;
-            this.tabs =
-                    AbstractBaseFragment.getFragments(activity, this.resources, this.parentSectionNumber,
-                            sortingStrategy, routerUuid);
-        }
-
-        @Override
-        public int getCount() {
-            return this.tabs.length;
-        }
-
-        @Nullable
-        @Override
-        public Fragment getItem(int position) {
-            if (this.tabs.length <= position) {
-                FirebaseCrashlytics.getInstance().log( "tabs contains less than " + position + " items");
-                return null;
-            }
-            return this.tabs[position];
-        }
-
-        @Nullable
-        @Override
-        public CharSequence getPageTitle(int position) {
-            if (this.tabs.length <= position) {
-                FirebaseCrashlytics.getInstance().log( "tabs contains less than " + position + " items");
-                return null;
-            }
-            final AbstractBaseFragment tab = this.tabs[position];
-            FirebaseCrashlytics.getInstance().log("Tab @position #" + position + ": " + tab);
-            if (tab == null) {
-                return null;
-            }
-            return tab.getTabTitle();
-        }
-
-        @Override
-        public void setPrimaryItem(ViewGroup container, int position, @Nullable Object object) {
-            super.setPrimaryItem(container, position, object);
-            // Hack to allow the non-primary fragments to start properly
-            if (object != null) {
-                ((Fragment) object).setUserVisibleHint(false);
-            }
-        }
+    public FragmentTabsAdapter(
+        PageSlidingTabStripFragment pageSlidingTabStripFragment,
+        final int sectionNumber,
+        FragmentManager fm,
+        Resources resources,
+        String sortingStrategy,
+        @Nullable final String routerUuid) {
+      super(fm);
+      this.parentSectionNumber = sectionNumber;
+      this.resources = resources;
+      this.tabs =
+          AbstractBaseFragment.getFragments(
+              pageSlidingTabStripFragment.getActivity(),
+              this.resources,
+              this.parentSectionNumber,
+              sortingStrategy,
+              routerUuid);
     }
 
-    public static final String TAG = PageSlidingTabStripFragment.class.getSimpleName();
-
-    public static final String PARENT_SECTION_TITLE = "parent_section_title";
-
-    private static final String ARG_SECTION_NUMBER = "section_number";
-
-    private static final String SORTING_STRATEGY = "sorting_strategy";
-
-    @NonNull
-    private FragmentTabsAdapter mFragmentTabsAdapter;
-
-    private ViewPager.OnPageChangeListener mOnPageChangeListener;
-
-    @NonNull
-    private ViewPager mPager;
-
-    private Router mRouter;
-
-    /**
-     * A custom {@link ViewPager} title strip which looks much like Tabs present in Android v4.0 and
-     * above, but is designed to give continuous feedback to the user when scrolling.
-     */
-    private SlidingTabLayout mSlidingTabLayout;
-
-    /**
-     * Returns a new instance of this fragment for the given section
-     * number.
-     */
-    @NonNull
-    public static PageSlidingTabStripFragment newInstance(
-            @NonNull final ViewPager.OnPageChangeListener onPageChangeListener, int sectionNumber,
-            @Nullable final String routerUuid) {
-        final PageSlidingTabStripFragment fragment = new PageSlidingTabStripFragment();
-        final Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        args.putString(AbstractBaseFragment.ROUTER_CONNECTION_INFO, routerUuid);
-        fragment.setArguments(args);
-        fragment.mOnPageChangeListener = onPageChangeListener;
-        return fragment;
+    public FragmentTabsAdapter(
+        final Activity activity,
+        final int sectionNumber,
+        FragmentManager fm,
+        Resources resources,
+        String sortingStrategy,
+        @Nullable final String routerUuid) {
+      super(fm);
+      this.parentSectionNumber = sectionNumber;
+      this.resources = resources;
+      this.tabs =
+          AbstractBaseFragment.getFragments(
+              activity, this.resources, this.parentSectionNumber, sortingStrategy, routerUuid);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+    public int getCount() {
+      return this.tabs.length;
+    }
 
-        final String routerUuid = getArguments().getString(AbstractBaseFragment.ROUTER_CONNECTION_INFO);
-        mRouter = RouterManagementActivity.Companion.getDao(getActivity()).getRouter(routerUuid);
+    @Nullable
+    @Override
+    public Fragment getItem(int position) {
+      if (this.tabs.length <= position) {
+        FirebaseCrashlytics.getInstance().log("tabs contains less than " + position + " items");
+        return null;
+      }
+      return this.tabs[position];
+    }
 
-        final SharedPreferences sharedPreferences =
-                getActivity().getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
-
-        mFragmentTabsAdapter = new FragmentTabsAdapter(this, getArguments().getInt(ARG_SECTION_NUMBER),
-                getChildFragmentManager(), getResources(),
-                String.format("%s.%s", SortingStrategy.class.getPackage().getName(),
-                        sharedPreferences.getString(RouterCompanionAppConstants.SORTING_STRATEGY_PREF,
-                                SortingStrategy.DEFAULT)), routerUuid);
+    @Nullable
+    @Override
+    public CharSequence getPageTitle(int position) {
+      if (this.tabs.length <= position) {
+        FirebaseCrashlytics.getInstance().log("tabs contains less than " + position + " items");
+        return null;
+      }
+      final AbstractBaseFragment tab = this.tabs[position];
+      FirebaseCrashlytics.getInstance().log("Tab @position #" + position + ": " + tab);
+      if (tab == null) {
+        return null;
+      }
+      return tab.getTabTitle();
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.pager, container, false);
+    public void setPrimaryItem(ViewGroup container, int position, @Nullable Object object) {
+      super.setPrimaryItem(container, position, object);
+      // Hack to allow the non-primary fragments to start properly
+      if (object != null) {
+        ((Fragment) object).setUserVisibleHint(false);
+      }
+    }
+  }
+
+  public static final String TAG = PageSlidingTabStripFragment.class.getSimpleName();
+
+  public static final String PARENT_SECTION_TITLE = "parent_section_title";
+
+  private static final String ARG_SECTION_NUMBER = "section_number";
+
+  private static final String SORTING_STRATEGY = "sorting_strategy";
+
+  @NonNull private FragmentTabsAdapter mFragmentTabsAdapter;
+
+  private ViewPager.OnPageChangeListener mOnPageChangeListener;
+
+  @NonNull private ViewPager mPager;
+
+  private Router mRouter;
+
+  /**
+   * A custom {@link ViewPager} title strip which looks much like Tabs present in Android v4.0 and
+   * above, but is designed to give continuous feedback to the user when scrolling.
+   */
+  private SlidingTabLayout mSlidingTabLayout;
+
+  /** Returns a new instance of this fragment for the given section number. */
+  @NonNull
+  public static PageSlidingTabStripFragment newInstance(
+      @NonNull final ViewPager.OnPageChangeListener onPageChangeListener,
+      int sectionNumber,
+      @Nullable final String routerUuid) {
+    final PageSlidingTabStripFragment fragment = new PageSlidingTabStripFragment();
+    final Bundle args = new Bundle();
+    args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+    args.putString(AbstractBaseFragment.ROUTER_CONNECTION_INFO, routerUuid);
+    fragment.setArguments(args);
+    fragment.mOnPageChangeListener = onPageChangeListener;
+    return fragment;
+  }
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setRetainInstance(true);
+
+    final String routerUuid = getArguments().getString(AbstractBaseFragment.ROUTER_CONNECTION_INFO);
+    mRouter = RouterManagementActivity.Companion.getDao(getActivity()).getRouter(routerUuid);
+
+    final SharedPreferences sharedPreferences =
+        getActivity().getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
+
+    mFragmentTabsAdapter =
+        new FragmentTabsAdapter(
+            this,
+            getArguments().getInt(ARG_SECTION_NUMBER),
+            getChildFragmentManager(),
+            getResources(),
+            String.format(
+                "%s.%s",
+                SortingStrategy.class.getPackage().getName(),
+                sharedPreferences.getString(
+                    RouterCompanionAppConstants.SORTING_STRATEGY_PREF, SortingStrategy.DEFAULT)),
+            routerUuid);
+  }
+
+  @Override
+  public View onCreateView(
+      @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.pager, container, false);
+  }
+
+  @Override
+  public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+
+    mPager = (ViewPager) view.findViewById(R.id.viewPager);
+    final int mFragmentTabsAdapterCount = mFragmentTabsAdapter.getCount();
+    mPager.setOffscreenPageLimit(mFragmentTabsAdapterCount - 1);
+    mPager.setAdapter(mFragmentTabsAdapter);
+    mPager.addOnPageChangeListener(mOnPageChangeListener);
+
+    mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.tabs);
+    int colorForOpenWrt = -1;
+    if (mRouter != null) {
+      final Router.RouterFirmware routerFirmware = this.mRouter.getRouterFirmware();
+      if (routerFirmware != null) {
+        switch (routerFirmware) {
+          case OPENWRT:
+            // Change background color
+            colorForOpenWrt = ContextCompat.getColor(getContext(), R.color.win8_orange);
+            mSlidingTabLayout.setBackgroundColor(colorForOpenWrt);
+            break;
+          default:
+            // Use default theme
+            break;
+        }
+      }
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    mSlidingTabLayout.setViewPager(this.mPager);
+    mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
 
-        mPager = (ViewPager) view.findViewById(R.id.viewPager);
-        final int mFragmentTabsAdapterCount = mFragmentTabsAdapter.getCount();
-        mPager.setOffscreenPageLimit(mFragmentTabsAdapterCount - 1);
-        mPager.setAdapter(mFragmentTabsAdapter);
-        mPager.addOnPageChangeListener(mOnPageChangeListener);
-
-        mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.tabs);
-        int colorForOpenWrt = -1;
-        if (mRouter != null) {
-            final Router.RouterFirmware routerFirmware = this.mRouter.getRouterFirmware();
-            if (routerFirmware != null) {
-                switch (routerFirmware) {
-                    case OPENWRT:
-                        //Change background color
-                        colorForOpenWrt = ContextCompat.getColor(getContext(), R.color.win8_orange);
-                        mSlidingTabLayout.setBackgroundColor(colorForOpenWrt);
-                        break;
-                    default:
-                        //Use default theme
-                        break;
-                }
-            }
-        }
-
-        mSlidingTabLayout.setViewPager(this.mPager);
-        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
-
-        final ArrayList<Integer> colorsToSkip = new ArrayList<>();
-        if (colorForOpenWrt > 0) {
-            colorsToSkip.add(colorForOpenWrt);
-        }
-        final Drawable tabsBackground = mSlidingTabLayout.getBackground();
-        if (tabsBackground instanceof ColorDrawable) {
-            colorsToSkip.add(((ColorDrawable) tabsBackground).getColor());
-        }
-
-        //Generate random colors to use for selection
-        final AbstractBaseFragment[] tabs = mFragmentTabsAdapter.tabs;
-        if (tabs.length > 0) {
-            final int[] selectedIndicatorColors = new int[tabs.length];
-            int i = 0;
-            for (final AbstractBaseFragment tab : tabs) {
-                selectedIndicatorColors[i++] =
-                        (tab != null ? ColorUtils.Companion.getColor(tab.getClass().getSimpleName())
-                                : ColorUtils.Companion.genColor(colorsToSkip));
-            }
-            mSlidingTabLayout.setSelectedIndicatorColors(selectedIndicatorColors);
-        } else {
-            mSlidingTabLayout.setSelectedIndicatorColors(
-                    ContextCompat.getColor(getContext(), R.color.tab_selected_strip));
-        }
-
-        //        mSlidingTabLayout.setDistributeEvenly(true);
-        mSlidingTabLayout.setViewPager(this.mPager);
+    final ArrayList<Integer> colorsToSkip = new ArrayList<>();
+    if (colorForOpenWrt > 0) {
+      colorsToSkip.add(colorForOpenWrt);
+    }
+    final Drawable tabsBackground = mSlidingTabLayout.getBackground();
+    if (tabsBackground instanceof ColorDrawable) {
+      colorsToSkip.add(((ColorDrawable) tabsBackground).getColor());
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+    // Generate random colors to use for selection
+    final AbstractBaseFragment[] tabs = mFragmentTabsAdapter.tabs;
+    if (tabs.length > 0) {
+      final int[] selectedIndicatorColors = new int[tabs.length];
+      int i = 0;
+      for (final AbstractBaseFragment tab : tabs) {
+        selectedIndicatorColors[i++] =
+            (tab != null
+                ? ColorUtils.Companion.getColor(tab.getClass().getSimpleName())
+                : ColorUtils.Companion.genColor(colorsToSkip));
+      }
+      mSlidingTabLayout.setSelectedIndicatorColors(selectedIndicatorColors);
+    } else {
+      mSlidingTabLayout.setSelectedIndicatorColors(
+          ContextCompat.getColor(getContext(), R.color.tab_selected_strip));
     }
 
-    public ViewPager.OnPageChangeListener getOnPageChangeListener() {
-        return mOnPageChangeListener;
-    }
+    //        mSlidingTabLayout.setDistributeEvenly(true);
+    mSlidingTabLayout.setViewPager(this.mPager);
+  }
 
-    public void startActivityForResult(Intent intent, DDWRTTile.ActivityResultListener listener) {
-        if (mOnPageChangeListener instanceof DDWRTMainActivity) {
-            ((DDWRTMainActivity) mOnPageChangeListener).startActivityForResult(intent, listener);
-        }
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+  }
+
+  public ViewPager.OnPageChangeListener getOnPageChangeListener() {
+    return mOnPageChangeListener;
+  }
+
+  public void startActivityForResult(Intent intent, DDWRTTile.ActivityResultListener listener) {
+    if (mOnPageChangeListener instanceof DDWRTMainActivity) {
+      ((DDWRTMainActivity) mOnPageChangeListener).startActivityForResult(intent, listener);
     }
+  }
 }

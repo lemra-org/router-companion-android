@@ -1,77 +1,60 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
 
-Copyright (C) 2014  Armel Soro
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context="org.rm3l.router_companion.main.DDWRTMainActivity">
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+	<com.google.android.material.appbar.AppBarLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" app:elevation="2dp"
+		app:paddingEnd="0dp" app:paddingStart="0dp">
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
-
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="org.rm3l.router_companion.main.DDWRTMainActivity">
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:elevation="2dp"
-        app:paddingEnd="0dp"
-        app:paddingStart="0dp">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:minHeight="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways" />
+		<androidx.appcompat.widget.Toolbar
+			android:id="@+id/toolbar" android:layout_width="match_parent"
+			android:layout_height="?attr/actionBarSize"
+			android:background="?attr/colorPrimary"
+			android:minHeight="?attr/actionBarSize"
+			app:layout_scrollFlags="scroll|enterAlways" />
 
 
-        <!-- The Tab rests directly below the Toolbar, attached below it -->
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabanim_tabs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabGravity="center"
-            app:tabIndicatorColor="@color/win8_lime"
-            app:tabIndicatorHeight="4dp"
-            app:tabMode="scrollable"
-            app:tabSelectedTextColor="@color/white"
-            app:tabTextColor="@color/LightGrey" />
+		<!-- The Tab rests directly below the Toolbar, attached below it -->
+		<com.google.android.material.tabs.TabLayout
+			android:id="@+id/tabanim_tabs" android:layout_width="match_parent"
+			android:layout_height="wrap_content" app:tabGravity="center"
+			app:tabIndicatorColor="@color/win8_lime" app:tabIndicatorHeight="4dp"
+			app:tabMode="scrollable" app:tabSelectedTextColor="@color/white"
+			app:tabTextColor="@color/LightGrey" />
 
-    </com.google.android.material.appbar.AppBarLayout>
+	</com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Helps handing the Fragments to load for each Tab -->
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/tabanim_viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/toolbar"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:paddingEnd="0dp"
-        app:paddingStart="0dp" />
+	<!-- Helps handing the Fragments to load for each Tab -->
+	<androidx.viewpager.widget.ViewPager
+		android:id="@+id/tabanim_viewpager"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_below="@id/toolbar"
+		app:layout_behavior="@string/appbar_scrolling_view_behavior"
+		app:paddingEnd="0dp" app:paddingStart="0dp" />
 
-    <!--<FrameLayout-->
-    <!--android:id="@+id/content"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_below="@id/toolbar"/>-->
+	<!--<FrameLayout -->
+	<!--android:id="@+id/content" -->
+	<!--android:layout_width="match_parent" -->
+	<!--android:layout_height="match_parent" -->
+	<!--android:layout_below="@id/toolbar"/> -->
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

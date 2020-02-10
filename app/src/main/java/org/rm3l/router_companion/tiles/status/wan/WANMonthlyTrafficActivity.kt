@@ -41,7 +41,6 @@ import androidx.core.view.MenuItemCompat
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.ShareActionProvider
 import androidx.appcompat.widget.Toolbar
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -234,7 +233,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
 
     @SuppressLint("MissingSuperCall")
     override fun onSaveInstanceState(outState: Bundle) {
-        //No call for super(). Bug on API Level > 11.
+        // No call for super(). Bug on API Level > 11.
     }
 
     override fun onDestroy() {
@@ -243,14 +242,17 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
-                                            grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         when (requestCode) {
             RouterCompanionAppConstants.Permissions.STORAGE -> {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay!
-                    FirebaseCrashlytics.getInstance().log( "Yay! Permission granted for #" + requestCode)
+                    FirebaseCrashlytics.getInstance().log("Yay! Permission granted for #" + requestCode)
                     if (optionsMenu != null) {
                         val menuItem = optionsMenu!!.findItem(R.id.tile_status_wan_monthly_traffic_share)
                         menuItem.isEnabled = true
@@ -258,7 +260,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    FirebaseCrashlytics.getInstance().log( "Boo! Permission denied for #" + requestCode)
+                    FirebaseCrashlytics.getInstance().log("Boo! Permission denied for #" + requestCode)
                     Utils.displayMessage(this, "Sharing of WAN Traffic Data will be unavailable", Style.INFO)
                     if (optionsMenu != null) {
                         val menuItem = optionsMenu!!.findItem(R.id.tile_status_wan_monthly_traffic_share)
@@ -268,7 +270,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 return
             }
             else -> {
-                //Nothing to do
+                // Nothing to do
             }
         }
     }
@@ -282,7 +284,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 }
 
                 override fun onAdOpened() {
-                    //Save preference
+                    // Save preference
                     getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                             Context.MODE_PRIVATE).edit()
                             .putLong(RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
@@ -306,7 +308,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
 
         this.optionsMenu = menu
 
-        //Permission requests
+        // Permission requests
         val rwExternalStoragePermissionCheck = PermissionChecker.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
             // Should we show an explanation?
@@ -320,7 +322,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                         "OK", Snackbar.LENGTH_INDEFINITE, object : SnackbarCallback {
                     @Throws(Exception::class)
                     override fun onDismissEventActionClick(event: Int, bundle: Bundle?) {
-                        //Request permission
+                        // Request permission
                         ActivityCompat.requestPermissions(this@WANMonthlyTrafficActivity,
                                 arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                                 RouterCompanionAppConstants.Permissions.STORAGE)
@@ -349,7 +351,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
         }
 
         val viewToShare = findViewById<View>(R.id.tile_status_wan_monthly_traffic_chart_placeholder)
-        //Construct Bitmap and share it
+        // Construct Bitmap and share it
         val width = viewToShare.width
         val height = viewToShare.height
         val bitmapToExport = Bitmap.createBitmap(if (width > 0) width else DEFAULT_BITMAP_WIDTH,
@@ -363,7 +365,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                     "WAN Monthly Traffic for '${mCycleItem!!.getLabelWithYears()}' on Router '${mRouterDisplay ?: ""}'")
 
             mCsvFileToShare = File(cacheDir, "$fileName.$CSV")
-            //Output the CSV file
+            // Output the CSV file
             mCsvFileToShare!!.bufferedWriter().use { out ->
                 out.write("Date,InboundBytes,InboundReadableValue,OutboundBytes,OutboundReadableValue")
                 out.newLine()
@@ -396,9 +398,8 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                     }
                 } catch (e: IOException) {
                     e.printStackTrace()
-                    //No Worries
+                    // No Worries
                 }
-
             }
 
             setShareFiles(PNG to mFileToShare!!, CSV to mCsvFileToShare!!)
@@ -424,7 +425,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 if (this.mChartView != null) {
                     this.mChartView!!.zoomIn()
                 } else {
-                    FirebaseCrashlytics.getInstance().log( "mChartView is NULL")
+                    FirebaseCrashlytics.getInstance().log("mChartView is NULL")
                     Toast.makeText(this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show()
                 }
                 return true
@@ -434,7 +435,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 if (this.mChartView != null) {
                     this.mChartView!!.zoomOut()
                 } else {
-                    FirebaseCrashlytics.getInstance().log( "mChartView is NULL")
+                    FirebaseCrashlytics.getInstance().log("mChartView is NULL")
                     Toast.makeText(this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show()
                 }
                 return true
@@ -444,7 +445,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 if (this.mChartView != null) {
                     this.mChartView!!.zoomReset()
                 } else {
-                    FirebaseCrashlytics.getInstance().log( "mChartView is NULL")
+                    FirebaseCrashlytics.getInstance().log("mChartView is NULL")
                     Toast.makeText(this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show()
                 }
                 return true
@@ -517,7 +518,6 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                                         .replace("bytes", "B"), outBytes,
                                 byteCountToDisplaySize(outBytes)
                                         .replace("bytes", "B")))
-
             }
 
             // Creating a dataset to hold each series
@@ -536,7 +536,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
             inboundRenderer.isFillPoints = true
             inboundRenderer.lineWidth = 2f
             inboundRenderer.isDisplayChartValues = false
-            inboundRenderer.displayChartValuesDistance = 5 //setting chart value distance
+            inboundRenderer.displayChartValuesDistance = 5 // setting chart value distance
             //            inboundRenderer.setChartValuesTextAlign(Align.CENTER);
             //            inboundRenderer.setChartValuesTextSize(textAppearanceSmallSize);
 
@@ -551,7 +551,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
 
             // Creating a XYMultipleSeriesRenderer to customize the whole chart
             val multiRenderer = XYMultipleSeriesRenderer()
-            multiRenderer.margins = intArrayOf(30, 100, 10, 10) //top,left,bottom,right
+            multiRenderer.margins = intArrayOf(30, 100, 10, 10) // top,left,bottom,right
             multiRenderer.barWidth = 25f
             multiRenderer.barSpacing = 0.5
             multiRenderer.orientation = XYMultipleSeriesRenderer.Orientation.HORIZONTAL
@@ -566,8 +566,8 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
             multiRenderer.isZoomButtonsVisible = false
             multiRenderer.labelsColor = ContextCompat.getColor(this, if (themeLight) R.color.black else R.color.theme_accent_1_light)
 
-            //Add custom labels for the values we have here
-            //setting no of values to display in y axis
+            // Add custom labels for the values we have here
+            // setting no of values to display in y axis
             multiRenderer.yLabels = 0
             if (maxY != 0.0) {
                 multiRenderer.addYTextLabel(maxY,
@@ -596,65 +596,65 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
             (0 until daysLength)
                     .filterNot {
                         firstAndLastsDaysSet && (it == 0 || it == daysLength - 1)
-                        //Add labels every n days
+                        // Add labels every n days
                     }
                     .forEach { multiRenderer.addXTextLabel(it.toDouble(), if (it > 0 && it % (maxX / 5) == 0) days[it] else EMPTY_STRING) }
 
-            //setting text size of the title
+            // setting text size of the title
             //            multiRenderer.setChartTitleTextSize(35);
             multiRenderer.chartTitleTextSize = textAppearanceMediumSize
-            //setting text size of the axis title
+            // setting text size of the axis title
             multiRenderer.axisTitleTextSize = 25f
-            //setting text size of the graph label
+            // setting text size of the graph label
             multiRenderer.labelsTextSize = 25f
             multiRenderer.legendTextSize = textAppearanceSmallSize
             multiRenderer.isFitLegend = true
             multiRenderer.pointSize = 25f
-            //setting pan ability which uses graph to move on both axis
+            // setting pan ability which uses graph to move on both axis
             multiRenderer.setPanEnabled(true, false)
             //            multiRenderer.setPanLimits(new double[] {-1, maxX + 30});
-            //setting click false on graph
+            // setting click false on graph
             multiRenderer.isClickEnabled = true
-            //setting lines to display on y axis
+            // setting lines to display on y axis
             multiRenderer.isShowGridY = false
-            //setting lines to display on x axis
+            // setting lines to display on x axis
             multiRenderer.isShowGridX = false
-            //setting legend to fit the screen size
+            // setting legend to fit the screen size
             multiRenderer.isFitLegend = true
-            //setting displaying line on grid
+            // setting displaying line on grid
             multiRenderer.setShowGrid(false)
-            //setting zoom
+            // setting zoom
             multiRenderer.setZoomEnabled(true, false)
-            //setting external zoom functions to false
+            // setting external zoom functions to false
             //            multiRenderer.setZoomRate(1.1f);
             multiRenderer.isExternalZoomEnabled = true
-            //setting displaying lines on graph to be formatted(like using graphics)
+            // setting displaying lines on graph to be formatted(like using graphics)
             multiRenderer.isAntialiasing = true
-            //setting to in scroll to false
+            // setting to in scroll to false
             multiRenderer.isInScroll = false
-            //setting x axis label align
+            // setting x axis label align
             multiRenderer.xLabelsAlign = Paint.Align.CENTER
-            //setting y axis label to align
+            // setting y axis label to align
             multiRenderer.setYLabelsAlign(Paint.Align.LEFT)
-            //setting text style
+            // setting text style
             multiRenderer.setTextTypeface("sans_serif", Typeface.NORMAL)
             // setting y axis max value, Since i'm using static values inside the graph so i'm setting y max value to 4000.
             // if you use dynamic values then get the max y value and set here
             multiRenderer.yAxisMax = maxY + maxY / 10
             multiRenderer.yAxisMin = 0.0
-            //setting used to move the graph on xaxiz to .5 to the right
+            // setting used to move the graph on xaxiz to .5 to the right
             multiRenderer.xAxisMin = -1.0
-            //setting max values to be display in x axis
+            // setting max values to be display in x axis
             multiRenderer.xAxisMax = (maxX - 1).toDouble()
-            //setting bar size or space between two bars
+            // setting bar size or space between two bars
             multiRenderer.barSpacing = 0.5
-            //Setting background color of the graph to transparent
+            // Setting background color of the graph to transparent
             multiRenderer.backgroundColor = Color.TRANSPARENT
-            //Setting margin color of the graph to transparent
+            // Setting margin color of the graph to transparent
             multiRenderer.marginsColor = ContextCompat.getColor(this, R.color.transparent_background)
             multiRenderer.isApplyBackgroundColor = true
 
-            //setting the margin size for the graph in the order top, left, bottom, right
+            // setting the margin size for the graph in the order top, left, bottom, right
             multiRenderer.margins = intArrayOf(30, 30, 30, 30)
 
             val blackOrWhite = ContextCompat.getColor(this,
@@ -670,14 +670,14 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
             multiRenderer.addSeriesRenderer(outboundRenderer)
 
             this.mChartView = ChartFactory.getBarChartView(this, dataset, multiRenderer, BarChart.Type.DEFAULT)
-            //mChartView.repaint();
+            // mChartView.repaint();
             val inboundRendererColor = inboundRenderer.color
             val outboundRendererColor = outboundRenderer.color
             val displayedTooltip = AtomicReference<ViewTooltip>(null)
 
             val positionX = AtomicReference<Float>(null)
             val positionY = AtomicReference<Float>(null)
-            //Dynamic view, indicating where to place the tooltip
+            // Dynamic view, indicating where to place the tooltip
             val tooltipViewHolder = TextView(this@WANMonthlyTrafficActivity)
             tooltipViewHolder.visibility = View.VISIBLE
 
@@ -692,7 +692,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 if (currentSeriesAndPoint != null) {
                     val xAxisValue = java.lang.Double.valueOf(currentSeriesAndPoint.xValue)!!.toInt()
                     if (xAxisValue in 0..(size - 1)) {
-                        //Series index: 0 => inbound, 1 => outbound
+                        // Series index: 0 => inbound, 1 => outbound
                         val seriesIndex = currentSeriesAndPoint.seriesIndex
                         if (seriesIndex == INBOUND || seriesIndex == OUTBOUND) {
                             //                                currentSeriesAndPoint.getPointIndex()
@@ -741,7 +741,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                                 viewTooltip.show()
                             }
                         } else {
-                            FirebaseCrashlytics.getInstance().log( "Unhandled series index: " + seriesIndex)
+                            FirebaseCrashlytics.getInstance().log("Unhandled series index: " + seriesIndex)
                         }
                     } else {
                         FirebaseCrashlytics.getInstance().log(
@@ -754,7 +754,6 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                     } catch (e: Exception) {
                         FirebaseCrashlytics.getInstance().recordException(e)
                     }
-
                 }
             }
             mChartView!!.addPanListener {
@@ -817,7 +816,6 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 optionsMenu!!.findItem(R.id.tile_status_wan_monthly_traffic_share).isEnabled = false
             }
         }
-
     }
 
     private fun setShareFiles(vararg files: Pair<String, File>?) {

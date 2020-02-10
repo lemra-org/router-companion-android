@@ -12,7 +12,6 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.os.Handler
 import androidx.annotation.ColorRes
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -62,7 +61,7 @@ fun Activity.openFeedbackForm(routerUuid: String? = null) =
 fun Activity.openFeedbackForm(router: Router? = null) = Utils.openFeedbackForm(this, router)
 
 fun Activity.restartWholeApplication(waitMessage: CharSequence? = null, delayMillis: Long? = null) {
-    FirebaseCrashlytics.getInstance().log("Restarting whole Android Application : ${waitMessage ?:""}...")
+    FirebaseCrashlytics.getInstance().log("Restarting whole Android Application : ${waitMessage ?: ""}...")
     val alertDialog = ProgressDialog.show(this, waitMessage, "App will restart. Please wait...", true)
     Handler().postDelayed({
         alertDialog.cancel()
@@ -71,12 +70,12 @@ fun Activity.restartWholeApplication(waitMessage: CharSequence? = null, delayMil
         val manager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager?
         manager?.set(AlarmManager.RTC, System.currentTimeMillis() + 100, intent)
         System.exit(2)
-    }, delayMillis?:2_000)
+    }, delayMillis ?: 2_000)
 }
 
 fun Activity.finishAndReload(waitMessage: String? = null, delayMillis: Long? = null, operationBeforeRestart: Runnable? = null) {
     FirebaseCrashlytics.getInstance().log(
-            "Finishing and reloading current activity (${this::class.java}): ${waitMessage ?:""}...")
+            "Finishing and reloading current activity (${this::class.java}): ${waitMessage ?: ""}...")
     val alertDialog = ProgressDialog.show(this, waitMessage, "Please wait...", true)
 //    val alertDialog = Utils.buildAlertDialog(this, null,
 //            waitMessage?:"Reloading...", false, false)
@@ -87,7 +86,7 @@ fun Activity.finishAndReload(waitMessage: String? = null, delayMillis: Long? = n
         operationBeforeRestart?.run()
         startActivity(intent)
         alertDialog.cancel()
-    }, delayMillis?:2_000)
+    }, delayMillis ?: 2_000)
 }
 
 fun Context?.getApplicationName(): CharSequence {

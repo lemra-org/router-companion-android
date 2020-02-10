@@ -18,7 +18,9 @@ class NoNewFirmwareUpdate : RuntimeException {
 abstract class AbstractRouterFirmwareConnector {
 
     protected fun updateProgressBarViewSeparator(
-            dataRetrievalListener: RemoteDataRetrievalListener?, progress: Int) {
+        dataRetrievalListener: RemoteDataRetrievalListener?,
+        progress: Int
+    ) {
         if (dataRetrievalListener == null) {
             return
         }
@@ -36,9 +38,12 @@ abstract class AbstractRouterFirmwareConnector {
         return routerModel
     }
 
-    fun <T : DDWRTTile<*>> getDataFor(context: Context,
-                                      router: Router, tile: Class<T>,
-                                      dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo {
+    fun <T : DDWRTTile<*>> getDataFor(
+        context: Context,
+        router: Router,
+        tile: Class<T>,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo {
         try {
             return this.javaClass
                     .getDeclaredMethod("getDataFor${tile.simpleName}", Context::class.java,
@@ -55,16 +60,21 @@ abstract class AbstractRouterFirmwareConnector {
             FirebaseCrashlytics.getInstance().recordException(e)
             throw IllegalStateException(e)
         }
-
     }
 
     @Throws(Exception::class)
-    abstract fun getDataForNetworkTopologyMapTile(context: Context,
-                                                  router: Router, dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo
+    abstract fun getDataForNetworkTopologyMapTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo
 
     @Throws(Exception::class)
-    abstract fun getWanPublicIpAddress(context: Context, router: Router,
-                                       dataRetrievalListener: RemoteDataRetrievalListener?): String?
+    abstract fun getWanPublicIpAddress(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): String?
 
     @Throws(Exception::class)
     abstract fun getRouterName(context: Context, router: Router): String?
@@ -79,32 +89,49 @@ abstract class AbstractRouterFirmwareConnector {
     protected abstract fun goGetRouterModel(context: Context, router: Router): String?
 
     @Throws(Exception::class)
-    abstract fun getDataForWANTotalTrafficOverviewTile(context: Context,
-                                                       router: Router, cycleItem: MonthlyCycleItem,
-                                                       dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo
+    abstract fun getDataForWANTotalTrafficOverviewTile(
+        context: Context,
+        router: Router,
+        cycleItem: MonthlyCycleItem,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo
 
     @Throws(Exception::class)
-    abstract fun getDataForUptimeTile(context: Context, router: Router,
-                                      dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo
+    abstract fun getDataForUptimeTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo
 
     @Throws(Exception::class)
-    abstract fun getDataForMemoryAndCpuUsageTile(context: Context,
-                                                 router: Router, dataRetrievalListener: RemoteDataRetrievalListener?): List<Array<String>>
+    abstract fun getDataForMemoryAndCpuUsageTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): List<Array<String>>
 
     @Throws(Exception::class)
-    abstract fun getDataForStorageUsageTile(context: Context,
-                                            router: Router, dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo
+    abstract fun getDataForStorageUsageTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo
 
     @Throws(Exception::class)
-    abstract fun getDataForStatusRouterStateTile(context: Context,
-                                                 router: Router, dataRetrievalListener: RemoteDataRetrievalListener?): NVRAMInfo
+    abstract fun getDataForStatusRouterStateTile(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): NVRAMInfo
 
     abstract fun getScmChangesetUrl(changeset: String): String?
 
     @Throws(Exception::class)
-    abstract fun getWANAccessPolicies(context: Context,
-                                      router: Router,
-                                      dataRetrievalListener: RemoteDataRetrievalListener?): WANAccessPoliciesRouterData?
+    abstract fun getWANAccessPolicies(
+        context: Context,
+        router: Router,
+        dataRetrievalListener: RemoteDataRetrievalListener?
+    ): WANAccessPoliciesRouterData?
 
     abstract fun manuallyCheckForFirmwareUpdateAndReturnDownloadLink(currentFwVer: String?): FirmwareRelease?
 }

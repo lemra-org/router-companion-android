@@ -29,10 +29,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
 import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +36,10 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
+import com.google.android.material.snackbar.Snackbar;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.Utils;
@@ -47,171 +47,192 @@ import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 
 public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
 
-    public static final String POSITION = "position";
+  public static final String POSITION = "position";
 
-    public static final String KEY = \"fake-key\";
+  public static final String KEY = \"fake-key\";
 
-    public static final String VALUE = "value";
+  public static final String VALUE = "value";
 
-    public static final String ACTION = "action";
+  public static final String ACTION = "action";
 
-    public static final int ADD = 1;
+  public static final int ADD = 1;
 
-    public static final int EDIT = 2;
+  public static final int EDIT = 2;
 
-    private CharSequence mKey;
+  private CharSequence mKey;
 
-    private int mPosition;
+  private int mPosition;
 
-    private CharSequence mValue;
+  private CharSequence mValue;
 
-    private NVRAMDataRecyclerViewAdapter nvramDataRecyclerViewAdapter;
+  private NVRAMDataRecyclerViewAdapter nvramDataRecyclerViewAdapter;
 
-    @NonNull
-    public static EditNVRAMKeyValueDialogFragment newInstance(
-            NVRAMDataRecyclerViewAdapter nvramDataRecyclerViewAdapter, int position, CharSequence key,
-            CharSequence value) {
-        final EditNVRAMKeyValueDialogFragment fragment = new EditNVRAMKeyValueDialogFragment();
+  @NonNull
+  public static EditNVRAMKeyValueDialogFragment newInstance(
+      NVRAMDataRecyclerViewAdapter nvramDataRecyclerViewAdapter,
+      int position,
+      CharSequence key,
+      CharSequence value) {
+    final EditNVRAMKeyValueDialogFragment fragment = new EditNVRAMKeyValueDialogFragment();
 
-        fragment.nvramDataRecyclerViewAdapter = nvramDataRecyclerViewAdapter;
+    fragment.nvramDataRecyclerViewAdapter = nvramDataRecyclerViewAdapter;
 
-        final Bundle args = new Bundle();
-        args.putInt(POSITION, position);
-        args.putCharSequence(KEY, key);
-        args.putCharSequence(VALUE, value);
-        fragment.setArguments(args);
+    final Bundle args = new Bundle();
+    args.putInt(POSITION, position);
+    args.putCharSequence(KEY, key);
+    args.putCharSequence(VALUE, value);
+    fragment.setArguments(args);
 
-        return fragment;
-    }
+    return fragment;
+  }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
 
-        final FragmentActivity fragmentActivity = getActivity();
+    final FragmentActivity fragmentActivity = getActivity();
 
-        ColorUtils.Companion.setAppTheme(fragmentActivity, null, false);
+    ColorUtils.Companion.setAppTheme(fragmentActivity, null, false);
 
-        //        if (ColorUtils.isThemeLight(fragmentActivity)) {
-        //            //Light
-        //            fragmentActivity.setTheme(R.style.AppThemeLight);
-        ////            fragmentActivity.getWindow().getDecorView()
-        ////                    .setBackgroundColor(ContextCompat.getColor(fragmentActivity,
-        ////                            android.R.color.white));
-        //        } else {
-        //            //Default is Dark
-        //            fragmentActivity.setTheme(R.style.AppThemeDark);
-        //        }
+    //        if (ColorUtils.isThemeLight(fragmentActivity)) {
+    //            //Light
+    //            fragmentActivity.setTheme(R.style.AppThemeLight);
+    ////            fragmentActivity.getWindow().getDecorView()
+    ////                    .setBackgroundColor(ContextCompat.getColor(fragmentActivity,
+    ////                            android.R.color.white));
+    //        } else {
+    //            //Default is Dark
+    //            fragmentActivity.setTheme(R.style.AppThemeDark);
+    //        }
 
-        final Bundle arguments = getArguments();
-        this.mKey = \"fake-key\";
-        this.mValue = arguments.getCharSequence(VALUE);
-        this.mPosition = arguments.getInt(POSITION);
-    }
+    final Bundle arguments = getArguments();
+    this.mKey = \"fake-key\";
+    this.mValue = arguments.getCharSequence(VALUE);
+    this.mPosition = arguments.getInt(POSITION);
+  }
 
-    @Override
-    public void onStart() {
-        super.onStart();    //super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
+  @Override
+  public void onStart() {
+    super.onStart(); // super.onStart() is where dialog.show() is actually called on the underlying
+    // dialog, so we have to do it after this point
 
-        final AlertDialog d = (AlertDialog) getDialog();
-        if (d != null) {
+    final AlertDialog d = (AlertDialog) getDialog();
+    if (d != null) {
 
-            ((TextView) d.findViewById(R.id.tile_admin_nvram_edit_key)).setText(this.mKey);
-            final EditText valueEditText = (EditText) d.findViewById(R.id.tile_admin_nvram_edit_value);
-            //            valueEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            //                @Override
-            //                public void onFocusChange(View v, boolean hasFocus) {
-            //                    ((TextView) d.findViewById(R.id.tile_admin_nvram_edit_value_textview))
-            //                            .setTypeface(null, hasFocus ? Typeface.BOLD_ITALIC : Typeface.NORMAL);
-            //                }
-            //            });
-            valueEditText.setText(this.mValue, TextView.BufferType.EDITABLE);
+      ((TextView) d.findViewById(R.id.tile_admin_nvram_edit_key)).setText(this.mKey);
+      final EditText valueEditText = (EditText) d.findViewById(R.id.tile_admin_nvram_edit_value);
+      //            valueEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+      //                @Override
+      //                public void onFocusChange(View v, boolean hasFocus) {
+      //                    ((TextView) d.findViewById(R.id.tile_admin_nvram_edit_value_textview))
+      //                            .setTypeface(null, hasFocus ? Typeface.BOLD_ITALIC :
+      // Typeface.NORMAL);
+      //                }
+      //            });
+      valueEditText.setText(this.mValue, TextView.BufferType.EDITABLE);
 
-            d.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+      d.getButton(Dialog.BUTTON_POSITIVE)
+          .setOnClickListener(
+              new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //Validate data
-                    final EditText editText = (EditText) d.findViewById(R.id.tile_admin_nvram_edit_value);
-                    final Editable newValue = editText.getText();
+                  // Validate data
+                  final EditText editText =
+                      (EditText) d.findViewById(R.id.tile_admin_nvram_edit_value);
+                  final Editable newValue = editText.getText();
 
-                    if (mValue != null && newValue.toString().equals(mValue.toString())) {
-                        //Crouton
-                        Utils.displayMessage(getActivity(), "No change", ALERT,
-                                (ViewGroup) (d.findViewById(R.id.tile_admin_nvram_edit_notification_viewgroup)));
-                        editText.requestFocus();
-                        //Open Keyboard
-                        final InputMethodManager imm =
-                                (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        if (imm != null) {
-                            // only will trigger it if no physical keyboard is open
-                            imm.showSoftInput(editText, 0);
-                        }
-                        return;
+                  if (mValue != null && newValue.toString().equals(mValue.toString())) {
+                    // Crouton
+                    Utils.displayMessage(
+                        getActivity(),
+                        "No change",
+                        ALERT,
+                        (ViewGroup)
+                            (d.findViewById(R.id.tile_admin_nvram_edit_notification_viewgroup)));
+                    editText.requestFocus();
+                    // Open Keyboard
+                    final InputMethodManager imm =
+                        (InputMethodManager)
+                            getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                      // only will trigger it if no physical keyboard is open
+                      imm.showSoftInput(editText, 0);
                     }
+                    return;
+                  }
 
-                    final CharSequence variableKey = \"fake-key\";
-                            ((TextView) d.findViewById(R.id.tile_admin_nvram_edit_key)).getText();
+                  final CharSequence variableKey = \"fake-key\";
+                      ((TextView) d.findViewById(R.id.tile_admin_nvram_edit_key)).getText();
 
-                    final Bundle token = new Bundle();
-                    token.putInt(POSITION, mPosition);
-                    token.putCharSequence(VALUE, newValue);
-                    token.putCharSequence(KEY, variableKey);
-                    token.putInt(ACTION, EDIT);
+                  final Bundle token = new Bundle();
+                  token.putInt(POSITION, mPosition);
+                  token.putCharSequence(VALUE, newValue);
+                  token.putCharSequence(KEY, variableKey);
+                  token.putInt(ACTION, EDIT);
 
-                    //nvram set data changed
-                    SnackbarUtils.buildSnackbar(getActivity(),
-                            String.format("Variable '%s' will be updated", variableKey),
-                            "CANCEL",
-                            Snackbar.LENGTH_LONG,
-                            nvramDataRecyclerViewAdapter,
-                            token, true);
+                  // nvram set data changed
+                  SnackbarUtils.buildSnackbar(
+                      getActivity(),
+                      String.format("Variable '%s' will be updated", variableKey),
+                      "CANCEL",
+                      Snackbar.LENGTH_LONG,
+                      nvramDataRecyclerViewAdapter,
+                      token,
+                      true);
 
-                    //new UndoBarController.UndoBar(getActivity()).message(
-                    //    String.format("Variable '%s' will be updated", variableKey))
-                    //    .listener(nvramDataRecyclerViewAdapter)
-                    //    .token(token)
-                    //    .show();
+                  // new UndoBarController.UndoBar(getActivity()).message(
+                  //    String.format("Variable '%s' will be updated", variableKey))
+                  //    .listener(nvramDataRecyclerViewAdapter)
+                  //    .token(token)
+                  //    .show();
 
-                    d.cancel();
+                  d.cancel();
                 }
+              });
+    }
+  }
+
+  @NonNull
+  @Override
+  public Dialog onCreateDialog(Bundle savedInstanceState) {
+    final FragmentActivity activity = getActivity();
+
+    final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+    // Get the layout inflater
+    final LayoutInflater inflater = activity.getLayoutInflater();
+
+    final View view = inflater.inflate(R.layout.tile_admin_nvram_edit, null);
+    builder
+        .setTitle(R.string.edit_nvram)
+        .setMessage(
+            "NVRAM is the permanent settings storage. This includes: "
+                + "i) settings that you normally change using Web Interface, and "
+                + "ii) settings for user Startup Scripts. \n"
+                + "Variables edited here will be persisted in NVRAM right away. \n\n"
+                + "* SO DO NOT EDIT UNLESS YOU REALLY KNOW WHAT YOU ARE DOING! *")
+        .setIcon(android.R.drawable.stat_sys_warning)
+        .setView(view)
+        // Add action buttons
+        .setPositiveButton(
+            R.string.update,
+            new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialog, int id) {
+                // Do nothing here because we override this button later to change the close
+                // behaviour.
+                // However, we still need this because on older versions of Android unless we
+                // pass a handler the button doesn't get instantiated
+              }
+            })
+        .setNegativeButton(
+            R.string.cancel,
+            new DialogInterface.OnClickListener() {
+              public void onClick(DialogInterface dialog, int id) {
+                getDialog().cancel();
+              }
             });
-        }
-    }
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final FragmentActivity activity = getActivity();
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-
-        // Get the layout inflater
-        final LayoutInflater inflater = activity.getLayoutInflater();
-
-        final View view = inflater.inflate(R.layout.tile_admin_nvram_edit, null);
-        builder.setTitle(R.string.edit_nvram)
-                .setMessage("NVRAM is the permanent settings storage. This includes: "
-                        + "i) settings that you normally change using Web Interface, and "
-                        + "ii) settings for user Startup Scripts. \n"
-                        + "Variables edited here will be persisted in NVRAM right away. \n\n"
-                        + "* SO DO NOT EDIT UNLESS YOU REALLY KNOW WHAT YOU ARE DOING! *")
-                .setIcon(android.R.drawable.stat_sys_warning)
-                .setView(view)
-                // Add action buttons
-                .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        //Do nothing here because we override this button later to change the close behaviour.
-                        //However, we still need this because on older versions of Android unless we
-                        //pass a handler the button doesn't get instantiated
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        getDialog().cancel();
-                    }
-                });
-
-        return builder.create();
-    }
+    return builder.create();
+  }
 }

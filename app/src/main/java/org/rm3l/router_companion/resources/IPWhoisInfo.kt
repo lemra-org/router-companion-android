@@ -83,17 +83,17 @@ class IPWhoisInfo {
     var organization: String? = null
 
     val isNone: Boolean
-        get() = asn == null
-                && city == null
-                && country == null
-                && country_code == null
-                && hostname == null
-                && ip == null
-                && latitude == null
-                && longitude == null
-                && organization == null
-                && prefix == null
-                && region == null
+        get() = asn == null &&
+                city == null &&
+                country == null &&
+                country_code == null &&
+                hostname == null &&
+                ip == null &&
+                latitude == null &&
+                longitude == null &&
+                organization == null &&
+                prefix == null &&
+                region == null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

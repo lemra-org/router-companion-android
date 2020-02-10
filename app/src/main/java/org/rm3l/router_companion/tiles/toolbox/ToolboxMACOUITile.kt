@@ -3,17 +3,17 @@ package org.rm3l.router_companion.tiles.toolbox
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import org.rm3l.ddwrt.R
-import org.rm3l.router_companion.actions.AbstractRouterAction
 import org.rm3l.router_companion.actions.MACOUILookupAction
 import org.rm3l.router_companion.resources.conn.Router
 
 class ToolboxMACOUITile(
-    parentFragment: Fragment, arguments: Bundle?,
+    parentFragment: Fragment,
+    arguments: Bundle?,
     router: Router?
 ) : AbstractToolboxTile(parentFragment, arguments, router) {
 
     override fun checkInputAnReturnErrorMessage(inputText: String): CharSequence? {
-        //Accept all inputs
+        // Accept all inputs
         return null
     }
 

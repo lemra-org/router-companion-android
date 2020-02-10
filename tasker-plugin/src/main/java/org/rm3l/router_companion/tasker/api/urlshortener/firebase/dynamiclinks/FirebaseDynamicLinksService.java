@@ -10,8 +10,8 @@ import retrofit2.http.Query;
 
 public interface FirebaseDynamicLinksService {
 
-    @Headers("Content-Type: application/json")
-    @POST("shortLinks")
-    Call<ShortLinksDataResponse> shortLinks(@Query("key") final String key, @Body final ShortLinksDataRequest body);
-
+  @Headers("Content-Type: application/json")
+  @POST("shortLinks")
+  Call<ShortLinksDataResponse> shortLinks(
+      @Query("key") final String key, @Body final ShortLinksDataRequest body);
 }

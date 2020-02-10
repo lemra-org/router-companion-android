@@ -32,10 +32,10 @@ import org.rm3l.router_companion.tiles.services.vpn.server.OpenVPNServerTile;
 
 public class ServicesOpenVPNServerFragment extends AbstractBaseFragment {
 
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Collections.<DDWRTTile>singletonList(
-                new OpenVPNServerTile(this, savedInstanceState, this.router));
-    }
+  @Nullable
+  @Override
+  protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    return Collections.<DDWRTTile>singletonList(
+        new OpenVPNServerTile(this, savedInstanceState, this.router));
+  }
 }

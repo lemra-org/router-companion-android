@@ -27,9 +27,11 @@ import org.rm3l.router_companion.resources.conn.Router;
 
 public interface RouterActionListener {
 
-    void onRouterActionFailure(@NonNull final RouterAction routerAction, @NonNull final Router router,
-            @Nullable final Exception exception);
+  void onRouterActionFailure(
+      @NonNull final RouterAction routerAction,
+      @NonNull final Router router,
+      @Nullable final Exception exception);
 
-    void onRouterActionSuccess(@NonNull final RouterAction routerAction, @NonNull final Router router,
-            Object returnData);
+  void onRouterActionSuccess(
+      @NonNull final RouterAction routerAction, @NonNull final Router router, Object returnData);
 }

@@ -33,56 +33,58 @@ import org.rm3l.router_companion.tiles.status.wireless.sort.ClientsSortingVisito
 
 public class ClientsAlphabeticalSortingVisitorImpl implements ClientsSortingVisitor {
 
-    @NonNull
-    private final Ordering<Device> aphabeticalOrdering;
+  @NonNull private final Ordering<Device> aphabeticalOrdering;
 
-    public ClientsAlphabeticalSortingVisitorImpl(int aphabeticalSort) {
-        if (aphabeticalSort == R.id.tile_status_wireless_clients_sort_a_z) {
-            aphabeticalOrdering = new Ordering<Device>() {
-                @Override
-                public int compare(Device left, Device right) {
-                    if (left == right) {
-                        return 0;
-                    }
-                    if (left == null) {
-                        return -1;
-                    }
-                    if (right == null) {
-                        return 1;
-                    }
-                    return Ordering.natural()
-                            .compare(nullToEmpty(left.getName()).toLowerCase(),
-                                    nullToEmpty(right.getName()).toLowerCase());
-                }
-            };
+  public ClientsAlphabeticalSortingVisitorImpl(int aphabeticalSort) {
+    if (aphabeticalSort == R.id.tile_status_wireless_clients_sort_a_z) {
+      aphabeticalOrdering =
+          new Ordering<Device>() {
+            @Override
+            public int compare(Device left, Device right) {
+              if (left == right) {
+                return 0;
+              }
+              if (left == null) {
+                return -1;
+              }
+              if (right == null) {
+                return 1;
+              }
+              return Ordering.natural()
+                  .compare(
+                      nullToEmpty(left.getName()).toLowerCase(),
+                      nullToEmpty(right.getName()).toLowerCase());
+            }
+          };
 
-        } else if (aphabeticalSort == R.id.tile_status_wireless_clients_sort_z_a) {
-            aphabeticalOrdering = new Ordering<Device>() {
-                @Override
-                public int compare(Device left, Device right) {
-                    if (left == right) {
-                        return 0;
-                    }
-                    if (left == null) {
-                        return 1;
-                    }
-                    if (right == null) {
-                        return -1;
-                    }
-                    return Ordering.natural()
-                            .compare(nullToEmpty(right.getName()).toLowerCase(),
-                                    nullToEmpty(left.getName()).toLowerCase());
-                }
-            };
+    } else if (aphabeticalSort == R.id.tile_status_wireless_clients_sort_z_a) {
+      aphabeticalOrdering =
+          new Ordering<Device>() {
+            @Override
+            public int compare(Device left, Device right) {
+              if (left == right) {
+                return 0;
+              }
+              if (left == null) {
+                return 1;
+              }
+              if (right == null) {
+                return -1;
+              }
+              return Ordering.natural()
+                  .compare(
+                      nullToEmpty(right.getName()).toLowerCase(),
+                      nullToEmpty(left.getName()).toLowerCase());
+            }
+          };
 
-        } else {
-            throw new IllegalArgumentException(
-                    "Only A-Z or Z-A are accepted for alphabetical sorting!");
-        }
+    } else {
+      throw new IllegalArgumentException("Only A-Z or Z-A are accepted for alphabetical sorting!");
     }
+  }
 
-    @NonNull
-    public Set<Device> visit(@NonNull final Set<Device> devices) {
-        return FluentIterable.from(devices).toSortedSet(aphabeticalOrdering);
-    }
+  @NonNull
+  public Set<Device> visit(@NonNull final Set<Device> devices) {
+    return FluentIterable.from(devices).toSortedSet(aphabeticalOrdering);
+  }
 }

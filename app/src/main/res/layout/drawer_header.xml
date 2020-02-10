@@ -1,61 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/header_layout"
-    android:layout_width="270dp"
-    android:layout_height="150dp">
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/header_layout" android:layout_width="270dp"
+	android:layout_height="150dp">
 
-    <ImageView
-        android:id="@+id/left_drawer_router_avatar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:scaleType="fitXY"
-        android:src="@drawable/router_picker_background" />
+	<ImageView android:id="@+id/left_drawer_router_avatar"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@android:color/transparent"
+		android:scaleType="fitXY"
+		android:src="@drawable/router_picker_background" />
 
-    <ImageView
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_centerVertical="true"
-        android:layout_gravity="center"
-        android:layout_marginLeft="20dp"
-        android:layout_marginStart="20dp"
-        android:src="@mipmap/ic_launcher_ddwrt_companion" />
+	<ImageView android:layout_width="70dp"
+		android:layout_height="70dp" android:layout_centerVertical="true"
+		android:layout_gravity="center" android:layout_marginLeft="20dp"
+		android:layout_marginStart="20dp"
+		android:src="@mipmap/ic_launcher_ddwrt_companion" />
 
-    <!--<LinearLayout-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="vertical">-->
+	<!--<LinearLayout -->
+	<!--android:layout_width="wrap_content" -->
+	<!--android:layout_height="wrap_content" -->
+	<!--android:orientation="vertical"> -->
 
 
-    <!--</LinearLayout>-->
+	<!--</LinearLayout> -->
 
-    <!--<TextView-->
-    <!--android:id="@+id/left_drawer_router_ip_port"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="50dp"-->
-    <!--android:ellipsize="middle"-->
-    <!--android:gravity="right|center_vertical"-->
-    <!--android:paddingLeft="10dp"-->
-    <!--android:paddingRight="10dp"-->
-    <!--android:maxLines="1"-->
-    <!--android:text="ip:port"-->
-    <!--android:textAllCaps="false"-->
-    <!--android:textColor="@color/abc_primary_text_material_light"-->
-    <!--android:textSize="20sp" />-->
-    <!--<TextView-->
-    <!--android:id="@+id/left_drawer_router_name"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="50dp"-->
-    <!--android:ellipsize="middle"-->
-    <!--android:layout_above="@id/left_drawer_router_ip_port"-->
-    <!--android:layout_alignParentRight="true"-->
-    <!--android:gravity="right|center_vertical"-->
-    <!--android:paddingLeft="10dp"-->
-    <!--android:paddingRight="10dp"-->
-    <!--android:maxLines="1"-->
-    <!--android:text="My Awesome Router"-->
-    <!--android:textAllCaps="false"-->
-    <!--android:textColor="@color/abc_primary_text_material_light"-->
-    <!--android:textSize="24sp" />-->
+	<!--<TextView -->
+	<!--android:id="@+id/left_drawer_router_ip_port" -->
+	<!--android:layout_width="match_parent" -->
+	<!--android:layout_height="50dp" -->
+	<!--android:ellipsize="middle" -->
+	<!--android:gravity="right|center_vertical" -->
+	<!--android:paddingLeft="10dp" -->
+	<!--android:paddingRight="10dp" -->
+	<!--android:maxLines="1" -->
+	<!--android:text="ip:port" -->
+	<!--android:textAllCaps="false" -->
+	<!--android:textColor="@color/abc_primary_text_material_light" -->
+	<!--android:textSize="20sp" /> -->
+	<!--<TextView -->
+	<!--android:id="@+id/left_drawer_router_name" -->
+	<!--android:layout_width="wrap_content" -->
+	<!--android:layout_height="50dp" -->
+	<!--android:ellipsize="middle" -->
+	<!--android:layout_above="@id/left_drawer_router_ip_port" -->
+	<!--android:layout_alignParentRight="true" -->
+	<!--android:gravity="right|center_vertical" -->
+	<!--android:paddingLeft="10dp" -->
+	<!--android:paddingRight="10dp" -->
+	<!--android:maxLines="1" -->
+	<!--android:text="My Awesome Router" -->
+	<!--android:textAllCaps="false" -->
+	<!--android:textColor="@color/abc_primary_text_material_light" -->
+	<!--android:textSize="24sp" /> -->
 
 </RelativeLayout>

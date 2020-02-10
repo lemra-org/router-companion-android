@@ -48,7 +48,7 @@ class ToolboxServiceNamesPortNumbersTile(parentFragment: Fragment, arguments: Bu
     private val serviceInputLayout: TextInputLayout
 
     init {
-        //We will use a custom layout for this
+        // We will use a custom layout for this
         layout.findViewById<View>(R.id.tile_toolbox_abstract_edittext).gone()
         val lookupView = layout.findViewById<View>(R.id.tile_toolbox_abstract_service_port_lookup_layout)
         lookupView.visible()
@@ -67,7 +67,7 @@ class ToolboxServiceNamesPortNumbersTile(parentFragment: Fragment, arguments: Bu
                         }
                     }
                 }
-        //Default is to lookup by port
+        // Default is to lookup by port
         lookupView.findViewById<RadioButton>(R.id.tile_toolbox_abstract_service_port_lookup_port).isChecked = true
 
         transportProtocolValuesFromSpinner = mParentFragmentActivity.resources
@@ -79,7 +79,7 @@ class ToolboxServiceNamesPortNumbersTile(parentFragment: Fragment, arguments: Bu
     override fun getInfoText() = R.string.service_port_lookup_info
 
     override fun checkInputAnReturnErrorMessage(inputText: String): CharSequence? {
-        //Main input is hidden - proceed with custom fields instead
+        // Main input is hidden - proceed with custom fields instead
         val port = layout.findViewById<TextInputEditText>(R.id.tile_toolbox_abstract_service_port_lookup_port_edittext).text
         val serviceName = layout.findViewById<TextInputEditText>(R.id.tile_toolbox_abstract_service_port_lookup_service_edittext).text
         return when {

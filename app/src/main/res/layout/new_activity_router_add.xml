@@ -1,32 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:orientation="vertical"
-    tools:context=".mgmt.register.ManageRouterWizard">
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:ads="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" android:fitsSystemWindows="true"
+	android:orientation="vertical"
+	tools:context=".mgmt.register.ManageRouterWizard">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/addRouterToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:title="Register a Router"
-        android:titleTextAppearance="?android:attr/textAppearanceLarge" />
+	<androidx.appcompat.widget.Toolbar
+		android:id="@+id/addRouterToolbar" android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="?attr/colorPrimary"
+		android:minHeight="?attr/actionBarSize"
+		android:title="Register a Router"
+		android:titleTextAppearance="?android:attr/textAppearanceLarge" />
 
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/router_add_adView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:visibility="gone"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_unit_id_router_management_activity" />
+	<com.google.android.gms.ads.AdView
+		android:id="@+id/router_add_adView"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:layout_marginBottom="5dp" android:layout_marginTop="5dp"
+		android:visibility="gone" ads:adSize="BANNER"
+		ads:adUnitId="@string/banner_ad_unit_id_router_management_activity" />
 
 
 </LinearLayout>

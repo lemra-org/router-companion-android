@@ -30,14 +30,14 @@ import org.rm3l.router_companion.tiles.DDWRTTile;
 
 /**
  * 'Admin > Factory Defaults' fragment
- * <p/>
- * TODO To Implement
+ *
+ * <p>TODO To Implement
  */
 public class AdminFactoryDefaultsFragment extends AbstractBaseFragment {
 
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return null;
-    }
+  @Nullable
+  @Override
+  protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    return null;
+  }
 }

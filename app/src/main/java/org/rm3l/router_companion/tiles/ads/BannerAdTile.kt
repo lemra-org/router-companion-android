@@ -12,7 +12,8 @@ import org.rm3l.router_companion.tiles.DDWRTTile
 import org.rm3l.router_companion.utils.AdUtils
 
 class BannerAdTile(
-    parentFragment: Fragment, arguments: Bundle?,
+    parentFragment: Fragment,
+    arguments: Bundle?,
     router: Router?
 ) : DDWRTTile<Unit>(parentFragment, arguments, router, R.layout.tile_adview, null) {
 

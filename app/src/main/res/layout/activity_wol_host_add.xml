@@ -1,113 +1,84 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
 
-Copyright (C) 2014  Armel Soro
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content" android:orientation="vertical">
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+	<LinearLayout
+		android:id="@+id/wol_host_add_notification_viewgroup"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" android:orientation="vertical" />
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+	<ScrollView android:layout_width="match_parent"
+		android:layout_height="wrap_content" android:scrollbars="none">
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+		<LinearLayout android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:orientation="vertical">
 
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
+			<!-- Host Name -->
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:layout_marginLeft="4dp"
+				android:layout_marginStart="4dp"
+				android:layout_marginTop="@dimen/activity_vertical_margin"
+				android:text="Host Name" />
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+			<org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
+				android:id="@+id/wol_host_add_name"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="4dp" android:layout_marginLeft="4dp"
+				android:layout_marginRight="4dp" android:hint="e.g., My PC"
+				android:imeOptions="flagNoExtractUi" android:inputType="text"
+				android:maxLines="1" />
 
-    <LinearLayout
-        android:id="@+id/wol_host_add_notification_viewgroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" />
+			<!-- MAC Address -->
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:layout_marginLeft="4dp"
+				android:layout_marginStart="4dp"
+				android:layout_marginTop="@dimen/activity_vertical_margin"
+				android:text="MAC Address (separator is ':')" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none">
+			<org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
+				android:id="@+id/wol_host_add_mac_addr"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="4dp" android:layout_marginLeft="4dp"
+				android:layout_marginRight="4dp"
+				android:hint="e.g., CF:5B:BB:F6:00:D7"
+				android:imeOptions="flagNoExtractUi" android:inputType="text"
+				android:maxLines="1" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+			<!-- Port -->
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:layout_marginLeft="4dp"
+				android:layout_marginStart="4dp"
+				android:layout_marginTop="@dimen/activity_vertical_margin"
+				android:text="Port (leave blank if unknown)" />
 
-            <!-- Host Name -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="Host Name" />
+			<org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
+				android:id="@+id/wol_host_add_port"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="4dp" android:layout_marginLeft="4dp"
+				android:layout_marginRight="4dp" android:ems="10"
+				android:hint="Port of Magic Packet Destination"
+				android:imeOptions="flagNoExtractUi"
+				android:inputType="numberSigned" android:maxLines="1"
+				android:text="" />
 
-            <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
-                android:id="@+id/wol_host_add_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:hint="e.g., My PC"
-                android:imeOptions="flagNoExtractUi"
-                android:inputType="text"
-                android:maxLines="1" />
+		</LinearLayout>
 
-            <!-- MAC Address -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="MAC Address (separator is ':')" />
-
-            <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
-                android:id="@+id/wol_host_add_mac_addr"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:hint="e.g., CF:5B:BB:F6:00:D7"
-                android:imeOptions="flagNoExtractUi"
-                android:inputType="text"
-                android:maxLines="1" />
-
-            <!-- Port -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="Port (leave blank if unknown)" />
-
-            <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
-                android:id="@+id/wol_host_add_port"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:ems="10"
-                android:hint="Port of Magic Packet Destination"
-                android:imeOptions="flagNoExtractUi"
-                android:inputType="numberSigned"
-                android:maxLines="1"
-                android:text="" />
-
-        </LinearLayout>
-
-    </ScrollView>
+	</ScrollView>
 
 </LinearLayout>

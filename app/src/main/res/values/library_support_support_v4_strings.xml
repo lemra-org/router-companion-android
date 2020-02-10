@@ -2,24 +2,39 @@
 
 
 <resources>
-    <string name="define_support_support_v4" translatable="false" />
-    <!-- Author section -->
-    <string name="library_support_support_v4_author" translatable="false">AOSP</string>
-    <string name="library_support_support_v4_authorWebsite" translatable="false">https://source.android.com/</string>
-    <!-- Library section -->
-    <string name="library_support_support_v4_libraryName" translatable="false">Android v4 Support Libraries</string>
-    <string name="library_support_support_v4_libraryDescription" translatable="false">The Android Support Library contains several library packages that can be included in your application. They provide support for application components, user interface features, accessibility, data handling, network connectivity, and programming utilities.</string>
-    <string name="library_support_support_v4_libraryWebsite" translatable="false">https://developer.android.com/reference/android/support/v4/app/package-summary.html</string>
-    <string name="library_support_support_v4_libraryVersion" translatable="false">26.0.2</string>
-    <!-- OpenSource section -->
-    <string name="library_support_support_v4_isOpenSource" translatable="false">true</string>
-    <string name="library_support_support_v4_repositoryLink" translatable="false" />
-    <!-- ClassPath for autoDetect section -->
-    <!--<string translatable="false" name="library_support_support_v4_classPath">com.facebook.support_support_v4</string>-->
-    <!-- License section -->
-    <string name="library_support_support_v4_licenseId" translatable="false">apache_2_0</string>
-    <!-- Custom variables section -->
+	<string name="define_support_support_v4" translatable="false" />
+	<!-- Author section -->
+	<string name="library_support_support_v4_author"
+		translatable="false">AOSP</string>
+	<string name="library_support_support_v4_authorWebsite"
+		translatable="false">https://source.android.com/</string>
+	<!-- Library section -->
+	<string name="library_support_support_v4_libraryName"
+		translatable="false">Android v4 Support Libraries</string>
+	<string name="library_support_support_v4_libraryDescription"
+		translatable="false">The Android Support Library contains several library
+		packages that can be included in your application. They provide
+		support for application components, user interface features,
+		accessibility, data handling, network connectivity, and programming
+		utilities.</string>
+	<string name="library_support_support_v4_libraryWebsite"
+		translatable="false">https://developer.android.com/reference/android/support/v4/app/package-summary.html</string>
+	<string name="library_support_support_v4_libraryVersion"
+		translatable="false">26.0.2</string>
+	<!-- OpenSource section -->
+	<string name="library_support_support_v4_isOpenSource"
+		translatable="false">true</string>
+	<string name="library_support_support_v4_repositoryLink"
+		translatable="false" />
+	<!-- ClassPath for autoDetect section -->
+	<!--<string translatable="false" name="library_support_support_v4_classPath">com.facebook.support_support_v4</string> -->
+	<!-- License section -->
+	<string name="library_support_support_v4_licenseId"
+		translatable="false">apache_2_0</string>
+	<!-- Custom variables section -->
 </resources>
 
 
-    <!--<resources>--><!--<string name="define_int_support_support_v4">year;owner</string>--><!--&lt;!&ndash; Author section &ndash;&gt;--><!--<string name="library_support_support_v4_author">AOSP</string>--><!--<string name="library_support_support_v4_authorWebsite">https://source.android.com/</string>--><!--&lt;!&ndash; Library section &ndash;&gt;--><!--<string name="library_support_support_v4_libraryName">Support Annotations</string>--><!--<string name="library_support_support_v4_libraryDescription">The Annotation package provides APIs to support adding annotation metadata to your apps.</string>--><!--<string name="library_support_support_v4_libraryWebsite"></string>--><!--<string name="library_support_support_v4_libraryVersion">26.0.2</string>--><!--&lt;!&ndash; OpenSource section &ndash;&gt;--><!--<string name="library_support_support_v4_isOpenSource">true</string>--><!--<string name="library_support_support_v4_repositoryLink"/>--><!--&lt;!&ndash; ClassPath for autoDetect section &ndash;&gt;--><!--&lt;!&ndash;<string name="library_support_support_v4_classPath">androidx.annotation.NonNull</string>&ndash;&gt;--><!--&lt;!&ndash; License section &ndash;&gt;--><!--<string name="library_support_support_v4_licenseId">apache_2_0</string>--><!--&lt;!&ndash; Custom variables section &ndash;&gt;--><!--<string name="library_support_support_v4_owner">The Android Open Source Project</string>--><!--<string name="library_support_support_v4_year">2011</string>--><!--</resources>-->
+<!--<resources> --><!--<string name="define_int_support_support_v4">year;owner</string> --><!--&lt;!&ndash; Author section &ndash;&gt; --><!--<string name="library_support_support_v4_author">AOSP</string> --><!--<string name="library_support_support_v4_authorWebsite">https://source.android.com/</string> --><!--&lt;!&ndash; Library section &ndash;&gt; --><!--<string name="library_support_support_v4_libraryName">Support Annotations</string> --><!--<string name="library_support_support_v4_libraryDescription">The Annotation 
+	package provides APIs to support adding annotation metadata to your apps.</string> --><!--<string name="library_support_support_v4_libraryWebsite"></string> --><!--<string name="library_support_support_v4_libraryVersion">26.0.2</string> --><!--&lt;!&ndash; OpenSource section &ndash;&gt; --><!--<string name="library_support_support_v4_isOpenSource">true</string> --><!--<string name="library_support_support_v4_repositoryLink"/> --><!--&lt;!&ndash; ClassPath for autoDetect section &ndash;&gt; --><!--&lt;!&ndash;<string name="library_support_support_v4_classPath">androidx.annotation.NonNull</string>&ndash;&gt; --><!--&lt;!&ndash; License section &ndash;&gt; --><!--<string name="library_support_support_v4_licenseId">apache_2_0</string> --><!--&lt;!&ndash; Custom variables section &ndash;&gt; --><!--<string name="library_support_support_v4_owner">The Android Open Source 
+	Project</string> --><!--<string name="library_support_support_v4_year">2011</string> --><!--</resources> -->

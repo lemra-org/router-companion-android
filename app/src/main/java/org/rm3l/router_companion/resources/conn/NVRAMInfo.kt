@@ -55,7 +55,9 @@ open class NVRAMInfo : RouterData<Properties>(), Serializable {
      * @param value the property value
      */
     fun setProperty(
-            name: String, value: String): NVRAMInfo {
+        name: String,
+        value: String
+    ): NVRAMInfo {
         super.getData()?.setProperty(name, value)
         return this
     }
@@ -68,7 +70,8 @@ open class NVRAMInfo : RouterData<Properties>(), Serializable {
      * @return the property value
      */
     fun getProperty(
-            name: String): String? {
+        name: String
+    ): String? {
         return this.getProperty(name, null)
     }
 
@@ -82,7 +85,9 @@ open class NVRAMInfo : RouterData<Properties>(), Serializable {
      * @return the property value
      */
     fun getProperty(
-            name: String, defaultValue: String?): String? {
+        name: String,
+        defaultValue: String?
+    ): String? {
         return super.getData()?.getProperty(name, defaultValue)
     }
 

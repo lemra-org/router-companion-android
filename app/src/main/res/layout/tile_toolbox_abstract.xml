@@ -1,301 +1,231 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
 
-Copyright (C) 2014  Armel Soro
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/tile_toolbox_ping" android:layout_width="fill_parent"
+	android:layout_height="wrap_content" android:baselineAligned="false"
+	android:orientation="horizontal">
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+	<LinearLayout android:layout_width="0dp"
+		android:layout_height="wrap_content" android:layout_weight="0.74"
+		android:orientation="vertical">
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+		<RelativeLayout android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:paddingTop="4.0dip">
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+			<TextView android:id="@+id/tile_toolbox_abstract_title"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentStart="true" android:ellipsize="end"
+				android:maxLines="1" android:text="@string/ping"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:textStyle="bold" />
 
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
+		</RelativeLayout>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tile_toolbox_ping"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:baselineAligned="false"
-    android:orientation="horizontal">
+		<View android:layout_width="fill_parent"
+			android:layout_height="1.0dip" android:layout_marginBottom="8.0dip"
+			android:layout_marginTop="8.0dip" android:background="#ffcccccc" />
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.74"
-        android:orientation="vertical">
+		<!-- Command description -->
+		<TextView android:id="@+id/tile_toolbox_abstract_info"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:layout_gravity="center"
+			android:ellipsize="end" android:gravity="center" android:maxLines="3"
+			android:textIsSelectable="true" android:textSize="12sp"
+			android:textStyle="italic" android:visibility="gone" />
 
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="4.0dip">
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:gravity="bottom"
 
-            <TextView
-                android:id="@+id/tile_toolbox_abstract_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="@string/ping"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold" />
+			android:visibility="invisible" />
 
-        </RelativeLayout>
+		<!-- Error message placeholder -->
+		<TextView android:id="@+id/tile_toolbox_abstract_error"
+			android:layout_width="300dp" android:layout_height="wrap_content"
+			android:layout_gravity="center" android:ellipsize="end"
+			android:gravity="center" android:maxLines="1"
+			android:text="@string/error_placeholder"
+			android:textColor="@color/ddwrt_purple"
+			android:textIsSelectable="true" android:textStyle="bold"
+			android:visibility="gone" />
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1.0dip"
-            android:layout_marginBottom="8.0dip"
-            android:layout_marginTop="8.0dip"
-            android:background="#ffcccccc" />
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:gravity="bottom"
+			android:textIsSelectable="true" android:visibility="invisible" />
 
-        <!-- Command description -->
-        <TextView
-            android:id="@+id/tile_toolbox_abstract_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="3"
-            android:textIsSelectable="true"
+		<!-- Filter -->
+		<org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
+			android:id="@+id/tile_toolbox_abstract_edittext"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:drawableBottom="@color/win8_teal"
+			android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
+			android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
+			android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
+			android:drawableStart="@drawable/abs__ic_search_api_holo_light"
+			android:hint="@string/ping_edit_text_hint"
+			android:imeOptions="actionSearch"
+			android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
+			android:maxLines="1" />
 
-            android:textSize="12sp"
-            android:textStyle="italic"
-            android:visibility="gone" />
+		<com.google.android.material.textfield.TextInputLayout
+			android:id="@+id/tile_toolbox_abstract_ping_packets_inputlayout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="@dimen/activity_vertical_margin"
+			android:visibility="gone">
+			<com.google.android.material.textfield.TextInputEditText
+				android:id="@+id/tile_toolbox_abstract_ping_packets"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="4dp" android:ems="10"
+				android:hint="Packets count" android:imeOptions="flagNoExtractUi"
+				android:inputType="numberSigned" android:maxLines="1"
+				android:selectAllOnFocus="true" android:text="5" />
+		</com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="bottom"
+		<LinearLayout
+			android:id="@+id/tile_toolbox_abstract_service_port_lookup_layout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:orientation="vertical"
+			android:visibility="gone">
 
-            android:visibility="invisible" />
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:layout_marginTop="4dp"
+				android:text="Lookup by" />
 
-        <!-- Error message placeholder -->
-        <TextView
-            android:id="@+id/tile_toolbox_abstract_error"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="1"
-            android:text="@string/error_placeholder"
-            android:textColor="@color/ddwrt_purple"
-            android:textIsSelectable="true"
-            android:textStyle="bold"
-            android:visibility="gone" />
+			<RadioGroup
+				android:id="@+id/tile_toolbox_abstract_service_port_lookup_type"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
+				<RadioButton
+					android:id="@+id/tile_toolbox_abstract_service_port_lookup_port"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/port_number" />
+				<RadioButton
+					android:id="@+id/tile_toolbox_abstract_service_port_lookup_service"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/service_name" />
+			</RadioGroup>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="bottom"
-            android:textIsSelectable="true"
-            android:visibility="invisible" />
+			<com.google.android.material.textfield.TextInputLayout
+				android:id="@+id/tile_toolbox_abstract_service_port_lookup_port_textinputlayout"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" android:visibility="gone">
+				<com.google.android.material.textfield.TextInputEditText
+					android:id="@+id/tile_toolbox_abstract_service_port_lookup_port_edittext"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginBottom="4dp" android:ems="10"
+					android:hint="Port Number (e.g.: 22)"
+					android:imeOptions="flagNoExtractUi"
+					android:inputType="numberSigned" android:maxLines="1"
+					android:selectAllOnFocus="true" />
+			</com.google.android.material.textfield.TextInputLayout>
+			<com.google.android.material.textfield.TextInputLayout
+				android:id="@+id/tile_toolbox_abstract_service_port_lookup_service_textinputlayout"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" android:visibility="gone">
+				<com.google.android.material.textfield.TextInputEditText
+					android:id="@+id/tile_toolbox_abstract_service_port_lookup_service_edittext"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginBottom="4dp" android:ems="10"
+					android:hint="Service Name (e.g.: ssh)"
+					android:imeOptions="flagNoExtractUi" android:inputType="text"
+					android:maxLines="1" android:selectAllOnFocus="true" />
+			</com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Filter -->
-        <org.rm3l.router_companion.widgets.InstantAutoCompleteTextView
-            android:id="@+id/tile_toolbox_abstract_edittext"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableBottom="@color/win8_teal"
-            android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
-            android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
-            android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
-            android:drawableStart="@drawable/abs__ic_search_api_holo_light"
-            android:hint="@string/ping_edit_text_hint"
-            android:imeOptions="actionSearch"
-            android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
-            android:maxLines="1" />
+			<TextView android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/activity_vertical_margin"
+				android:text="@string/transport_protocol" />
+			<Spinner
+				android:id="@+id/tile_toolbox_abstract_service_port_lookup_protocol"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal"
+				android:entries="@array/service_port_lookup_protocol_array"
+				android:entryValues="@array/service_port_lookup_protocol_array_values"
+				android:imeOptions="flagNoExtractUi"
+				android:prompt="@string/select_transport_protocol" />
+		</LinearLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tile_toolbox_abstract_ping_packets_inputlayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:visibility="gone">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tile_toolbox_abstract_ping_packets"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:ems="10"
-                android:hint="Packets count"
-                android:imeOptions="flagNoExtractUi"
-                android:inputType="numberSigned"
-                android:maxLines="1"
-                android:selectAllOnFocus="true"
-                android:text="5" />
-        </com.google.android.material.textfield.TextInputLayout>
+		<RelativeLayout
+			android:layout_marginTop="@dimen/activity_vertical_margin"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:weightSum="1">
 
-        <LinearLayout
-            android:id="@+id/tile_toolbox_abstract_service_port_lookup_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
+			<Button android:id="@+id/tile_toolbox_abstract_cancel_button"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentStart="true" android:enabled="false"
+				android:text="@string/cancel" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Lookup by" />
+			<!-- For tiles that need to geolocate an IP address -->
+			<Button
+				android:id="@+id/tile_toolbox_abstract_geolocate_button"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerInParent="true" android:enabled="true"
+				android:text="Geolocate IP" android:visibility="gone" />
 
-            <RadioGroup
-                android:id="@+id/tile_toolbox_abstract_service_port_lookup_type"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <RadioButton
-                    android:id="@+id/tile_toolbox_abstract_service_port_lookup_port"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/port_number" />
-                <RadioButton
-                    android:id="@+id/tile_toolbox_abstract_service_port_lookup_service"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/service_name" />
-            </RadioGroup>
+			<Button android:id="@+id/tile_toolbox_abstract_submit_button"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentEnd="true"
+				android:layout_alignParentRight="true" android:text="@string/submit" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tile_toolbox_abstract_service_port_lookup_port_textinputlayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tile_toolbox_abstract_service_port_lookup_port_edittext"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:ems="10"
-                    android:hint="Port Number (e.g.: 22)"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="numberSigned"
-                    android:maxLines="1"
-                    android:selectAllOnFocus="true" />
-            </com.google.android.material.textfield.TextInputLayout>
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tile_toolbox_abstract_service_port_lookup_service_textinputlayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tile_toolbox_abstract_service_port_lookup_service_edittext"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:ems="10"
-                    android:hint="Service Name (e.g.: ssh)"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:selectAllOnFocus="true" />
-            </com.google.android.material.textfield.TextInputLayout>
+		</RelativeLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="@string/transport_protocol" />
-            <Spinner
-                android:id="@+id/tile_toolbox_abstract_service_port_lookup_protocol"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:entries="@array/service_port_lookup_protocol_array"
-                android:entryValues="@array/service_port_lookup_protocol_array_values"
-                android:imeOptions="flagNoExtractUi"
-                android:prompt="@string/select_transport_protocol" />
-        </LinearLayout>
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:gravity="bottom"
 
-        <RelativeLayout
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1">
+			android:visibility="invisible" />
 
-            <Button
-                android:id="@+id/tile_toolbox_abstract_cancel_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:enabled="false"
-                android:text="@string/cancel" />
+		<ScrollView
+			android:id="@+id/tile_toolbox_abstract_content_scrollview"
+			android:layout_width="match_parent"
+			android:layout_height="fill_parent" android:fillViewport="true"
+			android:scrollbars="vertical|horizontal">
 
-            <!-- For tiles that need to geolocate an IP address -->
-            <Button
-                android:id="@+id/tile_toolbox_abstract_geolocate_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:enabled="true"
-                android:text="Geolocate IP"
-                android:visibility="gone" />
+			<RelativeLayout android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:background="@color/black">
 
-            <Button
-                android:id="@+id/tile_toolbox_abstract_submit_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:text="@string/submit" />
+				<TextView android:id="@+id/tile_toolbox_abstract_content"
+					android:layout_width="match_parent"
+					android:layout_height="fill_parent" android:gravity="bottom"
+					android:maxLength="9000" android:maxLines="200"
+					android:textColor="@color/white" android:textIsSelectable="true" />
 
-        </RelativeLayout>
+				<ProgressBar
+					android:id="@+id/tile_toolbox_ping_abstract_loading_view"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_centerInParent="true"
+					android:progressDrawable="@color/white" android:visibility="gone" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="bottom"
+			</RelativeLayout>
 
-            android:visibility="invisible" />
+		</ScrollView>
 
-        <ScrollView
-            android:id="@+id/tile_toolbox_abstract_content_scrollview"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:fillViewport="true"
-            android:scrollbars="vertical|horizontal">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/black">
-
-                <TextView
-                    android:id="@+id/tile_toolbox_abstract_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="fill_parent"
-                    android:gravity="bottom"
-                    android:maxLength="9000"
-                    android:maxLines="200"
-                    android:textColor="@color/white"
-
-                    android:textIsSelectable="true" />
-
-                <ProgressBar
-                    android:id="@+id/tile_toolbox_ping_abstract_loading_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:progressDrawable="@color/white"
-                    android:visibility="gone" />
-
-            </RelativeLayout>
-
-        </ScrollView>
-
-    </LinearLayout>
+	</LinearLayout>
 
 </LinearLayout>

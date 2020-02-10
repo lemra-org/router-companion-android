@@ -1,104 +1,76 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
 
-Copyright (C) 2014  Armel Soro
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content" android:orientation="vertical">
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+	<LinearLayout
+		android:id="@+id/http_auth_prompt_notification_viewgroup"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" android:orientation="vertical" />
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+	<ScrollView android:id="@+id/http_auth_prompt_scrollview"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" android:scrollbars="vertical">
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+		<LinearLayout android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:orientation="vertical">
 
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
+			<com.google.android.material.textfield.TextInputLayout
+				android:id="@+id/http_auth_prompt_username_input_layout"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" android:layout_marginLeft="4dp"
+				android:layout_marginStart="4dp"
+				android:layout_marginTop="@dimen/activity_vertical_margin">
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+				<com.google.android.material.textfield.TextInputEditText
+					android:id="@+id/http_auth_prompt_username"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginBottom="4dp" android:layout_marginLeft="4dp"
+					android:layout_marginRight="4dp" android:hint="HTTP Username"
+					android:imeOptions="flagNoExtractUi" android:inputType="text"
+					android:maxLines="1" android:selectAllOnFocus="true"
+					android:text="root" />
+			</com.google.android.material.textfield.TextInputLayout>
 
-    <LinearLayout
-        android:id="@+id/http_auth_prompt_notification_viewgroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" />
+			<TextView android:id="@+id/http_auth_prompt_password_hdr"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:layout_marginLeft="4dp"
+				android:layout_marginStart="4dp"
+				android:layout_marginTop="@dimen/activity_vertical_margin"
+				android:ellipsize="end" android:maxLines="1"
+				android:text="HTTP Password" />
 
-    <ScrollView
-        android:id="@+id/http_auth_prompt_scrollview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical">
+			<EditText android:id="@+id/http_auth_prompt_password"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" android:layout_marginLeft="4dp"
+				android:layout_marginRight="4dp"
+				android:imeOptions="flagNoExtractUi"
+				android:inputType="textPassword" android:maxLines="1"
+				android:selectAllOnFocus="true" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+			<CheckBox
+				android:id="@+id/http_auth_prompt_password_show_checkbox"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="4dp" android:layout_marginLeft="4dp"
+				android:layout_marginRight="4dp" android:checked="false"
+				android:text="Show Password" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/http_auth_prompt_username_input_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="@dimen/activity_vertical_margin">
+		</LinearLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/http_auth_prompt_username"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:hint="HTTP Username"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:selectAllOnFocus="true"
-                    android:text="root" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <TextView
-                android:id="@+id/http_auth_prompt_password_hdr"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="HTTP Password" />
-
-            <EditText
-                android:id="@+id/http_auth_prompt_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:imeOptions="flagNoExtractUi"
-                android:inputType="textPassword"
-                android:maxLines="1"
-                android:selectAllOnFocus="true" />
-
-            <CheckBox
-                android:id="@+id/http_auth_prompt_password_show_checkbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:checked="false"
-                android:text="Show Password" />
-
-        </LinearLayout>
-
-    </ScrollView>
+	</ScrollView>
 
 </LinearLayout>

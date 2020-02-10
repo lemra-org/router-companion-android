@@ -1,320 +1,292 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:number_picker_pref="http://schemas.android.com/apk/res-auto">
 
-Copyright (C) 2014  Armel Soro
+	<!--&lt;!&ndash; Theming &ndash;&gt; -->
+	<!--<PreferenceCategory -->
+	<!--android:title="Theming" -->
+	<!--android:key="@string/pref_header_theming"> -->
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+	<!--<org.rm3l.ddwrt.widgets.LongListPreference -->
+	<!--android:key="theming" -->
+	<!--android:title="@string/pref_title_theme" -->
+	<!--android:entries="@array/pref_theme_titles" -->
+	<!--android:entryValues="@array/pref_theme_values" -->
+	<!--android:defaultValue="31" -->
+	<!--android:negativeButtonText="@null" -->
+	<!--android:positiveButtonText="@null" /> -->
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+	<!--</PreferenceCategory> -->
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	<!-- General -->
+	<PreferenceCategory
+		android:key="@string/pref_header_general" android:title="General">
 
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:number_picker_pref="http://schemas.android.com/apk/res-auto">
+		<ListPreference
+			android:defaultValue="DDWRTSortingStrategy"
+			android:entries="@array/pref_sorting_strategy_titles"
+			android:entryValues="@array/pref_sorting_strategy_values"
+			android:icon="@drawable/ic_action_action_tab"
+			android:key="sortingStrategy" android:negativeButtonText="@null"
+			android:positiveButtonText="@null" android:title="Tab Order" />
 
-    <!--&lt;!&ndash; Theming &ndash;&gt;-->
-    <!--<PreferenceCategory-->
-    <!--android:title="Theming"-->
-    <!--android:key="@string/pref_header_theming">-->
+	</PreferenceCategory>
 
-    <!--<org.rm3l.ddwrt.widgets.LongListPreference-->
-    <!--android:key="theming"-->
-    <!--android:title="@string/pref_title_theme"-->
-    <!--android:entries="@array/pref_theme_titles"-->
-    <!--android:entryValues="@array/pref_theme_values"-->
-    <!--android:defaultValue="31"-->
-    <!--android:negativeButtonText="@null"-->
-    <!--android:positiveButtonText="@null" />-->
+	<!-- Data & Sync -->
+	<PreferenceCategory
+		android:key="@string/pref_header_data_sync"
+		android:title="Data &amp; Sync">
 
-    <!--</PreferenceCategory>-->
+		<!--<org.rm3l.ddwrt.widgets.LongListPreference -->
+		<!--android:defaultValue="3600000" -->
+		<!--android:entries="@array/pref_sync_frequency_titles" -->
+		<!--android:entryValues="@array/pref_sync_frequency_values" -->
+		<!--android:key="routerDataPullIntervalSeconds" -->
+		<!--android:negativeButtonText="@null" -->
+		<!--android:positiveButtonText="@null" -->
+		<!--android:title="Auto-refresh interval" /> -->
 
-    <!-- General -->
-    <PreferenceCategory
-        android:key="@string/pref_header_general"
-        android:title="General">
+		<org.rm3l.router_companion.widgets.MySwitchPreference
+			android:defaultValue="false" android:disableDependentsState="false"
+			android:icon="@drawable/ic_action_notification_sync"
+			android:key="auto_refresh.enable"
+			android:summaryOff="Disabled. You can still pull to refresh manually."
+			android:summaryOn="Enabled." android:title="Auto-refresh" />
 
-        <ListPreference
-            android:defaultValue="DDWRTSortingStrategy"
-            android:entries="@array/pref_sorting_strategy_titles"
-            android:entryValues="@array/pref_sorting_strategy_values"
-            android:icon="@drawable/ic_action_action_tab"
-            android:key="sortingStrategy"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="Tab Order" />
+		<org.rm3l.router_companion.widgets.EditTextLongPreference
+			android:defaultValue="60" android:dependency="auto_refresh.enable"
+			android:icon="@drawable/ic_action_navigation_refresh"
+			android:inputType="number"
+			android:key="routerDataPullIntervalSeconds"
+			android:summary="Auto-refresh interval"
+			android:title="Auto-refresh interval (in seconds)" />
 
-    </PreferenceCategory>
-
-    <!-- Data & Sync -->
-    <PreferenceCategory
-        android:key="@string/pref_header_data_sync"
-        android:title="Data &amp; Sync">
-
-        <!--<org.rm3l.ddwrt.widgets.LongListPreference-->
-        <!--android:defaultValue="3600000"-->
-        <!--android:entries="@array/pref_sync_frequency_titles"-->
-        <!--android:entryValues="@array/pref_sync_frequency_values"-->
-        <!--android:key="routerDataPullIntervalSeconds"-->
-        <!--android:negativeButtonText="@null"-->
-        <!--android:positiveButtonText="@null"-->
-        <!--android:title="Auto-refresh interval" />-->
-
-        <org.rm3l.router_companion.widgets.MySwitchPreference
-            android:defaultValue="false"
-            android:disableDependentsState="false"
-            android:icon="@drawable/ic_action_notification_sync"
-            android:key="auto_refresh.enable"
-            android:summaryOff="Disabled. You can still pull to refresh manually."
-            android:summaryOn="Enabled."
-            android:title="Auto-refresh" />
-
-        <org.rm3l.router_companion.widgets.EditTextLongPreference
-            android:defaultValue="60"
-            android:dependency="auto_refresh.enable"
-            android:icon="@drawable/ic_action_navigation_refresh"
-            android:inputType="number"
-            android:key="routerDataPullIntervalSeconds"
-            android:summary="Auto-refresh interval"
-            android:title="Auto-refresh interval (in seconds)" />
-
-    </PreferenceCategory>
+	</PreferenceCategory>
 
 
-    <!-- Monitoring -->
-    <PreferenceCategory
-        android:key="@string/pref_header_wan_monitoring"
-        android:title="Monitoring">
+	<!-- Monitoring -->
+	<PreferenceCategory
+		android:key="@string/pref_header_wan_monitoring"
+		android:title="Monitoring">
 
-        <org.rm3l.router_companion.widgets.NumberPickerPreference
-            android:defaultValue="1"
-            android:icon="@drawable/ic_action_action_today"
-            android:key="wan_cycle_day"
-            android:persistent="true"
-            android:title="WAN Monthly Cycle"
-            number_picker_pref:description="Date of each month:"
-            number_picker_pref:max="31"
-            number_picker_pref:min="1" />
+		<org.rm3l.router_companion.widgets.NumberPickerPreference
+			android:defaultValue="1"
+			android:icon="@drawable/ic_action_action_today"
+			android:key="wan_cycle_day" android:persistent="true"
+			android:title="WAN Monthly Cycle"
+			number_picker_pref:description="Date of each month:"
+			number_picker_pref:max="31" number_picker_pref:min="1" />
 
-    </PreferenceCategory>
+	</PreferenceCategory>
 
-    <!-- Speed Test -->
-    <PreferenceCategory
-        android:key="@string/pref_header_data_sync"
-        android:title="Speed Test">
+	<!-- Speed Test -->
+	<PreferenceCategory
+		android:key="@string/pref_header_data_sync" android:title="Speed Test">
 
-        <ListPreference
-            android:defaultValue="_random_"
-            android:entries="@array/speedtest_servers_titles"
-            android:entryValues="@array/speedtest_servers_values"
-            android:icon="@drawable/ic_action_hardware_computer"
-            android:key="routerSpeedTestServer"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="Server" />
+		<ListPreference android:defaultValue="_random_"
+			android:entries="@array/speedtest_servers_titles"
+			android:entryValues="@array/speedtest_servers_values"
+			android:icon="@drawable/ic_action_hardware_computer"
+			android:key="routerSpeedTestServer"
+			android:negativeButtonText="@null" android:positiveButtonText="@null"
+			android:title="Server" />
 
-        <org.rm3l.router_companion.widgets.LongListPreference
-            android:defaultValue="100"
-            android:entries="@array/routerSpeedTestMaxFileSize_titles"
-            android:entryValues="@array/routerSpeedTestMaxFileSize_values"
-            android:icon="@drawable/ic_action_device_data_usage"
-            android:key="routerSpeedTestMaxFileSizeMB"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="Max. size of sample data" />
+		<org.rm3l.router_companion.widgets.LongListPreference
+			android:defaultValue="100"
+			android:entries="@array/routerSpeedTestMaxFileSize_titles"
+			android:entryValues="@array/routerSpeedTestMaxFileSize_values"
+			android:icon="@drawable/ic_action_device_data_usage"
+			android:key="routerSpeedTestMaxFileSizeMB"
+			android:negativeButtonText="@null" android:positiveButtonText="@null"
+			android:title="Max. size of sample data" />
 
-        <EditTextPreference
-            android:defaultValue="8"
-            android:icon="@drawable/ic_action_action_schedule"
-            android:key="routerSpeedTestDurationThresholdSeconds"
-            android:summary="Test continues with next sample data size until transfer duration exceeds this"
-            android:title="Data transfer duration threshold (in seconds)" />
+		<EditTextPreference android:defaultValue="8"
+			android:icon="@drawable/ic_action_action_schedule"
+			android:key="routerSpeedTestDurationThresholdSeconds"
+			android:summary="Test continues with next sample data size until transfer duration exceeds this"
+			android:title="Data transfer duration threshold (in seconds)" />
 
-        <!-- Disabled for now -->
-        <!--<org.rm3l.ddwrt.widgets.MySwitchPreference-->
-        <!--android:defaultValue="true"-->
-        <!--android:key="routerSpeedTest.withCurrentConnection"-->
-        <!--android:summaryOff="Disabled. Link from this device to the router will not be tested. WAN Link (from Router to Internet) is always tested."-->
-        <!--android:summaryOn="Link from this device to the router will be tested, besides WAN Link (from Router to Internet)."-->
-        <!--android:title="Test device to router connection" />-->
+		<!-- Disabled for now -->
+		<!--<org.rm3l.ddwrt.widgets.MySwitchPreference -->
+		<!--android:defaultValue="true" -->
+		<!--android:key="routerSpeedTest.withCurrentConnection" -->
+		<!--android:summaryOff="Disabled. Link from this device to the router will 
+			not be tested. WAN Link (from Router to Internet) is always tested." -->
+		<!--android:summaryOn="Link from this device to the router will be tested, 
+			besides WAN Link (from Router to Internet)." -->
+		<!--android:title="Test device to router connection" /> -->
 
-        <ListPreference
-            android:icon="@drawable/ic_binary_unit"
-            android:defaultValue="B"
-            android:entries="@array/speedtest_units"
-            android:entryValues="@array/speedtest_units_values"
-            android:key="routerSpeedTestUnit"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="Measurement Unit" />
+		<ListPreference android:icon="@drawable/ic_binary_unit"
+			android:defaultValue="B" android:entries="@array/speedtest_units"
+			android:entryValues="@array/speedtest_units_values"
+			android:key="routerSpeedTestUnit" android:negativeButtonText="@null"
+			android:positiveButtonText="@null" android:title="Measurement Unit" />
 
-        <org.rm3l.router_companion.widgets.MySwitchPreference
-            android:defaultValue="false"
-            android:disableDependentsState="false"
-            android:icon="@drawable/ic_action_notification_sync"
-            android:key="routerSpeedTestAutoMeasurements"
-            android:summaryOff="Disabled."
-            android:summaryOn="Enabled."
-            android:title="Automatic measurements" />
-        <ListPreference
-            android:defaultValue="NL"
-            android:dependency="routerSpeedTestAutoMeasurements"
-            android:entries="@array/speedtest_auto_servers_titles"
-            android:entryValues="@array/speedtest_auto_servers_values"
-            android:icon="@drawable/ic_action_hardware_computer"
-            android:key="routerSpeedTestAutoMeasurementsServer"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="Server for automatic measurements" />
-        <!-- Hidden for now -->
-        <!--<ListPreference-->
-            <!--android:icon="@drawable/ic_action_navigation_refresh"-->
-            <!--android:dependency="routerSpeedTestAutoMeasurements"-->
-            <!--android:defaultValue="1D"-->
-            <!--android:entries="@array/speedtest_auto_schedule"-->
-            <!--android:entryValues="@array/speedtest_auto_schedule_values"-->
-            <!--android:key="routerSpeedTestAutoMeasurementsSchedule"-->
-            <!--android:negativeButtonText="@null"-->
-            <!--android:positiveButtonText="@null"-->
-            <!--android:title="Schedule" />-->
+		<org.rm3l.router_companion.widgets.MySwitchPreference
+			android:defaultValue="false" android:disableDependentsState="false"
+			android:icon="@drawable/ic_action_notification_sync"
+			android:key="routerSpeedTestAutoMeasurements"
+			android:summaryOff="Disabled." android:summaryOn="Enabled."
+			android:title="Automatic measurements" />
+		<ListPreference android:defaultValue="NL"
+			android:dependency="routerSpeedTestAutoMeasurements"
+			android:entries="@array/speedtest_auto_servers_titles"
+			android:entryValues="@array/speedtest_auto_servers_values"
+			android:icon="@drawable/ic_action_hardware_computer"
+			android:key="routerSpeedTestAutoMeasurementsServer"
+			android:negativeButtonText="@null" android:positiveButtonText="@null"
+			android:title="Server for automatic measurements" />
+		<!-- Hidden for now -->
+		<!--<ListPreference -->
+		<!--android:icon="@drawable/ic_action_navigation_refresh" -->
+		<!--android:dependency="routerSpeedTestAutoMeasurements" -->
+		<!--android:defaultValue="1D" -->
+		<!--android:entries="@array/speedtest_auto_schedule" -->
+		<!--android:entryValues="@array/speedtest_auto_schedule_values" -->
+		<!--android:key="routerSpeedTestAutoMeasurementsSchedule" -->
+		<!--android:negativeButtonText="@null" -->
+		<!--android:positiveButtonText="@null" -->
+		<!--android:title="Schedule" /> -->
 
-    </PreferenceCategory>
+	</PreferenceCategory>
 
-    <!-- Notifications -->
-    <PreferenceCategory
-        android:key="@string/pref_header_notifications"
-        android:title="Notifications">
+	<!-- Notifications -->
+	<PreferenceCategory
+		android:key="@string/pref_header_notifications"
+		android:title="Notifications">
 
-        <org.rm3l.router_companion.widgets.MySwitchPreference
-            android:defaultValue="true"
-            android:disableDependentsState="false"
-            android:icon="@drawable/ic_action_social_notifications"
-            android:key="notifications.enable"
-            android:summaryOff="Disabled for this router."
-            android:summaryOn="Enabled for this router."
-            android:title="Receive Notifications" />
+		<org.rm3l.router_companion.widgets.MySwitchPreference
+			android:defaultValue="true" android:disableDependentsState="false"
+			android:icon="@drawable/ic_action_social_notifications"
+			android:key="notifications.enable"
+			android:summaryOff="Disabled for this router."
+			android:summaryOn="Enabled for this router."
+			android:title="Receive Notifications" />
 
-        <org.rm3l.router_companion.widgets.MySwitchPreference
-            android:defaultValue="true"
-            android:dependency="notifications.enable"
-            android:icon="@drawable/ic_action_device_devices_blue"
-            android:key="notifications.connectedHosts.activeOnly"
-            android:summaryOff="Connected Hosts notifications will list all hosts, including those not connected anymore to this router but with an active DHCP lease."
-            android:summaryOn="You will be notified of active hosts only, i.e. hosts that are effectively connected to this router."
-            android:title="Display only active hosts" />
+		<org.rm3l.router_companion.widgets.MySwitchPreference
+			android:defaultValue="true" android:dependency="notifications.enable"
+			android:icon="@drawable/ic_action_device_devices_blue"
+			android:key="notifications.connectedHosts.activeOnly"
+			android:summaryOff="Connected Hosts notifications will list all hosts, including those not connected anymore to this router but with an active DHCP lease."
+			android:summaryOn="You will be notified of active hosts only, i.e. hosts that are effectively connected to this router."
+			android:title="Display only active hosts" />
 
-    </PreferenceCategory>
+	</PreferenceCategory>
 
-    <!-- Notifications -->
-    <PreferenceCategory
-        android:key="vpn_pptp"
-        android:title="VPN &amp; PPTP Clients">
+	<!-- Notifications -->
+	<PreferenceCategory android:key="vpn_pptp"
+		android:title="VPN &amp; PPTP Clients">
 
-        <org.rm3l.router_companion.widgets.MySwitchPreference
-            android:defaultValue="false"
-            android:icon="@drawable/ic_action_notification_vpn_lock_blue"
-            android:key="vpn.pptp.toggles.mutually.exclusive"
-            android:summaryOff="Disabled."
-            android:summaryOn="Enabled. At the moment, toggling either PPTP or OpenVPN requires your router to be rebooted. Toggling either PPTP Client or OpenVPN Client will ask you to also toggle OpenVPN Client or PPTP Client, respectively."
-            android:title="Ask to make VPN toggles mutually exclusive" />
+		<org.rm3l.router_companion.widgets.MySwitchPreference
+			android:defaultValue="false"
+			android:icon="@drawable/ic_action_notification_vpn_lock_blue"
+			android:key="vpn.pptp.toggles.mutually.exclusive"
+			android:summaryOff="Disabled."
+			android:summaryOn="Enabled. At the moment, toggling either PPTP or OpenVPN requires your router to be rebooted. Toggling either PPTP Client or OpenVPN Client will ask you to also toggle OpenVPN Client or PPTP Client, respectively."
+			android:title="Ask to make VPN toggles mutually exclusive" />
 
-    </PreferenceCategory>
+	</PreferenceCategory>
 
-    <!-- Network Map -->
-    <!--<PreferenceCategory-->
-    <!--android:key="@string/pref_header_ntm"-->
-    <!--android:title="Network Map">-->
+	<!-- Network Map -->
+	<!--<PreferenceCategory -->
+	<!--android:key="@string/pref_header_ntm" -->
+	<!--android:title="Network Map"> -->
 
-    <!--<org.rm3l.ddwrt.widgets.MySwitchPreference-->
-    <!--android:defaultValue="true"-->
-    <!--android:key="ntm.check.internet.connectivity"-->
-    <!--android:summaryOff="Disabled for this router."-->
-    <!--android:summaryOn="Enabled. We will check that this router can effectively reach the Internet."-->
-    <!--android:title="Check actual Internet connection" />-->
+	<!--<org.rm3l.ddwrt.widgets.MySwitchPreference -->
+	<!--android:defaultValue="true" -->
+	<!--android:key="ntm.check.internet.connectivity" -->
+	<!--android:summaryOff="Disabled for this router." -->
+	<!--android:summaryOn="Enabled. We will check that this router can effectively 
+		reach the Internet." -->
+	<!--android:title="Check actual Internet connection" /> -->
 
-    <!--</PreferenceCategory>-->
+	<!--</PreferenceCategory> -->
 
-    <!--<CheckBoxPreference-->
-    <!--android:disableDependentsState="false"-->
-    <!--android:defaultValue="true"-->
-    <!--android:key="notifications.enable"-->
-    <!--android:summaryOff="Background Service and notifications disabled. You need to open the app whenever you need it to connect to the Router/"-->
-    <!--android:summaryOn="Enabled. You may get notifications even if you are not using the app."-->
-    <!--android:title="Receive Notifications" />-->
+	<!--<CheckBoxPreference -->
+	<!--android:disableDependentsState="false" -->
+	<!--android:defaultValue="true" -->
+	<!--android:key="notifications.enable" -->
+	<!--android:summaryOff="Background Service and notifications disabled. You 
+		need to open the app whenever you need it to connect to the Router/" -->
+	<!--android:summaryOn="Enabled. You may get notifications even if you are 
+		not using the app." -->
+	<!--android:title="Receive Notifications" /> -->
 
-    <!--<org.rm3l.ddwrt.widgets.LongListPreference-->
-    <!--android:defaultValue="360"-->
-    <!--android:dependency="notifications.enable"-->
-    <!--android:entries="@array/pref_notifications_sync_frequency_titles"-->
-    <!--android:entryValues="@array/pref_notifications_sync_frequency_values"-->
-    <!--android:key="notifications.syncIntervalMinutes"-->
-    <!--android:negativeButtonText="@null"-->
-    <!--android:positiveButtonText="@null"-->
-    <!--android:title="How frequently to check" />-->
+	<!--<org.rm3l.ddwrt.widgets.LongListPreference -->
+	<!--android:defaultValue="360" -->
+	<!--android:dependency="notifications.enable" -->
+	<!--android:entries="@array/pref_notifications_sync_frequency_titles" -->
+	<!--android:entryValues="@array/pref_notifications_sync_frequency_values" -->
+	<!--android:key="notifications.syncIntervalMinutes" -->
+	<!--android:negativeButtonText="@null" -->
+	<!--android:positiveButtonText="@null" -->
+	<!--android:title="How frequently to check" /> -->
 
-    <!--<org.rm3l.ddwrt.widgets.MyMultiSelectListPreference-->
-    <!--android:dependency="notifications.enable"-->
-    <!--android:positiveButtonText="@null"-->
-    <!--android:negativeButtonText="@null"-->
-    <!--android:key="notifications.displayItems"-->
-    <!--android:title="Notifications to show"-->
-    <!--android:entries="@array/notifiable_items_list_titles"-->
-    <!--android:entryValues="@array/notifiable_items_list_values"-->
-    <!--android:defaultValue="@array/notifiable_items_list_default_values"-->
-    <!--android:persistent="true"/>-->
+	<!--<org.rm3l.ddwrt.widgets.MyMultiSelectListPreference -->
+	<!--android:dependency="notifications.enable" -->
+	<!--android:positiveButtonText="@null" -->
+	<!--android:negativeButtonText="@null" -->
+	<!--android:key="notifications.displayItems" -->
+	<!--android:title="Notifications to show" -->
+	<!--android:entries="@array/notifiable_items_list_titles" -->
+	<!--android:entryValues="@array/notifiable_items_list_values" -->
+	<!--android:defaultValue="@array/notifiable_items_list_default_values" -->
+	<!--android:persistent="true"/> -->
 
 
-    <!--<PreferenceCategory-->
-    <!--android:dependency="notifications.enable"-->
-    <!--android:key="notifications.wanConnectivity"-->
-    <!--android:title="WAN Connectivity Changes Notifications">-->
+	<!--<PreferenceCategory -->
+	<!--android:dependency="notifications.enable" -->
+	<!--android:key="notifications.wanConnectivity" -->
+	<!--android:title="WAN Connectivity Changes Notifications"> -->
 
-    <!--<CheckBoxPreference-->
-    <!--android:dependency="notifications.enable"-->
-    <!--android:defaultValue="true"-->
-    <!--android:key="notifications.wanConnectivity.enable"/>-->
+	<!--<CheckBoxPreference -->
+	<!--android:dependency="notifications.enable" -->
+	<!--android:defaultValue="true" -->
+	<!--android:key="notifications.wanConnectivity.enable"/> -->
 
-    <!--<org.rm3l.ddwrt.widgets.LongListPreference-->
-    <!--android:defaultValue="360"-->
-    <!--android:entries="@array/pref_notifications_sync_frequency_titles"-->
-    <!--android:entryValues="@array/pref_notifications_sync_frequency_values"-->
-    <!--android:key="notifications.wanConnectivity.syncIntervalMinutes"-->
-    <!--android:negativeButtonText="@null"-->
-    <!--android:positiveButtonText="@null"-->
-    <!--android:title="Frequency" />-->
+	<!--<org.rm3l.ddwrt.widgets.LongListPreference -->
+	<!--android:defaultValue="360" -->
+	<!--android:entries="@array/pref_notifications_sync_frequency_titles" -->
+	<!--android:entryValues="@array/pref_notifications_sync_frequency_values" -->
+	<!--android:key="notifications.wanConnectivity.syncIntervalMinutes" -->
+	<!--android:negativeButtonText="@null" -->
+	<!--android:positiveButtonText="@null" -->
+	<!--android:title="Frequency" /> -->
 
-    <!--</PreferenceCategory>-->
+	<!--</PreferenceCategory> -->
 
-    <!--<PreferenceCategory-->
-    <!--android:dependency="notifications.enable"-->
-    <!--android:key="notifications.openvpnClient"-->
-    <!--android:title="OpenVPN Client Connectivity Notifications">-->
+	<!--<PreferenceCategory -->
+	<!--android:dependency="notifications.enable" -->
+	<!--android:key="notifications.openvpnClient" -->
+	<!--android:title="OpenVPN Client Connectivity Notifications"> -->
 
-    <!--<CheckBoxPreference-->
-    <!--android:dependency="notifications.enable"-->
-    <!--android:defaultValue="true"-->
-    <!--android:key="notifications.openvpnClient.enable"/>-->
+	<!--<CheckBoxPreference -->
+	<!--android:dependency="notifications.enable" -->
+	<!--android:defaultValue="true" -->
+	<!--android:key="notifications.openvpnClient.enable"/> -->
 
-    <!--<org.rm3l.ddwrt.widgets.LongListPreference-->
-    <!--android:defaultValue="360"-->
-    <!--android:entries="@array/pref_notifications_sync_frequency_titles"-->
-    <!--android:entryValues="@array/pref_notifications_sync_frequency_values"-->
-    <!--android:key="notifications.openvpnClient.syncIntervalMinutes"-->
-    <!--android:negativeButtonText="@null"-->
-    <!--android:positiveButtonText="@null"-->
-    <!--android:title="Frequency" />-->
+	<!--<org.rm3l.ddwrt.widgets.LongListPreference -->
+	<!--android:defaultValue="360" -->
+	<!--android:entries="@array/pref_notifications_sync_frequency_titles" -->
+	<!--android:entryValues="@array/pref_notifications_sync_frequency_values" -->
+	<!--android:key="notifications.openvpnClient.syncIntervalMinutes" -->
+	<!--android:negativeButtonText="@null" -->
+	<!--android:positiveButtonText="@null" -->
+	<!--android:title="Frequency" /> -->
 
 
-    <!--</PreferenceCategory>-->
+	<!--</PreferenceCategory> -->
 
 
 </PreferenceScreen>

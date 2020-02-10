@@ -30,14 +30,14 @@ import org.rm3l.router_companion.tiles.DDWRTTile;
 
 /**
  * 'NAT/QoS > Port Range Fwding' fragment
- * <p/>
- * TODO To Implement
+ *
+ * <p>TODO To Implement
  */
 public class NATQoSPortRangeForwardingFragment extends AbstractBaseFragment {
 
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return null;
-    }
+  @Nullable
+  @Override
+  protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    return null;
+  }
 }

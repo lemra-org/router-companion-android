@@ -31,43 +31,46 @@ import org.rm3l.router_companion.tiles.status.wireless.WirelessClientsTile;
 
 public class MACOUILookupAction extends AbstractRouterAction<Void> {
 
-    @NonNull
-    private final String mMacAddress;
+  @NonNull private final String mMacAddress;
 
-    public MACOUILookupAction(Router router, @NonNull Context context,
-            @Nullable RouterActionListener listener,
-            @NonNull final SharedPreferences globalSharedPreferences, @NonNull final String macAddr) {
-        super(router, listener, RouterAction.MAC_OUI_LOOKUP, globalSharedPreferences);
-        this.mMacAddress = macAddr;
+  public MACOUILookupAction(
+      Router router,
+      @NonNull Context context,
+      @Nullable RouterActionListener listener,
+      @NonNull final SharedPreferences globalSharedPreferences,
+      @NonNull final String macAddr) {
+    super(router, listener, RouterAction.MAC_OUI_LOOKUP, globalSharedPreferences);
+    this.mMacAddress = macAddr;
+  }
+
+  @NonNull
+  @Override
+  protected RouterActionResult<Void> doActionInBackground() {
+    final RouterStreamActionListener routerStreamActionListener =
+        (listener instanceof RouterStreamActionListener)
+            ? (RouterStreamActionListener) listener
+            : null;
+    Exception exception = null;
+    try {
+      if (routerStreamActionListener != null) {
+        routerStreamActionListener.notifyRouterActionProgress(
+            RouterAction.MAC_OUI_LOOKUP, router, 0, null);
+      }
+      final MACOUIVendor macouiVendor =
+          WirelessClientsTile.mMacOuiVendorLookupCache.get(mMacAddress);
+      if (macouiVendor == null || macouiVendor.isNone()) {
+        throw new IllegalArgumentException(
+            "Failed to fetch OUI info - check your input or connectivity!");
+      }
+      if (routerStreamActionListener != null) {
+        routerStreamActionListener.notifyRouterActionProgress(
+            RouterAction.MAC_OUI_LOOKUP, router, 100, macouiVendor.toCommandOutputString());
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      exception = e;
     }
 
-    @NonNull
-    @Override
-    protected RouterActionResult<Void> doActionInBackground() {
-        final RouterStreamActionListener routerStreamActionListener =
-                (listener instanceof RouterStreamActionListener) ? (RouterStreamActionListener) listener
-                        : null;
-        Exception exception = null;
-        try {
-            if (routerStreamActionListener != null) {
-                routerStreamActionListener.notifyRouterActionProgress(RouterAction.MAC_OUI_LOOKUP, router,
-                        0, null);
-            }
-            final MACOUIVendor macouiVendor =
-                    WirelessClientsTile.mMacOuiVendorLookupCache.get(mMacAddress);
-            if (macouiVendor == null || macouiVendor.isNone()) {
-                throw new IllegalArgumentException(
-                        "Failed to fetch OUI info - check your input or connectivity!");
-            }
-            if (routerStreamActionListener != null) {
-                routerStreamActionListener.notifyRouterActionProgress(RouterAction.MAC_OUI_LOOKUP, router,
-                        100, macouiVendor.toCommandOutputString());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            exception = e;
-        }
-
-        return new RouterActionResult<>(null, exception);
-    }
+    return new RouterActionResult<>(null, exception);
+  }
 }

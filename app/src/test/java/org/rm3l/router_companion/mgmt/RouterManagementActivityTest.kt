@@ -2,9 +2,10 @@ package org.rm3l.router_companion.mgmt
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mikepenz.aboutlibraries.ui.LibsActivity
-import org.junit.*
-import org.junit.Assert.*
-import org.junit.runner.*
+import org.junit.Before
+import org.junit.Test
+import org.junit.Assert
+import org.junit.runner.RunWith
 import org.rm3l.ddwrt.R
 import org.rm3l.maoni.ui.MaoniActivity
 import org.rm3l.router_companion.mgmt.RouterManagementActivity.Companion.NEW_ROUTER_ADDED
@@ -32,7 +33,7 @@ class RouterManagementActivityTest {
             testAddRouterWizard()
             Assert.fail("Test commented out due to Robolectric issue")
         } catch (e: NotImplementedError) {
-            //Expected
+            // Expected
         }
     }
 
@@ -43,22 +44,22 @@ class RouterManagementActivityTest {
             testAddRouterWizard()
             Assert.fail("Test commented out due to Robolectric issue")
         } catch (e: NotImplementedError) {
-            //Expected
+            // Expected
         }
     }
 
     private fun testAddRouterWizard() {
         val startedIntent = shadowOf(activity).nextStartedActivityForResult
-        assertEquals(NEW_ROUTER_ADDED, startedIntent.requestCode)
+        Assert.assertEquals(NEW_ROUTER_ADDED, startedIntent.requestCode)
         val shadowIntent = shadowOf(startedIntent.intent)
-        assertEquals(ManageRouterFragmentActivity::class.java, shadowIntent.intentClass)
+        Assert.assertEquals(ManageRouterFragmentActivity::class.java, shadowIntent.intentClass)
 
         TODO(
             "ManageRouterFragmentActivity cannot be tested due to Robolectric issues: " +
                     "FragmentManager is already executing transactions"
         )
 
-        //TODO Issue with RoboElectric: FragmentManager is already executing transactions
+        // TODO Issue with RoboElectric: FragmentManager is already executing transactions
 //        //Register a demo router.
 //        val manageRouterActivity = setupActivity(ManageRouterFragmentActivity::class.java)
 //        manageRouterActivity.findViewById<Button>(R.id.router_add_ip_demo).performClick()
@@ -73,7 +74,7 @@ class RouterManagementActivityTest {
     @Test
     fun clickingRefreshRouterListMenuItem_shouldRefreshData() {
         shadowOf(activity).clickMenuItem(R.id.router_list_refresh)
-        //TODO
+        // TODO
     }
 
     @Test
@@ -81,16 +82,16 @@ class RouterManagementActivityTest {
         shadowOf(activity).clickMenuItem(R.id.router_list_about)
         val startedIntent = shadowOf(activity).nextStartedActivity
         val shadowIntent = shadowOf(startedIntent)
-        assertEquals(LibsActivity::class.java, shadowIntent.intentClass)
+        Assert.assertEquals(LibsActivity::class.java, shadowIntent.intentClass)
     }
 
     @Test
     fun clickingRouterManagementSettingsMenuItem_shouldOpenUpActivity() {
         shadowOf(activity).clickMenuItem(R.id.router_list_settings)
         val startedIntent = shadowOf(activity).nextStartedActivityForResult
-        assertEquals(ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE, startedIntent.requestCode)
+        Assert.assertEquals(ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE, startedIntent.requestCode)
         val shadowIntent = shadowOf(startedIntent.intent)
-        assertEquals(RouterManagementSettingsActivity::class.java, shadowIntent.intentClass)
+        Assert.assertEquals(RouterManagementSettingsActivity::class.java, shadowIntent.intentClass)
     }
 
     @Test
@@ -98,6 +99,6 @@ class RouterManagementActivityTest {
         shadowOf(activity).clickMenuItem(R.id.router_list_feedback)
         val startedIntent = shadowOf(activity).nextStartedActivity
         val shadowIntent = shadowOf(startedIntent)
-        assertEquals(MaoniActivity::class.java, shadowIntent.intentClass)
+        Assert.assertEquals(MaoniActivity::class.java, shadowIntent.intentClass)
     }
 }

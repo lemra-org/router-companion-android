@@ -23,122 +23,122 @@ import java.io.Serializable;
 
 public class WifiNetwork implements Serializable {
 
-    private WifiAuthType authType;
+  private WifiAuthType authType;
 
-    private boolean isHidden;
+  private boolean isHidden;
 
-    private String key;
+  private String key;
 
-    private String ssid;
+  private String ssid;
 
-    public static WifiNetwork fromWifiConfiguration(WifiConfiguration wifiConfiguration) {
-        String ssid = getSsidFromWifiConfiguration(wifiConfiguration);
-        WifiAuthType authType = getSecurityFromWifiConfiguration(wifiConfiguration);
-        String key = "";
-        boolean isHidden = wifiConfiguration.hiddenSSID;
+  public static WifiNetwork fromWifiConfiguration(WifiConfiguration wifiConfiguration) {
+    String ssid = getSsidFromWifiConfiguration(wifiConfiguration);
+    WifiAuthType authType = getSecurityFromWifiConfiguration(wifiConfiguration);
+    String key = "";
+    boolean isHidden = wifiConfiguration.hiddenSSID;
 
-        return new WifiNetwork(ssid, authType, key, isHidden);
+    return new WifiNetwork(ssid, authType, key, isHidden);
+  }
+
+  public static boolean isValidKeyLength(WifiAuthType authType, String key) throws WifiException {
+    int keyLength = key.length();
+
+    if (authType == WifiAuthType.WEP) {
+      if (keyLength != 5 && keyLength != 13) {
+        throw new WifiException(WifiException.WEP_KEY_LENGTH_ERROR);
+      }
+    } else { // WPA
+      if ((keyLength >= 5 && keyLength < 8) || keyLength > 63) { // TODO: support hex key (64)
+        throw new WifiException(WifiException.WPA_KEY_LENGTH_ERROR);
+      }
     }
 
-    public static boolean isValidKeyLength(WifiAuthType authType, String key) throws WifiException {
-        int keyLength = key.length();
+    return true;
+  }
 
-        if (authType == WifiAuthType.WEP) {
-            if (keyLength != 5 && keyLength != 13) {
-                throw new WifiException(WifiException.WEP_KEY_LENGTH_ERROR);
-            }
-        } else { // WPA
-            if ((keyLength >= 5 && keyLength < 8) || keyLength > 63) { // TODO: support hex key (64)
-                throw new WifiException(WifiException.WPA_KEY_LENGTH_ERROR);
-            }
-        }
+  public WifiNetwork(String ssid, WifiAuthType authType, String key, boolean isHidden) {
+    this.ssid = ssid;
+    this.key = key;
+    this.authType = authType;
+    this.isHidden = isHidden;
+  }
 
-        return true;
+  public WifiAuthType getAuthType() {
+    return authType;
+  }
+
+  public String getKey() {
+    return key;
+  }
+
+  public void setKey(String key) {
+    this.key = key;
+  }
+
+  public String getSsid() {
+    return ssid;
+  }
+
+  public boolean isHidden() {
+    return isHidden;
+  }
+
+  public boolean isPasswordProtected() {
+    return authType == WifiAuthType.WPA_PSK
+        || authType == WifiAuthType.WPA2_PSK
+        || authType == WifiAuthType.WEP
+        || !key.isEmpty();
+  }
+
+  public boolean needsPassword() {
+    return isPasswordProtected() && key.isEmpty();
+  }
+
+  @Override
+  public String toString() {
+    return "WifiNetwork{"
+        + ", ssid='"
+        + ssid
+        + '\''
+        + ", key='"
+        + key
+        + '\''
+        + ", authType="
+        + authType
+        + ", isHidden="
+        + isHidden
+        + '}';
+  }
+
+  private static WifiAuthType getSecurityFromWifiConfiguration(
+      WifiConfiguration wifiConfiguration) {
+    if (wifiConfiguration.allowedKeyManagement.get(WifiConfiguration.KeyMgmt.WPA_PSK)) {
+      if (wifiConfiguration.allowedProtocols.get(WifiConfiguration.Protocol.RSN)) {
+        return WifiAuthType.WPA2_PSK;
+      } else { // WifiConfiguration.Protocol.WPA
+        return WifiAuthType.WPA_PSK;
+      }
     }
-
-    public WifiNetwork(String ssid, WifiAuthType authType, String key, boolean isHidden) {
-        this.ssid = ssid;
-        this.key = key;
-        this.authType = authType;
-        this.isHidden = isHidden;
+    if (wifiConfiguration.allowedKeyManagement.get(WifiConfiguration.KeyMgmt.WPA_EAP)
+        || wifiConfiguration.allowedKeyManagement.get(WifiConfiguration.KeyMgmt.IEEE8021X)) {
+      if (wifiConfiguration.allowedProtocols.get(WifiConfiguration.Protocol.RSN)) {
+        return WifiAuthType.WPA2_EAP;
+      } else { // WifiConfiguration.Protocol.WPA
+        return WifiAuthType.WPA_EAP;
+      }
     }
+    return (wifiConfiguration.wepKeys[0] != null) ? WifiAuthType.WEP : WifiAuthType.OPEN;
+  }
 
-    public WifiAuthType getAuthType() {
-        return authType;
+  private static String getSsidFromWifiConfiguration(WifiConfiguration wifiConfiguration) {
+    String ssid = wifiConfiguration.SSID;
+    if (ssid != null) {
+      if (ssid.startsWith("\"") && ssid.endsWith("\"")) {
+        return ssid.substring(1, ssid.length() - 1);
+      } else {
+        return ssid; // FIXME: convert hex string to ascii string
+      }
     }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public String getSsid() {
-        return ssid;
-    }
-
-    public boolean isHidden() {
-        return isHidden;
-    }
-
-    public boolean isPasswordProtected() {
-        return authType == WifiAuthType.WPA_PSK
-                || authType == WifiAuthType.WPA2_PSK
-                || authType == WifiAuthType.WEP
-                || !key.isEmpty();
-    }
-
-    public boolean needsPassword() {
-        return isPasswordProtected() && key.isEmpty();
-    }
-
-    @Override
-    public String toString() {
-        return "WifiNetwork{"
-                + ", ssid='"
-                + ssid
-                + '\''
-                + ", key='"
-                + key
-                + '\''
-                + ", authType="
-                + authType
-                + ", isHidden="
-                + isHidden
-                + '}';
-    }
-
-    private static WifiAuthType getSecurityFromWifiConfiguration(
-            WifiConfiguration wifiConfiguration) {
-        if (wifiConfiguration.allowedKeyManagement.get(WifiConfiguration.KeyMgmt.WPA_PSK)) {
-            if (wifiConfiguration.allowedProtocols.get(WifiConfiguration.Protocol.RSN)) {
-                return WifiAuthType.WPA2_PSK;
-            } else { // WifiConfiguration.Protocol.WPA
-                return WifiAuthType.WPA_PSK;
-            }
-        }
-        if (wifiConfiguration.allowedKeyManagement.get(WifiConfiguration.KeyMgmt.WPA_EAP)
-                || wifiConfiguration.allowedKeyManagement.get(WifiConfiguration.KeyMgmt.IEEE8021X)) {
-            if (wifiConfiguration.allowedProtocols.get(WifiConfiguration.Protocol.RSN)) {
-                return WifiAuthType.WPA2_EAP;
-            } else { // WifiConfiguration.Protocol.WPA
-                return WifiAuthType.WPA_EAP;
-            }
-        }
-        return (wifiConfiguration.wepKeys[0] != null) ? WifiAuthType.WEP : WifiAuthType.OPEN;
-    }
-
-    private static String getSsidFromWifiConfiguration(WifiConfiguration wifiConfiguration) {
-        String ssid = wifiConfiguration.SSID;
-        if (ssid != null) {
-            if (ssid.startsWith("\"") && ssid.endsWith("\"")) {
-                return ssid.substring(1, ssid.length() - 1);
-            } else {
-                return ssid; // FIXME: convert hex string to ascii string
-            }
-        }
-        return "";
-    }
+    return "";
+  }
 }

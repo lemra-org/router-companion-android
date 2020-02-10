@@ -28,7 +28,7 @@ class HideInactiveClientsFilterVisitorImpl(private val hideInactive: Boolean) : 
 
     override fun visit(devices: Set<Device>) =
         devices.filter {
-            when(hideInactive) {
+            when (hideInactive) {
                 true -> it.isActive
                 false -> true
             }

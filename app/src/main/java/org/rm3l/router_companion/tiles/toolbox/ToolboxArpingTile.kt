@@ -24,16 +24,16 @@ package org.rm3l.router_companion.tiles.toolbox
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import org.rm3l.ddwrt.R
-import org.rm3l.router_companion.actions.AbstractRouterAction
 import org.rm3l.router_companion.actions.ArpPingFromRouterAction
 import org.rm3l.router_companion.resources.conn.Router
 
 class ToolboxArpingTile(
-    parentFragment: Fragment, arguments: Bundle?,
+    parentFragment: Fragment,
+    arguments: Bundle?,
     router: Router?
 ) : AbstractToolboxTile(parentFragment, arguments, router) {
 
-    override fun getEditTextHint()= R.string.host_edit_text_hint
+    override fun getEditTextHint() = R.string.host_edit_text_hint
 
     override fun getInfoText() = R.string.arping_info
 

@@ -24,9 +24,8 @@ package org.rm3l.router_companion.resources;
 
 import static com.google.common.base.Charsets.UTF_8;
 
-import androidx.annotation.Nullable;
 import android.util.Base64;
-import android.util.Log;
+import androidx.annotation.Nullable;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -40,119 +39,128 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-/**
- * An encrypted object
- */
+/** An encrypted object */
 public class Encrypted {
 
-    private static final String LOG_TAG = Encrypted.class.getSimpleName();
+  private static final String LOG_TAG = Encrypted.class.getSimpleName();
 
-    //TODO Look for a better way to encrypt data
-    private static final String PRIVATE_SET_INT = "novells sky#yes ";
+  // TODO Look for a better way to encrypt data
+  private static final String PRIVATE_SET_INT = "novells sky#yes ";
 
-    private static final String AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5Padding";
+  private static final String AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5Padding";
 
-    private static final String AES = "AES";
+  private static final String AES = "AES";
 
-    /**
-     * Decrypt some encrypted data
-     *
-     * @param encryptedData the encrypted data to decrypt
-     * @return the data decrypted, or <code>null</code> if no data was specified,
-     * or if data could not encoded properly
-     */
-    @Nullable
-    public static String d(@Nullable final String encryptedData) {
+  /**
+   * Decrypt some encrypted data
+   *
+   * @param encryptedData the encrypted data to decrypt
+   * @return the data decrypted, or <code>null</code> if no data was specified, or if data could not
+   *     encoded properly
+   */
+  @Nullable
+  public static String d(@Nullable final String encryptedData) {
 
-        if (encryptedData == null) {
-            return null;
-        }
-
-        final byte[] b64 = d(Base64.decode(encryptedData.getBytes(UTF_8), Base64.DEFAULT));
-        return b64 != null ? new String(b64, UTF_8) : null;
+    if (encryptedData == null) {
+      return null;
     }
 
-    @Nullable
-    public static byte[] d(@Nullable final byte[] byteArrayToDecryptIV) {
+    final byte[] b64 = d(Base64.decode(encryptedData.getBytes(UTF_8), Base64.DEFAULT));
+    return b64 != null ? new String(b64, UTF_8) : null;
+  }
 
-        if (byteArrayToDecryptIV == null) {
-            return null;
-        }
+  @Nullable
+  public static byte[] d(@Nullable final byte[] byteArrayToDecryptIV) {
 
-        Exception e;
-        try {
-            Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
-
-            byte[] iv = Arrays.copyOfRange(byteArrayToDecryptIV, byteArrayToDecryptIV.length - 16,
-                    byteArrayToDecryptIV.length);
-            byte[] byteArrayToDecrypt =
-                    Arrays.copyOfRange(byteArrayToDecryptIV, 0, byteArrayToDecryptIV.length - 16);
-            byte[] aesKey = \"fake-key\";
-            byte[] uncipheredtext;
-
-            SecretKeySpec secretKeySpec = new SecretKeySpec(aesKey, AES);
-            IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
-            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivParameterSpec);
-            uncipheredtext = cipher.doFinal(byteArrayToDecrypt);
-
-            return uncipheredtext;
-        } catch (final IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException | InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException ibse) {
-            e = ibse;
-        }
-
-        FirebaseCrashlytics.getInstance().log( "Failed to decrypt: " + e);
-        throw new IllegalStateException(e);
+    if (byteArrayToDecryptIV == null) {
+      return null;
     }
 
-    @Nullable
-    public static byte[] e(@Nullable final byte[] byteArrayToEncrypt) {
+    Exception e;
+    try {
+      Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
 
-        if (byteArrayToEncrypt == null) {
-            return null;
-        }
+      byte[] iv =
+          Arrays.copyOfRange(
+              byteArrayToDecryptIV, byteArrayToDecryptIV.length - 16, byteArrayToDecryptIV.length);
+      byte[] byteArrayToDecrypt =
+          Arrays.copyOfRange(byteArrayToDecryptIV, 0, byteArrayToDecryptIV.length - 16);
+      byte[] aesKey = \"fake-key\";
+      byte[] uncipheredtext;
 
-        Exception e;
-        try {
-            Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
+      SecretKeySpec secretKeySpec = new SecretKeySpec(aesKey, AES);
+      IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+      cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivParameterSpec);
+      uncipheredtext = cipher.doFinal(byteArrayToDecrypt);
 
-            byte[] iv = new byte[16];
-            byte[] aesKey = \"fake-key\";
-            byte[] ciphertext;
-
-            SecureRandom secureRandom = new SecureRandom();
-            secureRandom.nextBytes(iv);
-
-            SecretKeySpec secretKeySpec = new SecretKeySpec(aesKey, AES);
-            IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
-            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec);
-            ciphertext = cipher.doFinal(byteArrayToEncrypt);
-
-            final byte[] result = Arrays.copyOf(ciphertext, ciphertext.length + iv.length);
-            System.arraycopy(iv, 0, result, ciphertext.length, iv.length);
-            //return ArrayUtils.addAll(ciphertext, iv);
-            return result;
-        } catch (final IllegalBlockSizeException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException ibse) {
-            e = ibse;
-        }
-
-        FirebaseCrashlytics.getInstance().log( "Failed to encrypt: " + e);
-        throw new IllegalStateException(e);
+      return uncipheredtext;
+    } catch (final IllegalBlockSizeException
+        | BadPaddingException
+        | InvalidAlgorithmParameterException
+        | InvalidKeyException
+        | NoSuchAlgorithmException
+        | NoSuchPaddingException ibse) {
+      e = ibse;
     }
 
-    /**
-     * Encrypt some data
-     *
-     * @param data the data to encrypt
-     * @return the data encrypted, or <code>null</code> if no data was specified,
-     * or if data could not encoded properly
-     */
-    @Nullable
-    public static String e(@Nullable final String data) {
+    FirebaseCrashlytics.getInstance().log("Failed to decrypt: " + e);
+    throw new IllegalStateException(e);
+  }
 
-        if (data == null) {
-            return null;
-        }
+  @Nullable
+  public static byte[] e(@Nullable final byte[] byteArrayToEncrypt) {
 
-        return new String(Base64.encode(e(data.getBytes(UTF_8)), Base64.DEFAULT), UTF_8);
+    if (byteArrayToEncrypt == null) {
+      return null;
     }
+
+    Exception e;
+    try {
+      Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
+
+      byte[] iv = new byte[16];
+      byte[] aesKey = \"fake-key\";
+      byte[] ciphertext;
+
+      SecureRandom secureRandom = new SecureRandom();
+      secureRandom.nextBytes(iv);
+
+      SecretKeySpec secretKeySpec = new SecretKeySpec(aesKey, AES);
+      IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+      cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec);
+      ciphertext = cipher.doFinal(byteArrayToEncrypt);
+
+      final byte[] result = Arrays.copyOf(ciphertext, ciphertext.length + iv.length);
+      System.arraycopy(iv, 0, result, ciphertext.length, iv.length);
+      // return ArrayUtils.addAll(ciphertext, iv);
+      return result;
+    } catch (final IllegalBlockSizeException
+        | NoSuchPaddingException
+        | NoSuchAlgorithmException
+        | InvalidKeyException
+        | InvalidAlgorithmParameterException
+        | BadPaddingException ibse) {
+      e = ibse;
+    }
+
+    FirebaseCrashlytics.getInstance().log("Failed to encrypt: " + e);
+    throw new IllegalStateException(e);
+  }
+
+  /**
+   * Encrypt some data
+   *
+   * @param data the data to encrypt
+   * @return the data encrypted, or <code>null</code> if no data was specified, or if data could not
+   *     encoded properly
+   */
+  @Nullable
+  public static String e(@Nullable final String data) {
+
+    if (data == null) {
+      return null;
+    }
+
+    return new String(Base64.encode(e(data.getBytes(UTF_8)), Base64.DEFAULT), UTF_8);
+  }
 }

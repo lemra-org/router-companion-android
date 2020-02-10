@@ -1,63 +1,38 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-DD-WRT Companion is a mobile app that lets you connect to,
-monitor and manage your DD-WRT routers on the go.
-
-Copyright (C) 2014  Armel Soro
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
--->
+<?xml version="1.0" encoding="utf-8"?><!-- DD-WRT Companion is a mobile app 
+	that lets you connect to, monitor and manage your DD-WRT routers on the go. 
+	Copyright (C) 2014 Armel Soro This program is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. This program is distributed in the 
+	hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details. You should have received a copy 
+	of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. 
+	Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt; -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <group
-        android:id="@+id/tile_status_syslog_view_selection"
-        android:checkableBehavior="single"
-        android:orderInCategory="1">
-        <item
-            android:id="@+id/tile_status_syslog_view_last25"
-            android:checkable="true"
-            android:orderInCategory="1"
-            android:title="Last 25 Lines"
-            app:showAsAction="ifRoom" />
-        <item
-            android:id="@+id/tile_status_syslog_view_last50"
-            android:checkable="true"
-            android:orderInCategory="2"
-            android:title="Last 50 Lines"
-            app:showAsAction="ifRoom" />
-        <item
-            android:id="@+id/tile_status_syslog_view_last100"
-            android:checkable="true"
-            android:orderInCategory="3"
-            android:title="Last 100 Lines"
-            app:showAsAction="ifRoom" />
-    </group>
+	<group android:id="@+id/tile_status_syslog_view_selection"
+		android:checkableBehavior="single" android:orderInCategory="1">
+		<item android:id="@+id/tile_status_syslog_view_last25"
+			android:checkable="true" android:orderInCategory="1"
+			android:title="Last 25 Lines" app:showAsAction="ifRoom" />
+		<item android:id="@+id/tile_status_syslog_view_last50"
+			android:checkable="true" android:orderInCategory="2"
+			android:title="Last 50 Lines" app:showAsAction="ifRoom" />
+		<item android:id="@+id/tile_status_syslog_view_last100"
+			android:checkable="true" android:orderInCategory="3"
+			android:title="Last 100 Lines" app:showAsAction="ifRoom" />
+	</group>
 
-    <!-- View All -->
-    <item
-        android:id="@+id/tile_status_syslog_view_all"
-        android:orderInCategory="4"
-        android:title="View All"
-        app:showAsAction="ifRoom" />
+	<!-- View All -->
+	<item android:id="@+id/tile_status_syslog_view_all"
+		android:orderInCategory="4" android:title="View All"
+		app:showAsAction="ifRoom" />
 
-    <!-- Share -->
-    <item
-        android:id="@+id/tile_status_syslog_view_share"
-        android:orderInCategory="6"
-        android:title="Share"
-        app:showAsAction="ifRoom" />
+	<!-- Share -->
+	<item android:id="@+id/tile_status_syslog_view_share"
+		android:orderInCategory="6" android:title="Share"
+		app:showAsAction="ifRoom" />
 
 </menu>

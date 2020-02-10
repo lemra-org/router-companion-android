@@ -4,14 +4,27 @@ package org.rm3l.router_companion.resources
  * Created by rm3l on 15/06/15.
  */
 class ProcNetDevNetworkData(
-        /**
-         * @return the interfaceName
-         */
-        val interfaceName: String, rxBytes: Long, rxPackets: Int, rxErrors: Int,
-        rxDropped: Int, rxFifo: Int, rxFrame: Int, rxCompressed: Int, rxMulticast: Int, txBytes: Long,
-        txPackets: Int, txErrors: Int, txDropped: Int, txFifo: Int, txCollisions: Int,
-        txCarrierErrors: Int,
-        txCompressed: Int) {
+    /**
+     * @return the interfaceName
+     */
+    val interfaceName: String,
+    rxBytes: Long,
+    rxPackets: Int,
+    rxErrors: Int,
+    rxDropped: Int,
+    rxFifo: Int,
+    rxFrame: Int,
+    rxCompressed: Int,
+    rxMulticast: Int,
+    txBytes: Long,
+    txPackets: Int,
+    txErrors: Int,
+    txDropped: Int,
+    txFifo: Int,
+    txCollisions: Int,
+    txCarrierErrors: Int,
+    txCompressed: Int
+) {
     /**
      * @return the mReceive
      */

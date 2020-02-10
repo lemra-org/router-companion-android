@@ -29,10 +29,18 @@ import org.rm3l.router_companion.resources.conn.Router;
 
 public class TracerouteFromRouterAction extends ExecStreamableCommandRouterAction {
 
-    public TracerouteFromRouterAction(Router router, @NonNull Context context,
-            @Nullable RouterStreamActionListener listener,
-            @NonNull final SharedPreferences globalSharedPreferences, @NonNull final String host) {
-        super(router, RouterAction.TRACEROUTE, context, listener, globalSharedPreferences,
-                String.format("/usr/bin/traceroute -l -v %s 2>&1", host));
-    }
+  public TracerouteFromRouterAction(
+      Router router,
+      @NonNull Context context,
+      @Nullable RouterStreamActionListener listener,
+      @NonNull final SharedPreferences globalSharedPreferences,
+      @NonNull final String host) {
+    super(
+        router,
+        RouterAction.TRACEROUTE,
+        context,
+        listener,
+        globalSharedPreferences,
+        String.format("/usr/bin/traceroute -l -v %s 2>&1", host));
+  }
 }

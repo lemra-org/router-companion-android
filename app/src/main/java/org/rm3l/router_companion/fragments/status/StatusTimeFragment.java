@@ -31,9 +31,9 @@ import org.rm3l.router_companion.tiles.status.time.StatusTimeTile;
 
 public class StatusTimeFragment extends AbstractBaseFragment {
 
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Arrays.<DDWRTTile>asList(new StatusTimeTile(this, savedInstanceState, this.router));
-    }
+  @Nullable
+  @Override
+  protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    return Arrays.<DDWRTTile>asList(new StatusTimeTile(this, savedInstanceState, this.router));
+  }
 }

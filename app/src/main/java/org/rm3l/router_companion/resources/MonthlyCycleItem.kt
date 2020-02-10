@@ -107,7 +107,7 @@ class MonthlyCycleItem : Comparable<MonthlyCycleItem> {
 
     fun prev(): MonthlyCycleItem {
 
-        //[Feb 28 - Mar 30], with wanCycleDay=30 => [Jan 30 - Feb 28]
+        // [Feb 28 - Mar 30], with wanCycleDay=30 => [Jan 30 - Feb 28]
 
         val endCal = Calendar.getInstance()
         endCal.timeInMillis = start
@@ -128,7 +128,7 @@ class MonthlyCycleItem : Comparable<MonthlyCycleItem> {
     operator fun next(): MonthlyCycleItem {
         val startCal = Calendar.getInstance()
         startCal.timeInMillis = start
-        startCal.set(Calendar.DAY_OF_MONTH, 1) //The first day of the month the start is in
+        startCal.set(Calendar.DAY_OF_MONTH, 1) // The first day of the month the start is in
         startCal.add(Calendar.MONTH, 1)
         startCal.set(Calendar.DAY_OF_MONTH,
                 Math.min(startCal.getActualMaximum(Calendar.DAY_OF_MONTH), wanCycleDay!!))
@@ -136,7 +136,7 @@ class MonthlyCycleItem : Comparable<MonthlyCycleItem> {
 
         val nextStartCal = Calendar.getInstance()
         nextStartCal.timeInMillis = startMillis
-        nextStartCal.set(Calendar.DAY_OF_MONTH, 1) //The first day of the month the start is in
+        nextStartCal.set(Calendar.DAY_OF_MONTH, 1) // The first day of the month the start is in
         nextStartCal.add(Calendar.MONTH, 1)
         nextStartCal.set(Calendar.DAY_OF_MONTH,
                 Math.min(nextStartCal.getActualMaximum(Calendar.DAY_OF_MONTH), wanCycleDay!! - 1))

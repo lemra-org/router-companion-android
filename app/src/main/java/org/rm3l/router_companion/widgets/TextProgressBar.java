@@ -30,98 +30,98 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Build;
-import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.widget.ProgressBar;
+import androidx.annotation.NonNull;
 import org.rm3l.ddwrt.R;
 
 public class TextProgressBar extends ProgressBar {
 
-    private final Rect bounds = new Rect();
+  private final Rect bounds = new Rect();
 
-    private String text = "";
+  private String text = "";
 
-    private int textColor = Color.WHITE;
+  private int textColor = Color.WHITE;
 
-    private final Paint textPaint = new Paint();
+  private final Paint textPaint = new Paint();
 
-    private float textSize = 15;
+  private float textSize = 15;
 
-    public TextProgressBar(Context context) {
-        super(context);
+  public TextProgressBar(Context context) {
+    super(context);
+  }
+
+  public TextProgressBar(Context context, AttributeSet attrs) {
+    super(context, attrs);
+    setAttrs(attrs);
+  }
+
+  public TextProgressBar(Context context, AttributeSet attrs, int defStyleAttr) {
+    super(context, attrs, defStyleAttr);
+    setAttrs(attrs);
+  }
+
+  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+  public TextProgressBar(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    super(context, attrs, defStyleAttr, defStyleRes);
+    setAttrs(attrs);
+  }
+
+  public String getText() {
+    return text;
+  }
+
+  public synchronized void setText(String text) {
+    if (text != null) {
+      this.text = text;
+    } else {
+      this.text = "";
     }
+    postInvalidate();
+  }
 
-    public TextProgressBar(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        setAttrs(attrs);
-    }
+  public int getTextColor() {
+    return textColor;
+  }
 
-    public TextProgressBar(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        setAttrs(attrs);
-    }
+  public synchronized void setTextColor(int textColor) {
+    this.textColor = textColor;
+    postInvalidate();
+  }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public TextProgressBar(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        setAttrs(attrs);
-    }
+  public float getTextSize() {
+    return textSize;
+  }
 
-    public String getText() {
-        return text;
-    }
+  public synchronized void setTextSize(float textSize) {
+    this.textSize = textSize;
+    postInvalidate();
+  }
 
-    public synchronized void setText(String text) {
-        if (text != null) {
-            this.text = text;
-        } else {
-            this.text = "";
-        }
-        postInvalidate();
-    }
+  @Override
+  protected synchronized void onDraw(@NonNull final Canvas canvas) {
+    super.onDraw(canvas);
+    // create an instance of class Paint, set color and font size
+    textPaint.setAntiAlias(true);
+    textPaint.setColor(textColor);
+    textPaint.setTextSize(textSize);
+    // In order to show text in a middle, we need to know its size
+    textPaint.getTextBounds(text, 0, text.length(), bounds);
+    // Now we store font size in bounds variable and can calculate its position
+    int x = getWidth() / 2 - bounds.centerX();
+    int y = getHeight() / 2 - bounds.centerY();
+    // drawing text with appropriate color and size in the center
+    canvas.drawText(text, x, y, textPaint);
+  }
 
-    public int getTextColor() {
-        return textColor;
+  private void setAttrs(AttributeSet attrs) {
+    if (attrs != null) {
+      final TypedArray a =
+          getContext().obtainStyledAttributes(attrs, R.styleable.TextProgressBar, 0, 0);
+      setText(a.getString(R.styleable.TextProgressBar_text));
+      setTextColor(a.getColor(R.styleable.TextProgressBar_textColor, Color.WHITE));
+      setTextSize(a.getDimension(R.styleable.TextProgressBar_textSize, 15));
+      a.recycle();
     }
-
-    public synchronized void setTextColor(int textColor) {
-        this.textColor = textColor;
-        postInvalidate();
-    }
-
-    public float getTextSize() {
-        return textSize;
-    }
-
-    public synchronized void setTextSize(float textSize) {
-        this.textSize = textSize;
-        postInvalidate();
-    }
-
-    @Override
-    protected synchronized void onDraw(@NonNull final Canvas canvas) {
-        super.onDraw(canvas);
-        //create an instance of class Paint, set color and font size
-        textPaint.setAntiAlias(true);
-        textPaint.setColor(textColor);
-        textPaint.setTextSize(textSize);
-        //In order to show text in a middle, we need to know its size
-        textPaint.getTextBounds(text, 0, text.length(), bounds);
-        //Now we store font size in bounds variable and can calculate its position
-        int x = getWidth() / 2 - bounds.centerX();
-        int y = getHeight() / 2 - bounds.centerY();
-        //drawing text with appropriate color and size in the center
-        canvas.drawText(text, x, y, textPaint);
-    }
-
-    private void setAttrs(AttributeSet attrs) {
-        if (attrs != null) {
-            final TypedArray a =
-                    getContext().obtainStyledAttributes(attrs, R.styleable.TextProgressBar, 0, 0);
-            setText(a.getString(R.styleable.TextProgressBar_text));
-            setTextColor(a.getColor(R.styleable.TextProgressBar_textColor, Color.WHITE));
-            setTextSize(a.getDimension(R.styleable.TextProgressBar_textSize, 15));
-            a.recycle();
-        }
-    }
+  }
 }
