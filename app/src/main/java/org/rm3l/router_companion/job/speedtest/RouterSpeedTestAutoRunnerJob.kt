@@ -132,7 +132,7 @@ class RouterSpeedTestAutoRunnerJob {
         @JvmStatic
         @Throws(Exception::class)
         fun runPing(context: Context, mOriginalRouter: Router, mRouterCopy: Router, server: String?): PingRTT {
-            FirebaseCrashlytics.getInstance().log("runPing: " + server)
+            FirebaseCrashlytics.getInstance().log("runPing: $server")
 
             if (server.isNullOrBlank()) {
                 throw IllegalArgumentException("No Server specified")

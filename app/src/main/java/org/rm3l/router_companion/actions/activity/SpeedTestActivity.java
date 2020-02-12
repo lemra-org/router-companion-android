@@ -252,16 +252,13 @@ public class SpeedTestActivity extends AppCompatActivity
             final int j = i;
 
             activity.runOnUiThread(
-                new Runnable() {
-                  @Override
-                  public void run() {
-                    activity.mCancelFab.setProgress(j + (100 * 1 / 4));
-                    activity.noticeTextView.setText(
-                        String.format(
-                            Locale.US,
-                            "1/3 - Selecting remote test server...\n" + " Contacting '%s'...",
-                            getServerLocationDisplayFromCountryCode(country)));
-                  }
+                () -> {
+                  activity.mCancelFab.setProgress(j + (100 * 1 / 4));
+                  activity.noticeTextView.setText(
+                      String.format(
+                          Locale.US,
+                          "1/3 - Selecting remote test server...\n" + " Contacting '%s'...",
+                          getServerLocationDisplayFromCountryCode(country)));
                 });
 
             final PingRTT pingRTT =
@@ -1789,65 +1786,65 @@ public class SpeedTestActivity extends AppCompatActivity
 
   static {
     // TODO Those are just SoftLayer servers, but we may want to consider a much more exhaustive
-    // list: http://www.speedtest.net/speedtest-servers.php
-    SERVERS.put("NL", PING_SERVER, "speedtest.ams01.softlayer.com");
+    //  list: http://www.speedtest.net/speedtest-servers.php
+    SERVERS.put("NL", PING_SERVER, "speedtest.ams01.softlayer.com"); // OK
     SERVERS.put("NL", HTTP_DL_URL, "http://speedtest.ams01.softlayer.com/downloads/test%s.zip");
 
-    SERVERS.put("IN", PING_SERVER, "speedtest.che01.softlayer.com");
+    SERVERS.put("IN", PING_SERVER, "speedtest.che01.softlayer.com"); // OK (in router)
     SERVERS.put("IN", HTTP_DL_URL, "http://speedtest.che01.softlayer.com/downloads/test%s.zip");
 
-    SERVERS.put("US-DAL", PING_SERVER, "speedtest.dal01.softlayer.com");
+    SERVERS.put("US-DAL", PING_SERVER, "speedtest.dal01.softlayer.com"); // UNHEALTHY
     SERVERS.put("US-DAL", HTTP_DL_URL, "http://speedtest.dal01.softlayer.com/downloads/test%s.zip");
 
-    SERVERS.put("DE", PING_SERVER, "speedtest.fra02.softlayer.com");
+    SERVERS.put("DE", PING_SERVER, "speedtest.fra02.softlayer.com"); // OK
     SERVERS.put("DE", HTTP_DL_URL, "http://speedtest.fra02.softlayer.com/downloads/test%s.zip");
 
-    SERVERS.put("HK", PING_SERVER, "speedtest.hkg02.softlayer.com");
+    SERVERS.put("HK", PING_SERVER, "speedtest.hkg02.softlayer.com"); // OK
     SERVERS.put("HK", HTTP_DL_URL, "http://speedtest.hkg02.softlayer.com/downloads/test%s.zip");
 
-    SERVERS.put("US-HOU", PING_SERVER, "speedtest.hou02.softlayer.com");
+    SERVERS.put("US-HOU", PING_SERVER, "speedtest.hou02.softlayer.com"); // OK
     SERVERS.put("US-HOU", HTTP_DL_URL, "http://speedtest.hou02.softlayer.com/downloads/test%s.zip");
 
-    SERVERS.put("GB", PING_SERVER, "speedtest.lon02.softlayer.com");
+    SERVERS.put("GB", PING_SERVER, "speedtest.lon02.softlayer.com"); // OK
     SERVERS.put("GB", HTTP_DL_URL, "http://speedtest.lon02.softlayer.com/downloads/test%s.zip");
 
-    SERVERS.put("AU-MEL", PING_SERVER, "speedtest.mel01.softlayer.com");
+    SERVERS.put("AU-MEL", PING_SERVER, "speedtest.mel01.softlayer.com"); // OK
     SERVERS.put("AU-MEL", HTTP_DL_URL, "http://speedtest.mel01.softlayer.com/downloads/test%s.zip");
 
-    SERVERS.put("IT", PING_SERVER, "speedtest.mil01.softlayer.com");
+    SERVERS.put("IT", PING_SERVER, "speedtest.mil01.softlayer.com"); // OK
     SERVERS.put("IT", HTTP_DL_URL, "http://speedtest.mil01.softlayer.com/downloads/test%s.zip");
 
-    SERVERS.put("CA-MON", PING_SERVER, "speedtest.mon01.softlayer.com");
+    SERVERS.put("CA-MON", PING_SERVER, "speedtest.mon01.softlayer.com"); // OK
     SERVERS.put("CA-MON", HTTP_DL_URL, "http://speedtest.mon01.softlayer.com/downloads/test%s.zip");
 
-    SERVERS.put("FR", PING_SERVER, "speedtest.par01.softlayer.com");
+    SERVERS.put("FR", PING_SERVER, "speedtest.par01.softlayer.com"); // OK
     SERVERS.put("FR", HTTP_DL_URL, "http://speedtest.par01.softlayer.com/downloads/test%s.zip");
 
-    SERVERS.put("MX", PING_SERVER, "speedtest.mex01.softlayer.com");
+    SERVERS.put("MX", PING_SERVER, "speedtest.mex01.softlayer.com"); // OK
     SERVERS.put("MX", HTTP_DL_URL, "http://speedtest.mex01.softlayer.com/downloads/test%s.zip");
 
-    SERVERS.put("US-SJC", PING_SERVER, "speedtest.sjc01.softlayer.com");
+    SERVERS.put("US-SJC", PING_SERVER, "speedtest.sjc01.softlayer.com"); // OK
     SERVERS.put("US-SJC", HTTP_DL_URL, "http://speedtest.sjc01.softlayer.com/downloads/test%s.zip");
 
-    SERVERS.put("BR", PING_SERVER, "speedtest.sao01.softlayer.com");
+    SERVERS.put("BR", PING_SERVER, "speedtest.sao01.softlayer.com"); // OK
     SERVERS.put("BR", HTTP_DL_URL, "http://speedtest.sao01.softlayer.com/downloads/test%s.zip");
 
-    SERVERS.put("US-SEA", PING_SERVER, "speedtest.sea01.softlayer.com");
+    SERVERS.put("US-SEA", PING_SERVER, "speedtest.sea01.softlayer.com"); // OK
     SERVERS.put("US-SEA", HTTP_DL_URL, "http://speedtest.sea01.softlayer.com/downloads/test%s.zip");
 
-    SERVERS.put("SG", PING_SERVER, "speedtest.sng01.softlayer.com");
+    SERVERS.put("SG", PING_SERVER, "speedtest.sng01.softlayer.com"); // OK
     SERVERS.put("SG", HTTP_DL_URL, "http://speedtest.sng01.softlayer.com/downloads/test%s.zip");
 
-    SERVERS.put("AU-SYD", PING_SERVER, "speedtest.syd01.softlayer.com");
+    SERVERS.put("AU-SYD", PING_SERVER, "speedtest.syd01.softlayer.com"); // OK
     SERVERS.put("AU-SYD", HTTP_DL_URL, "http://speedtest.syd01.softlayer.com/downloads/test%s.zip");
 
-    SERVERS.put("JP", PING_SERVER, "speedtest.tok02.softlayer.com");
+    SERVERS.put("JP", PING_SERVER, "speedtest.tok02.softlayer.com"); // OK
     SERVERS.put("JP", HTTP_DL_URL, "http://speedtest.tok02.softlayer.com/downloads/test%s.zip");
 
-    SERVERS.put("CA-TOR", PING_SERVER, "speedtest.tor01.softlayer.com");
+    SERVERS.put("CA-TOR", PING_SERVER, "speedtest.tor01.softlayer.com"); // OK
     SERVERS.put("CA-TOR", HTTP_DL_URL, "http://speedtest.tor01.softlayer.com/downloads/test%s.zip");
 
-    SERVERS.put("US-WDC", PING_SERVER, "speedtest.wdc01.softlayer.com");
+    SERVERS.put("US-WDC", PING_SERVER, "speedtest.wdc01.softlayer.com"); // OK
     SERVERS.put("US-WDC", HTTP_DL_URL, "http://speedtest.wdc01.softlayer.com/downloads/test%s.zip");
   }
 }
