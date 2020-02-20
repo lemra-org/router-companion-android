@@ -66,6 +66,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import com.google.common.io.Files;
@@ -113,6 +114,8 @@ import org.rm3l.router_companion.widgets.RecyclerViewEmptySupport;
 
 public class SpeedTestActivity extends AppCompatActivity
     implements SwipeRefreshLayout.OnRefreshListener, SnackbarCallback {
+
+  public static final String SERVER_DISPLAY_NAME = "server_display_name";
 
   public static class NetworkChangeReceiver extends BroadcastReceiver {
 
@@ -276,13 +279,7 @@ public class SpeedTestActivity extends AppCompatActivity
           }
           pingServerCountry = serverCountry;
           if (!isNullOrEmpty(pingServerCountry)) {
-            activity.runOnUiThread(
-                new Runnable() {
-                  @Override
-                  public void run() {
-                    activity.refreshSpeedTestParameters(pingServerCountry);
-                  }
-                });
+            activity.runOnUiThread(() -> activity.refreshSpeedTestParameters(pingServerCountry));
           }
         } else {
           pingServerCountry = serverSetting;
@@ -458,7 +455,11 @@ public class SpeedTestActivity extends AppCompatActivity
         exception = e;
       }
 
-      return new AbstractRouterAction.RouterActionResult<>(null, exception);
+      return new AbstractRouterAction.RouterActionResult<>(
+          null,
+          exception,
+          ImmutableMap.of(
+              SERVER_DISPLAY_NAME, getServerLocationDisplayFromCountryCode(pingServerCountry)));
     }
 
     @Override
@@ -484,15 +485,22 @@ public class SpeedTestActivity extends AppCompatActivity
         if (exception != null) {
           activity.errorPlaceholder.setVisibility(View.VISIBLE);
           final Pair<String, String> exceptionPair = Utils.handleException(exception);
-          activity.errorPlaceholder.setText("Error: " + exceptionPair.first);
+          activity.errorPlaceholder.setText(String.format("Error: %s", exceptionPair.first));
           if (!isNullOrEmpty(exceptionPair.second)) {
+            final Object serverDisplayNameInMetadata =
+                voidRouterActionResult.metadata.get(SERVER_DISPLAY_NAME);
             activity.errorPlaceholder.setOnClickListener(
-                new View.OnClickListener() {
-                  @Override
-                  public void onClick(View v) {
-                    Toast.makeText(activity, exceptionPair.second, Toast.LENGTH_SHORT).show();
-                  }
-                });
+                v ->
+                    Toast.makeText(
+                            activity,
+                            String.format(
+                                "%s : %s",
+                                serverDisplayNameInMetadata != null
+                                    ? serverDisplayNameInMetadata
+                                    : "-",
+                                exceptionPair.second),
+                            Toast.LENGTH_SHORT)
+                        .show());
           }
         } else {
           // Persist speed test result
