@@ -1801,7 +1801,8 @@ public class SpeedTestActivity extends AppCompatActivity
     SERVERS.put("IN", PING_SERVER, "speedtest.che01.softlayer.com"); // OK (in router)
     SERVERS.put("IN", HTTP_DL_URL, "http://speedtest.che01.softlayer.com/downloads/test%s.zip");
 
-    //TODO Find a way to auto-handle this, or at least in a way that does not require publishing a new version of the app
+    // TODO Find a way to auto-handle this, or at least in a way that does not require publishing a
+    // new version of the app
     //    SERVERS.put("US-DAL", PING_SERVER, "speedtest.dal01.softlayer.com"); // UNHEALTHY
     //    SERVERS.put("US-DAL", HTTP_DL_URL,
     // "http://speedtest.dal01.softlayer.com/downloads/test%s.zip");
