@@ -27,6 +27,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.text.DateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,9 +55,17 @@ public abstract class AbstractRouterAction<T>
 
     @Nullable private final T result;
 
+    @NonNull public final Map<String, Object> metadata;
+
     public RouterActionResult(@Nullable T result, @Nullable Exception exception) {
+      this(result, exception, null);
+    }
+
+    public RouterActionResult(
+        @Nullable T result, @Nullable Exception exception, @Nullable Map<String, Object> metadata) {
       this.result = result;
       this.exception = exception;
+      this.metadata = Collections.unmodifiableMap(metadata != null ? metadata : new HashMap<>());
     }
 
     public Exception getException() {

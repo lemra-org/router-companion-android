@@ -132,7 +132,7 @@ class RouterSpeedTestAutoRunnerJob {
         @JvmStatic
         @Throws(Exception::class)
         fun runPing(context: Context, mOriginalRouter: Router, mRouterCopy: Router, server: String?): PingRTT {
-            FirebaseCrashlytics.getInstance().log("runPing: " + server)
+            FirebaseCrashlytics.getInstance().log("runPing: $server")
 
             if (server.isNullOrBlank()) {
                 throw IllegalArgumentException("No Server specified")
@@ -151,7 +151,7 @@ class RouterSpeedTestAutoRunnerJob {
                             PingFromRouterAction.MAX_PING_PACKETS_TO_SEND, server))
             if (pingOutput == null || pingOutput.size < 2) {
                 // Nothing - abort right now with an error message
-                throw SpeedTestException("Unable to contact remote server")
+                throw SpeedTestException("Unable to contact remote server: $server")
             }
 
             val pingRTT = PingRTT()
@@ -173,7 +173,7 @@ class RouterSpeedTestAutoRunnerJob {
             val pingRttOutput = pingOutput[pingOutput.size - 1]
             val pingRttOutputList = EQUAL_SPLITTER.splitToList(pingRttOutput)
             if (pingRttOutputList.size < 2) {
-                throw SpeedTestException("Unable to contact remote server")
+                throw SpeedTestException("Unable to contact remote server: $server")
             }
             val pingRtt = pingRttOutputList[1].replace("ms".toRegex(), "").trim({ it <= ' ' })
             val pingRttSplitResult = SLASH_SPLITTER.splitToList(pingRtt)
