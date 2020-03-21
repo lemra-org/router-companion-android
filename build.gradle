@@ -26,12 +26,11 @@ buildscript {
 
     ext {
         android_sdk = 28
-        buildScan_version = '2.2.1'
         buildTools_version = '28.0.3'
-        gradleBuildPlugin_version = '3.4.1'
+        gradleBuildPlugin_version = '3.6.0'
         support_version = '28.0.0'
         androidx_version = '1.0.0'
-        kotlin_version = '1.3.50'
+        kotlin_version = '1.3.70'
         ktlint_version = '0.32.0'
         android_ktx_version = '1.0.0'
         anko_version = '0.10.8'
@@ -66,7 +65,7 @@ buildscript {
     }
     dependencies {
         classpath "com.diffplug.spotless:spotless-plugin-gradle:3.27.1"
-        classpath "com.gradle:build-scan-plugin:$buildScan_version"
+//        classpath "com.gradle:gradle-enterprise-gradle-plugin:3.1.1"
         classpath "com.android.tools.build:gradle:$gradleBuildPlugin_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.github.triplet.gradle:play-publisher:$playPublisherPlugin_version"
@@ -74,7 +73,7 @@ buildscript {
     }
 }
 
-apply plugin: 'com.gradle.build-scan'
+//apply plugin: "com.gradle.build-scan"
 apply plugin: 'idea'
 apply plugin: 'kotlin'
 //apply plugin: 'kotlin-kapt'
@@ -224,13 +223,14 @@ idea.module {
 //kapt {
 //    useBuildCache = true
 //}
-
-buildScan {
-    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-    termsOfServiceAgree = 'yes'
-
-    if (System.getenv('CI')) {
-        publishAlways()
-        tag 'CI'
-    }
-}
+//gradleEnterprise {
+//    buildScan {
+//        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+//        termsOfServiceAgree = 'yes'
+//
+//        if (System.getenv('CI')) {
+//            publishAlways()
+//            tag 'CI'
+//        }
+//    }
+//}

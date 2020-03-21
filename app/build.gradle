@@ -264,6 +264,10 @@ android {
     // when Gradle merges variant sources and configurations. You must assign
     // each product flavor you configure to one of the flavor dimensions.
     flavorDimensions "mode"
+
+    // View binding provides compile-time safety when referencing views in your code.
+    // You can now replace findViewById() with the auto-generated binding class reference
+    viewBinding.enabled = true
 }
 
 //Automate the way version name is built for each flavor
