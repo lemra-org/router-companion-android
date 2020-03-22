@@ -24,7 +24,7 @@ class DatePickerFragment : DialogFragment(), OnDateSetListener {
         if (bundleArguments?.containsKey(START_MILLIS) == true) {
             calendar.timeInMillis = bundleArguments.getLong(START_MILLIS)
         }
-        val datePickerDialog = DatePickerDialog(activity,
+        val datePickerDialog = DatePickerDialog(requireActivity(),
                 bundleArguments?.getParcelable<AbstractDatePickerListener>(DATE_PICKER_LISTENER) ?: this,
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),

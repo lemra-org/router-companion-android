@@ -11,6 +11,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.android.material.snackbar.Snackbar
 import com.karumi.dexter.Dexter
@@ -63,7 +64,7 @@ class PermissionsUtils private constructor() {
             permissions: Collection<String>,
             rationaleMessage: String,
             snackbarActionText: String? = null,
-            @Snackbar.Duration snackbarDuration: Int = Snackbar.LENGTH_LONG,
+            @BaseTransientBottomBar.Duration snackbarDuration: Int = Snackbar.LENGTH_LONG,
             snackbarCb: SnackbarCallback? = null
         ) {
             requestPermissions(activity, *permissions.toTypedArray(), listener = object : BaseMultiplePermissionsListener() {

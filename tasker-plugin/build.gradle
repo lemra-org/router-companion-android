@@ -33,8 +33,8 @@ buildscript {
 
     dependencies {
         //noinspection GradleDynamicVersion
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.0.0-beta02'
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.0.0-beta03'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:1.0.2'
     }
 }
 
@@ -207,7 +207,7 @@ android {
 
     // View binding provides compile-time safety when referencing views in your code.
     // You can now replace findViewById() with the auto-generated binding class reference
-    viewBinding.enabled = true
+    buildFeatures.viewBinding = true
 }
 
 //Automate the way version name is built for each flavor
@@ -239,10 +239,10 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation "androidx.appcompat:appcompat:1.1.0"
-    implementation "com.google.android.material:material:1.0.0"
+    implementation "com.google.android.material:material:1.1.0"
     implementation "androidx.cardview:cardview:1.0.0"
     implementation "androidx.preference:preference:1.1.0"
-    implementation "androidx.recyclerview:recyclerview:1.0.0"
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
     implementation "androidx.annotation:annotation:1.1.0"
 
     implementation "org.rm3l:maoni:${maoni_version}"
@@ -258,7 +258,7 @@ dependencies {
     implementation group: 'com.twofortyfouram', name: 'android-spackle', version: "[2.0.0,4.0["
     androidTestImplementation group:'com.twofortyfouram', name:'android-test', version:'[6.0.1,7.0)'
 //    androidTestImplementation group:'com.twofortyfouram', name:'android-assertion', version:'[2.0.0,3.0)'
-    implementation 'com.google.firebase:firebase-crashlytics:17.0.0-beta01'
+    implementation 'com.google.firebase:firebase-crashlytics:17.0.0-beta02'
 
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.google.guava:guava:27.1-android'

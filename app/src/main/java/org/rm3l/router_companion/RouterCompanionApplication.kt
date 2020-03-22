@@ -91,7 +91,9 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
         FirebaseCrashlytics.getInstance().setCustomKey("WITH_ADS", BuildConfig.WITH_ADS)
 
         val acraEmailAddr = appPreferences.getString(RouterCompanionAppConstants.ACRA_USER_EMAIL, null)
-        FirebaseCrashlytics.getInstance().setUserId(acraEmailAddr)
+        if (acraEmailAddr != null) {
+            FirebaseCrashlytics.getInstance().setUserId(acraEmailAddr)
+        }
 
         mDebugResourceInspectorEnabled = appPreferences.getBoolean(DEBUG_RESOURCE_INSPECTOR_PREF_KEY, false)
 

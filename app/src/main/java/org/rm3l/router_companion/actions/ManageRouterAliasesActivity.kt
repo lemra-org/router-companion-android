@@ -54,7 +54,6 @@ import com.google.common.collect.FluentIterable
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Date
-import java.util.HashMap
 import needle.UiRelatedTask
 import org.json.JSONObject
 import org.rm3l.ddwrt.R
@@ -155,7 +154,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                         macEditText.requestFocus()
                         // Open Keyboard
                         val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        imm?.showSoftInput(macEditText, 0)
+                        imm.showSoftInput(macEditText, 0)
                         return@OnClickListener
                     }
                     if (!Utils.MAC_ADDRESS.matcher(macValueToPersist).matches()) {
@@ -168,7 +167,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                         macEditText.requestFocus()
                         // Open Keyboard
                         val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        imm?.showSoftInput(macEditText, 0)
+                        imm.showSoftInput(macEditText, 0)
                         return@OnClickListener
                     }
                     val aliasEditText = d.findViewById<View>(R.id.add_or_edit_router_alias_value) as EditText
@@ -184,7 +183,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                         aliasEditText.requestFocus()
                         // Open Keyboard
                         val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        imm?.showSoftInput(aliasEditText, 0)
+                        imm.showSoftInput(aliasEditText, 0)
                         return@OnClickListener
                     }
 
@@ -695,7 +694,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                     return
                 }
 
-                val aliases = HashMap<String, String>()
+                val aliases = mutableMapOf<String, String>()
                 for ((key, value) in allRouterPrefs) {
                     if (isNullOrEmpty(key) || value == null) {
                         continue
@@ -725,7 +724,7 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                 )
 
                 val backupDate = Date()
-                val aliasesStr = JSONObject(aliases).toString(2)
+                val aliasesStr = JSONObject(aliases as Map<*, *>).toString(2)
 
                 var fileOutputStream: FileOutputStream? = null
                 try {

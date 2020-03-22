@@ -415,7 +415,9 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                     // Reset Crashlytics user email addr
                     val acraEmailAddr =
                         this.mPreferences!!.getString(RouterCompanionAppConstants.ACRA_USER_EMAIL, null)
-                    FirebaseCrashlytics.getInstance().setUserId(acraEmailAddr)
+                    if (acraEmailAddr != null) {
+                        FirebaseCrashlytics.getInstance().setUserId(acraEmailAddr)
+                    }
 
                     val currentUserChoiceForAutoCrashReporting = this.mPreferences!!.getBoolean(ACRA_ENABLE, true)
                     if (this.mAutoCrashReports != currentUserChoiceForAutoCrashReporting) {
