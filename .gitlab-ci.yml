@@ -11,15 +11,6 @@ build_project:
   image: registry.gitlab.com/lemra/router-companion-android/android-sdk:latest
   stage: build
   before_script:
-    # Properly configure inotify values (for Watchman)
-    - export INOTIFY_SYSCTL_VALUE=999999
-    - sysctl 
-          fs.inotify.max_user_watches=$INOTIFY_SYSCTL_VALUE 
-          fs.inotify.max_queued_events=$INOTIFY_SYSCTL_VALUE 
-          fs.inotify.max_user_instances=$INOTIFY_SYSCTL_VALUE 
-        || true
-    - sysctl -p
-
     - chmod +x ./gradlew
 
   # Note on caching: 
