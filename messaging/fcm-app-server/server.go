@@ -62,7 +62,7 @@ var (
 	db *gorm.DB
 
 	// Websocket connection
-	socket socketio.Socket
+	socket socketio.Conn
 )
 
 type Client struct {
@@ -124,7 +124,7 @@ func ListClients(w http.ResponseWriter, r *http.Request) {
 }
 
 func Ping(w http.ResponseWriter, r *http.Request) {
-    SendOkResponse(w, nil)
+	SendOkResponse(w, nil)
 }
 
 func SendOkResponse(w http.ResponseWriter, res interface{}) {
@@ -214,7 +214,8 @@ func onMessageReceived(cm gcm.CcsMessage) error {
 	log.Printf("Received Message: %+v", cm)
 
 	if socket != nil {
-		log.Println("emit:", socket.Emit("upstream message", cm))
+		log.Println("emit:")
+		socket.Emit("upstream message", cm)
 	}
 
 	d := cm.Data
@@ -274,9 +275,11 @@ func Handler() http.Handler {
 	if err != nil {
 		log.Fatal(err)
 	}
-	wsServer.On("connection", func(so socketio.Socket) {
+	wsServer.OnConnect("connection", func(so socketio.Conn) error {
 		log.Println("on connection")
+		fmt.Println("connected:", so.ID())
 		socket = so
+		return nil
 	})
 	router.Handle("/socket.io/", wsServer)
 
@@ -284,7 +287,7 @@ func Handler() http.Handler {
 	//	// GET /clients
 	//	// List all registered registration IDs
 	//	router.HandleFunc("/clients", ListClients).Methods("GET")
-	
+
 	//PING
 	router.HandleFunc("/ping", Ping).Methods("GET")
 

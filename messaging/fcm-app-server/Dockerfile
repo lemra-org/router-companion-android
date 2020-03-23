@@ -12,15 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.4.2-wheezy
-
+FROM golang:1.14.1-buster
 
 # -----------------
 # Install dependencies
 # -----------------
 
-RUN apt-get update && apt-get install -y build-essential
-
+RUN apt-get update && apt-get install -y build-essential git
 
 # -----------------
 # Install Go dependencies
@@ -47,3 +45,4 @@ WORKDIR /src/gcm-playground/server/
 # -----------------
 
 EXPOSE 4260
+
