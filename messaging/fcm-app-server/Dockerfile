@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.15.2-buster
+FROM golang:1.15.4-buster
 
 # -----------------
 # Install dependencies
