@@ -5,7 +5,6 @@ package org.rm3l.router_companion.utils.kotlin
 import android.animation.Animator
 import android.animation.Animator.AnimatorListener
 import android.animation.ValueAnimator
-import androidx.core.content.ContextCompat
 import android.text.Spannable
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
@@ -13,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.resources.conn.Router
 import org.rm3l.router_companion.resources.conn.Router.RouterFirmware
@@ -42,7 +42,7 @@ fun View.setHeight(height: Int) {
 }
 
 fun View.setBackgroundColorFromRouterFirmware(router: Router?) =
-        this.setBackgroundColorFromRouterFirmware(router?.routerFirmware)
+    this.setBackgroundColorFromRouterFirmware(router?.routerFirmware)
 
 fun View.setBackgroundColorFromRouterFirmware(routerFirmware: RouterFirmware?) {
     val primaryColor = ColorUtils.getPrimaryColor(routerFirmware)
@@ -56,17 +56,20 @@ fun View.setBackgroundColorFromRouterFirmware(routerFirmware: RouterFirmware?) {
 
 fun ViewGroup.expand(expandCollapseButton: ImageButton? = null) {
     this.visible()
-    val widthSpec = View.MeasureSpec.makeMeasureSpec(ViewGroupUtils.getParent(this)?.width ?: 0,
-            View.MeasureSpec.EXACTLY)
+    val widthSpec = View.MeasureSpec.makeMeasureSpec(
+        ViewGroupUtils.getParent(this)?.width ?: 0,
+        View.MeasureSpec.EXACTLY
+    )
     val heightSpec = View.MeasureSpec.makeMeasureSpec(this.computeFullHeight(), View.MeasureSpec.AT_MOST)
     this.measure(widthSpec, heightSpec)
     val mAnimator = slideAnimator(0, this.measuredHeight)
     mAnimator.start()
     expandCollapseButton?.let {
         it.setImageResource(
-                if (ColorUtils.isThemeLight(it.context))
-                    R.drawable.ic_expand_less_black_24dp
-                else R.drawable.ic_expand_less_white_24dp)
+            if (ColorUtils.isThemeLight(it.context))
+                R.drawable.ic_expand_less_black_24dp
+            else R.drawable.ic_expand_less_white_24dp
+        )
     }
 }
 
@@ -87,9 +90,10 @@ fun View.collapse(expandCollapseButton: ImageButton? = null) {
     mAnimator.start()
     expandCollapseButton?.let {
         it.setImageResource(
-                if (ColorUtils.isThemeLight(it.context))
-                    R.drawable.ic_expand_more_black_24dp
-                else R.drawable.ic_expand_more_white_24dp)
+            if (ColorUtils.isThemeLight(it.context))
+                R.drawable.ic_expand_more_black_24dp
+            else R.drawable.ic_expand_more_white_24dp
+        )
     }
 }
 
@@ -102,18 +106,20 @@ fun ViewGroup.computeFullHeight(): Int {
     this.visibility = View.VISIBLE
     val numberOfChildren = this.childCount
     (0 until numberOfChildren)
-            .asSequence()
-            .map { this.getChildAt(it) }
-            .forEach {
-                totalHeight += if (it is ViewGroup) {
-                    it.computeFullHeight()
-                } else {
-                    val desiredWidth = View.MeasureSpec.makeMeasureSpec(this.width,
-                            View.MeasureSpec.AT_MOST)
-                    it.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED)
-                    it.measuredHeight
-                }
+        .asSequence()
+        .map { this.getChildAt(it) }
+        .forEach {
+            totalHeight += if (it is ViewGroup) {
+                it.computeFullHeight()
+            } else {
+                val desiredWidth = View.MeasureSpec.makeMeasureSpec(
+                    this.width,
+                    View.MeasureSpec.AT_MOST
+                )
+                it.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED)
+                it.measuredHeight
             }
+        }
     this.visibility = initialVisibility
     return totalHeight
 }
@@ -133,7 +139,10 @@ private fun View.slideAnimator(start: Int, end: Int): ValueAnimator {
 fun TextView.setClickable(onClickFunction: (View?) -> Unit) {
     this.movementMethod = LinkMovementMethod.getInstance()
     val spans = this.text as Spannable
-    spans.setSpan(object : ClickableSpan() {
-        override fun onClick(widget: View) = onClickFunction(widget)
-    }, 0, spans.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    spans.setSpan(
+        object : ClickableSpan() {
+            override fun onClick(widget: View) = onClickFunction(widget)
+        },
+        0, spans.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+    )
 }

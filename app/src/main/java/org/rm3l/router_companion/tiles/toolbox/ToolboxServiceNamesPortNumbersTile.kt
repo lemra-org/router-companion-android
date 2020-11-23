@@ -22,15 +22,15 @@
 package org.rm3l.router_companion.tiles.toolbox
 
 import android.os.Bundle
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import androidx.fragment.app.Fragment
 import android.text.TextUtils
 import android.view.View
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.actions.AbstractRouterAction
@@ -41,7 +41,7 @@ import org.rm3l.router_companion.utils.kotlin.gone
 import org.rm3l.router_companion.utils.kotlin.visible
 
 class ToolboxServiceNamesPortNumbersTile(parentFragment: Fragment, arguments: Bundle?, router: Router?) :
-        AbstractToolboxTile(parentFragment, arguments, router) {
+    AbstractToolboxTile(parentFragment, arguments, router) {
 
     private val transportProtocolValuesFromSpinner: Array<String>
     private val portInputLayout: TextInputLayout
@@ -55,23 +55,23 @@ class ToolboxServiceNamesPortNumbersTile(parentFragment: Fragment, arguments: Bu
         portInputLayout = lookupView.findViewById(R.id.tile_toolbox_abstract_service_port_lookup_port_textinputlayout)
         serviceInputLayout = lookupView.findViewById(R.id.tile_toolbox_abstract_service_port_lookup_service_textinputlayout)
         lookupView.findViewById<RadioGroup>(R.id.tile_toolbox_abstract_service_port_lookup_type)
-                .setOnCheckedChangeListener { _, checkedId ->
-                    when (checkedId) {
-                        R.id.tile_toolbox_abstract_service_port_lookup_port -> {
-                            portInputLayout.visible()
-                            serviceInputLayout.gone()
-                        }
-                        R.id.tile_toolbox_abstract_service_port_lookup_service -> {
-                            portInputLayout.gone()
-                            serviceInputLayout.visible()
-                        }
+            .setOnCheckedChangeListener { _, checkedId ->
+                when (checkedId) {
+                    R.id.tile_toolbox_abstract_service_port_lookup_port -> {
+                        portInputLayout.visible()
+                        serviceInputLayout.gone()
+                    }
+                    R.id.tile_toolbox_abstract_service_port_lookup_service -> {
+                        portInputLayout.gone()
+                        serviceInputLayout.visible()
                     }
                 }
+            }
         // Default is to lookup by port
         lookupView.findViewById<RadioButton>(R.id.tile_toolbox_abstract_service_port_lookup_port).isChecked = true
 
         transportProtocolValuesFromSpinner = mParentFragmentActivity.resources
-                .getStringArray(R.array.service_port_lookup_protocol_array_values)
+            .getStringArray(R.array.service_port_lookup_protocol_array_values)
     }
 
     override fun isGeoLocateButtonEnabled() = false
@@ -131,12 +131,13 @@ class ToolboxServiceNamesPortNumbersTile(parentFragment: Fragment, arguments: Bu
         }
         return try {
             ServiceNamesPortNumbersMappingLookupAction(
-                    router = mRouter!!,
-                    listener = mRouterActionListener,
-                    globalSharedPreferences = mGlobalPreferences,
-                    protocols = listOf(Protocol.valueOf(transportProtocolValuesFromSpinner[protocolSpinner.selectedItemPosition])),
-                    ports = ports,
-                    services = serviceNames)
+                router = mRouter!!,
+                listener = mRouterActionListener,
+                globalSharedPreferences = mGlobalPreferences,
+                protocols = listOf(Protocol.valueOf(transportProtocolValuesFromSpinner[protocolSpinner.selectedItemPosition])),
+                ports = ports,
+                services = serviceNames
+            )
         } catch (e: Exception) {
             FirebaseCrashlytics.getInstance().recordException(e)
             Toast.makeText(mParentFragmentActivity, "Internal Error: ${e.message}", Toast.LENGTH_LONG).show()

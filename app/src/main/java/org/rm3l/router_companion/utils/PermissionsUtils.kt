@@ -12,16 +12,16 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.BaseTransientBottomBar
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.listener.multi.BaseMultiplePermissionsListener
-import org.rm3l.router_companion.utils.snackbar.SnackbarCallback
-import org.rm3l.router_companion.utils.snackbar.SnackbarUtils
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
 import org.rm3l.router_companion.common.utils.ActivityUtils
+import org.rm3l.router_companion.utils.snackbar.SnackbarCallback
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style
 
 class PermissionsUtils private constructor() {
@@ -67,18 +67,23 @@ class PermissionsUtils private constructor() {
             @BaseTransientBottomBar.Duration snackbarDuration: Int = Snackbar.LENGTH_LONG,
             snackbarCb: SnackbarCallback? = null
         ) {
-            requestPermissions(activity, *permissions.toTypedArray(), listener = object : BaseMultiplePermissionsListener() {
+            requestPermissions(
+                activity, *permissions.toTypedArray(),
+                listener = object : BaseMultiplePermissionsListener() {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         if (report?.areAllPermissionsGranted() == false) {
-                            SnackbarUtils.buildSnackbar(activity, rationaleMessage,
+                            SnackbarUtils.buildSnackbar(
+                                activity, rationaleMessage,
                                 snackbarActionText,
                                 snackbarDuration,
                                 snackbarCb,
                                 null,
-                                true)
+                                true
+                            )
                         }
                     }
-                })
+                }
+            )
         }
 
         @JvmStatic
@@ -123,8 +128,10 @@ class PermissionsUtils private constructor() {
             onPermissionDenied: () -> Unit?,
             onPermissionDeniedMessage: String? = null
         ) =
-            requestPermissions(activity, permissions, onPermissionGranted,
-                onPermissionDeniedMessage, onPermissionDeniedMessage, onPermissionDenied)
+            requestPermissions(
+                activity, permissions, onPermissionGranted,
+                onPermissionDeniedMessage, onPermissionDeniedMessage, onPermissionDenied
+            )
 
         @JvmStatic
         fun requestPermissions(
@@ -135,30 +142,34 @@ class PermissionsUtils private constructor() {
             onPermissionPermantentlyDeniedMessage: String? = null,
             onPermissionDenied: () -> Unit?
         ) {
-            requestPermissions(activity, *permissions.toTypedArray(), listener = object : BaseMultiplePermissionsListener() {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    if (report?.areAllPermissionsGranted() == true) {
-                        onPermissionGranted()
-                    } else {
-                        if (report?.isAnyPermissionPermanentlyDenied == true) {
-                            SnackbarUtils.buildSnackbar(
-                                activity,
-                                onPermissionPermantentlyDeniedMessage,
-                                "Settings",
-                                Snackbar.LENGTH_LONG,
-                                object : SnackbarCallback {
-                                    override fun onDismissEventActionClick(event: Int, bundle: Bundle?) {
-                                        ActivityUtils.openApplicationSettings(activity)
-                                    }
-                                }, null, true
-                            )
+            requestPermissions(
+                activity, *permissions.toTypedArray(),
+                listener = object : BaseMultiplePermissionsListener() {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        if (report?.areAllPermissionsGranted() == true) {
+                            onPermissionGranted()
                         } else {
-                            Utils.displayMessage(activity, onPermissionDeniedMessage, Style.INFO)
+                            if (report?.isAnyPermissionPermanentlyDenied == true) {
+                                SnackbarUtils.buildSnackbar(
+                                    activity,
+                                    onPermissionPermantentlyDeniedMessage,
+                                    "Settings",
+                                    Snackbar.LENGTH_LONG,
+                                    object : SnackbarCallback {
+                                        override fun onDismissEventActionClick(event: Int, bundle: Bundle?) {
+                                            ActivityUtils.openApplicationSettings(activity)
+                                        }
+                                    },
+                                    null, true
+                                )
+                            } else {
+                                Utils.displayMessage(activity, onPermissionDeniedMessage, Style.INFO)
+                            }
+                            onPermissionDenied()
                         }
-                        onPermissionDenied()
                     }
                 }
-            })
+            )
         }
 
         @JvmStatic

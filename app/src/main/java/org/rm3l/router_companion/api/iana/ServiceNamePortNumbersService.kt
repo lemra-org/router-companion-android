@@ -24,19 +24,19 @@ interface ServiceNamePortNumbersService {
             services: Collection<String>? = null
         ): GraphQLQuery {
             val graphQLQuery = "{\n" +
-                    "records (filter: {ports: " +
-                    gson.toJson(ports ?: emptyList<Long>()) +
-                    ", protocols: " +
-                    gson.toJson(protocols ?: emptyList<Protocol>()).replace("\"".toRegex(), "") +
-                    ", services: " +
-                    gson.toJson(services ?: emptyList<String>()) +
-                    "}) {\n" +
-                    "serviceName\n" +
-                    "portNumber\n" +
-                    "transportProtocol\n" +
-                    "description\n" +
-                    "}\n" +
-                    "}"
+                "records (filter: {ports: " +
+                gson.toJson(ports ?: emptyList<Long>()) +
+                ", protocols: " +
+                gson.toJson(protocols ?: emptyList<Protocol>()).replace("\"".toRegex(), "") +
+                ", services: " +
+                gson.toJson(services ?: emptyList<String>()) +
+                "}) {\n" +
+                "serviceName\n" +
+                "portNumber\n" +
+                "transportProtocol\n" +
+                "description\n" +
+                "}\n" +
+                "}"
             return GraphQLQuery(query = graphQLQuery)
         }
     }
@@ -47,4 +47,4 @@ fun ServiceNamePortNumbersService.query(
     protocols: Collection<Protocol>? = null,
     services: Collection<String>? = null
 ) =
-        this.query(ServiceNamePortNumbersService.toGraphQLQuery(ports, protocols, services))
+    this.query(ServiceNamePortNumbersService.toGraphQLQuery(ports, protocols, services))

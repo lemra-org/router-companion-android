@@ -4,9 +4,9 @@ package org.rm3l.router_companion.resources
  * Created by rm3l on 15/06/15.
  */
 data class ProcNetDevReceive(
-        /**
-         * Received
-         */
+    /**
+     * Received
+     */
     /**
      * @return the rx_Bytes
      */

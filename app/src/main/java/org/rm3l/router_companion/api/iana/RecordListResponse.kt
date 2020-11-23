@@ -56,9 +56,9 @@ class Record @JvmOverloads constructor(
 
     override fun toString(): String {
         return "Record(serviceName=$serviceName, portNumber=$portNumber, transportProtocol=$transportProtocol, " +
-                "description=$description, assignee=$assignee, contact=$contact, registrationDate=$registrationDate, " +
-                "modificationDate=$modificationDate, reference=$reference, serviceCode=$serviceCode, " +
-                "knownUnauthorizedUses=$knownUnauthorizedUses, assignmentNotes=$assignmentNotes)"
+            "description=$description, assignee=$assignee, contact=$contact, registrationDate=$registrationDate, " +
+            "modificationDate=$modificationDate, reference=$reference, serviceCode=$serviceCode, " +
+            "knownUnauthorizedUses=$knownUnauthorizedUses, assignmentNotes=$assignmentNotes)"
     }
 }
 

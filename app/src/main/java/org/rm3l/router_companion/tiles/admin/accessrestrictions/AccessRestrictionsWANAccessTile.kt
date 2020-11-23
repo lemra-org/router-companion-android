@@ -3,15 +3,6 @@ package org.rm3l.router_companion.tiles.admin.accessrestrictions
 import android.app.AlertDialog
 import android.graphics.Point
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
-import androidx.fragment.app.Fragment
-import androidx.loader.content.AsyncTaskLoader
-import androidx.core.content.ContextCompat
-import androidx.loader.content.Loader
-import androidx.cardview.widget.CardView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -22,11 +13,20 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.loader.content.AsyncTaskLoader
+import androidx.loader.content.Loader
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.curioustechizen.ago.RelativeTimeTextView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import com.google.common.base.Splitter
 import com.google.common.base.Strings
 import com.google.common.base.Throwables
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.find
@@ -98,14 +98,17 @@ import java.util.Collections
  * Created by rm3l on 20/01/16.
  */
 class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundle?, router: Router?) :
-        DDWRTTile<WANAccessPoliciesRouterData>(
-                parentFragment, arguments, router, R.layout.tile_admin_access_restrictions_wan_access, null),
-        PopupMenu.OnMenuItemClickListener, AnkoLogger {
+    DDWRTTile<WANAccessPoliciesRouterData>(
+        parentFragment, arguments, router, R.layout.tile_admin_access_restrictions_wan_access, null
+    ),
+    PopupMenu.OnMenuItemClickListener,
+    AnkoLogger {
 
     private val addNewButton: FloatingActionButton
 
     private val mRecyclerView = layout.find<RecyclerViewEmptySupport>(
-            R.id.tile_admin_access_restrictions_wan_access_ListView)
+        R.id.tile_admin_access_restrictions_wan_access_ListView
+    )
     private val mAdapter: RecyclerView.Adapter<*>
     private val mLayoutManager: RecyclerView.LayoutManager
 
@@ -120,14 +123,20 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
         mRecyclerView.setHasFixedSize(true)
 
         // use a linear layout manager
-        mLayoutManager = LinearLayoutManager(mParentFragmentActivity, LinearLayoutManager.VERTICAL,
-                false)
+        mLayoutManager = LinearLayoutManager(
+            mParentFragmentActivity, LinearLayoutManager.VERTICAL,
+            false
+        )
         mLayoutManager.scrollToPosition(0)
         mRecyclerView.layoutManager = mLayoutManager
         //
         val emptyView = layout.find<TextView>(R.id.empty_view)
-        emptyView.setTextColor(ContextCompat.getColor(mParentFragmentActivity,
-                if (mParentFragmentActivity.isThemeLight()) R.color.black else R.color.white))
+        emptyView.setTextColor(
+            ContextCompat.getColor(
+                mParentFragmentActivity,
+                if (mParentFragmentActivity.isThemeLight()) R.color.black else R.color.white
+            )
+        )
         mRecyclerView.setEmptyView(emptyView)
 
         // specify an adapter (see also next example)
@@ -150,17 +159,17 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
         addNewButton.setOnClickListener {
             mParentFragmentActivity.toast("TODO Add new WAN Access Policy")
             mParentFragmentActivity.startActivity(
-                    mParentFragmentActivity.intentFor<AddOrEditWANAccessPolicyActivity>(
-                            ROUTER_SELECTED to mRouter?.uuid,
-                            "id" to 5
-                    )
+                mParentFragmentActivity.intentFor<AddOrEditWANAccessPolicyActivity>(
+                    ROUTER_SELECTED to mRouter?.uuid,
+                    "id" to 5
+                )
             )
         }
 
         // Create Options Menu
         val tileMenu = layout.find<ImageButton>(R.id.tile_admin_access_restrictions_wan_access_menu)
 
-        if (mParentFragmentActivity?.isThemeLight()) {
+        if (mParentFragmentActivity.isThemeLight()) {
             // Set menu background to white
             tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark)
         }
@@ -176,7 +185,7 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
     }
 
     fun canChildScrollUp(): Boolean {
-        val canScrollVertically = mRecyclerView?.canScrollVertically(-1)
+        val canScrollVertically = mRecyclerView.canScrollVertically(-1)
         if (!canScrollVertically) {
             return canScrollVertically
         }
@@ -215,9 +224,11 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
         return object : AsyncTaskLoader<WANAccessPoliciesRouterData>(this.mParentFragmentActivity) {
             override fun loadInBackground(): WANAccessPoliciesRouterData? {
                 try {
-                    FirebaseCrashlytics.getInstance().log("Init background loader for " +
+                    FirebaseCrashlytics.getInstance().log(
+                        "Init background loader for " +
                             AccessRestrictionsWANAccessTile::class.java +
-                            ": routerInfo=$mRouter / nbRunsLoader=$nbRunsLoader")
+                            ": routerInfo=$mRouter / nbRunsLoader=$nbRunsLoader"
+                    )
 
                     if (mRefreshing.getAndSet(true)) {
                         throw DDWRTTileAutoRefreshNotAllowedException()
@@ -228,15 +239,16 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
 
                     mLastSync = System.currentTimeMillis()
 
-                    return mRouterConnector.getWANAccessPolicies(mParentFragmentActivity,
-                            mRouter!!,
-                            object : RemoteDataRetrievalListener {
-                                override fun onProgressUpdate(progress: Int) {
-                                    updateProgressBarViewSeparator(progress)
-                                }
-
-                                override fun doRegardlessOfStatus() {}
+                    return mRouterConnector.getWANAccessPolicies(
+                        mParentFragmentActivity,
+                        mRouter!!,
+                        object : RemoteDataRetrievalListener {
+                            override fun onProgressUpdate(progress: Int) {
+                                updateProgressBarViewSeparator(progress)
                             }
+
+                            override fun doRegardlessOfStatus() {}
+                        }
                     )
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -258,22 +270,26 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
 
             if (data == null) {
                 data = WANAccessPoliciesRouterData().setException(
-                        DDWRTNoDataException("No Data!")) as WANAccessPoliciesRouterData
+                    DDWRTNoDataException("No Data!")
+                ) as WANAccessPoliciesRouterData
             }
 
             val wanAccessPolicies = data.getData()
             var exception = data.getException()
             if (exception == null && wanAccessPolicies == null) {
                 data = WANAccessPoliciesRouterData().setException(
-                        DDWRTNoDataException("No Data!")) as WANAccessPoliciesRouterData
+                    DDWRTNoDataException("No Data!")
+                ) as WANAccessPoliciesRouterData
             }
             exception = data.getException()
 
             layout.find<View>(
-                    R.id.tile_admin_access_restrictions_wan_access_loading_view).visibility = View.GONE
+                R.id.tile_admin_access_restrictions_wan_access_loading_view
+            ).visibility = View.GONE
 
             val errorPlaceHolderView = this.layout.find<TextView>(
-                    R.id.tile_admin_access_restrictions_wan_access_error)
+                R.id.tile_admin_access_restrictions_wan_access_error
+            )
 
             if (exception !is DDWRTTileAutoRefreshNotAllowedException) {
 
@@ -338,7 +354,7 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
 
         private val todHoursSplitter = Splitter.on(":").omitEmptyStrings().trimResults()
 
-        public fun getHourFormatted(todHour: String): String {
+        fun getHourFormatted(todHour: String): String {
             val stringList = todHoursSplitter.splitToList(todHour)
             if (stringList.size < 2) {
                 return todHour
@@ -359,14 +375,16 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
 internal class WANAccessRulesRecyclerViewAdapter(
     private val tile: AccessRestrictionsWANAccessTile
 ) :
-        RecyclerView.Adapter<WANAccessRulesRecyclerViewHolder>() {
+    RecyclerView.Adapter<WANAccessRulesRecyclerViewHolder>() {
 
     private val wanAccessPolicies = ArrayList<WANAccessPolicy>()
 
     override fun getItemId(position: Int): Long {
         val itemAt: WANAccessPolicy = wanAccessPolicies[position]
-        return ViewIDUtils.getStableId(WANAccessPolicy::class.java,
-                Integer.toString(itemAt.number))
+        return ViewIDUtils.getStableId(
+            WANAccessPolicy::class.java,
+            Integer.toString(itemAt.number)
+        )
     }
 
     fun getWanAccessPolicies(): List<WANAccessPolicy> {
@@ -380,7 +398,7 @@ internal class WANAccessRulesRecyclerViewAdapter(
         if (wanAccessPolicies != null) {
             this.wanAccessPolicies.addAll(wanAccessPolicies)
             Collections.sort(this.wanAccessPolicies) { lhs, rhs ->
-                Integer.valueOf(lhs.number)!!.compareTo(rhs.number)
+                Integer.valueOf(lhs.number).compareTo(rhs.number)
             }
         }
         return this
@@ -389,7 +407,7 @@ internal class WANAccessRulesRecyclerViewAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WANAccessRulesRecyclerViewHolder {
         // create a new view
         val v = LayoutInflater.from(parent.context)
-                .inflate(R.layout.tile_admin_access_restriction, parent, false)
+            .inflate(R.layout.tile_admin_access_restriction, parent, false)
         // set the view's size, margins, paddings and layout parameters
         // ...
         return WANAccessRulesRecyclerViewHolder(this.tile, v)
@@ -406,12 +424,18 @@ internal class WANAccessRulesRecyclerViewAdapter(
 
         if (this.tile.mParentFragmentActivity.isThemeLight()) {
             holder.cardView.setCardBackgroundColor(
-                    ContextCompat.getColor(this.tile.mParentFragmentActivity,
-                            R.color.cardview_light_background))
+                ContextCompat.getColor(
+                    this.tile.mParentFragmentActivity,
+                    R.color.cardview_light_background
+                )
+            )
         } else {
             holder.cardView.setCardBackgroundColor(
-                    ContextCompat.getColor(this.tile.mParentFragmentActivity,
-                            R.color.cardview_dark_background))
+                ContextCompat.getColor(
+                    this.tile.mParentFragmentActivity,
+                    R.color.cardview_dark_background
+                )
+            )
         }
 
         val textDrawable = ImageUtils.getTextDrawable(wanAccessPolicy.name)
@@ -431,7 +455,8 @@ internal class WANAccessRulesRecyclerViewAdapter(
                 daysPattern = "1 1 1 1 1 1 1" // Everyday
             }
             val timeOfDayBufferList = Splitter.on(" ").omitEmptyStrings().trimResults().splitToList(
-                    daysPattern)
+                daysPattern
+            )
             for (i in timeOfDayBufferList.indices) {
                 val todStatus = timeOfDayBufferList[i]
                 if (i >= holder.daysTextViews.size) {
@@ -470,137 +495,174 @@ internal class WANAccessRulesRecyclerViewAdapter(
             }
             else -> {
                 stateBgColor = R.color.gray
-                Utils.reportException(tile.mParentFragmentActivity,
-                        WANAccessPolicyException("status=[$status]"))
+                Utils.reportException(
+                    tile.mParentFragmentActivity,
+                    WANAccessPolicyException("status=[$status]")
+                )
                 holder.wanPolicyStateText.text = "unknown"
             }
         }
         holder.wanPolicyStateText.setBackgroundColor(
-                ContextCompat.getColor(tile.mParentFragmentActivity, stateBgColor))
+            ContextCompat.getColor(tile.mParentFragmentActivity, stateBgColor)
+        )
 
         holder.wanPolicyStateText.setOnClickListener {
             holder.menuImageButton.performClick()
         }
 
         val removeWanPolicyDialog = AlertDialog.Builder(tile.mParentFragmentActivity).setIcon(
-                R.drawable.ic_action_alert_warning)
-                .setTitle(String.format("Remove WAN Access Policy: '%s'?", wanAccessPolicy.name))
-                .setMessage("Are you sure you wish to continue? ")
-                .setCancelable(true)
-                .setPositiveButton("Proceed!") { _, _ ->
-                    holder.wanPolicyStateText.isEnabled = false
+            R.drawable.ic_action_alert_warning
+        )
+            .setTitle(String.format("Remove WAN Access Policy: '%s'?", wanAccessPolicy.name))
+            .setMessage("Are you sure you wish to continue? ")
+            .setCancelable(true)
+            .setPositiveButton("Proceed!") { _, _ ->
+                holder.wanPolicyStateText.isEnabled = false
 
-                    Utils.displayMessage(tile.mParentFragmentActivity,
-                            String.format("Deleting WAN Access Policy: '%s'...",
-                                    wanAccessPolicy.name), Style.INFO)
+                Utils.displayMessage(
+                    tile.mParentFragmentActivity,
+                    String.format(
+                        "Deleting WAN Access Policy: '%s'...",
+                        wanAccessPolicy.name
+                    ),
+                    Style.INFO
+                )
 
-                    val wanAccessPolicyNumber = wanAccessPolicy.number
+                val wanAccessPolicyNumber = wanAccessPolicy.number
 
-                    val nvramVarsToSet = NVRAMInfo().setProperty("filter_dport_grp" + wanAccessPolicyNumber,
-                            EMPTY_STRING)
-                            .setProperty("filter_ip_grp" + wanAccessPolicyNumber, EMPTY_STRING)
-                            .setProperty("filter_mac_grp" + wanAccessPolicyNumber, EMPTY_STRING)
-                            .setProperty("filter_p2p_grp" + wanAccessPolicyNumber, EMPTY_STRING)
-                            .setProperty("filter_port_grp" + wanAccessPolicyNumber, EMPTY_STRING)
-                            .setProperty("filter_rule" + wanAccessPolicyNumber, EMPTY_STRING)
-                            .setProperty("filter_tod" + wanAccessPolicyNumber, EMPTY_STRING)
-                            .setProperty("filter_tod_buf" + wanAccessPolicyNumber, EMPTY_STRING)
-                            .setProperty("filter_web_host" + wanAccessPolicyNumber, EMPTY_STRING)
-                            .setProperty("filter_web_url" + wanAccessPolicyNumber, EMPTY_STRING)
+                val nvramVarsToSet = NVRAMInfo().setProperty(
+                    "filter_dport_grp" + wanAccessPolicyNumber,
+                    EMPTY_STRING
+                )
+                    .setProperty("filter_ip_grp" + wanAccessPolicyNumber, EMPTY_STRING)
+                    .setProperty("filter_mac_grp" + wanAccessPolicyNumber, EMPTY_STRING)
+                    .setProperty("filter_p2p_grp" + wanAccessPolicyNumber, EMPTY_STRING)
+                    .setProperty("filter_port_grp" + wanAccessPolicyNumber, EMPTY_STRING)
+                    .setProperty("filter_rule" + wanAccessPolicyNumber, EMPTY_STRING)
+                    .setProperty("filter_tod" + wanAccessPolicyNumber, EMPTY_STRING)
+                    .setProperty("filter_tod_buf" + wanAccessPolicyNumber, EMPTY_STRING)
+                    .setProperty("filter_web_host" + wanAccessPolicyNumber, EMPTY_STRING)
+                    .setProperty("filter_web_url" + wanAccessPolicyNumber, EMPTY_STRING)
 
-                    ActionManager.runTasks(
-                            SetNVRAMVariablesAction(tile.getRouter(), tile.mParentFragmentActivity,
-                                    nvramVarsToSet, false, object : RouterActionListener {
-                                override fun onRouterActionSuccess(
-                                    routerAction: RouterAction,
-                                    router: Router,
-                                    returnData: Any
-                                ) {
-                                    tile.mParentFragmentActivity.runOnUiThread {
-                                        try {
-                                            Utils.displayMessage(tile.mParentFragmentActivity, String.format(
-                                                    "WAN Access Policy '%s' successfully deleted on host '%s'. ",
-                                                    wanAccessPolicy.name,
-                                                    tile.getRouter()!!.canonicalHumanReadableName), Style.CONFIRM)
-                                        } finally {
-                                            holder.wanPolicyStateText.isEnabled = true
-                                            wanAccessPolicies.remove(wanAccessPolicy)
-                                            // Success- update recycler view
-                                            notifyItemRemoved(holder.adapterPosition)
-                                        }
+                ActionManager.runTasks(
+                    SetNVRAMVariablesAction(
+                        tile.getRouter(), tile.mParentFragmentActivity,
+                        nvramVarsToSet, false,
+                        object : RouterActionListener {
+                            override fun onRouterActionSuccess(
+                                routerAction: RouterAction,
+                                router: Router,
+                                returnData: Any
+                            ) {
+                                tile.mParentFragmentActivity.runOnUiThread {
+                                    try {
+                                        Utils.displayMessage(
+                                            tile.mParentFragmentActivity,
+                                            String.format(
+                                                "WAN Access Policy '%s' successfully deleted on host '%s'. ",
+                                                wanAccessPolicy.name,
+                                                tile.getRouter()!!.canonicalHumanReadableName
+                                            ),
+                                            Style.CONFIRM
+                                        )
+                                    } finally {
+                                        holder.wanPolicyStateText.isEnabled = true
+                                        wanAccessPolicies.remove(wanAccessPolicy)
+                                        // Success- update recycler view
+                                        notifyItemRemoved(holder.adapterPosition)
                                     }
                                 }
+                            }
 
-                                override fun onRouterActionFailure(
-                                    routerAction: RouterAction,
-                                    router: Router,
-                                    exception: Exception?
-                                ) {
-                                    tile.mParentFragmentActivity.runOnUiThread {
-                                        try {
-                                            Utils.displayMessage(tile.mParentFragmentActivity, String.format(
-                                                    "Error while trying to delete WAN Access Policy '%s' on '%s': %s",
-                                                    wanAccessPolicy.name,
-                                                    tile.getRouter()!!.canonicalHumanReadableName,
-                                                    Utils.handleException(exception).first), Style.ALERT)
-                                        } finally {
-                                            holder.wanPolicyStateText.isEnabled = true
-                                        }
+                            override fun onRouterActionFailure(
+                                routerAction: RouterAction,
+                                router: Router,
+                                exception: Exception?
+                            ) {
+                                tile.mParentFragmentActivity.runOnUiThread {
+                                    try {
+                                        Utils.displayMessage(
+                                            tile.mParentFragmentActivity,
+                                            String.format(
+                                                "Error while trying to delete WAN Access Policy '%s' on '%s': %s",
+                                                wanAccessPolicy.name,
+                                                tile.getRouter()!!.canonicalHumanReadableName,
+                                                Utils.handleException(exception).first
+                                            ),
+                                            Style.ALERT
+                                        )
+                                    } finally {
+                                        holder.wanPolicyStateText.isEnabled = true
                                     }
                                 }
-                            }, tile.mGlobalPreferences, "/sbin/stopservice firewall",
-                                    "/sbin/startservice firewall"))
-                }
-                .setNegativeButton("Cancel") { _, _ ->
-                    // Cancelled - nothing more to do!
-                }
-                .create()
+                            }
+                        },
+                        tile.mGlobalPreferences, "/sbin/stopservice firewall",
+                        "/sbin/startservice firewall"
+                    )
+                )
+            }
+            .setNegativeButton("Cancel") { _, _ ->
+                // Cancelled - nothing more to do!
+            }
+            .create()
 
         if (!ColorUtils.isThemeLight(tile.mParentFragmentActivity)) {
             // Set menu background to white
             holder.menuImageButton.setImageResource(
-                    R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark)
+                R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark
+            )
         }
 
         holder.menuImageButton.setOnClickListener {
             val popup = PopupMenu(tile.mParentFragmentActivity, it)
-            popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
-                when (item.itemId) {
-                    R.id.tile_wan_access_policy_toggle -> {
-                        holder.wanPolicyStateText.performClick()
-                        return@OnMenuItemClickListener true
-                    }
-
-                    R.id.tile_wan_access_policy_enable, R.id.tile_wan_access_policy_disable -> {
-                        val enablePolicy = item.itemId == R.id.tile_wan_access_policy_enable
-                        if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                            Utils.displayUpgradeMessage(tile.mParentFragmentActivity,
-                                    String.format("%sable WAN Access Policy Restriction",
-                                            if (enablePolicy) "En" else "Dis"))
+            popup.setOnMenuItemClickListener(
+                PopupMenu.OnMenuItemClickListener { item ->
+                    when (item.itemId) {
+                        R.id.tile_wan_access_policy_toggle -> {
+                            holder.wanPolicyStateText.performClick()
                             return@OnMenuItemClickListener true
                         }
-                        toggleWANAccessRestriction(holder, wanAccessPolicy, enablePolicy)
-                        return@OnMenuItemClickListener true
-                    }
 
-                    R.id.tile_wan_access_policy_remove -> {
-                        removeWanPolicyDialog.show()
-                        return@OnMenuItemClickListener true
+                        R.id.tile_wan_access_policy_enable, R.id.tile_wan_access_policy_disable -> {
+                            val enablePolicy = item.itemId == R.id.tile_wan_access_policy_enable
+                            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                                Utils.displayUpgradeMessage(
+                                    tile.mParentFragmentActivity,
+                                    String.format(
+                                        "%sable WAN Access Policy Restriction",
+                                        if (enablePolicy) "En" else "Dis"
+                                    )
+                                )
+                                return@OnMenuItemClickListener true
+                            }
+                            toggleWANAccessRestriction(holder, wanAccessPolicy, enablePolicy)
+                            return@OnMenuItemClickListener true
+                        }
+
+                        R.id.tile_wan_access_policy_remove -> {
+                            removeWanPolicyDialog.show()
+                            return@OnMenuItemClickListener true
+                        }
+                        R.id.tile_wan_access_policy_edit -> {
+                            // TODO Edit: open up edit popup or, better, a completely different setting activity
+                            Toast.makeText(
+                                tile.mParentFragmentActivity,
+                                "[TODO] Edit WAN Access Policy #" +
+                                    wanAccessPolicy.number +
+                                    " (" +
+                                    wanAccessPolicy.name +
+                                    ")",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return@OnMenuItemClickListener true
+                        }
+                        else -> {
+                        }
                     }
-                    R.id.tile_wan_access_policy_edit -> {
-                        // TODO Edit: open up edit popup or, better, a completely different setting activity
-                        Toast.makeText(tile.mParentFragmentActivity, "[TODO] Edit WAN Access Policy #" +
-                                wanAccessPolicy.number +
-                                " (" +
-                                wanAccessPolicy.name +
-                                ")", Toast.LENGTH_SHORT).show()
-                        return@OnMenuItemClickListener true
-                    }
-                    else -> {
-                    }
+                    false
                 }
-                false
-            })
+            )
             val inflater = popup.menuInflater
             val menu = popup.menu
             inflater.inflate(R.menu.tile_wan_access_policy_options, menu)
@@ -620,63 +682,90 @@ internal class WANAccessRulesRecyclerViewAdapter(
         newStatus: Boolean
     ) {
         holder.wanPolicyStateText.isEnabled = false
-        SnackbarUtils.buildSnackbar(tile.mParentFragmentActivity,
-                tile.mParentFragmentActivity.findViewById(android.R.id.content),
-                String.format("Going to %sable WAN Access Policy: '%s'", if (newStatus) "en" else "dis",
-                        wanAccessPolicy.name), "Undo", Snackbar.LENGTH_LONG, object : SnackbarCallback {
-            @Throws(Exception::class)
-            override fun onDismissEventTimeout(event: Int, bundle: Bundle?) {
-                Utils.displayMessage(tile.mParentFragmentActivity,
-                        String.format("%sabling WAN Access Policy: '%s'...", if (newStatus) "En" else "Dis",
-                                wanAccessPolicy.name), Style.INFO)
-                val enableStatus = if (!newStatus)
-                    DISABLE
-                else if (WANAccessPolicy.DENY == wanAccessPolicy.denyOrFilter)
-                    ENABLE_1
-                else
-                    ENABLE_2
-                ActionManager.runTasks(
-                        ToggleWANAccessPolicyRouterAction(tile.getRouter(), tile.mParentFragmentActivity,
-                                object : RouterActionListener {
-                                    override fun onRouterActionSuccess(
-                                        routerAction: RouterAction,
-                                        router: Router,
-                                        returnData: Any
-                                    ) {
-                                        tile.mParentFragmentActivity.runOnUiThread {
-                                            try {
-                                                Utils.displayMessage(tile.mParentFragmentActivity, String.format(
-                                                        "WAN Access Policy '%s' successfully %s on host '%s'. ",
-                                                        wanAccessPolicy.name, if (newStatus) "enabled" else "disabled",
-                                                        tile.getRouter()!!.canonicalHumanReadableName), Style.CONFIRM)
-                                            } finally {
-                                                wanAccessPolicy.status = Integer.toString(enableStatus)
-                                                this@WANAccessRulesRecyclerViewAdapter.notifyItemChanged(
-                                                        holder.adapterPosition)
-                                            }
+        SnackbarUtils.buildSnackbar(
+            tile.mParentFragmentActivity,
+            tile.mParentFragmentActivity.findViewById(android.R.id.content),
+            String.format(
+                "Going to %sable WAN Access Policy: '%s'", if (newStatus) "en" else "dis",
+                wanAccessPolicy.name
+            ),
+            "Undo", Snackbar.LENGTH_LONG,
+            object : SnackbarCallback {
+                @Throws(Exception::class)
+                override fun onDismissEventTimeout(event: Int, bundle: Bundle?) {
+                    Utils.displayMessage(
+                        tile.mParentFragmentActivity,
+                        String.format(
+                            "%sabling WAN Access Policy: '%s'...", if (newStatus) "En" else "Dis",
+                            wanAccessPolicy.name
+                        ),
+                        Style.INFO
+                    )
+                    val enableStatus = if (!newStatus)
+                        DISABLE
+                    else if (WANAccessPolicy.DENY == wanAccessPolicy.denyOrFilter)
+                        ENABLE_1
+                    else
+                        ENABLE_2
+                    ActionManager.runTasks(
+                        ToggleWANAccessPolicyRouterAction(
+                            tile.getRouter(), tile.mParentFragmentActivity,
+                            object : RouterActionListener {
+                                override fun onRouterActionSuccess(
+                                    routerAction: RouterAction,
+                                    router: Router,
+                                    returnData: Any
+                                ) {
+                                    tile.mParentFragmentActivity.runOnUiThread {
+                                        try {
+                                            Utils.displayMessage(
+                                                tile.mParentFragmentActivity,
+                                                String.format(
+                                                    "WAN Access Policy '%s' successfully %s on host '%s'. ",
+                                                    wanAccessPolicy.name, if (newStatus) "enabled" else "disabled",
+                                                    tile.getRouter()!!.canonicalHumanReadableName
+                                                ),
+                                                Style.CONFIRM
+                                            )
+                                        } finally {
+                                            wanAccessPolicy.status = Integer.toString(enableStatus)
+                                            this@WANAccessRulesRecyclerViewAdapter.notifyItemChanged(
+                                                holder.adapterPosition
+                                            )
                                         }
                                     }
+                                }
 
-                                    override fun onRouterActionFailure(
-                                        routerAction: RouterAction,
-                                        router: Router,
-                                        exception: Exception?
-                                    ) {
-                                        tile.mParentFragmentActivity.runOnUiThread {
-                                            try {
-                                                Utils.displayMessage(tile.mParentFragmentActivity, String.format(
-                                                        "Error while trying to %s WAN Access Policy '%s' on '%s': %s",
-                                                        if (newStatus) "enable" else "disable", wanAccessPolicy.name,
-                                                        tile.getRouter()!!.canonicalHumanReadableName,
-                                                        Utils.handleException(exception).first), Style.ALERT)
-                                            } finally {
-                                                // Revert
-                                            }
+                                override fun onRouterActionFailure(
+                                    routerAction: RouterAction,
+                                    router: Router,
+                                    exception: Exception?
+                                ) {
+                                    tile.mParentFragmentActivity.runOnUiThread {
+                                        try {
+                                            Utils.displayMessage(
+                                                tile.mParentFragmentActivity,
+                                                String.format(
+                                                    "Error while trying to %s WAN Access Policy '%s' on '%s': %s",
+                                                    if (newStatus) "enable" else "disable", wanAccessPolicy.name,
+                                                    tile.getRouter()!!.canonicalHumanReadableName,
+                                                    Utils.handleException(exception).first
+                                                ),
+                                                Style.ALERT
+                                            )
+                                        } finally {
+                                            // Revert
                                         }
                                     }
-                                }, tile.mGlobalPreferences, wanAccessPolicy, enableStatus))
-            }
-        }, null, true)
+                                }
+                            },
+                            tile.mGlobalPreferences, wanAccessPolicy, enableStatus
+                        )
+                    )
+                }
+            },
+            null, true
+        )
     }
 }
 
@@ -684,14 +773,14 @@ internal class WANAccessRulesRecyclerViewHolder(
     private val tile: AccessRestrictionsWANAccessTile,
     itemView: View
 ) :
-        RecyclerView.ViewHolder(itemView) {
+    RecyclerView.ViewHolder(itemView) {
 
     val cardView = itemView.find<CardView>(R.id.access_restriction_policy_cardview)
     val policyNb = itemView.find<TextView>(R.id.access_restriction_policy_cardview_number)
     val policyName = itemView.find<TextView>(R.id.access_restriction_policy_cardview_name)
     val policyHours = itemView.find<TextView>(R.id.access_restriction_policy_cardview_hours)
     val internetPolicyDuringSelectedTimeOfDay = itemView
-            .find<TextView>(R.id.access_restriction_policy_cardview_internet_policy)
+        .find<TextView>(R.id.access_restriction_policy_cardview_internet_policy)
 
     val daysTextViews = arrayOfNulls<TextView>(7)
 
@@ -703,26 +792,36 @@ internal class WANAccessRulesRecyclerViewHolder(
 
     init {
         this.daysTextViews[0] = itemView.find<TextView>(
-                R.id.access_restriction_policy_cardview_days_sunday)
+            R.id.access_restriction_policy_cardview_days_sunday
+        )
         this.daysTextViews[1] = itemView.find<TextView>(
-                R.id.access_restriction_policy_cardview_days_monday)
+            R.id.access_restriction_policy_cardview_days_monday
+        )
         this.daysTextViews[2] = itemView.find<TextView>(
-                R.id.access_restriction_policy_cardview_days_tuesday)
+            R.id.access_restriction_policy_cardview_days_tuesday
+        )
         this.daysTextViews[3] = itemView.find<TextView>(
-                R.id.access_restriction_policy_cardview_days_wednesday)
+            R.id.access_restriction_policy_cardview_days_wednesday
+        )
         this.daysTextViews[4] = itemView.find<TextView>(
-                R.id.access_restriction_policy_cardview_days_thursday)
+            R.id.access_restriction_policy_cardview_days_thursday
+        )
         this.daysTextViews[5] = itemView.find<TextView>(
-                R.id.access_restriction_policy_cardview_days_friday)
+            R.id.access_restriction_policy_cardview_days_friday
+        )
         this.daysTextViews[6] = itemView.find<TextView>(
-                R.id.access_restriction_policy_cardview_days_saturday)
+            R.id.access_restriction_policy_cardview_days_saturday
+        )
 
         this.wanPolicyStateText = itemView.find<TextView>(
-                R.id.access_restriction_policy_cardview_status)
+            R.id.access_restriction_policy_cardview_status
+        )
         this.menuImageButton = itemView.find<ImageButton>(
-                R.id.access_restriction_policy_cardview_menu)
+            R.id.access_restriction_policy_cardview_menu
+        )
         this.removeImageButton = itemView.find<ImageButton>(
-                R.id.access_restriction_policy_remove_btn)
+            R.id.access_restriction_policy_remove_btn
+        )
     }
 }
 

@@ -13,15 +13,15 @@ import android.graphics.Color
 import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import android.widget.Toast
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.evernote.android.job.DailyJob
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobManager
 import com.evernote.android.job.JobRequest
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import needle.UiRelatedTask
 import org.rm3l.ddwrt.BuildConfig
 import org.rm3l.ddwrt.R
@@ -79,12 +79,14 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                 return
             }
             val builder = JobRequest.Builder(TAG)
-                    .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
+                .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
 //                    .setRequiresCharging(true)
             // run job between 9am and 9pm
-            schedule(builder,
-                    TimeUnit.HOURS.toMillis(9),
-                    TimeUnit.HOURS.toMillis(21))
+            schedule(
+                builder,
+                TimeUnit.HOURS.toMillis(9),
+                TimeUnit.HOURS.toMillis(21)
+            )
         }
 
         @JvmStatic
@@ -92,136 +94,163 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
             activity: Activity,
             router: Router
         ) {
-            val alertDialog = ProgressDialog.show(activity, "Checking for firmware updates",
-                    "Please wait...",
-                    true)
+            val alertDialog = ProgressDialog.show(
+                activity, "Checking for firmware updates",
+                "Please wait...",
+                true
+            )
             MultiThreadingManager.getWebTasksExecutor().execute(
-                    object : UiRelatedTask<Pair<String?, Exception?>>() {
-                        private var mNewerRelease: FirmwareRelease? = null
-                        override fun doWork(): Pair<String?, Exception?> {
-                            // First determine current version
-                            try {
-                                @Suppress("USELESS_ELVIS")
-                                val nvramInfo = RouterFirmwareConnectorManager.getConnector(router)
-                                        .getDataFor(activity, router,
-                                                StatusRouterStateTile::class.java, null)
-                                        ?: throw IllegalStateException("Could not retrieve local data")
+                object : UiRelatedTask<Pair<String?, Exception?>>() {
+                    private var mNewerRelease: FirmwareRelease? = null
+                    override fun doWork(): Pair<String?, Exception?> {
+                        // First determine current version
+                        try {
+                            @Suppress("USELESS_ELVIS")
+                            val nvramInfo = RouterFirmwareConnectorManager.getConnector(router)
+                                .getDataFor(
+                                    activity, router,
+                                    StatusRouterStateTile::class.java, null
+                                )
+                                ?: throw IllegalStateException("Could not retrieve local data")
 
-                                val currentFwVer = nvramInfo.getProperty(NVRAMInfo.OS_VERSION,
-                                        "")
-                                if (currentFwVer.isNullOrBlank()) {
-                                    throw IllegalStateException("Could not retrieve current firmware version")
+                            val currentFwVer = nvramInfo.getProperty(
+                                NVRAMInfo.OS_VERSION,
+                                ""
+                            )
+                            if (currentFwVer.isNullOrBlank()) {
+                                throw IllegalStateException("Could not retrieve current firmware version")
+                            }
+                            mNewerRelease = RouterFirmwareConnectorManager.getConnector(router)
+                                .manuallyCheckForFirmwareUpdateAndReturnDownloadLink(currentFwVer)
+                            if (mNewerRelease == null) {
+                                // No new update
+                                throw IllegalStateException("Could not retrieve current firmware version")
+                            }
+                            var newReleaseDLLink: String? = mNewerRelease!!.getDirectLink()
+                            if (newReleaseDLLink != null && Utils.isNonDemoRouter(router)) {
+                                var shortened = false
+                                if (NetworkUtils.getFirebaseDynamicLinksService() != null) {
+                                    try {
+                                        val shortLinksDataRequest = ShortLinksDataRequest(
+                                            dynamicLinkInfo = DynamicLinkInfo(link = newReleaseDLLink)
+                                        )
+                                        val response = NetworkUtils.getFirebaseDynamicLinksService().shortLinks(
+                                            shortLinksDataRequest
+                                        ).execute()
+                                        NetworkUtils.checkResponseSuccessful(response)
+                                        newReleaseDLLink = response.body()!!.shortLink
+                                        shortened = true
+                                    } catch (e: Exception) {
+                                        // Do not worry about that => fallback to the original DL link
+                                        shortened = false
+                                    }
                                 }
-                                mNewerRelease = RouterFirmwareConnectorManager.getConnector(router)
-                                        .manuallyCheckForFirmwareUpdateAndReturnDownloadLink(currentFwVer)
-                                if (mNewerRelease == null) {
-                                    // No new update
-                                    throw IllegalStateException("Could not retrieve current firmware version")
-                                }
-                                var newReleaseDLLink: String? = mNewerRelease!!.getDirectLink()
-                                if (newReleaseDLLink != null && Utils.isNonDemoRouter(router)) {
-                                    var shortened = false
-                                    if (NetworkUtils.getFirebaseDynamicLinksService() != null) {
+                                if (!shortened) {
+                                    if (NetworkUtils.getIsGdService() != null) {
                                         try {
-                                            val shortLinksDataRequest = ShortLinksDataRequest(
-                                                dynamicLinkInfo = DynamicLinkInfo(link = newReleaseDLLink))
-                                            val response = NetworkUtils.getFirebaseDynamicLinksService().shortLinks(
-                                                shortLinksDataRequest).execute()
+                                            val response = NetworkUtils.getIsGdService()
+                                                .shortLinks(newReleaseDLLink!!).execute()
                                             NetworkUtils.checkResponseSuccessful(response)
-                                            newReleaseDLLink = response.body()!!.shortLink
+                                            newReleaseDLLink = response.body()!!.shorturl
                                             shortened = true
-                                        } catch (e: Exception) {
+                                        } catch (e1: Exception) {
                                             // Do not worry about that => fallback to the original DL link
                                             shortened = false
                                         }
                                     }
-                                    if (!shortened) {
-                                        if (NetworkUtils.getIsGdService() != null) {
-                                            try {
-                                                val response = NetworkUtils.getIsGdService()
-                                                    .shortLinks(newReleaseDLLink!!).execute()
-                                                NetworkUtils.checkResponseSuccessful(response)
-                                                newReleaseDLLink = response.body()!!.shorturl
-                                                shortened = true
-                                            } catch (e1: Exception) {
-                                                // Do not worry about that => fallback to the original DL link
-                                                shortened = false
-                                            }
+                                }
+                            }
+                            return newReleaseDLLink to null
+                        } catch (e: Exception) {
+                            FirebaseCrashlytics.getInstance().recordException(e)
+                            return null to e
+                        }
+                    }
+
+                    override fun thenDoUiRelatedWork(result: Pair<String?, Exception?>?) {
+                        FirebaseCrashlytics.getInstance().log("result: $result")
+                        alertDialog.cancel()
+                        if (result == null) {
+                            Utils.displayMessage(
+                                activity,
+                                "Internal Error. Please try again later.",
+                                SnackbarUtils.Style.ALERT
+                            )
+                            return
+                        }
+                        val exception = result.second
+                        if (exception != null) {
+                            when (exception) {
+                                is NoNewFirmwareUpdate -> Utils.displayMessage(
+                                    activity,
+                                    "Your router (${router.canonicalHumanReadableName}) is up-to-date.",
+                                    SnackbarUtils.Style.CONFIRM
+                                )
+                                else -> Utils.displayMessage(
+                                    activity,
+                                    "Could not check for update: ${ExceptionUtils.getRootCause(exception).message}",
+                                    SnackbarUtils.Style.ALERT
+                                )
+                            }
+                        } else if (mNewerRelease != null && result.first != null) {
+                            val routerFirmware = router.routerFirmware
+                            SnackbarUtils.buildSnackbar(
+                                activity,
+                                activity.findViewById(android.R.id.content),
+                                ContextCompat.getColor(activity, R.color.win8_blue),
+                                "A new ${routerFirmware?.officialName ?: ""} Build (${mNewerRelease!!.version}) is available for '${router.canonicalHumanReadableName}'",
+                                Color.WHITE,
+                                "View", // TODO Reconsider once we have an auto-upgrade firmware feature. Add link to perform the upgrade right away
+                                Color.YELLOW,
+                                Snackbar.LENGTH_LONG,
+                                object : SnackbarCallback {
+                                    @Throws(Exception::class)
+                                    override fun onDismissEventActionClick(event: Int, bundle: Bundle?) {
+                                        if (result.first == null) {
+                                            Toast.makeText(
+                                                activity, "Internal Error - please try again later",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            FirebaseCrashlytics.getInstance().recordException(FirmwareUpdateFoundButWithNoUrlException("Firmware update: no URL"))
+                                        } else {
+                                            val url = result.first!!
+                                            CustomTabActivityHelper.openCustomTab(
+                                                activity,
+                                                null, url, router.uuid, null,
+                                                { activity, _ ->
+                                                    // Otherwise, default to a classic WebView implementation
+                                                    val intent = Intent(
+                                                        activity,
+                                                        FirmwareReleaseDownloadPageActivity::class.java
+                                                    )
+                                                    intent.putExtra(ROUTER_SELECTED, router.uuid)
+                                                    intent.putExtra(FirmwareReleaseDownloadPageActivity.RELEASE_URL, url)
+                                                    activity.startActivity(intent)
+                                                },
+                                                false
+                                            )
                                         }
                                     }
-                                }
-                                return newReleaseDLLink to null
-                            } catch (e: Exception) {
-                                FirebaseCrashlytics.getInstance().recordException(e)
-                                return null to e
-                            }
+                                },
+                                null, true
+                            )
+                        } else {
+                            Utils.displayMessage(
+                                activity,
+                                "Internal Error. Please try again later.",
+                                SnackbarUtils.Style.ALERT
+                            )
                         }
-
-                        override fun thenDoUiRelatedWork(result: Pair<String?, Exception?>?) {
-                            FirebaseCrashlytics.getInstance().log("result: $result")
-                            alertDialog.cancel()
-                            if (result == null) {
-                                Utils.displayMessage(activity,
-                                        "Internal Error. Please try again later.",
-                                        SnackbarUtils.Style.ALERT)
-                                return
-                            }
-                            val exception = result.second
-                            if (exception != null) {
-                                when (exception) {
-                                    is NoNewFirmwareUpdate -> Utils.displayMessage(activity,
-                                            "Your router (${router.canonicalHumanReadableName}) is up-to-date.",
-                                            SnackbarUtils.Style.CONFIRM)
-                                    else -> Utils.displayMessage(activity,
-                                            "Could not check for update: ${ExceptionUtils.getRootCause(exception).message}",
-                                            SnackbarUtils.Style.ALERT)
-                                }
-                            } else if (mNewerRelease != null && result.first != null) {
-                                val routerFirmware = router.routerFirmware
-                                SnackbarUtils.buildSnackbar(activity,
-                                        activity.findViewById(android.R.id.content),
-                                        ContextCompat.getColor(activity, R.color.win8_blue),
-                                        "A new ${routerFirmware?.officialName ?: ""} Build (${mNewerRelease!!.version}) is available for '${router.canonicalHumanReadableName}'",
-                                        Color.WHITE,
-                                        "View", // TODO Reconsider once we have an auto-upgrade firmware feature. Add link to perform the upgrade right away
-                                        Color.YELLOW,
-                                        Snackbar.LENGTH_LONG,
-                                        object : SnackbarCallback {
-                                            @Throws(Exception::class)
-                                            override fun onDismissEventActionClick(event: Int, bundle: Bundle?) {
-                                                if (result.first == null) {
-                                                    Toast.makeText(activity, "Internal Error - please try again later",
-                                                            Toast.LENGTH_SHORT).show()
-                                                    FirebaseCrashlytics.getInstance().recordException(FirmwareUpdateFoundButWithNoUrlException("Firmware update: no URL"))
-                                                } else {
-                                                    val url = result.first!!
-                                                    CustomTabActivityHelper.openCustomTab(activity,
-                                                            null, url, router.uuid, null,
-                                                            { activity, _ ->
-                                                                // Otherwise, default to a classic WebView implementation
-                                                                val intent = Intent(activity,
-                                                                        FirmwareReleaseDownloadPageActivity::class.java)
-                                                                intent.putExtra(ROUTER_SELECTED, router.uuid)
-                                                                intent.putExtra(FirmwareReleaseDownloadPageActivity.RELEASE_URL, url)
-                                                                activity.startActivity(intent)
-                                                    }, false)
-                                                }
-                                            }
-                                        }, null, true)
-                            } else {
-                                Utils.displayMessage(activity,
-                                        "Internal Error. Please try again later.",
-                                        SnackbarUtils.Style.ALERT)
-                            }
-                        }
-                    })
+                    }
+                })
         }
 
         @JvmStatic
         fun handleJob(context: Context, params: Params?): Boolean {
             val routerDao = RouterManagementActivity.getDao(context)
             val globalPreferences = context.getSharedPreferences(
-                    RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE
+            )
             val firebaseDynamicLinksService = NetworkUtils.getFirebaseDynamicLinksService()
             val isGdService = NetworkUtils.getIsGdService()
 
@@ -237,97 +266,105 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
             val forceCheck = params?.extras?.getBoolean(MANUAL_REQUEST, false)
             val releaseAndGooGlLinksMap: MutableMap<String, String?> = mutableMapOf()
             routerDao.allRouters
-                    .filter { it.getPreferences(context)?.getBoolean(NOTIFICATIONS_ENABLE, true) == true }
-                    .map { router ->
-                        val mapped = router to try {
-                            val nvramInfo = RouterFirmwareConnectorManager.getConnector(router)
-                                    .getDataFor(context, router, StatusRouterStateTile::class.java, null)
-                            //noinspection ConstantConditions
-                            val currentFwVer = nvramInfo.getProperty(NVRAMInfo.OS_VERSION, "")!!.trim()
-                            if (currentFwVer.isBlank()) null
-                            else RouterFirmwareConnectorManager.getConnector(router)
-                                    .manuallyCheckForFirmwareUpdateAndReturnDownloadLink(currentFwVer)
-                        } catch (e: Exception) {
-                            FirebaseCrashlytics.getInstance().recordException(e)
-                            null
-                        }
-                        mapped
+                .filter { it.getPreferences(context)?.getBoolean(NOTIFICATIONS_ENABLE, true) == true }
+                .map { router ->
+                    val mapped = router to try {
+                        val nvramInfo = RouterFirmwareConnectorManager.getConnector(router)
+                            .getDataFor(context, router, StatusRouterStateTile::class.java, null)
+                        //noinspection ConstantConditions
+                        val currentFwVer = nvramInfo.getProperty(NVRAMInfo.OS_VERSION, "")!!.trim()
+                        if (currentFwVer.isBlank()) null
+                        else RouterFirmwareConnectorManager.getConnector(router)
+                            .manuallyCheckForFirmwareUpdateAndReturnDownloadLink(currentFwVer)
+                    } catch (e: Exception) {
+                        FirebaseCrashlytics.getInstance().recordException(e)
+                        null
                     }
-                    .filter { routerAndNewestReleaseUpdatePair -> routerAndNewestReleaseUpdatePair.second != null }
-                    .filter { routerAndNewestReleaseUpdatePair ->
+                    mapped
+                }
+                .filter { routerAndNewestReleaseUpdatePair -> routerAndNewestReleaseUpdatePair.second != null }
+                .filter { routerAndNewestReleaseUpdatePair ->
+                    val router = routerAndNewestReleaseUpdatePair.first
+                    val release = routerAndNewestReleaseUpdatePair.second
+                    val routerPreferences = router.getPreferences(context)
+                    val newReleaseVersion = release!!.version
+                    if (forceCheck == true) {
+                        true
+                    } else {
+                        val toProcess = routerPreferences?.getString(
+                            LAST_RELEASE_CHECKED,
+                            ""
+                        )!! != newReleaseVersion
+                        if (toProcess) {
+                            routerPreferences.edit().putString(LAST_RELEASE_CHECKED, newReleaseVersion).apply()
+                            Utils.requestBackup(context)
+                        }
+                        toProcess
+                    }
+                }
+                .forEach { routerAndNewestReleaseUpdatePair ->
+                    try {
                         val router = routerAndNewestReleaseUpdatePair.first
                         val release = routerAndNewestReleaseUpdatePair.second
-                        val routerPreferences = router.getPreferences(context)
                         val newReleaseVersion = release!!.version
-                        if (forceCheck == true) {
-                            true
-                        } else {
-                            val toProcess = routerPreferences?.getString(LAST_RELEASE_CHECKED,
-                                    "")!! != newReleaseVersion
-                            if (toProcess) {
-                                routerPreferences.edit().putString(LAST_RELEASE_CHECKED, newReleaseVersion).apply()
-                                Utils.requestBackup(context)
-                            }
-                            toProcess
-                        }
-                    }
-                    .forEach { routerAndNewestReleaseUpdatePair ->
-                        try {
-                            val router = routerAndNewestReleaseUpdatePair.first
-                            val release = routerAndNewestReleaseUpdatePair.second
-                            val newReleaseVersion = release!!.version
-                            val newReleaseDownloadLink = release.getDirectLink()
-                            val downloadLink = releaseAndGooGlLinksMap.getOrPut(
-                                    "${router.routerFirmware!!.name}.$newReleaseVersion",
-                                    {
-                                        var newReleaseDLLink: String? = newReleaseDownloadLink
-                                        if (newReleaseDLLink != null && Utils.isNonDemoRouter(router)) {
-                                            var shortened: Boolean
-                                            try {
-                                                val shortLinksDataRequest = ShortLinksDataRequest(
-                                                    dynamicLinkInfo = DynamicLinkInfo(link = newReleaseDLLink)
-                                                )
-                                                val response = firebaseDynamicLinksService.shortLinks(
-                                                    shortLinksDataRequest
-                                                ).execute()
-                                                NetworkUtils.checkResponseSuccessful(response)
-                                                newReleaseDLLink = response.body()!!.shortLink
-                                                shortened = true
-                                            } catch (e: Exception) {
-                                                // Do not worry about that => fallback to the original DL link
-                                                shortened = false
-                                            }
-
-                                            if (!shortened) {
-                                                try {
-                                                    val response = isGdService.shortLinks(newReleaseDLLink!!).execute()
-                                                    NetworkUtils.checkResponseSuccessful(response)
-                                                    newReleaseDLLink = response.body()!!.shorturl
-                                                    shortened = true
-                                                } catch (e: Exception) {
-                                                    // Do not worry about that => fallback to the original DL link
-                                                    shortened = false
-                                                }
-                                            }
-                                        }
-                                        newReleaseDLLink
+                        val newReleaseDownloadLink = release.getDirectLink()
+                        val downloadLink = releaseAndGooGlLinksMap.getOrPut(
+                            "${router.routerFirmware!!.name}.$newReleaseVersion",
+                            {
+                                var newReleaseDLLink: String? = newReleaseDownloadLink
+                                if (newReleaseDLLink != null && Utils.isNonDemoRouter(router)) {
+                                    var shortened: Boolean
+                                    try {
+                                        val shortLinksDataRequest = ShortLinksDataRequest(
+                                            dynamicLinkInfo = DynamicLinkInfo(link = newReleaseDLLink)
+                                        )
+                                        val response = firebaseDynamicLinksService.shortLinks(
+                                            shortLinksDataRequest
+                                        ).execute()
+                                        NetworkUtils.checkResponseSuccessful(response)
+                                        newReleaseDLLink = response.body()!!.shortLink
+                                        shortened = true
+                                    } catch (e: Exception) {
+                                        // Do not worry about that => fallback to the original DL link
+                                        shortened = false
                                     }
-                            ) ?: newReleaseDownloadLink
 
-                            //        Intent intent = new Intent(this, RouterManagementActivity.class);
-                            //        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            //        PendingIntent pendingIntent = PendingIntent.getActivity(this,
-                            //                FCM_NOTIFICATION_ID /* Request code */, intent,
-                            //                PendingIntent.FLAG_ONE_SHOT);
+                                    if (!shortened) {
+                                        try {
+                                            val response = isGdService.shortLinks(newReleaseDLLink!!).execute()
+                                            NetworkUtils.checkResponseSuccessful(response)
+                                            newReleaseDLLink = response.body()!!.shorturl
+                                            shortened = true
+                                        } catch (e: Exception) {
+                                            // Do not worry about that => fallback to the original DL link
+                                            shortened = false
+                                        }
+                                    }
+                                }
+                                newReleaseDLLink
+                            }
+                        ) ?: newReleaseDownloadLink
 
-                            val largeIcon = Router.loadRouterAvatarUrlSync(context, router, Router.mAvatarDownloadOpts)
-                            doNotify(context, router, largeIcon ?: BitmapFactory.decodeResource(context.resources,
-                                    R.mipmap.ic_launcher_ddwrt_companion), downloadLink, newReleaseVersion)
-                        } catch (e: Exception) {
-                            // No worries - go on with the next
-                            FirebaseCrashlytics.getInstance().recordException(e)
-                        }
+                        //        Intent intent = new Intent(this, RouterManagementActivity.class);
+                        //        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        //        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                        //                FCM_NOTIFICATION_ID /* Request code */, intent,
+                        //                PendingIntent.FLAG_ONE_SHOT);
+
+                        val largeIcon = Router.loadRouterAvatarUrlSync(context, router, Router.mAvatarDownloadOpts)
+                        doNotify(
+                            context, router,
+                            largeIcon ?: BitmapFactory.decodeResource(
+                                context.resources,
+                                R.mipmap.ic_launcher_ddwrt_companion
+                            ),
+                            downloadLink, newReleaseVersion
+                        )
+                    } catch (e: Exception) {
+                        // No worries - go on with the next
+                        FirebaseCrashlytics.getInstance().recordException(e)
                     }
+                }
             return true
         }
 
@@ -345,12 +382,15 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
             }
 
             val routerPreferences = router.getPreferences(context)
-            val latestFirmwareReleaseNotified = routerPreferences?.getString(LATEST_FIRMWARE_RELEASE_NOTIFIED_PREF,
-                    null)
+            val latestFirmwareReleaseNotified = routerPreferences?.getString(
+                LATEST_FIRMWARE_RELEASE_NOTIFIED_PREF,
+                null
+            )
             if (newReleaseVersion.equals(latestFirmwareReleaseNotified)) {
                 FirebaseCrashlytics.getInstance().log(
-                        "Firmware release ${router.canonicalHumanReadableName}/$newReleaseVersion already notified" +
-                                " => skipping notification.")
+                    "Firmware release ${router.canonicalHumanReadableName}/$newReleaseVersion already notified" +
+                        " => skipping notification."
+                )
                 return
             }
 
@@ -358,36 +398,48 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
             val resultIntent = Intent(Intent.ACTION_VIEW)
             resultIntent.data = Uri.parse(downloadLink)
 
-            val pendingIntent = PendingIntent.getActivity(context,
-                    router.id /* Request code */, resultIntent,
-                    PendingIntent.FLAG_ONE_SHOT)
+            val pendingIntent = PendingIntent.getActivity(
+                context,
+                router.id /* Request code */, resultIntent,
+                PendingIntent.FLAG_ONE_SHOT
+            )
 
             //        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            val notificationBuilder = NotificationCompat.Builder(context,
-                    "$NOTIFICATION_GROUP_GENERAL_UPDATES-${router.routerFirmware!!.name}")
-                    .setGroup(NOTIFICATION_GROUP_GENERAL_UPDATES)
-                    .setLargeIcon(largeIcon)
-                    .setSmallIcon(R.mipmap.ic_launcher_ddwrt_companion)
-                    .setContentTitle(
-                            "A new ${router.routerFirmware!!.officialName} Build is available for '${router.canonicalHumanReadableName}'")
-                    .setContentText(newReleaseVersion)
-                    .setAutoCancel(true)
+            val notificationBuilder = NotificationCompat.Builder(
+                context,
+                "$NOTIFICATION_GROUP_GENERAL_UPDATES-${router.routerFirmware!!.name}"
+            )
+                .setGroup(NOTIFICATION_GROUP_GENERAL_UPDATES)
+                .setLargeIcon(largeIcon)
+                .setSmallIcon(R.mipmap.ic_launcher_ddwrt_companion)
+                .setContentTitle(
+                    "A new ${router.routerFirmware!!.officialName} Build is available for '${router.canonicalHumanReadableName}'"
+                )
+                .setContentText(newReleaseVersion)
+                .setAutoCancel(true)
 
             val globalPreferences = context.getSharedPreferences(
-                    RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE
+            )
 
             // Notification sound, if required
             val ringtoneUri = globalPreferences.getString(
-                    RouterCompanionAppConstants.NOTIFICATIONS_SOUND, null)
+                RouterCompanionAppConstants.NOTIFICATIONS_SOUND, null
+            )
             if (ringtoneUri != null) {
-                notificationBuilder.setSound(Uri.parse(ringtoneUri),
-                        AudioManager.STREAM_NOTIFICATION)
+                notificationBuilder.setSound(
+                    Uri.parse(ringtoneUri),
+                    AudioManager.STREAM_NOTIFICATION
+                )
             }
 
-            if (!globalPreferences.getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_VIBRATE,
-                    true)) {
+            if (!globalPreferences.getBoolean(
+                    RouterCompanionAppConstants.NOTIFICATIONS_VIBRATE,
+                    true
+                )
+            ) {
                 notificationBuilder.setDefaults(Notification.DEFAULT_LIGHTS)
-                        .setVibrate(RouterCompanionAppConstants.NO_VIBRATION_PATTERN)
+                    .setVibrate(RouterCompanionAppConstants.NO_VIBRATION_PATTERN)
                 //                    if (ringtoneUri != null) {
                 //                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
                 //                    } else {
@@ -397,14 +449,16 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
             notificationBuilder.setContentIntent(pendingIntent)
 
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE)
-                    as NotificationManager
+                as NotificationManager
 
-            notificationManager.notify(router.id + 99999 /* ID of notification */,
-                    notificationBuilder.build())
+            notificationManager.notify(
+                router.id + 99999 /* ID of notification */,
+                notificationBuilder.build()
+            )
 
             routerPreferences?.edit()
-                    ?.putString(LATEST_FIRMWARE_RELEASE_NOTIFIED_PREF, newReleaseVersion)
-                    ?.apply()
+                ?.putString(LATEST_FIRMWARE_RELEASE_NOTIFIED_PREF, newReleaseVersion)
+                ?.apply()
             Utils.requestBackup(context)
         }
     }
@@ -415,7 +469,8 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
         try {
             if (!handleJob(context, params)) {
                 FirebaseCrashlytics.getInstance().log(
-                        "Today (${Date()}) execution did not succeed => hopefully it will succeeed tomorrow...")
+                    "Today (${Date()}) execution did not succeed => hopefully it will succeeed tomorrow..."
+                )
             }
         } catch (e: Exception) {
             FirebaseCrashlytics.getInstance().recordException(e)
@@ -442,7 +497,7 @@ class FirmwareUpdateCheckerOneShotJob : Job(), RouterCompanionJob {
 }
 
 class FirmwareUpdateFoundButWithNoUrlException(message: String?, throwable: Throwable? = null) :
-        RuntimeException(message, throwable)
+    RuntimeException(message, throwable)
 
 class FirmwareReleaseDownloadPageActivity : WebActivity() {
 

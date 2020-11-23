@@ -60,9 +60,9 @@ class MACOUIVendor {
 
     val isNone: Boolean
         get() = data == null || (data!!.getAddress() == null || data!!.getAddress()!!.isEmpty()) &&
-                data!!.getCountry() == null &&
-                data!!.getManufacturer() == null &&
-                data!!.getPrefix() == null
+            data!!.getCountry() == null &&
+            data!!.getManufacturer() == null &&
+            data!!.getPrefix() == null
 
     override fun toString(): String {
         return "MACOUIVendor{data='$data'}"
@@ -73,10 +73,10 @@ class MACOUIVendor {
             ""
         else
             "\n" + "- manufacturer: " + data!!.getManufacturer() + "\n" + "- address: " +
-                    if (data!!.getAddress() != null)
-                        Joiner.on(" , ").skipNulls().join(data!!.getAddress()!!)
-                    else
-                        "N/A" + "\n" + "- country: " + data!!.getCountry() + "\n" + "- prefix: " + data!!.getPrefix()
+                if (data!!.getAddress() != null)
+                    Joiner.on(" , ").skipNulls().join(data!!.getAddress()!!)
+                else
+                    "N/A" + "\n" + "- country: " + data!!.getCountry() + "\n" + "- prefix: " + data!!.getPrefix()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -145,9 +145,10 @@ class MACOUIVendor {
             val that = other as DataDetails?
 
             if (if (manufacturer != null)
-                manufacturer != that!!.manufacturer
-            else
-                that!!.manufacturer != null) {
+                    manufacturer != that!!.manufacturer
+                else
+                    that!!.manufacturer != null
+            ) {
                 return false
             }
             if (if (address != null) address != that.address else that.address != null) return false

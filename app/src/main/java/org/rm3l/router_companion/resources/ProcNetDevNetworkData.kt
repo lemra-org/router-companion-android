@@ -35,11 +35,15 @@ class ProcNetDevNetworkData(
     val transmit: ProcNetDevTransmit
 
     init {
-        this.receive = ProcNetDevReceive(rxBytes, rxPackets, rxErrors, rxDropped, rxFifo, rxFrame,
-                rxCompressed, rxMulticast)
-        this.transmit = ProcNetDevTransmit(txBytes, txPackets, txErrors, txDropped, txFifo,
-                txCollisions,
-                txCarrierErrors, txCompressed)
+        this.receive = ProcNetDevReceive(
+            rxBytes, rxPackets, rxErrors, rxDropped, rxFifo, rxFrame,
+            rxCompressed, rxMulticast
+        )
+        this.transmit = ProcNetDevTransmit(
+            txBytes, txPackets, txErrors, txDropped, txFifo,
+            txCollisions,
+            txCarrierErrors, txCompressed
+        )
     }
 
     /**

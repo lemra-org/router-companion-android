@@ -32,28 +32,28 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
-import androidx.core.content.PermissionChecker
-import androidx.core.view.MenuItemCompat
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.ShareActionProvider
-import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.ShareActionProvider
+import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.core.content.PermissionChecker
+import androidx.core.view.MenuItemCompat
 import com.github.florent37.viewtooltip.ViewTooltip
 import com.github.florent37.viewtooltip.ViewTooltip.ALIGN
 import com.github.florent37.viewtooltip.ViewTooltip.Position
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.InterstitialAd
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import org.achartengine.ChartFactory
@@ -140,8 +140,10 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         dao = RouterManagementActivity.getDao(this)
         if (dao == null) {
-            Utils.reportException(this,
-                    IllegalStateException("dao == null"))
+            Utils.reportException(
+                this,
+                IllegalStateException("dao == null")
+            )
             Toast.makeText(this, "Internal Error - please try again later.", Toast.LENGTH_SHORT).show()
             finish()
             return
@@ -152,8 +154,10 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
         val routerUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED)
         val wanCycleStr = intent.getStringExtra(WAN_CYCLE)
         if (routerUuid.isNullOrBlank() || wanCycleStr.isNullOrBlank()) {
-            Utils.reportException(this,
-                    IllegalStateException("isNullOrEmpty(routerUuid) || mCycleItem == null"))
+            Utils.reportException(
+                this,
+                IllegalStateException("isNullOrEmpty(routerUuid) || mCycleItem == null")
+            )
             Toast.makeText(this, "Internal Error - please try again later.", Toast.LENGTH_SHORT).show()
             finish()
             return
@@ -162,8 +166,10 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
         mRouter = dao!!.getRouter(routerUuid)
 
         if (mRouter == null) {
-            Utils.reportException(this,
-                    IllegalStateException("isNullOrEmpty(routerUuid) || mCycleItem == null"))
+            Utils.reportException(
+                this,
+                IllegalStateException("isNullOrEmpty(routerUuid) || mCycleItem == null")
+            )
             Toast.makeText(this, "Internal Error - please try again later.", Toast.LENGTH_SHORT).show()
             finish()
             return
@@ -189,7 +195,8 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
             mCycleItem = Gson().fromJson(wanCycleStr, MonthlyCycleItem::class.java)
         } catch (jse: JsonSyntaxException) {
             FirebaseCrashlytics.getInstance().log(
-                    "JsonSyntaxException while trying to read wanCycleStr: " + wanCycleStr)
+                "JsonSyntaxException while trying to read wanCycleStr: " + wanCycleStr
+            )
             jse.printStackTrace()
             Utils.reportException(this, jse)
             Toast.makeText(this, "Internal Error - please try again later.", Toast.LENGTH_SHORT).show()
@@ -199,17 +206,23 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
 
         mCycleItem!!.setContext(this)
 
-        mInterstitialAd = AdUtils.requestNewInterstitial(this,
-                R.string.interstitial_ad_unit_id_transtion_to_wan_monthly_chart)
+        mInterstitialAd = AdUtils.requestNewInterstitial(
+            this,
+            R.string.interstitial_ad_unit_id_transtion_to_wan_monthly_chart
+        )
 
-        AdUtils.buildAndDisplayAdViewIfNeeded(this,
-                findViewById<View>(R.id.tile_status_wan_monthly_traffic_chart_view_adView) as AdView)
+        AdUtils.buildAndDisplayAdViewIfNeeded(
+            this,
+            findViewById<View>(R.id.tile_status_wan_monthly_traffic_chart_view_adView) as AdView
+        )
 
         mToolbar = findViewById<View>(R.id.tile_status_wan_monthly_traffic_chart_view_toolbar) as Toolbar
         if (mToolbar != null) {
             mToolbar!!.title = WAN_MONTHLY_TRAFFIC + ": " + mCycleItem!!.getLabelWithYears()
-            mToolbar!!.subtitle = String.format("%s (%s:%d)", mRouter!!.displayName, mRouter!!.remoteIpAddress,
-                    mRouter!!.remotePort)
+            mToolbar!!.subtitle = String.format(
+                "%s (%s:%d)", mRouter!!.displayName, mRouter!!.remoteIpAddress,
+                mRouter!!.remotePort
+            )
             mToolbar!!.setTitleTextAppearance(applicationContext, R.style.ToolbarTitle)
             mToolbar!!.setSubtitleTextAppearance(applicationContext, R.style.ToolbarSubtitle)
             mToolbar!!.setTitleTextColor(ContextCompat.getColor(this, R.color.white))
@@ -223,8 +236,10 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
             actionBar.setHomeButtonEnabled(true)
         }
 
-        wanTrafficDataBreakdown = WANTrafficUtils.getWANTrafficDataByRouterBetweenDates(dao!!, mRouter!!.uuid,
-                mCycleItem!!.start, mCycleItem!!.end)
+        wanTrafficDataBreakdown = WANTrafficUtils.getWANTrafficDataByRouterBetweenDates(
+            dao!!, mRouter!!.uuid,
+            mCycleItem!!.start, mCycleItem!!.end
+        )
 
         mTooltipPlaceholderView = findViewById(R.id.tile_status_wan_monthly_traffic_chart_tooltip_placeholder)
 
@@ -285,11 +300,15 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
 
                 override fun onAdOpened() {
                     // Save preference
-                    getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                            Context.MODE_PRIVATE).edit()
-                            .putLong(RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
-                                    System.currentTimeMillis())
-                            .apply()
+                    getSharedPreferences(
+                        RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                        Context.MODE_PRIVATE
+                    ).edit()
+                        .putLong(
+                            RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
+                            System.currentTimeMillis()
+                        )
+                        .apply()
                 }
             }
 
@@ -312,27 +331,38 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
         val rwExternalStoragePermissionCheck = PermissionChecker.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            ) {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
 
-                SnackbarUtils.buildSnackbar(this, "Storage access is required to share WAN Traffic Data.",
-                        "OK", Snackbar.LENGTH_INDEFINITE, object : SnackbarCallback {
-                    @Throws(Exception::class)
-                    override fun onDismissEventActionClick(event: Int, bundle: Bundle?) {
-                        // Request permission
-                        ActivityCompat.requestPermissions(this@WANMonthlyTrafficActivity,
+                SnackbarUtils.buildSnackbar(
+                    this, "Storage access is required to share WAN Traffic Data.",
+                    "OK", Snackbar.LENGTH_INDEFINITE,
+                    object : SnackbarCallback {
+                        @Throws(Exception::class)
+                        override fun onDismissEventActionClick(event: Int, bundle: Bundle?) {
+                            // Request permission
+                            ActivityCompat.requestPermissions(
+                                this@WANMonthlyTrafficActivity,
                                 arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                                RouterCompanionAppConstants.Permissions.STORAGE)
-                    }
-                }, null, true)
+                                RouterCompanionAppConstants.Permissions.STORAGE
+                            )
+                        }
+                    },
+                    null, true
+                )
             } else {
                 // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        RouterCompanionAppConstants.Permissions.STORAGE)
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    RouterCompanionAppConstants.Permissions.STORAGE
+                )
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
@@ -354,15 +384,18 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
         // Construct Bitmap and share it
         val width = viewToShare.width
         val height = viewToShare.height
-        val bitmapToExport = Bitmap.createBitmap(if (width > 0) width else DEFAULT_BITMAP_WIDTH,
-                if (height > 0) height else DEFAULT_BITMAP_HEIGHT, Bitmap.Config.ARGB_8888)
+        val bitmapToExport = Bitmap.createBitmap(
+            if (width > 0) width else DEFAULT_BITMAP_WIDTH,
+            if (height > 0) height else DEFAULT_BITMAP_HEIGHT, Bitmap.Config.ARGB_8888
+        )
         val canvas = Canvas(bitmapToExport)
         viewToShare.draw(canvas)
 
         if (PermissionChecker.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
             val fileName = Utils.getEscapedFileName(
-                    "WAN Monthly Traffic for '${mCycleItem!!.getLabelWithYears()}' on Router '${mRouterDisplay ?: ""}'")
+                "WAN Monthly Traffic for '${mCycleItem!!.getLabelWithYears()}' on Router '${mRouterDisplay ?: ""}'"
+            )
 
             mCsvFileToShare = File(cacheDir, "$fileName.$CSV")
             // Output the CSV file
@@ -370,15 +403,17 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 out.write("Date,InboundBytes,InboundReadableValue,OutboundBytes,OutboundReadableValue")
                 out.newLine()
                 wanTrafficDataBreakdown
-                        ?.filterNotNull()
-                        ?.forEach { wanTrafficData ->
-                            val inBytes = wanTrafficData.traffIn.toLong() * MB
-                            val outBytes = wanTrafficData.traffOut.toLong() * MB
-                            out.write("${wanTrafficData.date}," +
-                                    "$inBytes,\"" + byteCountToDisplaySize(inBytes).replace("bytes", "B") + "\"," +
-                                    "$outBytes,\"" + byteCountToDisplaySize(outBytes).replace("bytes", "B") + "\"")
-                            out.newLine()
-                        }
+                    ?.filterNotNull()
+                    ?.forEach { wanTrafficData ->
+                        val inBytes = wanTrafficData.traffIn.toLong() * MB
+                        val outBytes = wanTrafficData.traffOut.toLong() * MB
+                        out.write(
+                            "${wanTrafficData.date}," +
+                                "$inBytes,\"" + byteCountToDisplaySize(inBytes).replace("bytes", "B") + "\"," +
+                                "$outBytes,\"" + byteCountToDisplaySize(outBytes).replace("bytes", "B") + "\""
+                        )
+                        out.newLine()
+                    }
             }
 
             mFileToShare = File(cacheDir, "$fileName.$PNG")
@@ -389,8 +424,10 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 outputStream.flush()
             } catch (e: IOException) {
                 e.printStackTrace()
-                Utils.displayMessage(this, getString(R.string.internal_error_please_try_again),
-                        Style.ALERT)
+                Utils.displayMessage(
+                    this, getString(R.string.internal_error_please_try_again),
+                    Style.ALERT
+                )
             } finally {
                 try {
                     if (outputStream != null) {
@@ -410,7 +447,7 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-        // Respond to the action bar's Up/Home button
+            // Respond to the action bar's Up/Home button
             android.R.id.home -> {
                 onBackPressed()
                 return true
@@ -511,13 +548,18 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 val inBytes = `in`.toLong() * MB
                 val outBytes = out.toLong() * MB
 
-                breakdownLines.add(i,
-                        String.format("- Day %d (%s): Inbound = %d B (%s) / Outbound = %d B (%s)", i + 1,
-                                wanTrafficData.date, inBytes,
-                                byteCountToDisplaySize(inBytes)
-                                        .replace("bytes", "B"), outBytes,
-                                byteCountToDisplaySize(outBytes)
-                                        .replace("bytes", "B")))
+                breakdownLines.add(
+                    i,
+                    String.format(
+                        "- Day %d (%s): Inbound = %d B (%s) / Outbound = %d B (%s)", i + 1,
+                        wanTrafficData.date, inBytes,
+                        byteCountToDisplaySize(inBytes)
+                            .replace("bytes", "B"),
+                        outBytes,
+                        byteCountToDisplaySize(outBytes)
+                            .replace("bytes", "B")
+                    )
+                )
             }
 
             // Creating a dataset to hold each series
@@ -555,12 +597,14 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
             multiRenderer.barWidth = 25f
             multiRenderer.barSpacing = 0.5
             multiRenderer.orientation = XYMultipleSeriesRenderer.Orientation.HORIZONTAL
-            multiRenderer.chartTitle = String.format("Date range: %s / Total IN: %s / Total OUT: %s",
-                    mCycleItem!!.getLabelWithYears(),
-                    byteCountToDisplaySize(totalIn * MB)
-                            .replace("bytes", "B"),
-                    byteCountToDisplaySize(totalOut * MB)
-                            .replace("bytes", "B"))
+            multiRenderer.chartTitle = String.format(
+                "Date range: %s / Total IN: %s / Total OUT: %s",
+                mCycleItem!!.getLabelWithYears(),
+                byteCountToDisplaySize(totalIn * MB)
+                    .replace("bytes", "B"),
+                byteCountToDisplaySize(totalOut * MB)
+                    .replace("bytes", "B")
+            )
             multiRenderer.xTitle = "Days"
             multiRenderer.yTitle = "Traffic"
             multiRenderer.isZoomButtonsVisible = false
@@ -570,18 +614,30 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
             // setting no of values to display in y axis
             multiRenderer.yLabels = 0
             if (maxY != 0.0) {
-                multiRenderer.addYTextLabel(maxY,
-                        byteCountToDisplaySize(
-                                (maxY * MB).toLong()).replace("bytes", "B"))
-                multiRenderer.addYTextLabel(3 * maxY / 4,
-                        byteCountToDisplaySize(
-                                (3.0 * maxY * MB.toDouble() / 4).toLong()).replace("bytes", "B"))
-                multiRenderer.addYTextLabel(maxY / 2,
-                        byteCountToDisplaySize(
-                                (maxY * MB / 2).toLong()).replace("bytes", "B"))
-                multiRenderer.addYTextLabel(maxY / 4,
-                        byteCountToDisplaySize(
-                                (maxY * MB / 4).toLong()).replace("bytes", "B"))
+                multiRenderer.addYTextLabel(
+                    maxY,
+                    byteCountToDisplaySize(
+                        (maxY * MB).toLong()
+                    ).replace("bytes", "B")
+                )
+                multiRenderer.addYTextLabel(
+                    3 * maxY / 4,
+                    byteCountToDisplaySize(
+                        (3.0 * maxY * MB.toDouble() / 4).toLong()
+                    ).replace("bytes", "B")
+                )
+                multiRenderer.addYTextLabel(
+                    maxY / 2,
+                    byteCountToDisplaySize(
+                        (maxY * MB / 2).toLong()
+                    ).replace("bytes", "B")
+                )
+                multiRenderer.addYTextLabel(
+                    maxY / 4,
+                    byteCountToDisplaySize(
+                        (maxY * MB / 4).toLong()
+                    ).replace("bytes", "B")
+                )
             }
 
             multiRenderer.xLabelsAngle = 70f
@@ -594,11 +650,11 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 firstAndLastsDaysSet = true
             }
             (0 until daysLength)
-                    .filterNot {
-                        firstAndLastsDaysSet && (it == 0 || it == daysLength - 1)
-                        // Add labels every n days
-                    }
-                    .forEach { multiRenderer.addXTextLabel(it.toDouble(), if (it > 0 && it % (maxX / 5) == 0) days[it] else EMPTY_STRING) }
+                .filterNot {
+                    firstAndLastsDaysSet && (it == 0 || it == daysLength - 1)
+                    // Add labels every n days
+                }
+                .forEach { multiRenderer.addXTextLabel(it.toDouble(), if (it > 0 && it % (maxX / 5) == 0) days[it] else EMPTY_STRING) }
 
             // setting text size of the title
             //            multiRenderer.setChartTitleTextSize(35);
@@ -657,8 +713,10 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
             // setting the margin size for the graph in the order top, left, bottom, right
             multiRenderer.margins = intArrayOf(30, 30, 30, 30)
 
-            val blackOrWhite = ContextCompat.getColor(this,
-                    if (ColorUtils.isThemeLight(this)) R.color.black else R.color.white)
+            val blackOrWhite = ContextCompat.getColor(
+                this,
+                if (ColorUtils.isThemeLight(this)) R.color.black else R.color.white
+            )
             multiRenderer.axesColor = blackOrWhite
             multiRenderer.xLabelsColor = blackOrWhite
             multiRenderer.setYLabelsColor(0, blackOrWhite)
@@ -690,14 +748,14 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
             mChartView!!.setOnClickListener { v ->
                 val currentSeriesAndPoint = mChartView!!.currentSeriesAndPoint
                 if (currentSeriesAndPoint != null) {
-                    val xAxisValue = java.lang.Double.valueOf(currentSeriesAndPoint.xValue)!!.toInt()
+                    val xAxisValue = java.lang.Double.valueOf(currentSeriesAndPoint.xValue).toInt()
                     if (xAxisValue in 0..(size - 1)) {
                         // Series index: 0 => inbound, 1 => outbound
                         val seriesIndex = currentSeriesAndPoint.seriesIndex
                         if (seriesIndex == INBOUND || seriesIndex == OUTBOUND) {
                             //                                currentSeriesAndPoint.getPointIndex()
-                            val inBytes = java.lang.Double.valueOf(inData[xAxisValue])!!.toLong() * MB
-                            val outBytes = java.lang.Double.valueOf(outData[xAxisValue])!!.toLong() * MB
+                            val inBytes = java.lang.Double.valueOf(inData[xAxisValue]).toLong() * MB
+                            val outBytes = java.lang.Double.valueOf(outData[xAxisValue]).toLong() * MB
                             val posX = positionX.get()
                             val posY = positionY.get()
                             val touchPositionsSet = posX != null && posY != null
@@ -712,25 +770,28 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                             val tooltipText: String
                             tooltipText = if (seriesIndex == INBOUND) {
                                 "${days[xAxisValue]} : Inbound : " +
-                                        byteCountToDisplaySize(inBytes).replace("bytes", "B") +
-                                        " / Outbound : " +
-                                        byteCountToDisplaySize(outBytes).replace("bytes", "B")
+                                    byteCountToDisplaySize(inBytes).replace("bytes", "B") +
+                                    " / Outbound : " +
+                                    byteCountToDisplaySize(outBytes).replace("bytes", "B")
                             } else {
                                 "${days[xAxisValue]} : Outbound : " +
-                                        byteCountToDisplaySize(outBytes).replace("bytes", "B") +
-                                        " / Inbound : " +
-                                        byteCountToDisplaySize(inBytes).replace("bytes", "B")
+                                    byteCountToDisplaySize(outBytes).replace("bytes", "B") +
+                                    " / Inbound : " +
+                                    byteCountToDisplaySize(inBytes).replace("bytes", "B")
                             }
                             val viewTooltip = ViewTooltip.on(if (touchPositionsSet) tooltipViewHolder else v)
-                                    .color(if (seriesIndex == INBOUND) inboundRendererColor else outboundRendererColor)
-                                    .textColor(ContextCompat.getColor(
-                                            this@WANMonthlyTrafficActivity, R.color.white))
-                                    .autoHide(true, 10000)
-                                    .clickToHide(true)
-                                    .corner(30)
-                                    .position(Position.TOP)
-                                    .align(ALIGN.CENTER)
-                                    .text(tooltipText)
+                                .color(if (seriesIndex == INBOUND) inboundRendererColor else outboundRendererColor)
+                                .textColor(
+                                    ContextCompat.getColor(
+                                        this@WANMonthlyTrafficActivity, R.color.white
+                                    )
+                                )
+                                .autoHide(true, 10000)
+                                .clickToHide(true)
+                                .corner(30)
+                                .position(Position.TOP)
+                                .align(ALIGN.CENTER)
+                                .text(tooltipText)
                             viewTooltip.onDisplay { displayedTooltip.set(viewTooltip) }.onHide { displayedTooltip.set(null) }
                             val existingTooltip = displayedTooltip.getAndSet(viewTooltip)
                             try {
@@ -745,7 +806,8 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                         }
                     } else {
                         FirebaseCrashlytics.getInstance().log(
-                                "xAxisValue=$xAxisValue: out of X axis bounds: $daysLength")
+                            "xAxisValue=$xAxisValue: out of X axis bounds: $daysLength"
+                        )
                     }
                 } else {
                     val existingTooltip = displayedTooltip.get()
@@ -774,28 +836,31 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
                 }
                 multiRenderer.xLabels = 0
             }
-            mChartView!!.addZoomListener(object : ZoomListener {
-                override fun zoomApplied(zoomEvent: ZoomEvent) {
-                    val start = multiRenderer.xAxisMin
-                    val stop = multiRenderer.xAxisMax
-                    multiRenderer.clearXTextLabels()
-                    val labels = MathHelper.getLabels(start, stop, 10)
-                    var labelToInt: Int
-                    for (label in labels) {
-                        if (label == null) {
-                            continue
+            mChartView!!.addZoomListener(
+                object : ZoomListener {
+                    override fun zoomApplied(zoomEvent: ZoomEvent) {
+                        val start = multiRenderer.xAxisMin
+                        val stop = multiRenderer.xAxisMax
+                        multiRenderer.clearXTextLabels()
+                        val labels = MathHelper.getLabels(start, stop, 10)
+                        var labelToInt: Int
+                        for (label in labels) {
+                            if (label == null) {
+                                continue
+                            }
+                            labelToInt = label.toInt()
+                            if (labelToInt < 0 || labelToInt >= daysLength) {
+                                continue
+                            }
+                            multiRenderer.addXTextLabel(label, days[labelToInt])
                         }
-                        labelToInt = label.toInt()
-                        if (labelToInt < 0 || labelToInt >= daysLength) {
-                            continue
-                        }
-                        multiRenderer.addXTextLabel(label, days[labelToInt])
+                        multiRenderer.xLabels = 0
                     }
-                    multiRenderer.xLabels = 0
-                }
 
-                override fun zoomReset() {}
-            }, true, true)
+                    override fun zoomReset() {}
+                },
+                true, true
+            )
 
             chartPlaceholderView.removeAllViews()
             chartPlaceholderView.addView(mChartView)
@@ -825,9 +890,9 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
 
         val uriForFiles = files.filterNotNull().map {
             it.first to
-                    FileProvider.getUriForFile(this@WANMonthlyTrafficActivity, RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY, it.second)
+                FileProvider.getUriForFile(this@WANMonthlyTrafficActivity, RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY, it.second)
         }
-                .toMap()
+            .toMap()
 
         mShareActionProvider!!.setOnShareTargetSelectedListener { _, intent ->
             uriForFiles.forEach { grantUriPermission(intent.component!!.packageName, it.value, Intent.FLAG_GRANT_READ_URI_PERMISSION) }
@@ -841,15 +906,21 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
         sendIntent.action = Intent.ACTION_SEND_MULTIPLE
         sendIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, ArrayList(uriForFiles.values))
         sendIntent.type = "text/html"
-        sendIntent.putExtra(Intent.EXTRA_SUBJECT,
-                "WAN Traffic for Router '$mRouterDisplay': ${mCycleItem!!.getLabelWithYears()}")
-        sendIntent.putExtra(Intent.EXTRA_TEXT, fromHtml(
+        sendIntent.putExtra(
+            Intent.EXTRA_SUBJECT,
+            "WAN Traffic for Router '$mRouterDisplay': ${mCycleItem!!.getLabelWithYears()}"
+        )
+        sendIntent.putExtra(
+            Intent.EXTRA_TEXT,
+            fromHtml(
                 "Traffic Breakdown<br/><br/> >>> " +
-                        "Total Inbound: $totalInBytes B (${byteCountToDisplaySize(totalInBytes)
-                                .replace("bytes", "B", true)}) / " +
-                        "Total Outbound: $totalOutBytes B " +
-                        "(${byteCountToDisplaySize(totalOutBytes).replace("bytes", "B", true)}) " +
-                        "<<<<br/><br/>${breakdownLines.joinToString("<br/>")}${Utils.getShareIntentFooter()}"))
+                    "Total Inbound: $totalInBytes B (${byteCountToDisplaySize(totalInBytes)
+                        .replace("bytes", "B", true)}) / " +
+                    "Total Outbound: $totalOutBytes B " +
+                    "(${byteCountToDisplaySize(totalOutBytes).replace("bytes", "B", true)}) " +
+                    "<<<<br/><br/>${breakdownLines.joinToString("<br/>")}${Utils.getShareIntentFooter()}"
+            )
+        )
 
         sendIntent.data = uriForFiles[PNG]
         //        sendIntent.setType("image/png");

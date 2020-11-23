@@ -1,15 +1,15 @@
 package org.rm3l.router_companion.widgets
 
+import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.app.Dialog
 import android.os.Bundle
-import java.util.Calendar
-import android.app.DatePickerDialog
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.fragment.app.DialogFragment
 import android.widget.DatePicker
+import androidx.fragment.app.DialogFragment
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import java.util.Calendar
 
 const val DATE_PICKER_LISTENER = "DATE_PICKER_LISTENER"
 const val START_MILLIS = "START_MILLIS"
@@ -24,11 +24,13 @@ class DatePickerFragment : DialogFragment(), OnDateSetListener {
         if (bundleArguments?.containsKey(START_MILLIS) == true) {
             calendar.timeInMillis = bundleArguments.getLong(START_MILLIS)
         }
-        val datePickerDialog = DatePickerDialog(requireActivity(),
-                bundleArguments?.getParcelable<AbstractDatePickerListener>(DATE_PICKER_LISTENER) ?: this,
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH))
+        val datePickerDialog = DatePickerDialog(
+            requireActivity(),
+            bundleArguments?.getParcelable<AbstractDatePickerListener>(DATE_PICKER_LISTENER) ?: this,
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
         val datePicker = datePickerDialog.datePicker
         if (bundleArguments?.containsKey(MIN_MILLIS) == true) {
             datePicker.minDate = bundleArguments.getLong(MIN_MILLIS)
@@ -53,16 +55,16 @@ class DatePickerFragment : DialogFragment(), OnDateSetListener {
             minMillis: Long? = null,
             maxMillis: Long? = null
         ):
-                DatePickerFragment {
-            val fragment = DatePickerFragment()
-            val bundle = Bundle()
-            bundle.putParcelable(DATE_PICKER_LISTENER, datePickerListener)
-            startFromMillis?.let { bundle.putLong(START_MILLIS, it) }
-            minMillis?.let { bundle.putLong(MIN_MILLIS, it) }
-            maxMillis?.let { bundle.putLong(MAX_MILLIS, it) }
-            fragment.arguments = bundle
-            return fragment
-        }
+            DatePickerFragment {
+                val fragment = DatePickerFragment()
+                val bundle = Bundle()
+                bundle.putParcelable(DATE_PICKER_LISTENER, datePickerListener)
+                startFromMillis?.let { bundle.putLong(START_MILLIS, it) }
+                minMillis?.let { bundle.putLong(MIN_MILLIS, it) }
+                maxMillis?.let { bundle.putLong(MAX_MILLIS, it) }
+                fragment.arguments = bundle
+                return fragment
+            }
     }
 }
 

@@ -9,14 +9,14 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.AudioManager
 import android.net.Uri
-import androidx.core.app.NotificationCompat
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.util.Patterns
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import androidx.core.app.NotificationCompat
 import com.google.common.base.Objects
 import com.google.common.base.Strings.isNullOrEmpty
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.RouterCompanionAppConstants
 import org.rm3l.router_companion.firmwares.RouterFirmwareConnectorManager
@@ -33,7 +33,7 @@ import org.rm3l.router_companion.utils.Utils
 
 class PublicIPChangesServiceTask(ctx: Context) : AbstractBackgroundServiceTask(ctx) {
     private val routerModelUpdaterServiceTask: RouterModelUpdaterServiceTask =
-            RouterModelUpdaterServiceTask(ctx)
+        RouterModelUpdaterServiceTask(ctx)
 
     @Throws(Exception::class)
     override fun runBackgroundServiceTask(router: Router) {
@@ -42,7 +42,7 @@ class PublicIPChangesServiceTask(ctx: Context) : AbstractBackgroundServiceTask(c
         val nvramInfo = SSHUtils.getNVRamInfoFromRouter(mCtx, router, globalPreferences, WAN_IPADDR)
 
         val wanPublicIpAddress = RouterFirmwareConnectorManager.getConnector(router)
-                .getWanPublicIpAddress(mCtx, router, null)
+            .getWanPublicIpAddress(mCtx, router, null)
         val wanPublicIpCmdStatus: Array<String>
         if (wanPublicIpAddress != null) {
             wanPublicIpCmdStatus = arrayOf(wanPublicIpAddress)
@@ -90,8 +90,9 @@ class PublicIPChangesServiceTask(ctx: Context) : AbstractBackgroundServiceTask(c
             val globalSharedPreferences = Utils.getGlobalSharedPreferences(mCtx)
 
             if (!globalSharedPreferences
-                    .getStringSet(RouterCompanionAppConstants.NOTIFICATIONS_CHOICE_PREF, emptySet())!!
-                    .contains(PublicIPChangesServiceTask::class.java.simpleName)) {
+                .getStringSet(RouterCompanionAppConstants.NOTIFICATIONS_CHOICE_PREF, emptySet())!!
+                .contains(PublicIPChangesServiceTask::class.java.simpleName)
+            ) {
                 FirebaseCrashlytics.getInstance().log("PublicIPChangesServiceTask notifications disabled")
                 return
             }
@@ -117,8 +118,13 @@ class PublicIPChangesServiceTask(ctx: Context) : AbstractBackgroundServiceTask(c
             FirebaseCrashlytics.getInstance().log("(wanIpFromPrefs,wanIp)=($wanIpFromPrefs,$wanIp)")
             FirebaseCrashlytics.getInstance().log("(wanPublicIpFromPrefs,wanPublicIp)=($wanPublicIpFromPrefs,$wanPublicIp)")
 
-            if (!(Objects.equal(wanPublicIp, wanPublicIpFromPrefs) && Objects.equal(wanIp,
-                    wanIpFromPrefs))) {
+            if (!(
+                Objects.equal(wanPublicIp, wanPublicIpFromPrefs) && Objects.equal(
+                        wanIp,
+                        wanIpFromPrefs
+                    )
+                )
+            ) {
 
                 // Save last value into preferences and display notification
                 val editor = routerPreferences.edit()
@@ -139,12 +145,14 @@ class PublicIPChangesServiceTask(ctx: Context) : AbstractBackgroundServiceTask(c
 
                 // Now display notification
                 val notificationsEnabled = routerPreferences.getBoolean(
-                        RouterCompanionAppConstants.NOTIFICATIONS_ENABLE, true)
+                    RouterCompanionAppConstants.NOTIFICATIONS_ENABLE, true
+                )
 
                 FirebaseCrashlytics.getInstance().log("NOTIFICATIONS_ENABLE=" + notificationsEnabled)
 
                 val mNotificationManager = mCtx.getSystemService(
-                        Context.NOTIFICATION_SERVICE) as NotificationManager
+                    Context.NOTIFICATION_SERVICE
+                ) as NotificationManager
 
                 if (!notificationsEnabled) {
                     mNotificationManager.cancel(notifyID)
@@ -154,8 +162,14 @@ class PublicIPChangesServiceTask(ctx: Context) : AbstractBackgroundServiceTask(c
                     val wanIpNullOrEmpty = isNullOrEmpty(wanIp)
                     if (!(wanPublicIpNullOrEmpty && wanIpNullOrEmpty)) {
                         val largeIcon = Router.loadRouterAvatarUrlSync(mCtx, router, Router.mAvatarDownloadOpts)
-                        doNotify(mCtx, router, largeIcon ?: BitmapFactory.decodeResource(mCtx.resources,
-                                R.mipmap.ic_launcher_ddwrt_companion), notifyID, wanPublicIp, wanIp)
+                        doNotify(
+                            mCtx, router,
+                            largeIcon ?: BitmapFactory.decodeResource(
+                                mCtx.resources,
+                                R.mipmap.ic_launcher_ddwrt_companion
+                            ),
+                            notifyID, wanPublicIp, wanIp
+                        )
                         editor.putBoolean(IS_FIRST_TIME_PREF_PREFIX + notifyID, false).apply()
                         Utils.requestBackup(mCtx)
                     }
@@ -173,12 +187,16 @@ class PublicIPChangesServiceTask(ctx: Context) : AbstractBackgroundServiceTask(c
         ) {
             val resultIntent = Intent(mCtx, DDWRTMainActivity::class.java)
             resultIntent.putExtra(ROUTER_SELECTED, router.uuid)
-            resultIntent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED,
-                    1) // Open right on the Public IP status
+            resultIntent.putExtra(
+                DDWRTMainActivity.SAVE_ITEM_SELECTED,
+                1
+            ) // Open right on the Public IP status
             // Because clicking the notification opens a new ("special") activity, there's
             // no need to create an artificial back stack.
-            val resultPendingIntent = PendingIntent.getActivity(mCtx, 0, resultIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT)
+            val resultPendingIntent = PendingIntent.getActivity(
+                mCtx, 0, resultIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
 
             val mRouterName = router.name
             val mRouterNameNullOrEmpty = isNullOrEmpty(mRouterName)
@@ -192,27 +210,32 @@ class PublicIPChangesServiceTask(ctx: Context) : AbstractBackgroundServiceTask(c
             }
 
             val mBuilder = NotificationCompat.Builder(mCtx, router.notificationChannelId)
-                    .setGroup(router.uuid)
-                    .setSmallIcon(R.drawable.ic_stat_ip)
-                    .setLargeIcon(largeIcon)
-                    .setAutoCancel(true)
-                    .setGroup(PublicIPChangesServiceTask::class.java.simpleName)
-                    .setGroupSummary(true)
-                    .setContentIntent(resultPendingIntent)
-                    .setContentTitle("New IP Address")
+                .setGroup(router.uuid)
+                .setSmallIcon(R.drawable.ic_stat_ip)
+                .setLargeIcon(largeIcon)
+                .setAutoCancel(true)
+                .setGroup(PublicIPChangesServiceTask::class.java.simpleName)
+                .setGroupSummary(true)
+                .setContentIntent(resultPendingIntent)
+                .setContentTitle("New IP Address")
 
             // Notification sound, if required
             val sharedPreferences = mCtx.getSharedPreferences(
-                    RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE
+            )
             val ringtoneUri = sharedPreferences.getString(
-                    RouterCompanionAppConstants.NOTIFICATIONS_SOUND, null)
+                RouterCompanionAppConstants.NOTIFICATIONS_SOUND, null
+            )
             if (ringtoneUri != null) {
                 mBuilder.setSound(Uri.parse(ringtoneUri), AudioManager.STREAM_NOTIFICATION)
             }
-            if (!sharedPreferences.getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_VIBRATE,
-                    true)) {
+            if (!sharedPreferences.getBoolean(
+                    RouterCompanionAppConstants.NOTIFICATIONS_VIBRATE,
+                    true
+                )
+            ) {
                 mBuilder.setDefaults(Notification.DEFAULT_LIGHTS)
-                        .setVibrate(RouterCompanionAppConstants.NO_VIBRATION_PATTERN)
+                    .setVibrate(RouterCompanionAppConstants.NO_VIBRATION_PATTERN)
                 //                    if (ringtoneUri != null) {
                 //                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
                 //                    } else {
@@ -223,28 +246,35 @@ class PublicIPChangesServiceTask(ctx: Context) : AbstractBackgroundServiceTask(c
             val routerPreferences = mCtx.getSharedPreferences(router.templateUuidOrUuid, Context.MODE_PRIVATE)
 
             val isFirstTimeForNotification = routerPreferences.getBoolean(
-                    IS_FIRST_TIME_PREF_PREFIX + notifyID, true)
+                IS_FIRST_TIME_PREF_PREFIX + notifyID, true
+            )
 
             val bigContentTitle = if (isFirstTimeForNotification) "New IP Address" else "IP Address change"
 
             val inboxStyle = NotificationCompat.InboxStyle().setSummaryText(summaryText)
-                    .setBigContentTitle(bigContentTitle)
+                .setBigContentTitle(bigContentTitle)
 
             // Public IP Address
             val wanPublicIpNullOrEmpty = isNullOrEmpty(wanPublicIp)
             val wanIpNullOrEmpty = isNullOrEmpty(wanIp)
-            val publicIpLine = String.format("Public IP   %s",
-                    if (wanPublicIpNullOrEmpty) "-" else wanPublicIp)
+            val publicIpLine = String.format(
+                "Public IP   %s",
+                if (wanPublicIpNullOrEmpty) "-" else wanPublicIp
+            )
             val publicIpSpannable = SpannableString(publicIpLine)
-            publicIpSpannable.setSpan(StyleSpan(android.graphics.Typeface.BOLD), 0,
-                    "Public IP".length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            publicIpSpannable.setSpan(
+                StyleSpan(android.graphics.Typeface.BOLD), 0,
+                "Public IP".length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
             inboxStyle.addLine(publicIpSpannable)
 
             // WAN IP Address
             val wanIpLine = String.format("WAN IP   %s", if (wanIpNullOrEmpty) "-" else wanIp)
             val wanIpSpannable = SpannableString(wanIpLine)
-            wanIpSpannable.setSpan(StyleSpan(android.graphics.Typeface.BOLD), 0,
-                    "WAN IP".length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            wanIpSpannable.setSpan(
+                StyleSpan(android.graphics.Typeface.BOLD), 0,
+                "WAN IP".length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
             inboxStyle.addLine(wanIpSpannable)
 
             mBuilder.setContentText(summaryText)
@@ -255,7 +285,8 @@ class PublicIPChangesServiceTask(ctx: Context) : AbstractBackgroundServiceTask(c
             // Because the ID remains unchanged, the existing notification is
             // updated.
             val mNotificationManager = mCtx.getSystemService(
-                    Context.NOTIFICATION_SERVICE) as NotificationManager
+                Context.NOTIFICATION_SERVICE
+            ) as NotificationManager
             val notification = mBuilder.build()
             mNotificationManager.notify(notifyID, notification)
             updateNotificationIconWithRouterAvatar(mCtx, router, notifyID, notification)

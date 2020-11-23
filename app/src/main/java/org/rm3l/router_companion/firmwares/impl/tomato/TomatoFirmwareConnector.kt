@@ -3,9 +3,9 @@ package org.rm3l.router_companion.firmwares.impl.tomato
 import android.content.Context
 import android.text.TextUtils
 import android.util.Patterns
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.common.base.Splitter
 import com.google.common.base.Strings
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.rm3l.router_companion.RouterCompanionAppConstants
 import org.rm3l.router_companion.RouterCompanionAppConstants.NOK
 import org.rm3l.router_companion.RouterCompanionAppConstants.UNKNOWN
@@ -40,8 +40,10 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
         router: Router,
         dataRetrievalListener: RemoteDataRetrievalListener?
     ): NVRAMInfo {
-        return NetworkTopologyMapTileWorker.getDataForNetworkTopologyMapTile(context, router,
-                dataRetrievalListener)
+        return NetworkTopologyMapTileWorker.getDataForNetworkTopologyMapTile(
+            context, router,
+            dataRetrievalListener
+        )
     }
 
     @Throws(Exception::class)
@@ -56,9 +58,11 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
     @Throws(Exception::class)
     override fun goGetRouterModel(context: Context, router: Router): String? {
 
-        val output = SSHUtils.getManualProperty(context, router,
-                Utils.getGlobalSharedPreferences(context),
-                String.format("/bin/nvram show 2>/dev/null | grep %s | awk -F'=' '{print $2}'", MODEL))
+        val output = SSHUtils.getManualProperty(
+            context, router,
+            Utils.getGlobalSharedPreferences(context),
+            String.format("/bin/nvram show 2>/dev/null | grep %s | awk -F'=' '{print $2}'", MODEL)
+        )
         if (output != null && output.size > 0) {
             return output[0]
         }
@@ -83,7 +87,7 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
     ): NVRAMInfo {
         // Same implementation as in DD-WRT
         return RouterFirmwareConnectorManager.getConnector(Router.RouterFirmware.DDWRT)
-                .getDataFor(context, router, UptimeTile::class.java, dataRetrievalListener)
+            .getDataFor(context, router, UptimeTile::class.java, dataRetrievalListener)
     }
 
     @Throws(Exception::class)
@@ -94,7 +98,7 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
     ): List<Array<String>> {
         // Same implementation as in DD-WRT
         return RouterFirmwareConnectorManager.getConnector(Router.RouterFirmware.DDWRT)
-                .getDataForMemoryAndCpuUsageTile(context, router, dataRetrievalListener)
+            .getDataForMemoryAndCpuUsageTile(context, router, dataRetrievalListener)
     }
 
     @Throws(Exception::class)
@@ -107,30 +111,43 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
 
         val globalSharedPreferences = Utils.getGlobalSharedPreferences(context)
 
-        val nvramSize = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
-                "/bin/nvram show | tail -n 1 | grep \"free.\"")
+        val nvramSize = SSHUtils.getManualProperty(
+            context, router, globalSharedPreferences,
+            "/bin/nvram show | tail -n 1 | grep \"free.\""
+        )
         dataRetrievalListener?.onProgressUpdate(20)
 
-        val jffs2Size = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
-                "/bin/df -T | grep \"jffs2\"")
+        val jffs2Size = SSHUtils.getManualProperty(
+            context, router, globalSharedPreferences,
+            "/bin/df -T | grep \"jffs2\""
+        )
         dataRetrievalListener?.onProgressUpdate(30)
 
-        val cifsSize = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
-                "/bin/df -T | grep \"cifs\"")
+        val cifsSize = SSHUtils.getManualProperty(
+            context, router, globalSharedPreferences,
+            "/bin/df -T | grep \"cifs\""
+        )
 
         return parseDataForStorageUsageTile(
-                Arrays.asList<Array<String>>(nvramSize, jffs2Size, cifsSize),
-                dataRetrievalListener)
+            Arrays.asList<Array<String>>(nvramSize, jffs2Size, cifsSize),
+            dataRetrievalListener
+        )
     }
 
-    override fun getRouterName(context: Context, router: Router) = SSHUtils.getNVRamInfoFromRouter(context, router,
-            Utils.getGlobalSharedPreferences(context), NVRAMInfo.ROUTER_NAME)?.getProperty(NVRAMInfo.ROUTER_NAME)
+    override fun getRouterName(context: Context, router: Router) = SSHUtils.getNVRamInfoFromRouter(
+        context, router,
+        Utils.getGlobalSharedPreferences(context), NVRAMInfo.ROUTER_NAME
+    )?.getProperty(NVRAMInfo.ROUTER_NAME)
 
-    override fun getLanIpAddress(context: Context, router: Router) = SSHUtils.getNVRamInfoFromRouter(context, router,
-            Utils.getGlobalSharedPreferences(context), NVRAMInfo.LAN_IPADDR)?.getProperty(NVRAMInfo.LAN_IPADDR)
+    override fun getLanIpAddress(context: Context, router: Router) = SSHUtils.getNVRamInfoFromRouter(
+        context, router,
+        Utils.getGlobalSharedPreferences(context), NVRAMInfo.LAN_IPADDR
+    )?.getProperty(NVRAMInfo.LAN_IPADDR)
 
-    override fun getWanIpAddress(context: Context, router: Router) = SSHUtils.getNVRamInfoFromRouter(context, router,
-            Utils.getGlobalSharedPreferences(context), NVRAMInfo.WAN_IPADDR)?.getProperty(NVRAMInfo.WAN_IPADDR)
+    override fun getWanIpAddress(context: Context, router: Router) = SSHUtils.getNVRamInfoFromRouter(
+        context, router,
+        Utils.getGlobalSharedPreferences(context), NVRAMInfo.WAN_IPADDR
+    )?.getProperty(NVRAMInfo.WAN_IPADDR)
 
     @Throws(Exception::class)
     override fun getDataForStatusRouterStateTile(
@@ -143,10 +160,12 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
 
         updateProgressBarViewSeparator(dataRetrievalListener, 10)
 
-        var nvramInfo = SSHUtils.getNVRamInfoFromRouter(context, router, globalSharedPreferences,
-                NVRAMInfo.ROUTER_NAME, NVRAMInfo.WAN_IPADDR, MODEL,
-                NVRAMInfo.DIST_TYPE, NVRAMInfo.LAN_IPADDR,
-                NVRAMInfo.OS_VERSION)
+        var nvramInfo = SSHUtils.getNVRamInfoFromRouter(
+            context, router, globalSharedPreferences,
+            NVRAMInfo.ROUTER_NAME, NVRAMInfo.WAN_IPADDR, MODEL,
+            NVRAMInfo.DIST_TYPE, NVRAMInfo.LAN_IPADDR,
+            NVRAMInfo.OS_VERSION
+        )
 
         if (nvramInfo == null) {
             nvramInfo = NVRAMInfo()
@@ -161,16 +180,18 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
         // date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))
         // date -d @$(sed -n '/^btime /s///p' /proc/stat)
         // Add FW, Kernel and Uptime
-        val otherCmds = SSHUtils.getManualProperty(context, router, globalSharedPreferences,
-                // date
-                "date",
-                // date since last reboot
-                "date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) )) || " +
-                        " awk -vuptimediff=\"$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))\" " +
-                        " 'BEGIN { print strftime(\"%Y-%m-%d %H:%M:%S\", uptimediff); }' ",
-                // elapsed from current date
-                "uptime | awk -F'up' '{print $2}' | awk -F'users' '{print $1}' | awk -F'load' '{print $1}'",
-                "uname -a", "cat /etc/motd 2>&1| tail -n 1")
+        val otherCmds = SSHUtils.getManualProperty(
+            context, router, globalSharedPreferences,
+            // date
+            "date",
+            // date since last reboot
+            "date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) )) || " +
+                " awk -vuptimediff=\"$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))\" " +
+                " 'BEGIN { print strftime(\"%Y-%m-%d %H:%M:%S\", uptimediff); }' ",
+            // elapsed from current date
+            "uptime | awk -F'up' '{print $2}' | awk -F'users' '{print $1}' | awk -F'load' '{print $1}'",
+            "uname -a", "cat /etc/motd 2>&1| tail -n 1"
+        )
 
         if (otherCmds != null) {
             if (otherCmds.size >= 1) {
@@ -193,8 +214,10 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
                 // Kernel
                 otherCmds[3]?.let {
                     val valueWithoutGnuLinux = it.replace("GNU/Linux", "")
-                    nvramInfo?.setProperty(NVRAMInfo.KERNEL,
-                            valueWithoutGnuLinux.replace(nvramInfo?.getProperty(NVRAMInfo.ROUTER_NAME) ?: "", ""))
+                    nvramInfo.setProperty(
+                        NVRAMInfo.KERNEL,
+                        valueWithoutGnuLinux.replace(nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME) ?: "", "")
+                    )
                 }
 //        nvramInfo.setProperty(NVRAMInfo.KERNEL,
 //            StringUtils.replace(StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
@@ -210,8 +233,9 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
 
         val routerPreferences = router.getPreferences(context)
         val checkActualInternetConnectivity = routerPreferences == null || routerPreferences.getBoolean(
-                RouterCompanionAppConstants.OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF,
-                true)
+            RouterCompanionAppConstants.OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF,
+            true
+        )
 
         if (checkActualInternetConnectivity) {
             // Now get public IP Address
@@ -224,9 +248,14 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
                     if (Patterns.IP_ADDRESS.matcher(wanPublicIp!!).matches()) {
                         nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp)
 
-                        PublicIPChangesServiceTask.buildNotificationIfNeeded(context, router,
-                                arrayOf(wanPublicIp), nvramInfo.getProperty(
-                                NVRAMInfo.WAN_IPADDR), null)
+                        PublicIPChangesServiceTask.buildNotificationIfNeeded(
+                            context, router,
+                            arrayOf(wanPublicIp),
+                            nvramInfo.getProperty(
+                                NVRAMInfo.WAN_IPADDR
+                            ),
+                            null
+                        )
                     } else {
                         nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK)
                     }
@@ -308,9 +337,12 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
                             val nvramUsedBytesLong = java.lang.Long.parseLong(nvramUsedBytesStr)
                             val nvramFreeBytesLong = java.lang.Long.parseLong(nvramFreeBytesStr)
                             val nvramTotalBytesLong = nvramUsedBytesLong + nvramFreeBytesLong
-                            nvramInfo.setProperty(NVRAMInfo.NVRAM_USED_PERCENT,
-                                    java.lang.Long.toString(
-                                            Math.min(100, 100 * nvramUsedBytesLong / nvramTotalBytesLong)))
+                            nvramInfo.setProperty(
+                                NVRAMInfo.NVRAM_USED_PERCENT,
+                                java.lang.Long.toString(
+                                    Math.min(100, 100 * nvramUsedBytesLong / nvramTotalBytesLong)
+                                )
+                            )
                         } catch (e: NumberFormatException) {
                             e.printStackTrace()
                             FirebaseCrashlytics.getInstance().recordException(e)
@@ -341,8 +373,10 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
                     dataRetrievalListener?.onProgressUpdate(Math.min(70, 50 + 5 * i))
                 }
                 if (totalSize > 0) {
-                    nvramInfo.setProperty(NVRAMInfo.STORAGE_JFFS2_USED_PERCENT,
-                            java.lang.Long.toString(Math.min(100, 100 * totalUsed / totalSize)))
+                    nvramInfo.setProperty(
+                        NVRAMInfo.STORAGE_JFFS2_USED_PERCENT,
+                        java.lang.Long.toString(Math.min(100, 100 * totalUsed / totalSize))
+                    )
                 }
             }
             dataRetrievalListener?.onProgressUpdate(75)
@@ -368,8 +402,10 @@ class TomatoFirmwareConnector : AbstractRouterFirmwareConnector() {
                     dataRetrievalListener?.onProgressUpdate(Math.min(87, 75 + 5 * i))
                 }
                 if (totalSize > 0) {
-                    nvramInfo.setProperty(NVRAMInfo.STORAGE_CIFS_USED_PERCENT,
-                            java.lang.Long.toString(Math.min(100, 100 * totalUsed / totalSize)))
+                    nvramInfo.setProperty(
+                        NVRAMInfo.STORAGE_CIFS_USED_PERCENT,
+                        java.lang.Long.toString(Math.min(100, 100 * totalUsed / totalSize))
+                    )
                 }
             }
             return nvramInfo

@@ -2,21 +2,20 @@ package org.rm3l.router_companion.tiles.admin.accessrestrictions
 
 import android.content.Context
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
-import androidx.viewpager.widget.ViewPager
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.google.common.base.Strings.isNullOrEmpty
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import org.jetbrains.anko.find
 import org.jetbrains.anko.toast
 import org.rm3l.ddwrt.R
@@ -53,7 +52,7 @@ class AddOrEditWANAccessPolicyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         val routerUuid = intent.getStringExtra(ROUTER_SELECTED)
-        if (isNullOrEmpty(routerUuid)) {
+        if (routerUuid.isNullOrBlank()) {
             toast("Internal Error: Router could not be determined")
             finish()
             return
@@ -85,8 +84,8 @@ class AddOrEditWANAccessPolicyActivity : AppCompatActivity() {
         val fab = find<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener {
             Snackbar.make(it!!, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null)
-                    .show()
+                .setAction("Action", null)
+                .show()
         }
     }
 
@@ -116,8 +115,10 @@ class AddOrEditWANAccessPolicyActivity : AppCompatActivity() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
         ): View? {
-            val rootView = inflater.inflate(R.layout.fragment_add_or_edit_wan_access_policy, container,
-                    false)
+            val rootView = inflater.inflate(
+                R.layout.fragment_add_or_edit_wan_access_policy, container,
+                false
+            )
             val textView = rootView.find<TextView>(R.id.section_label)
             arguments?.let { textView.text = getString(R.string.section_format, it.getInt(ARG_SECTION_NUMBER)) }
 //            textView.text = getString(R.string.section_format, arguments?.getInt(ARG_SECTION_NUMBER))

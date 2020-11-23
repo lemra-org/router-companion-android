@@ -3,7 +3,6 @@ package org.rm3l.router_companion.job.speedtest
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.core.util.Pair
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.evernote.android.job.DailyJob
 import com.evernote.android.job.DailyJob.DailyJobResult.CANCEL
 import com.evernote.android.job.DailyJob.DailyJobResult.SUCCESS
@@ -16,6 +15,7 @@ import com.google.common.base.Joiner
 import com.google.common.base.Splitter
 import com.google.common.base.Strings
 import com.google.common.collect.Lists
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.rm3l.ddwrt.BuildConfig
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY
@@ -67,10 +67,10 @@ import java.util.concurrent.TimeUnit
 class RouterSpeedTestAutoRunnerJob {
 
     companion object {
-        val LOG_TAG = RouterSpeedTestAutoRunnerJob::class.java.simpleName!!
+        val LOG_TAG = RouterSpeedTestAutoRunnerJob::class.java.simpleName
 
         @JvmField
-        val JOB_TAG_PREFIX = RouterSpeedTestAutoRunnerJob::class.java.simpleName!!
+        val JOB_TAG_PREFIX = RouterSpeedTestAutoRunnerJob::class.java.simpleName
 
         @JvmField
         val JOB_TAG_SEPARATOR = "::"
@@ -98,14 +98,16 @@ class RouterSpeedTestAutoRunnerJob {
 
         private fun cancelAllSchedules(routerUuid: String) {
             JobManager.instance().cancelAllForTag(
-                    getActualRouterJobTag(RouterSpeedTestRunnerDailyJob.TAG, routerUuid))
+                getActualRouterJobTag(RouterSpeedTestRunnerDailyJob.TAG, routerUuid)
+            )
             JobManager.instance().cancelAllForTag(
-                    getActualRouterJobTag(RouterSpeedTestRunnerPeriodicJob.TAG, routerUuid))
+                getActualRouterJobTag(RouterSpeedTestRunnerPeriodicJob.TAG, routerUuid)
+            )
         }
 
         @JvmStatic
         fun getActualRouterJobTag(jobTag: String, routerUuid: String) =
-                "$JOB_TAG_PREFIX$jobTag$JOB_TAG_SEPARATOR$routerUuid"
+            "$JOB_TAG_PREFIX$jobTag$JOB_TAG_SEPARATOR$routerUuid"
 
         @JvmStatic
         fun schedule(routerUuid: String, autoFlag: Boolean, schedule: String) {
@@ -140,15 +142,19 @@ class RouterSpeedTestAutoRunnerJob {
 
             if (Utils.isDemoRouter(mOriginalRouter)) {
                 return PingRTT().setStddev(0.01f)
-                        .setPacketLoss(Random().nextInt(100).toFloat())
-                        .setMin(Random().nextFloat())
-                        .setMax(Random().nextFloat() * 1024)
-                        .setAvg(Random().nextFloat() * 512)
+                    .setPacketLoss(Random().nextInt(100).toFloat())
+                    .setMin(Random().nextFloat())
+                    .setMax(Random().nextFloat() * 1024)
+                    .setAvg(Random().nextFloat() * 512)
             }
 
-            val pingOutput = SSHUtils.getManualProperty(context, mRouterCopy, null,
-                    String.format(Locale.US, PingFromRouterAction.PING_CMD_TO_FORMAT,
-                            PingFromRouterAction.MAX_PING_PACKETS_TO_SEND, server))
+            val pingOutput = SSHUtils.getManualProperty(
+                context, mRouterCopy, null,
+                String.format(
+                    Locale.US, PingFromRouterAction.PING_CMD_TO_FORMAT,
+                    PingFromRouterAction.MAX_PING_PACKETS_TO_SEND, server
+                )
+            )
             if (pingOutput == null || pingOutput.size < 2) {
                 // Nothing - abort right now with an error message
                 throw SpeedTestException("Unable to contact remote server: $server")
@@ -214,8 +220,10 @@ class RouterSpeedTestAutoRunnerJob {
             if (isDemoRouter || BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                 if (mDao.getSpeedTestResultsByRouter(mOriginalRouter.uuid).size >= MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION) {
                     if (isDemoRouter) {
-                        FirebaseCrashlytics.getInstance().log("You cannot have more than $MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION " +
-                                "Speed Test results for the Demo Router: $routerUuid")
+                        FirebaseCrashlytics.getInstance().log(
+                            "You cannot have more than $MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION " +
+                                "Speed Test results for the Demo Router: $routerUuid"
+                        )
                     } else {
                         FirebaseCrashlytics.getInstance().log("[PREMIUM] Save more SpeedTest runs: $routerUuid")
                     }
@@ -226,8 +234,10 @@ class RouterSpeedTestAutoRunnerJob {
             val mRouterCopy = Router(context, mOriginalRouter).setUuid(UUID.randomUUID().toString())
             try {
                 val mRouterPreferences = mOriginalRouter.getPreferences(context)
-                val serverSetting = mRouterPreferences?.getString(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SERVER,
-                        ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SERVER_DEFAULT)
+                val serverSetting = mRouterPreferences?.getString(
+                    ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SERVER,
+                    ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SERVER_DEFAULT
+                )
                 var server: String? = null
                 val speedTestResult: SpeedTestResult?
 
@@ -291,12 +301,16 @@ class RouterSpeedTestAutoRunnerJob {
                 speedTestResult.setWanPingRTT(wanLatencyResults)
 
                 // WAN DL / UL: algorithm here: https://speedof.me/howitworks.html
-                val userDefinedRouterSpeedTestMaxFileSizeMB = mRouterPreferences?.getLong(ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB,
-                        ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB_DEFAULT) ?: ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB_DEFAULT
+                val userDefinedRouterSpeedTestMaxFileSizeMB = mRouterPreferences?.getLong(
+                    ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB,
+                    ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB_DEFAULT
+                ) ?: ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB_DEFAULT
                 val userDefinedRouterSpeedTestDurationThresholdSeconds =
-                        mRouterPreferences?.getString(ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS,
-                                ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT)?.toLong()
-                                ?: ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT.toLong()
+                    mRouterPreferences?.getString(
+                        ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS,
+                        ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT
+                    )?.toLong()
+                        ?: ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT.toLong()
 
                 var pairAcceptedForComputation: Pair<Long, Long>? = null
 
@@ -316,13 +330,16 @@ class RouterSpeedTestAutoRunnerJob {
 
                 if (mPossibleFileSizes.isEmpty()) {
                     mPossibleFileSizes = arrayOf(100L)
-                    Utils.reportException(context,
-                            SpeedTestException("R.array.routerSpeedTestMaxFileSize_values is NULL or empty"))
+                    Utils.reportException(
+                        context,
+                        SpeedTestException("R.array.routerSpeedTestMaxFileSize_values is NULL or empty")
+                    )
                 }
                 Arrays.sort(mPossibleFileSizes)
 
                 FirebaseCrashlytics.getInstance().log(
-                        "mPossibleFileSizes: " + Arrays.toString(mPossibleFileSizes))
+                    "mPossibleFileSizes: " + Arrays.toString(mPossibleFileSizes)
+                )
 
                 for (possibleFileSize in mPossibleFileSizes) {
                     // Measure time to download file of the specified type
@@ -331,22 +348,29 @@ class RouterSpeedTestAutoRunnerJob {
 
                     val remoteFileName = java.lang.Long.toString(possibleFileSize!!)
 
-                    @SuppressLint("DefaultLocale") val completeServerUrl = String.format("%s?_=%d", String.format(wanDLSpeedUrlToFormat ?: "", remoteFileName),
-                            System.currentTimeMillis())
+                    @SuppressLint("DefaultLocale") val completeServerUrl = String.format(
+                        "%s?_=%d", String.format(wanDLSpeedUrlToFormat, remoteFileName),
+                        System.currentTimeMillis()
+                    )
 
                     val cmdExecOutput: Array<String>?
                     if (Utils.isDemoRouter(mOriginalRouter)) {
                         cmdExecOutput = arrayOf(Integer.toString(Math.min(77, Random().nextInt(possibleFileSize.toInt()))), Integer.toString(Random().nextInt(1)))
                     } else {
-                        cmdExecOutput = SSHUtils.getManualProperty(context, mRouterCopy,
-                                context.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
-                                Joiner.on(" && ").skipNulls(), "DATE_START=$(/bin/date +\"%s\")",
-                                // seconds since 1970-01-01 00:00:00 UTC
-                                String.format("/usr/bin/wget -qO /dev/null \"%s\" > /dev/null 2>&1 ",
-                                        completeServerUrl), "DATE_END=$(/bin/date +\"%s\")",
-                                // seconds since 1970-01-01 00:00:00 UTC
-                                "/bin/echo $((\${DATE_END}-\${DATE_START}))", // number of seconds
-                                "/bin/echo $?")
+                        cmdExecOutput = SSHUtils.getManualProperty(
+                            context, mRouterCopy,
+                            context.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
+                            Joiner.on(" && ").skipNulls(), "DATE_START=$(/bin/date +\"%s\")",
+                            // seconds since 1970-01-01 00:00:00 UTC
+                            String.format(
+                                "/usr/bin/wget -qO /dev/null \"%s\" > /dev/null 2>&1 ",
+                                completeServerUrl
+                            ),
+                            "DATE_END=$(/bin/date +\"%s\")",
+                            // seconds since 1970-01-01 00:00:00 UTC
+                            "/bin/echo $((\${DATE_END}-\${DATE_START}))", // number of seconds
+                            "/bin/echo $?"
+                        )
                     }
 
                     if (cmdExecOutput == null || cmdExecOutput.size < 2 || "0" != Strings.nullToEmpty(cmdExecOutput[cmdExecOutput.size - 1]).trim({ it <= ' ' })) {
@@ -367,9 +391,13 @@ class RouterSpeedTestAutoRunnerJob {
                         throw SpeedTestException("Unexpected output - please try again later.")
                     }
 
-                    FirebaseCrashlytics.getInstance().log(String.format(Locale.US,
+                    FirebaseCrashlytics.getInstance().log(
+                        String.format(
+                            Locale.US,
                             "[SpeedTest] Downloaded %d MB of data in %d seconds. Download URL is: \"%s\"",
-                            possibleFileSize, elapsedSeconds, completeServerUrl))
+                            possibleFileSize, elapsedSeconds, completeServerUrl
+                        )
+                    )
 
                     speedTestResult.setWanDLFileSize(possibleFileSize)
                     speedTestResult.setWanDLDuration(elapsedSeconds)
@@ -396,10 +424,12 @@ class RouterSpeedTestAutoRunnerJob {
                 speedTestResult.setWanUl(Random().nextInt(27) * 1024 xor 5)
 
                 // Persist speed test result
-                val speedTestResultToPersist = SpeedTestResult(mOriginalRouter.uuid,
-                        SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(executionDate),
-                        server ?: "", speedTestResult.getWanPing()!!, speedTestResult.getWanDl()!!,
-                        speedTestResult.getWanUl()!!, null, null, null, pingServerCountry)
+                val speedTestResultToPersist = SpeedTestResult(
+                    mOriginalRouter.uuid,
+                    SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(executionDate),
+                    server, speedTestResult.getWanPing()!!, speedTestResult.getWanDl()!!,
+                    speedTestResult.getWanUl()!!, null, null, null, pingServerCountry
+                )
                 val speedTestResultToPersistWanPingRTT = PingRTT()
                 if (speedTestResult.getWanPing() != null) {
                     speedTestResultToPersistWanPingRTT.avg = speedTestResult.getWanPing()!!.toFloat()
@@ -418,13 +448,17 @@ class RouterSpeedTestAutoRunnerJob {
                 speedTestResultToPersist.setWanULDuration(speedTestResult.getWanULDuration())
 
                 speedTestResultToPersist.setConnectionDLFileSize(
-                        speedTestResult.getConnectionDLFileSize())
+                    speedTestResult.getConnectionDLFileSize()
+                )
                 speedTestResultToPersist.setConnectionDLDuration(
-                        speedTestResult.getConnectionDLDuration())
+                    speedTestResult.getConnectionDLDuration()
+                )
                 speedTestResultToPersist.setConnectionULFileSize(
-                        speedTestResult.getConnectionULFileSize())
+                    speedTestResult.getConnectionULFileSize()
+                )
                 speedTestResultToPersist.setConnectionULDuration(
-                        speedTestResult.getConnectionULDuration())
+                    speedTestResult.getConnectionULDuration()
+                )
 
                 mDao.insertSpeedTestResult(speedTestResultToPersist)
 
@@ -443,18 +477,20 @@ class RouterSpeedTestRunnerDailyJob : DailyJob(), RouterCompanionJob {
 
     companion object {
         @JvmField
-        val TAG = RouterSpeedTestRunnerDailyJob::class.java.simpleName!!
+        val TAG = RouterSpeedTestRunnerDailyJob::class.java.simpleName
 
         @JvmStatic
         fun schedule(routerUuid: String, extras: PersistableBundleCompat) {
             val builder = JobRequest.Builder(RouterSpeedTestAutoRunnerJob.getActualRouterJobTag(TAG, routerUuid))
-                    .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
+                .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
 //                    .setRequiresCharging(true)
-                    .setExtras(extras)
+                .setExtras(extras)
             // run job between 1am and 11pm
-            DailyJob.schedule(builder,
-                    TimeUnit.HOURS.toMillis(1),
-                    TimeUnit.HOURS.toMillis(23))
+            DailyJob.schedule(
+                builder,
+                TimeUnit.HOURS.toMillis(1),
+                TimeUnit.HOURS.toMillis(23)
+            )
         }
     }
 
@@ -480,33 +516,33 @@ class RouterSpeedTestRunnerPeriodicJob : Job(), RouterCompanionJob {
     override fun isOneShotJob() = false
 
     companion object {
-        val TAG = RouterSpeedTestRunnerPeriodicJob::class.java.simpleName!!
+        val TAG = RouterSpeedTestRunnerPeriodicJob::class.java.simpleName
 
         @JvmStatic
         fun schedule(routerUuid: String, schedule: String, extras: PersistableBundleCompat) {
             val intervalMs =
-                    when (schedule) {
-                        EVERY_HOUR -> TimeUnit.HOURS.toMillis(1L)
-                        EVERY_3_HOURS -> TimeUnit.HOURS.toMillis(3L)
-                        EVERY_6_HOURS -> TimeUnit.HOURS.toMillis(6L)
-                        EVERY_12_HOURS -> TimeUnit.HOURS.toMillis(12L)
-                        EVERY_2_DAYS -> TimeUnit.DAYS.toMillis(2L)
-                        WEEKLY -> TimeUnit.DAYS.toMillis(7L)
-                        MONTHLY -> TimeUnit.DAYS.toMillis(31L)
-                        else -> null
-                    }
+                when (schedule) {
+                    EVERY_HOUR -> TimeUnit.HOURS.toMillis(1L)
+                    EVERY_3_HOURS -> TimeUnit.HOURS.toMillis(3L)
+                    EVERY_6_HOURS -> TimeUnit.HOURS.toMillis(6L)
+                    EVERY_12_HOURS -> TimeUnit.HOURS.toMillis(12L)
+                    EVERY_2_DAYS -> TimeUnit.DAYS.toMillis(2L)
+                    WEEKLY -> TimeUnit.DAYS.toMillis(7L)
+                    MONTHLY -> TimeUnit.DAYS.toMillis(31L)
+                    else -> null
+                }
             FirebaseCrashlytics.getInstance().log("intervalMs : $intervalMs")
             if (intervalMs == null) {
                 FirebaseCrashlytics.getInstance().log("intervalMs is NULL => nothing scheduled")
                 return
             }
             JobRequest.Builder(RouterSpeedTestAutoRunnerJob.getActualRouterJobTag(TAG, routerUuid))
-                    .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
+                .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
 //                    .setRequiresCharging(true)
-                    .setExtras(extras)
-                    .setPeriodic(intervalMs, TimeUnit.MINUTES.toMillis(5))
-                    .build()
-                    .schedule()
+                .setExtras(extras)
+                .setPeriodic(intervalMs, TimeUnit.MINUTES.toMillis(5))
+                .build()
+                .schedule()
         }
     }
 
@@ -518,8 +554,10 @@ class RouterSpeedTestRunnerPeriodicJob : Job(), RouterCompanionJob {
                 FirebaseCrashlytics.getInstance().log("router is NULL or archived => cancelling periodic job")
                 return Result.FAILURE
             }
-            RouterSpeedTestAutoRunnerJob.doRunSpeedTest(context,
-                    params.extras.getString(ROUTER_SELECTED, null))
+            RouterSpeedTestAutoRunnerJob.doRunSpeedTest(
+                context,
+                params.extras.getString(ROUTER_SELECTED, null)
+            )
         } catch (e: Exception) {
             // Reschedule
             FirebaseCrashlytics.getInstance().recordException(e)
@@ -545,6 +583,6 @@ class RouterSpeedTestRunnerOneShotJob : Job(), RouterCompanionJob {
     }
 
     companion object {
-        val TAG = RouterSpeedTestRunnerOneShotJob::class.java.simpleName!!
+        val TAG = RouterSpeedTestRunnerOneShotJob::class.java.simpleName
     }
 }

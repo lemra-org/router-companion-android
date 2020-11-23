@@ -2,11 +2,11 @@ package org.rm3l.router_companion.service
 
 import android.content.Context
 import android.net.ConnectivityManager
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.evernote.android.job.DailyJob
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobManager
 import com.evernote.android.job.JobRequest
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.rm3l.ddwrt.BuildConfig
 import org.rm3l.router_companion.RouterCompanionAppConstants
 import org.rm3l.router_companion.job.RouterCompanionJob
@@ -27,7 +27,7 @@ class BackgroundService : DailyJob(), RouterCompanionJob {
 
     companion object {
         @JvmField
-        val TAG = BackgroundService::class.java.simpleName!!
+        val TAG = BackgroundService::class.java.simpleName
 
         @JvmStatic
         fun schedule() {
@@ -37,25 +37,28 @@ class BackgroundService : DailyJob(), RouterCompanionJob {
                 return
             }
             val builder = JobRequest.Builder(TAG)
-                    .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
-                    .setRequiresBatteryNotLow(true)
+                .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
+                .setRequiresBatteryNotLow(true)
             // run job between 6am and 5am
-            DailyJob.schedule(builder,
-                    TimeUnit.HOURS.toMillis(6),
-                    TimeUnit.HOURS.toMillis(5))
+            DailyJob.schedule(
+                builder,
+                TimeUnit.HOURS.toMillis(6),
+                TimeUnit.HOURS.toMillis(5)
+            )
         }
 
         @JvmStatic
         fun handleJob(context: Context, params: Params?) {
             val dao = RouterManagementActivity.getDao(context)
             val globalPreferences = context.getSharedPreferences(
-                    RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                    Context.MODE_PRIVATE)
+                RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                Context.MODE_PRIVATE
+            )
 
             // check the global background data setting
             globalPreferences?.edit()
-                    ?.putLong(RouterCompanionAppConstants.BG_SERVICE_LAST_HANDLE, System.currentTimeMillis())
-                    ?.apply()
+                ?.putLong(RouterCompanionAppConstants.BG_SERVICE_LAST_HANDLE, System.currentTimeMillis())
+                ?.apply()
             Utils.requestBackup(context)
 
             val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -73,13 +76,15 @@ class BackgroundService : DailyJob(), RouterCompanionJob {
                 tasks.add(RouterWebInterfaceParametersUpdaterServiceTask(context))
                 if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                     FirebaseCrashlytics.getInstance().log(
-                            "ConnectedHostsServiceTask and PublicIPChangesServiceTask background notifications" +
-                                    " are *Premium* features!")
+                        "ConnectedHostsServiceTask and PublicIPChangesServiceTask background notifications" +
+                            " are *Premium* features!"
+                    )
                 } else {
                     // According to user preference
                     val notificationsChoiceSet = globalPreferences?.getStringSet(
-                            RouterCompanionAppConstants.NOTIFICATIONS_CHOICE_PREF,
-                            emptySet()) ?: emptySet()
+                        RouterCompanionAppConstants.NOTIFICATIONS_CHOICE_PREF,
+                        emptySet()
+                    ) ?: emptySet()
                     FirebaseCrashlytics.getInstance().log("notificationsChoiceSet: " + notificationsChoiceSet)
                     if (notificationsChoiceSet.contains(ConnectedHostsServiceTask::class.java.simpleName)) {
                         tasks.add(ConnectedHostsServiceTask(context))
@@ -95,7 +100,8 @@ class BackgroundService : DailyJob(), RouterCompanionJob {
                     // Execute tasks available for notifications
                     for (backgroundServiceTask in tasks) {
                         FirebaseCrashlytics.getInstance().log(
-                                ">>> Running task: ${backgroundServiceTask.javaClass} on router $router")
+                            ">>> Running task: ${backgroundServiceTask.javaClass} on router $router"
+                        )
                         try {
                             backgroundServiceTask.runBackgroundServiceTask(router)
                         } catch (e: Exception) {
@@ -112,8 +118,10 @@ class BackgroundService : DailyJob(), RouterCompanionJob {
     override fun onRunDailyJob(params: Params): DailyJobResult {
         try {
             if (context.getSharedPreferences(
-                    RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                    .getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_BG_SERVICE_ENABLE, false)) {
+                    RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE
+                )
+                .getBoolean(RouterCompanionAppConstants.NOTIFICATIONS_BG_SERVICE_ENABLE, false)
+            ) {
                 handleJob(context, params)
             } else {
                 FirebaseCrashlytics.getInstance().log("Background Service disabled (user choice)")
@@ -129,7 +137,7 @@ class BackgroundService : DailyJob(), RouterCompanionJob {
 class BackgroundServiceOneShotJob : Job(), RouterCompanionJob {
 
     companion object {
-        val TAG = BackgroundServiceOneShotJob::class.java.simpleName!!
+        val TAG = BackgroundServiceOneShotJob::class.java.simpleName
     }
 
     override fun onRunJob(params: Params): Result {

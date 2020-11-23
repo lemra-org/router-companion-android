@@ -29,16 +29,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
-import com.google.android.material.snackbar.Snackbar
-import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityOptionsCompat
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
-import androidx.loader.content.AsyncTaskLoader
-import androidx.core.content.FileProvider
-import androidx.loader.content.Loader
-import androidx.core.content.PermissionChecker
-import androidx.appcompat.widget.SwitchCompat
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.format.DateUtils
@@ -53,12 +43,22 @@ import android.widget.NumberPicker
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import androidx.appcompat.widget.SwitchCompat
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.FileProvider
+import androidx.core.content.PermissionChecker
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.loader.content.AsyncTaskLoader
+import androidx.loader.content.Loader
 import com.github.curioustechizen.ago.RelativeTimeTextView
+import com.google.android.material.snackbar.Snackbar
 import com.google.common.base.Optional
 import com.google.common.base.Strings.isNullOrEmpty
 import com.google.common.base.Throwables
 import com.google.common.collect.FluentIterable
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import org.rm3l.ddwrt.BuildConfig
 import org.rm3l.ddwrt.R
@@ -109,8 +109,8 @@ class WANMonthlyTrafficTile(
     arguments: Bundle?,
     router: Router?
 ) : DDWRTTile<NVRAMInfo>(parentFragment, arguments, router, R.layout.tile_status_wan_monthly_traffic, null),
-        SnackbarCallback,
-        RouterActionListener {
+    SnackbarCallback,
+    RouterActionListener {
 
     private val dao: DDWRTCompanionDAO = RouterManagementActivity.getDao(mParentFragmentActivity)
 
@@ -139,8 +139,12 @@ class WANMonthlyTrafficTile(
             isToggleStateActionRunning.set(true)
 
             if (view !is CompoundButton) {
-                Utils.reportException(null, IllegalStateException(
-                        "ManageWANTrafficCounterToggle#onClick: " + "view is NOT an instance of CompoundButton!"))
+                Utils.reportException(
+                    null,
+                    IllegalStateException(
+                        "ManageWANTrafficCounterToggle#onClick: " + "view is NOT an instance of CompoundButton!"
+                    )
+                )
                 isToggleStateActionRunning.set(false)
                 return
             }
@@ -156,9 +160,12 @@ class WANMonthlyTrafficTile(
             // Also set traff data loaded from preferences, if any
             if (enable && mParentFragmentPreferences != null) {
                 // Also restore traffic data we had in preferences
-                val traffMonths = FluentIterable.from(Optional.fromNullable(
-                        mParentFragmentPreferences.getStringSet(WAN_MONTHLY_TRAFFIC, HashSet()))
-                        .or(HashSet())).transform { input -> d(input) }.toSet()
+                val traffMonths = FluentIterable.from(
+                    Optional.fromNullable(
+                        mParentFragmentPreferences.getStringSet(WAN_MONTHLY_TRAFFIC, HashSet())
+                    )
+                        .or(HashSet())
+                ).transform { input -> d(input) }.toSet()
 
                 for (traffMonth in traffMonths) {
                     if (traffMonth == null || traffMonth.isEmpty()) {
@@ -172,107 +179,128 @@ class WANMonthlyTrafficTile(
                 }
             }
 
-            SnackbarUtils.buildSnackbar(mParentFragmentActivity,
-                    String.format("WAN Traffic Counter will be %s on '%s' (%s). ",
-                            //                                    "Router will be rebooted at the end of the operation.",
-                            if (enable) "enabled" else "disabled", mRouter!!.displayName,
-                            mRouter.remoteIpAddress), "CANCEL", Snackbar.LENGTH_LONG,
-                    object : SnackbarCallback {
-                        @Throws(Exception::class)
-                        override fun onDismissEventActionClick(event: Int, bundle: Bundle?) {
-                            cancel()
-                        }
+            SnackbarUtils.buildSnackbar(
+                mParentFragmentActivity,
+                String.format(
+                    "WAN Traffic Counter will be %s on '%s' (%s). ",
+                    //                                    "Router will be rebooted at the end of the operation.",
+                    if (enable) "enabled" else "disabled", mRouter!!.displayName,
+                    mRouter.remoteIpAddress
+                ),
+                "CANCEL", Snackbar.LENGTH_LONG,
+                object : SnackbarCallback {
+                    @Throws(Exception::class)
+                    override fun onDismissEventActionClick(event: Int, bundle: Bundle?) {
+                        cancel()
+                    }
 
-                        @Throws(Exception::class)
-                        override fun onDismissEventConsecutive(event: Int, bundle: Bundle?) {
-                            cancel()
-                        }
+                    @Throws(Exception::class)
+                    override fun onDismissEventConsecutive(event: Int, bundle: Bundle?) {
+                        cancel()
+                    }
 
-                        @Throws(Exception::class)
-                        override fun onDismissEventManual(event: Int, bundle: Bundle?) {
-                            cancel()
-                        }
+                    @Throws(Exception::class)
+                    override fun onDismissEventManual(event: Int, bundle: Bundle?) {
+                        cancel()
+                    }
 
-                        @Throws(Exception::class)
-                        override fun onDismissEventSwipe(event: Int, bundle: Bundle?) {
-                            cancel()
-                        }
+                    @Throws(Exception::class)
+                    override fun onDismissEventSwipe(event: Int, bundle: Bundle?) {
+                        cancel()
+                    }
 
-                        @Throws(Exception::class)
-                        override fun onDismissEventTimeout(event: Int, bundle: Bundle?) {
-                            Utils.displayMessage(mParentFragmentActivity,
-                                    String.format("%s WAN Traffic Counter...", if (enable) "Enabling" else "Disabling"),
-                                    Style.INFO)
+                    @Throws(Exception::class)
+                    override fun onDismissEventTimeout(event: Int, bundle: Bundle?) {
+                        Utils.displayMessage(
+                            mParentFragmentActivity,
+                            String.format("%s WAN Traffic Counter...", if (enable) "Enabling" else "Disabling"),
+                            Style.INFO
+                        )
 
-                            ActionManager.runTasks(
-                                    SetNVRAMVariablesAction(mRouter, mParentFragmentActivity, nvramInfoToSet,
-                                            false,
-                                            object : RouterActionListener {
-                                                override fun onRouterActionFailure(
-                                                    routerAction: RouterAction,
-                                                    router: Router,
-                                                    exception: Exception?
-                                                ) {
-                                                    mParentFragmentActivity.runOnUiThread {
-                                                        try {
-                                                            view.isChecked = !enable
-                                                            Utils.displayMessage(mParentFragmentActivity,
-                                                                    String.format(
-                                                                            "Error while trying to %s WAN Traffic Counter on '%s' (%s): %s",
-                                                                            if (enable) "enable" else "disable",
-                                                                            router.displayName,
-                                                                            router.remoteIpAddress,
-                                                                            Utils.handleException(
-                                                                                    exception).first),
-                                                                    Style.ALERT)
-                                                        } finally {
-                                                            view.isEnabled = true
-                                                            isToggleStateActionRunning.set(false)
-                                                        }
-                                                    }
+                        ActionManager.runTasks(
+                            SetNVRAMVariablesAction(
+                                mRouter, mParentFragmentActivity, nvramInfoToSet,
+                                false,
+                                object : RouterActionListener {
+                                    override fun onRouterActionFailure(
+                                        routerAction: RouterAction,
+                                        router: Router,
+                                        exception: Exception?
+                                    ) {
+                                        mParentFragmentActivity.runOnUiThread {
+                                            try {
+                                                view.isChecked = !enable
+                                                Utils.displayMessage(
+                                                    mParentFragmentActivity,
+                                                    String.format(
+                                                        "Error while trying to %s WAN Traffic Counter on '%s' (%s): %s",
+                                                        if (enable) "enable" else "disable",
+                                                        router.displayName,
+                                                        router.remoteIpAddress,
+                                                        Utils.handleException(
+                                                            exception
+                                                        ).first
+                                                    ),
+                                                    Style.ALERT
+                                                )
+                                            } finally {
+                                                view.isEnabled = true
+                                                isToggleStateActionRunning.set(false)
+                                            }
+                                        }
+                                    }
+
+                                    override fun onRouterActionSuccess(
+                                        routerAction: RouterAction,
+                                        router: Router,
+                                        returnData: Any
+                                    ) {
+                                        mParentFragmentActivity.runOnUiThread {
+                                            try {
+
+                                                view.isChecked = enable
+                                                Utils.displayMessage(
+                                                    mParentFragmentActivity,
+                                                    String.format(
+                                                        "WAN Traffic Counter %s successfully on host '%s' (%s)",
+                                                        if (enable) "enabled" else "disabled",
+                                                        router.displayName,
+                                                        router.remoteIpAddress
+                                                    ),
+                                                    Style.CONFIRM
+                                                )
+                                            } finally {
+                                                view.isEnabled = true
+                                                isToggleStateActionRunning.set(false)
+                                                if (mLoader != null) {
+                                                    // Reload everything right away
+                                                    doneWithLoaderInstance(
+                                                        this@WANMonthlyTrafficTile,
+                                                        mLoader as AsyncTaskLoader<NVRAMInfo>, 1L
+                                                    )
                                                 }
+                                            }
+                                        }
+                                    }
+                                },
+                                mGlobalPreferences
+                            )
+                        )
+                    }
 
-                                                override fun onRouterActionSuccess(
-                                                    routerAction: RouterAction,
-                                                    router: Router,
-                                                    returnData: Any
-                                                ) {
-                                                    mParentFragmentActivity.runOnUiThread {
-                                                        try {
-
-                                                            view.isChecked = enable
-                                                            Utils.displayMessage(mParentFragmentActivity,
-                                                                    String.format(
-                                                                            "WAN Traffic Counter %s successfully on host '%s' (%s)",
-                                                                            if (enable) "enabled" else "disabled",
-                                                                            router.displayName,
-                                                                            router.remoteIpAddress),
-                                                                    Style.CONFIRM)
-                                                        } finally {
-                                                            view.isEnabled = true
-                                                            isToggleStateActionRunning.set(false)
-                                                            if (mLoader != null) {
-                                                                // Reload everything right away
-                                                                doneWithLoaderInstance(this@WANMonthlyTrafficTile,
-                                                                        mLoader as AsyncTaskLoader<NVRAMInfo>, 1L)
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }, mGlobalPreferences))
-                        }
-
-                        private fun cancel() {
-                            mParentFragmentActivity.runOnUiThread {
-                                try {
-                                    view.isChecked = !enable
-                                    view.isEnabled = true
-                                } finally {
-                                    isToggleStateActionRunning.set(false)
-                                }
+                    private fun cancel() {
+                        mParentFragmentActivity.runOnUiThread {
+                            try {
+                                view.isChecked = !enable
+                                view.isEnabled = true
+                            } finally {
+                                isToggleStateActionRunning.set(false)
                             }
                         }
-                    }, Bundle(), true)
+                    }
+                },
+                Bundle(), true
+            )
 
             // new UndoBarController.UndoBar(mParentFragmentActivity).message(
             //    String.format("WAN Traffic Counter will be %s on '%s' (%s). ",
@@ -331,26 +359,39 @@ class WANMonthlyTrafficTile(
 
                 val currentCycleItem = mCurrentCycle.get() ?: return
 
-                dateFromPickerButton.text = DateUtils.formatDateTime(mParentFragmentActivity,
-                        currentCycleItem.start, DateUtils.FORMAT_ABBREV_MONTH)
-                dateToPickerButton.text = DateUtils.formatDateTime(mParentFragmentActivity,
-                        currentCycleItem.end, DateUtils.FORMAT_ABBREV_MONTH)
+                dateFromPickerButton.text = DateUtils.formatDateTime(
+                    mParentFragmentActivity,
+                    currentCycleItem.start, DateUtils.FORMAT_ABBREV_MONTH
+                )
+                dateToPickerButton.text = DateUtils.formatDateTime(
+                    mParentFragmentActivity,
+                    currentCycleItem.end, DateUtils.FORMAT_ABBREV_MONTH
+                )
 
-                val data = WANTrafficUtils.computeWANTrafficUsageBetweenDates(dao, mRouter!!.uuid,
-                        currentCycleItem.start, currentCycleItem.end)
+                val data = WANTrafficUtils.computeWANTrafficUsageBetweenDates(
+                    dao, mRouter!!.uuid,
+                    currentCycleItem.start, currentCycleItem.end
+                )
 
                 //                final boolean isCurrentMonthYear = mCycleOfTheDay.equals(currentCycleItem);
 
                 this@WANMonthlyTrafficTile.layout.findViewById<View>(
-                        R.id.tile_status_wan_monthly_traffic_graph_placeholder_current).isEnabled = true
+                    R.id.tile_status_wan_monthly_traffic_graph_placeholder_current
+                ).isEnabled = true
                 this@WANMonthlyTrafficTile.layout.findViewById<View>(
-                        R.id.tile_status_wan_monthly_traffic_graph_placeholder_date_to_picker).isEnabled = true
+                    R.id.tile_status_wan_monthly_traffic_graph_placeholder_date_to_picker
+                ).isEnabled = true
 
                 // Display traffic data for this month
                 if (data.isEmpty) {
-                    Toast.makeText(this@WANMonthlyTrafficTile.mParentFragmentActivity,
-                            String.format("No traffic data for '%s'. Please try again later.",
-                                    currentCycleItem.getLabelWithYears()), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@WANMonthlyTrafficTile.mParentFragmentActivity,
+                        String.format(
+                            "No traffic data for '%s'. Please try again later.",
+                            currentCycleItem.getLabelWithYears()
+                        ),
+                        Toast.LENGTH_SHORT
+                    ).show()
                     return
                 }
 
@@ -404,31 +445,44 @@ class WANMonthlyTrafficTile(
         }
 
         // Permission requests
-        val rwExternalStoragePermissionCheck = PermissionChecker.checkSelfPermission(mParentFragmentActivity,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        val rwExternalStoragePermissionCheck = PermissionChecker.checkSelfPermission(
+            mParentFragmentActivity,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
         if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(mParentFragmentActivity,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    mParentFragmentActivity,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            ) {
                 // Show an expanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                SnackbarUtils.buildSnackbar(mParentFragmentActivity,
-                        "Storage access is required to be able to backup and restore WAN traffic data.", "OK",
-                        Snackbar.LENGTH_INDEFINITE, object : SnackbarCallback {
-                    @Throws(Exception::class)
-                    override fun onDismissEventActionClick(event: Int, bundle: Bundle?) {
-                        // Request permission
-                        ActivityCompat.requestPermissions(mParentFragmentActivity,
+                SnackbarUtils.buildSnackbar(
+                    mParentFragmentActivity,
+                    "Storage access is required to be able to backup and restore WAN traffic data.", "OK",
+                    Snackbar.LENGTH_INDEFINITE,
+                    object : SnackbarCallback {
+                        @Throws(Exception::class)
+                        override fun onDismissEventActionClick(event: Int, bundle: Bundle?) {
+                            // Request permission
+                            ActivityCompat.requestPermissions(
+                                mParentFragmentActivity,
                                 arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                                RouterCompanionAppConstants.Permissions.STORAGE)
-                    }
-                }, null, true)
+                                RouterCompanionAppConstants.Permissions.STORAGE
+                            )
+                        }
+                    },
+                    null, true
+                )
             } else {
                 // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(mParentFragmentActivity,
-                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        RouterCompanionAppConstants.Permissions.STORAGE)
+                ActivityCompat.requestPermissions(
+                    mParentFragmentActivity,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    RouterCompanionAppConstants.Permissions.STORAGE
+                )
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
@@ -437,154 +491,193 @@ class WANMonthlyTrafficTile(
 
         val displayName = String.format("'%s' (%s)", router?.displayName, router?.remoteIpAddress)
 
-        tileMenu.setOnClickListener(View.OnClickListener { v ->
-            val popup = PopupMenu(mParentFragmentActivity, v)
-            popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { menuItem ->
-                val itemId = menuItem.itemId
-                // Store current value in preferences
-                when (itemId) {
-                    R.id.tile_wan_monthly_traffic_backup_raw -> {
-                        if (PermissionChecker.checkSelfPermission(mParentFragmentActivity,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                            Utils.displayMessage(mParentFragmentActivity, "Storage access required",
-                                    Style.ALERT)
-                            return@OnMenuItemClickListener false
-                        }
-                        // Allowed for all
-                        displayBackupDialog(displayName,
-                                BackupWANMonthlyTrafficRouterAction.BackupFileType_RAW)
-                        return@OnMenuItemClickListener true
-                    }
-                    R.id.tile_wan_monthly_traffic_backup_csv -> {
-                        if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                            // Download the full version to unlock this version
-                            Utils.displayUpgradeMessage(mParentFragmentActivity,
-                                    "Backup WAN Traffic Data as CSV")
-                            return@OnMenuItemClickListener true
-                        }
-                        if (PermissionChecker.checkSelfPermission(mParentFragmentActivity,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                            Utils.displayMessage(mParentFragmentActivity, "Storage access required",
-                                    Style.ALERT)
-                            return@OnMenuItemClickListener false
-                        }
-                        displayBackupDialog(displayName,
-                                BackupWANMonthlyTrafficRouterAction.BackupFileType_CSV)
-                        return@OnMenuItemClickListener true
-                    }
-                    R.id.tile_wan_monthly_traffic_restore -> {
-                        if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                            // Download the full version to unlock this version
-                            Utils.displayUpgradeMessage(mParentFragmentActivity,
-                                    "Restore WAN Monthly Traffic Data")
-                            return@OnMenuItemClickListener true
-                        }
+        tileMenu.setOnClickListener(
+            View.OnClickListener { v ->
+                val popup = PopupMenu(mParentFragmentActivity, v)
+                popup.setOnMenuItemClickListener(
+                    PopupMenu.OnMenuItemClickListener { menuItem ->
+                        val itemId = menuItem.itemId
+                        // Store current value in preferences
+                        when (itemId) {
+                            R.id.tile_wan_monthly_traffic_backup_raw -> {
+                                if (PermissionChecker.checkSelfPermission(
+                                        mParentFragmentActivity,
+                                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                    ) != PackageManager.PERMISSION_GRANTED
+                                ) {
+                                    Utils.displayMessage(
+                                        mParentFragmentActivity, "Storage access required",
+                                        Style.ALERT
+                                    )
+                                    return@OnMenuItemClickListener false
+                                }
+                                // Allowed for all
+                                displayBackupDialog(
+                                    displayName,
+                                    BackupWANMonthlyTrafficRouterAction.BackupFileType_RAW
+                                )
+                                return@OnMenuItemClickListener true
+                            }
+                            R.id.tile_wan_monthly_traffic_backup_csv -> {
+                                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                                    // Download the full version to unlock this version
+                                    Utils.displayUpgradeMessage(
+                                        mParentFragmentActivity,
+                                        "Backup WAN Traffic Data as CSV"
+                                    )
+                                    return@OnMenuItemClickListener true
+                                }
+                                if (PermissionChecker.checkSelfPermission(
+                                        mParentFragmentActivity,
+                                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                    ) != PackageManager.PERMISSION_GRANTED
+                                ) {
+                                    Utils.displayMessage(
+                                        mParentFragmentActivity, "Storage access required",
+                                        Style.ALERT
+                                    )
+                                    return@OnMenuItemClickListener false
+                                }
+                                displayBackupDialog(
+                                    displayName,
+                                    BackupWANMonthlyTrafficRouterAction.BackupFileType_CSV
+                                )
+                                return@OnMenuItemClickListener true
+                            }
+                            R.id.tile_wan_monthly_traffic_restore -> {
+                                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                                    // Download the full version to unlock this version
+                                    Utils.displayUpgradeMessage(
+                                        mParentFragmentActivity,
+                                        "Restore WAN Monthly Traffic Data"
+                                    )
+                                    return@OnMenuItemClickListener true
+                                }
 
-                        if (PermissionChecker.checkSelfPermission(mParentFragmentActivity,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                            Utils.displayMessage(mParentFragmentActivity, "Storage access required",
-                                    Style.ALERT)
-                            return@OnMenuItemClickListener false
-                        }
+                                if (PermissionChecker.checkSelfPermission(
+                                        mParentFragmentActivity,
+                                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                    ) != PackageManager.PERMISSION_GRANTED
+                                ) {
+                                    Utils.displayMessage(
+                                        mParentFragmentActivity, "Storage access required",
+                                        Style.ALERT
+                                    )
+                                    return@OnMenuItemClickListener false
+                                }
 
-                        val supportFragmentManager = mParentFragmentActivity.supportFragmentManager
-                        val restoreWANTraffic = supportFragmentManager.findFragmentByTag(
-                                RESTORE_WAN_MONTHLY_TRAFFIC_FRAGMENT_TAG)
-                        (restoreWANTraffic as? DialogFragment)?.dismiss()
-                        val restoreFragment = RestoreWANMonthlyTrafficDialogFragment.newInstance(mRouter!!.uuid)
-                        restoreFragment.show(supportFragmentManager,
-                                RESTORE_WAN_MONTHLY_TRAFFIC_FRAGMENT_TAG)
+                                val supportFragmentManager = mParentFragmentActivity.supportFragmentManager
+                                val restoreWANTraffic = supportFragmentManager.findFragmentByTag(
+                                    RESTORE_WAN_MONTHLY_TRAFFIC_FRAGMENT_TAG
+                                )
+                                (restoreWANTraffic as? DialogFragment)?.dismiss()
+                                val restoreFragment = RestoreWANMonthlyTrafficDialogFragment.newInstance(mRouter!!.uuid)
+                                restoreFragment.show(
+                                    supportFragmentManager,
+                                    RESTORE_WAN_MONTHLY_TRAFFIC_FRAGMENT_TAG
+                                )
 
-                        return@OnMenuItemClickListener true
-                    }
-                    R.id.tile_wan_monthly_traffic_delete -> {
-                        val token = Bundle()
-                        token.putString(WAN_MONTHLY_TRAFFIC_ACTION, RouterAction.DELETE_WAN_TRAFF.name)
+                                return@OnMenuItemClickListener true
+                            }
+                            R.id.tile_wan_monthly_traffic_delete -> {
+                                val token = Bundle()
+                                token.putString(WAN_MONTHLY_TRAFFIC_ACTION, RouterAction.DELETE_WAN_TRAFF.name)
 
-                        SnackbarUtils.buildSnackbar(mParentFragmentActivity,
-                                String.format("Going to erase WAN Monthly Traffic Data on %s...",
-                                        displayName),
-                                "CANCEL",
-                                Snackbar.LENGTH_LONG,
-                                this@WANMonthlyTrafficTile,
-                                token, true)
+                                SnackbarUtils.buildSnackbar(
+                                    mParentFragmentActivity,
+                                    String.format(
+                                        "Going to erase WAN Monthly Traffic Data on %s...",
+                                        displayName
+                                    ),
+                                    "CANCEL",
+                                    Snackbar.LENGTH_LONG,
+                                    this@WANMonthlyTrafficTile,
+                                    token, true
+                                )
 
-                        // new UndoBarController.UndoBar(mParentFragmentActivity).message(
-                        //    String.format("Going to erase WAN Monthly Traffic Data on %s...", displayName))
-                        //    .listener(WANMonthlyTrafficTile.this)
-                        //    .token(token)
-                        //    .show();
-                        return@OnMenuItemClickListener true
-                    }
-                    R.id.tile_wan_monthly_traffic_change_cycle -> {
-                        val builder = androidx.appcompat.app.AlertDialog.Builder(mParentFragmentActivity)
-                        val dialogInflater = LayoutInflater.from(builder.context)
+                                // new UndoBarController.UndoBar(mParentFragmentActivity).message(
+                                //    String.format("Going to erase WAN Monthly Traffic Data on %s...", displayName))
+                                //    .listener(WANMonthlyTrafficTile.this)
+                                //    .token(token)
+                                //    .show();
+                                return@OnMenuItemClickListener true
+                            }
+                            R.id.tile_wan_monthly_traffic_change_cycle -> {
+                                val builder = androidx.appcompat.app.AlertDialog.Builder(mParentFragmentActivity)
+                                val dialogInflater = LayoutInflater.from(builder.context)
 
-                        val view = dialogInflater.inflate(R.layout.data_usage_cycle_editor, null, false)
-                        val cycleDayPicker = view.findViewById<View>(R.id.wan_cycle_day) as NumberPicker
+                                val view = dialogInflater.inflate(R.layout.data_usage_cycle_editor, null, false)
+                                val cycleDayPicker = view.findViewById<View>(R.id.wan_cycle_day) as NumberPicker
 
-                        val wanCycleDay: Int
-                        if (mParentFragmentPreferences != null) {
-                            val cycleDay = mParentFragmentPreferences.getInt(WAN_CYCLE_DAY_PREF, 1)
-                            wanCycleDay = if (cycleDay < 1) 1 else if (cycleDay > 31) 31 else cycleDay
-                        } else {
-                            wanCycleDay = 1
-                        }
+                                val wanCycleDay: Int
+                                if (mParentFragmentPreferences != null) {
+                                    val cycleDay = mParentFragmentPreferences.getInt(WAN_CYCLE_DAY_PREF, 1)
+                                    wanCycleDay = if (cycleDay < 1) 1 else if (cycleDay > 31) 31 else cycleDay
+                                } else {
+                                    wanCycleDay = 1
+                                }
 
-                        cycleDayPicker.minValue = 1
-                        cycleDayPicker.maxValue = 31
-                        cycleDayPicker.value = wanCycleDay
-                        cycleDayPicker.wrapSelectorWheel = true
+                                cycleDayPicker.minValue = 1
+                                cycleDayPicker.maxValue = 31
+                                cycleDayPicker.value = wanCycleDay
+                                cycleDayPicker.wrapSelectorWheel = true
 
-                        builder.setTitle(R.string.data_usage_cycle_editor_title)
-                        builder.setView(view)
+                                builder.setTitle(R.string.data_usage_cycle_editor_title)
+                                builder.setView(view)
 
-                        builder.setCancelable(true)
+                                builder.setCancelable(true)
 
-                        builder.setPositiveButton(R.string.data_usage_cycle_editor_positive,
-                                DialogInterface.OnClickListener { dialog, which ->
-                                    // clear focus to finish pending text edits
-                                    cycleDayPicker.clearFocus()
+                                builder.setPositiveButton(
+                                    R.string.data_usage_cycle_editor_positive,
+                                    DialogInterface.OnClickListener { dialog, which ->
+                                        // clear focus to finish pending text edits
+                                        cycleDayPicker.clearFocus()
 
-                                    val wanCycleDay = cycleDayPicker.value
+                                        val wanCycleDay = cycleDayPicker.value
 
-                                    // Update preferences
-                                    if (mParentFragmentPreferences == null) {
-                                        return@OnClickListener
-                                    }
-                                    mParentFragmentPreferences.edit()
+                                        // Update preferences
+                                        if (mParentFragmentPreferences == null) {
+                                            return@OnClickListener
+                                        }
+                                        mParentFragmentPreferences.edit()
                                             .putInt(WAN_CYCLE_DAY_PREF, wanCycleDay)
                                             .apply()
 
-                                    mCycleOfTheDay = WANTrafficData
-                                            .getCurrentWANCycle(mParentFragmentActivity,
-                                                    mParentFragmentPreferences)
+                                        mCycleOfTheDay = WANTrafficData
+                                            .getCurrentWANCycle(
+                                                mParentFragmentActivity,
+                                                mParentFragmentPreferences
+                                            )
 
-                                    mCurrentCycle.set(mCycleOfTheDay)
+                                        mCurrentCycle.set(mCycleOfTheDay)
 
-                                    // Update
-                                    val monthYearDisplayed = layout.findViewById<View>(
-                                            R.id.tile_status_wan_monthly_month_displayed) as TextView
-                                    monthYearDisplayed.text = mCurrentCycle.get().getLabelWithYears()
-                                })
+                                        // Update
+                                        val monthYearDisplayed = layout.findViewById<View>(
+                                            R.id.tile_status_wan_monthly_month_displayed
+                                        ) as TextView
+                                        monthYearDisplayed.text = mCurrentCycle.get().getLabelWithYears()
+                                    }
+                                )
 
-                        builder.create().show()
+                                builder.create().show()
 
-                        return@OnMenuItemClickListener true
+                                return@OnMenuItemClickListener true
+                            }
+                            else -> {
+                            }
+                        }
+                        false
                     }
-                    else -> {
-                    }
-                }
-                false
-            })
-            val inflater = popup.menuInflater
+                )
+                val inflater = popup.menuInflater
 
-            val menu = popup.menu
+                val menu = popup.menu
 
-            inflater.inflate(R.menu.tile_wan_monthly_traffic_options, menu)
+                inflater.inflate(R.menu.tile_wan_monthly_traffic_options, menu)
 
-            popup.show()
-        })
+                popup.show()
+            }
+        )
     }
 
     fun displayBackupDialog(displayName: String, backupFileType: Int) {
@@ -592,13 +685,17 @@ class WANMonthlyTrafficTile(
         token.putString(WAN_MONTHLY_TRAFFIC_ACTION, RouterAction.BACKUP_WAN_TRAFF.name)
         token.putInt(WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE, backupFileType)
 
-        SnackbarUtils.buildSnackbar(mParentFragmentActivity,
-                String.format("Backup of WAN Traffic Data (as %s) is going to start on %s...",
-                        backupFileType, displayName),
-                "CANCEL",
-                Snackbar.LENGTH_LONG,
-                this@WANMonthlyTrafficTile,
-                token, true)
+        SnackbarUtils.buildSnackbar(
+            mParentFragmentActivity,
+            String.format(
+                "Backup of WAN Traffic Data (as %s) is going to start on %s...",
+                backupFileType, displayName
+            ),
+            "CANCEL",
+            Snackbar.LENGTH_LONG,
+            this@WANMonthlyTrafficTile,
+            token, true
+        )
 
         // new UndoBarController.UndoBar(mParentFragmentActivity).message(
         //    String.format("Backup of WAN Traffic Data (as %s) is going to start on %s...",
@@ -617,148 +714,197 @@ class WANMonthlyTrafficTile(
     override fun onDismissEventTimeout(event: Int, token: Bundle?) {
         val routerAction = token?.getString(WAN_MONTHLY_TRAFFIC_ACTION)
         FirebaseCrashlytics.getInstance().log(
-                "WAN Monthly Traffic Data Action: [$routerAction]")
+            "WAN Monthly Traffic Data Action: [$routerAction]"
+        )
         if (routerAction.isNullOrBlank()) {
             return
         }
         try {
-            when (RouterAction.valueOf(routerAction!!)) {
+            when (RouterAction.valueOf(routerAction)) {
                 RouterAction.DELETE_WAN_TRAFF -> {
                     run {
-                        val alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                                "Erasing WAN Traffic Data - please hold on...", false, false)
+                        val alertDialog = Utils.buildAlertDialog(
+                            mParentFragmentActivity, null,
+                            "Erasing WAN Traffic Data - please hold on...", false, false
+                        )
                         alertDialog.show()
                         (alertDialog.findViewById<View>(android.R.id.message) as TextView).gravity = Gravity.CENTER_HORIZONTAL
                         ActionManager.runTasks(
-                                EraseWANMonthlyTrafficRouterAction(mRouter, mParentFragmentActivity,
-                                        object : RouterActionListener {
-                                            override fun onRouterActionFailure(
-                                                routerAction: RouterAction,
-                                                router: Router,
-                                                exception: Exception?
-                                            ) {
-                                                try {
-                                                    this@WANMonthlyTrafficTile.onRouterActionFailure(routerAction, router,
-                                                            exception)
-                                                } finally {
-                                                    mParentFragmentActivity.runOnUiThread { alertDialog.cancel() }
-                                                }
-                                            }
+                            EraseWANMonthlyTrafficRouterAction(
+                                mRouter, mParentFragmentActivity,
+                                object : RouterActionListener {
+                                    override fun onRouterActionFailure(
+                                        routerAction: RouterAction,
+                                        router: Router,
+                                        exception: Exception?
+                                    ) {
+                                        try {
+                                            this@WANMonthlyTrafficTile.onRouterActionFailure(
+                                                routerAction, router,
+                                                exception
+                                            )
+                                        } finally {
+                                            mParentFragmentActivity.runOnUiThread { alertDialog.cancel() }
+                                        }
+                                    }
 
-                                            override fun onRouterActionSuccess(
-                                                routerAction: RouterAction,
-                                                router: Router,
-                                                returnData: Any
-                                            ) {
-                                                try {
-                                                    // dao delete everything
-                                                    dao.deleteWANTrafficDataByRouter(mRouter!!.uuid)
-                                                    this@WANMonthlyTrafficTile.onRouterActionSuccess(routerAction, router,
-                                                            returnData)
-                                                } finally {
-                                                    mParentFragmentActivity.runOnUiThread { alertDialog.cancel() }
-                                                }
-                                                if (mLoader != null) {
-                                                    // Reload everything right away
-                                                    doneWithLoaderInstance(this@WANMonthlyTrafficTile,
-                                                            mLoader as AsyncTaskLoader<NVRAMInfo>, 1L)
-                                                }
-                                            }
-                                        }, mGlobalPreferences))
+                                    override fun onRouterActionSuccess(
+                                        routerAction: RouterAction,
+                                        router: Router,
+                                        returnData: Any
+                                    ) {
+                                        try {
+                                            // dao delete everything
+                                            dao.deleteWANTrafficDataByRouter(mRouter!!.uuid)
+                                            this@WANMonthlyTrafficTile.onRouterActionSuccess(
+                                                routerAction, router,
+                                                returnData
+                                            )
+                                        } finally {
+                                            mParentFragmentActivity.runOnUiThread { alertDialog.cancel() }
+                                        }
+                                        if (mLoader != null) {
+                                            // Reload everything right away
+                                            doneWithLoaderInstance(
+                                                this@WANMonthlyTrafficTile,
+                                                mLoader as AsyncTaskLoader<NVRAMInfo>, 1L
+                                            )
+                                        }
+                                    }
+                                },
+                                mGlobalPreferences
+                            )
+                        )
                     }
                     return
                 }
                 RouterAction.BACKUP_WAN_TRAFF -> {
-                    val fileType = token!!.getInt(WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE,
-                            BackupWANMonthlyTrafficRouterAction.BackupFileType_RAW)
-                    val alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                            "Backing up WAN Traffic Data - please hold on...", false, false)
+                    val fileType = token.getInt(
+                        WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE,
+                        BackupWANMonthlyTrafficRouterAction.BackupFileType_RAW
+                    )
+                    val alertDialog = Utils.buildAlertDialog(
+                        mParentFragmentActivity, null,
+                        "Backing up WAN Traffic Data - please hold on...", false, false
+                    )
                     alertDialog.show()
                     (alertDialog.findViewById<View>(android.R.id.message) as TextView).gravity = Gravity.CENTER_HORIZONTAL
                     ActionManager.runTasks(
-                            BackupWANMonthlyTrafficRouterAction(mRouter, fileType, mParentFragmentActivity,
-                                    object : RouterActionListener {
+                        BackupWANMonthlyTrafficRouterAction(
+                            mRouter, fileType, mParentFragmentActivity,
+                            object : RouterActionListener {
 
-                                        override fun onRouterActionFailure(
-                                            routerAction: RouterAction,
-                                            router: Router,
-                                            exception: Exception?
-                                        ) {
-                                            try {
-                                                Utils.displayMessage(mParentFragmentActivity,
-                                                        String.format("Error on action '%s': %s",
-                                                                routerAction.toString(),
-                                                                Utils.handleException(exception).first), Style.ALERT)
-                                            } finally {
-                                                mParentFragmentActivity.runOnUiThread { alertDialog.cancel() }
-                                            }
+                                override fun onRouterActionFailure(
+                                    routerAction: RouterAction,
+                                    router: Router,
+                                    exception: Exception?
+                                ) {
+                                    try {
+                                        Utils.displayMessage(
+                                            mParentFragmentActivity,
+                                            String.format(
+                                                "Error on action '%s': %s",
+                                                routerAction.toString(),
+                                                Utils.handleException(exception).first
+                                            ),
+                                            Style.ALERT
+                                        )
+                                    } finally {
+                                        mParentFragmentActivity.runOnUiThread { alertDialog.cancel() }
+                                    }
+                                }
+
+                                override fun onRouterActionSuccess(
+                                    routerAction: RouterAction,
+                                    router: Router,
+                                    returnData: Any
+                                ) {
+                                    try {
+                                        val msg: String
+                                        if (!(returnData is Array<*> && returnData.size >= 2)) {
+                                            msg = String.format(
+                                                "Action '%s' executed " +
+                                                    "successfully on host '%s', but an internal error occurred. " +
+                                                    "The issue will be reported. Please try again later.",
+                                                routerAction.toString(), router.remoteIpAddress
+                                            )
+                                            Utils.displayMessage(mParentFragmentActivity, msg, Style.INFO)
+                                            Utils.reportException(null, IllegalStateException(msg))
+                                            return
                                         }
 
-                                        override fun onRouterActionSuccess(
-                                            routerAction: RouterAction,
-                                            router: Router,
-                                            returnData: Any
-                                        ) {
-                                            try {
-                                                val msg: String
-                                                if (!(returnData is Array<*> && returnData.size >= 2)) {
-                                                    msg = String.format("Action '%s' executed " +
-                                                            "successfully on host '%s', but an internal error occurred. " +
-                                                            "The issue will be reported. Please try again later.",
-                                                            routerAction.toString(), router.remoteIpAddress)
-                                                    Utils.displayMessage(mParentFragmentActivity, msg, Style.INFO)
-                                                    Utils.reportException(null, IllegalStateException(msg))
-                                                    return
-                                                }
+                                        val backupDateObject = returnData[0]
+                                        val localBackupFileObject = returnData[1]
 
-                                                val backupDateObject = returnData[0]
-                                                val localBackupFileObject = returnData[1]
-
-                                                if (!(backupDateObject is Date && localBackupFileObject is File)) {
-                                                    msg = String.format("Action '%s' executed " +
-                                                            "successfully on host '%s', but could not determine where " +
-                                                            "local backup file has been saved. Please try again later.",
-                                                            routerAction.toString(), router.remoteIpAddress)
-                                                    Utils.displayMessage(mParentFragmentActivity, msg, Style.INFO)
-                                                    Utils.reportException(null, IllegalStateException(msg))
-                                                    return
-                                                }
-
-                                                Utils.displayMessage(mParentFragmentActivity, String.format(
-                                                        "Action '%s' executed successfully on host '%s'. " + "Now loading the file sharing activity chooser...",
-                                                        routerAction.toString(), router.remoteIpAddress),
-                                                        Style.CONFIRM)
-
-                                                val localBackupFile = returnData[1] as File
-                                                val backupDate = returnData[0] as Date
-
-                                                val uriForFile = FileProvider
-                                                        .getUriForFile(mParentFragmentActivity,
-                                                                RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY,
-                                                                localBackupFile)
-                                                mParentFragmentActivity.grantUriPermission(
-                                                        mParentFragmentActivity.packageName, uriForFile,
-                                                        Intent.FLAG_GRANT_READ_URI_PERMISSION)
-
-                                                val shareIntent = Intent()
-                                                shareIntent.action = Intent.ACTION_SEND
-                                                shareIntent.putExtra(Intent.EXTRA_SUBJECT,
-                                                        String.format("Backup of WAN Monthly Traffic on Router '%s'",
-                                                                mRouter!!.canonicalHumanReadableName))
-                                                shareIntent.type = "text/html"
-                                                shareIntent.putExtra(Intent.EXTRA_TEXT, fromHtml(
-                                                        ("Backup Date: " + backupDate + "\n\n")
-                                                                .replace("\n".toRegex(), "<br/>") + Utils.getShareIntentFooter()))
-                                                shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile)
-                                                mParentFragmentActivity
-                                                        .startActivity(Intent.createChooser(shareIntent,
-                                                                mParentFragmentActivity.resources
-                                                                        .getText(R.string.share_backup)))
-                                            } finally {
-                                                mParentFragmentActivity.runOnUiThread { alertDialog.cancel() }
-                                            }
+                                        if (!(backupDateObject is Date && localBackupFileObject is File)) {
+                                            msg = String.format(
+                                                "Action '%s' executed " +
+                                                    "successfully on host '%s', but could not determine where " +
+                                                    "local backup file has been saved. Please try again later.",
+                                                routerAction.toString(), router.remoteIpAddress
+                                            )
+                                            Utils.displayMessage(mParentFragmentActivity, msg, Style.INFO)
+                                            Utils.reportException(null, IllegalStateException(msg))
+                                            return
                                         }
-                                    }, mGlobalPreferences))
+
+                                        Utils.displayMessage(
+                                            mParentFragmentActivity,
+                                            String.format(
+                                                "Action '%s' executed successfully on host '%s'. " + "Now loading the file sharing activity chooser...",
+                                                routerAction.toString(), router.remoteIpAddress
+                                            ),
+                                            Style.CONFIRM
+                                        )
+
+                                        val localBackupFile = returnData[1] as File
+                                        val backupDate = returnData[0] as Date
+
+                                        val uriForFile = FileProvider
+                                            .getUriForFile(
+                                                mParentFragmentActivity,
+                                                RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY,
+                                                localBackupFile
+                                            )
+                                        mParentFragmentActivity.grantUriPermission(
+                                            mParentFragmentActivity.packageName, uriForFile,
+                                            Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                        )
+
+                                        val shareIntent = Intent()
+                                        shareIntent.action = Intent.ACTION_SEND
+                                        shareIntent.putExtra(
+                                            Intent.EXTRA_SUBJECT,
+                                            String.format(
+                                                "Backup of WAN Monthly Traffic on Router '%s'",
+                                                mRouter!!.canonicalHumanReadableName
+                                            )
+                                        )
+                                        shareIntent.type = "text/html"
+                                        shareIntent.putExtra(
+                                            Intent.EXTRA_TEXT,
+                                            fromHtml(
+                                                ("Backup Date: " + backupDate + "\n\n")
+                                                    .replace("\n".toRegex(), "<br/>") + Utils.getShareIntentFooter()
+                                            )
+                                        )
+                                        shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile)
+                                        mParentFragmentActivity
+                                            .startActivity(
+                                                Intent.createChooser(
+                                                    shareIntent,
+                                                    mParentFragmentActivity.resources
+                                                        .getText(R.string.share_backup)
+                                                )
+                                            )
+                                    } finally {
+                                        mParentFragmentActivity.runOnUiThread { alertDialog.cancel() }
+                                    }
+                                }
+                            },
+                            mGlobalPreferences
+                        )
+                    )
                     return
                 }
                 else -> {
@@ -777,7 +923,8 @@ class WANMonthlyTrafficTile(
         var data = data
         try {
             FirebaseCrashlytics.getInstance().log(
-                    "onLoadFinished: loader=$loader / data=$data / data=$data")
+                "onLoadFinished: loader=$loader / data=$data / data=$data"
+            )
 
             setLoadingViewVisibility(View.GONE)
             layout.findViewById<View>(R.id.tile_status_wan_monthly_traffic_header_loading_view).visibility = View.GONE
@@ -787,28 +934,22 @@ class WANMonthlyTrafficTile(
             if (data == null) {
                 preliminaryCheckException = DDWRTNoDataException("No Data!")
             } else if (data.getException() == null) {
-                    if ("1" != data.getProperty(NVRAMInfo.TTRAFF_ENABLE)) {
-                        preliminaryCheckException = DDWRTTraffDataDisabled("Traffic monitoring disabled!")
-                    } else if (data.isEmpty) {
-                        preliminaryCheckException = DDWRTNoDataException("No Traffic Data!")
-                    }
+                if ("1" != data.getProperty(NVRAMInfo.TTRAFF_ENABLE)) {
+                    preliminaryCheckException = DDWRTTraffDataDisabled("Traffic monitoring disabled!")
+                } else if (data.isEmpty) {
+                    preliminaryCheckException = DDWRTNoDataException("No Traffic Data!")
                 }
+            }
 
             val enableTraffDataButton = this.layout.findViewById<View>(R.id.tile_status_wan_monthly_traffic_status) as SwitchCompat
             enableTraffDataButton.visibility = View.VISIBLE
 
             val makeToogleEnabled = data != null && data.getData() != null && data.getData()!!
-                    .containsKey(NVRAMInfo.TTRAFF_ENABLE)
+                .containsKey(NVRAMInfo.TTRAFF_ENABLE)
 
             if (!isToggleStateActionRunning.get()) {
                 if (makeToogleEnabled) {
-                    if ("1" == data!!.getProperty(NVRAMInfo.TTRAFF_ENABLE)) {
-                        // Enabled
-                        enableTraffDataButton.isChecked = true
-                    } else {
-                        // Disabled
-                        enableTraffDataButton.isChecked = false
-                    }
+                    enableTraffDataButton.isChecked = "1" == data!!.getProperty(NVRAMInfo.TTRAFF_ENABLE)
                     enableTraffDataButton.isEnabled = true
                 } else {
                     enableTraffDataButton.isChecked = false
@@ -826,7 +967,8 @@ class WANMonthlyTrafficTile(
             val exception = data!!.getException()
 
             val displayButton = this.layout.findViewById<View>(
-                    R.id.tile_status_wan_monthly_traffic_graph_placeholder_display_button)
+                R.id.tile_status_wan_monthly_traffic_graph_placeholder_display_button
+            )
             val currentButton = this.layout.findViewById<Button>(R.id.tile_status_wan_monthly_traffic_graph_placeholder_current)
             val dateFromPickerButton = this.layout.findViewById<Button>(R.id.tile_status_wan_monthly_traffic_graph_placeholder_date_from_picker)
             val dateToPickerButton = this.layout.findViewById<Button>(R.id.tile_status_wan_monthly_traffic_graph_placeholder_date_to_picker)
@@ -854,43 +996,56 @@ class WANMonthlyTrafficTile(
 
                     val cycleItem = mCurrentCycle.get()
                     if (cycleItem == null) {
-                        Toast.makeText(this@WANMonthlyTrafficTile.mParentFragmentActivity,
-                                String.format("No traffic data for '%s'", monthYearDisplayedText),
-                                Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@WANMonthlyTrafficTile.mParentFragmentActivity,
+                            String.format("No traffic data for '%s'", monthYearDisplayedText),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else {
 
                         val intent = Intent(mParentFragmentActivity, WANMonthlyTrafficActivity::class.java)
-                        intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
-                                mRouter?.uuid ?: EMPTY_STRING)
+                        intent.putExtra(
+                            RouterManagementActivity.ROUTER_SELECTED,
+                            mRouter?.uuid ?: EMPTY_STRING
+                        )
                         intent.putExtra(WANMonthlyTrafficActivity.WAN_CYCLE, mGson.toJson(cycleItem))
 
-                        val alertDialog = ProgressDialog.show(mParentFragmentActivity,
-                                String.format("Loading traffic data for '%s'", monthYearDisplayedText),
-                                "Please Wait...", true)
+                        val alertDialog = ProgressDialog.show(
+                            mParentFragmentActivity,
+                            String.format("Loading traffic data for '%s'", monthYearDisplayedText),
+                            "Please Wait...", true
+                        )
 
-                        Handler().postDelayed({
-                            val options = ActivityOptionsCompat.makeScaleUpAnimation(v, 0, 0, v.width,
-                                    v.height)
-                            ActivityCompat.startActivity(mParentFragmentActivity, intent, options.toBundle())
-                            //
-                            //                                    mParentFragmentActivity.startActivity(intent);
-                            //                                    mParentFragmentActivity.overridePendingTransition(
-                            //                                            R.anim.zoom_enter, R.anim.zoom_exit);
-                            alertDialog.cancel()
-                        }, 1000)
+                        Handler().postDelayed(
+                            {
+                                val options = ActivityOptionsCompat.makeScaleUpAnimation(
+                                    v, 0, 0, v.width,
+                                    v.height
+                                )
+                                ActivityCompat.startActivity(mParentFragmentActivity, intent, options.toBundle())
+                                //
+                                //                                    mParentFragmentActivity.startActivity(intent);
+                                //                                    mParentFragmentActivity.overridePendingTransition(
+                                //                                            R.anim.zoom_enter, R.anim.zoom_exit);
+                                alertDialog.cancel()
+                            },
+                            1000
+                        )
                     }
                 }
 
                 currentButton.setOnClickListener {
-                    mCycleOfTheDay = WANTrafficData.getCurrentWANCycle(mParentFragmentActivity,
-                            mParentFragmentPreferences)
+                    mCycleOfTheDay = WANTrafficData.getCurrentWANCycle(
+                        mParentFragmentActivity,
+                        mParentFragmentPreferences
+                    )
                     mCurrentCycle.set(mCycleOfTheDay)
                     monthYearDisplayed.text = mCycleOfTheDay.getLabelWithYears()
                     if (mParentFragmentPreferences != null) {
                         try {
                             mParentFragmentPreferences.edit()
-                                    .remove(getFormattedPrefKey(WAN_CYCLE_DISPLAYED))
-                                    .apply()
+                                .remove(getFormattedPrefKey(WAN_CYCLE_DISPLAYED))
+                                .apply()
                         } catch (e: Exception) {
                             // No worries
                         }
@@ -908,9 +1063,11 @@ class WANMonthlyTrafficTile(
                             if (mParentFragmentPreferences != null) {
                                 try {
                                     mParentFragmentPreferences.edit()
-                                            .putString(getFormattedPrefKey(WAN_CYCLE_DISPLAYED),
-                                                    mGson.toJson(currentCycle))
-                                            .apply()
+                                        .putString(
+                                            getFormattedPrefKey(WAN_CYCLE_DISPLAYED),
+                                            mGson.toJson(currentCycle)
+                                        )
+                                        .apply()
                                     Utils.requestBackup(mParentFragmentActivity)
                                 } catch (e: Exception) {
                                     // No worries
@@ -919,9 +1076,10 @@ class WANMonthlyTrafficTile(
                         }
                     }
                     val datePickerFragment = DatePickerFragment.newInstance(
-                            datePickerListener,
-                            mCurrentCycle.get().start,
-                            maxMillis = mCurrentCycle.get().end)
+                        datePickerListener,
+                        mCurrentCycle.get().start,
+                        maxMillis = mCurrentCycle.get().end
+                    )
                     datePickerFragment.show(mParentFragmentActivity.supportFragmentManager, "dateFromPicker")
                 }
 
@@ -936,9 +1094,11 @@ class WANMonthlyTrafficTile(
                             if (mParentFragmentPreferences != null) {
                                 try {
                                     mParentFragmentPreferences.edit()
-                                            .putString(getFormattedPrefKey(WAN_CYCLE_DISPLAYED),
-                                                    mGson.toJson(currentCycle))
-                                            .apply()
+                                        .putString(
+                                            getFormattedPrefKey(WAN_CYCLE_DISPLAYED),
+                                            mGson.toJson(currentCycle)
+                                        )
+                                        .apply()
                                     Utils.requestBackup(mParentFragmentActivity)
                                 } catch (e: Exception) {
                                     // No worries
@@ -947,9 +1107,10 @@ class WANMonthlyTrafficTile(
                         }
                     }
                     val datePickerFragment = DatePickerFragment.newInstance(
-                            datePickerListener = datePickerListener,
-                            startFromMillis = mCurrentCycle.get().end,
-                            minMillis = mCurrentCycle.get().start)
+                        datePickerListener = datePickerListener,
+                        startFromMillis = mCurrentCycle.get().end,
+                        minMillis = mCurrentCycle.get().start
+                    )
                     datePickerFragment.show(mParentFragmentActivity.supportFragmentManager, "dateToPicker")
                 }
 
@@ -995,9 +1156,14 @@ class WANMonthlyTrafficTile(
         router: Router,
         exception: Exception?
     ) {
-        Utils.displayMessage(mParentFragmentActivity,
-                String.format("Error on action '%s': %s", routerAction.toString(),
-                        Utils.handleException(exception).first), Style.ALERT)
+        Utils.displayMessage(
+            mParentFragmentActivity,
+            String.format(
+                "Error on action '%s': %s", routerAction.toString(),
+                Utils.handleException(exception).first
+            ),
+            Style.ALERT
+        )
     }
 
     override fun onRouterActionSuccess(
@@ -1005,9 +1171,14 @@ class WANMonthlyTrafficTile(
         router: Router,
         returnData: Any
     ) {
-        Utils.displayMessage(mParentFragmentActivity,
-                String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(),
-                        router.remoteIpAddress), Style.CONFIRM)
+        Utils.displayMessage(
+            mParentFragmentActivity,
+            String.format(
+                "Action '%s' executed successfully on host '%s'", routerAction.toString(),
+                router.remoteIpAddress
+            ),
+            Style.CONFIRM
+        )
     }
 
     override fun getLoader(id: Int, args: Bundle?): Loader<NVRAMInfo>? {
@@ -1024,12 +1195,14 @@ class WANMonthlyTrafficTile(
 
                     mIsThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity)
 
-                    FirebaseCrashlytics.getInstance().log("Init background loader for " +
+                    FirebaseCrashlytics.getInstance().log(
+                        "Init background loader for " +
                             WANMonthlyTrafficTile::class.java +
                             ": routerInfo=" +
                             mRouter +
                             " / nbRunsLoader=" +
-                            nbRunsLoader)
+                            nbRunsLoader
+                    )
 
                     if (mRefreshing.getAndSet(true)) {
                         return NVRAMInfo().setException(DDWRTTileAutoRefreshNotAllowedException())
@@ -1055,12 +1228,16 @@ class WANMonthlyTrafficTile(
 
                     updateProgressBarViewSeparator(10)
                     // Get TTRAFF_ENABLE
-                    val ttraffEnableNVRAMInfo = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences,
-                            NVRAMInfo.TTRAFF_ENABLE)
+                    val ttraffEnableNVRAMInfo = SSHUtils.getNVRamInfoFromRouter(
+                        mParentFragmentActivity, mRouter, mGlobalPreferences,
+                        NVRAMInfo.TTRAFF_ENABLE
+                    )
 
                     updateProgressBarViewSeparator(20)
-                    mCycleOfTheDay = WANTrafficData.getCurrentWANCycle(mParentFragmentActivity,
-                            mParentFragmentPreferences)
+                    mCycleOfTheDay = WANTrafficData.getCurrentWANCycle(
+                        mParentFragmentActivity,
+                        mParentFragmentPreferences
+                    )
 
                     var cycleItem: MonthlyCycleItem? = null
                     if (mParentFragmentPreferences != null) {
@@ -1075,12 +1252,16 @@ class WANMonthlyTrafficTile(
                     }
                     mCurrentCycle.set(if (cycleItem != null) cycleItem else mCycleOfTheDay)
 
-                    getTrafficDataNvramInfoAndPersistIfNeeded(mParentFragmentActivity, mRouter,
-                            mGlobalPreferences, dao)
+                    getTrafficDataNvramInfoAndPersistIfNeeded(
+                        mParentFragmentActivity, mRouter,
+                        mGlobalPreferences, dao
+                    )
 
                     updateProgressBarViewSeparator(55)
-                    val nvramInfo = WANTrafficUtils.computeWANTrafficUsageBetweenDates(dao, mRouter!!.uuid,
-                            mCurrentCycle.get().start, mCurrentCycle.get().end)
+                    val nvramInfo = WANTrafficUtils.computeWANTrafficUsageBetweenDates(
+                        dao, mRouter!!.uuid,
+                        mCurrentCycle.get().start, mCurrentCycle.get().end
+                    )
 
                     if (ttraffEnableNVRAMInfo != null) {
                         nvramInfo.putAll(ttraffEnableNVRAMInfo)

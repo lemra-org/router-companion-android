@@ -41,7 +41,8 @@ data class WANTrafficData @JvmOverloads constructor(
                 val calendarForStartComputation = Calendar.getInstance()
                 calendarForStartComputation.add(Calendar.MONTH, -1)
                 val prevMonthActualMaximum = calendarForStartComputation.getActualMaximum(
-                        Calendar.DAY_OF_MONTH)
+                    Calendar.DAY_OF_MONTH
+                )
                 if (wanCycleDay > prevMonthActualMaximum) {
                     calendarForStartComputation.set(Calendar.DAY_OF_MONTH, prevMonthActualMaximum)
                 } else {
@@ -52,7 +53,8 @@ data class WANTrafficData @JvmOverloads constructor(
                 // End
                 val calendarForEndComputation = Calendar.getInstance()
                 val currentMonthActualMaximum = calendarForEndComputation.getActualMaximum(
-                        Calendar.DAY_OF_MONTH)
+                    Calendar.DAY_OF_MONTH
+                )
                 if (wanCycleDay - 1 > currentMonthActualMaximum) {
                     calendarForEndComputation.set(Calendar.DAY_OF_MONTH, currentMonthActualMaximum)
                 } else {
@@ -66,7 +68,8 @@ data class WANTrafficData @JvmOverloads constructor(
                 // Start
                 val calendarForStartComputation = Calendar.getInstance()
                 val currentMonthActualMaximum = calendarForStartComputation.getActualMaximum(
-                        Calendar.DAY_OF_MONTH)
+                    Calendar.DAY_OF_MONTH
+                )
                 if (wanCycleDay > currentMonthActualMaximum) {
                     calendarForStartComputation.set(Calendar.DAY_OF_MONTH, currentMonthActualMaximum)
                 } else {
@@ -78,7 +81,8 @@ data class WANTrafficData @JvmOverloads constructor(
                 val calendarForEndComputation = Calendar.getInstance()
                 calendarForEndComputation.add(Calendar.MONTH, 1)
                 val nextMonthActualMaximum = calendarForEndComputation.getActualMaximum(
-                        Calendar.DAY_OF_MONTH)
+                    Calendar.DAY_OF_MONTH
+                )
                 if (wanCycleDay - 1 > nextMonthActualMaximum) {
                     calendarForEndComputation.set(Calendar.DAY_OF_MONTH, nextMonthActualMaximum)
                 } else {

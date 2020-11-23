@@ -46,10 +46,12 @@ abstract class AbstractRouterFirmwareConnector {
     ): NVRAMInfo {
         try {
             return this.javaClass
-                    .getDeclaredMethod("getDataFor${tile.simpleName}", Context::class.java,
-                            Router::class.java,
-                            RemoteDataRetrievalListener::class.java)
-                    .invoke(this, context, router, dataRetrievalListener) as NVRAMInfo
+                .getDeclaredMethod(
+                    "getDataFor${tile.simpleName}", Context::class.java,
+                    Router::class.java,
+                    RemoteDataRetrievalListener::class.java
+                )
+                .invoke(this, context, router, dataRetrievalListener) as NVRAMInfo
         } catch (e: IllegalAccessException) {
             FirebaseCrashlytics.getInstance().recordException(e)
             throw IllegalStateException(e)

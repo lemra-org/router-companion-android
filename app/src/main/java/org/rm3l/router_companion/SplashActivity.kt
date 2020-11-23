@@ -32,10 +32,12 @@ class SplashActivity : AppCompatActivity() {
         if (requestCode == SplashScreenBuilder.SPLASH_SCREEN_FINISHED) {
             if (resultCode == RESULT_OK) {
                 FirebaseCrashlytics.getInstance().log(
-                    "SPLASH_SCREEN_FINISHED: OK => SplashScreen finished without manual canceling")
+                    "SPLASH_SCREEN_FINISHED: OK => SplashScreen finished without manual canceling"
+                )
             } else if (resultCode == RESULT_CANCELED) {
                 FirebaseCrashlytics.getInstance().log(
-                    "SPLASH_SCREEN_FINISHED: RESULT_CANCELED => SplashScreen finished through manual canceling")
+                    "SPLASH_SCREEN_FINISHED: RESULT_CANCELED => SplashScreen finished through manual canceling"
+                )
             }
         }
 

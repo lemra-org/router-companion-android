@@ -9,7 +9,9 @@ class ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(private val mShowOnlyW
 
     override fun visit(devices: Set<Device>) =
         devices.filter {
-            !mShowOnlyWanAccessDisabledHosts || (it.wanAccessState
-                    == WAN_ACCESS_DISABLED)
+            !mShowOnlyWanAccessDisabledHosts || (
+                it.wanAccessState
+                    == WAN_ACCESS_DISABLED
+                )
         }.toSet()
 }

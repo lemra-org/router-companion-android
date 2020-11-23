@@ -38,9 +38,9 @@ class ToolboxArpingTile(
     override fun getInfoText() = R.string.arping_info
 
     override fun getRouterAction(textToFind: String) = ArpPingFromRouterAction(
-            mRouter, mParentFragmentActivity, mRouterActionListener,
-            mGlobalPreferences, textToFind
-        )
+        mRouter, mParentFragmentActivity, mRouterActionListener,
+        mGlobalPreferences, textToFind
+    )
 
     override fun getSubmitButtonText() = R.string.toolbox_arping
 

@@ -52,19 +52,22 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
         try {
             dataRetrievalListener?.onProgressUpdate(10)
             return NVRAMInfo().setProperty(NVRAMInfo.ROUTER_NAME, "Demo Router (Test Data)")
-                    .setProperty(NVRAMInfo.WAN_IPADDR, "1.2.3.4")
-                    .setProperty(NVRAMInfo.LAN_IPADDR, "192.168.78.254")
-                    .setProperty(NVRAMInfo.OPENVPNCL_ENABLE, Integer.toString(Random().nextInt(2)))
-                    .setProperty(NVRAMInfo.OPENVPNCL_REMOTEIP, "my.remote.vpn.servi.ce")
-                    .setProperty(NVRAMInfo.OPENVPNCL_REMOTEPORT, "1234")
-                    .setProperty(NVRAMInfo.NB_ACTIVE_CLIENTS, Integer.toString(Random().nextInt(20)))
-                    .setProperty(NVRAMInfo.NB_DHCP_LEASES, Integer.toString(Random().nextInt(30)))
-                    .setProperty(NVRAMInfo.INTERNET_CONNECTIVITY_PUBLIC_IP, "52." +
-                            (1 + Random().nextInt(252)) +
-                            "." +
-                            (1 + Random().nextInt(252)) +
-                            "." +
-                            (1 + Random().nextInt(252)))
+                .setProperty(NVRAMInfo.WAN_IPADDR, "1.2.3.4")
+                .setProperty(NVRAMInfo.LAN_IPADDR, "192.168.78.254")
+                .setProperty(NVRAMInfo.OPENVPNCL_ENABLE, Integer.toString(Random().nextInt(2)))
+                .setProperty(NVRAMInfo.OPENVPNCL_REMOTEIP, "my.remote.vpn.servi.ce")
+                .setProperty(NVRAMInfo.OPENVPNCL_REMOTEPORT, "1234")
+                .setProperty(NVRAMInfo.NB_ACTIVE_CLIENTS, Integer.toString(Random().nextInt(20)))
+                .setProperty(NVRAMInfo.NB_DHCP_LEASES, Integer.toString(Random().nextInt(30)))
+                .setProperty(
+                    NVRAMInfo.INTERNET_CONNECTIVITY_PUBLIC_IP,
+                    "52." +
+                        (1 + Random().nextInt(252)) +
+                        "." +
+                        (1 + Random().nextInt(252)) +
+                        "." +
+                        (1 + Random().nextInt(252))
+                )
         } finally {
             dataRetrievalListener?.doRegardlessOfStatus()
         }
@@ -123,27 +126,37 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
     ): NVRAMInfo {
         dataRetrievalListener?.onProgressUpdate(50)
 
-        val nvramInfo = NVRAMInfo().setProperty(NVRAMInfo.TTRAFF_ENABLE,
-                if (Random().nextBoolean()) "1" else "0")
+        val nvramInfo = NVRAMInfo().setProperty(
+            NVRAMInfo.TTRAFF_ENABLE,
+            if (Random().nextBoolean()) "1" else "0"
+        )
 
         val random = Random()
         val totalDlMonth = ((500 + MB * random.nextInt(500)) * MB).toLong()
 
-        nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH,
-                org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(totalDlMonth))
+        nvramInfo.setProperty(
+            TOTAL_DL_CURRENT_MONTH,
+            org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(totalDlMonth)
+        )
         nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB, HIDDEN_)
 
         val totalUlMonth = ((1 + random.nextInt(100)) * MB).toLong()
-        nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH,
-                org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(totalUlMonth))
+        nvramInfo.setProperty(
+            TOTAL_UL_CURRENT_MONTH,
+            org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(totalUlMonth)
+        )
         nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB, HIDDEN_)
 
-        nvramInfo.setProperty(NVRAMInfo.TOTAL_DL_CURRENT_DAY,
-                org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(totalDlMonth / 30))
+        nvramInfo.setProperty(
+            NVRAMInfo.TOTAL_DL_CURRENT_DAY,
+            org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(totalDlMonth / 30)
+        )
         nvramInfo.setProperty(NVRAMInfo.TOTAL_DL_CURRENT_DAY_MB, HIDDEN_)
 
-        nvramInfo.setProperty(NVRAMInfo.TOTAL_UL_CURRENT_DAY,
-                org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(totalUlMonth / 30))
+        nvramInfo.setProperty(
+            NVRAMInfo.TOTAL_UL_CURRENT_DAY,
+            org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize(totalUlMonth / 30)
+        )
         nvramInfo.setProperty(NVRAMInfo.TOTAL_UL_CURRENT_DAY_MB, HIDDEN_)
 
         return nvramInfo
@@ -162,16 +175,19 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
         val days = Integer.toString(random.nextInt(60))
         val hours = Integer.toString(random.nextInt(23))
         val minutes = Integer.toString(random.nextInt(59))
-        return NVRAMInfo().setProperty(NVRAMInfo.UPTIME, "22:31:45 up " +
+        return NVRAMInfo().setProperty(
+            NVRAMInfo.UPTIME,
+            "22:31:45 up " +
                 days +
                 " days, " +
                 hours +
                 ":" +
                 minutes +
-                ", load average: 0.11, 0.10, 0.09")
-                .setProperty(NVRAMInfo.UPTIME_DAYS, days)
-                .setProperty(NVRAMInfo.UPTIME_HOURS, hours)
-                .setProperty(NVRAMInfo.UPTIME_MINUTES, minutes)
+                ", load average: 0.11, 0.10, 0.09"
+        )
+            .setProperty(NVRAMInfo.UPTIME_DAYS, days)
+            .setProperty(NVRAMInfo.UPTIME_HOURS, hours)
+            .setProperty(NVRAMInfo.UPTIME_MINUTES, minutes)
     }
 
     @Throws(Exception::class)
@@ -182,14 +198,17 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
     ): List<Array<String>> {
         val memTotal = 4096
         val memFree = Random().nextInt(memTotal + 1)
-        val memUsageData = Array(3, { i ->
-            when (i) {
-                0 -> "$memTotal kB" // MemTotal
-                1 -> "$memFree kB" // MemFree
-                2 -> "${Random().nextInt(100)}"
-                else -> ""
+        val memUsageData = Array(
+            3,
+            { i ->
+                when (i) {
+                    0 -> "$memTotal kB" // MemTotal
+                    1 -> "$memFree kB" // MemFree
+                    2 -> "${Random().nextInt(100)}"
+                    else -> ""
+                }
             }
-        })
+        )
         val cpuUsageData = Array(2, { i -> if (i == 1) " 0.14, 0.24, 0.28" else "1" })
 
         return Arrays.asList<Array<String>>(memUsageData, cpuUsageData)
@@ -209,7 +228,8 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
         val cifsSize: Array<String?>? = Array(1, { _ -> "/dev/mtdblock/5      cifs          $totalSize      ${random.nextInt(totalSize)}     91300   50% /cifs" })
 
         return DDWRTFirmwareConnector.parseDataForStorageUsageTile(
-                listOf(nvramSize, jffs2Size, cifsSize), dataRetrievalListener)
+            listOf(nvramSize, jffs2Size, cifsSize), dataRetrievalListener
+        )
     }
 
     @Throws(Exception::class)
@@ -220,11 +240,11 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
     ): NVRAMInfo {
 
         val nvramInfo = NVRAMInfo().setProperty(NVRAMInfo.ROUTER_NAME, ROUTER_NAME)
-                .setProperty(NVRAMInfo.WAN_IPADDR, WAN_IPADDR)
-                .setProperty(NVRAMInfo.MODEL, MODEL)
-                .setProperty(NVRAMInfo.DIST_TYPE, DIST_TYPE)
-                .setProperty(NVRAMInfo.LAN_IPADDR, LAN_IPADDR)
-                .setProperty(NVRAMInfo.OS_VERSION, OS_VERSION)
+            .setProperty(NVRAMInfo.WAN_IPADDR, WAN_IPADDR)
+            .setProperty(NVRAMInfo.MODEL, MODEL)
+            .setProperty(NVRAMInfo.DIST_TYPE, DIST_TYPE)
+            .setProperty(NVRAMInfo.LAN_IPADDR, LAN_IPADDR)
+            .setProperty(NVRAMInfo.OS_VERSION, OS_VERSION)
 
         updateProgressBarViewSeparator(dataRetrievalListener, 50)
 
@@ -232,17 +252,19 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
         val cal = Calendar.getInstance()
         cal.time = date
         cal.add(Calendar.DATE, -77)
-        val otherCmds = Array(5,
-                { i ->
-                    when (i) {
-                        0 -> date.toString() // current date
-                        1 -> cal.time.toString() // date since last reboot
-                        2 -> " 77 days, 11:00,  2 users, "
-                        3 -> "Linux 2.4.37 #7583 Sat Oct 10 mips"
-                        4 -> "DD-WRT v24-sp2 (10/10/09) - rev 7583"
-                        else -> ""
-                    }
-                })
+        val otherCmds = Array(
+            5,
+            { i ->
+                when (i) {
+                    0 -> date.toString() // current date
+                    1 -> cal.time.toString() // date since last reboot
+                    2 -> " 77 days, 11:00,  2 users, "
+                    3 -> "Linux 2.4.37 #7583 Sat Oct 10 mips"
+                    4 -> "DD-WRT v24-sp2 (10/10/09) - rev 7583"
+                    else -> ""
+                }
+            }
+        )
 
         // date
         nvramInfo.setProperty(NVRAMInfo.CURRENT_DATE, otherCmds[0])
@@ -261,8 +283,10 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
         // Kernel
         otherCmds[3].let {
             val valueWithoutGnuLinux = it.replace("GNU/Linux", "")
-            nvramInfo.setProperty(NVRAMInfo.KERNEL,
-                    valueWithoutGnuLinux.replace(nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME) ?: "", ""))
+            nvramInfo.setProperty(
+                NVRAMInfo.KERNEL,
+                valueWithoutGnuLinux.replace(nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME) ?: "", "")
+            )
         }
 //    nvramInfo.setProperty(NVRAMInfo.KERNEL,
 //        StringUtils.replace(StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
@@ -275,8 +299,10 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
         val strings = Splitter.on("rev:").omitEmptyStrings().trimResults().splitToList(fwString)
         if (strings.size >= 2) {
             try {
-                nvramInfo.setProperty(NVRAMInfo.OS_VERSION,
-                        java.lang.Long.toString(java.lang.Long.parseLong(strings[1].trim { it <= ' ' })))
+                nvramInfo.setProperty(
+                    NVRAMInfo.OS_VERSION,
+                    java.lang.Long.toString(java.lang.Long.parseLong(strings[1].trim { it <= ' ' }))
+                )
             } catch (nfe: NumberFormatException) {
                 // No worries
             }
@@ -287,8 +313,10 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
         val nbRunsLoaderModulo = (nbRunsStatusRouterStateTile.getAndIncrement() % 5).toInt()
         if (nbRunsLoaderModulo == 0) {
             // nbRunsLoader = 5k
-            nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP,
-                    "52.64." + (1 + Random().nextInt(252)) + "." + (1 + Random().nextInt(252)))
+            nvramInfo.setProperty(
+                INTERNET_CONNECTIVITY_PUBLIC_IP,
+                "52.64." + (1 + Random().nextInt(252)) + "." + (1 + Random().nextInt(252))
+            )
         } else if (nbRunsLoaderModulo == 1) {
             // nbRunsLoader = 5k + 1
             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK)
@@ -336,7 +364,8 @@ class DemoFirmwareConnector : AbstractRouterFirmwareConnector() {
             // TODO Add other properties here
         }
         val routerData = WANAccessPoliciesRouterData().setData(
-                wanAccessPolicies) as WANAccessPoliciesRouterData
+            wanAccessPolicies
+        ) as WANAccessPoliciesRouterData
         dataRetrievalListener?.onProgressUpdate(90)
         return routerData
     }

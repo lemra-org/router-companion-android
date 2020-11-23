@@ -2,9 +2,9 @@ package org.rm3l.router_companion.mgmt
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mikepenz.aboutlibraries.ui.LibsActivity
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.junit.Assert
 import org.junit.runner.RunWith
 import org.rm3l.ddwrt.R
 import org.rm3l.maoni.ui.MaoniActivity
@@ -56,7 +56,7 @@ class RouterManagementActivityTest {
 
         TODO(
             "ManageRouterFragmentActivity cannot be tested due to Robolectric issues: " +
-                    "FragmentManager is already executing transactions"
+                "FragmentManager is already executing transactions"
         )
 
         // TODO Issue with RoboElectric: FragmentManager is already executing transactions

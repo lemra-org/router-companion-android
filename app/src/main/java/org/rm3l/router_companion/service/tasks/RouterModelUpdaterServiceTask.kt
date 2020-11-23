@@ -16,8 +16,10 @@ class RouterModelUpdaterServiceTask(ctx: Context) : AbstractBackgroundServiceTas
 
         val routerPreferences = mCtx.getSharedPreferences(router.templateUuidOrUuid, Context.MODE_PRIVATE) ?: return
 
-        val nvramInfo = SSHUtils.getNVRamInfoFromRouter(mCtx, router, globalPreferences,
-                NVRAMInfo.MODEL) ?: return
+        val nvramInfo = SSHUtils.getNVRamInfoFromRouter(
+            mCtx, router, globalPreferences,
+            NVRAMInfo.MODEL
+        ) ?: return
 
         val routerModel = nvramInfo.getProperty(NVRAMInfo.MODEL, DEFAULT_VALUE)
 

@@ -37,9 +37,11 @@ class MonthlyCycleItem : Comparable<MonthlyCycleItem> {
     constructor(context: Context?, start: Long, end: Long) {
         this.context = context
         this.label = formatDateRange(context, FORMAT_SHOW_DATE or FORMAT_ABBREV_MONTH, start, end)
-        this.labelWithYears = formatDateRange(context,
-                FORMAT_SHOW_YEAR or FORMAT_SHOW_DATE or FORMAT_ABBREV_MONTH, start,
-                end)
+        this.labelWithYears = formatDateRange(
+            context,
+            FORMAT_SHOW_YEAR or FORMAT_SHOW_DATE or FORMAT_ABBREV_MONTH, start,
+            end
+        )
         this.start = start
         this.end = end
     }
@@ -73,9 +75,13 @@ class MonthlyCycleItem : Comparable<MonthlyCycleItem> {
     }
 
     fun refreshLabelWithYears(): String? {
-        this.setLabelWithYears(formatDateRange(context,
+        this.setLabelWithYears(
+            formatDateRange(
+                context,
                 FORMAT_SHOW_YEAR or FORMAT_SHOW_DATE or FORMAT_ABBREV_MONTH, start,
-                end))
+                end
+            )
+        )
         return this.labelWithYears
     }
 
@@ -117,12 +123,15 @@ class MonthlyCycleItem : Comparable<MonthlyCycleItem> {
         val startCal = Calendar.getInstance()
         startCal.timeInMillis = start
         startCal.add(Calendar.MONTH, -1)
-        startCal.set(Calendar.DAY_OF_MONTH,
-                Math.min(startCal.getActualMaximum(Calendar.DAY_OF_MONTH), wanCycleDay!!))
+        startCal.set(
+            Calendar.DAY_OF_MONTH,
+            Math.min(startCal.getActualMaximum(Calendar.DAY_OF_MONTH), wanCycleDay!!)
+        )
         val startMillis = startCal.timeInMillis
 
         return MonthlyCycleItem(context, startMillis, endMillis).setRouterPreferences(
-                routerPreferences)
+            routerPreferences
+        )
     }
 
     operator fun next(): MonthlyCycleItem {
@@ -130,20 +139,25 @@ class MonthlyCycleItem : Comparable<MonthlyCycleItem> {
         startCal.timeInMillis = start
         startCal.set(Calendar.DAY_OF_MONTH, 1) // The first day of the month the start is in
         startCal.add(Calendar.MONTH, 1)
-        startCal.set(Calendar.DAY_OF_MONTH,
-                Math.min(startCal.getActualMaximum(Calendar.DAY_OF_MONTH), wanCycleDay!!))
+        startCal.set(
+            Calendar.DAY_OF_MONTH,
+            Math.min(startCal.getActualMaximum(Calendar.DAY_OF_MONTH), wanCycleDay!!)
+        )
         val startMillis = startCal.timeInMillis
 
         val nextStartCal = Calendar.getInstance()
         nextStartCal.timeInMillis = startMillis
         nextStartCal.set(Calendar.DAY_OF_MONTH, 1) // The first day of the month the start is in
         nextStartCal.add(Calendar.MONTH, 1)
-        nextStartCal.set(Calendar.DAY_OF_MONTH,
-                Math.min(nextStartCal.getActualMaximum(Calendar.DAY_OF_MONTH), wanCycleDay!! - 1))
+        nextStartCal.set(
+            Calendar.DAY_OF_MONTH,
+            Math.min(nextStartCal.getActualMaximum(Calendar.DAY_OF_MONTH), wanCycleDay!! - 1)
+        )
         val endMillis = nextStartCal.timeInMillis
 
         return MonthlyCycleItem(context, startMillis, endMillis).setRouterPreferences(
-                routerPreferences)
+            routerPreferences
+        )
     }
 
     companion object {

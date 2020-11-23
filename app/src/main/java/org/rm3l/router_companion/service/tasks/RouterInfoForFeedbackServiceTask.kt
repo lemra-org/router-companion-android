@@ -12,13 +12,17 @@ class RouterInfoForFeedbackServiceTask(ctx: Context) : AbstractBackgroundService
     @Throws(Exception::class)
     override fun runBackgroundServiceTask(router: Router) {
 
-        val routerPreferences = mCtx.getSharedPreferences(router.templateUuidOrUuid,
-                Context.MODE_PRIVATE) ?: return
+        val routerPreferences = mCtx.getSharedPreferences(
+            router.templateUuidOrUuid,
+            Context.MODE_PRIVATE
+        ) ?: return
 
-        val manualProperty = SSHUtils.getManualProperty(mCtx, router, globalPreferences, "uname -a",
-                StatusRouterCPUTile.GREP_MODEL_PROC_CPUINFO + "| uniq",
-                StatusRouterCPUTile.GREP_MODEL_PROC_CPUINFO + "| wc -l", "/sbin/softwarerevision 2>&1",
-                "cat /tmp/loginprompt 2>&1") ?: return
+        val manualProperty = SSHUtils.getManualProperty(
+            mCtx, router, globalPreferences, "uname -a",
+            StatusRouterCPUTile.GREP_MODEL_PROC_CPUINFO + "| uniq",
+            StatusRouterCPUTile.GREP_MODEL_PROC_CPUINFO + "| wc -l", "/sbin/softwarerevision 2>&1",
+            "cat /tmp/loginprompt 2>&1"
+        ) ?: return
 
         var kernel: String? = null
         val kernelFromPrefs = routerPreferences.getString(NVRAMInfo.KERNEL, DEFAULT_VALUE)
@@ -31,8 +35,10 @@ class RouterInfoForFeedbackServiceTask(ctx: Context) : AbstractBackgroundService
             cpuModel = manualProperty[1]
         }
         var cpuCoresCount: String? = null
-        val cpuCoresCountFromPrefs = routerPreferences.getString(NVRAMInfo.CPU_CORES_COUNT,
-                DEFAULT_VALUE)
+        val cpuCoresCountFromPrefs = routerPreferences.getString(
+            NVRAMInfo.CPU_CORES_COUNT,
+            DEFAULT_VALUE
+        )
         if (manualProperty.size >= 3) {
             cpuCoresCount = manualProperty[2]
         }

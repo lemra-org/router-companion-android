@@ -30,17 +30,17 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import androidx.core.content.ContextCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.util.Log
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.airbnb.deeplinkdispatch.DeepLinkHandler
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.evernote.android.job.JobConfig
 import com.evernote.android.job.JobManager
 import com.facebook.stetho.Stetho
 import com.facebook.stetho.Stetho.newInitializerBuilder
 import com.google.firebase.FirebaseApp
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.squareup.picasso.Picasso
@@ -122,11 +122,13 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
         AppLockManager.getInstance().enableDefaultAppLockIfAvailable(this)
         if (AppLockManager.getInstance().isAppLockFeatureEnabled) {
             /* Disable lockscreen for some activities if needed */
-            AppLockManager.getInstance().appLock.exemptActivities = arrayOf(SplashActivity::class.java.canonicalName,
-                    GettingStartedActivity::class.java.canonicalName,
-                    DeepLinkActivity::class.java.canonicalName,
-                    DeepLinkActivity::class.java.canonicalName,
-                    RouterActionsDeepLinkActivity::class.java.canonicalName)
+            AppLockManager.getInstance().appLock.exemptActivities = arrayOf(
+                SplashActivity::class.java.canonicalName,
+                GettingStartedActivity::class.java.canonicalName,
+                DeepLinkActivity::class.java.canonicalName,
+                DeepLinkActivity::class.java.canonicalName,
+                RouterActionsDeepLinkActivity::class.java.canonicalName
+            )
         }
 
 //        if (BuildConfig.WITH_ADS || BuildConfig.WITH_INTERSTITIAL_ADS) {
@@ -138,10 +140,11 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
             // if using Robolectric in local unit test, thrown IOException.
             // see https://github.com/facebook/stetho/issues/440
             Stetho.initialize(
-                    newInitializerBuilder(this)
-                            .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-                            .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
-                            .build())
+                newInitializerBuilder(this)
+                    .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+                    .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+                    .build()
+            )
         }
 
         val intentFilter = IntentFilter(DeepLinkHandler.ACTION)
@@ -218,53 +221,55 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
         }
     }
 
-    override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
-        FirebaseCrashlytics.getInstance().log("onActivityCreated: ${activity?.javaClass?.canonicalName}")
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+        FirebaseCrashlytics.getInstance().log("onActivityCreated: ${activity.javaClass.canonicalName}")
         mCurrentActivity = WeakReference(activity)
     }
 
-    override fun onActivityDestroyed(activity: Activity?) {
+    override fun onActivityDestroyed(activity: Activity) {
         FirebaseCrashlytics.getInstance().log(
-                "onActivityDestroyed: ${activity?.javaClass?.canonicalName}")
+            "onActivityDestroyed: ${activity.javaClass.canonicalName}"
+        )
         mCurrentActivity?.clear()
 //        if (mCurrentActivity != null) {
 //            mCurrentActivity!!.clear()
 //        }
     }
 
-    override fun onActivityPaused(activity: Activity?) {
-        FirebaseCrashlytics.getInstance().log("onActivityPaused: ${activity?.javaClass?.canonicalName}")
+    override fun onActivityPaused(activity: Activity) {
+        FirebaseCrashlytics.getInstance().log("onActivityPaused: ${activity.javaClass.canonicalName}")
         mCurrentActivity?.clear()
 //        if (mCurrentActivity != null) {
 //            mCurrentActivity!!.clear()
 //        }
     }
 
-    override fun onActivityResumed(activity: Activity?) {
-        FirebaseCrashlytics.getInstance().log("onActivityResumed: " + activity?.javaClass?.canonicalName)
+    override fun onActivityResumed(activity: Activity) {
+        FirebaseCrashlytics.getInstance().log("onActivityResumed: " + activity.javaClass.canonicalName)
         mCurrentActivity = WeakReference(activity)
     }
 
-    override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {
+    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
         FirebaseCrashlytics.getInstance().log(
-                "onActivitySaveInstanceState: " + activity?.javaClass?.canonicalName)
+            "onActivitySaveInstanceState: " + activity.javaClass.canonicalName
+        )
 //        if (mCurrentActivity != null) {
 //            mCurrentActivity!!.clear()
 //        }
         mCurrentActivity?.clear()
     }
 
-    override fun onActivityStarted(activity: Activity?) {
-        FirebaseCrashlytics.getInstance().log("onActivityStarted: " + activity?.javaClass?.canonicalName)
+    override fun onActivityStarted(activity: Activity) {
+        FirebaseCrashlytics.getInstance().log("onActivityStarted: " + activity.javaClass.canonicalName)
         mCurrentActivity = WeakReference(activity)
     }
 
-    override fun onActivityStopped(activity: Activity?) {
-        FirebaseCrashlytics.getInstance().log("onActivityStopped: " + activity?.javaClass?.canonicalName)
+    override fun onActivityStopped(activity: Activity) {
+        FirebaseCrashlytics.getInstance().log("onActivityStopped: " + activity.javaClass.canonicalName)
 //        if (mCurrentActivity != null) {
 //            mCurrentActivity!!.clear()
 //        }
-        mCurrentActivity?.clear()
+//        mCurrentActivity?.clear()
     }
 
     override fun onTerminate() {

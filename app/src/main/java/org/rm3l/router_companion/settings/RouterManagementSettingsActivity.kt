@@ -22,6 +22,15 @@
 package org.rm3l.router_companion.settings
 
 import android.app.Activity
+import android.content.Intent
+import android.content.SharedPreferences
+import android.os.Bundle
+import android.preference.Preference
+import android.preference.PreferenceFragment
+import com.airbnb.deeplinkdispatch.DeepLink
+import org.rm3l.ddwrt.BuildConfig
+import org.rm3l.ddwrt.R
+import org.rm3l.router_companion.RouterCompanionAppConstants
 import org.rm3l.router_companion.RouterCompanionAppConstants.ACRA_ENABLE
 import org.rm3l.router_companion.RouterCompanionAppConstants.ACRA_USER_EMAIL
 import org.rm3l.router_companion.RouterCompanionAppConstants.DATA_USAGE_NETWORK_PREF
@@ -32,16 +41,6 @@ import org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_VIBRA
 import org.rm3l.router_companion.RouterCompanionAppConstants.SECURITY_PIN_LOCK_PREF
 import org.rm3l.router_companion.RouterCompanionAppConstants.SECURITY_THIRD_PARTY_INTEGRATION
 import org.rm3l.router_companion.RouterCompanionAppConstants.THEMING_PREF
-
-import android.content.Intent
-import android.content.SharedPreferences
-import android.os.Bundle
-import android.preference.Preference
-import android.preference.PreferenceFragment
-import com.airbnb.deeplinkdispatch.DeepLink
-import org.rm3l.ddwrt.BuildConfig
-import org.rm3l.ddwrt.R
-import org.rm3l.router_companion.RouterCompanionAppConstants
 
 @DeepLink("dd-wrt://settings", "ddwrt://settings")
 class RouterManagementSettingsActivity : AbstractDDWRTSettingsActivity() {
@@ -105,8 +104,10 @@ class RouterManagementSettingsActivity : AbstractDDWRTSettingsActivity() {
     }
 
     override fun getSharedPreferences(name: String, mode: Int): SharedPreferences {
-        return super.getSharedPreferences(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                mode)
+        return super.getSharedPreferences(
+            RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+            mode
+        )
     }
 
     override fun getPreferenceFragment(): PreferenceFragment {

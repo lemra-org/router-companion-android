@@ -5,9 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.core.app.TaskStackBuilder
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import android.util.Log
 import com.airbnb.deeplinkdispatch.DeepLink
 import com.airbnb.deeplinkdispatch.DeepLinkEntry
 import com.airbnb.deeplinkdispatch.DeepLinkEntry.Type.CLASS

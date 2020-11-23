@@ -84,16 +84,16 @@ class IPWhoisInfo {
 
     val isNone: Boolean
         get() = asn == null &&
-                city == null &&
-                country == null &&
-                country_code == null &&
-                hostname == null &&
-                ip == null &&
-                latitude == null &&
-                longitude == null &&
-                organization == null &&
-                prefix == null &&
-                region == null
+            city == null &&
+            country == null &&
+            country_code == null &&
+            hostname == null &&
+            ip == null &&
+            latitude == null &&
+            longitude == null &&
+            organization == null &&
+            prefix == null &&
+            region == null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -105,9 +105,10 @@ class IPWhoisInfo {
         if (if (city != null) city != that.city else that.city != null) return false
         if (if (country != null) country != that.country else that.country != null) return false
         if (if (country_code != null)
-            country_code != that.country_code
-        else
-            that.country_code != null) {
+                country_code != that.country_code
+            else
+                that.country_code != null
+        ) {
             return false
         }
         if (if (hostname != null) hostname != that.hostname else that.hostname != null) return false
@@ -117,9 +118,10 @@ class IPWhoisInfo {
             return false
         }
         if (if (organization != null)
-            organization != that.organization
-        else
-            that.organization != null) {
+                organization != that.organization
+            else
+                that.organization != null
+        ) {
             return false
         }
         if (if (prefix != null) prefix != that.prefix else that.prefix != null) return false

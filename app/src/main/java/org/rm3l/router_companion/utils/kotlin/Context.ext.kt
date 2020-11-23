@@ -11,12 +11,12 @@ import android.content.Context.MODE_PRIVATE
 import android.content.ContextWrapper
 import android.content.Intent
 import android.os.Handler
-import androidx.annotation.ColorRes
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.ColorRes
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY
 import org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_THEME
@@ -32,14 +32,16 @@ import org.rm3l.router_companion.utils.Utils
  */
 
 fun Context.isThemeLight(): Boolean =
-        (this.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE)
-                .getLong(THEMING_PREF, DEFAULT_THEME) == ColorUtils.LIGHT_THEME)
+    (
+        this.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE)
+            .getLong(THEMING_PREF, DEFAULT_THEME) == ColorUtils.LIGHT_THEME
+        )
 
 fun ContextWrapper.setAppTheme(routerFirmware: RouterFirmware?, transparentStatusBar: Boolean) =
-        ColorUtils.setAppTheme(this, routerFirmware, transparentStatusBar)
+    ColorUtils.setAppTheme(this, routerFirmware, transparentStatusBar)
 
 fun ContextWrapper.setAppTheme(routerFirmware: RouterFirmware?) =
-        this.setAppTheme(routerFirmware, false)
+    this.setAppTheme(routerFirmware, false)
 
 @Suppress("DEPRECATION")
 @SuppressLint("NewApi")
@@ -55,38 +57,49 @@ fun Context.inflate(res: Int, parent: ViewGroup? = null): View {
 fun Activity.openFeedbackForm() = this.openFeedbackForm(routerUuid = null)
 
 fun Activity.openFeedbackForm(routerUuid: String? = null) =
-        this.openFeedbackForm(router = if (routerUuid == null) null
-        else org.rm3l.router_companion.mgmt.RouterManagementActivity.getDao(this).getRouter(routerUuid))
+    this.openFeedbackForm(
+        router = if (routerUuid == null) null
+        else org.rm3l.router_companion.mgmt.RouterManagementActivity.getDao(this).getRouter(routerUuid)
+    )
 
 fun Activity.openFeedbackForm(router: Router? = null) = Utils.openFeedbackForm(this, router)
 
 fun Activity.restartWholeApplication(waitMessage: CharSequence? = null, delayMillis: Long? = null) {
     FirebaseCrashlytics.getInstance().log("Restarting whole Android Application : ${waitMessage ?: ""}...")
     val alertDialog = ProgressDialog.show(this, waitMessage, "App will restart. Please wait...", true)
-    Handler().postDelayed({
-        alertDialog.cancel()
-        val intent = PendingIntent.getActivity(this.baseContext, 0, Intent(this.intent),
-                PendingIntent.FLAG_CANCEL_CURRENT)
-        val manager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager?
-        manager?.set(AlarmManager.RTC, System.currentTimeMillis() + 100, intent)
-        System.exit(2)
-    }, delayMillis ?: 2_000)
+    Handler().postDelayed(
+        {
+            alertDialog.cancel()
+            val intent = PendingIntent.getActivity(
+                this.baseContext, 0, Intent(this.intent),
+                PendingIntent.FLAG_CANCEL_CURRENT
+            )
+            val manager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager?
+            manager?.set(AlarmManager.RTC, System.currentTimeMillis() + 100, intent)
+            System.exit(2)
+        },
+        delayMillis ?: 2_000
+    )
 }
 
 fun Activity.finishAndReload(waitMessage: String? = null, delayMillis: Long? = null, operationBeforeRestart: Runnable? = null) {
     FirebaseCrashlytics.getInstance().log(
-            "Finishing and reloading current activity (${this::class.java}): ${waitMessage ?: ""}...")
+        "Finishing and reloading current activity (${this::class.java}): ${waitMessage ?: ""}..."
+    )
     val alertDialog = ProgressDialog.show(this, waitMessage, "Please wait...", true)
 //    val alertDialog = Utils.buildAlertDialog(this, null,
 //            waitMessage?:"Reloading...", false, false)
 //    alertDialog.show()
     alertDialog.findViewById<TextView>(android.R.id.message).gravity = Gravity.CENTER_HORIZONTAL
-    Handler().postDelayed({
-        finish()
-        operationBeforeRestart?.run()
-        startActivity(intent)
-        alertDialog.cancel()
-    }, delayMillis ?: 2_000)
+    Handler().postDelayed(
+        {
+            finish()
+            operationBeforeRestart?.run()
+            startActivity(intent)
+            alertDialog.cancel()
+        },
+        delayMillis ?: 2_000
+    )
 }
 
 fun Context?.getApplicationName(): CharSequence {

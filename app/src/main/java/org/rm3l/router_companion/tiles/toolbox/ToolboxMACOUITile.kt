@@ -22,9 +22,9 @@ class ToolboxMACOUITile(
     override fun getInfoText() = R.string.oui_lookup_info
 
     override fun getRouterAction(textToFind: String) = MACOUILookupAction(
-            mRouter, mParentFragmentActivity, mRouterActionListener,
-            mGlobalPreferences, textToFind
-        )
+        mRouter, mParentFragmentActivity, mRouterActionListener,
+        mGlobalPreferences, textToFind
+    )
 
     override fun getSubmitButtonText() = R.string.toolbox_oui_lookup_submit
 

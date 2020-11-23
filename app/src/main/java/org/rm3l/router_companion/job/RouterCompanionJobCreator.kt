@@ -19,7 +19,7 @@ class RouterCompanionJobCreator : JobCreator {
         if (tag.startsWith(RouterSpeedTestAutoRunnerJob.JOB_TAG_PREFIX)) {
             // Speed test job have a different format: "$JOB_TAG_PREFIX${TAG}$JOB_TAG_SEPARATOR$routerUuid"
             actualTag = actualTag.substring(RouterSpeedTestAutoRunnerJob.JOB_TAG_PREFIX.length)
-                    .split(RouterSpeedTestAutoRunnerJob.JOB_TAG_SEPARATOR)[0]
+                .split(RouterSpeedTestAutoRunnerJob.JOB_TAG_SEPARATOR)[0]
         }
         val job = JOB_MAP[actualTag]
         return if (job == null) null else job::class.java.newInstance()
@@ -28,20 +28,20 @@ class RouterCompanionJobCreator : JobCreator {
     companion object {
         @JvmField
         val JOB_MAP = mapOf<String, Job>(
-                FirmwareUpdateCheckerJob.TAG to FirmwareUpdateCheckerJob(),
-                FirmwareUpdateCheckerOneShotJob.TAG to FirmwareUpdateCheckerOneShotJob(),
-                BackgroundService.TAG to BackgroundService(),
-                BackgroundServiceOneShotJob.TAG to BackgroundServiceOneShotJob(),
-                RouterSpeedTestRunnerDailyJob.TAG to RouterSpeedTestRunnerDailyJob(),
-                RouterSpeedTestRunnerPeriodicJob.TAG to RouterSpeedTestRunnerPeriodicJob(),
-                RouterSpeedTestRunnerOneShotJob.TAG to RouterSpeedTestRunnerOneShotJob()
+            FirmwareUpdateCheckerJob.TAG to FirmwareUpdateCheckerJob(),
+            FirmwareUpdateCheckerOneShotJob.TAG to FirmwareUpdateCheckerOneShotJob(),
+            BackgroundService.TAG to BackgroundService(),
+            BackgroundServiceOneShotJob.TAG to BackgroundServiceOneShotJob(),
+            RouterSpeedTestRunnerDailyJob.TAG to RouterSpeedTestRunnerDailyJob(),
+            RouterSpeedTestRunnerPeriodicJob.TAG to RouterSpeedTestRunnerPeriodicJob(),
+            RouterSpeedTestRunnerOneShotJob.TAG to RouterSpeedTestRunnerOneShotJob()
         )
 
         @JvmStatic
         fun getOneShotJobTags() = JOB_MAP
-                .filter { val job = it.value; job is RouterCompanionJob && job.isOneShotJob() }
-                .keys
-                .toList()
+            .filter { val job = it.value; job is RouterCompanionJob && job.isOneShotJob() }
+            .keys
+            .toList()
 
         @JvmStatic
         fun runJobImmediately(tag: String) = JobRequest.Builder(tag).startNow().build().schedule()

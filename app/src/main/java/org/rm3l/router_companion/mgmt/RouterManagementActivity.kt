@@ -22,15 +22,6 @@
 
 package org.rm3l.router_companion.mgmt
 
-import org.rm3l.router_companion.RouterCompanionAppConstants.ACRA_ENABLE
-import org.rm3l.router_companion.RouterCompanionAppConstants.DEBUG_MODE
-import org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY
-import org.rm3l.router_companion.RouterCompanionAppConstants.MAX_ROUTERS_FREE_VERSION
-import org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_BG_SERVICE_ENABLE
-import org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF
-import org.rm3l.router_companion.RouterCompanionAppConstants.THEMING_PREF
-import org.rm3l.router_companion.RouterCompanionApplication.Companion.DEBUG_RESOURCE_INSPECTOR_PREF_KEY
-
 import android.app.Activity
 import android.app.AlertDialog.Builder
 import android.app.SearchManager
@@ -46,18 +37,6 @@ import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.os.Handler
 import android.preference.PreferenceManager
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityOptionsCompat
-import androidx.fragment.app.DialogFragment
-import androidx.core.content.ContextCompat
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.SearchView
-import androidx.appcompat.widget.Toolbar
-import androidx.recyclerview.widget.ItemTouchHelper
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
@@ -65,23 +44,41 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter
 import co.paulburke.android.itemtouchhelperdemo.helper.OnStartDragListener
 import com.airbnb.deeplinkdispatch.DeepLink
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.evernote.android.job.JobManager
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.InterstitialAd
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.common.base.Joiner
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.readystatesoftware.chuck.Chuck
-import com.stephentuso.welcome.WelcomeHelper
 import com.stephentuso.welcome.WelcomeActivity
-import java.util.ArrayList
-import java.util.concurrent.atomic.AtomicInteger
+import com.stephentuso.welcome.WelcomeHelper
 import org.rm3l.ddwrt.BuildConfig
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.RouterCompanionAppConstants
+import org.rm3l.router_companion.RouterCompanionAppConstants.ACRA_ENABLE
+import org.rm3l.router_companion.RouterCompanionAppConstants.DEBUG_MODE
+import org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY
+import org.rm3l.router_companion.RouterCompanionAppConstants.MAX_ROUTERS_FREE_VERSION
+import org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_BG_SERVICE_ENABLE
+import org.rm3l.router_companion.RouterCompanionAppConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF
+import org.rm3l.router_companion.RouterCompanionAppConstants.THEMING_PREF
+import org.rm3l.router_companion.RouterCompanionApplication.Companion.DEBUG_RESOURCE_INSPECTOR_PREF_KEY
 import org.rm3l.router_companion.actions.ActionManager
 import org.rm3l.router_companion.actions.RebootRouterAction
 import org.rm3l.router_companion.actions.RouterAction
@@ -107,21 +104,27 @@ import org.rm3l.router_companion.utils.ColorUtils
 import org.rm3l.router_companion.utils.ImageUtils
 import org.rm3l.router_companion.utils.Utils
 import org.rm3l.router_companion.utils.customtabs.CustomTabActivityHelper
-import org.rm3l.router_companion.utils.kotlin.isThemeLight
-import org.rm3l.router_companion.utils.kotlin.setAppTheme
 import org.rm3l.router_companion.utils.kotlin.color
+import org.rm3l.router_companion.utils.kotlin.finishAndReload
 import org.rm3l.router_companion.utils.kotlin.inflate
+import org.rm3l.router_companion.utils.kotlin.isThemeLight
 import org.rm3l.router_companion.utils.kotlin.openFeedbackForm
 import org.rm3l.router_companion.utils.kotlin.restartWholeApplication
-import org.rm3l.router_companion.utils.kotlin.finishAndReload
-
+import org.rm3l.router_companion.utils.kotlin.setAppTheme
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style
 import org.rm3l.router_companion.welcome.GettingStartedActivity
 import org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
+import java.util.ArrayList
+import java.util.concurrent.atomic.AtomicInteger
 
 @DeepLink("dd-wrt://management", "ddwrt://management")
-class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, RouterMgmtDialogListener,
-    SearchView.OnQueryTextListener, SwipeRefreshLayout.OnRefreshListener, CustomTabActivityHelper.ConnectionCallback,
+class RouterManagementActivity :
+    AppCompatActivity(),
+    View.OnClickListener,
+    RouterMgmtDialogListener,
+    SearchView.OnQueryTextListener,
+    SwipeRefreshLayout.OnRefreshListener,
+    CustomTabActivityHelper.ConnectionCallback,
     OnStartDragListener {
 
     private var addNewButton: FloatingActionButton? = null
@@ -424,7 +427,7 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                         // Restart activity
                         FirebaseCrashlytics.getInstance().log(
                             "<mAutoCrashReports,currentUserChoiceForAutoCrashReporting>=<" +
-                                    mAutoCrashReports + "," + currentUserChoiceForAutoCrashReporting + ">"
+                                mAutoCrashReports + "," + currentUserChoiceForAutoCrashReporting + ">"
                         )
                         val waitMessage = String.format(
                             "%sabling automatic crash reporting and app usage analytics",
@@ -433,11 +436,11 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                         this.restartWholeApplication(waitMessage, null)
                     } else if (this.mCurrentTheme != this.mPreferences!!.getLong(THEMING_PREF, -1L) ||
                         this.mBackgroundServiceEnabled != this.mPreferences!!.getBoolean(
-                            NOTIFICATIONS_BG_SERVICE_ENABLE, false
-                        ) ||
+                                NOTIFICATIONS_BG_SERVICE_ENABLE, false
+                            ) ||
                         this.mBackgroundServiceFrequency != this.mPreferences!!.getLong(
-                            NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1L
-                        )
+                                NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1L
+                            )
                     ) {
                         // Reload UI
                         this.finishAndReload("Reloading UI", null, null)
@@ -738,23 +741,27 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
             finish()
             return true
         } else if (itemId == R.id.help) {
-            CustomTabActivityHelper.openCustomTab(this@RouterManagementActivity, null,
+            CustomTabActivityHelper.openCustomTab(
+                this@RouterManagementActivity, null,
                 RouterCompanionAppConstants.REMOTE_HELP_WEBSITE, null, null,
                 { activity, uri ->
                     activity.startActivity(
                         Intent(this@RouterManagementActivity, HelpActivity::class.java)
                     )
-                }, false
+                },
+                false
             )
             return true
         } else if (itemId == R.id.changelog) {
-            CustomTabActivityHelper.openCustomTab(this@RouterManagementActivity, null,
+            CustomTabActivityHelper.openCustomTab(
+                this@RouterManagementActivity, null,
                 RouterCompanionAppConstants.REMOTE_HELP_WEBSITE_CHANGELOG, null, null,
                 { activity, uri ->
                     activity.startActivity(
                         Intent(this@RouterManagementActivity, ChangelogActivity::class.java)
                     )
-                }, false
+                },
+                false
             )
             return true
         } else if (itemId == R.id.debug_open_sharedprefs) {
@@ -944,7 +951,8 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
 
                     for (selectedRouter in routersList) {
                         ActionManager.runTasks(
-                            RebootRouterAction(selectedRouter, this@RouterManagementActivity,
+                            RebootRouterAction(
+                                selectedRouter, this@RouterManagementActivity,
                                 object : RouterActionListener {
                                     override fun onRouterActionFailure(
                                         routerAction: RouterAction,
@@ -1015,7 +1023,8 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                                             }
                                         }
                                     }
-                                }, mPreferences!!
+                                },
+                                mPreferences!!
                             )
                         )
                     }
@@ -1385,56 +1394,60 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
     ) {
         //        mSwipeRefreshLayout.setEnabled(false);
         setRefreshActionButtonState(true)
-        Handler().postDelayed({
-            try {
-                val allRouters = this@RouterManagementActivity.dao!!.allRouters
-                (this@RouterManagementActivity.mAdapter as RouterListRecycleViewAdapter).routersList = allRouters
-                when (cause) {
-                    DATA_SET_CHANGED -> this@RouterManagementActivity.mAdapter!!.notifyDataSetChanged()
-                    INSERTED -> {
-                        // Rebuild list so as to add the new router on top
-                        // We assume the item with the highest id is the latest added,
-                        // and, as such, should be on top of the list
-                        val routerList = ArrayList(allRouters)
-                        routerList.sortWith(Comparator { o1, o2 -> o2.id - o1.id })
-                        for (i in routerList.indices) {
-                            val router = routerList[i]
-                            val previousOrderIdx = router.orderIndex
-                            if (i == position) {
-                                router.orderIndex = i
-                            } else {
-                                router.orderIndex = previousOrderIdx + 1
-                            }
-                            val newOrderIndex = router.orderIndex
-                            FirebaseCrashlytics.getInstance().log("XXX Router '" +
+        Handler().postDelayed(
+            {
+                try {
+                    val allRouters = this@RouterManagementActivity.dao!!.allRouters
+                    (this@RouterManagementActivity.mAdapter as RouterListRecycleViewAdapter).routersList = allRouters
+                    when (cause) {
+                        DATA_SET_CHANGED -> this@RouterManagementActivity.mAdapter!!.notifyDataSetChanged()
+                        INSERTED -> {
+                            // Rebuild list so as to add the new router on top
+                            // We assume the item with the highest id is the latest added,
+                            // and, as such, should be on top of the list
+                            val routerList = ArrayList(allRouters)
+                            routerList.sortWith(Comparator { o1, o2 -> o2.id - o1.id })
+                            for (i in routerList.indices) {
+                                val router = routerList[i]
+                                val previousOrderIdx = router.orderIndex
+                                if (i == position) {
+                                    router.orderIndex = i
+                                } else {
+                                    router.orderIndex = previousOrderIdx + 1
+                                }
+                                val newOrderIndex = router.orderIndex
+                                FirebaseCrashlytics.getInstance().log(
+                                    "XXX Router '" +
                                         router.canonicalHumanReadableName +
                                         "' " +
                                         "new position: " +
                                         previousOrderIdx +
                                         " => " +
                                         newOrderIndex
-                            )
+                                )
 
-                            dao!!.updateRouter(router)
+                                dao!!.updateRouter(router)
+                            }
+
+                            this@RouterManagementActivity.mAdapter!!.notifyItemInserted(position!!)
+                            mRecyclerView!!.scrollToPosition(position)
                         }
-
-                        this@RouterManagementActivity.mAdapter!!.notifyItemInserted(position!!)
-                        mRecyclerView!!.scrollToPosition(position)
+                        REMOVED -> this@RouterManagementActivity.mAdapter!!.notifyItemRemoved(
+                            position!!
+                        )
+                        UPDATED -> this@RouterManagementActivity.mAdapter!!.notifyItemChanged(
+                            position!!
+                        )
                     }
-                    REMOVED -> this@RouterManagementActivity.mAdapter!!.notifyItemRemoved(
-                        position!!
-                    )
-                    UPDATED -> this@RouterManagementActivity.mAdapter!!.notifyItemChanged(
-                        position!!
-                    )
-                }
 
-                setDynamicAppShortcuts()
-            } finally {
-                setRefreshActionButtonState(false)
-                //                    mSwipeRefreshLayout.setEnabled(true);
-            }
-        }, 1000)
+                    setDynamicAppShortcuts()
+                } finally {
+                    setRefreshActionButtonState(false)
+                    //                    mSwipeRefreshLayout.setEnabled(true);
+                }
+            },
+            1000
+        )
     }
 
     private fun handleIntent(intent: Intent) {
@@ -1531,8 +1544,8 @@ class RouterManagementActivity : AppCompatActivity(), View.OnClickListener, Rout
                     val shortcut = ShortcutInfo.Builder(this, routerUuid).setShortLabel(
                         if (routerName?.isBlank() == true)
                             router.remoteIpAddress +
-                                    ":" +
-                                    router.remotePort
+                                ":" +
+                                router.remotePort
                         else
                             routerName ?: ""
                     )

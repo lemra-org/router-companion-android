@@ -18,16 +18,19 @@ import org.rm3l.router_companion.utils.Utils
  * Created by rm3l on 30/07/15.
  */
 class RouterWebInterfaceParametersUpdaterServiceTask(ctx: Context) : AbstractBackgroundServiceTask(
-        ctx) {
+    ctx
+) {
 
     @Throws(Exception::class)
     override fun runBackgroundServiceTask(router: Router) {
 
         val routerPreferences = mCtx.getSharedPreferences(router.templateUuidOrUuid, Context.MODE_PRIVATE) ?: return
 
-        val nvramInfo = SSHUtils.getNVRamInfoFromRouter(mCtx, router, globalPreferences, HTTP_ENABLE,
-                HTTP_LANPORT,
-                HTTP_WANPORT, HTTPS_ENABLE, REMOTE_MGT_HTTPS) ?: return
+        val nvramInfo = SSHUtils.getNVRamInfoFromRouter(
+            mCtx, router, globalPreferences, HTTP_ENABLE,
+            HTTP_LANPORT,
+            HTTP_WANPORT, HTTPS_ENABLE, REMOTE_MGT_HTTPS
+        ) ?: return
 
         val httpEnabled = nvramInfo.getProperty(HTTP_ENABLE)
         val httpsEnabled = nvramInfo.getProperty(HTTPS_ENABLE)

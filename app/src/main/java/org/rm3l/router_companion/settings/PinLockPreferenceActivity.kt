@@ -3,11 +3,11 @@ package org.rm3l.router_companion.settings
 import android.os.Bundle
 import android.preference.PreferenceFragment
 import android.preference.SwitchPreference
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.utils.Utils
 import org.rm3l.router_companion.utils.kotlin.setAppTheme
@@ -48,9 +48,11 @@ class PinLockPreferenceActivity : AppCompatActivity() {
         supportActionBar?.setHomeButtonEnabled(true)
 
         mSamplePreferenceFragment = fragmentManager.findFragmentByTag(
-                KEY_PREFERENCE_FRAGMENT) as PinLockPreferenceFragment?
+            KEY_PREFERENCE_FRAGMENT
+        ) as PinLockPreferenceFragment?
         mPasscodePreferenceFragment = fragmentManager.findFragmentByTag(
-                KEY_PASSCODE_FRAGMENT) as PasscodePreferenceFragment?
+            KEY_PASSCODE_FRAGMENT
+        ) as PasscodePreferenceFragment?
 
         if (mSamplePreferenceFragment == null || mPasscodePreferenceFragment == null) {
             val passcodeArgs = Bundle()
@@ -60,9 +62,9 @@ class PinLockPreferenceActivity : AppCompatActivity() {
             mPasscodePreferenceFragment?.arguments = passcodeArgs
 
             fragmentManager.beginTransaction()
-                    .replace(R.id.settings_content_frame, mPasscodePreferenceFragment, KEY_PASSCODE_FRAGMENT)
-                    .add(R.id.settings_content_frame, mSamplePreferenceFragment, KEY_PREFERENCE_FRAGMENT)
-                    .commit()
+                .replace(R.id.settings_content_frame, mPasscodePreferenceFragment, KEY_PASSCODE_FRAGMENT)
+                .add(R.id.settings_content_frame, mSamplePreferenceFragment, KEY_PREFERENCE_FRAGMENT)
+                .commit()
         }
     }
 
@@ -71,8 +73,8 @@ class PinLockPreferenceActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             android.R.id.home -> {
                 onBackPressed()
                 return true
@@ -88,9 +90,11 @@ class PinLockPreferenceActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         val togglePreference = mSamplePreferenceFragment?.findPreference(
-                getString(org.wordpress.passcodelock.R.string.pref_key_passcode_toggle)) as SwitchPreference?
+            getString(org.wordpress.passcodelock.R.string.pref_key_passcode_toggle)
+        ) as SwitchPreference?
         val changePreference = mSamplePreferenceFragment?.findPreference(
-                getString(org.wordpress.passcodelock.R.string.pref_key_change_passcode))
+            getString(org.wordpress.passcodelock.R.string.pref_key_change_passcode)
+        )
 
         if (togglePreference != null && changePreference != null) {
             mPasscodePreferenceFragment?.setPreferences(togglePreference, changePreference)

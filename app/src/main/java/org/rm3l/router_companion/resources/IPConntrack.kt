@@ -147,52 +147,60 @@ class IPConntrack {
         if (structUseCount != that.structUseCount) return false
         if (timeout != that.timeout) return false
         if (if (destWhoisOrHostname != null)
-            destWhoisOrHostname != that.destWhoisOrHostname
-        else
-            that.destWhoisOrHostname != null) {
+                destWhoisOrHostname != that.destWhoisOrHostname
+            else
+                that.destWhoisOrHostname != null
+        ) {
             return false
         }
         if (if (destinationAddressOriginalSide != null)
-            destinationAddressOriginalSide != that.destinationAddressOriginalSide
-        else
-            that.destinationAddressOriginalSide != null) {
+                destinationAddressOriginalSide != that.destinationAddressOriginalSide
+            else
+                that.destinationAddressOriginalSide != null
+        ) {
             return false
         }
         if (if (destinationAddressReplySide != null)
-            destinationAddressReplySide != that.destinationAddressReplySide
-        else
-            that.destinationAddressReplySide != null) {
+                destinationAddressReplySide != that.destinationAddressReplySide
+            else
+                that.destinationAddressReplySide != null
+        ) {
             return false
         }
         if (if (icmpId != null) icmpId != that.icmpId else that.icmpId != null) return false
         if (if (sourceAddressOriginalSide != null)
-            sourceAddressOriginalSide != that.sourceAddressOriginalSide
-        else
-            that.sourceAddressOriginalSide != null) {
+                sourceAddressOriginalSide != that.sourceAddressOriginalSide
+            else
+                that.sourceAddressOriginalSide != null
+        ) {
             return false
         }
         if (if (sourceAddressReplySide != null)
-            sourceAddressReplySide != that.sourceAddressReplySide
-        else
-            that.sourceAddressReplySide != null) {
+                sourceAddressReplySide != that.sourceAddressReplySide
+            else
+                that.sourceAddressReplySide != null
+        ) {
             return false
         }
         if (if (sourceHostname != null)
-            sourceHostname != that.sourceHostname
-        else
-            that.sourceHostname != null) {
+                sourceHostname != that.sourceHostname
+            else
+                that.sourceHostname != null
+        ) {
             return false
         }
         if (if (tcpConnectionState != null)
-            tcpConnectionState != that.tcpConnectionState
-        else
-            that.tcpConnectionState != null) {
+                tcpConnectionState != that.tcpConnectionState
+            else
+                that.tcpConnectionState != null
+        ) {
             return false
         }
         if (if (transportProtocol != null)
-            transportProtocol != that.transportProtocol
-        else
-            that.transportProtocol != null) {
+                transportProtocol != that.transportProtocol
+            else
+                that.transportProtocol != null
+        ) {
             return false
         }
 
@@ -303,13 +311,20 @@ class IPConntrack {
                                             ipConntrack.destinationPortReplySide = Integer.parseInt(secondPart)
                                         }
                                     } else if (ipConntrack.packets <= 0L && "packets".equals(
-                                            firstPart, ignoreCase = true)) {
+                                            firstPart, ignoreCase = true
+                                        )
+                                    ) {
                                         ipConntrack.packets = java.lang.Long.parseLong(secondPart)
-                                    } else if (ipConntrack.bytes <= 0L && "bytes".equals(firstPart,
-                                            ignoreCase = true)) {
+                                    } else if (ipConntrack.bytes <= 0L && "bytes".equals(
+                                            firstPart,
+                                            ignoreCase = true
+                                        )
+                                    ) {
                                         ipConntrack.bytes = java.lang.Long.parseLong(secondPart)
                                     } else if (ipConntrack.structUseCount <= 0 && "use".equals(
-                                            firstPart, ignoreCase = true)) {
+                                            firstPart, ignoreCase = true
+                                        )
+                                    ) {
                                         ipConntrack.structUseCount = Integer.parseInt(secondPart)
                                     }
                                 } else if (sequence.startsWith("[")) {
@@ -353,13 +368,20 @@ class IPConntrack {
                                         ipConntrack.destinationPortReplySide = Integer.parseInt(secondPart)
                                     }
                                 } else if (ipConntrack.packets <= 0L && "packets".equals(
-                                        firstPart, ignoreCase = true)) {
+                                        firstPart, ignoreCase = true
+                                    )
+                                ) {
                                     ipConntrack.packets = java.lang.Long.parseLong(secondPart)
-                                } else if (ipConntrack.bytes <= 0L && "bytes".equals(firstPart,
-                                        ignoreCase = true)) {
+                                } else if (ipConntrack.bytes <= 0L && "bytes".equals(
+                                        firstPart,
+                                        ignoreCase = true
+                                    )
+                                ) {
                                     ipConntrack.bytes = java.lang.Long.parseLong(secondPart)
                                 } else if (ipConntrack.structUseCount <= 0 && "use".equals(
-                                        firstPart, ignoreCase = true)) {
+                                        firstPart, ignoreCase = true
+                                    )
+                                ) {
                                     ipConntrack.structUseCount = Integer.parseInt(secondPart)
                                 }
                             } else if (sequence.startsWith("[")) {
@@ -402,22 +424,38 @@ class IPConntrack {
                                         ipConntrack.destinationPortReplySide = Integer.parseInt(secondPart)
                                     }
                                 } else if (ipConntrack.packets <= 0L && "packets".equals(
-                                        firstPart, ignoreCase = true)) {
+                                        firstPart, ignoreCase = true
+                                    )
+                                ) {
                                     ipConntrack.packets = java.lang.Long.parseLong(secondPart)
-                                } else if (ipConntrack.bytes <= 0L && "bytes".equals(firstPart,
-                                        ignoreCase = true)) {
+                                } else if (ipConntrack.bytes <= 0L && "bytes".equals(
+                                        firstPart,
+                                        ignoreCase = true
+                                    )
+                                ) {
                                     ipConntrack.bytes = java.lang.Long.parseLong(secondPart)
                                 } else if (ipConntrack.structUseCount <= 0 && "use".equals(
-                                        firstPart, ignoreCase = true)) {
+                                        firstPart, ignoreCase = true
+                                    )
+                                ) {
                                     ipConntrack.structUseCount = Integer.parseInt(secondPart)
-                                } else if (ipConntrack.icmpId == null && "id".equals(firstPart,
-                                        ignoreCase = true)) {
+                                } else if (ipConntrack.icmpId == null && "id".equals(
+                                        firstPart,
+                                        ignoreCase = true
+                                    )
+                                ) {
                                     ipConntrack.icmpId = secondPart
-                                } else if (ipConntrack.icmpType <= 0 && "type".equals(firstPart,
-                                        ignoreCase = true)) {
+                                } else if (ipConntrack.icmpType <= 0 && "type".equals(
+                                        firstPart,
+                                        ignoreCase = true
+                                    )
+                                ) {
                                     ipConntrack.icmpType = Integer.parseInt(secondPart)
-                                } else if (ipConntrack.icmpCode <= 0 && "code".equals(firstPart,
-                                        ignoreCase = true)) {
+                                } else if (ipConntrack.icmpCode <= 0 && "code".equals(
+                                        firstPart,
+                                        ignoreCase = true
+                                    )
+                                ) {
                                     ipConntrack.icmpCode = Integer.parseInt(secondPart)
                                 }
                             } else if (sequence.startsWith("[")) {
@@ -460,13 +498,20 @@ class IPConntrack {
                                         ipConntrack.destinationPortReplySide = Integer.parseInt(secondPart)
                                     }
                                 } else if (ipConntrack.packets <= 0L && "packets".equals(
-                                        firstPart, ignoreCase = true)) {
+                                        firstPart, ignoreCase = true
+                                    )
+                                ) {
                                     ipConntrack.packets = java.lang.Long.parseLong(secondPart)
-                                } else if (ipConntrack.bytes <= 0L && "bytes".equals(firstPart,
-                                        ignoreCase = true)) {
+                                } else if (ipConntrack.bytes <= 0L && "bytes".equals(
+                                        firstPart,
+                                        ignoreCase = true
+                                    )
+                                ) {
                                     ipConntrack.bytes = java.lang.Long.parseLong(secondPart)
                                 } else if (ipConntrack.structUseCount <= 0 && "use".equals(
-                                        firstPart, ignoreCase = true)) {
+                                        firstPart, ignoreCase = true
+                                    )
+                                ) {
                                     ipConntrack.structUseCount = Integer.parseInt(secondPart)
                                 }
                             } else if (sequence.startsWith("[")) {
@@ -476,8 +521,10 @@ class IPConntrack {
                     }
                 }
             } catch (e: Exception) {
-                ReportingUtils.reportException(null,
-                        IllegalStateException("Error when parsing IP Conntrack raw: " + raw, e))
+                ReportingUtils.reportException(
+                    null,
+                    IllegalStateException("Error when parsing IP Conntrack raw: " + raw, e)
+                )
                 return null
             }
 

@@ -1,9 +1,9 @@
 package org.rm3l.router_companion.widgets
 
 import android.content.Context
-import androidx.recyclerview.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 class RecyclerViewEmptySupport : RecyclerView {
@@ -19,14 +19,16 @@ class RecyclerViewEmptySupport : RecyclerView {
 
         override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
             FirebaseCrashlytics.getInstance().log(
-                    "onItemRangeInserted($positionStart, $itemCount)")
+                "onItemRangeInserted($positionStart, $itemCount)"
+            )
             super.onItemRangeInserted(positionStart, itemCount)
             checkIfEmpty()
         }
 
         override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
             FirebaseCrashlytics.getInstance().log(
-                    "onItemRangeInserted($positionStart, $itemCount)")
+                "onItemRangeInserted($positionStart, $itemCount)"
+            )
             super.onItemRangeRemoved(positionStart, itemCount)
             checkIfEmpty()
         }

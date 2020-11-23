@@ -1,9 +1,9 @@
 package org.rm3l.router_companion.tiles.ads
 
 import android.os.Bundle
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.loader.content.AsyncTaskLoader
-import androidx.core.content.ContextCompat
 import androidx.loader.content.Loader
 import com.google.android.gms.ads.AdView
 import org.rm3l.ddwrt.R

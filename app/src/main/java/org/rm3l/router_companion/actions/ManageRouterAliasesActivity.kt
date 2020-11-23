@@ -1,12 +1,5 @@
 package org.rm3l.router_companion.actions
 
-import com.google.common.base.Strings.isNullOrEmpty
-import com.google.common.base.Strings.nullToEmpty
-import org.rm3l.router_companion.main.DDWRTMainActivity.IMPORT_ALIASES_FRAGMENT_TAG
-import org.rm3l.router_companion.main.DDWRTMainActivity.MAIN_ACTIVITY_ACTION
-import org.rm3l.router_companion.utils.Utils.fromHtml
-import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style.ALERT
-
 import android.Manifest
 import android.app.AlertDialog
 import android.app.Dialog
@@ -18,19 +11,6 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
-import androidx.fragment.app.DialogFragment
-import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
-import androidx.core.util.Pair
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.SearchView
-import androidx.appcompat.widget.Toolbar
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.Menu
@@ -47,18 +27,32 @@ import android.widget.PopupMenu
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.core.util.Pair
+import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.gms.ads.AdView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import com.google.common.base.Predicate
 import com.google.common.base.Strings
+import com.google.common.base.Strings.isNullOrEmpty
+import com.google.common.base.Strings.nullToEmpty
 import com.google.common.collect.FluentIterable
-import java.io.File
-import java.io.FileOutputStream
-import java.util.Date
 import needle.UiRelatedTask
 import org.json.JSONObject
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.RouterCompanionAppConstants
 import org.rm3l.router_companion.exceptions.StorageException
+import org.rm3l.router_companion.main.DDWRTMainActivity.IMPORT_ALIASES_FRAGMENT_TAG
+import org.rm3l.router_companion.main.DDWRTMainActivity.MAIN_ACTIVITY_ACTION
 import org.rm3l.router_companion.mgmt.RouterManagementActivity
 import org.rm3l.router_companion.multithreading.MultiThreadingManager
 import org.rm3l.router_companion.resources.MACOUIVendor
@@ -71,12 +65,21 @@ import org.rm3l.router_companion.utils.ImageUtils
 import org.rm3l.router_companion.utils.PermissionsUtils
 import org.rm3l.router_companion.utils.StorageUtils
 import org.rm3l.router_companion.utils.Utils
+import org.rm3l.router_companion.utils.Utils.fromHtml
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils
+import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style.ALERT
 import org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
+import java.io.File
+import java.io.FileOutputStream
+import java.util.Date
 
-class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, SwipeRefreshLayout.OnRefreshListener,
-    SearchView.OnQueryTextListener, SnackbarCallback {
+class ManageRouterAliasesActivity :
+    AppCompatActivity(),
+    View.OnClickListener,
+    SwipeRefreshLayout.OnRefreshListener,
+    SearchView.OnQueryTextListener,
+    SnackbarCallback {
 
     private var addNewButton: FloatingActionButton? = null
     private var mAdapter: RecyclerView.Adapter<*>? = null
@@ -136,67 +139,69 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                 val mAliasView = d.findViewById<View>(R.id.add_or_edit_router_alias_value) as EditText
                 mAliasView.setText(this.mAlias, TextView.BufferType.EDITABLE)
 
-                d.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(View.OnClickListener { view ->
-                    // Validate data
-                    val macEditText = d.findViewById<View>(R.id.add_or_edit_router_alias_mac) as EditText
-                    val macValue = macEditText.text
+                d.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(
+                    View.OnClickListener { view ->
+                        // Validate data
+                        val macEditText = d.findViewById<View>(R.id.add_or_edit_router_alias_mac) as EditText
+                        val macValue = macEditText.text
 
-                    val macValueToPersist = nullToEmpty(macValue.toString())?.toLowerCase()
+                        val macValueToPersist = nullToEmpty(macValue.toString())?.toLowerCase()
 
-                    if (Strings.isNullOrEmpty(macValueToPersist)) {
-                        // Crouton
-                        Utils.displayMessage(
-                            activity!!, "MAC Address is required", ALERT,
-                            d.findViewById<View>(
-                                R.id.add_or_edit_router_alias_notification_viewgroup
-                            ) as ViewGroup
-                        )
-                        macEditText.requestFocus()
-                        // Open Keyboard
-                        val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        imm.showSoftInput(macEditText, 0)
-                        return@OnClickListener
+                        if (Strings.isNullOrEmpty(macValueToPersist)) {
+                            // Crouton
+                            Utils.displayMessage(
+                                activity!!, "MAC Address is required", ALERT,
+                                d.findViewById<View>(
+                                    R.id.add_or_edit_router_alias_notification_viewgroup
+                                ) as ViewGroup
+                            )
+                            macEditText.requestFocus()
+                            // Open Keyboard
+                            val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                            imm.showSoftInput(macEditText, 0)
+                            return@OnClickListener
+                        }
+                        if (!Utils.MAC_ADDRESS.matcher(macValueToPersist).matches()) {
+                            Utils.displayMessage(
+                                activity!!, "MAC Address format required", ALERT,
+                                d.findViewById<View>(
+                                    R.id.add_or_edit_router_alias_notification_viewgroup
+                                ) as ViewGroup
+                            )
+                            macEditText.requestFocus()
+                            // Open Keyboard
+                            val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                            imm.showSoftInput(macEditText, 0)
+                            return@OnClickListener
+                        }
+                        val aliasEditText = d.findViewById<View>(R.id.add_or_edit_router_alias_value) as EditText
+
+                        if (TextUtils.isEmpty(aliasEditText.text)) {
+                            // Crouton
+                            Utils.displayMessage(
+                                activity!!, "Alias cannot be blank", ALERT,
+                                d.findViewById<View>(
+                                    R.id.add_or_edit_router_alias_notification_viewgroup
+                                ) as ViewGroup
+                            )
+                            aliasEditText.requestFocus()
+                            // Open Keyboard
+                            val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                            imm.showSoftInput(aliasEditText, 0)
+                            return@OnClickListener
+                        }
+
+                        routerPreferences!!.edit()
+                            .putString(macValueToPersist, nullToEmpty(aliasEditText.text.toString()))
+                            .apply()
+
+                        if (onClickListener != null) {
+                            onClickListener!!.onClick(d, view.id)
+                        }
+
+                        d.dismiss()
                     }
-                    if (!Utils.MAC_ADDRESS.matcher(macValueToPersist).matches()) {
-                        Utils.displayMessage(
-                            activity!!, "MAC Address format required", ALERT,
-                            d.findViewById<View>(
-                                R.id.add_or_edit_router_alias_notification_viewgroup
-                            ) as ViewGroup
-                        )
-                        macEditText.requestFocus()
-                        // Open Keyboard
-                        val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        imm.showSoftInput(macEditText, 0)
-                        return@OnClickListener
-                    }
-                    val aliasEditText = d.findViewById<View>(R.id.add_or_edit_router_alias_value) as EditText
-
-                    if (TextUtils.isEmpty(aliasEditText.text)) {
-                        // Crouton
-                        Utils.displayMessage(
-                            activity!!, "Alias cannot be blank", ALERT,
-                            d.findViewById<View>(
-                                R.id.add_or_edit_router_alias_notification_viewgroup
-                            ) as ViewGroup
-                        )
-                        aliasEditText.requestFocus()
-                        // Open Keyboard
-                        val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        imm.showSoftInput(aliasEditText, 0)
-                        return@OnClickListener
-                    }
-
-                    routerPreferences!!.edit()
-                        .putString(macValueToPersist, nullToEmpty(aliasEditText.text.toString()))
-                        .apply()
-
-                    if (onClickListener != null) {
-                        onClickListener!!.onClick(d, view.id)
-                    }
-
-                    d.dismiss()
-                })
+                )
             }
         }
 
@@ -299,46 +304,48 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                         oReturn.values = aliases
                     } else {
                         // Filter aliases list
-                        oReturn.values = FluentIterable.from(aliases).filter(Predicate { input ->
-                            if (input == null) {
-                                return@Predicate false
-                            }
-                            val macAddr = input.first
-                            val alias = input.second
+                        oReturn.values = FluentIterable.from(aliases).filter(
+                            Predicate { input ->
+                                if (input == null) {
+                                    return@Predicate false
+                                }
+                                val macAddr = input.first
+                                val alias = input.second
 
-                            if (macAddr == null || alias == null) {
-                                return@Predicate false
-                            }
+                                if (macAddr == null || alias == null) {
+                                    return@Predicate false
+                                }
 
-                            val constraintLowerCase = constraint.toString().toLowerCase()
-                            val containsIgnoreCase = macAddr.toLowerCase().contains(
-                                constraintLowerCase
-                            ) || alias.toLowerCase().contains(constraintLowerCase)
-                            // final boolean containsIgnoreCase =
-                            //    containsIgnoreCase(macAddr, constraint) || containsIgnoreCase(alias,
-                            //        constraint);
+                                val constraintLowerCase = constraint.toString().toLowerCase()
+                                val containsIgnoreCase = macAddr.toLowerCase().contains(
+                                    constraintLowerCase
+                                ) || alias.toLowerCase().contains(constraintLowerCase)
+                                // final boolean containsIgnoreCase =
+                                //    containsIgnoreCase(macAddr, constraint) || containsIgnoreCase(alias,
+                                //        constraint);
 
-                            if (containsIgnoreCase) {
-                                return@Predicate true
-                            }
+                                if (containsIgnoreCase) {
+                                    return@Predicate true
+                                }
 
-                            // Otherwise check OUI
-                            var macouiVendor: MACOUIVendor? = null
-                            try {
-                                macouiVendor = WirelessClientsTile.mMacOuiVendorLookupCache
-                                    .getIfPresent(macAddr)
-                            } catch (e: Exception) {
-                                // No worries
-                            }
+                                // Otherwise check OUI
+                                var macouiVendor: MACOUIVendor? = null
+                                try {
+                                    macouiVendor = WirelessClientsTile.mMacOuiVendorLookupCache
+                                        .getIfPresent(macAddr)
+                                } catch (e: Exception) {
+                                    // No worries
+                                }
 
-                            if (macouiVendor == null) {
-                                return@Predicate false
+                                if (macouiVendor == null) {
+                                    return@Predicate false
+                                }
+                                val company = macouiVendor.company ?: return@Predicate false
+                                company.toLowerCase().contains(constraint.toString().toLowerCase())
+                                // return (macouiVendor != null && containsIgnoreCase(macouiVendor.getCompany(),
+                                //    constraint));
                             }
-                            val company = macouiVendor.company ?: return@Predicate false
-                            company.toLowerCase().contains(constraint.toString().toLowerCase())
-                            // return (macouiVendor != null && containsIgnoreCase(macouiVendor.getCompany(),
-                            //    constraint));
-                        }).toList()
+                        ).toList()
                     }
 
                     return oReturn
@@ -425,9 +432,12 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
             holder.removeButton.setOnClickListener { removeAliasEntryDialog.show() }
 
             holder.containerView.setOnClickListener {
-                displayRouterAliasDialog(context!!, mac, aliasStr, DialogInterface.OnClickListener { _, _ ->
-                    context.doRefreshRoutersListWithSpinner(RecyclerViewRefreshCause.DATA_SET_CHANGED, null)
-                })
+                displayRouterAliasDialog(
+                    context!!, mac, aliasStr,
+                    DialogInterface.OnClickListener { _, _ ->
+                        context.doRefreshRoutersListWithSpinner(RecyclerViewRefreshCause.DATA_SET_CHANGED, null)
+                    }
+                )
             }
 
             holder.containerView.setOnLongClickListener { v ->
@@ -486,23 +496,27 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
             removeAliasEntryDialog: AlertDialog
         ) {
             val popup = PopupMenu(context, v)
-            popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
-                val i = item.itemId
-                if (i == R.id.menu_router_alias_edit) {
-                    displayRouterAliasDialog(context!!, mac, aliasStr,
-                        DialogInterface.OnClickListener { _, _ ->
-                            context.doRefreshRoutersListWithSpinner(
-                                RecyclerViewRefreshCause.DATA_SET_CHANGED, null
-                            )
-                        })
-                    return@OnMenuItemClickListener true
-                } else if (i == R.id.menu_router_alias_remove) {
-                    removeAliasEntryDialog.show()
-                    return@OnMenuItemClickListener true
-                } else {
+            popup.setOnMenuItemClickListener(
+                PopupMenu.OnMenuItemClickListener { item ->
+                    val i = item.itemId
+                    if (i == R.id.menu_router_alias_edit) {
+                        displayRouterAliasDialog(
+                            context!!, mac, aliasStr,
+                            DialogInterface.OnClickListener { _, _ ->
+                                context.doRefreshRoutersListWithSpinner(
+                                    RecyclerViewRefreshCause.DATA_SET_CHANGED, null
+                                )
+                            }
+                        )
+                        return@OnMenuItemClickListener true
+                    } else if (i == R.id.menu_router_alias_remove) {
+                        removeAliasEntryDialog.show()
+                        return@OnMenuItemClickListener true
+                    } else {
+                    }
+                    false
                 }
-                false
-            })
+            )
             val inflater = popup.menuInflater
             val menu = popup.menu
             inflater.inflate(R.menu.menu_manage_router_alias, menu)
@@ -644,7 +658,8 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                         RecyclerViewRefreshCause.DATA_SET_CHANGED,
                         null
                     )
-                })
+                }
+            )
         }
     }
 
@@ -708,14 +723,15 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                 }
 
                 val exportDirectory = StorageUtils.getExportDirectory(this)
-                        ?: throw StorageException("Could not retrieve or create export directory!")
+                    ?: throw StorageException("Could not retrieve or create export directory!")
 
                 val aliasesDir = File(exportDirectory, "alias")
 
                 StorageUtils.createDirectoryOrRaiseException(aliasesDir)
 
                 val outputFile = File(
-                    aliasesDir, Utils.getEscapedFileName(
+                    aliasesDir,
+                    Utils.getEscapedFileName(
                         String.format(
                             "Aliases_for_%s_%s_%s", mRouter!!.displayName,
                             mRouter!!.remoteIpAddress, mRouter!!.uuid
@@ -734,9 +750,11 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                     fileOutputStream?.close()
                 }
 
-                SnackbarUtils.buildSnackbar(this, findViewById(android.R.id.content), Color.DKGRAY,
+                SnackbarUtils.buildSnackbar(
+                    this, findViewById(android.R.id.content), Color.DKGRAY,
                     String.format("File '%s' created!", outputFile.absolutePath), Color.GREEN, "Share",
-                    Color.WHITE, Snackbar.LENGTH_LONG, object : SnackbarCallback {
+                    Color.WHITE, Snackbar.LENGTH_LONG,
+                    object : SnackbarCallback {
                         @Throws(Exception::class)
                         override fun onDismissEventActionClick(event: Int, bundle: Bundle?) {
                             // Share button clicked - share file
@@ -773,7 +791,8 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                                 )
                                 shareIntent.type = "text/html"
                                 shareIntent.putExtra(
-                                    Intent.EXTRA_TEXT, fromHtml(
+                                    Intent.EXTRA_TEXT,
+                                    fromHtml(
                                         "Backup Date: $backupDate\n\n$aliasesStr\n\n\n"
                                             .replace("\n".toRegex(), "<br/>") + Utils.getShareIntentFooter()
                                     )
@@ -798,7 +817,8 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                                 )
                             }
                         }
-                    }, null, true
+                    },
+                    null, true
                 )
             }
             else -> {
@@ -827,10 +847,12 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                         RecyclerViewRefreshCause.DATA_SET_CHANGED,
                         null
                     )
-                })
+                }
+            )
             return true
         } else if (itemId == R.id.router_aliases_import) {
-            PermissionsUtils.requestPermissions(this, listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            PermissionsUtils.requestPermissions(
+                this, listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                 {
                     val importAliasesFragment = supportFragmentManager.findFragmentByTag(IMPORT_ALIASES_FRAGMENT_TAG)
                     if (importAliasesFragment is DialogFragment) {
@@ -845,7 +867,8 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
             )
             return true
         } else if (itemId == R.id.router_aliases_export_all) {
-            PermissionsUtils.requestPermissions(this, listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            PermissionsUtils.requestPermissions(
+                this, listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                 {
                     val token = Bundle()
                     token.putInt(MAIN_ACTIVITY_ACTION, RouterActions.EXPORT_ALIASES)
@@ -855,7 +878,8 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
                         String.format(
                             "Going to start exporting aliases for '%s' (%s)...",
                             mRouter!!.displayName, mRouter!!.remoteIpAddress
-                        ), "Undo",
+                        ),
+                        "Undo",
                         Snackbar.LENGTH_SHORT, this@ManageRouterAliasesActivity, token, true
                     )
                     Unit
@@ -940,30 +964,33 @@ class ManageRouterAliasesActivity : AppCompatActivity(), View.OnClickListener, S
     ) {
         //        mSwipeRefreshLayout.setEnabled(false);
         setRefreshActionButtonState(true)
-        Handler().postDelayed({
-            try {
-                val allAliases = FluentIterable.from(Router.getAliases(this@ManageRouterAliasesActivity, mRouter))
-                    .toList()
-                (this@ManageRouterAliasesActivity.mAdapter as RouterAliasesListRecyclerViewAdapter).setAliasesColl(
-                    allAliases
-                )
-                when (cause) {
-                    RecyclerViewRefreshCause.DATA_SET_CHANGED -> this@ManageRouterAliasesActivity.mAdapter!!.notifyDataSetChanged()
-                    RecyclerViewRefreshCause.INSERTED -> this@ManageRouterAliasesActivity.mAdapter!!.notifyItemInserted(
-                        position!!
+        Handler().postDelayed(
+            {
+                try {
+                    val allAliases = FluentIterable.from(Router.getAliases(this@ManageRouterAliasesActivity, mRouter))
+                        .toList()
+                    (this@ManageRouterAliasesActivity.mAdapter as RouterAliasesListRecyclerViewAdapter).setAliasesColl(
+                        allAliases
                     )
-                    RecyclerViewRefreshCause.REMOVED -> this@ManageRouterAliasesActivity.mAdapter!!.notifyItemRemoved(
-                        position!!
-                    )
-                    RecyclerViewRefreshCause.UPDATED -> this@ManageRouterAliasesActivity.mAdapter!!.notifyItemChanged(
-                        position!!
-                    )
+                    when (cause) {
+                        RecyclerViewRefreshCause.DATA_SET_CHANGED -> this@ManageRouterAliasesActivity.mAdapter!!.notifyDataSetChanged()
+                        RecyclerViewRefreshCause.INSERTED -> this@ManageRouterAliasesActivity.mAdapter!!.notifyItemInserted(
+                            position!!
+                        )
+                        RecyclerViewRefreshCause.REMOVED -> this@ManageRouterAliasesActivity.mAdapter!!.notifyItemRemoved(
+                            position!!
+                        )
+                        RecyclerViewRefreshCause.UPDATED -> this@ManageRouterAliasesActivity.mAdapter!!.notifyItemChanged(
+                            position!!
+                        )
+                    }
+                } finally {
+                    setRefreshActionButtonState(false)
+                    //                    mSwipeRefreshLayout.setEnabled(true);
                 }
-            } finally {
-                setRefreshActionButtonState(false)
-                //                    mSwipeRefreshLayout.setEnabled(true);
-            }
-        }, 1000)
+            },
+            1000
+        )
     }
 
     private fun handleIntent(intent: Intent) {

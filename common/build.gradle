@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:1.0.2'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:2.0.0'
     }
 }
 
@@ -14,7 +14,7 @@ apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
     compileSdkVersion android_sdk
-    buildToolsVersion buildTools_version
+//    buildToolsVersion buildTools_version
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
