@@ -57,7 +57,7 @@ buildscript {
     System.properties['com.android.build.gradle.overrideVersionCheck'] = 'true'
     repositories {
         google()
-        jcenter()
+        //jcenter()
         maven {
             url "https://plugins.gradle.org/m2/"
         }
@@ -81,7 +81,7 @@ apply plugin: 'kotlin'
 allprojects {
     repositories {
         google()
-        jcenter()
+        //jcenter()
         maven {
             url "https://jitpack.io"
             maven {
@@ -136,7 +136,7 @@ allprojects {
 subprojects {
     repositories {
         google()
-        jcenter()
+        //jcenter()
         maven { url 'http://clojars.org/repo' }
     }
 }
@@ -199,7 +199,7 @@ ext.getVersionCodeAndName = {
 }
 repositories {
     google()
-    jcenter()
+    //jcenter()
     mavenCentral()
 }
 dependencies {

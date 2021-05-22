@@ -306,7 +306,7 @@ repositories {
     //Statically added in the libs folder, to avoid surprises with this repository suddenly becoming unavailable
 //    url "https://repository-achartengine.forge.cloudbees.com/snapshot/"
 //  }
-    jcenter()
+    //jcenter()
     google()
     mavenCentral()
     maven { url 'http://dl.bintray.com/igenius-code/maven' }

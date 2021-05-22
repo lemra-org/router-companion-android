@@ -42,12 +42,13 @@ apply plugin: 'project-report'
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'com.getkeepsafe.dexcount'
+//apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'com.google.firebase.crashlytics'
 
 repositories {
-    jcenter()
+    //jcenter()
     google()
+    mavenCentral()
 }
 
 //apply plugin: 'com.github.triplet.play'
