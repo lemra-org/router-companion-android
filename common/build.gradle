@@ -10,7 +10,7 @@ buildscript {
 
 apply plugin: 'project-report'
 apply plugin: 'com.android.library'
-apply plugin: 'com.getkeepsafe.dexcount'
+//apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
     compileSdkVersion android_sdk
