@@ -26,13 +26,16 @@ import com.google.gms.googleservices.GoogleServicesPlugin
 buildscript {
     repositories {
         google()
-        maven { url 'http://dl.bintray.com/amulyakhare/maven' }
+        maven {
+            url 'http://dl.bintray.com/amulyakhare/maven'
+            allowInsecureProtocol = true
+        }
         mavenCentral()
     }
 
     dependencies {
         //noinspection GradleDynamicVersion
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.4.1'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.6.1'
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:2.0.0'
     }
 }
@@ -54,8 +57,8 @@ apply plugin: 'com.google.firebase.crashlytics'
 android {
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     testOptions {
@@ -309,9 +312,13 @@ repositories {
     //jcenter()
     google()
     mavenCentral()
-    maven { url 'http://dl.bintray.com/igenius-code/maven' }
+    maven {
+        url 'http://dl.bintray.com/igenius-code/maven'
+        allowInsecureProtocol = true
+    }
     maven {
         url 'http://dl.bintray.com/amulyakhare/maven'
+        allowInsecureProtocol = true
     }
     maven { url "https://s3.amazonaws.com/avocarrot-android-builds/dist/" }
 }
@@ -533,4 +540,4 @@ apply plugin: 'com.google.gms.google-services'
 //}
 
 //Workaround from https://github.com/invertase/react-native-firebase/issues/1155#issuecomment-395944013
-GoogleServicesPlugin.config.disableVersionCheck = true
+//GoogleServicesPlugin.config.disableVersionCheck = true

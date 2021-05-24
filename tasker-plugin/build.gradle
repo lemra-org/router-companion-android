@@ -28,12 +28,15 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url 'http://dl.bintray.com/amulyakhare/maven' }
+        maven {
+            url 'http://dl.bintray.com/amulyakhare/maven'
+            allowInsecureProtocol = true
+        }
     }
 
     dependencies {
         //noinspection GradleDynamicVersion
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.4.1'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.6.1'
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:2.0.0'
     }
 }
@@ -64,8 +67,8 @@ android {
 //    }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     testOptions {
@@ -330,4 +333,4 @@ dependencies {
 apply plugin: 'com.google.gms.google-services'
 
 //Workaround from https://github.com/invertase/react-native-firebase/issues/1155#issuecomment-395944013
-GoogleServicesPlugin.config.disableVersionCheck = true
+//GoogleServicesPlugin.config.disableVersionCheck = true

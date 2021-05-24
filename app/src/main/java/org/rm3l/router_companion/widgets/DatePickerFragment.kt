@@ -24,11 +24,13 @@ class DatePickerFragment : DialogFragment(), OnDateSetListener {
         if (bundleArguments?.containsKey(START_MILLIS) == true) {
             calendar.timeInMillis = bundleArguments.getLong(START_MILLIS)
         }
-        val datePickerDialog = DatePickerDialog(activity!!,
-                bundleArguments?.getParcelable<AbstractDatePickerListener>(DATE_PICKER_LISTENER)?:this,
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH))
+        val datePickerDialog = DatePickerDialog(
+            activity!!,
+            bundleArguments?.getParcelable<AbstractDatePickerListener>(DATE_PICKER_LISTENER) ?: this,
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
         val datePicker = datePickerDialog.datePicker
         if (bundleArguments?.containsKey(MIN_MILLIS) == true) {
             datePicker.minDate = bundleArguments.getLong(MIN_MILLIS)
