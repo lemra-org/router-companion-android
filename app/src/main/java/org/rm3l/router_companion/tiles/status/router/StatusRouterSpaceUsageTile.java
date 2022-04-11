@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.tiles.status.router;
@@ -140,7 +140,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
       }
 
       final TextView errorPlaceHolderView =
-          (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_error);
+              this.layout.findViewById(R.id.tile_status_router_router_space_usage_error);
 
       final Exception exception = data.getException();
 
@@ -151,25 +151,23 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
 
         // NVRAM
         final TextView nvramSpaceView =
-            (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_nvram);
+                this.layout.findViewById(R.id.tile_status_router_router_space_usage_nvram);
         nvramSpaceView.setText(data.getProperty("nvram_space", "-"));
 
         // CIFS
         final TextView cifsSpaceView =
-            (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_cifs);
+                this.layout.findViewById(R.id.tile_status_router_router_space_usage_cifs);
         cifsSpaceView.setText(data.getProperty("cifs_space", "-"));
 
         // JFFS
         final TextView jffsView =
-            (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_jffs2);
+                this.layout.findViewById(R.id.tile_status_router_router_space_usage_jffs2);
         jffsView.setText(data.getProperty("jffs_space", "-"));
 
         // Update usages as well
         ProgressBar pb =
-            (ProgressBar)
                 layout.findViewById(R.id.tile_status_router_router_space_usage_nvram_usage);
         TextView pbText =
-            (TextView)
                 layout.findViewById(R.id.tile_status_router_router_space_usage_nvram_usage_text);
         try {
           final int propertyUtilization =
@@ -190,10 +188,8 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
         }
 
         pb =
-            (ProgressBar)
                 layout.findViewById(R.id.tile_status_router_router_space_usage_cifs_usage);
         pbText =
-            (TextView)
                 layout.findViewById(R.id.tile_status_router_router_space_usage_cifs_usage_text);
         try {
           final int propertyUtilization =
@@ -215,10 +211,8 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
         }
 
         pb =
-            (ProgressBar)
                 layout.findViewById(R.id.tile_status_router_router_space_usage_jffs2_usage);
         pbText =
-            (TextView)
                 layout.findViewById(R.id.tile_status_router_router_space_usage_jffs2_usage_text);
         try {
           final int propertyUtilization =
@@ -241,7 +235,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
 
         // Update last sync
         final RelativeTimeTextView lastSyncView =
-            (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }

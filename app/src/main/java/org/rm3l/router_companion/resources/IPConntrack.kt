@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.resources
@@ -26,6 +26,7 @@ import com.google.common.base.Splitter
 import com.google.common.base.Strings
 import com.google.common.base.Strings.nullToEmpty
 import org.rm3l.router_companion.utils.ReportingUtils
+import java.util.Locale
 
 class IPConntrack {
 
@@ -266,7 +267,7 @@ class IPConntrack {
 
             try {
 
-                val proto = nullToEmpty(toList[0]).toUpperCase()
+                val proto = nullToEmpty(toList[0]).uppercase(Locale.getDefault())
                 ipConntrack.transportProtocol = proto
                 if (toList.size >= 3) {
                     ipConntrack.timeout = java.lang.Long.parseLong(toList[2])

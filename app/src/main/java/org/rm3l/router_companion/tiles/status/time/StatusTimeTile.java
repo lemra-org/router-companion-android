@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.tiles.status.time;
@@ -97,7 +97,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
       }
 
       final TextView errorPlaceHolderView =
-          (TextView) this.layout.findViewById(R.id.tile_status_time_error);
+              this.layout.findViewById(R.id.tile_status_time_error);
 
       final Exception exception = data.getException();
 
@@ -150,7 +150,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
 
         // Update last sync
         final RelativeTimeTextView lastSyncView =
-            (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }

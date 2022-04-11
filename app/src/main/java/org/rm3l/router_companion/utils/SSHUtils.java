@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.utils;
@@ -54,6 +54,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -917,7 +918,7 @@ public final class SSHUtils {
       }
       command += "\n";
 
-      out.write(command.getBytes(Charset.forName("UTF-8")));
+      out.write(command.getBytes(StandardCharsets.UTF_8));
       out.flush();
       if (checkAck(in) != 0) {
         return closeChannel(channelExec, out);

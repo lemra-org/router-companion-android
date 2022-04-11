@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.widgets;
@@ -39,13 +39,13 @@ public class NetworkTrafficView extends TextView {
 
   private static final int KILOBYTE = 1024;
 
-  private static DecimalFormat decimalFormat = new DecimalFormat("##0.#");
+  private static final DecimalFormat decimalFormat = new DecimalFormat("##0.#");
 
-  private int KB = KILOBIT;
+  private final int KB = KILOBIT;
 
-  private int MB = KB * KB;
+  private final int MB = KB * KB;
 
-  private int GB = MB * KB;
+  private final int GB = MB * KB;
 
   private final Context mContext;
 

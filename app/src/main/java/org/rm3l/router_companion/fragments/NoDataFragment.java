@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 package org.rm3l.router_companion.fragments;
 
@@ -29,7 +29,7 @@ import org.rm3l.router_companion.tiles.DDWRTTile;
 /**
  * No-Data Fragment
  *
- * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
+ * @author <a href="mailto:armel+router_companion@rm3l.org">Armel S.</a>
  */
 public class NoDataFragment extends AbstractBaseFragment {
 

@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.widgets;
@@ -47,7 +47,7 @@ public class VerticalScrollView extends ScrollView {
 
   View.OnTouchListener mGestureListener;
 
-  private GestureDetector mGestureDetector;
+  private final GestureDetector mGestureDetector;
 
   public VerticalScrollView(Context context, AttributeSet attrs) {
     super(context, attrs);

@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.tiles.status.lan;
@@ -121,7 +121,7 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
       }
 
       final TextView errorPlaceHolderView =
-          (TextView) this.layout.findViewById(R.id.tile_status_lan_status_error);
+              this.layout.findViewById(R.id.tile_status_lan_status_error);
 
       final Exception exception = data.getException();
 
@@ -133,26 +133,26 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
 
         // MAC Address
         final TextView macView =
-            (TextView) this.layout.findViewById(R.id.tile_status_lan_status_mac);
+                this.layout.findViewById(R.id.tile_status_lan_status_mac);
         macView.setText(data.getProperty(NVRAMInfo.Companion.getLAN_HWADDR(), "-"));
 
         // IP Address
-        final TextView ipView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_ip);
+        final TextView ipView = this.layout.findViewById(R.id.tile_status_lan_status_ip);
         ipView.setText(data.getProperty(NVRAMInfo.Companion.getLAN_IPADDR(), "-"));
 
         // Subnet Mask
         final TextView maskView =
-            (TextView) this.layout.findViewById(R.id.tile_status_lan_status_subnet_mask);
+                this.layout.findViewById(R.id.tile_status_lan_status_subnet_mask);
         maskView.setText(data.getProperty(NVRAMInfo.Companion.getLAN_NETMASK(), "-"));
 
         // GW
         final TextView gwView =
-            (TextView) this.layout.findViewById(R.id.tile_status_lan_status_gateway);
+                this.layout.findViewById(R.id.tile_status_lan_status_gateway);
         gwView.setText(data.getProperty(NVRAMInfo.Companion.getLAN_GATEWAY(), "-"));
 
         // Update last sync
         final RelativeTimeTextView lastSyncView =
-            (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }

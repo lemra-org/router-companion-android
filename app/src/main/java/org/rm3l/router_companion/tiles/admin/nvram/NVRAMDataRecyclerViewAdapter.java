@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 package org.rm3l.router_companion.tiles.admin.nvram;
 
@@ -110,16 +110,16 @@ public class NVRAMDataRecyclerViewAdapter
       this.fragmentManager = fragmentManager;
       this.itemView = itemView;
       this.itemView.setOnClickListener(this);
-      this.cardView = (CardView) this.itemView.findViewById(R.id.nvram_entry_cardview);
+      this.cardView = this.itemView.findViewById(R.id.nvram_entry_cardview);
       this.cardView.setOnClickListener(this);
 
-      this.menuBtn = (ImageButton) this.itemView.findViewById(R.id.nvram_var_menu);
-      this.removeBtn = (ImageButton) this.itemView.findViewById(R.id.nvram_var_remove_btn);
+      this.menuBtn = this.itemView.findViewById(R.id.nvram_var_menu);
+      this.removeBtn = this.itemView.findViewById(R.id.nvram_var_remove_btn);
 
-      this.avatar = (ImageView) this.itemView.findViewById(R.id.avatar);
+      this.avatar = this.itemView.findViewById(R.id.avatar);
 
-      this.key = (TextView) this.itemView.findViewById(R.id.nvram_key);
-      this.value = (TextView) this.itemView.findViewById(R.id.nvram_value);
+      this.key = this.itemView.findViewById(R.id.nvram_key);
+      this.value = this.itemView.findViewById(R.id.nvram_value);
     }
 
     @Override

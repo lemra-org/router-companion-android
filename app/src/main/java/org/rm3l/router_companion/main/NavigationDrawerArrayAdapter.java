@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 package org.rm3l.router_companion.main;
 
@@ -93,7 +93,7 @@ public class NavigationDrawerArrayAdapter extends ArrayAdapter<NavigationDrawerM
 
       view = LayoutInflater.from(context).inflate(layout, null);
 
-      TextView text1 = (TextView) view.findViewById(R.id.menurow_title);
+      TextView text1 = view.findViewById(R.id.menurow_title);
       view.setTag(new ViewHolder(text1));
     }
 

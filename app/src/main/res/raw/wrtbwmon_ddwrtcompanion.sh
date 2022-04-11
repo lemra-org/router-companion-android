@@ -24,7 +24,7 @@
 # Modified by Chee Kok Aun (RemoveThisSpamProtectionwolfkodi AT gmail DOT com)
 # to calculate live traffic in 10 seconds intervals.
 #
-# Adapted for DD-WRT Companion App by Armel S. <apps+ddwrt@rm3l.org>
+# Adapted for DD-WRT Companion App by Armel S. <armel+router_companion@rm3l.org>
 #
 
 LAN_IFACE=$(nvram get lan_ifname)

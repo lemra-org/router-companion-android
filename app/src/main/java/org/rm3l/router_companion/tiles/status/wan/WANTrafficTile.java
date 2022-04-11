@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.tiles.status.wan;
@@ -214,7 +214,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
       }
 
       final TextView errorPlaceHolderView =
-          (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_error);
+              this.layout.findViewById(R.id.tile_status_wan_traffic_error);
 
       final Exception exception = data.getException();
 
@@ -228,11 +228,11 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
 
         // Iface Name
         final TextView wanIfaceView =
-            (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_iface);
+                this.layout.findViewById(R.id.tile_status_wan_traffic_iface);
         wanIfaceView.setText(Strings.isNullOrEmpty(wanIface) ? "-" : wanIface);
 
         final TextView wanIngressView =
-            (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_ingress);
+                this.layout.findViewById(R.id.tile_status_wan_traffic_ingress);
         String text;
         final String wanRcvBytes = data.getProperty(wanIface + "_rcv_bytes", "-1");
         try {
@@ -250,7 +250,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
         wanIngressView.setText(text);
 
         final TextView wanEgressView =
-            (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_egress);
+                this.layout.findViewById(R.id.tile_status_wan_traffic_egress);
         final String wanXmitBytes = data.getProperty(wanIface + "_xmit_bytes", "-1");
         try {
           final double wanXmitMBytes = Double.parseDouble(wanXmitBytes) / (1024 * 1024);
@@ -268,7 +268,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
 
         // Update last sync
         final RelativeTimeTextView lastSyncView =
-            (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }

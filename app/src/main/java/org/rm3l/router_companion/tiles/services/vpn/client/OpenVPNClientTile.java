@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 package org.rm3l.router_companion.tiles.services.vpn.client;
 
@@ -414,7 +414,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
   private static final String LOG_TAG = OpenVPNClientTile.class.getSimpleName();
 
-  private AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
+  private final AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
 
   private long mLastSync;
 
@@ -548,7 +548,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
       }
 
       final SwitchCompat enableTraffDataButton =
-          (SwitchCompat) this.layout.findViewById(R.id.tile_services_openvpn_client_status);
+              this.layout.findViewById(R.id.tile_services_openvpn_client_status);
       enableTraffDataButton.setVisibility(View.VISIBLE);
 
       final boolean makeToogleEnabled =
@@ -558,13 +558,9 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
       if (!isToggleStateActionRunning.get()) {
         if (makeToogleEnabled) {
-          if ("1".equals(data.getProperty(NVRAMInfo.Companion.getOPENVPNCL_ENABLE()))) {
             // Enabled
-            enableTraffDataButton.setChecked(true);
-          } else {
             // Disabled
-            enableTraffDataButton.setChecked(false);
-          }
+            enableTraffDataButton.setChecked("1".equals(data.getProperty(NVRAMInfo.Companion.getOPENVPNCL_ENABLE())));
           enableTraffDataButton.setEnabled(true);
         } else {
           enableTraffDataButton.setChecked(false);
@@ -579,7 +575,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
       }
 
       final TextView errorPlaceHolderView =
-          (TextView) this.layout.findViewById(R.id.tile_services_openvpn_client_error);
+              this.layout.findViewById(R.id.tile_services_openvpn_client_error);
 
       final Exception exception = data.getException();
 
@@ -596,7 +592,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
         // Update last sync
         final RelativeTimeTextView lastSyncView =
-            (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }

@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.fragments.status;
@@ -56,9 +56,9 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
   private static final String LOG_TAG = StatusWirelessFragment.class.getSimpleName();
 
   // Save views for the very first time
-  private List<String> ifacesViews = Lists.newArrayList();
+  private final List<String> ifacesViews = Lists.newArrayList();
 
-  @Nullable private Collection<WirelessIfaceTile> mIfaceTiles = null;
+  @Nullable private final Collection<WirelessIfaceTile> mIfaceTiles = null;
 
   private Loader<Collection<WirelessIfaceTile>> mLoader;
 
@@ -218,7 +218,7 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
   @Nullable
   @Override
   protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return Collections.<DDWRTTile>singletonList(
+    return Collections.singletonList(
         new WirelessIfacesTile(this, savedInstanceState, router));
   }
 }

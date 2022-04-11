@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.utils;
@@ -102,7 +102,7 @@ public final class ViewGroupUtils {
 
   @NonNull
   public static PointF getBottomLeftCorner(@NonNull final View view) {
-    final float src[] = new float[8];
+    final float[] src = new float[8];
     final float[] dst =
         new float[] {
           0, 0, view.getWidth(), 0, 0, view.getHeight(), view.getWidth(), view.getHeight()
@@ -113,7 +113,7 @@ public final class ViewGroupUtils {
 
   @NonNull
   public static PointF getBottomRightCorner(@NonNull final View view) {
-    final float src[] = new float[8];
+    final float[] src = new float[8];
     final float[] dst =
         new float[] {
           0, 0, view.getWidth(), 0, 0, view.getHeight(), view.getWidth(), view.getHeight()
@@ -167,7 +167,7 @@ public final class ViewGroupUtils {
 
   @NonNull
   public static PointF getTopLeftCorner(@NonNull final View view) {
-    final float src[] = new float[8];
+    final float[] src = new float[8];
     final float[] dst =
         new float[] {
           0, 0, view.getWidth(), 0, 0, view.getHeight(), view.getWidth(), view.getHeight()
@@ -178,7 +178,7 @@ public final class ViewGroupUtils {
 
   @NonNull
   public static PointF getTopRightCorner(@NonNull final View view) {
-    final float src[] = new float[8];
+    final float[] src = new float[8];
     final float[] dst =
         new float[] {
           0, 0, view.getWidth(), 0, 0, view.getHeight(), view.getWidth(), view.getHeight()

@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 package org.rm3l.router_companion.tiles.status.bandwidth;
 
@@ -181,7 +181,7 @@ public class IfacesBandwidthMonitoringTile extends DDWRTTile<None> {
           .setVisibility(View.VISIBLE);
 
       final ImageButton tileMenu =
-          (ImageButton) layout.findViewById(R.id.tile_status_bandwidth_monitoring_menu);
+              layout.findViewById(R.id.tile_status_bandwidth_monitoring_menu);
 
       if (!isThemeLight) {
         // Set menu background to white
@@ -200,7 +200,7 @@ public class IfacesBandwidthMonitoringTile extends DDWRTTile<None> {
       }
 
       final TextView errorPlaceHolderView =
-          (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_error);
+              this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_error);
 
       final Exception exception = data.getException();
 
@@ -303,7 +303,7 @@ public class IfacesBandwidthMonitoringTile extends DDWRTTile<None> {
 
         // Update last sync
         final RelativeTimeTextView lastSyncView =
-            (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }
@@ -782,15 +782,14 @@ public class IfacesBandwidthMonitoringTile extends DDWRTTile<None> {
     legendView.setVisibility(View.VISIBLE);
 
     final TextView inTextView =
-        (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_in);
+            this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_in);
     final TextView outTextView =
-        (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_out);
+            this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_out);
 
     inTextView.setText(nvramInfo.getProperty(ifaceStr + "_ingress_MB", "-").replace("bytes", "B"));
     outTextView.setText(nvramInfo.getProperty(ifaceStr + "_egress_MB", "-").replace("bytes", "B"));
 
     final LinearLayout graphPlaceHolder =
-        (LinearLayout)
             this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
     final Map<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> dataCircularBuffer =
         bandwidthMonitoringIfaceData.getData();
@@ -843,7 +842,6 @@ public class IfacesBandwidthMonitoringTile extends DDWRTTile<None> {
             .findViewById(R.id.tile_status_bandwidth_monitoring_graph_legend_series1_bar)
             .setBackgroundColor(colorForIface);
         final TextView series1TextView =
-            (TextView)
                 this.layout.findViewById(
                     R.id.tile_status_bandwidth_monitoring_graph_legend_series1_text);
         series1TextView.setText(iface);
@@ -853,7 +851,6 @@ public class IfacesBandwidthMonitoringTile extends DDWRTTile<None> {
             .findViewById(R.id.tile_status_bandwidth_monitoring_graph_legend_series2_bar)
             .setBackgroundColor(colorForIface);
         final TextView series2TextView =
-            (TextView)
                 this.layout.findViewById(
                     R.id.tile_status_bandwidth_monitoring_graph_legend_series2_text);
         series2TextView.setText(iface);

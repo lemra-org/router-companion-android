@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.resources.conn;
@@ -110,7 +110,7 @@ import org.rm3l.router_companion.utils.Utils;
  *
  * <p>Connections can be either SSH-based or HTTP(S)-based.
  *
- * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
+ * @author <a href="mailto:armel+router_companion@rm3l.org">Armel S.</a>
  */
 public class Router implements Serializable {
 
@@ -353,7 +353,7 @@ public class Router implements Serializable {
   public enum SSHAuthenticationMethod {
     NONE,
     PASSWORD,
-    PUBLIC_PRIVATE_KEY;
+    PUBLIC_PRIVATE_KEY
   }
 
   public enum RouterFirmware {
@@ -1155,11 +1155,7 @@ public class Router implements Serializable {
     if (!username.equals(router.username)) {
       return false;
     }
-    if (!uuid.equals(router.uuid)) {
-      return false;
-    }
-
-    return true;
+    return uuid.equals(router.uuid);
   }
 
   @NonNull

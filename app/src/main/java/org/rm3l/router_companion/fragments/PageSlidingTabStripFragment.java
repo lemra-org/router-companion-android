@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.fragments;
@@ -55,7 +55,7 @@ import org.rm3l.router_companion.utils.ColorUtils;
 /**
  * Page Sliding fragment
  *
- * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
+ * @author <a href="mailto:armel+router_companion@rm3l.org">Armel S.</a>
  */
 public class PageSlidingTabStripFragment extends Fragment {
 
@@ -213,13 +213,13 @@ public class PageSlidingTabStripFragment extends Fragment {
   public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    mPager = (ViewPager) view.findViewById(R.id.viewPager);
+    mPager = view.findViewById(R.id.viewPager);
     final int mFragmentTabsAdapterCount = mFragmentTabsAdapter.getCount();
     mPager.setOffscreenPageLimit(mFragmentTabsAdapterCount - 1);
     mPager.setAdapter(mFragmentTabsAdapter);
     mPager.addOnPageChangeListener(mOnPageChangeListener);
 
-    mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.tabs);
+    mSlidingTabLayout = view.findViewById(R.id.tabs);
     int colorForOpenWrt = -1;
     if (mRouter != null) {
       final Router.RouterFirmware routerFirmware = this.mRouter.getRouterFirmware();

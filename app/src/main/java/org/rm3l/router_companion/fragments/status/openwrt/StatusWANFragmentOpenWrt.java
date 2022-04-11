@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 package org.rm3l.router_companion.fragments.status.openwrt;
 
@@ -37,7 +37,7 @@ public class StatusWANFragmentOpenWrt extends StatusWANFragment {
   @Nullable
   @Override
   protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return Arrays.<DDWRTTile>asList(
+    return Arrays.asList(
         new WANConfigTileOpenWrt(this, savedInstanceState, this.router),
         new WANTrafficTileOpenWrt(this, savedInstanceState, this.router),
         new WANMonthlyTrafficTile(this, savedInstanceState, this.router));

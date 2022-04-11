@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.fragments;
@@ -106,7 +106,7 @@ import org.rm3l.router_companion.widgets.RecyclerViewEmptySupport;
 /**
  * Abstract base fragment
  *
- * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
+ * @author <a href="mailto:armel+router_companion@rm3l.org">Armel S.</a>
  */
 public abstract class AbstractBaseFragment<T> extends Fragment
     implements LoaderManager.LoaderCallbacks<T>, SwipeRefreshLayout.OnRefreshListener {
@@ -1184,9 +1184,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment
 
     final int rootViewType = getRootViewType();
     final RecyclerViewEmptySupport recyclerView =
-        (RecyclerViewEmptySupport) rootView.findViewById(R.id.tiles_container_recyclerview);
+            rootView.findViewById(R.id.tiles_container_recyclerview);
     final LinearLayout linearLayout =
-        (LinearLayout) rootView.findViewById(R.id.tiles_container_linearlayout);
+            rootView.findViewById(R.id.tiles_container_linearlayout);
     final View recyclerViewEmptyView = rootView.findViewById(R.id.empty_view);
     switch (rootViewType) {
       case RootViewType_LINEAR_LAYOUT:

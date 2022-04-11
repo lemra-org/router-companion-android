@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.utils
@@ -40,6 +40,7 @@ import org.rm3l.router_companion.RouterCompanionAppConstants
 import org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_THEME
 import org.rm3l.router_companion.RouterCompanionAppConstants.THEMING_PREF
 import org.rm3l.router_companion.resources.conn.Router.RouterFirmware
+import java.util.Locale
 import java.util.Random
 import java.util.concurrent.ExecutionException
 
@@ -189,7 +190,7 @@ class ColorUtils private constructor() {
                     Utils.getResId(
                         String.format(
                             "%s_%s",
-                            routerFirmware!!.name.toLowerCase(),
+                            routerFirmware!!.name.lowercase(Locale.getDefault()),
                             Strings.nullToEmpty(themeSuffix)
                         ),
                         R.color::class.java
@@ -285,7 +286,7 @@ class ColorUtils private constructor() {
                 try {
                     // Determine style by intropsection
                     @ColorRes val textColorResId: Int = Utils.getResId(
-                        String.format("%s_tile_title", routerFirmware!!.name.toLowerCase()),
+                        String.format("%s_tile_title", routerFirmware!!.name.lowercase(Locale.getDefault())),
                         R.color::class.java
                     )
                     view.setTextColor(ContextCompat.getColor(context, textColorResId))

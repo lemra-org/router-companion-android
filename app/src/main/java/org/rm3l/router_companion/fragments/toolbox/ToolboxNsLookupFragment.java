@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 package org.rm3l.router_companion.fragments.toolbox;
 
@@ -33,6 +33,6 @@ public class ToolboxNsLookupFragment extends AbstractToolboxFragment {
   @Nullable
   @Override
   protected List<DDWRTTile> doGetTiles(@Nullable Bundle savedInstanceState) {
-    return Arrays.<DDWRTTile>asList(new ToolboxNsLookupTile(this, savedInstanceState, this.router));
+    return Arrays.asList(new ToolboxNsLookupTile(this, savedInstanceState, this.router));
   }
 }

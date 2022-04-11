@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.resources.conn
@@ -30,7 +30,7 @@ import java.util.Properties
  * Wrapper around NVRAM info fetched from a given [Router].
  * Data comes in as a Properties object.
 
- * @author [Armel S.](mailto:apps+ddwrt@rm3l.org)
+ * @author [Armel S.](mailto:armel+router_companion@rm3l.org)
  */
 open class NVRAMInfo : RouterData<Properties>(), Serializable {
     /**

@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.tiles.admin.nvram;
@@ -135,7 +135,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
   private static final String LAST_SEARCH = "lastSearch";
 
-  private FloatingActionButton addNewButton;
+  private final FloatingActionButton addNewButton;
 
   private final NVRAMDataRecyclerViewAdapter mAdapter;
 
@@ -173,7 +173,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
     mLayoutManager.scrollToPosition(0);
     mRecyclerView.setLayoutManager(mLayoutManager);
 
-    final TextView emptyView = (TextView) layout.findViewById(R.id.empty_view);
+    final TextView emptyView = layout.findViewById(R.id.empty_view);
     if (ColorUtils.Companion.isThemeLight(mParentFragmentActivity)) {
       emptyView.setTextColor(ContextCompat.getColor(mParentFragmentActivity, R.color.black));
     } else {
@@ -210,7 +210,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         });
 
     // Create Options Menu
-    final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_admin_nvram_menu);
+    final ImageButton tileMenu = layout.findViewById(R.id.tile_admin_nvram_menu);
 
     if (!ColorUtils.Companion.isThemeLight(mParentFragmentActivity)) {
       // Set menu background to white
@@ -255,7 +255,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
     // Handle for Search EditText
     final EditText filterEditText =
-        (EditText) this.layout.findViewById(R.id.tile_admin_nvram_filter);
+            this.layout.findViewById(R.id.tile_admin_nvram_filter);
     // Initialize with existing search data
     filterEditText.setText(
         mParentFragmentPreferences != null
@@ -308,7 +308,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                   mNvramInfoToDisplay = new HashMap<>(mNvramInfoDefaultSortingData);
                 }
 
-                ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplay);
+                mAdapter.setEntryList(mNvramInfoToDisplay);
                 mAdapter.notifyDataSetChanged();
 
                 if (mParentFragmentPreferences != null) {
@@ -472,7 +472,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
       layout.findViewById(R.id.tile_admin_nvram_loading_view).setVisibility(View.GONE);
 
       final TextView errorPlaceHolderView =
-          (TextView) this.layout.findViewById(R.id.tile_admin_nvram_error);
+              this.layout.findViewById(R.id.tile_admin_nvram_error);
 
       final Exception exception = data.getException();
 
@@ -494,7 +494,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                 : null;
 
         if (isNullOrEmpty(textToFind)) {
-          ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplay);
+          mAdapter.setEntryList(mNvramInfoToDisplay);
           mAdapter.notifyDataSetChanged();
         } else {
 
@@ -547,7 +547,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
         // Update last sync
         final RelativeTimeTextView lastSyncView =
-            (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }
@@ -639,7 +639,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
       } else {
         // Already filtered data
         final Map<Object, Object> adapterNvramInfo =
-            ((NVRAMDataRecyclerViewAdapter) mAdapter).getNvramInfo();
+            mAdapter.getNvramInfo();
         if (itemId == R.id.tile_admin_nvram_sort_default) {
           mNvramInfoToDisplayCopy = new HashMap<>(adapterNvramInfo);
           notifyDatasetChanged = true;
@@ -659,7 +659,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
       }
 
       if (mNvramInfoToDisplayCopy != null && notifyDatasetChanged) {
-        ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplayCopy);
+        mAdapter.setEntryList(mNvramInfoToDisplayCopy);
         mAdapter.notifyDataSetChanged();
       }
     } else {
@@ -670,7 +670,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
           () -> {
             // Share action
             final Map<Object, Object> nvramInfo =
-                ((NVRAMDataRecyclerViewAdapter) mAdapter).getNvramInfo();
+                mAdapter.getNvramInfo();
             if (nvramInfo == null || nvramInfo.isEmpty()) {
               Utils.displayMessage(mParentFragmentActivity, "Nothing to share!", Style.ALERT);
               return null;

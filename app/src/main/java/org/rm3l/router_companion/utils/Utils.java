@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.utils;
@@ -153,7 +153,7 @@ public final class Utils {
     (byte) 'e', (byte) 'f'
   };
 
-  private static AtomicLong nextLoaderId = new AtomicLong(1);
+  private static final AtomicLong nextLoaderId = new AtomicLong(1);
 
   @NonNull
   public static AlertDialog buildAlertDialog(
@@ -199,11 +199,9 @@ public final class Utils {
       }
       // END Debugging
 
-      if (activeNetworkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
-        // Forbid even if network is not connected,
-        // because user has expressed the requirement not to use such network
-        return false;
-      }
+      // Forbid even if network is not connected,
+      // because user has expressed the requirement not to use such network
+      return activeNetworkInfo.getType() != ConnectivityManager.TYPE_MOBILE;
 
       //            final NetworkInfo wifiNetworkInfo =
       // connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);

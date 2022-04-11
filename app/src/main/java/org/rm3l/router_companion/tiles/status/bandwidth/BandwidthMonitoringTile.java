@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.tiles.status.bandwidth;
@@ -84,7 +84,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
 
     public BandwidthMonitoringIfaceData() {
       super();
-      super.setData(Maps.<String, EvictingQueue<DataPoint>>newConcurrentMap());
+      super.setData(Maps.newConcurrentMap());
     }
 
     public BandwidthMonitoringIfaceData addData(final String iface, final DataPoint point) {
@@ -92,7 +92,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
       @SuppressWarnings("ConstantConditions")
       final EvictingQueue<DataPoint> dataPointsForIface = data.get(iface);
       if (dataPointsForIface == null) {
-        data.put(iface, EvictingQueue.<DataPoint>create(MAX_DATA_POINTS));
+        data.put(iface, EvictingQueue.create(MAX_DATA_POINTS));
       }
       data.get(iface).add(point);
       return this;
@@ -290,7 +290,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
       }
 
       final TextView errorPlaceHolderView =
-          (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_error);
+              this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_error);
 
       final Exception exception = data.getException();
 
@@ -301,7 +301,6 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
         }
 
         final LinearLayout graphPlaceHolder =
-            (LinearLayout)
                 this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
         final Map<String, EvictingQueue<DataPoint>> dataCircularBuffer =
             bandwidthMonitoringIfaceData.getData();
@@ -372,7 +371,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
 
         // Update last sync
         final RelativeTimeTextView lastSyncView =
-            (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }

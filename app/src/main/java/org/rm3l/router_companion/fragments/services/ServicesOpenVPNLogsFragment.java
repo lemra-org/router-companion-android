@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 package org.rm3l.router_companion.fragments.services;
 
@@ -38,7 +38,7 @@ public class ServicesOpenVPNLogsFragment extends AbstractBaseFragment {
   protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
     if (tiles == null) {
       tiles =
-          Arrays.<DDWRTTile>asList(
+          Arrays.asList(
               new OpenVPNLogsTile(this, mLayout, savedInstanceState, this.router));
     }
     return tiles;

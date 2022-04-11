@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 package org.rm3l.router_companion.tiles.services.wol;
 
@@ -118,7 +118,7 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
 
     setContentView(R.layout.activity_wol_daemon_settings);
 
-    mToolbar = (Toolbar) findViewById(R.id.wol_daemon_settings_toolbar);
+    mToolbar = findViewById(R.id.wol_daemon_settings_toolbar);
     if (mToolbar != null) {
       mToolbar.setTitle("Automatic WOL Settings");
       mToolbar.setSubtitle(
@@ -142,7 +142,7 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
     sharedPreferences = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
 
     final EditText secureOnPasswordEditText =
-        (EditText) findViewById(R.id.wol_daemon_settings_secure_on_password);
+            findViewById(R.id.wol_daemon_settings_secure_on_password);
     ((CheckBox) findViewById(R.id.wol_daemon_settings_secure_on_password_show_checkbox))
         .setOnCheckedChangeListener(
             new CompoundButton.OnCheckedChangeListener() {
@@ -314,7 +314,7 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
         .setText(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_INTERVAL()), EDITABLE);
 
     final AutoCompleteTextView hostnameAutoComplete =
-        (AutoCompleteTextView) findViewById(R.id.wol_daemon_settings_hostname);
+            findViewById(R.id.wol_daemon_settings_hostname);
     final Set<String> hostnames =
         sharedPreferences.getStringSet(WOL_DAEMON_HOSTNAMES_PREF_KEY, new HashSet<String>());
     //noinspection ConstantConditions

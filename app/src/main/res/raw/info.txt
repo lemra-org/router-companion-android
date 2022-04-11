@@ -17,7 +17,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
+Contact Info: Armel Soro &lt;armel+router_companion AT rm3l DOT org&gt;
 -->
 <h3>%APP_NAME%</h3>
 v%VERSION_NAME%<br/><br/>
@@ -25,4 +25,4 @@ Copyright &copy; 2014-%CURRENT_YEAR% Armel S.<br/><br/>
 
 <b><a href="%SUPPORT_WEBSITE_HREF%" target="_blank">https://ddwrt-companion.app</a></b>
 <br><br>
-<a href="mailto:apps+ddwrt@rm3l.org?subject=DD-WRT%20Companion%20Android%20Application">apps+ddwrt@rm3l.org</a>
+<a href="mailto:armel+router_companion@rm3l.org?subject=DD-WRT%20Companion%20Android%20Application">armel+router_companion@rm3l.org</a>

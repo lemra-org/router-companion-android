@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 package org.rm3l.router_companion.tiles.toolbox;
 
@@ -128,7 +128,7 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
   public void onLoadFinished(Loader<None> loader, None data) {
     ((TextView) layout.findViewById(R.id.tile_toolbox_abstract_title)).setText(this.getTileTitle());
 
-    final TextView infoTextView = (TextView) layout.findViewById(R.id.tile_toolbox_abstract_info);
+    final TextView infoTextView = layout.findViewById(R.id.tile_toolbox_abstract_info);
     final Integer infoText = this.getInfoText();
     if (infoText == null) {
       infoTextView.setVisibility(View.GONE);
@@ -137,21 +137,21 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
       infoTextView.setText(infoText);
     }
 
-    final Button button = (Button) layout.findViewById(R.id.tile_toolbox_abstract_submit_button);
+    final Button button = layout.findViewById(R.id.tile_toolbox_abstract_submit_button);
     button.setText(this.getSubmitButtonText());
 
     final Button geolocateButton = layout.findViewById(R.id.tile_toolbox_abstract_geolocate_button);
 
     final Button cancelButton =
-        (Button) layout.findViewById(R.id.tile_toolbox_abstract_cancel_button);
+            layout.findViewById(R.id.tile_toolbox_abstract_cancel_button);
 
     final View progressBar = layout.findViewById(R.id.tile_toolbox_ping_abstract_loading_view);
 
-    final TextView outputView = (TextView) layout.findViewById(R.id.tile_toolbox_abstract_content);
+    final TextView outputView = layout.findViewById(R.id.tile_toolbox_abstract_content);
 
     // Handle for Search EditText
     final AutoCompleteTextView editText =
-        (AutoCompleteTextView) this.layout.findViewById(R.id.tile_toolbox_abstract_edittext);
+            this.layout.findViewById(R.id.tile_toolbox_abstract_edittext);
     if (this.getEditTextHint() != null) {
       editText.setHint(this.getEditTextHint());
     }
@@ -171,7 +171,7 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
             : EMPTY_STRING,
         EDITABLE);
 
-    final TextView errorView = (TextView) layout.findViewById(R.id.tile_toolbox_abstract_error);
+    final TextView errorView = layout.findViewById(R.id.tile_toolbox_abstract_error);
 
     geolocateButton.setOnClickListener(
         v -> {

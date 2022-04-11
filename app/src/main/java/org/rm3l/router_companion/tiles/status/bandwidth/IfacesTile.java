@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.tiles.status.bandwidth;
@@ -71,10 +71,10 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
     isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
     mProgressBar =
-        (ProgressBar) layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view);
+            layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view);
     mProgressBar.setMax(100);
     mProgressBarDesc =
-        (TextView) layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view_desc);
+            layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view_desc);
 
     if (isThemeLight) {
       mProgressBarDesc.setTextColor(ContextCompat.getColor(mParentFragmentActivity, R.color.black));
@@ -216,7 +216,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
       }
 
       final TextView errorPlaceHolderView =
-          (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_error);
+              this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_error);
 
       final Exception exception = data.getException();
 
@@ -228,22 +228,22 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
 
         // LAN
         final TextView lanIfaceView =
-            (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_lan);
+                this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_lan);
         lanIfaceView.setText(data.getProperty(NVRAMInfo.Companion.getLAN_IFNAME(), "-"));
 
         // WAN
         final TextView wanIfaceView =
-            (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wan);
+                this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wan);
         wanIfaceView.setText(data.getProperty(NVRAMInfo.Companion.getWAN_IFNAME(), "-"));
 
         // Wireless
         final TextView wlIfaceView =
-            (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless);
+                this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless);
         wlIfaceView.setText(data.getProperty(NVRAMInfo.Companion.getLANDEVS(), "-"));
 
         // Update last sync
         final RelativeTimeTextView lastSyncView =
-            (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }

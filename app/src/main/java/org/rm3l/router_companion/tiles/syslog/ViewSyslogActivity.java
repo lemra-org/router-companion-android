@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 package org.rm3l.router_companion.tiles.syslog;
 
@@ -308,7 +308,7 @@ public class ViewSyslogActivity extends AppCompatActivity
 
     handleIntent(getIntent());
 
-    mToolbar = (Toolbar) findViewById(R.id.tile_status_syslog_full_view_toolbar);
+    mToolbar = findViewById(R.id.tile_status_syslog_full_view_toolbar);
     if (mToolbar != null) {
       mWindowTitleFromBundle = intent.getStringExtra(WINDOW_TITLE);
       mToolbar.setTitle(
@@ -331,7 +331,7 @@ public class ViewSyslogActivity extends AppCompatActivity
     }
 
     mRecyclerView =
-        (RecyclerViewEmptySupport) findViewById(R.id.tile_status_syslog_full_recyclerview);
+            findViewById(R.id.tile_status_syslog_full_recyclerview);
 
     // use this setting to improve performance if you know that changes
     // in content do not change the layout size of the RecyclerView
@@ -343,7 +343,7 @@ public class ViewSyslogActivity extends AppCompatActivity
     mLayoutManager.scrollToPosition(0);
     mRecyclerView.setLayoutManager(mLayoutManager);
 
-    final TextView emptyView = (TextView) findViewById(R.id.empty_view);
+    final TextView emptyView = findViewById(R.id.empty_view);
     if (ColorUtils.Companion.isThemeLight(this)) {
       emptyView.setTextColor(ContextCompat.getColor(this, R.color.black));
     } else {
@@ -356,7 +356,7 @@ public class ViewSyslogActivity extends AppCompatActivity
     mAdapter.setHasStableIds(true);
     mRecyclerView.setAdapter(mAdapter);
 
-    mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+    mSwipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
     mSwipeRefreshLayout.setOnRefreshListener(this);
     mSwipeRefreshLayout.setColorSchemeResources(
         android.R.color.holo_blue_bright,
@@ -407,7 +407,7 @@ public class ViewSyslogActivity extends AppCompatActivity
 
   @Override
   public void onRequestPermissionsResult(
-      int requestCode, String permissions[], int[] grantResults) {
+      int requestCode, String[] permissions, int[] grantResults) {
 
     switch (requestCode) {
       case RouterCompanionAppConstants.Permissions.STORAGE:
@@ -493,7 +493,7 @@ public class ViewSyslogActivity extends AppCompatActivity
     mSearchView.setOnQueryTextListener(this);
 
     // Get the search close button image view
-    final ImageView closeButton = (ImageView) mSearchView.findViewById(R.id.search_close_btn);
+    final ImageView closeButton = mSearchView.findViewById(R.id.search_close_btn);
     if (closeButton != null) {
       // Set on click listener
       closeButton.setOnClickListener(

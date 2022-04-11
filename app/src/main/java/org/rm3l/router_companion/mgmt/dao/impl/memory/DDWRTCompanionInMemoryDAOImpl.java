@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.mgmt.dao.impl.memory;
@@ -53,7 +53,7 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
 
   private final Map<String, Router> DB = new ConcurrentHashMap<>();
 
-  private Context ctx;
+  private final Context ctx;
 
   public DDWRTCompanionInMemoryDAOImpl() {
     if (RouterCompanionAppConstants.TEST_MODE) {

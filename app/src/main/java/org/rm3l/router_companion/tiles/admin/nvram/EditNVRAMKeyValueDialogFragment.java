@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.tiles.admin.nvram;
@@ -120,7 +120,7 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
     if (d != null) {
 
       ((TextView) d.findViewById(R.id.tile_admin_nvram_edit_key)).setText(this.mKey);
-      final EditText valueEditText = (EditText) d.findViewById(R.id.tile_admin_nvram_edit_value);
+      final EditText valueEditText = d.findViewById(R.id.tile_admin_nvram_edit_value);
       //            valueEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
       //                @Override
       //                public void onFocusChange(View v, boolean hasFocus) {
@@ -138,7 +138,7 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
                 public void onClick(View view) {
                   // Validate data
                   final EditText editText =
-                      (EditText) d.findViewById(R.id.tile_admin_nvram_edit_value);
+                          d.findViewById(R.id.tile_admin_nvram_edit_value);
                   final Editable newValue = editText.getText();
 
                   if (mValue != null && newValue.toString().equals(mValue.toString())) {
@@ -147,8 +147,7 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
                         getActivity(),
                         "No change",
                         ALERT,
-                        (ViewGroup)
-                            (d.findViewById(R.id.tile_admin_nvram_edit_notification_viewgroup)));
+                            d.findViewById(R.id.tile_admin_nvram_edit_notification_viewgroup));
                     editText.requestFocus();
                     // Open Keyboard
                     final InputMethodManager imm =

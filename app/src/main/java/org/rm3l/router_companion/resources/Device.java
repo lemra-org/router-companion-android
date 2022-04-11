@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.resources;
@@ -33,7 +33,7 @@ import java.util.Set;
 /**
  * Device Type: represents a device reported as a Client (Wireless/DHCP/...)
  *
- * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
+ * @author <a href="mailto:armel+router_companion@rm3l.org">Armel S.</a>
  */
 public class Device implements Comparable<Device> {
 
@@ -66,11 +66,7 @@ public class Device implements Comparable<Device> {
       if (snr != null ? !snr.equals(that.snr) : that.snr != null) {
         return false;
       }
-      if (ssid != null ? !ssid.equals(that.ssid) : that.ssid != null) {
-        return false;
-      }
-
-      return true;
+      return ssid != null ? ssid.equals(that.ssid) : that.ssid == null;
     }
 
     @Nullable
@@ -127,7 +123,7 @@ public class Device implements Comparable<Device> {
 
     private final String mToString;
 
-    private WANAccessState(final String mToString) {
+    WANAccessState(final String mToString) {
       this.mToString = mToString;
     }
 
@@ -216,11 +212,7 @@ public class Device implements Comparable<Device> {
 
     final Device device = (Device) o;
 
-    if (!macAddress.equals(device.macAddress)) {
-      return false;
-    }
-
-    return true;
+    return macAddress.equals(device.macAddress);
   }
 
   @Nullable

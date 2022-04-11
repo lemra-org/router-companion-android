@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.tiles.admin.nvram;
@@ -101,7 +101,7 @@ public class AddNVRAMKeyValueDialogFragment extends DialogFragment {
                 public void onClick(View view) {
                   // Validate data
                   final TextView varKeyTV =
-                      (TextView) d.findViewById(R.id.tile_admin_nvram_add_key);
+                          d.findViewById(R.id.tile_admin_nvram_add_key);
                   final CharSequence variableKey = \"fake-key\";
                   if (TextUtils.isEmpty(variableKey)) {
                     // Error
@@ -109,8 +109,7 @@ public class AddNVRAMKeyValueDialogFragment extends DialogFragment {
                         getActivity(),
                         "Missing key for NVRAM variable",
                         ALERT,
-                        (ViewGroup)
-                            (d.findViewById(R.id.tile_admin_nvram_add_notification_viewgroup)));
+                            d.findViewById(R.id.tile_admin_nvram_add_notification_viewgroup));
                     varKeyTV.requestFocus();
                     // Open Keyboard
                     final InputMethodManager imm =

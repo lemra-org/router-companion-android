@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.tiles.status.wireless;
@@ -292,7 +292,7 @@ public class WirelessIfacesTile extends IfacesTile {
 
   private static final String TAG = WirelessIfacesTile.class.getSimpleName();
 
-  private AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
+  private final AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
 
   private AsyncTaskLoader<NVRAMInfo> mLoader;
 
@@ -335,7 +335,7 @@ public class WirelessIfacesTile extends IfacesTile {
       mProgressBarDesc.setVisibility(View.GONE);
 
       final GridLayout container =
-          (GridLayout) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_list_container);
+              this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_list_container);
       container.setVisibility(View.VISIBLE);
 
       // Now add each wireless iface tile
@@ -364,7 +364,6 @@ public class WirelessIfacesTile extends IfacesTile {
       }
 
       final SwitchCompat enableRadioButton =
-          (SwitchCompat)
               this.layout.findViewById(
                   R.id.tile_status_bandwidth_ifaces_wireless_radio_togglebutton);
       enableRadioButton.setVisibility(View.VISIBLE);
@@ -374,13 +373,9 @@ public class WirelessIfacesTile extends IfacesTile {
 
       if (!isToggleStateActionRunning.get()) {
         if (makeToogleEnabled) {
-          if ("1".equals(data.getProperty(WL_RADIO))) {
             // Enabled
-            enableRadioButton.setChecked(true);
-          } else {
             // Disabled
-            enableRadioButton.setChecked(false);
-          }
+            enableRadioButton.setChecked("1".equals(data.getProperty(WL_RADIO)));
           enableRadioButton.setEnabled(true);
         } else {
           enableRadioButton.setChecked(false);
@@ -439,7 +434,7 @@ public class WirelessIfacesTile extends IfacesTile {
 
           // Create Options Menu
           final ImageButton tileMenu =
-              (ImageButton) cardView.findViewById(R.id.tile_status_wireless_iface_menu);
+                  cardView.findViewById(R.id.tile_status_wireless_iface_menu);
 
           if (!isThemeLight) {
             // Set menu background to white

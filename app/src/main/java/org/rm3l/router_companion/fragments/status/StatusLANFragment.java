@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
+ * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
 package org.rm3l.router_companion.fragments.status;
@@ -37,7 +37,7 @@ public class StatusLANFragment extends AbstractBaseFragment {
   @Nullable
   @Override
   protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return Arrays.<DDWRTTile>asList(
+    return Arrays.asList(
         new LANStateTile(this, savedInstanceState, this.router),
         //                new LANClientsTile(this, savedInstanceState, this.router),
         new DHCPStatusTile(this, savedInstanceState, this.router)
