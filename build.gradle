@@ -30,7 +30,7 @@ buildscript {
 //        buildTools_version = '29.0.2'
         gradleBuildPlugin_version = '7.2.0-beta04'
         androidx_version = '1.0.0'
-        kotlin_version = '1.5.0'
+        kotlin_version = '1.6.20'
 	    ktlint_version = '0.39.0'
 //        android_ktx_version = '1.0.0'
         anko_version = '0.10.8'
@@ -64,7 +64,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "com.diffplug.spotless:spotless-plugin-gradle:5.7.0"
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:6.3.0"
 //        classpath "com.gradle:gradle-enterprise-gradle-plugin:3.1.1"
         classpath "com.android.tools.build:gradle:$gradleBuildPlugin_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
