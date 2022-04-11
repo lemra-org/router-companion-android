@@ -19,7 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
 import java.util.ArrayList;
 import java.util.Collections;
 import org.osmdroid.api.IMapController;
@@ -78,9 +78,9 @@ public class IPGeoActivity extends AppCompatActivity {
         AdUtils.requestNewInterstitial(
             this, R.string.interstitial_ad_unit_id_wireless_network_generate_qr_code);
 
-    AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.activity_ip_geo_adView));
+    AdUtils.buildAndDisplayAdViewIfNeeded(this, findViewById(R.id.activity_ip_geo_adView));
 
-    final Toolbar toolbar = (Toolbar) findViewById(R.id.activity_ip_geo_toolbar);
+    final Toolbar toolbar = findViewById(R.id.activity_ip_geo_toolbar);
     if (toolbar != null) {
       toolbar.setTitle("IP Geolocation");
       toolbar.setSubtitle(publicIpToGeolocate);
@@ -110,9 +110,9 @@ public class IPGeoActivity extends AppCompatActivity {
         () -> null,
         "Storage access is required to display and cache map tiles");
 
-    final TextView errorView = (TextView) findViewById(R.id.activity_ip_geo_map_error);
+    final TextView errorView = findViewById(R.id.activity_ip_geo_map_error);
 
-    final ProgressBar progressBar = (ProgressBar) findViewById(R.id.activity_ip_geo_map_loading);
+    final ProgressBar progressBar = findViewById(R.id.activity_ip_geo_map_loading);
 
     new AsyncTask<String, Void, Void>() {
 

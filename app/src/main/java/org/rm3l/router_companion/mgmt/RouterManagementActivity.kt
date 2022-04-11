@@ -38,6 +38,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.preference.PreferenceManager
 import android.text.TextUtils
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -59,9 +60,11 @@ import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter
 import co.paulburke.android.itemtouchhelperdemo.helper.OnStartDragListener
 import com.airbnb.deeplinkdispatch.DeepLink
 import com.evernote.android.job.JobManager
-import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.InterstitialAd
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.common.base.Joiner
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -218,10 +221,29 @@ class RouterManagementActivity :
 
         AdUtils.buildAndDisplayAdViewIfNeeded(this, findViewById<View>(R.id.router_list_adView) as AdView)
 
-        mInterstitialAd = AdUtils.requestNewInterstitial(
-            this,
-            R.string.interstitial_ad_unit_id_router_list_to_router_main
-        )
+        if (BuildConfig.WITH_ADS && AdUtils.canDisplayInterstialAd(this)) {
+            InterstitialAd.load(
+                this,
+                getString(R.string.interstitial_ad_unit_id_router_list_to_router_main),
+                AdRequest.Builder().build(),
+                object : InterstitialAdLoadCallback() {
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        Log.d(LOG_TAG, adError.message)
+                        mInterstitialAd = null
+                    }
+
+                    override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                        Log.d(LOG_TAG, "Ad was loaded.")
+                        mInterstitialAd = interstitialAd
+                    }
+                }
+            )
+        }
+
+//        mInterstitialAd = AdUtils.requestNewInterstitial(
+//            this,
+//            R.string.interstitial_ad_unit_id_router_list_to_router_main
+//        )
 
         mToolbar = findViewById<View>(R.id.routerManagementActivityToolbar) as Toolbar
         if (mToolbar != null) {
@@ -520,30 +542,32 @@ class RouterManagementActivity :
     override fun onBackPressed() {
         if (BuildConfig.WITH_ADS && mInterstitialAd != null && AdUtils.canDisplayInterstialAd(this)) {
 
-            mInterstitialAd!!.adListener = object : AdListener() {
-                override fun onAdClosed() {
-                    super@RouterManagementActivity.onBackPressed()
-                }
+//            mInterstitialAd!!.adListener = object : AdListener() {
+//                override fun onAdClosed() {
+//                    super@RouterManagementActivity.onBackPressed()
+//                }
+//
+//                override fun onAdOpened() {
+//                    // Save preference
+//                    getSharedPreferences(
+//                        DEFAULT_SHARED_PREFERENCES_KEY,
+//                        Context.MODE_PRIVATE
+//                    ).edit()
+//                        .putLong(
+//                            RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
+//                            System.currentTimeMillis()
+//                        )
+//                        .apply()
+//                }
+//            }
 
-                override fun onAdOpened() {
-                    // Save preference
-                    getSharedPreferences(
-                        DEFAULT_SHARED_PREFERENCES_KEY,
-                        Context.MODE_PRIVATE
-                    ).edit()
-                        .putLong(
-                            RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
-                            System.currentTimeMillis()
-                        )
-                        .apply()
-                }
-            }
+            mInterstitialAd!!.show(this)
 
-            if (mInterstitialAd!!.isLoaded) {
-                mInterstitialAd!!.show()
-            } else {
-                super@RouterManagementActivity.onBackPressed()
-            }
+//            if (mInterstitialAd!!.isLoaded) {
+//                mInterstitialAd!!.show(this)
+//            } else {
+//                super@RouterManagementActivity.onBackPressed()
+//            }
         } else {
             super.onBackPressed()
         }

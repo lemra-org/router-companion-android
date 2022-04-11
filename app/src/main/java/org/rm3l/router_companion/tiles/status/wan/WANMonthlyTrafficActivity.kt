@@ -23,7 +23,6 @@ package org.rm3l.router_companion.tiles.status.wan
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -32,6 +31,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -49,9 +49,11 @@ import androidx.core.view.MenuItemCompat
 import com.github.florent37.viewtooltip.ViewTooltip
 import com.github.florent37.viewtooltip.ViewTooltip.ALIGN
 import com.github.florent37.viewtooltip.ViewTooltip.Position
-import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.InterstitialAd
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
@@ -206,10 +208,29 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
 
         mCycleItem!!.setContext(this)
 
-        mInterstitialAd = AdUtils.requestNewInterstitial(
-            this,
-            R.string.interstitial_ad_unit_id_transtion_to_wan_monthly_chart
-        )
+        if (BuildConfig.WITH_ADS && AdUtils.canDisplayInterstialAd(this)) {
+            InterstitialAd.load(
+                this,
+                getString(R.string.interstitial_ad_unit_id_transtion_to_wan_monthly_chart),
+                AdRequest.Builder().build(),
+                object : InterstitialAdLoadCallback() {
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        Log.d(LOG_TAG, adError.message)
+                        mInterstitialAd = null
+                    }
+
+                    override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                        Log.d(LOG_TAG, "Ad was loaded.")
+                        mInterstitialAd = interstitialAd
+                    }
+                }
+            )
+        }
+
+//        mInterstitialAd = AdUtils.requestNewInterstitial(
+//            this,
+//            R.string.interstitial_ad_unit_id_transtion_to_wan_monthly_chart
+//        )
 
         AdUtils.buildAndDisplayAdViewIfNeeded(
             this,
@@ -293,30 +314,32 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
     override fun finish() {
         if (BuildConfig.WITH_ADS && mInterstitialAd != null && AdUtils.canDisplayInterstialAd(this)) {
 
-            mInterstitialAd!!.adListener = object : AdListener() {
-                override fun onAdClosed() {
-                    super@WANMonthlyTrafficActivity.finish()
-                }
+//            mInterstitialAd!!.adListener = object : AdListener() {
+//                override fun onAdClosed() {
+//                    super@WANMonthlyTrafficActivity.finish()
+//                }
+//
+//                override fun onAdOpened() {
+//                    // Save preference
+//                    getSharedPreferences(
+//                        RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+//                        Context.MODE_PRIVATE
+//                    ).edit()
+//                        .putLong(
+//                            RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
+//                            System.currentTimeMillis()
+//                        )
+//                        .apply()
+//                }
+//            }
 
-                override fun onAdOpened() {
-                    // Save preference
-                    getSharedPreferences(
-                        RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                        Context.MODE_PRIVATE
-                    ).edit()
-                        .putLong(
-                            RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
-                            System.currentTimeMillis()
-                        )
-                        .apply()
-                }
-            }
+            mInterstitialAd!!.show(this)
 
-            if (mInterstitialAd!!.isLoaded) {
-                mInterstitialAd!!.show()
-            } else {
-                super@WANMonthlyTrafficActivity.finish()
-            }
+//            if (mInterstitialAd!!.isLoaded) {
+//                mInterstitialAd!!.show(this)
+//            } else {
+//                super@WANMonthlyTrafficActivity.finish()
+//            }
         } else {
             super.finish()
         }

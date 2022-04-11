@@ -61,7 +61,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -972,9 +972,9 @@ public class SpeedTestActivity extends AppCompatActivity
             this, R.string.interstitial_ad_unit_id_transtion_to_wan_monthly_chart);
 
     AdUtils.buildAndDisplayAdViewIfNeeded(
-        this, (AdView) findViewById(R.id.router_speedtest_adView));
+        this, findViewById(R.id.router_speedtest_adView));
 
-    mToolbar = (Toolbar) findViewById(R.id.routerSpeedTestToolbar);
+    mToolbar = findViewById(R.id.routerSpeedTestToolbar);
     if (mToolbar != null) {
       mToolbar.setTitle("Speed Test");
       updateToolbarTitleAndSubTitle();
@@ -993,7 +993,7 @@ public class SpeedTestActivity extends AppCompatActivity
     }
 
     Router.doFetchAndSetRouterAvatarInImageView(
-        this, mRouterCopy, (ImageView) findViewById(R.id.speedtest_router_imageView));
+        this, mRouterCopy, findViewById(R.id.speedtest_router_imageView));
 
     mWanDlTextView = findViewById(R.id.speedtest_internet_dl_speed);
     mSpeedTestWanDlRaw = findViewById(R.id.speedtest_internet_dl_speed_raw_bytes);
@@ -1003,7 +1003,7 @@ public class SpeedTestActivity extends AppCompatActivity
 
     mDao = RouterManagementActivity.Companion.getDao(this);
 
-    mRecyclerView = (RecyclerViewEmptySupport) findViewById(R.id.speedtest_results_recycler_view);
+    mRecyclerView = findViewById(R.id.speedtest_results_recycler_view);
 
     // use this setting to improve performance if you know that changes
     // in content do not change the layout size of the RecyclerView
@@ -1035,11 +1035,11 @@ public class SpeedTestActivity extends AppCompatActivity
         new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
     mRecyclerView.addItemDecoration(itemDecoration);
 
-    mSpeedtestLatencyTitle = (TextView) findViewById(R.id.speedtest_latency_title);
-    mSpeedtestWanDlTitle = (TextView) findViewById(R.id.speedtest_wan_dl_title);
+    mSpeedtestLatencyTitle = findViewById(R.id.speedtest_latency_title);
+    mSpeedtestWanDlTitle = findViewById(R.id.speedtest_wan_dl_title);
     //        mSpeedtestWanUlTitle = (TextView) findViewById(R.id.speedtest_wan_ul_title);
-    mSpeedtestWifiSpeedTitle = (TextView) findViewById(R.id.speedtest_lan_title);
-    mSpeedtestWifiEfficiencyTitle = (TextView) findViewById(R.id.speedtest_wifi_efficiency_title);
+    mSpeedtestWifiSpeedTitle = findViewById(R.id.speedtest_lan_title);
+    mSpeedtestWifiEfficiencyTitle = findViewById(R.id.speedtest_wifi_efficiency_title);
 
     mTitleTextViews =
         new TextView[] {
@@ -1048,13 +1048,13 @@ public class SpeedTestActivity extends AppCompatActivity
           mSpeedtestWifiSpeedTitle, mSpeedtestWifiEfficiencyTitle
         };
 
-    mServerCountryFlag = (ImageView) findViewById(R.id.speedtest_server_country_flag);
-    mServerLabel = (TextView) findViewById(R.id.speedtest_server);
+    mServerCountryFlag = findViewById(R.id.speedtest_server_country_flag);
+    mServerLabel = findViewById(R.id.speedtest_server);
 
-    errorPlaceholder = (TextView) findViewById(R.id.router_speedtest_error);
+    errorPlaceholder = findViewById(R.id.router_speedtest_error);
     errorPlaceholder.setVisibility(View.GONE);
 
-    noticeTextView = (TextView) findViewById(R.id.router_speedtest_notice);
+    noticeTextView = findViewById(R.id.router_speedtest_notice);
 
     internetRouterLink = findViewById(R.id.speedtest_internet_line);
     routerLanLink = findViewById(R.id.speedtest_router_lan_path_vertical);
@@ -1063,9 +1063,9 @@ public class SpeedTestActivity extends AppCompatActivity
         ContextCompat.getColor(SpeedTestActivity.this, R.color.network_link_color);
 
     final ImageButton speedtestResultsRefreshImageButton =
-        (ImageButton) findViewById(R.id.speedtest_results_refresh);
+            findViewById(R.id.speedtest_results_refresh);
     final ImageButton speedtestResultsClearAllImageButton =
-        (ImageButton) findViewById(R.id.speedtest_results_clear_all);
+            findViewById(R.id.speedtest_results_clear_all);
 
     if (mIsThemeLight) {
       speedtestResultsRefreshImageButton.setImageDrawable(
@@ -1169,8 +1169,8 @@ public class SpeedTestActivity extends AppCompatActivity
           }
         });
 
-    mRunFab = (FabButton) findViewById(R.id.speedtest_run_action);
-    mCancelFab = (FabButton) findViewById(R.id.speedtest_cancel_action);
+    mRunFab = findViewById(R.id.speedtest_run_action);
+    mCancelFab = findViewById(R.id.speedtest_cancel_action);
 
     mCancelFab.setVisibility(View.GONE);
     mRunFab.setVisibility(View.VISIBLE);
@@ -1519,7 +1519,7 @@ public class SpeedTestActivity extends AppCompatActivity
 
   protected void updateNbSpeedTestResults(List<SpeedTestResult> speedTestResultsByRouter) {
     final int size = speedTestResultsByRouter.size();
-    final TextView nbResultsView = (TextView) findViewById(R.id.speedtest_results_nb_results);
+    final TextView nbResultsView = findViewById(R.id.speedtest_results_nb_results);
     nbResultsView.setText(String.format(Locale.US, "%d", size));
   }
 

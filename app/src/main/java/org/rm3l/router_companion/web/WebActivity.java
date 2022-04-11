@@ -32,7 +32,7 @@ import androidx.core.content.ContextCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -88,7 +88,7 @@ public abstract class WebActivity extends AppCompatActivity
     mInterstitialAd =
         AdUtils.requestNewInterstitial(this, R.string.interstitial_ad_unit_id_web_exit);
 
-    AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.web_adView));
+    AdUtils.buildAndDisplayAdViewIfNeeded(this, findViewById(R.id.web_adView));
 
     mToolbar = findViewById(R.id.web_toolbar);
     if (mToolbar != null) {

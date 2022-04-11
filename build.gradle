@@ -28,22 +28,22 @@ buildscript {
         android_sdk = 30
         buildScan_version = '2.2.1'
 //        buildTools_version = '29.0.2'
-        gradleBuildPlugin_version = '7.0.0-beta02'
+        gradleBuildPlugin_version = '7.2.0-beta04'
         androidx_version = '1.0.0'
         kotlin_version = '1.5.0'
 	    ktlint_version = '0.39.0'
 //        android_ktx_version = '1.0.0'
         anko_version = '0.10.8'
-        playServices_version = '19.5.0'
+        playServices_version = '20.1.0'
 //        firebase_core_version = '17.2.3'
-        firebase_appindexing_version = '19.1.0'
+        firebase_appindexing_version = '20.0.0'
         robolectric_version = '4.4'
         junit_version = '4.13'
         mockito_version = '3.1.0'
 //        avocarrot_glispa_mobfox_version = '3.6.9'
 
         playPublisherPlugin_version = '2.2.0'
-        googlePlayServicesPlugin_version = '4.3.8'
+        googlePlayServicesPlugin_version = '4.3.10'
 
         maoni_version = '8.3.2'
 

@@ -28,7 +28,6 @@ import static org.rm3l.router_companion.utils.ImageUtils.encodeAsBitmap;
 import static org.rm3l.router_companion.utils.Utils.fromHtml;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -37,12 +36,14 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -53,8 +54,10 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.content.PermissionChecker;
 import androidx.core.view.MenuItemCompat;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Strings;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
@@ -151,9 +154,32 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
 
     setContentView(R.layout.tile_status_wireless_iface_qrcode);
 
-    mInterstitialAd =
-        AdUtils.requestNewInterstitial(
-            this, R.string.interstitial_ad_unit_id_wireless_network_generate_qr_code);
+    //    mInterstitialAd =
+    //        AdUtils.requestNewInterstitial(
+    //            this, R.string.interstitial_ad_unit_id_wireless_network_generate_qr_code);
+
+    if (BuildConfig.WITH_ADS && AdUtils.canDisplayInterstialAd(this)) {
+      InterstitialAd.load(
+          this,
+          getString(R.string.interstitial_ad_unit_id_wireless_network_generate_qr_code),
+          new AdRequest.Builder().build(),
+          new InterstitialAdLoadCallback() {
+            @Override
+            public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+              // The mInterstitialAd reference will be null until
+              // an ad is loaded.
+              mInterstitialAd = interstitialAd;
+              Log.i(LOG_TAG, "onAdLoaded");
+            }
+
+            @Override
+            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+              // Handle the error
+              Log.i(LOG_TAG, loadAdError.getMessage());
+              mInterstitialAd = null;
+            }
+          });
+    }
 
     mSsid = Strings.nullToEmpty(intent.getStringExtra(WifiSharingActivity.SSID));
     final String wifiEncryptionType = intent.getStringExtra(WifiSharingActivity.ENC_TYPE);
@@ -171,7 +197,7 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
 
     mTitle = ("WiFi QR Code: " + mSsid);
 
-    mToolbar = (Toolbar) findViewById(R.id.tile_status_wireless_iface_qrcode_window_toolbar);
+    mToolbar = findViewById(R.id.tile_status_wireless_iface_qrcode_window_toolbar);
     if (mToolbar != null) {
       mToolbar.setTitle(mTitle);
       mToolbar.setSubtitle(
@@ -192,7 +218,7 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
     }
 
     final ImageView qrCodeImageView =
-        (ImageView) findViewById(R.id.tile_status_wireless_iface_qrcode_image);
+            findViewById(R.id.tile_status_wireless_iface_qrcode_image);
 
     final View loadingView =
         findViewById(R.id.tile_status_wireless_iface_qrcode_image_loading_view);
@@ -265,7 +291,7 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
 
   @Override
   public void onRequestPermissionsResult(
-      int requestCode, String permissions[], int[] grantResults) {
+      int requestCode, String[] permissions, int[] grantResults) {
 
     switch (requestCode) {
       case RouterCompanionAppConstants.Permissions.STORAGE:
@@ -302,32 +328,35 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
 
     if (BuildConfig.WITH_ADS && mInterstitialAd != null && AdUtils.canDisplayInterstialAd(this)) {
 
-      mInterstitialAd.setAdListener(
-          new AdListener() {
-            @Override
-            public void onAdClosed() {
-              WirelessIfaceQrCodeActivity.super.finish();
-            }
+      //      mInterstitialAd.setAdListener(
+      //          new AdListener() {
+      //            @Override
+      //            public void onAdClosed() {
+      //              WirelessIfaceQrCodeActivity.super.finish();
+      //            }
+      //
+      //            @Override
+      //            public void onAdOpened() {
+      //              // Save preference
+      //              getSharedPreferences(
+      //                      RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+      //                      Context.MODE_PRIVATE)
+      //                  .edit()
+      //                  .putLong(
+      //                      RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
+      //                      System.currentTimeMillis())
+      //                  .apply();
+      //            }
+      //          });
+      //
+      //      if (mInterstitialAd.isLoaded()) {
+      //        mInterstitialAd.show();
+      //      } else {
+      //        WirelessIfaceQrCodeActivity.super.finish();
+      //      }
 
-            @Override
-            public void onAdOpened() {
-              // Save preference
-              getSharedPreferences(
-                      RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                      Context.MODE_PRIVATE)
-                  .edit()
-                  .putLong(
-                      RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
-                      System.currentTimeMillis())
-                  .apply();
-            }
-          });
+      mInterstitialAd.show(this);
 
-      if (mInterstitialAd.isLoaded()) {
-        mInterstitialAd.show();
-      } else {
-        WirelessIfaceQrCodeActivity.super.finish();
-      }
     } else {
       super.finish();
     }

@@ -3,9 +3,9 @@ buildscript {
         mavenCentral() // or jcenter()
     }
 
-    dependencies {
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:2.0.0'
-    }
+//    dependencies {
+//        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:2.0.0'
+//    }
 }
 
 apply plugin: 'project-report'
@@ -76,5 +76,5 @@ android.productFlavors.each {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "androidx.appcompat:appcompat:1.1.0"
+    implementation "androidx.appcompat:appcompat:1.3.0"
 }

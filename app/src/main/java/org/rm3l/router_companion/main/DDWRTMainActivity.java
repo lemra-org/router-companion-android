@@ -83,7 +83,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 import com.airbnb.deeplinkdispatch.DeepLink;
 import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -419,7 +419,7 @@ public class DDWRTMainActivity extends AppCompatActivity
               Log.e(
                   TAG,
                   "App Indexing API: There was an error recording the recipe view."
-                      + status.toString());
+                      + status);
             }
           }
         });
@@ -1129,7 +1129,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                     Log.e(
                         TAG,
                         "App Indexing API: There was an error recording the recipe view."
-                            + status.toString());
+                            + status);
                   }
                 }
               });
@@ -1165,7 +1165,7 @@ public class DDWRTMainActivity extends AppCompatActivity
     } finally {
       // Drop strong reference to Picasso
       final ImageView navigationViewHeaderAvatar =
-          (ImageView) findViewById(R.id.left_drawer_router_avatar);
+              findViewById(R.id.left_drawer_router_avatar);
       if (navigationViewHeaderAvatar != null) {
         new Picasso.Builder(this).build().cancelRequest(navigationViewHeaderAvatar);
       }
@@ -1594,7 +1594,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                   HttpURLConnection urlConnection = null;
                   try {
                     final URL url = new URL(urlStr + "/Management.asp");
-                    if (url.getProtocol().toLowerCase().equals("https")) {
+                    if (url.getProtocol().equalsIgnoreCase("https")) {
                       trustAllHosts();
                       final HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
                       https.setHostnameVerifier(DO_NOT_VERIFY);
@@ -1950,7 +1950,7 @@ public class DDWRTMainActivity extends AppCompatActivity
         this,
         String.format(
             "Error on action '%s': %s",
-            routerAction.toString(), Utils.handleException(exception).first),
+                routerAction, Utils.handleException(exception).first),
         Style.ALERT);
   }
 
@@ -1961,7 +1961,7 @@ public class DDWRTMainActivity extends AppCompatActivity
         this,
         String.format(
             "Action '%s' executed successfully on host '%s'",
-            routerAction.toString(), router.getRemoteIpAddress()),
+                routerAction, router.getRemoteIpAddress()),
         Style.CONFIRM);
   }
 
@@ -2196,7 +2196,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                             DDWRTMainActivity.this,
                             String.format(
                                 "Error on action '%s': %s",
-                                routerAction.toString(), Utils.handleException(exception).first),
+                                    routerAction, Utils.handleException(exception).first),
                             Style.ALERT);
                       } finally {
                         runOnUiThread(
@@ -2223,7 +2223,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                   "Action '%s' executed "
                                       + "successfully on host '%s', but an internal error occurred. "
                                       + "The issue will be reported. Please try again later.",
-                                  routerAction.toString(), router.getRemoteIpAddress());
+                                      routerAction, router.getRemoteIpAddress());
                           Utils.displayMessage(DDWRTMainActivity.this, msg, Style.INFO);
                           ReportingUtils.reportException(
                               DDWRTMainActivity.this, new IllegalStateException(msg));
@@ -2241,7 +2241,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                   "Action '%s' executed "
                                       + "successfully on host '%s', but could not determine where "
                                       + "local backup file has been saved. Please try again later.",
-                                  routerAction.toString(), router.getRemoteIpAddress());
+                                      routerAction, router.getRemoteIpAddress());
                           Utils.displayMessage(DDWRTMainActivity.this, msg, Style.INFO);
                           ReportingUtils.reportException(
                               DDWRTMainActivity.this, new IllegalStateException(msg));
@@ -2253,7 +2253,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                             String.format(
                                 "Action '%s' executed successfully on host '%s'. "
                                     + "Now loading the file sharing activity chooser...",
-                                routerAction.toString(), router.getRemoteIpAddress()),
+                                    routerAction, router.getRemoteIpAddress()),
                             Style.CONFIRM);
 
                         final File localBackupFile = (File) (((Object[]) returnData)[1]);
@@ -2404,7 +2404,7 @@ public class DDWRTMainActivity extends AppCompatActivity
 
   private void setUpToolbar() {
 
-    mToolbar = (Toolbar) findViewById(R.id.toolbar);
+    mToolbar = findViewById(R.id.toolbar);
     final Resources resources = getResources();
     if (mToolbar != null) {
       final RouterFirmware routerFirmware = this.mRouter.getRouterFirmware();

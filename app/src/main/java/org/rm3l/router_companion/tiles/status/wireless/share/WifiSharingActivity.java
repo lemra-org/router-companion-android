@@ -23,7 +23,7 @@ import androidx.viewpager.widget.ViewPager;
 import be.brunoparmentier.wifikeyshare.model.WifiAuthType;
 import be.brunoparmentier.wifikeyshare.model.WifiNetwork;
 import be.brunoparmentier.wifikeyshare.utils.NfcUtils;
-import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.material.tabs.TabLayout;
 import com.google.common.base.Strings;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
@@ -115,9 +115,9 @@ public class WifiSharingActivity extends AppCompatActivity {
     by findViewByID method
      */
 
-    mToolbar = (Toolbar) findViewById(R.id.tile_status_wireless_sharing_toolbar);
-    tabLayout = (TabLayout) findViewById(R.id.tile_status_wireless_sharing_tabs);
-    viewPager = (ViewPager) findViewById(R.id.tile_status_wireless_sharing_viewpager);
+    mToolbar = findViewById(R.id.tile_status_wireless_sharing_toolbar);
+    tabLayout = findViewById(R.id.tile_status_wireless_sharing_tabs);
+    viewPager = findViewById(R.id.tile_status_wireless_sharing_viewpager);
 
     mInterstitialAd =
         AdUtils.requestNewInterstitial(

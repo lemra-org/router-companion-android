@@ -67,7 +67,7 @@ import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter;
 import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperViewHolder;
 import co.paulburke.android.itemtouchhelperdemo.helper.OnStartDragListener;
 import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
@@ -134,19 +134,19 @@ public class RouterListRecycleViewAdapter
 
     private final Context mContext;
 
-    @NonNull private ImageView routerAvatarImage;
+    @NonNull private final ImageView routerAvatarImage;
 
-    @NonNull private ImageButton routerOpenButton;
+    @NonNull private final ImageButton routerOpenButton;
 
-    @NonNull private ImageButton routerEditButton;
+    @NonNull private final ImageButton routerEditButton;
 
-    @NonNull private ImageButton routerCopyButton;
+    @NonNull private final ImageButton routerCopyButton;
 
-    @NonNull private ImageButton routerRemoveButton;
+    @NonNull private final ImageButton routerRemoveButton;
 
-    @NonNull private ImageButton routerMenu;
+    @NonNull private final ImageButton routerMenu;
 
-    @NonNull private View routerUsernameAndProtoView;
+    @NonNull private final View routerUsernameAndProtoView;
 
     private final View routerViewParent;
 
@@ -162,21 +162,21 @@ public class RouterListRecycleViewAdapter
       //            this.handleView = (ImageView)
       // this.itemView.findViewById(R.id.router_view_handle);
 
-      this.routerName = (TextView) this.itemView.findViewById(R.id.router_name);
-      this.routerIp = (TextView) this.itemView.findViewById(R.id.router_ip_address);
-      this.routerConnProto = (TextView) this.itemView.findViewById(R.id.router_connection_protocol);
-      this.routerUuid = (TextView) this.itemView.findViewById(R.id.router_uuid);
-      this.routerUsername = (TextView) this.itemView.findViewById(R.id.router_username);
-      this.routerFirmware = (TextView) this.itemView.findViewById(R.id.router_firmware);
-      this.routerModel = (TextView) this.itemView.findViewById(R.id.router_model);
+      this.routerName = this.itemView.findViewById(R.id.router_name);
+      this.routerIp = this.itemView.findViewById(R.id.router_ip_address);
+      this.routerConnProto = this.itemView.findViewById(R.id.router_connection_protocol);
+      this.routerUuid = this.itemView.findViewById(R.id.router_uuid);
+      this.routerUsername = this.itemView.findViewById(R.id.router_username);
+      this.routerFirmware = this.itemView.findViewById(R.id.router_firmware);
+      this.routerModel = this.itemView.findViewById(R.id.router_model);
 
-      this.routerMenu = (ImageButton) this.itemView.findViewById(R.id.router_menu);
+      this.routerMenu = this.itemView.findViewById(R.id.router_menu);
       this.routerOpenButton = this.itemView.findViewById(R.id.router_open);
       this.routerEditButton = this.itemView.findViewById(R.id.router_edit);
       this.routerCopyButton = this.itemView.findViewById(R.id.router_copy);
       this.routerRemoveButton = this.itemView.findViewById(R.id.router_remove);
 
-      this.routerAvatarImage = (ImageView) this.itemView.findViewById(R.id.router_avatar);
+      this.routerAvatarImage = this.itemView.findViewById(R.id.router_avatar);
 
       this.routerUsernameAndProtoView = this.itemView.findViewById(R.id.router_username_and_proto);
     }
@@ -240,7 +240,7 @@ public class RouterListRecycleViewAdapter
                             "Rebooting '%s' (%s)...",
                             mRouter.getDisplayName(), mRouter.getRemoteIpAddress());
                     if (activity instanceof Activity) {
-                      Utils.displayMessage((Activity) activity, infoMsg, Style.INFO);
+                      Utils.displayMessage(activity, infoMsg, Style.INFO);
                     } else {
                       Toast.makeText(activity, infoMsg, Toast.LENGTH_SHORT).show();
                     }
@@ -257,7 +257,7 @@ public class RouterListRecycleViewAdapter
                                 String.format("Error: %s", Utils.handleException(exception).first);
 
                             if (activity instanceof Activity) {
-                              Utils.displayMessage((Activity) activity, msg, Style.ALERT);
+                              Utils.displayMessage(activity, msg, Style.ALERT);
                             } else {
                               Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
                             }
@@ -272,9 +272,9 @@ public class RouterListRecycleViewAdapter
                             // No error
                             final String msg =
                                 String.format(
-                                    "Action '%s' executed successfully", routerAction.toString());
+                                    "Action '%s' executed successfully", routerAction);
                             if (activity instanceof Activity) {
-                              Utils.displayMessage((Activity) activity, msg, Style.CONFIRM);
+                              Utils.displayMessage(activity, msg, Style.CONFIRM);
                             } else {
                               Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
                             }
@@ -328,13 +328,13 @@ public class RouterListRecycleViewAdapter
 
   private final SharedPreferences mGlobalPreferences;
 
-  @Nullable private InterstitialAd mInterstitialAd;
+  @Nullable private final InterstitialAd mInterstitialAd;
 
   private final Resources resources;
 
   private List<Router> routersList;
 
-  private SparseBooleanArray selectedItems;
+  private final SparseBooleanArray selectedItems;
 
   public RouterListRecycleViewAdapter(final Activity activity, final List<Router> results) {
     this.setRoutersList(results);
@@ -655,7 +655,6 @@ public class RouterListRecycleViewAdapter
                         final View snackbarView = snackbar.getView();
                         snackbarView.setBackgroundColor(Color.DKGRAY);
                         final TextView textView =
-                            (TextView)
                                 snackbarView.findViewById(
                                     com.google.android.material.R.id.snackbar_text);
                         textView.setTextColor(Color.YELLOW);
@@ -869,7 +868,6 @@ public class RouterListRecycleViewAdapter
                 final View snackbarView = snackbar.getView();
                 snackbarView.setBackgroundColor(Color.DKGRAY);
                 final TextView textView =
-                    (TextView)
                         snackbarView.findViewById(com.google.android.material.R.id.snackbar_text);
                 textView.setTextColor(Color.YELLOW);
                 snackbar.show();
@@ -1236,14 +1234,14 @@ public class RouterListRecycleViewAdapter
 
     // Sets the TouchDelegate on the parent view, such that touches
     // within the touch delegate bounds are routed to the child.
-    if (View.class.isInstance(view.getParent())) {
+    if (view.getParent() instanceof View) {
       ((View) view.getParent()).setTouchDelegate(touchDelegate);
     }
   }
 
   private void startActivity(Intent ddWrtMainIntent) {
     if (activity instanceof Activity) {
-      RouterManagementActivity.Companion.startActivity((Activity) activity, null, ddWrtMainIntent);
+      RouterManagementActivity.Companion.startActivity(activity, null, ddWrtMainIntent);
     } else {
       // Start in a much more classical way
       activity.startActivity(ddWrtMainIntent);
