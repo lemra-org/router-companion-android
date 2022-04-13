@@ -84,9 +84,9 @@ allprojects {
         //jcenter()
         maven {
             url "https://jitpack.io"
-            maven {
-                url "https://plugins.gradle.org/m2/"
-            }
+//            maven {
+//                url "https://plugins.gradle.org/m2/"
+//            }
             content {
                 // this repository contains everything BUT artifacts with group starting with "my.company"
                 excludeGroupByRegex "org\\.rm3l.*"
