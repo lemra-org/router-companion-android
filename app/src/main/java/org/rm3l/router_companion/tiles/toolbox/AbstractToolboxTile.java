@@ -142,8 +142,7 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
 
     final Button geolocateButton = layout.findViewById(R.id.tile_toolbox_abstract_geolocate_button);
 
-    final Button cancelButton =
-            layout.findViewById(R.id.tile_toolbox_abstract_cancel_button);
+    final Button cancelButton = layout.findViewById(R.id.tile_toolbox_abstract_cancel_button);
 
     final View progressBar = layout.findViewById(R.id.tile_toolbox_ping_abstract_loading_view);
 
@@ -151,7 +150,7 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
 
     // Handle for Search EditText
     final AutoCompleteTextView editText =
-            this.layout.findViewById(R.id.tile_toolbox_abstract_edittext);
+        this.layout.findViewById(R.id.tile_toolbox_abstract_edittext);
     if (this.getEditTextHint() != null) {
       editText.setHint(this.getEditTextHint());
     }

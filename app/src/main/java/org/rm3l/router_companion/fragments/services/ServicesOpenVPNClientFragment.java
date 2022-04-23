@@ -36,7 +36,6 @@ public class ServicesOpenVPNClientFragment extends AbstractBaseFragment {
   @Nullable
   @Override
   protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return Collections.singletonList(
-        new OpenVPNClientTile(this, savedInstanceState, this.router));
+    return Collections.singletonList(new OpenVPNClientTile(this, savedInstanceState, this.router));
   }
 }

@@ -548,7 +548,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
       }
 
       final SwitchCompat enableTraffDataButton =
-              this.layout.findViewById(R.id.tile_services_openvpn_client_status);
+          this.layout.findViewById(R.id.tile_services_openvpn_client_status);
       enableTraffDataButton.setVisibility(View.VISIBLE);
 
       final boolean makeToogleEnabled =
@@ -558,9 +558,10 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
       if (!isToggleStateActionRunning.get()) {
         if (makeToogleEnabled) {
-            // Enabled
-            // Disabled
-            enableTraffDataButton.setChecked("1".equals(data.getProperty(NVRAMInfo.Companion.getOPENVPNCL_ENABLE())));
+          // Enabled
+          // Disabled
+          enableTraffDataButton.setChecked(
+              "1".equals(data.getProperty(NVRAMInfo.Companion.getOPENVPNCL_ENABLE())));
           enableTraffDataButton.setEnabled(true);
         } else {
           enableTraffDataButton.setChecked(false);
@@ -575,7 +576,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
       }
 
       final TextView errorPlaceHolderView =
-              this.layout.findViewById(R.id.tile_services_openvpn_client_error);
+          this.layout.findViewById(R.id.tile_services_openvpn_client_error);
 
       final Exception exception = data.getException();
 
@@ -591,8 +592,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
         updateTileDisplayData(data, true);
 
         // Update last sync
-        final RelativeTimeTextView lastSyncView =
-                layout.findViewById(R.id.tile_last_sync);
+        final RelativeTimeTextView lastSyncView = layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }

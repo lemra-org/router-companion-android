@@ -417,9 +417,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                       + " view successfully.");
             } else {
               Log.e(
-                  TAG,
-                  "App Indexing API: There was an error recording the recipe view."
-                      + status);
+                  TAG, "App Indexing API: There was an error recording the recipe view." + status);
             }
           }
         });
@@ -1128,8 +1126,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                   } else {
                     Log.e(
                         TAG,
-                        "App Indexing API: There was an error recording the recipe view."
-                            + status);
+                        "App Indexing API: There was an error recording the recipe view." + status);
                   }
                 }
               });
@@ -1164,8 +1161,7 @@ public class DDWRTMainActivity extends AppCompatActivity
       // No worries
     } finally {
       // Drop strong reference to Picasso
-      final ImageView navigationViewHeaderAvatar =
-              findViewById(R.id.left_drawer_router_avatar);
+      final ImageView navigationViewHeaderAvatar = findViewById(R.id.left_drawer_router_avatar);
       if (navigationViewHeaderAvatar != null) {
         new Picasso.Builder(this).build().cancelRequest(navigationViewHeaderAvatar);
       }
@@ -1949,8 +1945,7 @@ public class DDWRTMainActivity extends AppCompatActivity
     Utils.displayMessage(
         this,
         String.format(
-            "Error on action '%s': %s",
-                routerAction, Utils.handleException(exception).first),
+            "Error on action '%s': %s", routerAction, Utils.handleException(exception).first),
         Style.ALERT);
   }
 
@@ -1961,7 +1956,7 @@ public class DDWRTMainActivity extends AppCompatActivity
         this,
         String.format(
             "Action '%s' executed successfully on host '%s'",
-                routerAction, router.getRemoteIpAddress()),
+            routerAction, router.getRemoteIpAddress()),
         Style.CONFIRM);
   }
 
@@ -2196,7 +2191,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                             DDWRTMainActivity.this,
                             String.format(
                                 "Error on action '%s': %s",
-                                    routerAction, Utils.handleException(exception).first),
+                                routerAction, Utils.handleException(exception).first),
                             Style.ALERT);
                       } finally {
                         runOnUiThread(
@@ -2223,7 +2218,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                   "Action '%s' executed "
                                       + "successfully on host '%s', but an internal error occurred. "
                                       + "The issue will be reported. Please try again later.",
-                                      routerAction, router.getRemoteIpAddress());
+                                  routerAction, router.getRemoteIpAddress());
                           Utils.displayMessage(DDWRTMainActivity.this, msg, Style.INFO);
                           ReportingUtils.reportException(
                               DDWRTMainActivity.this, new IllegalStateException(msg));
@@ -2241,7 +2236,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                   "Action '%s' executed "
                                       + "successfully on host '%s', but could not determine where "
                                       + "local backup file has been saved. Please try again later.",
-                                      routerAction, router.getRemoteIpAddress());
+                                  routerAction, router.getRemoteIpAddress());
                           Utils.displayMessage(DDWRTMainActivity.this, msg, Style.INFO);
                           ReportingUtils.reportException(
                               DDWRTMainActivity.this, new IllegalStateException(msg));
@@ -2253,7 +2248,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                             String.format(
                                 "Action '%s' executed successfully on host '%s'. "
                                     + "Now loading the file sharing activity chooser...",
-                                    routerAction, router.getRemoteIpAddress()),
+                                routerAction, router.getRemoteIpAddress()),
                             Style.CONFIRM);
 
                         final File localBackupFile = (File) (((Object[]) returnData)[1]);

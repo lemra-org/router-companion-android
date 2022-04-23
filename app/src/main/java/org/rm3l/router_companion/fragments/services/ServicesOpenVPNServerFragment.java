@@ -35,7 +35,6 @@ public class ServicesOpenVPNServerFragment extends AbstractBaseFragment {
   @Nullable
   @Override
   protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return Collections.singletonList(
-        new OpenVPNServerTile(this, savedInstanceState, this.router));
+    return Collections.singletonList(new OpenVPNServerTile(this, savedInstanceState, this.router));
   }
 }

@@ -132,7 +132,7 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
       }
 
       final TextView errorPlaceHolderView =
-              this.layout.findViewById(R.id.tile_status_lan_dhcp_status_error);
+          this.layout.findViewById(R.id.tile_status_lan_dhcp_status_error);
 
       final Exception exception = data.getException();
 
@@ -144,7 +144,7 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
 
         // Server Status
         final TextView dhcpServerView =
-                this.layout.findViewById(R.id.tile_status_lan_dhcp_status_server);
+            this.layout.findViewById(R.id.tile_status_lan_dhcp_status_server);
         final String lanProto = data.getProperty(NVRAMInfo.Companion.getLAN_PROTO());
         final String lanProtoTxt;
         if (lanProto == null) {
@@ -158,7 +158,7 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
 
         // Daemon
         final TextView dhcpDaemonView =
-                this.layout.findViewById(R.id.tile_status_lan_dhcp_status_daemon);
+            this.layout.findViewById(R.id.tile_status_lan_dhcp_status_daemon);
         final String dhcpDnsmasq = data.getProperty(NVRAMInfo.Companion.getDHCP_DNSMASQ());
         final String dhcpDnsmasqTxt;
         if ("1".equalsIgnoreCase(dhcpDnsmasq)) {
@@ -177,14 +177,13 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
             .setText(data.getProperty(DHCP_END_IP, "-"));
 
         final TextView clientLeaseView =
-                this.layout.findViewById(R.id.tile_status_lan_dhcp_status_client_lease_time);
+            this.layout.findViewById(R.id.tile_status_lan_dhcp_status_client_lease_time);
         final String dhcpClientLeaseTime = data.getProperty(NVRAMInfo.Companion.getDHCP_LEASE());
         clientLeaseView.setText(
             Strings.isNullOrEmpty(dhcpClientLeaseTime) ? "-" : (dhcpClientLeaseTime + " min"));
 
         // Update last sync
-        final RelativeTimeTextView lastSyncView =
-                layout.findViewById(R.id.tile_last_sync);
+        final RelativeTimeTextView lastSyncView = layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }

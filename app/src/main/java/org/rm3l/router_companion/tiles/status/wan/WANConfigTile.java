@@ -94,8 +94,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
       @NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
     super(parentFragment, arguments, router, R.layout.tile_status_wan_config, null);
     // Create Options Menu
-    final ImageButton tileMenu =
-            layout.findViewById(R.id.tile_status_wan_config_menu);
+    final ImageButton tileMenu = layout.findViewById(R.id.tile_status_wan_config_menu);
 
     if (!ColorUtils.Companion.isThemeLight(mParentFragmentActivity)) {
       // Set menu background to white
@@ -176,8 +175,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
       layout.findViewById(R.id.tile_status_wan_config_loading_view).setVisibility(View.GONE);
       layout.findViewById(R.id.tile_status_wan_config_gridLayout).setVisibility(View.VISIBLE);
 
-      final ImageButton tileMenu =
-              layout.findViewById(R.id.tile_status_wan_config_menu);
+      final ImageButton tileMenu = layout.findViewById(R.id.tile_status_wan_config_menu);
 
       if (data == null) {
         data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
@@ -189,7 +187,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
       }
 
       final TextView errorPlaceHolderView =
-              this.layout.findViewById(R.id.tile_status_wan_config_error);
+          this.layout.findViewById(R.id.tile_status_wan_config_error);
 
       final Exception exception = data.getException();
 
@@ -201,7 +199,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
 
         // Connection Type
         final TextView wanConnTypeView =
-                this.layout.findViewById(R.id.tile_status_wan_config_connection_type);
+            this.layout.findViewById(R.id.tile_status_wan_config_connection_type);
         final String wanProto = data.getProperty(NVRAMInfo.Companion.getWAN_PROTO(), "-");
         final String wanConnectionTypeManual;
 
@@ -212,9 +210,9 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
 
           // Unhide 3g signal text
           final TextView wan3gSignalFieldView =
-                  this.layout.findViewById(R.id.tile_status_wan_config_3g_signal_field);
+              this.layout.findViewById(R.id.tile_status_wan_config_3g_signal_field);
           final TextView wan3gSignalView =
-                  this.layout.findViewById(R.id.tile_status_wan_config_3g_signal);
+              this.layout.findViewById(R.id.tile_status_wan_config_3g_signal);
           wan3gSignalFieldView.setVisibility(View.VISIBLE);
           wan3gSignalView.setVisibility(View.VISIBLE);
           wan3gSignalView.setText(data.getProperty(NVRAMInfo.Companion.getWAN_3_G_SIGNAL(), "-"));
@@ -230,40 +228,36 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
 
         // Connection Uptime
         final TextView wanUptimeView =
-                this.layout.findViewById(R.id.tile_status_wan_config_connection_uptime);
+            this.layout.findViewById(R.id.tile_status_wan_config_connection_uptime);
         wanUptimeView.setText(
             data.getProperty(NVRAMInfo.Companion.getWAN_CONNECTION_UPTIME(), "-"));
 
         // WAN MAC
-        final TextView wanMacView =
-                this.layout.findViewById(R.id.tile_status_wan_config_wan_mac);
+        final TextView wanMacView = this.layout.findViewById(R.id.tile_status_wan_config_wan_mac);
         wanMacView.setText(data.getProperty(NVRAMInfo.Companion.getWAN_HWADDR(), "-"));
 
         // WAN IP
         final String wanIpText = data.getProperty(NVRAMInfo.Companion.getWAN_IPADDR(), "-");
-        final TextView wanIPView =
-                this.layout.findViewById(R.id.tile_status_wan_config_wan_ip);
+        final TextView wanIPView = this.layout.findViewById(R.id.tile_status_wan_config_wan_ip);
         wanIPView.setText(wanIpText);
 
         // Subnet
         final TextView wanSubnetView =
-                this.layout.findViewById(R.id.tile_status_wan_config_subnet_mask);
+            this.layout.findViewById(R.id.tile_status_wan_config_subnet_mask);
         wanSubnetView.setText(data.getProperty(NVRAMInfo.Companion.getWAN_NETMASK(), "-"));
 
         // Gateway
         final TextView wanGatewayView =
-                this.layout.findViewById(R.id.tile_status_wan_config_subnet_gateway);
+            this.layout.findViewById(R.id.tile_status_wan_config_subnet_gateway);
         wanGatewayView.setText(data.getProperty(NVRAMInfo.Companion.getWAN_GATEWAY(), "-"));
 
         // Public IP and Reverse DNS
         final TextView internetIpTitle =
-                this.layout.findViewById(R.id.tile_status_wan_config_internet_ip_title);
+            this.layout.findViewById(R.id.tile_status_wan_config_internet_ip_title);
         final TextView internetIpTextView =
-                this.layout.findViewById(R.id.tile_status_wan_config_internet_ip);
-        final TextView rDnsTitle =
-                this.layout.findViewById(R.id.tile_status_wan_config_rdns_title);
-        final TextView rDnsTextView =
-                this.layout.findViewById(R.id.tile_status_wan_config_rdns);
+            this.layout.findViewById(R.id.tile_status_wan_config_internet_ip);
+        final TextView rDnsTitle = this.layout.findViewById(R.id.tile_status_wan_config_rdns_title);
+        final TextView rDnsTextView = this.layout.findViewById(R.id.tile_status_wan_config_rdns);
         if (!checkActualInternetConnectivity) {
           internetIpTitle.setVisibility(View.GONE);
           internetIpTextView.setVisibility(View.GONE);
@@ -291,8 +285,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
         }
 
         // DNS
-        final TextView wanDNSView =
-                this.layout.findViewById(R.id.tile_status_wan_config_dns);
+        final TextView wanDNSView = this.layout.findViewById(R.id.tile_status_wan_config_dns);
         final String wanDns = data.getProperty(NVRAMInfo.Companion.getWAN_DNS());
         final String wanGetDns = data.getProperty(NVRAMInfo.Companion.getWAN_GET_DNS());
         final String property =
@@ -320,8 +313,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo>
         }
 
         // Update last sync
-        final RelativeTimeTextView lastSyncView =
-                layout.findViewById(R.id.tile_last_sync);
+        final RelativeTimeTextView lastSyncView = layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }

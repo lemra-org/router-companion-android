@@ -174,7 +174,7 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
         .setActionData(
             String.format(
                 "- NVRAM Data: %s\n" + "- Commands run after commit: %s",
-                    nvramInfo, commandsToRunAfterCommit));
+                nvramInfo, commandsToRunAfterCommit));
   }
 
   @Nullable

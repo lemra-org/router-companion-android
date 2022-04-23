@@ -214,7 +214,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
       }
 
       final TextView errorPlaceHolderView =
-              this.layout.findViewById(R.id.tile_status_wan_traffic_error);
+          this.layout.findViewById(R.id.tile_status_wan_traffic_error);
 
       final Exception exception = data.getException();
 
@@ -227,12 +227,11 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
         final String wanIface = data.getProperty(NVRAMInfo.Companion.getWAN_IFACE());
 
         // Iface Name
-        final TextView wanIfaceView =
-                this.layout.findViewById(R.id.tile_status_wan_traffic_iface);
+        final TextView wanIfaceView = this.layout.findViewById(R.id.tile_status_wan_traffic_iface);
         wanIfaceView.setText(Strings.isNullOrEmpty(wanIface) ? "-" : wanIface);
 
         final TextView wanIngressView =
-                this.layout.findViewById(R.id.tile_status_wan_traffic_ingress);
+            this.layout.findViewById(R.id.tile_status_wan_traffic_ingress);
         String text;
         final String wanRcvBytes = data.getProperty(wanIface + "_rcv_bytes", "-1");
         try {
@@ -250,7 +249,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
         wanIngressView.setText(text);
 
         final TextView wanEgressView =
-                this.layout.findViewById(R.id.tile_status_wan_traffic_egress);
+            this.layout.findViewById(R.id.tile_status_wan_traffic_egress);
         final String wanXmitBytes = data.getProperty(wanIface + "_xmit_bytes", "-1");
         try {
           final double wanXmitMBytes = Double.parseDouble(wanXmitBytes) / (1024 * 1024);
@@ -267,8 +266,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
         wanEgressView.setText(text);
 
         // Update last sync
-        final RelativeTimeTextView lastSyncView =
-                layout.findViewById(R.id.tile_last_sync);
+        final RelativeTimeTextView lastSyncView = layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }

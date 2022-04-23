@@ -144,7 +144,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
       }
 
       final TextView errorPlaceHolderView =
-              this.layout.findViewById(R.id.tile_status_router_router_cpu_error);
+          this.layout.findViewById(R.id.tile_status_router_router_cpu_error);
 
       final Exception exception = data.getException();
 
@@ -155,30 +155,29 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
 
         // Clock Frequency
         final TextView cpuSpeedView =
-                this.layout.findViewById(R.id.tile_status_router_router_cpu_speed);
+            this.layout.findViewById(R.id.tile_status_router_router_cpu_speed);
         final String property = data.getProperty(NVRAMInfo.Companion.getCPU_CLOCK_FREQ());
         cpuSpeedView.setText(Strings.isNullOrEmpty(property) ? null : (property + " MHz"));
 
         // Model
         final TextView cpuModelView =
-                this.layout.findViewById(R.id.tile_status_router_router_cpu_model);
+            this.layout.findViewById(R.id.tile_status_router_router_cpu_model);
         cpuModelView.setText(data.getProperty(NVRAMInfo.Companion.getCPU_MODEL(), "-"));
 
         // Cores Count
         final TextView cpuCountView =
-                this.layout.findViewById(R.id.tile_status_router_router_cpu_cores);
+            this.layout.findViewById(R.id.tile_status_router_router_cpu_cores);
         cpuCountView.setText(data.getProperty(NVRAMInfo.Companion.getCPU_CORES_COUNT(), "-"));
 
         // Load Avg
         final TextView loadAvgView =
-                this.layout.findViewById(R.id.tile_status_router_router_cpu_load_avg);
+            this.layout.findViewById(R.id.tile_status_router_router_cpu_load_avg);
         loadAvgView.setText(data.getProperty(NVRAMInfo.Companion.getLOAD_AVERAGE(), "-"));
 
         // Load Avg Usage
-        final ProgressBar pb =
-                layout.findViewById(R.id.tile_status_router_router_cpu_load_usage);
+        final ProgressBar pb = layout.findViewById(R.id.tile_status_router_router_cpu_load_usage);
         final TextView pbText =
-                layout.findViewById(R.id.tile_status_router_router_cpu_load_avg_usage_text);
+            layout.findViewById(R.id.tile_status_router_router_cpu_load_avg_usage_text);
         try {
           final int propertyUtilization =
               Integer.parseInt(data.getProperty(NVRAMInfo.Companion.getCPU_USED_PERCENT()));
@@ -198,8 +197,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
         }
 
         // Update last sync
-        final RelativeTimeTextView lastSyncView =
-                layout.findViewById(R.id.tile_last_sync);
+        final RelativeTimeTextView lastSyncView = layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }

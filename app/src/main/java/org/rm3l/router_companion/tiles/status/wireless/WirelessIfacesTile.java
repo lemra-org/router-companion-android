@@ -335,7 +335,7 @@ public class WirelessIfacesTile extends IfacesTile {
       mProgressBarDesc.setVisibility(View.GONE);
 
       final GridLayout container =
-              this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_list_container);
+          this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_list_container);
       container.setVisibility(View.VISIBLE);
 
       // Now add each wireless iface tile
@@ -364,8 +364,7 @@ public class WirelessIfacesTile extends IfacesTile {
       }
 
       final SwitchCompat enableRadioButton =
-              this.layout.findViewById(
-                  R.id.tile_status_bandwidth_ifaces_wireless_radio_togglebutton);
+          this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless_radio_togglebutton);
       enableRadioButton.setVisibility(View.VISIBLE);
 
       final boolean makeToogleEnabled =
@@ -373,9 +372,9 @@ public class WirelessIfacesTile extends IfacesTile {
 
       if (!isToggleStateActionRunning.get()) {
         if (makeToogleEnabled) {
-            // Enabled
-            // Disabled
-            enableRadioButton.setChecked("1".equals(data.getProperty(WL_RADIO)));
+          // Enabled
+          // Disabled
+          enableRadioButton.setChecked("1".equals(data.getProperty(WL_RADIO)));
           enableRadioButton.setEnabled(true);
         } else {
           enableRadioButton.setChecked(false);
@@ -433,8 +432,7 @@ public class WirelessIfacesTile extends IfacesTile {
           final CardView cardView = (CardView) tileViewGroupLayout;
 
           // Create Options Menu
-          final ImageButton tileMenu =
-                  cardView.findViewById(R.id.tile_status_wireless_iface_menu);
+          final ImageButton tileMenu = cardView.findViewById(R.id.tile_status_wireless_iface_menu);
 
           if (!isThemeLight) {
             // Set menu background to white

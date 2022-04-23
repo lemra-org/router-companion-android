@@ -578,8 +578,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
       Utils.displayMessage(
           mParentFragmentActivity,
           String.format(
-              "Error on action '%s': %s",
-                  routerAction, Utils.handleException(exception).first),
+              "Error on action '%s': %s", routerAction, Utils.handleException(exception).first),
           Style.ALERT);
       handleActionCancellationOrFailureEvent(routerAction);
     }
@@ -592,7 +591,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
           mParentFragmentActivity,
           String.format(
               "Action '%s' executed successfully on host '%s'",
-                  routerAction, router.getRemoteIpAddress()),
+              routerAction, router.getRemoteIpAddress()),
           Style.CONFIRM);
       if (toggleWanAccessSwitchCompat != null
           && (routerAction == RouterAction.ENABLE_WAN_ACCESS
@@ -682,8 +681,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
       Utils.displayMessage(
           mParentFragmentActivity,
           String.format(
-              "Error on action '%s': %s",
-                  routerAction, Utils.handleException(exception).first),
+              "Error on action '%s': %s", routerAction, Utils.handleException(exception).first),
           Style.ALERT);
     }
 
@@ -712,7 +710,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
           mParentFragmentActivity,
           String.format(
               "Action '%s' executed successfully on host '%s'",
-                  routerAction, router.getRemoteIpAddress()),
+              routerAction, router.getRemoteIpAddress()),
           Style.CONFIRM);
     }
   }
@@ -900,11 +898,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
 
     isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
-    mProgressBar =
-            layout.findViewById(R.id.tile_status_wireless_clients_loading_view);
+    mProgressBar = layout.findViewById(R.id.tile_status_wireless_clients_loading_view);
     mProgressBar.setMax(100);
-    mProgressBarDesc =
-            layout.findViewById(R.id.tile_status_wireless_clients_loading_view_desc);
+    mProgressBarDesc = layout.findViewById(R.id.tile_status_wireless_clients_loading_view_desc);
 
     if (isThemeLight) {
       mProgressBarDesc.setTextColor(ContextCompat.getColor(mParentFragmentActivity, R.color.black));
@@ -933,8 +929,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
         new File(
             mParentFragmentActivity.getCacheDir(), this.getClass().getSimpleName() + ".tmp.dat");
 
-    mRecyclerView =
-            layout.findViewById(R.id.tile_status_wireless_clients_recycler_view);
+    mRecyclerView = layout.findViewById(R.id.tile_status_wireless_clients_recycler_view);
 
     // use this setting to improve performance if you know that changes
     // in content do not change the layout size of the RecyclerView
@@ -972,8 +967,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
     //        mRecyclerView.setMinimumHeight(size.y);
 
     // Create Options Menu
-    final ImageButton tileMenu =
-            layout.findViewById(R.id.tile_status_wireless_clients_menu);
+    final ImageButton tileMenu = layout.findViewById(R.id.tile_status_wireless_clients_menu);
     if (!isThemeLight) {
       // Set menu background to white
       tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
@@ -1372,7 +1366,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
       }
 
       final TextView errorPlaceHolderView =
-              this.layout.findViewById(R.id.tile_status_wireless_clients_error);
+          this.layout.findViewById(R.id.tile_status_wireless_clients_error);
 
       final Exception exception = data.getException();
 
@@ -1413,7 +1407,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
         // Number of Active IP Connections
         final int numActiveIPConnections = data.getActiveIPConnections();
         final TextView activeIpConnectionsNumView =
-                layout.findViewById(R.id.tile_status_wireless_clients_active_ip_connections_num);
+            layout.findViewById(R.id.tile_status_wireless_clients_active_ip_connections_num);
         activeIpConnectionsNumView.setText(
             numActiveIPConnections >= 0
                 ? String.valueOf(numActiveIPConnections)
@@ -1592,8 +1586,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
             .setText(String.valueOf(nbBlockedClients));
 
         // Update last sync
-        final RelativeTimeTextView lastSyncView =
-                layout.findViewById(R.id.tile_last_sync);
+        final RelativeTimeTextView lastSyncView = layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }

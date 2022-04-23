@@ -32,7 +32,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -137,8 +136,7 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
                 @Override
                 public void onClick(View view) {
                   // Validate data
-                  final EditText editText =
-                          d.findViewById(R.id.tile_admin_nvram_edit_value);
+                  final EditText editText = d.findViewById(R.id.tile_admin_nvram_edit_value);
                   final Editable newValue = editText.getText();
 
                   if (mValue != null && newValue.toString().equals(mValue.toString())) {
@@ -147,7 +145,7 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
                         getActivity(),
                         "No change",
                         ALERT,
-                            d.findViewById(R.id.tile_admin_nvram_edit_notification_viewgroup));
+                        d.findViewById(R.id.tile_admin_nvram_edit_notification_viewgroup));
                     editText.requestFocus();
                     // Open Keyboard
                     final InputMethodManager imm =

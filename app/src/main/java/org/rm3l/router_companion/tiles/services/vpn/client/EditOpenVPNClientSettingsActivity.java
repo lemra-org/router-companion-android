@@ -644,7 +644,7 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
         .setChecked("1".equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_ADV())));
 
     final AutoCompleteTextView serverIpOrNameAutoComplete =
-            findViewById(R.id.openvpn_client_settings_server_ip_name);
+        findViewById(R.id.openvpn_client_settings_server_ip_name);
     final Set<String> editOpenVPNClientSettingsTargetServers =
         sharedPreferences.getStringSet(
             EDIT_OPEN_VPN_CLIENT_SETTINGS_TARGET_SERVERS_AUTOCOMPLETE_PREF, new HashSet<String>());
@@ -658,7 +658,7 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
         mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_REMOTEIP()), EDITABLE);
 
     final AutoCompleteTextView serverPortAutoComplete =
-            findViewById(R.id.openvpn_client_settings_port);
+        findViewById(R.id.openvpn_client_settings_port);
     final Set<String> editOpenVPNClientSettingsServerPorts =
         sharedPreferences.getStringSet(
             EDIT_OPEN_VPN_CLIENT_SETTINGS_SERVER_PORTS_AUTOCOMPLETE_PREF, new HashSet<String>());
@@ -728,8 +728,7 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
     ((CheckBox) findViewById(R.id.openvpn_client_settings_advanced_options_nat_bridge_tap_to_br0))
         .setChecked("1".equals(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_BRIDGE())));
 
-    final AutoCompleteTextView localIps =
-            findViewById(R.id.openvpn_client_settings_ip_address);
+    final AutoCompleteTextView localIps = findViewById(R.id.openvpn_client_settings_ip_address);
     final Set<String> editOpenVPNClientSettingsLocalIPs =
         sharedPreferences.getStringSet(
             EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_IPS_AUTOCOMPLETE_PREF, new HashSet<String>());
@@ -742,7 +741,7 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
     localIps.setText(mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_IP()), EDITABLE);
 
     final AutoCompleteTextView localSubnetMask =
-            findViewById(R.id.openvpn_client_settings_subnet_mask);
+        findViewById(R.id.openvpn_client_settings_subnet_mask);
     final Set<String> editOpenVPNClientSettingsLocalSubnets =
         sharedPreferences.getStringSet(
             EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_SUBNETS_AUTOCOMPLETE_PREF, new HashSet<String>());
@@ -756,7 +755,7 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
         mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_MASK()), EDITABLE);
 
     final AutoCompleteTextView mtuSettingAutoCompleteView =
-            findViewById(R.id.openvpn_client_settings_tunnel_mtu_setting);
+        findViewById(R.id.openvpn_client_settings_tunnel_mtu_setting);
     final Set<String> editOpenVPNClientSettingsMTUSettings =
         sharedPreferences.getStringSet(
             EDIT_OPEN_VPN_CLIENT_SETTINGS_MTU_SETTINGS_AUTOCOMPLETE_PREF, new HashSet<String>());
@@ -770,7 +769,7 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
         mNvramInfo.getProperty(NVRAMInfo.Companion.getOPENVPNCL_MTU(), "1400"), EDITABLE);
 
     final AutoCompleteTextView udpFragmentAutoCompleteView =
-            findViewById(R.id.openvpn_client_settings_tunnel_udp_fragment);
+        findViewById(R.id.openvpn_client_settings_tunnel_udp_fragment);
     final Set<String> editOpenVPNClientSettingsUDPFragment =
         sharedPreferences.getStringSet(
             EDIT_OPEN_VPN_CLIENT_SETTINGS_UDP_FRAGMENTS_AUTOCOMPLETE_PREF, new HashSet<String>());

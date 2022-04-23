@@ -142,7 +142,7 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
     sharedPreferences = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
 
     final EditText secureOnPasswordEditText =
-            findViewById(R.id.wol_daemon_settings_secure_on_password);
+        findViewById(R.id.wol_daemon_settings_secure_on_password);
     ((CheckBox) findViewById(R.id.wol_daemon_settings_secure_on_password_show_checkbox))
         .setOnCheckedChangeListener(
             new CompoundButton.OnCheckedChangeListener() {
@@ -314,7 +314,7 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
         .setText(mNvramInfo.getProperty(NVRAMInfo.Companion.getWOL_INTERVAL()), EDITABLE);
 
     final AutoCompleteTextView hostnameAutoComplete =
-            findViewById(R.id.wol_daemon_settings_hostname);
+        findViewById(R.id.wol_daemon_settings_hostname);
     final Set<String> hostnames =
         sharedPreferences.getStringSet(WOL_DAEMON_HOSTNAMES_PREF_KEY, new HashSet<String>());
     //noinspection ConstantConditions

@@ -180,8 +180,7 @@ public class IfacesBandwidthMonitoringTile extends DDWRTTile<None> {
           .findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder)
           .setVisibility(View.VISIBLE);
 
-      final ImageButton tileMenu =
-              layout.findViewById(R.id.tile_status_bandwidth_monitoring_menu);
+      final ImageButton tileMenu = layout.findViewById(R.id.tile_status_bandwidth_monitoring_menu);
 
       if (!isThemeLight) {
         // Set menu background to white
@@ -200,7 +199,7 @@ public class IfacesBandwidthMonitoringTile extends DDWRTTile<None> {
       }
 
       final TextView errorPlaceHolderView =
-              this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_error);
+          this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_error);
 
       final Exception exception = data.getException();
 
@@ -302,8 +301,7 @@ public class IfacesBandwidthMonitoringTile extends DDWRTTile<None> {
             });
 
         // Update last sync
-        final RelativeTimeTextView lastSyncView =
-                layout.findViewById(R.id.tile_last_sync);
+        final RelativeTimeTextView lastSyncView = layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }
@@ -781,16 +779,15 @@ public class IfacesBandwidthMonitoringTile extends DDWRTTile<None> {
         this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_legend);
     legendView.setVisibility(View.VISIBLE);
 
-    final TextView inTextView =
-            this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_in);
+    final TextView inTextView = this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_in);
     final TextView outTextView =
-            this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_out);
+        this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_out);
 
     inTextView.setText(nvramInfo.getProperty(ifaceStr + "_ingress_MB", "-").replace("bytes", "B"));
     outTextView.setText(nvramInfo.getProperty(ifaceStr + "_egress_MB", "-").replace("bytes", "B"));
 
     final LinearLayout graphPlaceHolder =
-            this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
+        this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
     final Map<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> dataCircularBuffer =
         bandwidthMonitoringIfaceData.getData();
 
@@ -842,8 +839,8 @@ public class IfacesBandwidthMonitoringTile extends DDWRTTile<None> {
             .findViewById(R.id.tile_status_bandwidth_monitoring_graph_legend_series1_bar)
             .setBackgroundColor(colorForIface);
         final TextView series1TextView =
-                this.layout.findViewById(
-                    R.id.tile_status_bandwidth_monitoring_graph_legend_series1_text);
+            this.layout.findViewById(
+                R.id.tile_status_bandwidth_monitoring_graph_legend_series1_text);
         series1TextView.setText(iface);
         series1TextView.setTextColor(colorForIface);
       } else if (i == 1) {
@@ -851,8 +848,8 @@ public class IfacesBandwidthMonitoringTile extends DDWRTTile<None> {
             .findViewById(R.id.tile_status_bandwidth_monitoring_graph_legend_series2_bar)
             .setBackgroundColor(colorForIface);
         final TextView series2TextView =
-                this.layout.findViewById(
-                    R.id.tile_status_bandwidth_monitoring_graph_legend_series2_text);
+            this.layout.findViewById(
+                R.id.tile_status_bandwidth_monitoring_graph_legend_series2_text);
         series2TextView.setText(iface);
         series2TextView.setTextColor(colorForIface);
       }

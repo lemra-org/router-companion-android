@@ -390,8 +390,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         .setText(this.iface);
 
     // Create Options Menu
-    final ImageButton tileMenu =
-            layout.findViewById(R.id.tile_status_wireless_iface_menu);
+    final ImageButton tileMenu = layout.findViewById(R.id.tile_status_wireless_iface_menu);
 
     final boolean isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
@@ -413,7 +412,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
             inflater.inflate(R.menu.tile_wireless_iface_options, menu);
 
             final MenuItem shareMenuItem = menu.findItem(R.id.tile_status_wireless_iface_share);
-            shareMenuItem.setEnabled(wifiEncryptionType != null && (!isNullOrEmpty(wifiSsid) || wifiPassword != null));
+            shareMenuItem.setEnabled(
+                wifiEncryptionType != null && (!isNullOrEmpty(wifiSsid) || wifiPassword != null));
             if (NfcUtils.hasNFCHardware(mParentFragmentActivity)) {
               shareMenuItem.setTitle(R.string.share_via_nfc_or_qr_code);
             } else {
@@ -439,7 +439,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     }
 
     final TextView errorPlaceHolderView =
-            this.layout.findViewById(R.id.tile_status_wireless_iface_error);
+        this.layout.findViewById(R.id.tile_status_wireless_iface_error);
 
     final Exception exception = data.getException();
 
@@ -1254,7 +1254,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
     // Encryption
     final TextView encryptionView =
-            this.layout.findViewById(R.id.tile_status_wireless_iface_encryption);
+        this.layout.findViewById(R.id.tile_status_wireless_iface_encryption);
     final String wlSecModeToDisplay =
         data.getProperty(
             this.iface + "_security_mode",
@@ -1307,8 +1307,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     }
 
     // SSID
-    final TextView ssidView =
-            this.layout.findViewById(R.id.tile_status_wireless_iface_ssid);
+    final TextView ssidView = this.layout.findViewById(R.id.tile_status_wireless_iface_ssid);
     final String wlSsid =
         data.getProperty(
             this.iface + "_ssid", defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
@@ -1340,8 +1339,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     // EMPTY_VALUE_TO_DISPLAY);
 
     // Ifname
-    final TextView ifnameView =
-            this.layout.findViewById(R.id.tile_status_wireless_iface_ifname);
+    final TextView ifnameView = this.layout.findViewById(R.id.tile_status_wireless_iface_ifname);
     final String wlIfname =
         data.getProperty(
             this.iface + "_ifname", defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
@@ -1350,8 +1348,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     }
 
     // Iface State
-    final TextView ifaceStateView =
-            this.layout.findViewById(R.id.tile_status_wireless_iface_state);
+    final TextView ifaceStateView = this.layout.findViewById(R.id.tile_status_wireless_iface_state);
     final String phyIfaceState =
         data.getProperty(
             this.iface + IFACE_STATE, defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
@@ -1361,7 +1358,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
     // MAC
     final TextView hwAddrView =
-            this.layout.findViewById(R.id.tile_status_wireless_iface_mac_address);
+        this.layout.findViewById(R.id.tile_status_wireless_iface_mac_address);
     final String wlHwAddr =
         data.getProperty(
             this.iface + "_hwaddr", defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
@@ -1371,8 +1368,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     }
 
     // Radio
-    final CheckBox radioView =
-            this.layout.findViewById(R.id.tile_status_wireless_iface_radio);
+    final CheckBox radioView = this.layout.findViewById(R.id.tile_status_wireless_iface_radio);
     radioView.setEnabled(false);
     radioView.setChecked(
         "1"
@@ -1384,8 +1380,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     radioView.setVisibility(View.GONE);
 
     // Mode
-    final TextView modeView =
-            this.layout.findViewById(R.id.tile_status_wireless_iface_mode);
+    final TextView modeView = this.layout.findViewById(R.id.tile_status_wireless_iface_mode);
     String property =
         data.getProperty(
             this.iface + "_mode", defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
@@ -1394,8 +1389,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     }
 
     // Net Mode
-    final TextView netModeView =
-            this.layout.findViewById(R.id.tile_status_wireless_iface_network);
+    final TextView netModeView = this.layout.findViewById(R.id.tile_status_wireless_iface_network);
     final String netmode =
         data.getProperty(
             this.iface + "_net_mode",
@@ -1436,7 +1430,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
     // Temperature
     final TextView temperatureView =
-            this.layout.findViewById(R.id.tile_status_wireless_iface_temperature);
+        this.layout.findViewById(R.id.tile_status_wireless_iface_temperature);
     final String temperatureProperty =
         data.getProperty(
             this.iface + "_temperature",
@@ -1448,8 +1442,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     }
 
     // Channel
-    final TextView channelView =
-            this.layout.findViewById(R.id.tile_status_wireless_iface_channel);
+    final TextView channelView = this.layout.findViewById(R.id.tile_status_wireless_iface_channel);
     final String channelProperty =
         data.getProperty(
             this.iface + "_channel",
@@ -1467,8 +1460,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     // "-");
     //            rateView.setText(rateProperty);
     // Rate
-    final TextView rxRateView =
-            this.layout.findViewById(R.id.tile_status_wireless_iface_rx_rate);
+    final TextView rxRateView = this.layout.findViewById(R.id.tile_status_wireless_iface_rx_rate);
     final String rxRateProperty =
         data.getProperty(
             this.iface + "_rx_rate_human_readable",
@@ -1477,8 +1469,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
       rxRateView.setText(rxRateProperty);
     }
 
-    final TextView txRateView =
-            this.layout.findViewById(R.id.tile_status_wireless_iface_tx_rate);
+    final TextView txRateView = this.layout.findViewById(R.id.tile_status_wireless_iface_tx_rate);
     final String txRateProperty =
         data.getProperty(
             this.iface + "_tx_rate_human_readable",
@@ -1489,7 +1480,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
     // Packet Info
     final TextView rxPacketsView =
-            this.layout.findViewById(R.id.tile_status_wireless_iface_rx_packets);
+        this.layout.findViewById(R.id.tile_status_wireless_iface_rx_packets);
     final String rxPacketsProperty =
         data.getProperty(
             this.iface + "_rx_packets", defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
@@ -1498,7 +1489,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     }
 
     final TextView txPacketsView =
-            this.layout.findViewById(R.id.tile_status_wireless_iface_tx_packets);
+        this.layout.findViewById(R.id.tile_status_wireless_iface_tx_packets);
     final String txPacketsProperty =
         data.getProperty(
             this.iface + "_tx_packets", defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
@@ -1507,8 +1498,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     }
 
     // TX Power
-    final TextView xmitView =
-            this.layout.findViewById(R.id.tile_status_wireless_iface_tx_power);
+    final TextView xmitView = this.layout.findViewById(R.id.tile_status_wireless_iface_tx_power);
     final String txPwrProperty =
         data.getProperty(
             this.iface + "_txpwr",
@@ -1520,8 +1510,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     }
 
     // Noise
-    final TextView noiseView =
-            this.layout.findViewById(R.id.tile_status_wireless_iface_noise_dBm);
+    final TextView noiseView = this.layout.findViewById(R.id.tile_status_wireless_iface_noise_dBm);
     final String noiseProp =
         data.getProperty(
             this.iface + "_noise",

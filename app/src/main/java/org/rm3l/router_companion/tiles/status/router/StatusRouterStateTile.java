@@ -108,7 +108,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
       }
 
       final TextView errorPlaceHolderView =
-              this.layout.findViewById(R.id.tile_status_router_router_state_error);
+          this.layout.findViewById(R.id.tile_status_router_router_state_error);
 
       final Exception exception = data.getException();
 
@@ -120,7 +120,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
 
         // Router Name
         final TextView routerNameView =
-                this.layout.findViewById(R.id.tile_status_router_router_state_title);
+            this.layout.findViewById(R.id.tile_status_router_router_state_title);
         final String routerName = data.getProperty(NVRAMInfo.Companion.getROUTER_NAME());
         final boolean routerNameNull = (routerName == null);
         String routerNameToSet = routerName;
@@ -136,7 +136,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
 
         // OS Version
         final TextView osVersionTv =
-                this.layout.findViewById(R.id.tile_status_router_router_state_os_version);
+            this.layout.findViewById(R.id.tile_status_router_router_state_os_version);
         final String osVersion = data.getProperty(NVRAMInfo.Companion.getOS_VERSION());
         if (TextUtils.isEmpty(osVersion)) {
           osVersionTv.setText("-");
@@ -191,13 +191,13 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
         // WAN IP
         final String wanIpText = data.getProperty(NVRAMInfo.Companion.getWAN_IPADDR(), "-");
         final TextView wanIpViewDetail =
-                this.layout.findViewById(R.id.tile_status_router_router_state_wan_ip_detail);
+            this.layout.findViewById(R.id.tile_status_router_router_state_wan_ip_detail);
         wanIpViewDetail.setText(wanIpText);
 
         final TextView internetIpTitle =
-                this.layout.findViewById(R.id.tile_status_router_router_state_internet_ip_title);
+            this.layout.findViewById(R.id.tile_status_router_router_state_internet_ip_title);
         final TextView internetIpTextView =
-                this.layout.findViewById(R.id.tile_status_router_router_state_internet_ip);
+            this.layout.findViewById(R.id.tile_status_router_router_state_internet_ip);
         if (!checkActualInternetConnectivity) {
           internetIpTitle.setVisibility(View.GONE);
           internetIpTextView.setVisibility(View.GONE);
@@ -216,7 +216,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
         }
 
         final TextView routerModelView =
-                this.layout.findViewById(R.id.tile_status_router_router_state_model);
+            this.layout.findViewById(R.id.tile_status_router_router_state_model);
         final String routerModel = data.getProperty(NVRAMInfo.Companion.getMODEL(), "-");
         routerModelView.setText(routerModel);
         if (mParentFragmentPreferences != null) {
@@ -233,28 +233,27 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
         }
 
         final TextView lanIpView =
-                this.layout.findViewById(R.id.tile_status_router_router_state_lan_ip);
+            this.layout.findViewById(R.id.tile_status_router_router_state_lan_ip);
         lanIpView.setText(data.getProperty(NVRAMInfo.Companion.getLAN_IPADDR(), "-"));
 
         final TextView fwView =
-                this.layout.findViewById(R.id.tile_status_router_router_state_firmware);
+            this.layout.findViewById(R.id.tile_status_router_router_state_firmware);
         fwView.setText(data.getProperty(NVRAMInfo.Companion.getFIRMWARE(), "-"));
 
         final TextView kernelView =
-                this.layout.findViewById(R.id.tile_status_router_router_state_kernel);
+            this.layout.findViewById(R.id.tile_status_router_router_state_kernel);
         kernelView.setText(data.getProperty(NVRAMInfo.Companion.getKERNEL(), "-"));
 
         final TextView uptimeView =
-                this.layout.findViewById(R.id.tile_status_router_router_state_uptime);
+            this.layout.findViewById(R.id.tile_status_router_router_state_uptime);
         uptimeView.setText(data.getProperty(NVRAMInfo.Companion.getUPTIME(), "-"));
 
         final TextView currentDateView =
-                this.layout.findViewById(R.id.tile_status_router_router_state_datetime);
+            this.layout.findViewById(R.id.tile_status_router_router_state_datetime);
         currentDateView.setText(data.getProperty(NVRAMInfo.Companion.getCURRENT_DATE(), "-"));
 
         // Update last sync
-        final RelativeTimeTextView lastSyncView =
-                layout.findViewById(R.id.tile_last_sync);
+        final RelativeTimeTextView lastSyncView = layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }

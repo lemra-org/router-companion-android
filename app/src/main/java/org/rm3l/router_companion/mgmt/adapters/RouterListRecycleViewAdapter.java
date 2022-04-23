@@ -271,8 +271,7 @@ public class RouterListRecycleViewAdapter
 
                             // No error
                             final String msg =
-                                String.format(
-                                    "Action '%s' executed successfully", routerAction);
+                                String.format("Action '%s' executed successfully", routerAction);
                             if (activity instanceof Activity) {
                               Utils.displayMessage(activity, msg, Style.CONFIRM);
                             } else {
@@ -655,8 +654,8 @@ public class RouterListRecycleViewAdapter
                         final View snackbarView = snackbar.getView();
                         snackbarView.setBackgroundColor(Color.DKGRAY);
                         final TextView textView =
-                                snackbarView.findViewById(
-                                    com.google.android.material.R.id.snackbar_text);
+                            snackbarView.findViewById(
+                                com.google.android.material.R.id.snackbar_text);
                         textView.setTextColor(Color.YELLOW);
                         snackbar.show();
 
@@ -868,7 +867,7 @@ public class RouterListRecycleViewAdapter
                 final View snackbarView = snackbar.getView();
                 snackbarView.setBackgroundColor(Color.DKGRAY);
                 final TextView textView =
-                        snackbarView.findViewById(com.google.android.material.R.id.snackbar_text);
+                    snackbarView.findViewById(com.google.android.material.R.id.snackbar_text);
                 textView.setTextColor(Color.YELLOW);
                 snackbar.show();
               }

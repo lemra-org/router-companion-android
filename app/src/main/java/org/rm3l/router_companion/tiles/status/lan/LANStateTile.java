@@ -121,7 +121,7 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
       }
 
       final TextView errorPlaceHolderView =
-              this.layout.findViewById(R.id.tile_status_lan_status_error);
+          this.layout.findViewById(R.id.tile_status_lan_status_error);
 
       final Exception exception = data.getException();
 
@@ -132,8 +132,7 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
         }
 
         // MAC Address
-        final TextView macView =
-                this.layout.findViewById(R.id.tile_status_lan_status_mac);
+        final TextView macView = this.layout.findViewById(R.id.tile_status_lan_status_mac);
         macView.setText(data.getProperty(NVRAMInfo.Companion.getLAN_HWADDR(), "-"));
 
         // IP Address
@@ -141,18 +140,15 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
         ipView.setText(data.getProperty(NVRAMInfo.Companion.getLAN_IPADDR(), "-"));
 
         // Subnet Mask
-        final TextView maskView =
-                this.layout.findViewById(R.id.tile_status_lan_status_subnet_mask);
+        final TextView maskView = this.layout.findViewById(R.id.tile_status_lan_status_subnet_mask);
         maskView.setText(data.getProperty(NVRAMInfo.Companion.getLAN_NETMASK(), "-"));
 
         // GW
-        final TextView gwView =
-                this.layout.findViewById(R.id.tile_status_lan_status_gateway);
+        final TextView gwView = this.layout.findViewById(R.id.tile_status_lan_status_gateway);
         gwView.setText(data.getProperty(NVRAMInfo.Companion.getLAN_GATEWAY(), "-"));
 
         // Update last sync
-        final RelativeTimeTextView lastSyncView =
-                layout.findViewById(R.id.tile_last_sync);
+        final RelativeTimeTextView lastSyncView = layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }

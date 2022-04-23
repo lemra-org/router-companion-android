@@ -37,9 +37,7 @@ public class ServicesOpenVPNLogsFragment extends AbstractBaseFragment {
   @Override
   protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
     if (tiles == null) {
-      tiles =
-          Arrays.asList(
-              new OpenVPNLogsTile(this, mLayout, savedInstanceState, this.router));
+      tiles = Arrays.asList(new OpenVPNLogsTile(this, mLayout, savedInstanceState, this.router));
     }
     return tiles;
   }

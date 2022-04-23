@@ -249,6 +249,11 @@ android {
             proguardFiles 'proguard-rules-r8.pro'
             signingConfig signingConfigs.release
             zipAlignEnabled true
+            rootProject.localProperties.each { key, val ->
+                resValue("string",
+                        key.toUpperCase().replaceAll("\\.", "_").replaceAll("-", "_"),
+                        val.toString())
+            }
         }
         debug {
             // Disable fabric build ID generation for debug builds
@@ -256,6 +261,11 @@ android {
             minifyEnabled true
             proguardFiles 'proguard-rules-r8.pro'
             zipAlignEnabled true
+            rootProject.localProperties.each { key, val ->
+                resValue("string",
+                        key.toUpperCase().replaceAll("\\.", "_").replaceAll("-", "_"),
+                        val.toString())
+            }
 
             //Android-Debug-Database - not needed anymore as FB's Stetho superseedes this
 //      resValue("string", "PORT_NUMBER", "8080")
@@ -337,7 +347,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 //    implementation "androidx.core:core-ktx:$android_ktx_version"
     // Anko Commons
-    implementation "org.jetbrains.anko:anko-commons:$anko_version"
+//    implementation "org.jetbrains.anko:anko-commons:$anko_version"
     // Anko Layouts
 //    compile "org.jetbrains.anko:anko-sdk25:$anko_version" // sdk15, sdk19, sdk21, sdk23 are also available
 //    compile "org.jetbrains.anko:anko-appcompat-v7:$anko_version"
@@ -438,8 +448,16 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
 
-    implementation "org.rm3l:maoni:${maoni_version}"
-    implementation "org.rm3l:maoni-doorbell:${maoni_version}"
+    implementation("org.rm3l:maoni:${maoni_version}") {
+        transitive = true
+        //Needed because of https://github.com/rm3l/maoni/issues/294
+        exclude module: 'unspecified'
+    }
+    implementation("org.rm3l:maoni-doorbell:${maoni_version}") {
+        transitive = true
+        //Needed because of https://github.com/rm3l/maoni/issues/294
+        exclude module: 'unspecified'
+    }
 
     //LeakCanary - to detect memory leaks (only in debug flavor)
     debugImplementation "com.squareup.leakcanary:leakcanary-android:${leakCanaryVersion}"

@@ -218,7 +218,6 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
   @Nullable
   @Override
   protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-    return Collections.singletonList(
-        new WirelessIfacesTile(this, savedInstanceState, router));
+    return Collections.singletonList(new WirelessIfacesTile(this, savedInstanceState, router));
   }
 }

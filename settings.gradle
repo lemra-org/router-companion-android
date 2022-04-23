@@ -20,6 +20,36 @@
  * Contact Info: Armel Soro <armel+router_companion@rm3l.org>
  */
 
+//TODO For later, once we no longer use buildScript
+//pluginManagement {
+//    repositories {
+//        gradlePluginPortal()
+//        google()
+//        mavenCentral()
+//    }
+//}
+//dependencyResolutionManagement {
+//    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+//    repositories {
+//        google()
+//        mavenCentral()
+//        maven {
+//            url "https://jitpack.io"
+//            content {
+//                // this repository contains everything BUT artifacts with group starting with "my.company"
+//                excludeGroupByRegex "org\\.rm3l.*"
+//            }
+//        }
+//        flatDir {
+//            dirs 'libs'
+//        }
+//        maven {
+//            url 'http://clojars.org/repo'
+//            allowInsecureProtocol = true
+//        }
+//    }
+//}
+
 include ':app'
 include ':tasker-plugin'
 include ':common'

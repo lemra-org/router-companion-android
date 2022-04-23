@@ -254,8 +254,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         });
 
     // Handle for Search EditText
-    final EditText filterEditText =
-            this.layout.findViewById(R.id.tile_admin_nvram_filter);
+    final EditText filterEditText = this.layout.findViewById(R.id.tile_admin_nvram_filter);
     // Initialize with existing search data
     filterEditText.setText(
         mParentFragmentPreferences != null
@@ -471,8 +470,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
       layout.findViewById(R.id.tile_admin_nvram_loading_view).setVisibility(View.GONE);
 
-      final TextView errorPlaceHolderView =
-              this.layout.findViewById(R.id.tile_admin_nvram_error);
+      final TextView errorPlaceHolderView = this.layout.findViewById(R.id.tile_admin_nvram_error);
 
       final Exception exception = data.getException();
 
@@ -546,8 +544,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         }
 
         // Update last sync
-        final RelativeTimeTextView lastSyncView =
-                layout.findViewById(R.id.tile_last_sync);
+        final RelativeTimeTextView lastSyncView = layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }
@@ -638,8 +635,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         mNvramInfoToDisplayCopy = mNvramInfoToDisplay;
       } else {
         // Already filtered data
-        final Map<Object, Object> adapterNvramInfo =
-            mAdapter.getNvramInfo();
+        final Map<Object, Object> adapterNvramInfo = mAdapter.getNvramInfo();
         if (itemId == R.id.tile_admin_nvram_sort_default) {
           mNvramInfoToDisplayCopy = new HashMap<>(adapterNvramInfo);
           notifyDatasetChanged = true;
@@ -669,8 +665,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
           Collections.singletonList(permission.WRITE_EXTERNAL_STORAGE),
           () -> {
             // Share action
-            final Map<Object, Object> nvramInfo =
-                mAdapter.getNvramInfo();
+            final Map<Object, Object> nvramInfo = mAdapter.getNvramInfo();
             if (nvramInfo == null || nvramInfo.isEmpty()) {
               Utils.displayMessage(mParentFragmentActivity, "Nothing to share!", Style.ALERT);
               return null;

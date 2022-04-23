@@ -140,7 +140,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
       }
 
       final TextView errorPlaceHolderView =
-              this.layout.findViewById(R.id.tile_status_router_router_space_usage_error);
+          this.layout.findViewById(R.id.tile_status_router_router_space_usage_error);
 
       final Exception exception = data.getException();
 
@@ -151,24 +151,24 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
 
         // NVRAM
         final TextView nvramSpaceView =
-                this.layout.findViewById(R.id.tile_status_router_router_space_usage_nvram);
+            this.layout.findViewById(R.id.tile_status_router_router_space_usage_nvram);
         nvramSpaceView.setText(data.getProperty("nvram_space", "-"));
 
         // CIFS
         final TextView cifsSpaceView =
-                this.layout.findViewById(R.id.tile_status_router_router_space_usage_cifs);
+            this.layout.findViewById(R.id.tile_status_router_router_space_usage_cifs);
         cifsSpaceView.setText(data.getProperty("cifs_space", "-"));
 
         // JFFS
         final TextView jffsView =
-                this.layout.findViewById(R.id.tile_status_router_router_space_usage_jffs2);
+            this.layout.findViewById(R.id.tile_status_router_router_space_usage_jffs2);
         jffsView.setText(data.getProperty("jffs_space", "-"));
 
         // Update usages as well
         ProgressBar pb =
-                layout.findViewById(R.id.tile_status_router_router_space_usage_nvram_usage);
+            layout.findViewById(R.id.tile_status_router_router_space_usage_nvram_usage);
         TextView pbText =
-                layout.findViewById(R.id.tile_status_router_router_space_usage_nvram_usage_text);
+            layout.findViewById(R.id.tile_status_router_router_space_usage_nvram_usage_text);
         try {
           final int propertyUtilization =
               Integer.parseInt(data.getProperty(NVRAMInfo.Companion.getNVRAM_USED_PERCENT()));
@@ -187,10 +187,8 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
           pbText.setVisibility(View.GONE);
         }
 
-        pb =
-                layout.findViewById(R.id.tile_status_router_router_space_usage_cifs_usage);
-        pbText =
-                layout.findViewById(R.id.tile_status_router_router_space_usage_cifs_usage_text);
+        pb = layout.findViewById(R.id.tile_status_router_router_space_usage_cifs_usage);
+        pbText = layout.findViewById(R.id.tile_status_router_router_space_usage_cifs_usage_text);
         try {
           final int propertyUtilization =
               Integer.parseInt(
@@ -210,10 +208,8 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
           pbText.setVisibility(View.GONE);
         }
 
-        pb =
-                layout.findViewById(R.id.tile_status_router_router_space_usage_jffs2_usage);
-        pbText =
-                layout.findViewById(R.id.tile_status_router_router_space_usage_jffs2_usage_text);
+        pb = layout.findViewById(R.id.tile_status_router_router_space_usage_jffs2_usage);
+        pbText = layout.findViewById(R.id.tile_status_router_router_space_usage_jffs2_usage_text);
         try {
           final int propertyUtilization =
               Integer.parseInt(
@@ -234,8 +230,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
         }
 
         // Update last sync
-        final RelativeTimeTextView lastSyncView =
-                layout.findViewById(R.id.tile_last_sync);
+        final RelativeTimeTextView lastSyncView = layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }

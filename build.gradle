@@ -28,7 +28,7 @@ buildscript {
         android_sdk = 30
         buildScan_version = '2.2.1'
 //        buildTools_version = '29.0.2'
-        gradleBuildPlugin_version = '7.2.0-beta04'
+        gradleBuildPlugin_version = '7.2.0-rc01'
         androidx_version = '1.0.0'
         kotlin_version = '1.6.20'
 	    ktlint_version = '0.39.0'
@@ -45,7 +45,7 @@ buildscript {
         playPublisherPlugin_version = '2.2.0'
         googlePlayServicesPlugin_version = '4.3.10'
 
-        maoni_version = '8.3.2'
+        maoni_version = '10.0.0'
 
         leakCanaryVersion = '2.5'
 
@@ -80,18 +80,19 @@ apply plugin: 'kotlin'
 
 allprojects {
     repositories {
+        mavenCentral()
         google()
-        //jcenter()
+        jcenter()
         maven {
             url "https://jitpack.io"
-//            maven {
-//                url "https://plugins.gradle.org/m2/"
-//            }
             content {
                 // this repository contains everything BUT artifacts with group starting with "my.company"
                 excludeGroupByRegex "org\\.rm3l.*"
             }
         }
+//        maven {
+//            url "https://plugins.gradle.org/m2/"
+//        }
         flatDir {
             dirs 'libs'
         }
@@ -142,6 +143,12 @@ subprojects {
             allowInsecureProtocol = true
         }
     }
+}
+
+def localPropertiesFile = rootProject.file("local.properties")
+ext.localProperties = new Properties()
+if (localPropertiesFile.exists()) {
+    rootProject.localProperties.load(new FileInputStream(localPropertiesFile))
 }
 
 def homePath = System.properties['user.home'].toString()

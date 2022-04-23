@@ -44,8 +44,8 @@ import org.rm3l.maoni.common.model.Feedback;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.api.feedback.DoorbellSubmitRequest;
 import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.resources.DynamicLinkInfo;
+import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.resources.FirebaseDynamicLinksResponse;
 import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.resources.ShortLinksDataRequest;
-import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.resources.ShortLinksDataResponse;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.multithreading.MultiThreadingManager;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
@@ -197,7 +197,7 @@ public class MaoniFeedbackHandler implements Handler {
                 try {
                   final ShortLinksDataRequest gooGlData =
                       new ShortLinksDataRequest(new DynamicLinkInfo(longLink));
-                  final Response<ShortLinksDataResponse> response =
+                  final Response<FirebaseDynamicLinksResponse> response =
                       NetworkUtils.getFirebaseDynamicLinksService().shortLinks(gooGlData).execute();
                   NetworkUtils.checkResponseSuccessful(response);
                   screenshotCaptureUploadUrl = response.body().getShortLink();
@@ -285,7 +285,7 @@ public class MaoniFeedbackHandler implements Handler {
                 try {
                   final ShortLinksDataRequest shortLinksDataRequest =
                       new ShortLinksDataRequest(new DynamicLinkInfo(longLink));
-                  final Response<ShortLinksDataResponse> response =
+                  final Response<FirebaseDynamicLinksResponse> response =
                       NetworkUtils.getFirebaseDynamicLinksService()
                           .shortLinks(shortLinksDataRequest)
                           .execute();

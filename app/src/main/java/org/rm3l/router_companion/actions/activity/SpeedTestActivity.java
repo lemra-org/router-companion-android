@@ -60,7 +60,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Joiner;
@@ -971,8 +970,7 @@ public class SpeedTestActivity extends AppCompatActivity
         AdUtils.requestNewInterstitial(
             this, R.string.interstitial_ad_unit_id_transtion_to_wan_monthly_chart);
 
-    AdUtils.buildAndDisplayAdViewIfNeeded(
-        this, findViewById(R.id.router_speedtest_adView));
+    AdUtils.buildAndDisplayAdViewIfNeeded(this, findViewById(R.id.router_speedtest_adView));
 
     mToolbar = findViewById(R.id.routerSpeedTestToolbar);
     if (mToolbar != null) {
@@ -1063,9 +1061,9 @@ public class SpeedTestActivity extends AppCompatActivity
         ContextCompat.getColor(SpeedTestActivity.this, R.color.network_link_color);
 
     final ImageButton speedtestResultsRefreshImageButton =
-            findViewById(R.id.speedtest_results_refresh);
+        findViewById(R.id.speedtest_results_refresh);
     final ImageButton speedtestResultsClearAllImageButton =
-            findViewById(R.id.speedtest_results_clear_all);
+        findViewById(R.id.speedtest_results_clear_all);
 
     if (mIsThemeLight) {
       speedtestResultsRefreshImageButton.setImageDrawable(

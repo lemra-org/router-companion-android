@@ -217,8 +217,7 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
       actionBar.setHomeButtonEnabled(true);
     }
 
-    final ImageView qrCodeImageView =
-            findViewById(R.id.tile_status_wireless_iface_qrcode_image);
+    final ImageView qrCodeImageView = findViewById(R.id.tile_status_wireless_iface_qrcode_image);
 
     final View loadingView =
         findViewById(R.id.tile_status_wireless_iface_qrcode_image_loading_view);

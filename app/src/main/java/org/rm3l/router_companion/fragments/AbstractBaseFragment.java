@@ -1184,9 +1184,8 @@ public abstract class AbstractBaseFragment<T> extends Fragment
 
     final int rootViewType = getRootViewType();
     final RecyclerViewEmptySupport recyclerView =
-            rootView.findViewById(R.id.tiles_container_recyclerview);
-    final LinearLayout linearLayout =
-            rootView.findViewById(R.id.tiles_container_linearlayout);
+        rootView.findViewById(R.id.tiles_container_recyclerview);
+    final LinearLayout linearLayout = rootView.findViewById(R.id.tiles_container_linearlayout);
     final View recyclerViewEmptyView = rootView.findViewById(R.id.empty_view);
     switch (rootViewType) {
       case RootViewType_LINEAR_LAYOUT:

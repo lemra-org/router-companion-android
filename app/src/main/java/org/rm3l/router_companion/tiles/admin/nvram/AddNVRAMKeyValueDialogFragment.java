@@ -33,7 +33,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -100,8 +99,7 @@ public class AddNVRAMKeyValueDialogFragment extends DialogFragment {
                 @Override
                 public void onClick(View view) {
                   // Validate data
-                  final TextView varKeyTV =
-                          d.findViewById(R.id.tile_admin_nvram_add_key);
+                  final TextView varKeyTV = d.findViewById(R.id.tile_admin_nvram_add_key);
                   final CharSequence variableKey = \"fake-key\";
                   if (TextUtils.isEmpty(variableKey)) {
                     // Error
@@ -109,7 +107,7 @@ public class AddNVRAMKeyValueDialogFragment extends DialogFragment {
                         getActivity(),
                         "Missing key for NVRAM variable",
                         ALERT,
-                            d.findViewById(R.id.tile_admin_nvram_add_notification_viewgroup));
+                        d.findViewById(R.id.tile_admin_nvram_add_notification_viewgroup));
                     varKeyTV.requestFocus();
                     // Open Keyboard
                     final InputMethodManager imm =

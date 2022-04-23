@@ -73,7 +73,6 @@ import androidx.loader.content.AsyncTaskLoader;
 import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.gms.ads.AdView;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
@@ -790,8 +789,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
           .setText(destinationAddressOriginalSide);
 
       final String protocol = ipConntrackRow.getTransportProtocol();
-      final TextView proto =
-              cardView.findViewById(R.id.activity_ip_connections_device_proto);
+      final TextView proto = cardView.findViewById(R.id.activity_ip_connections_device_proto);
       proto.setText(isNullOrEmpty(protocol) ? "-" : protocol.toUpperCase());
       ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_protocol))
           .setText(isNullOrEmpty(protocol) ? "-" : protocol.toUpperCase());
@@ -800,7 +798,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
       final TextView tcpConnectionStateView =
           cardView.findViewById(R.id.activity_ip_connections_tcp_connection_state);
       final TextView tcpConnectionStateDetailedView =
-              cardView.findViewById(R.id.activity_ip_connections_details_tcp_connection_state);
+          cardView.findViewById(R.id.activity_ip_connections_details_tcp_connection_state);
 
       if (!isNullOrEmpty(tcpConnectionState)) {
         tcpConnectionStateView.setText(tcpConnectionState);
@@ -857,23 +855,22 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
       // ID
       final View icmpIdTitle =
           cardView.findViewById(R.id.activity_ip_connections_details_icmp_id_title);
-      final TextView icmpId =
-              cardView.findViewById(R.id.activity_ip_connections_details_icmp_id);
+      final TextView icmpId = cardView.findViewById(R.id.activity_ip_connections_details_icmp_id);
       // Type
       final View icmpTypeTitle =
           cardView.findViewById(R.id.activity_ip_connections_details_icmp_type_title);
       final TextView icmpType =
-              cardView.findViewById(R.id.activity_ip_connections_details_icmp_type);
+          cardView.findViewById(R.id.activity_ip_connections_details_icmp_type);
       // Code
       final View icmpCodeTitle =
           cardView.findViewById(R.id.activity_ip_connections_details_icmp_code_title);
       final TextView icmpCode =
-              cardView.findViewById(R.id.activity_ip_connections_details_icmp_code);
+          cardView.findViewById(R.id.activity_ip_connections_details_icmp_code);
       // Ctrl Message
       final View icmpCtrlMsgTitle =
           cardView.findViewById(R.id.activity_ip_connections_details_icmp_ctrl_msg_title);
       final TextView icmpCtrlMsg =
-              cardView.findViewById(R.id.activity_ip_connections_details_icmp_ctrl_msg);
+          cardView.findViewById(R.id.activity_ip_connections_details_icmp_ctrl_msg);
 
       final View[] icmpViews =
           new View[] {

@@ -70,11 +70,9 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
 
     isThemeLight = ColorUtils.Companion.isThemeLight(mParentFragmentActivity);
 
-    mProgressBar =
-            layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view);
+    mProgressBar = layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view);
     mProgressBar.setMax(100);
-    mProgressBarDesc =
-            layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view_desc);
+    mProgressBarDesc = layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view_desc);
 
     if (isThemeLight) {
       mProgressBarDesc.setTextColor(ContextCompat.getColor(mParentFragmentActivity, R.color.black));
@@ -216,7 +214,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
       }
 
       final TextView errorPlaceHolderView =
-              this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_error);
+          this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_error);
 
       final Exception exception = data.getException();
 
@@ -228,22 +226,21 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
 
         // LAN
         final TextView lanIfaceView =
-                this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_lan);
+            this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_lan);
         lanIfaceView.setText(data.getProperty(NVRAMInfo.Companion.getLAN_IFNAME(), "-"));
 
         // WAN
         final TextView wanIfaceView =
-                this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wan);
+            this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wan);
         wanIfaceView.setText(data.getProperty(NVRAMInfo.Companion.getWAN_IFNAME(), "-"));
 
         // Wireless
         final TextView wlIfaceView =
-                this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless);
+            this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless);
         wlIfaceView.setText(data.getProperty(NVRAMInfo.Companion.getLANDEVS(), "-"));
 
         // Update last sync
-        final RelativeTimeTextView lastSyncView =
-                layout.findViewById(R.id.tile_last_sync);
+        final RelativeTimeTextView lastSyncView = layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }

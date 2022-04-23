@@ -33,7 +33,6 @@ public class ToolboxWhoisFragment extends AbstractToolboxFragment {
   @Nullable
   @Override
   protected List<DDWRTTile> doGetTiles(@Nullable Bundle savedInstanceState) {
-    return Collections.singletonList(
-        new ToolboxWhoisTile(this, savedInstanceState, this.router));
+    return Collections.singletonList(new ToolboxWhoisTile(this, savedInstanceState, this.router));
   }
 }

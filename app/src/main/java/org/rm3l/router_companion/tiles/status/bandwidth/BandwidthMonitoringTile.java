@@ -290,7 +290,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
       }
 
       final TextView errorPlaceHolderView =
-              this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_error);
+          this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_error);
 
       final Exception exception = data.getException();
 
@@ -301,7 +301,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
         }
 
         final LinearLayout graphPlaceHolder =
-                this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
+            this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
         final Map<String, EvictingQueue<DataPoint>> dataCircularBuffer =
             bandwidthMonitoringIfaceData.getData();
 
@@ -370,8 +370,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
         graphPlaceHolder.addView(chartView, 0);
 
         // Update last sync
-        final RelativeTimeTextView lastSyncView =
-                layout.findViewById(R.id.tile_last_sync);
+        final RelativeTimeTextView lastSyncView = layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }

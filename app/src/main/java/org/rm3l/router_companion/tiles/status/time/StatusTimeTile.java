@@ -96,8 +96,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
         data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
       }
 
-      final TextView errorPlaceHolderView =
-              this.layout.findViewById(R.id.tile_status_time_error);
+      final TextView errorPlaceHolderView = this.layout.findViewById(R.id.tile_status_time_error);
 
       final Exception exception = data.getException();
 
@@ -149,8 +148,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
             .setText(daylightPeriodString != null ? daylightPeriodString : "-");
 
         // Update last sync
-        final RelativeTimeTextView lastSyncView =
-                layout.findViewById(R.id.tile_last_sync);
+        final RelativeTimeTextView lastSyncView = layout.findViewById(R.id.tile_last_sync);
         lastSyncView.setReferenceTime(mLastSync);
         lastSyncView.setPrefix("Last sync: ");
       }

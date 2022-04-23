@@ -31,7 +31,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import org.rm3l.ddwrt.BuildConfig;

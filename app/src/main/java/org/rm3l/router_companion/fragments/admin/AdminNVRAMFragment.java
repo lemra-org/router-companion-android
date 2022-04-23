@@ -59,9 +59,7 @@ public class AdminNVRAMFragment extends AbstractBaseFragment {
   @Override
   protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
     if (tiles == null) {
-      tiles =
-          Collections.singletonList(
-              new AdminNVRAMTile(this, savedInstanceState, this.router));
+      tiles = Collections.singletonList(new AdminNVRAMTile(this, savedInstanceState, this.router));
     }
     return tiles;
   }
