@@ -2,7 +2,7 @@
  * DD-WRT Companion is a mobile app that lets you connect to,
  * monitor and manage your DD-WRT routers on the go.
  *
- * Copyright (C) 2014  Armel Soro
+ * Copyright (C) 2014-2022  Armel Soro
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
