@@ -66,8 +66,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter;
 import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperViewHolder;
 import co.paulburke.android.itemtouchhelperdemo.helper.OnStartDragListener;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
@@ -94,7 +92,6 @@ import org.rm3l.router_companion.mgmt.register.resources.RouterWizardAction;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.status.wireless.WirelessClientsTile;
-import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
@@ -327,8 +324,6 @@ public class RouterListRecycleViewAdapter
 
   private final SharedPreferences mGlobalPreferences;
 
-  @Nullable private final InterstitialAd mInterstitialAd;
-
   private final Resources resources;
 
   private List<Router> routersList;
@@ -424,10 +419,6 @@ public class RouterListRecycleViewAdapter
             }
           }
         };
-
-    mInterstitialAd =
-        AdUtils.requestNewInterstitial(
-            activity, R.string.interstitial_ad_unit_id_router_list_to_router_main);
   }
 
   public void clearSelections() {
@@ -1046,67 +1037,23 @@ public class RouterListRecycleViewAdapter
       routerSharedPreferences.edit().putBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, true).apply();
     }
 
-    if (BuildConfig.WITH_ADS
-        && mInterstitialAd != null
-        && AdUtils.canDisplayInterstialAd(activity)) {
-      mInterstitialAd.setAdListener(
-          new AdListener() {
-            @Override
-            public void onAdClosed() {
-              startActivity(ddWrtMainIntent);
-            }
-
-            @Override
-            public void onAdOpened() {
-              mGlobalPreferences
-                  .edit()
-                  .putLong(
-                      RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
-                      System.currentTimeMillis())
-                  .apply();
-            }
-          });
-
-      if (mInterstitialAd.isLoaded()) {
-        mInterstitialAd.show();
-      } else {
-        //                    final AlertDialog alertDialog = Utils.buildAlertDialog(this, null,
-        // "Loading...", false, false);
-        //                    alertDialog.show();
-        //                    ((TextView)
-        // alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-        final ProgressDialog alertDialog =
-            ProgressDialog.show(activity, "Loading Router details", "Please wait...", true);
-        new Handler()
-            .postDelayed(
-                new Runnable() {
-                  @Override
-                  public void run() {
-                    startActivity(ddWrtMainIntent);
-                    alertDialog.cancel();
-                  }
-                },
-                1000);
-      }
-    } else {
-      //                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null,
-      // "Loading...", false, false);
-      //                alertDialog.show();
-      //                ((TextView)
-      // alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-      final ProgressDialog alertDialog =
-          ProgressDialog.show(activity, "Loading Router details", "Please wait...", true);
-      new Handler()
-          .postDelayed(
-              new Runnable() {
-                @Override
-                public void run() {
-                  startActivity(ddWrtMainIntent);
-                  alertDialog.cancel();
-                }
-              },
-              1000);
-    }
+    //                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null,
+    // "Loading...", false, false);
+    //                alertDialog.show();
+    //                ((TextView)
+    // alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+    final ProgressDialog alertDialog =
+        ProgressDialog.show(activity, "Loading Router details", "Please wait...", true);
+    new Handler()
+        .postDelayed(
+            new Runnable() {
+              @Override
+              public void run() {
+                startActivity(ddWrtMainIntent);
+                alertDialog.cancel();
+              }
+            },
+            1000);
   }
 
   private void openAddRouterForm() {
@@ -1127,7 +1074,7 @@ public class RouterListRecycleViewAdapter
     // Display Donate Message if trying to add more than the max routers for Free version
     final List<Router> allRouters = dao.getAllRouters();
     //noinspection PointlessBooleanExpression,ConstantConditions
-    if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS)
+    if ((BuildConfig.DONATIONS)
         && allRouters != null
         && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
       // Download the full version to unlock this version
@@ -1155,7 +1102,7 @@ public class RouterListRecycleViewAdapter
     // Display Donate Message if trying to add more than the max routers for Free version
     final List<Router> allRouters = dao.getAllRouters();
     //noinspection PointlessBooleanExpression,ConstantConditions
-    if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS)
+    if ((BuildConfig.DONATIONS)
         && allRouters != null
         && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
       // Download the full version to unlock this version

@@ -86,7 +86,7 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
 
       this.enable = compoundButton.isChecked();
 
-      if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+      if (BuildConfig.DONATIONS) {
         Utils.displayUpgradeMessage(mParentFragmentActivity, "Toggle PPTP Client");
         isToggleStateActionRunning.set(false);
         mParentFragmentActivity.runOnUiThread(

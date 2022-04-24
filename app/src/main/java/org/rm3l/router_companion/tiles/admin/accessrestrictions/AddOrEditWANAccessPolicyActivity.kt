@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -16,8 +17,6 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
-import org.jetbrains.anko.find
-import org.jetbrains.anko.toast
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.mgmt.RouterManagementActivity
 import org.rm3l.router_companion.mgmt.RouterManagementActivity.Companion.ROUTER_SELECTED
@@ -44,7 +43,7 @@ class AddOrEditWANAccessPolicyActivity : AppCompatActivity() {
 
     private var mRouter: Router? = null
 
-    override fun attachBaseContext(newBase: Context?) {
+    override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(Utils.getBaseContextToAttach(this, newBase))
     }
 
@@ -53,7 +52,7 @@ class AddOrEditWANAccessPolicyActivity : AppCompatActivity() {
 
         val routerUuid = intent.getStringExtra(ROUTER_SELECTED)
         if (routerUuid.isNullOrBlank()) {
-            toast("Internal Error: Router could not be determined")
+            Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_LONG).show()
             finish()
             return
         }
@@ -61,7 +60,7 @@ class AddOrEditWANAccessPolicyActivity : AppCompatActivity() {
         val dao = RouterManagementActivity.getDao(this)
         mRouter = dao.getRouter(routerUuid)
         if (mRouter == null) {
-            toast("Internal Error: Router could not be determined")
+            Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_LONG).show()
             finish()
             return
         }
@@ -70,7 +69,7 @@ class AddOrEditWANAccessPolicyActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_add_or_edit_wan_access_policy)
 
-        val toolbar = find<Toolbar>(R.id.toolbar)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         // Create the adapter that will return a fragment for each of the three
@@ -78,10 +77,10 @@ class AddOrEditWANAccessPolicyActivity : AppCompatActivity() {
         mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = find<ViewPager>(R.id.container)
+        mViewPager = findViewById<ViewPager>(R.id.container)
         mViewPager!!.adapter = mSectionsPagerAdapter
 
-        val fab = find<FloatingActionButton>(R.id.fab)
+        val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener {
             Snackbar.make(it!!, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null)
@@ -119,7 +118,7 @@ class AddOrEditWANAccessPolicyActivity : AppCompatActivity() {
                 R.layout.fragment_add_or_edit_wan_access_policy, container,
                 false
             )
-            val textView = rootView.find<TextView>(R.id.section_label)
+            val textView = rootView.findViewById<TextView>(R.id.section_label)
             arguments?.let { textView.text = getString(R.string.section_format, it.getInt(ARG_SECTION_NUMBER)) }
 //            textView.text = getString(R.string.section_format, arguments?.getInt(ARG_SECTION_NUMBER))
             return rootView

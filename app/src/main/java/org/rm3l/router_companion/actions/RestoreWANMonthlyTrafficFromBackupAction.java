@@ -15,7 +15,6 @@ import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
-import org.rm3l.router_companion.utils.AdUtils;
 
 /** Created by rm3l on 10/05/15. */
 public class RestoreWANMonthlyTrafficFromBackupAction extends AbstractRouterAction<Void> {
@@ -24,19 +23,8 @@ public class RestoreWANMonthlyTrafficFromBackupAction extends AbstractRouterActi
 
     private final Date mClickDate;
 
-    private final String mDeviceId;
-
     public AgreementToRestoreWANTraffDataFromBackup(@NonNull Context context) {
       mClickDate = new Date();
-      mDeviceId = AdUtils.getDeviceIdForAdMob(context);
-    }
-
-    public Date getClickDate() {
-      return mClickDate;
-    }
-
-    public String getDeviceId() {
-      return mDeviceId;
     }
   }
 

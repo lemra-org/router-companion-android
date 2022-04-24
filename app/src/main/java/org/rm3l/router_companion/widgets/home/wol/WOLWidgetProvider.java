@@ -250,7 +250,7 @@ public class WOLWidgetProvider extends AppWidgetProvider {
 
       // Wake all Intent
       final Intent wakeAllIntent;
-      if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+      if (BuildConfig.DONATIONS) {
         wakeAllIntent = new Intent(context, UpgradeDialogAsActivity.class);
       } else {
         wakeAllIntent =

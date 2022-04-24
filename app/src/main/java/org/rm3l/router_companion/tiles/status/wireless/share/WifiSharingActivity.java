@@ -23,7 +23,6 @@ import androidx.viewpager.widget.ViewPager;
 import be.brunoparmentier.wifikeyshare.model.WifiAuthType;
 import be.brunoparmentier.wifikeyshare.model.WifiNetwork;
 import be.brunoparmentier.wifikeyshare.utils.NfcUtils;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.material.tabs.TabLayout;
 import com.google.common.base.Strings;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
@@ -34,7 +33,6 @@ import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.status.wireless.share.nfc.WifiSharingNfcFragment;
 import org.rm3l.router_companion.tiles.status.wireless.share.nfc.WriteWifiConfigToNfcDialog;
-import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.Utils;
 
@@ -54,8 +52,6 @@ public class WifiSharingActivity extends AppCompatActivity {
   private static final String SAVED_WIFI_NFC_DIALOG_STATE = "wifi_nfc_dlg_state";
 
   private boolean isInWriteMode;
-
-  private InterstitialAd mInterstitialAd;
 
   private String mRouterUuid;
 
@@ -118,10 +114,6 @@ public class WifiSharingActivity extends AppCompatActivity {
     mToolbar = findViewById(R.id.tile_status_wireless_sharing_toolbar);
     tabLayout = findViewById(R.id.tile_status_wireless_sharing_tabs);
     viewPager = findViewById(R.id.tile_status_wireless_sharing_viewpager);
-
-    mInterstitialAd =
-        AdUtils.requestNewInterstitial(
-            this, R.string.interstitial_ad_unit_id_wireless_network_generate_qr_code);
 
     mSsid = intent.getStringExtra(SSID);
     mWifiEncType = intent.getStringExtra(ENC_TYPE);

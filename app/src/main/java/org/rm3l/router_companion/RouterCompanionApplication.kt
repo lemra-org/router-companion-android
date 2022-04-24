@@ -88,7 +88,7 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(autoCrashReportingEnabled && !BuildConfig.DEBUG)
 
         FirebaseCrashlytics.getInstance().setCustomKey("DEBUG", BuildConfig.DEBUG)
-        FirebaseCrashlytics.getInstance().setCustomKey("WITH_ADS", BuildConfig.WITH_ADS)
+        FirebaseCrashlytics.getInstance().setCustomKey("WITH_ADS", false)
 
         val acraEmailAddr = appPreferences.getString(RouterCompanionAppConstants.ACRA_USER_EMAIL, null)
         if (acraEmailAddr != null) {
@@ -189,7 +189,7 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
             eventMap.put("VERSION_CODE", BuildConfig.VERSION_CODE)
             eventMap.put("VERSION_NAME", BuildConfig.VERSION_NAME)
             eventMap.put("DEBUG", BuildConfig.DEBUG)
-            eventMap.put("WITH_ADS", BuildConfig.WITH_ADS)
+            eventMap.put("WITH_ADS", false)
             ReportingUtils.reportEvent(ReportingUtils.EVENT_FIRST_LAUNCH, eventMap)
         }
 

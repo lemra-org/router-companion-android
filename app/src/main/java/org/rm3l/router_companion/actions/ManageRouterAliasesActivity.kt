@@ -38,7 +38,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.google.android.gms.ads.AdView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.common.base.Predicate
@@ -59,7 +58,6 @@ import org.rm3l.router_companion.resources.MACOUIVendor
 import org.rm3l.router_companion.resources.RecyclerViewRefreshCause
 import org.rm3l.router_companion.resources.conn.Router
 import org.rm3l.router_companion.tiles.status.wireless.WirelessClientsTile
-import org.rm3l.router_companion.utils.AdUtils
 import org.rm3l.router_companion.utils.ColorUtils
 import org.rm3l.router_companion.utils.ImageUtils
 import org.rm3l.router_companion.utils.PermissionsUtils
@@ -549,11 +547,6 @@ class ManageRouterAliasesActivity :
         handleIntent(getIntent())
 
         mRouterPreferences = getSharedPreferences(routerSelected, Context.MODE_PRIVATE)
-
-        AdUtils.buildAndDisplayAdViewIfNeeded(
-            this,
-            findViewById<View>(R.id.router_aliases_list_adView) as AdView
-        )
 
         mToolbar = findViewById<View>(R.id.manageRouterAliasesToolbar) as Toolbar
         if (mToolbar != null) {

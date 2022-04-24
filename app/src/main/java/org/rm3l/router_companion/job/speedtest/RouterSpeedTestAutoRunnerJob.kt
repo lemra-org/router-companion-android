@@ -113,7 +113,7 @@ class RouterSpeedTestAutoRunnerJob {
         fun schedule(routerUuid: String, autoFlag: Boolean, schedule: String) {
             cancelAllSchedules(routerUuid)
             // This is a premium feature
-            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+            if (BuildConfig.DONATIONS) {
                 FirebaseCrashlytics.getInstance().log("Speed Test auto measures feature is *premium*!")
                 return
             }
@@ -217,7 +217,7 @@ class RouterSpeedTestAutoRunnerJob {
                 return
             }
             val isDemoRouter = Utils.isDemoRouter(mOriginalRouter)
-            if (isDemoRouter || BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+            if (isDemoRouter || BuildConfig.DONATIONS) {
                 if (mDao.getSpeedTestResultsByRouter(mOriginalRouter.uuid).size >= MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION) {
                     if (isDemoRouter) {
                         FirebaseCrashlytics.getInstance().log(

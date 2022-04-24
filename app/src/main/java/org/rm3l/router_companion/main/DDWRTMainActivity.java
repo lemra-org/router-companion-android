@@ -82,8 +82,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 import com.airbnb.deeplinkdispatch.DeepLink;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -164,7 +162,6 @@ import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.settings.RouterSettingsActivity;
 import org.rm3l.router_companion.tiles.DDWRTTile;
-import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.AppShortcutUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.NetworkUtils;
@@ -297,8 +294,6 @@ public class DDWRTMainActivity extends AppCompatActivity
   private FirebaseDynamicLinksService mFirebaseDynamicLinksService;
 
   private IsGdService mIsGdService;
-
-  @Nullable private InterstitialAd mInterstitialAd;
 
   private boolean mIsThemeLight;
 
@@ -475,10 +470,6 @@ public class DDWRTMainActivity extends AppCompatActivity
 
     setContentView(R.layout.activity_main);
 
-    mInterstitialAd =
-        AdUtils.requestNewInterstitial(
-            this, R.string.interstitial_ad_unit_id_router_list_to_router_main);
-
     setupCustomTabHelper(this);
     setUpToolbar();
     setUpViewPager();
@@ -628,71 +619,21 @@ public class DDWRTMainActivity extends AppCompatActivity
                     intent.putExtra(ROUTER_SELECTED, routerUuid);
                     intent.putExtra(SAVE_ITEM_SELECTED, mPosition);
                     intent.putExtra(TAB_INDEX, mTabPosition);
-
-                    if (BuildConfig.WITH_ADS
-                        && mInterstitialAd != null
-                        && AdUtils.canDisplayInterstialAd(DDWRTMainActivity.this)) {
-
-                      mInterstitialAd.setAdListener(
-                          new AdListener() {
-                            @Override
-                            public void onAdClosed() {
-                              finish();
-                              startActivity(intent);
-                            }
-
-                            @Override
-                            public void onAdOpened() {
-                              // Save preference
-                              mGlobalPreferences
-                                  .edit()
-                                  .putLong(
-                                      RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
-                                      System.currentTimeMillis())
-                                  .apply();
-                            }
-                          });
-
-                      if (mInterstitialAd.isLoaded()) {
-                        mInterstitialAd.show();
-                      } else {
-                        // Reload UI
-                        final ProgressDialog alertDialog =
-                            ProgressDialog.show(
-                                DDWRTMainActivity.this,
-                                "Switching Routers",
-                                "Please wait...",
-                                true);
-                        new Handler()
-                            .postDelayed(
-                                new Runnable() {
-                                  @Override
-                                  public void run() {
-                                    finish();
-                                    startActivity(intent);
-                                    alertDialog.cancel();
-                                  }
-                                },
-                                2000);
-                      }
-                    } else {
-                      // Reload UI
-                      final ProgressDialog alertDialog =
-                          ProgressDialog.show(
-                              DDWRTMainActivity.this, "Switching Routers", "Please wait...", true);
-                      new Handler()
-                          .postDelayed(
-                              new Runnable() {
-                                @Override
-                                public void run() {
-                                  finish();
-                                  startActivity(intent);
-                                  alertDialog.cancel();
-                                }
-                              },
-                              2000);
-                    }
-
+                    // Reload UI
+                    final ProgressDialog alertDialog =
+                        ProgressDialog.show(
+                            DDWRTMainActivity.this, "Switching Routers", "Please wait...", true);
+                    new Handler()
+                        .postDelayed(
+                            new Runnable() {
+                              @Override
+                              public void run() {
+                                finish();
+                                startActivity(intent);
+                                alertDialog.cancel();
+                              }
+                            },
+                            2000);
                     return true;
                   }
                 })
@@ -1283,11 +1224,9 @@ public class DDWRTMainActivity extends AppCompatActivity
       }
     }
 
-    if (!BuildConfig.WITH_ADS) {
-      final MenuItem removeAdsMenuItem = menu.findItem(R.id.action_remove_ads);
-      if (removeAdsMenuItem != null) {
-        removeAdsMenuItem.setVisible(false);
-      }
+    final MenuItem removeAdsMenuItem = menu.findItem(R.id.action_remove_ads);
+    if (removeAdsMenuItem != null) {
+      removeAdsMenuItem.setVisible(false);
     }
 
     final RouterFirmware routerFirmware = mRouter.getRouterFirmware();
@@ -1633,7 +1572,7 @@ public class DDWRTMainActivity extends AppCompatActivity
       mRouter.addHomeScreenShortcut(this);
       return true;
     } else if (itemId == R.id.action_check_for_firmware_updates) {
-      if (Utils.isNonDemoRouter(mRouter) && (BuildConfig.DONATIONS || BuildConfig.WITH_ADS)) {
+      if (Utils.isNonDemoRouter(mRouter) && (BuildConfig.DONATIONS)) {
         // Download the full version to unlock this version
         final RouterFirmware routerFirmware = mRouter.getRouterFirmware();
         Utils.displayUpgradeMessage(
@@ -1702,7 +1641,7 @@ public class DDWRTMainActivity extends AppCompatActivity
 
       return true;
     } else if (itemId == R.id.action_ddwrt_actions_restore_factory_defaults) {
-      if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+      if (BuildConfig.DONATIONS) {
         // Download the full version to unlock this version
         Utils.displayUpgradeMessage(this, "Restore Factory Defaults");
         return true;
@@ -1778,7 +1717,7 @@ public class DDWRTMainActivity extends AppCompatActivity
 
       return true;
     } else if (itemId == R.id.action_ddwrt_actions_backup_restore_router_backup) {
-      if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+      if (BuildConfig.DONATIONS) {
         // Download the full version to unlock this version
         Utils.displayUpgradeMessage(this, "Backup Router");
         return true;
@@ -1786,7 +1725,7 @@ public class DDWRTMainActivity extends AppCompatActivity
       displayBackupDialog(displayName);
       return true;
     } else if (itemId == R.id.action_ddwrt_actions_backup_restore_router_restore) {
-      if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+      if (BuildConfig.DONATIONS) {
         // Download the full version to unlock this version
         Utils.displayUpgradeMessage(this, "Restore Router");
         return true;
@@ -1802,7 +1741,7 @@ public class DDWRTMainActivity extends AppCompatActivity
 
       return true;
     } else if (itemId == R.id.action_ddwrt_actions_firmware_upgrade) {
-      if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+      if (BuildConfig.DONATIONS) {
         // Download the full version to unlock this version
         Utils.displayUpgradeMessage(this, "Upgrade Firmware");
         return true;
@@ -2327,7 +2266,7 @@ public class DDWRTMainActivity extends AppCompatActivity
     // Display Donate Message if trying to add more than the max routers for Free version
     final List<Router> allRouters = dao.getAllRouters();
     //noinspection PointlessBooleanExpression,ConstantConditions
-    if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS)
+    if ((BuildConfig.DONATIONS)
         && allRouters != null
         && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
       // Download the full version to unlock this version

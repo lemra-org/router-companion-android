@@ -57,7 +57,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.fragments.access.AccessRestrictionsWANAccessFragment;
 import org.rm3l.router_companion.fragments.admin.AdminCommandsFragment;
@@ -97,7 +96,6 @@ import org.rm3l.router_companion.prefs.sort.SortingStrategy;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.resources.conn.Router.RouterFirmware;
 import org.rm3l.router_companion.tiles.DDWRTTile;
-import org.rm3l.router_companion.tiles.ads.BannerAdTile;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
@@ -1117,40 +1115,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment
     //            }
     //        }
 
-    final List<DDWRTTile> tiles = this.getTiles(savedInstanceState);
-    if (BuildConfig.WITH_ADS) {
-
-      this.fragmentTiles = new ArrayList<>();
-      if (tiles != null) {
-        final int size = tiles.size();
-        if (size >= 2) {
-          final int randomMin;
-          if (size >= 3) {
-            randomMin = 2;
-          } else {
-            randomMin = 1;
-          }
-          this.fragmentTiles.addAll(tiles);
-          this.fragmentTiles.add(
-              Math.max(randomMin, new Random().nextInt(size)),
-              new BannerAdTile(this, savedInstanceState, this.router));
-        } else {
-          if (size == 1 && tiles.get(0) != null && !tiles.get(0).isEmbeddedWithinScrollView()) {
-            // Add banner add first, then all other tiles (issue with AdminNVRAMTile)
-            this.fragmentTiles.add(new BannerAdTile(this, savedInstanceState, this.router));
-          } else {
-            // Add banner add first, then all other tiles
-            this.fragmentTiles.add(new BannerAdTile(this, savedInstanceState, this.router));
-          }
-
-          this.fragmentTiles.addAll(tiles);
-        }
-      } else {
-        this.fragmentTiles.add(new BannerAdTile(this, savedInstanceState, this.router));
-      }
-    } else {
-      this.fragmentTiles = tiles;
-    }
+    this.fragmentTiles = this.getTiles(savedInstanceState);
   }
 
   /**

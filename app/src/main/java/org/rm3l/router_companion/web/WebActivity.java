@@ -4,7 +4,6 @@ import static android.webkit.WebView.RENDERER_PRIORITY_BOUND;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
@@ -30,14 +29,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
-import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
-import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
-import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.Utils;
 
@@ -62,8 +56,6 @@ public abstract class WebActivity extends AppCompatActivity
 
   protected WebView mWebview;
 
-  @Nullable private InterstitialAd mInterstitialAd;
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     // Let's display the progress in the activity title bar, like the
@@ -83,11 +75,6 @@ public abstract class WebActivity extends AppCompatActivity
     ColorUtils.Companion.setAppTheme(this, null, false);
 
     setContentView(R.layout.activity_web);
-
-    mInterstitialAd =
-        AdUtils.requestNewInterstitial(this, R.string.interstitial_ad_unit_id_web_exit);
-
-    AdUtils.buildAndDisplayAdViewIfNeeded(this, findViewById(R.id.web_adView));
 
     mToolbar = findViewById(R.id.web_toolbar);
     if (mToolbar != null) {
@@ -174,42 +161,6 @@ public abstract class WebActivity extends AppCompatActivity
   }
 
   protected abstract boolean isJavascriptEnabled();
-
-  @Override
-  public void finish() {
-
-    if (BuildConfig.WITH_ADS && mInterstitialAd != null && AdUtils.canDisplayInterstialAd(this)) {
-
-      mInterstitialAd.setAdListener(
-          new AdListener() {
-            @Override
-            public void onAdClosed() {
-              WebActivity.super.finish();
-            }
-
-            @Override
-            public void onAdOpened() {
-              // Save preference
-              getSharedPreferences(
-                      RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                      Context.MODE_PRIVATE)
-                  .edit()
-                  .putLong(
-                      RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
-                      System.currentTimeMillis())
-                  .apply();
-            }
-          });
-
-      if (mInterstitialAd.isLoaded()) {
-        mInterstitialAd.show();
-      } else {
-        WebActivity.super.finish();
-      }
-    } else {
-      super.finish();
-    }
-  }
 
   @NonNull
   public abstract String getUrl();

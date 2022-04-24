@@ -74,7 +74,7 @@ class BackgroundService : DailyJob(), RouterCompanionJob {
                 tasks.add(RouterModelUpdaterServiceTask(context))
                 tasks.add(RouterInfoForFeedbackServiceTask(context))
                 tasks.add(RouterWebInterfaceParametersUpdaterServiceTask(context))
-                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                if (BuildConfig.DONATIONS) {
                     FirebaseCrashlytics.getInstance().log(
                         "ConnectedHostsServiceTask and PublicIPChangesServiceTask background notifications" +
                             " are *Premium* features!"

@@ -43,16 +43,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.common.base.Strings;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.analytics.FirebaseAnalytics.Param;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.firmwares.AbstractRouterFirmwareConnector;
@@ -63,7 +59,6 @@ import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.service.tasks.RouterInfoForFeedbackServiceTask;
 import org.rm3l.router_companion.service.tasks.RouterModelUpdaterServiceTask;
-import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.Utils;
 
 /** Abstract DDWRT Tile */
@@ -161,8 +156,6 @@ public abstract class DDWRTTile<T>
   private final AtomicReference<DDWRTTileRefreshListener> mRefreshListener =
       new AtomicReference<>();
 
-  @Nullable private InterstitialAd mTileClickInterstitialAd;
-
   public static <T> String getFormattedPrefKey(
       @NonNull final Class<T> clazz, @NonNull final String scope) {
     return clazz.getCanonicalName() + "::" + scope;
@@ -189,15 +182,6 @@ public abstract class DDWRTTile<T>
     this.mSupportLoaderManager = this.mParentFragment.getLoaderManager();
     this.mFragmentArguments = arguments;
 
-    mParentFragmentActivity.runOnUiThread(
-        new Runnable() {
-          @Override
-          public void run() {
-            mTileClickInterstitialAd =
-                AdUtils.requestNewInterstitial(
-                    mParentFragmentActivity, R.string.interstitial_ad_unit_id_tile_click);
-          }
-        });
     this.routerModelUpdaterServiceTask = new RouterModelUpdaterServiceTask(mParentFragmentActivity);
     this.routerInfoForFeedbackServiceTask =
         new RouterInfoForFeedbackServiceTask(mParentFragmentActivity);
@@ -322,99 +306,35 @@ public abstract class DDWRTTile<T>
       //                            .getShortClassName() : "???")
       //                    .putContentId(this.getClass().getSimpleName()));
 
-      if (BuildConfig.WITH_ADS
-          && mTileClickInterstitialAd != null
-          && AdUtils.canDisplayInterstialAd(mParentFragmentActivity)) {
-
-        mTileClickInterstitialAd.setAdListener(
-            new AdListener() {
-              @Override
-              public void onAdClosed() {
-                final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
-                if (adRequest != null) {
-                  mTileClickInterstitialAd.loadAd(adRequest);
+      final String dialogMsg = onClickIntentAndListener.getDialogMessage();
+      //noinspection ConstantConditions
+      //                final AlertDialog alertDialog =
+      // Utils.buildAlertDialog(mParentFragmentActivity, null,
+      //                        Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." :
+      // dialogMsg, false, false);
+      //                alertDialog.show();
+      //                ((TextView)
+      // alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+      final ProgressDialog alertDialog =
+          ProgressDialog.show(
+              mParentFragmentActivity,
+              "Opening tile details",
+              Strings.isNullOrEmpty(dialogMsg) ? "Please Wait..." : dialogMsg,
+              true);
+      new Handler()
+          .postDelayed(
+              new Runnable() {
+                @Override
+                public void run() {
+                  ((AbstractBaseFragment) mParentFragment)
+                      .startActivityForResult(
+                          onClickIntent, onClickIntentAndListener.getListener());
+                  mParentFragmentActivity.overridePendingTransition(
+                      R.anim.right_in, R.anim.left_out);
+                  alertDialog.cancel();
                 }
-                ((AbstractBaseFragment) mParentFragment)
-                    .startActivityForResult(onClickIntent, onClickIntentAndListener.getListener());
-              }
-
-              @Override
-              public void onAdOpened() {
-                // Save preference
-                mGlobalPreferences
-                    .edit()
-                    .putLong(
-                        RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
-                        System.currentTimeMillis())
-                    .apply();
-              }
-            });
-
-        if (mTileClickInterstitialAd.isLoaded()) {
-          mTileClickInterstitialAd.show();
-        } else {
-          final String dialogMsg = onClickIntentAndListener.getDialogMessage();
-          //noinspection ConstantConditions
-          //                    final AlertDialog alertDialog =
-          // Utils.buildAlertDialog(mParentFragmentActivity, null,
-          //                            Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed
-          // view..." : dialogMsg, false, false);
-          //                    alertDialog.show();
-          //                    ((TextView)
-          // alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-          //
-          final ProgressDialog alertDialog =
-              ProgressDialog.show(
-                  mParentFragmentActivity,
-                  "Opening tile details",
-                  Strings.isNullOrEmpty(dialogMsg) ? "Please Wait..." : dialogMsg,
-                  true);
-          new Handler()
-              .postDelayed(
-                  new Runnable() {
-                    @Override
-                    public void run() {
-                      ((AbstractBaseFragment) mParentFragment)
-                          .startActivityForResult(
-                              onClickIntent, onClickIntentAndListener.getListener());
-                      mParentFragmentActivity.overridePendingTransition(
-                          R.anim.right_in, R.anim.left_out);
-                      alertDialog.cancel();
-                    }
-                  },
-                  1000);
-        }
-      } else {
-        final String dialogMsg = onClickIntentAndListener.getDialogMessage();
-        //noinspection ConstantConditions
-        //                final AlertDialog alertDialog =
-        // Utils.buildAlertDialog(mParentFragmentActivity, null,
-        //                        Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." :
-        // dialogMsg, false, false);
-        //                alertDialog.show();
-        //                ((TextView)
-        // alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-        final ProgressDialog alertDialog =
-            ProgressDialog.show(
-                mParentFragmentActivity,
-                "Opening tile details",
-                Strings.isNullOrEmpty(dialogMsg) ? "Please Wait..." : dialogMsg,
-                true);
-        new Handler()
-            .postDelayed(
-                new Runnable() {
-                  @Override
-                  public void run() {
-                    ((AbstractBaseFragment) mParentFragment)
-                        .startActivityForResult(
-                            onClickIntent, onClickIntentAndListener.getListener());
-                    mParentFragmentActivity.overridePendingTransition(
-                        R.anim.right_in, R.anim.left_out);
-                    alertDialog.cancel();
-                  }
-                },
-                1000);
-      }
+              },
+              1000);
     }
   }
 

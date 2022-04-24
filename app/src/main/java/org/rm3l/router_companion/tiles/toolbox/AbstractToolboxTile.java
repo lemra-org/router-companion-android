@@ -49,7 +49,6 @@ import androidx.loader.content.Loader;
 import com.google.common.base.Throwables;
 import java.util.HashSet;
 import java.util.Set;
-import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.actions.AbstractRouterAction;
 import org.rm3l.router_companion.actions.ActionManager;
@@ -116,12 +115,6 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
   @Override
   public Integer getTileTitleViewId() {
     return null;
-  }
-
-  @Override
-  public boolean isEmbeddedWithinScrollView() {
-    //        return false;
-    return BuildConfig.WITH_ADS && super.isEmbeddedWithinScrollView();
   }
 
   @Override

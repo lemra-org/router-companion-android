@@ -23,7 +23,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
-import com.google.android.gms.ads.AdView;
 import com.google.common.collect.Lists;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.util.ArrayList;
@@ -40,7 +39,6 @@ import org.rm3l.router_companion.mgmt.RouterMgmtDialogListener;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.router_companion.mgmt.register.ManageRouterFragmentActivity;
 import org.rm3l.router_companion.resources.conn.Router;
-import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
 import org.rm3l.router_companion.utils.Utils;
@@ -132,9 +130,6 @@ public class RouterActionsWidgetConfigureActivity extends AppCompatActivity
     //        }
 
     setContentView(R.layout.actionswidget_configure);
-
-    AdUtils.buildAndDisplayAdViewIfNeeded(
-        this, (AdView) findViewById(R.id.widget_configure_adView));
 
     final Toolbar mToolbar = (Toolbar) findViewById(R.id.actions_widget_configure_toolbar);
     if (mToolbar != null) {
@@ -398,7 +393,7 @@ public class RouterActionsWidgetConfigureActivity extends AppCompatActivity
     // Display Donate Message if trying to add more than the max routers for Free version
     final List<Router> allRouters = mDao.getAllRouters();
     //noinspection PointlessBooleanExpression,ConstantConditions
-    if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS)
+    if (BuildConfig.DONATIONS
         && allRouters != null
         && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
       // Download the full version to unlock this version

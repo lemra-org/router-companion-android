@@ -447,7 +447,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
                     final int nbLinesToView;
                     if (itemId == R.id.tile_status_syslog_view_share) {
-                      if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                      if (BuildConfig.DONATIONS) {
                         Utils.displayUpgradeMessage(mParentFragmentActivity, "Share Router Logs");
                       } else {
                         StatusSyslogTile.this.dumpAndShareLogs();
@@ -463,7 +463,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                       nbLinesToView = 100;
 
                     } else if (itemId == R.id.tile_status_syslog_view_all) {
-                      if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                      if (BuildConfig.DONATIONS) {
                         Utils.displayUpgradeMessage(mParentFragmentActivity, "View All Logs");
                         return true;
                       }

@@ -126,7 +126,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
       this.enable = compoundButton.isChecked();
 
-      if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+      if (BuildConfig.DONATIONS) {
         Utils.displayUpgradeMessage(mParentFragmentActivity, "Toggle OpenVPN Client");
         isToggleStateActionRunning.set(false);
         mParentFragmentActivity.runOnUiThread(
@@ -1058,7 +1058,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
   @Override
   protected OnClickIntent getOnclickIntent() {
 
-    if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+    if (BuildConfig.DONATIONS) {
       // Not allowed
       Utils.displayUpgradeMessage(mParentFragmentActivity, "Edit OpenVPN Client Settings");
       return null;

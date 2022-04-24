@@ -127,7 +127,6 @@ import org.rm3l.router_companion.resources.IPWhoisInfo;
 import org.rm3l.router_companion.resources.conn.NVRAMInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.status.wireless.stats.ActiveIPConnectionsStatsAdapter;
-import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.NetworkUtils;
@@ -289,7 +288,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
               protocolsToResolve.add(portProtocolPair.second);
             }
           }
-          if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+          if (BuildConfig.DONATIONS) {
             FirebaseCrashlytics.getInstance()
                 .log("Service names / port numbers lookup is a premium feature");
           } else {
@@ -1357,7 +1356,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                       if (portNumber == null || protocol == null) {
                         throw new IllegalArgumentException("Invalid pair: " + key);
                       }
-                      if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                      if (BuildConfig.DONATIONS) {
                         // Premium feature only
                         FirebaseCrashlytics.getInstance()
                             .log("Service names / port numbers lookup is a premium feature");
@@ -1568,9 +1567,6 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
     final boolean themeLight = ColorUtils.Companion.isThemeLight(this);
 
     setContentView(R.layout.tile_status_active_ip_connections);
-
-    AdUtils.buildAndDisplayAdViewIfNeeded(
-        this, findViewById(R.id.tile_status_active_ip_connections_view_adView));
 
     mActiveIPConnectionsMultiLine = Joiner.on("\n\n").join(mActiveIPConnections);
 

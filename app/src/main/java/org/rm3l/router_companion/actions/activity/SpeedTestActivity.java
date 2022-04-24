@@ -59,8 +59,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -99,7 +97,6 @@ import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.router_companion.resources.SpeedTestResult;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.settings.RouterSpeedTestSettingsActivity;
-import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.ImageUtils;
 import org.rm3l.router_companion.utils.PermissionsUtils;
@@ -808,8 +805,6 @@ public class SpeedTestActivity extends AppCompatActivity
 
   private SharedPreferences mGlobalPreferences;
 
-  @Nullable private InterstitialAd mInterstitialAd;
-
   private boolean mIsThemeLight;
 
   private RecyclerView.LayoutManager mLayoutManager;
@@ -965,12 +960,6 @@ public class SpeedTestActivity extends AppCompatActivity
             ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SCHEDULE, RouterSpeedTestAutoRunnerJob.DAILY);
 
     this.mMessageReceiver = new NetworkChangeReceiver(this);
-
-    mInterstitialAd =
-        AdUtils.requestNewInterstitial(
-            this, R.string.interstitial_ad_unit_id_transtion_to_wan_monthly_chart);
-
-    AdUtils.buildAndDisplayAdViewIfNeeded(this, findViewById(R.id.router_speedtest_adView));
 
     mToolbar = findViewById(R.id.routerSpeedTestToolbar);
     if (mToolbar != null) {
@@ -1178,7 +1167,7 @@ public class SpeedTestActivity extends AppCompatActivity
           @Override
           public void onClick(View v) {
             final boolean isDemoRouter = Utils.isDemoRouter(mOriginalRouter);
-            if (isDemoRouter || BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+            if (isDemoRouter || BuildConfig.DONATIONS) {
               if (mDao.getSpeedTestResultsByRouter(mOriginalRouter.getUuid()).size()
                   >= MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION) {
                 if (isDemoRouter) {
@@ -1309,41 +1298,6 @@ public class SpeedTestActivity extends AppCompatActivity
   }
 
   @Override
-  public void finish() {
-    if (BuildConfig.WITH_ADS && mInterstitialAd != null && AdUtils.canDisplayInterstialAd(this)) {
-
-      mInterstitialAd.setAdListener(
-          new AdListener() {
-            @Override
-            public void onAdClosed() {
-              SpeedTestActivity.super.finish();
-            }
-
-            @Override
-            public void onAdOpened() {
-              // Save preference
-              getSharedPreferences(
-                      RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                      Context.MODE_PRIVATE)
-                  .edit()
-                  .putLong(
-                      RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
-                      System.currentTimeMillis())
-                  .apply();
-            }
-          });
-
-      if (mInterstitialAd.isLoaded()) {
-        mInterstitialAd.show();
-      } else {
-        SpeedTestActivity.super.finish();
-      }
-    } else {
-      super.finish();
-    }
-  }
-
-  @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.menu_activity_speed_test, menu);
     this.optionsMenu = menu;
@@ -1369,7 +1323,7 @@ public class SpeedTestActivity extends AppCompatActivity
       return true;
     } else if (itemId == R.id.router_speedtest_refresh) {
       final boolean isDemoRouter = Utils.isDemoRouter(mOriginalRouter);
-      if (isDemoRouter || BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+      if (isDemoRouter || BuildConfig.DONATIONS) {
         if (mDao.getSpeedTestResultsByRouter(mOriginalRouter.getUuid()).size()
             >= MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION) {
           if (isDemoRouter) {

@@ -11,7 +11,6 @@
 	Contact Info: Armel Soro &lt;armel+router_companion AT rm3l DOT org&gt; -->
 <com.sothree.slidinguppanel.SlidingUpPanelLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:ads="http://schemas.android.com/apk/res-auto"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:sothree="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
@@ -36,15 +35,6 @@
 			android:layout_height="wrap_content"
 			android:background="?attr/colorPrimary"
 			android:minHeight="?attr/actionBarSize" />
-
-		<com.google.android.gms.ads.AdView
-			android:id="@+id/router_speedtest_adView"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center_horizontal"
-			android:layout_marginBottom="5dp" android:layout_marginTop="5dp"
-			android:visibility="gone" ads:adSize="BANNER"
-			ads:adUnitId="@string/banner_ad_unit_id_router_management_activity" />
 
 		<!-- Error message placeholder -->
 		<TextView android:id="@+id/router_speedtest_error"

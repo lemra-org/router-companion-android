@@ -68,7 +68,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
         @JvmStatic
         fun schedule() {
             // This is a premium feature
-            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+            if (BuildConfig.DONATIONS) {
                 FirebaseCrashlytics.getInstance().log("Firmware Build Updates feature is *premium*!")
                 return
             }

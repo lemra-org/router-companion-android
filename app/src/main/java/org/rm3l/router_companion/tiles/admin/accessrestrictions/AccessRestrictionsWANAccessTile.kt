@@ -3,6 +3,7 @@ package org.rm3l.router_companion.tiles.admin.accessrestrictions
 import android.app.AlertDialog
 import android.graphics.Point
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -27,12 +28,6 @@ import com.google.common.base.Splitter
 import com.google.common.base.Strings
 import com.google.common.base.Throwables
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.debug
-import org.jetbrains.anko.find
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.toast
 import org.rm3l.ddwrt.BuildConfig
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING
@@ -58,7 +53,11 @@ import org.rm3l.router_companion.tiles.DDWRTTile
 import org.rm3l.router_companion.utils.ColorUtils
 import org.rm3l.router_companion.utils.ImageUtils
 import org.rm3l.router_companion.utils.Utils
+import org.rm3l.router_companion.utils.kotlin.find
+import org.rm3l.router_companion.utils.kotlin.intentFor
 import org.rm3l.router_companion.utils.kotlin.isThemeLight
+import org.rm3l.router_companion.utils.kotlin.longToast
+import org.rm3l.router_companion.utils.kotlin.toast
 import org.rm3l.router_companion.utils.kotlin.visible
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils
@@ -101,12 +100,13 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
     DDWRTTile<WANAccessPoliciesRouterData>(
         parentFragment, arguments, router, R.layout.tile_admin_access_restrictions_wan_access, null
     ),
-    PopupMenu.OnMenuItemClickListener,
-    AnkoLogger {
+    PopupMenu.OnMenuItemClickListener {
+
+    private val TAG = AccessRestrictionsWANAccessTile::class.java.simpleName
 
     private val addNewButton: FloatingActionButton
 
-    private val mRecyclerView = layout.find<RecyclerViewEmptySupport>(
+    private val mRecyclerView = layout.findViewById<RecyclerViewEmptySupport>(
         R.id.tile_admin_access_restrictions_wan_access_ListView
     )
     private val mAdapter: RecyclerView.Adapter<*>
@@ -130,7 +130,7 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
         mLayoutManager.scrollToPosition(0)
         mRecyclerView.layoutManager = mLayoutManager
         //
-        val emptyView = layout.find<TextView>(R.id.empty_view)
+        val emptyView = layout.findViewById<TextView>(R.id.empty_view)
         emptyView.setTextColor(
             ContextCompat.getColor(
                 mParentFragmentActivity,
@@ -149,20 +149,20 @@ class AccessRestrictionsWANAccessTile(parentFragment: Fragment, arguments: Bundl
         display.getSize(size)
         val width = size.x
         val height = size.y
-        debug("<width,height> = <$width,$height>")
+        Log.d(TAG, "<width,height> = <$width,$height>")
         mRecyclerView.minimumHeight = size.y
 
-        addNewButton = layout.find(R.id.wan_access_restriction_policy_add)
+        addNewButton = layout.findViewById(R.id.wan_access_restriction_policy_add)
         // Hidden for now
         addNewButton.visibility = View.GONE
 
         addNewButton.setOnClickListener {
             mParentFragmentActivity.toast("TODO Add new WAN Access Policy")
             mParentFragmentActivity.startActivity(
-                mParentFragmentActivity.intentFor<AddOrEditWANAccessPolicyActivity>(
-                    ROUTER_SELECTED to mRouter?.uuid,
-                    "id" to 5
-                )
+                mParentFragmentActivity.intentFor<AddOrEditWANAccessPolicyActivity> {
+                    it.putExtra(ROUTER_SELECTED, mRouter?.uuid)
+                    it.putExtra("id", 5)
+                }
             )
         }
 
@@ -626,7 +626,7 @@ internal class WANAccessRulesRecyclerViewAdapter(
 
                         R.id.tile_wan_access_policy_enable, R.id.tile_wan_access_policy_disable -> {
                             val enablePolicy = item.itemId == R.id.tile_wan_access_policy_enable
-                            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                            if (BuildConfig.DONATIONS) {
                                 Utils.displayUpgradeMessage(
                                     tile.mParentFragmentActivity,
                                     String.format(
@@ -791,35 +791,35 @@ internal class WANAccessRulesRecyclerViewHolder(
     val avatarImageView = itemView.find<ImageView>(R.id.avatar)
 
     init {
-        this.daysTextViews[0] = itemView.find<TextView>(
+        this.daysTextViews[0] = itemView.find(
             R.id.access_restriction_policy_cardview_days_sunday
         )
-        this.daysTextViews[1] = itemView.find<TextView>(
+        this.daysTextViews[1] = itemView.find(
             R.id.access_restriction_policy_cardview_days_monday
         )
-        this.daysTextViews[2] = itemView.find<TextView>(
+        this.daysTextViews[2] = itemView.find(
             R.id.access_restriction_policy_cardview_days_tuesday
         )
-        this.daysTextViews[3] = itemView.find<TextView>(
+        this.daysTextViews[3] = itemView.find(
             R.id.access_restriction_policy_cardview_days_wednesday
         )
-        this.daysTextViews[4] = itemView.find<TextView>(
+        this.daysTextViews[4] = itemView.find(
             R.id.access_restriction_policy_cardview_days_thursday
         )
-        this.daysTextViews[5] = itemView.find<TextView>(
+        this.daysTextViews[5] = itemView.find(
             R.id.access_restriction_policy_cardview_days_friday
         )
-        this.daysTextViews[6] = itemView.find<TextView>(
+        this.daysTextViews[6] = itemView.find(
             R.id.access_restriction_policy_cardview_days_saturday
         )
 
-        this.wanPolicyStateText = itemView.find<TextView>(
+        this.wanPolicyStateText = itemView.find(
             R.id.access_restriction_policy_cardview_status
         )
-        this.menuImageButton = itemView.find<ImageButton>(
+        this.menuImageButton = itemView.find(
             R.id.access_restriction_policy_cardview_menu
         )
-        this.removeImageButton = itemView.find<ImageButton>(
+        this.removeImageButton = itemView.find(
             R.id.access_restriction_policy_remove_btn
         )
     }

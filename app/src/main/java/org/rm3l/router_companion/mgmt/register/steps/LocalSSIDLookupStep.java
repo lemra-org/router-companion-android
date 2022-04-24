@@ -171,7 +171,7 @@ public class LocalSSIDLookupStep extends MaterialWizardStep {
         new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+            if (BuildConfig.DONATIONS) {
               // Download the full version to unlock this version
               Utils.displayUpgradeMessage(activity, "Add Alternate Addresses");
               return;

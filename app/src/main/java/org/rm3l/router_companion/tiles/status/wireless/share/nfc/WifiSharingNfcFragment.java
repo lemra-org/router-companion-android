@@ -65,7 +65,7 @@ public class WifiSharingNfcFragment extends Fragment {
         new View.OnClickListener() {
           @Override
           public void onClick(View view) {
-            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+            if (BuildConfig.DONATIONS) {
               // Download the full version to unlock this version
               Utils.displayUpgradeMessage(activity, "Write Wi-Fi to NFC tag");
               return;

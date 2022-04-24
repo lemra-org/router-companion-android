@@ -90,7 +90,7 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
 
       this.enable = compoundButton.isChecked();
 
-      if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+      if (BuildConfig.DONATIONS) {
         Utils.displayUpgradeMessage(mParentFragmentActivity, "Toggle Wake on LAN Daemon");
         isToggleStateActionRunning.set(false);
         mParentFragmentActivity.runOnUiThread(
@@ -614,7 +614,7 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
   @Override
   protected OnClickIntent getOnclickIntent() {
 
-    if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+    if (BuildConfig.DONATIONS) {
       Utils.displayUpgradeMessage(mParentFragmentActivity, "Edit WOL Settings");
       return null;
     }

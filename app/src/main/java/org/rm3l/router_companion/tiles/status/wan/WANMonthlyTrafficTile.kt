@@ -519,7 +519,7 @@ class WANMonthlyTrafficTile(
                                 return@OnMenuItemClickListener true
                             }
                             R.id.tile_wan_monthly_traffic_backup_csv -> {
-                                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                                if (BuildConfig.DONATIONS) {
                                     // Download the full version to unlock this version
                                     Utils.displayUpgradeMessage(
                                         mParentFragmentActivity,
@@ -545,7 +545,7 @@ class WANMonthlyTrafficTile(
                                 return@OnMenuItemClickListener true
                             }
                             R.id.tile_wan_monthly_traffic_restore -> {
-                                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                                if (BuildConfig.DONATIONS) {
                                     // Download the full version to unlock this version
                                     Utils.displayUpgradeMessage(
                                         mParentFragmentActivity,

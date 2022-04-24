@@ -77,7 +77,7 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
 
       this.enable = compoundButton.isChecked();
 
-      if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+      if (BuildConfig.DONATIONS) {
         Utils.displayUpgradeMessage(mParentFragmentActivity, "Toggle OpenVPN Server");
         isToggleStateActionRunning.set(false);
         mParentFragmentActivity.runOnUiThread(

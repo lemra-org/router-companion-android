@@ -355,6 +355,7 @@ dependencies {
 //    implementation "org.jetbrains.anko:anko-sdk25:$anko_version"
 //    implementation "org.jetbrains.anko:anko-sdk25-coroutines:$anko_version"
 //    implementation "org.jetbrains.anko:anko-appcompat-v7:$anko_version"
+//    implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
 
     testImplementation "junit:junit:$junit_version"
     testImplementation "org.robolectric:robolectric:$robolectric_version"
@@ -384,7 +385,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-analytics'
 
-    implementation 'com.google.guava:guava:27.1-android'
+    implementation 'com.google.guava:guava:31.1-android'
     implementation 'commons-net:commons-net:3.6'
     //WARNING: Test that changing JSCh versions do not produce unwanted side-effects, such as an inability to connect
     implementation 'com.jcraft:jsch:0.1.51'
@@ -403,7 +404,7 @@ dependencies {
     implementation 'com.github.curioustechizen.android-ago:library:1.4.0'
     //    implementation 'com.github.danielemaddaluno.androidupdatechecker:library:1.0.2'
 //  implementation 'com.google.android.gms:play-services-ads:11.4.0'
-    implementation "com.google.android.gms:play-services-ads-lite:${playServices_version}" //only for distrib. via Play Store
+//    implementation "com.google.android.gms:play-services-ads-lite:${playServices_version}" //only for distrib. via Play Store
 //    implementation "com.google.firebase:firebase-ads:${playServices_version}"
 
 //    //Avocarrot => acquired by Glispa => acquired by MobFox

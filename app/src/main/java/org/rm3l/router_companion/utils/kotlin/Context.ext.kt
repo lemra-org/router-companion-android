@@ -16,7 +16,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.ColorRes
+import androidx.annotation.IdRes
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY
 import org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_THEME
@@ -103,5 +105,23 @@ fun Activity.finishAndReload(waitMessage: String? = null, delayMillis: Long? = n
 }
 
 fun Context?.getApplicationName(): CharSequence {
-    return if (this == null) "" else this.applicationInfo.loadLabel(this.packageManager)
+    return this?.applicationInfo?.loadLabel(this.packageManager) ?: ""
+}
+
+fun Context?.toast(message: CharSequence, duration: Int = Toast.LENGTH_SHORT) {
+    Toast.makeText(this, message, duration).show()
+}
+
+fun Context?.longToast(message: CharSequence) = this?.toast(message, Toast.LENGTH_LONG)
+
+fun <T : View> Activity.find(@IdRes id: Int): T = this.findViewById(id)
+
+fun <T : View> ViewGroup.find(@IdRes id: Int): T = this.findViewById(id)
+
+fun <T : View> View.find(@IdRes id: Int): T = this.findViewById(id)
+
+inline fun <reified T : Activity> Activity.intentFor(intentUpdater: (Intent) -> Unit): Intent {
+    val intent = Intent(this, T::class.java)
+    intentUpdater(intent)
+    return intent
 }

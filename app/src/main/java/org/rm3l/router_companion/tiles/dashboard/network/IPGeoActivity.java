@@ -18,7 +18,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
 import java.util.ArrayList;
 import java.util.Collections;
 import org.osmdroid.api.IMapController;
@@ -33,7 +32,6 @@ import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.IPWhoisInfo;
 import org.rm3l.router_companion.resources.conn.Router;
 import org.rm3l.router_companion.tiles.status.wireless.ActiveIPConnectionsDetailActivity;
-import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.PermissionsUtils;
 import org.rm3l.router_companion.utils.ReportingUtils;
@@ -72,12 +70,6 @@ public class IPGeoActivity extends AppCompatActivity {
         this, router != null ? router.getRouterFirmware() : null, false);
 
     setContentView(R.layout.activity_ip_geo);
-
-    final InterstitialAd interstitialAd =
-        AdUtils.requestNewInterstitial(
-            this, R.string.interstitial_ad_unit_id_wireless_network_generate_qr_code);
-
-    AdUtils.buildAndDisplayAdViewIfNeeded(this, findViewById(R.id.activity_ip_geo_adView));
 
     final Toolbar toolbar = findViewById(R.id.activity_ip_geo_toolbar);
     if (toolbar != null) {

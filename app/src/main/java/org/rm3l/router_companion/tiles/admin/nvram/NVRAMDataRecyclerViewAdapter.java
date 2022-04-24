@@ -124,7 +124,7 @@ public class NVRAMDataRecyclerViewAdapter
 
     @Override
     public void onClick(View v) {
-      if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+      if (BuildConfig.DONATIONS) {
         Utils.displayUpgradeMessage(context, "Update NVRAM Variable");
         return;
       }

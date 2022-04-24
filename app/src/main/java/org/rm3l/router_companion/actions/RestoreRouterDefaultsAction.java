@@ -29,7 +29,6 @@ import com.google.common.base.Joiner;
 import java.util.Date;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.resources.conn.Router;
-import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.SSHUtils;
 
 public class RestoreRouterDefaultsAction extends AbstractRouterAction<Void> {
@@ -38,19 +37,12 @@ public class RestoreRouterDefaultsAction extends AbstractRouterAction<Void> {
 
     private final Date mClickDate;
 
-    private final String mDeviceId;
-
     public AgreementToResetRouter(@NonNull Context context) {
       mClickDate = new Date();
-      mDeviceId = AdUtils.getDeviceIdForAdMob(context);
     }
 
     public Date getClickDate() {
       return mClickDate;
-    }
-
-    public String getDeviceId() {
-      return mDeviceId;
     }
   }
 

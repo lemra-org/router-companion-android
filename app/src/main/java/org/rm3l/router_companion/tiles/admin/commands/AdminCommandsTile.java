@@ -21,7 +21,6 @@ import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.loader.content.AsyncTaskLoader;
 import androidx.loader.content.Loader;
-import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.actions.AbstractRouterAction;
 import org.rm3l.router_companion.actions.ActionManager;
@@ -72,12 +71,6 @@ public class AdminCommandsTile extends DDWRTTile<Void> {
   @Override
   public Integer getTileTitleViewId() {
     return R.id.tile_admin_commands_title;
-  }
-
-  @Override
-  public boolean isEmbeddedWithinScrollView() {
-    //        return false;
-    return BuildConfig.WITH_ADS && super.isEmbeddedWithinScrollView();
   }
 
   @Override

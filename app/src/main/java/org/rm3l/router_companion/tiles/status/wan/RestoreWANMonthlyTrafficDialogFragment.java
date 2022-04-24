@@ -25,7 +25,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +33,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
-import com.google.android.gms.ads.AdView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Strings;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
@@ -42,7 +40,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
-import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.actions.ActionManager;
@@ -54,7 +51,6 @@ import org.rm3l.router_companion.actions.RouterActionListener;
 import org.rm3l.router_companion.actions.RouterRestoreDialogListener;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.resources.conn.Router;
-import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.Utils;
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback;
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
@@ -143,17 +139,6 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
 
     final AlertDialog d = (AlertDialog) getDialog();
     if (d != null) {
-
-      if (BuildConfig.WITH_ADS) {
-        // For Ads to show up, otherwise we get the following error message:
-        // Not enough space to show ad. Needs 320x50 dp, but only has 288x597 dp.
-        d.getWindow()
-            .setLayout(
-                WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-      }
-
-      AdUtils.buildAndDisplayAdViewIfNeeded(
-          d.getContext(), (AdView) d.findViewById(R.id.activity_router_restore_adView));
 
       d.findViewById(R.id.router_restore_backup_select_button)
           .setOnClickListener(

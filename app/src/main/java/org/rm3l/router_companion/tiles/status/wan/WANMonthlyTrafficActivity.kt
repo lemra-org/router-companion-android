@@ -31,7 +31,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -49,11 +48,6 @@ import androidx.core.view.MenuItemCompat
 import com.github.florent37.viewtooltip.ViewTooltip
 import com.github.florent37.viewtooltip.ViewTooltip.ALIGN
 import com.github.florent37.viewtooltip.ViewTooltip.Position
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.interstitial.InterstitialAd
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
@@ -68,7 +62,6 @@ import org.achartengine.renderer.XYSeriesRenderer
 import org.achartengine.tools.ZoomEvent
 import org.achartengine.tools.ZoomListener
 import org.achartengine.util.MathHelper
-import org.rm3l.ddwrt.BuildConfig
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.RouterCompanionAppConstants
 import org.rm3l.router_companion.RouterCompanionAppConstants.EMPTY_STRING
@@ -80,7 +73,6 @@ import org.rm3l.router_companion.resources.WANTrafficData
 import org.rm3l.router_companion.resources.WANTrafficData.Companion.INBOUND
 import org.rm3l.router_companion.resources.WANTrafficData.Companion.OUTBOUND
 import org.rm3l.router_companion.resources.conn.Router
-import org.rm3l.router_companion.utils.AdUtils
 import org.rm3l.router_companion.utils.ColorUtils
 import org.rm3l.router_companion.utils.FileUtils.byteCountToDisplaySize
 import org.rm3l.router_companion.utils.Utils
@@ -115,8 +107,6 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
 
     private var mFileToShare: File? = null
     private var mCsvFileToShare: File? = null
-
-    private var mInterstitialAd: InterstitialAd? = null
 
     private var mRouter: Router? = null
 
@@ -208,35 +198,6 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
 
         mCycleItem!!.setContext(this)
 
-        if (BuildConfig.WITH_ADS && AdUtils.canDisplayInterstialAd(this)) {
-            InterstitialAd.load(
-                this,
-                getString(R.string.interstitial_ad_unit_id_transtion_to_wan_monthly_chart),
-                AdRequest.Builder().build(),
-                object : InterstitialAdLoadCallback() {
-                    override fun onAdFailedToLoad(adError: LoadAdError) {
-                        Log.d(LOG_TAG, adError.message)
-                        mInterstitialAd = null
-                    }
-
-                    override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                        Log.d(LOG_TAG, "Ad was loaded.")
-                        mInterstitialAd = interstitialAd
-                    }
-                }
-            )
-        }
-
-//        mInterstitialAd = AdUtils.requestNewInterstitial(
-//            this,
-//            R.string.interstitial_ad_unit_id_transtion_to_wan_monthly_chart
-//        )
-
-        AdUtils.buildAndDisplayAdViewIfNeeded(
-            this,
-            findViewById<View>(R.id.tile_status_wan_monthly_traffic_chart_view_adView) as AdView
-        )
-
         mToolbar = findViewById<View>(R.id.tile_status_wan_monthly_traffic_chart_view_toolbar) as Toolbar
         if (mToolbar != null) {
             mToolbar!!.title = WAN_MONTHLY_TRAFFIC + ": " + mCycleItem!!.getLabelWithYears()
@@ -308,40 +269,6 @@ class WANMonthlyTrafficActivity : AppCompatActivity() {
             else -> {
                 // Nothing to do
             }
-        }
-    }
-
-    override fun finish() {
-        if (BuildConfig.WITH_ADS && mInterstitialAd != null && AdUtils.canDisplayInterstialAd(this)) {
-
-//            mInterstitialAd!!.adListener = object : AdListener() {
-//                override fun onAdClosed() {
-//                    super@WANMonthlyTrafficActivity.finish()
-//                }
-//
-//                override fun onAdOpened() {
-//                    // Save preference
-//                    getSharedPreferences(
-//                        RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-//                        Context.MODE_PRIVATE
-//                    ).edit()
-//                        .putLong(
-//                            RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
-//                            System.currentTimeMillis()
-//                        )
-//                        .apply()
-//                }
-//            }
-
-            mInterstitialAd!!.show(this)
-
-//            if (mInterstitialAd!!.isLoaded) {
-//                mInterstitialAd!!.show(this)
-//            } else {
-//                super@WANMonthlyTrafficActivity.finish()
-//            }
-        } else {
-            super.finish()
         }
     }
 

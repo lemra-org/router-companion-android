@@ -73,9 +73,6 @@ import androidx.loader.content.AsyncTaskLoader;
 import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
@@ -152,7 +149,6 @@ import org.rm3l.router_companion.tiles.status.wireless.sort.ClientsSortingVisito
 import org.rm3l.router_companion.tiles.status.wireless.sort.impl.ClientsAlphabeticalSortingVisitorImpl;
 import org.rm3l.router_companion.tiles.status.wireless.sort.impl.LastSeenClientsSortingVisitorImpl;
 import org.rm3l.router_companion.tiles.status.wireless.sort.impl.TopTalkersClientsSortingVisitorImpl;
-import org.rm3l.router_companion.utils.AdUtils;
 import org.rm3l.router_companion.utils.ColorUtils;
 import org.rm3l.router_companion.utils.NVRAMParser;
 import org.rm3l.router_companion.utils.NetworkUtils;
@@ -314,7 +310,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
       final String deviceName = nullToEmpty(device.getName());
 
       if (itemId == R.id.tile_status_wireless_client_wan_access_state) {
-        if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+        if (BuildConfig.DONATIONS) {
           // Download the full version to unlock this version
           Utils.displayUpgradeMessage(mParentFragmentActivity, "Enable/Disable Internet Access");
           return true;
@@ -853,8 +849,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
 
   private final Set<Device> mDevices = new HashSet<>();
 
-  @Nullable private InterstitialAd mInterstitialAdForActiveIPConnections;
-
   private long mLastSync;
 
   private final LinearLayoutManager mLayoutManager;
@@ -913,17 +907,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
         && !mParentFragmentPreferences.contains(getFormattedPrefKey(RT_GRAPHS))) {
       mParentFragmentPreferences.edit().putBoolean(getFormattedPrefKey(RT_GRAPHS), true).apply();
     }
-
-    mParentFragmentActivity.runOnUiThread(
-        new Runnable() {
-          @Override
-          public void run() {
-            mInterstitialAdForActiveIPConnections =
-                AdUtils.requestNewInterstitial(
-                    mParentFragmentActivity,
-                    R.string.interstitial_ad_unit_id_open_active_ip_connections_activity);
-          }
-        });
 
     mBandwidthMonitoringData =
         new File(
@@ -1104,96 +1087,34 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                         ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER,
                         currentIpToHostNameResolverMap);
 
-                    if (BuildConfig.WITH_ADS
-                        && mInterstitialAdForActiveIPConnections != null
-                        && AdUtils.canDisplayInterstialAd(mParentFragmentActivity)) {
-
-                      mInterstitialAdForActiveIPConnections.setAdListener(
-                          new AdListener() {
-                            @Override
-                            public void onAdClosed() {
-                              final AdRequest adRequest =
-                                  AdUtils.buildAdRequest(mParentFragmentActivity);
-                              if (adRequest != null) {
-                                mInterstitialAdForActiveIPConnections.loadAd(adRequest);
-                              }
-                              mParentFragmentActivity.startActivity(intent);
-                            }
-
-                            @Override
-                            public void onAdOpened() {
-                              // Save preference
-                              mGlobalPreferences
-                                  .edit()
-                                  .putLong(
-                                      RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
-                                      System.currentTimeMillis())
-                                  .apply();
-                            }
-                          });
-
-                      if (mInterstitialAdForActiveIPConnections.isLoaded()) {
-                        mInterstitialAdForActiveIPConnections.show();
-                      } else {
-                        //noinspection ConstantConditions
-                        final AlertDialog alertDialog =
-                            Utils.buildAlertDialog(
-                                mParentFragmentActivity, null, "Loading...", false, false);
-                        alertDialog.show();
-                        ((TextView) alertDialog.findViewById(android.R.id.message))
-                            .setGravity(Gravity.CENTER_HORIZONTAL);
-                        new Handler()
-                            .postDelayed(
-                                new Runnable() {
-                                  @Override
-                                  public void run() {
-                                    try {
-                                      mParentFragmentActivity.startActivity(intent);
-                                    } catch (final Exception e) {
-                                      Toast.makeText(
-                                              mParentFragmentActivity,
-                                              "Internal error - issue will be reported. Sorry for the inconvenience: "
-                                                  + e.getMessage(),
-                                              Toast.LENGTH_SHORT)
-                                          .show();
-                                      Utils.reportException(mParentFragmentActivity, e);
-                                    } finally {
-                                      alertDialog.cancel();
-                                    }
-                                  }
-                                },
-                                1000);
-                      }
-                    } else {
-                      //noinspection ConstantConditions
-                      final AlertDialog alertDialog =
-                          Utils.buildAlertDialog(
-                              mParentFragmentActivity, null, "Loading...", false, false);
-                      alertDialog.show();
-                      ((TextView) alertDialog.findViewById(android.R.id.message))
-                          .setGravity(Gravity.CENTER_HORIZONTAL);
-                      new Handler()
-                          .postDelayed(
-                              new Runnable() {
-                                @Override
-                                public void run() {
-                                  try {
-                                    mParentFragmentActivity.startActivity(intent);
-                                  } catch (final Exception e) {
-                                    Toast.makeText(
-                                            mParentFragmentActivity,
-                                            "Internal error - issue will be reported. Sorry for the inconvenience: "
-                                                + e.getMessage(),
-                                            Toast.LENGTH_SHORT)
-                                        .show();
-                                    Utils.reportException(mParentFragmentActivity, e);
-                                  } finally {
-                                    alertDialog.cancel();
-                                  }
+                    //noinspection ConstantConditions
+                    final AlertDialog alertDialog =
+                        Utils.buildAlertDialog(
+                            mParentFragmentActivity, null, "Loading...", false, false);
+                    alertDialog.show();
+                    ((TextView) alertDialog.findViewById(android.R.id.message))
+                        .setGravity(Gravity.CENTER_HORIZONTAL);
+                    new Handler()
+                        .postDelayed(
+                            new Runnable() {
+                              @Override
+                              public void run() {
+                                try {
+                                  mParentFragmentActivity.startActivity(intent);
+                                } catch (final Exception e) {
+                                  Toast.makeText(
+                                          mParentFragmentActivity,
+                                          "Internal error - issue will be reported. Sorry for the inconvenience: "
+                                              + e.getMessage(),
+                                          Toast.LENGTH_SHORT)
+                                      .show();
+                                  Utils.reportException(mParentFragmentActivity, e);
+                                } finally {
+                                  alertDialog.cancel();
                                 }
-                              },
-                              1000);
-                    }
+                              }
+                            },
+                            1000);
 
                     return true;
                   }
@@ -1449,74 +1370,23 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                       ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER,
                       currentIpToHostNameResolverMap);
 
-                  if (BuildConfig.WITH_ADS
-                      && mInterstitialAdForActiveIPConnections != null
-                      && AdUtils.canDisplayInterstialAd(mParentFragmentActivity)) {
-
-                    mInterstitialAdForActiveIPConnections.setAdListener(
-                        new AdListener() {
-                          @Override
-                          public void onAdClosed() {
-                            final AdRequest adRequest =
-                                AdUtils.buildAdRequest(mParentFragmentActivity);
-                            if (adRequest != null) {
-                              mInterstitialAdForActiveIPConnections.loadAd(adRequest);
+                  //noinspection ConstantConditions
+                  final AlertDialog alertDialog =
+                      Utils.buildAlertDialog(
+                          mParentFragmentActivity, null, "Loading...", false, false);
+                  alertDialog.show();
+                  ((TextView) alertDialog.findViewById(android.R.id.message))
+                      .setGravity(Gravity.CENTER_HORIZONTAL);
+                  new Handler()
+                      .postDelayed(
+                          new Runnable() {
+                            @Override
+                            public void run() {
+                              mParentFragmentActivity.startActivity(intent);
+                              alertDialog.cancel();
                             }
-                            mParentFragmentActivity.startActivity(intent);
-                          }
-
-                          @Override
-                          public void onAdOpened() {
-                            // Save preference
-                            mGlobalPreferences
-                                .edit()
-                                .putLong(
-                                    RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
-                                    System.currentTimeMillis())
-                                .apply();
-                          }
-                        });
-
-                    if (mInterstitialAdForActiveIPConnections.isLoaded()) {
-                      mInterstitialAdForActiveIPConnections.show();
-                    } else {
-                      //noinspection ConstantConditions
-                      final AlertDialog alertDialog =
-                          Utils.buildAlertDialog(
-                              mParentFragmentActivity, null, "Loading...", false, false);
-                      alertDialog.show();
-                      ((TextView) alertDialog.findViewById(android.R.id.message))
-                          .setGravity(Gravity.CENTER_HORIZONTAL);
-                      new Handler()
-                          .postDelayed(
-                              new Runnable() {
-                                @Override
-                                public void run() {
-                                  mParentFragmentActivity.startActivity(intent);
-                                  alertDialog.cancel();
-                                }
-                              },
-                              1000);
-                    }
-                  } else {
-                    //noinspection ConstantConditions
-                    final AlertDialog alertDialog =
-                        Utils.buildAlertDialog(
-                            mParentFragmentActivity, null, "Loading...", false, false);
-                    alertDialog.show();
-                    ((TextView) alertDialog.findViewById(android.R.id.message))
-                        .setGravity(Gravity.CENTER_HORIZONTAL);
-                    new Handler()
-                        .postDelayed(
-                            new Runnable() {
-                              @Override
-                              public void run() {
-                                mParentFragmentActivity.startActivity(intent);
-                                alertDialog.cancel();
-                              }
-                            },
-                            1000);
-                  }
+                          },
+                          1000);
                 }
               };
           spans.setSpan(clickSpan, 0, spans.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

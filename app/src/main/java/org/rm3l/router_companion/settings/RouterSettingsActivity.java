@@ -43,7 +43,6 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import androidx.annotation.NonNull;
 import com.airbnb.deeplinkdispatch.DeepLink;
-import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.mgmt.RouterManagementActivity;
 import org.rm3l.router_companion.widgets.MySwitchPreference;
@@ -112,27 +111,14 @@ public class RouterSettingsActivity extends AbstractRouterSettingsActivity {
           findPreference(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SERVER);
       final Preference autoMeasurementsScheduleSetting =
           findPreference(ROUTER_SPEED_TEST_AUTO_MEASUREMENTS_SCHEDULE);
-      if (BuildConfig.WITH_ADS) {
-        autoMeasurementsSettings.setTitle("Automatic measurements (Upgrade to switch)");
-        autoMeasurementsSettings.setChecked(false);
-        autoMeasurementsSettings.setEnabled(false);
-        if (autoMeasurementsScheduleSetting != null) {
-          autoMeasurementsScheduleSetting.setTitle("Schedule (Upgrade to switch)");
-          autoMeasurementsScheduleSetting.setEnabled(false);
-        }
-        autoMeasurementsServerSetting.setTitle(
-            "Server for automatic measurements (Upgrade to switch)");
-        autoMeasurementsServerSetting.setEnabled(false);
-      } else {
-        autoMeasurementsSettings.setTitle("Automatic measurements");
-        autoMeasurementsSettings.setEnabled(true);
-        if (autoMeasurementsScheduleSetting != null) {
-          autoMeasurementsScheduleSetting.setTitle("Schedule");
-          autoMeasurementsScheduleSetting.setEnabled(true);
-        }
-        autoMeasurementsServerSetting.setTitle("Server for automatic measurements");
-        autoMeasurementsServerSetting.setEnabled(true);
+      autoMeasurementsSettings.setTitle("Automatic measurements");
+      autoMeasurementsSettings.setEnabled(true);
+      if (autoMeasurementsScheduleSetting != null) {
+        autoMeasurementsScheduleSetting.setTitle("Schedule");
+        autoMeasurementsScheduleSetting.setEnabled(true);
       }
+      autoMeasurementsServerSetting.setTitle("Server for automatic measurements");
+      autoMeasurementsServerSetting.setEnabled(true);
     }
   }
 

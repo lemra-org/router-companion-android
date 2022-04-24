@@ -38,7 +38,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.preference.PreferenceManager
 import android.text.TextUtils
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -60,11 +59,6 @@ import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter
 import co.paulburke.android.itemtouchhelperdemo.helper.OnStartDragListener
 import com.airbnb.deeplinkdispatch.DeepLink
 import com.evernote.android.job.JobManager
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.interstitial.InterstitialAd
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.common.base.Joiner
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -102,18 +96,12 @@ import org.rm3l.router_companion.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImp
 import org.rm3l.router_companion.mgmt.register.ManageRouterFragmentActivity
 import org.rm3l.router_companion.resources.conn.Router
 import org.rm3l.router_companion.settings.RouterManagementSettingsActivity
-import org.rm3l.router_companion.utils.AdUtils
 import org.rm3l.router_companion.utils.ColorUtils
 import org.rm3l.router_companion.utils.ImageUtils
 import org.rm3l.router_companion.utils.Utils
 import org.rm3l.router_companion.utils.customtabs.CustomTabActivityHelper
-import org.rm3l.router_companion.utils.kotlin.color
 import org.rm3l.router_companion.utils.kotlin.finishAndReload
-import org.rm3l.router_companion.utils.kotlin.inflate
-import org.rm3l.router_companion.utils.kotlin.isThemeLight
-import org.rm3l.router_companion.utils.kotlin.openFeedbackForm
 import org.rm3l.router_companion.utils.kotlin.restartWholeApplication
-import org.rm3l.router_companion.utils.kotlin.setAppTheme
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils.Style
 import org.rm3l.router_companion.welcome.GettingStartedActivity
 import org.rm3l.router_companion.widgets.RecyclerViewEmptySupport
@@ -147,9 +135,6 @@ class RouterManagementActivity :
     private var mCurrentTheme: Long = 0
 
     private var mCustomTabActivityHelper: CustomTabActivityHelper? = null
-
-    //    private Pusher mPusher;
-    private var mInterstitialAd: InterstitialAd? = null
 
     private var mItemTouchHelper: ItemTouchHelper? = null
 
@@ -218,32 +203,6 @@ class RouterManagementActivity :
         setContentView(R.layout.activity_router_management)
 
         setupCustomTabHelper(this)
-
-        AdUtils.buildAndDisplayAdViewIfNeeded(this, findViewById<View>(R.id.router_list_adView) as AdView)
-
-        if (BuildConfig.WITH_ADS && AdUtils.canDisplayInterstialAd(this)) {
-            InterstitialAd.load(
-                this,
-                getString(R.string.interstitial_ad_unit_id_router_list_to_router_main),
-                AdRequest.Builder().build(),
-                object : InterstitialAdLoadCallback() {
-                    override fun onAdFailedToLoad(adError: LoadAdError) {
-                        Log.d(LOG_TAG, adError.message)
-                        mInterstitialAd = null
-                    }
-
-                    override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                        Log.d(LOG_TAG, "Ad was loaded.")
-                        mInterstitialAd = interstitialAd
-                    }
-                }
-            )
-        }
-
-//        mInterstitialAd = AdUtils.requestNewInterstitial(
-//            this,
-//            R.string.interstitial_ad_unit_id_router_list_to_router_main
-//        )
 
         mToolbar = findViewById<View>(R.id.routerManagementActivityToolbar) as Toolbar
         if (mToolbar != null) {
@@ -539,40 +498,6 @@ class RouterManagementActivity :
         super.onDestroy()
     }
 
-    override fun onBackPressed() {
-        if (BuildConfig.WITH_ADS && mInterstitialAd != null && AdUtils.canDisplayInterstialAd(this)) {
-
-//            mInterstitialAd!!.adListener = object : AdListener() {
-//                override fun onAdClosed() {
-//                    super@RouterManagementActivity.onBackPressed()
-//                }
-//
-//                override fun onAdOpened() {
-//                    // Save preference
-//                    getSharedPreferences(
-//                        DEFAULT_SHARED_PREFERENCES_KEY,
-//                        Context.MODE_PRIVATE
-//                    ).edit()
-//                        .putLong(
-//                            RouterCompanionAppConstants.AD_LAST_INTERSTITIAL_PREF,
-//                            System.currentTimeMillis()
-//                        )
-//                        .apply()
-//                }
-//            }
-
-            mInterstitialAd!!.show(this)
-
-//            if (mInterstitialAd!!.isLoaded) {
-//                mInterstitialAd!!.show(this)
-//            } else {
-//                super@RouterManagementActivity.onBackPressed()
-//            }
-        } else {
-            super.onBackPressed()
-        }
-    }
-
     override fun onClick(view: View?) {
         if (view == null) {
             return
@@ -714,7 +639,7 @@ class RouterManagementActivity :
 
         val removeAdsMenuItem = menu.findItem(R.id.router_list_remove_ads)
         if (removeAdsMenuItem != null) {
-            removeAdsMenuItem.isVisible = BuildConfig.WITH_ADS
+            removeAdsMenuItem.isVisible = false
         }
 
         // Search
@@ -1519,7 +1444,7 @@ class RouterManagementActivity :
         // Display Donate Message if trying to add more than the max routers for Free version
         val allRouters = dao!!.allRouters
         //noinspection PointlessBooleanExpression,ConstantConditions
-        if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS) && allRouters.size >= MAX_ROUTERS_FREE_VERSION) {
+        if (BuildConfig.DONATIONS && allRouters.size >= MAX_ROUTERS_FREE_VERSION) {
             // Download the full version to unlock this version
             Utils.displayUpgradeMessage(this, "Manage a new Router")
             return

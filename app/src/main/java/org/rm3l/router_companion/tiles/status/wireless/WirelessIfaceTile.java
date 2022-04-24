@@ -598,7 +598,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
       return true;
     } else if (itemId == R.id.tile_status_wireless_iface_traffic_shaping) {
-      if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+      if (BuildConfig.DONATIONS) {
         // Download the full version to unlock this version
         Utils.displayUpgradeMessage(mParentFragmentActivity, "Traffic Shaping");
         return true;
@@ -700,7 +700,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
           true);
       return true;
     } else if (itemId == R.id.tile_status_wireless_iface_security) {
-      if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+      if (BuildConfig.DONATIONS) {
         // Download the full version to unlock this version
         Utils.displayUpgradeMessage(mParentFragmentActivity, "Edit Wireless Security Settings");
         return true;

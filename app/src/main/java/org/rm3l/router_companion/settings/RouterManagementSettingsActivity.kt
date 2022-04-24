@@ -28,7 +28,6 @@ import android.os.Bundle
 import android.preference.Preference
 import android.preference.PreferenceFragment
 import com.airbnb.deeplinkdispatch.DeepLink
-import org.rm3l.ddwrt.BuildConfig
 import org.rm3l.ddwrt.R
 import org.rm3l.router_companion.RouterCompanionAppConstants
 import org.rm3l.router_companion.RouterCompanionAppConstants.ACRA_ENABLE
@@ -59,14 +58,8 @@ class RouterManagementSettingsActivity : AbstractDDWRTSettingsActivity() {
             // guidelines.
             //            bindPreferenceSummaryToValue(findPreference(ALWAYS_CHECK_CONNECTION_PREF_KEY));
             val themingPreference = findPreference(THEMING_PREF)
-            if (BuildConfig.WITH_ADS) {
-                themingPreference.title = "Theme (Upgrade to switch)"
-                //                themingPreference.setSummary("Upgrade to switch app theme");
-                themingPreference.isEnabled = false
-            } else {
-                themingPreference.title = "Theme"
-                themingPreference.isEnabled = true
-            }
+            themingPreference.title = "Theme"
+            themingPreference.isEnabled = true
 
             AbstractDDWRTSettingsActivity.bindPreferenceSummaryToValue(themingPreference)
 
