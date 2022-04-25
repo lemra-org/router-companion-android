@@ -129,7 +129,10 @@ inline fun <reified T : Activity> Activity.intentFor(intentUpdater: (Intent) -> 
     return intent
 }
 
-fun Context.getConfigProperty(identifier: String, defaultValue: String? = null): String? {
+fun Context?.getConfigProperty(identifier: String, defaultValue: String? = null): String? {
+    if (this == null) {
+        return defaultValue
+    }
     val id = this.resources.getIdentifier(identifier, "string", this.packageName)
     if (id == 0) {
         return defaultValue
@@ -142,9 +145,9 @@ fun Context.getConfigProperty(identifier: String, defaultValue: String? = null):
     }
 }
 
-fun Context.getConfigProperty(@StringRes identifier: Int, defaultValue: String? = null) = try {
-    this.resources.getString(identifier)
+fun Context?.getConfigProperty(@StringRes identifier: Int, defaultValue: String? = null) = try {
+    this?.resources?.getString(identifier) ?: defaultValue
 } catch (rnfe: Resources.NotFoundException) {
-    Log.d(this.javaClass.simpleName, "Resource $identifier of type string not found in package ${this.packageName}", rnfe)
+    Log.d(this?.javaClass?.simpleName ?: "-", "Resource $identifier of type string not found in package ${this?.packageName}", rnfe)
     defaultValue
 }

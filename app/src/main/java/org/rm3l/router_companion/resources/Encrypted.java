@@ -25,31 +25,35 @@ package org.rm3l.router_companion.resources;
 import static com.google.common.base.Charsets.UTF_8;
 
 import android.util.Base64;
+import android.util.Log;
+import android.widget.Toast;
 import androidx.annotation.Nullable;
+import com.google.common.base.Strings;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Objects;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import org.rm3l.router_companion.RouterCompanionApplication;
+import org.rm3l.router_companion.common.utils.ExceptionUtils;
+import org.rm3l.router_companion.utils.kotlin.ContextUtils;
 
 /** An encrypted object */
 public class Encrypted {
 
-  private static final String LOG_TAG = Encrypted.class.getSimpleName();
-
-  // TODO Look for a better way to encrypt data
-  private static final String PRIVATE_SET_INT = "novells sky#yes ";
-
   private static final String AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5Padding";
 
   private static final String AES = "AES";
+
+  public static final int PRIV_KEY_MIN_LENGTH = 16;
 
   /**
    * Decrypt some encrypted data
@@ -82,9 +86,12 @@ public class Encrypted {
 
       byte[] iv =
           Arrays.copyOfRange(
-              byteArrayToDecryptIV, byteArrayToDecryptIV.length - 16, byteArrayToDecryptIV.length);
+              byteArrayToDecryptIV,
+              byteArrayToDecryptIV.length - PRIV_KEY_MIN_LENGTH,
+              byteArrayToDecryptIV.length);
       byte[] byteArrayToDecrypt =
-          Arrays.copyOfRange(byteArrayToDecryptIV, 0, byteArrayToDecryptIV.length - 16);
+          Arrays.copyOfRange(
+              byteArrayToDecryptIV, 0, byteArrayToDecryptIV.length - PRIV_KEY_MIN_LENGTH);
       byte[] aesKey = \"fake-key\";
       byte[] uncipheredtext;
 
@@ -104,7 +111,14 @@ public class Encrypted {
     }
 
     FirebaseCrashlytics.getInstance().log("Failed to decrypt: " + e);
-    throw new IllegalStateException(e);
+    Toast.makeText(
+            RouterCompanionApplication.getCurrentActivity(),
+            "Could not decrypt data. Error message is: "
+                + ExceptionUtils.getRootCause(e)
+                + ". The issue will be reported (depending on your preferences).",
+            Toast.LENGTH_LONG)
+        .show();
+    return null;
   }
 
   @Nullable
@@ -118,7 +132,7 @@ public class Encrypted {
     try {
       Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
 
-      byte[] iv = new byte[16];
+      byte[] iv = new byte[PRIV_KEY_MIN_LENGTH];
       byte[] aesKey = \"fake-key\";
       byte[] ciphertext;
 
@@ -145,6 +159,25 @@ public class Encrypted {
 
     FirebaseCrashlytics.getInstance().log("Failed to encrypt: " + e);
     throw new IllegalStateException(e);
+  }
+
+  private static String getEncryptionKey() {
+    String key =
+        Objects.requireNonNull(
+            ContextUtils.getConfigProperty(
+                RouterCompanionApplication.getCurrentActivity(), "ENCRYPTION_KEY", ""));
+    final int length = key.length();
+    // Add padding if necessary
+    if (length < PRIV_KEY_MIN_LENGTH) {
+      key += Strings.repeat(" ", PRIV_KEY_MIN_LENGTH - length);
+    } else {
+      if (length % PRIV_KEY_MIN_LENGTH != 0) {
+        // Pad up to the nearest multiplier
+        key += Strings.repeat(" ", PRIV_KEY_MIN_LENGTH - length % PRIV_KEY_MIN_LENGTH);
+      }
+    }
+    Log.d("XXX", "[" + key + "], length=" + key.length());
+    return key;
   }
 
   /**

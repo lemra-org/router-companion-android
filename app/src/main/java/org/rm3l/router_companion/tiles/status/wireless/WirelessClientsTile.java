@@ -794,7 +794,10 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                 macAddr.replaceAll(":", "-").substring(0, 8)),
                             RequestMethod.GET);
                     final Response<JsonElement> response =
-                        NetworkUtils.getProxyService(RouterCompanionApplication.getCurrentActivity()).proxy(proxyData).execute();
+                        NetworkUtils.getProxyService(
+                                RouterCompanionApplication.getCurrentActivity())
+                            .proxy(proxyData)
+                            .execute();
                     NetworkUtils.checkResponseSuccessful(response);
                     return JsonElementUtils.parseAs(response.body(), MACOUIVendor.class);
                   } catch (final Exception e) {

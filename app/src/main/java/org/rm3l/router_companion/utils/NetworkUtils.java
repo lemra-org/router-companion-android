@@ -50,22 +50,30 @@ public final class NetworkUtils {
   @NonNull
   public static ProxyService getProxyService(@NonNull Context context) {
     return NetworkUtils.createApiService(
-            null,
-            Objects.requireNonNull(ContextUtils.getConfigProperty(context, "PROXY_SERVER_BASE_URL", "")),
-            ProxyService.class,
-            new AuthenticationInterceptor("Basic " + Objects.requireNonNull(
-                    ContextUtils.getConfigProperty(context, "PROXY_SERVER_BASIC_AUTH_TOKEN_BASE64", ""))));
+        null,
+        Objects.requireNonNull(
+            ContextUtils.getConfigProperty(context, "PROXY_SERVER_BASE_URL", "")),
+        ProxyService.class,
+        new AuthenticationInterceptor(
+            "Basic "
+                + Objects.requireNonNull(
+                    ContextUtils.getConfigProperty(
+                        context, "PROXY_SERVER_BASIC_AUTH_TOKEN_BASE64", ""))));
   }
 
   @NonNull
-  public static ServiceNamePortNumbersService getServiceNamePortNumbersService(@NonNull Context context) {
+  public static ServiceNamePortNumbersService getServiceNamePortNumbersService(
+      @NonNull Context context) {
     return NetworkUtils.createApiService(
-            null,
-            Objects.requireNonNull(ContextUtils.getConfigProperty(context, "SERVICE_NAMES_PORT_NUMBERS_BASE_URL", "")),
-            ServiceNamePortNumbersService.class,
-            new AuthenticationInterceptor(
-                    "Basic " + Objects.requireNonNull(
-                            ContextUtils.getConfigProperty(context, "SERVICE_NAMES_PORT_NUMBERS_BASIC_AUTH_TOKEN_BASE64", ""))));
+        null,
+        Objects.requireNonNull(
+            ContextUtils.getConfigProperty(context, "SERVICE_NAMES_PORT_NUMBERS_BASE_URL", "")),
+        ServiceNamePortNumbersService.class,
+        new AuthenticationInterceptor(
+            "Basic "
+                + Objects.requireNonNull(
+                    ContextUtils.getConfigProperty(
+                        context, "SERVICE_NAMES_PORT_NUMBERS_BASIC_AUTH_TOKEN_BASE64", ""))));
   }
 
   private static class FirebaseDynamicLinksServiceHolder {
