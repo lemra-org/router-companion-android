@@ -1,11 +1,13 @@
 package org.rm3l.router_companion.actions
 
 import android.content.SharedPreferences
+import org.rm3l.router_companion.RouterCompanionApplication
 import org.rm3l.router_companion.actions.RouterAction.SERVICE_NAMES_PORT_NUMBERS_LOOKUP
 import org.rm3l.router_companion.api.iana.Protocol
 import org.rm3l.router_companion.api.iana.query
 import org.rm3l.router_companion.resources.conn.Router
 import org.rm3l.router_companion.utils.NetworkUtils
+import java.util.Locale
 
 class ServiceNamesPortNumbersMappingLookupAction(
     router: Router,
@@ -25,10 +27,10 @@ class ServiceNamesPortNumbersMappingLookupAction(
                 SERVICE_NAMES_PORT_NUMBERS_LOOKUP, router,
                 0, null
             )
-            val response = NetworkUtils.getServiceNamePortNumbersService().query(
+            val response = NetworkUtils.getServiceNamePortNumbersService(RouterCompanionApplication.getCurrentActivity()!!).query(
                 ports = this.ports,
                 protocols = this.protocols,
-                services = this.services?.map { it.toLowerCase() }
+                services = this.services?.map { it.lowercase(Locale.getDefault()) }
             ).execute()
             NetworkUtils.checkResponseSuccessful(response)
             val body = response.body() ?: throw IllegalStateException("Empty response")

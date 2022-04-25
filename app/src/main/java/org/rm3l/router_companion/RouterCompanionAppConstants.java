@@ -24,7 +24,6 @@ package org.rm3l.router_companion;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
-import com.amazonaws.regions.Regions;
 import com.google.common.base.Charsets;
 import java.io.File;
 import java.nio.charset.Charset;
@@ -152,11 +151,10 @@ public final class RouterCompanionAppConstants {
 
   public static final String WIDGETS_PREFERENCES_KEY = \"fake-key\";
 
-  //    public static final String FILEPROVIDER_AUTHORITY = "org.rm3l.fileprovider";
   public static final String FILEPROVIDER_AUTHORITY =
       (BuildConfig.APPLICATION_ID + ".fileprovider");
 
-  public static final String SUPPORT_WEBSITE = "http://rm3l.org/apps/ddwrt-companion/ddwrt/home";
+  public static final String WEBSITE = "https://ddwrt-companion.app";
 
   public static final String ACRA_USER_EMAIL = "acra.user.email";
 
@@ -240,9 +238,6 @@ public final class RouterCompanionAppConstants {
 
   public static final String IS_GD_URL_SHORTENER_BASE_URL = "https://is.gd/";
 
-  // TODO Externalize
-  public static final String FIREBASE_API_KEY = \"fake-api-key\";
-
   public static final String UNIT_BYTE = "B";
 
   public static final String UNIT_BIT = "b";
@@ -255,21 +250,6 @@ public final class RouterCompanionAppConstants {
       ("ftp://" + DDWRT_RELEASE_REMOTE_HOST + "/betas");
 
   public static final String DDWRT_RELEASE_URL_FORMAT = (DDWRT_RELEASE_BASE_URL + "/%s/%s");
-
-  // TODO Externalize
-  public static final String PROXY_SERVER_BASE_URL = "https://reverse-proxy.services.rm3l.org";
-
-  // TODO Externalize
-  public static final String PROXY_SERVER_PASSWORD_AUTH_TOKEN_ENCODED =
-      "Basic xxx";
-
-  // TODO Externalize
-  public static final String SERVICE_NAMES_PORT_NUMBERS_API_SERVER_BASE_URL =
-      "https://service-names-port-numbers.services.rm3l.org";
-
-  // TODO Externalize
-  public static final String SERVICE_NAMES_PORT_NUMBERS_API_SERVER_PASSWORD_AUTH_TOKEN_ENCODED =
-      "Basic xxx";
 
   @NonNull
   public static File getClientsUsageDataFile(

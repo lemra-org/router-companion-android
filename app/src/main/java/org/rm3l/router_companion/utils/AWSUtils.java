@@ -49,9 +49,11 @@ public final class AWSUtils {
       credsProvider =
           new CognitoCachingCredentialsProvider(
               context,
-                  ContextUtils.getConfigProperty(context, "AWS_COGNITO_IDENTITY_POOL_ID", null),
-                  Regions.fromName(Objects.requireNonNull(
-                          ContextUtils.getConfigProperty(context, "AWS_COGNITO_IDENTITY_POOL_REGION", "us-east-1"))));
+              ContextUtils.getConfigProperty(context, "AWS_COGNITO_IDENTITY_POOL_ID", null),
+              Regions.fromName(
+                  Objects.requireNonNull(
+                      ContextUtils.getConfigProperty(
+                          context, "AWS_COGNITO_IDENTITY_POOL_REGION", "us-east-1"))));
     }
     return credsProvider;
   }
@@ -62,8 +64,11 @@ public final class AWSUtils {
       s3Client =
           new AmazonS3Client(
               getAWSCredentialsProvider(context), Region.getRegion(Regions.DEFAULT_REGION));
-      s3Client.setRegion(Region.getRegion(Objects.requireNonNull(
-              ContextUtils.getConfigProperty(context, "AWS_COGNITO_IDENTITY_POOL_REGION", "us-east-1"))));
+      s3Client.setRegion(
+          Region.getRegion(
+              Objects.requireNonNull(
+                  ContextUtils.getConfigProperty(
+                      context, "AWS_COGNITO_IDENTITY_POOL_REGION", "us-east-1"))));
     }
     return s3Client;
   }
@@ -80,7 +85,8 @@ public final class AWSUtils {
 
   @NonNull
   public static String getS3BucketName(final Context context) {
-    return Objects.requireNonNull(ContextUtils.getConfigProperty(context, "AWS_S3_BUCKET", "dd-wrt-companion"));
+    return Objects.requireNonNull(
+        ContextUtils.getConfigProperty(context, "AWS_S3_BUCKET", "dd-wrt-companion"));
   }
 
   private AWSUtils() {}

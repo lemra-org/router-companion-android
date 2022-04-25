@@ -12,6 +12,8 @@ interface FirebaseDynamicLinksService {
 
     @Headers("Content-Type: application/json")
     @POST("shortLinks")
-    fun shortLinks(@Query("key") apiKey: String,
-                   @Body body: ShortLinksDataRequest): Call<FirebaseDynamicLinksResponse>
+    fun shortLinks(
+        @Query("key") apiKey: String,
+        @Body body: ShortLinksDataRequest
+    ): Call<FirebaseDynamicLinksResponse>
 }

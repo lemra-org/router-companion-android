@@ -3,10 +3,6 @@ package org.rm3l.router_companion.utils;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.FIREBASE_DYNAMIC_LINKS_BASE_URL;
 import static org.rm3l.router_companion.RouterCompanionAppConstants.IS_GD_URL_SHORTENER_BASE_URL;
-import static org.rm3l.router_companion.RouterCompanionAppConstants.PROXY_SERVER_BASE_URL;
-import static org.rm3l.router_companion.RouterCompanionAppConstants.PROXY_SERVER_PASSWORD_AUTH_TOKEN_ENCODED;
-import static org.rm3l.router_companion.RouterCompanionAppConstants.SERVICE_NAMES_PORT_NUMBERS_API_SERVER_BASE_URL;
-import static org.rm3l.router_companion.RouterCompanionAppConstants.SERVICE_NAMES_PORT_NUMBERS_API_SERVER_PASSWORD_AUTH_TOKEN_ENCODED;
 import static org.rm3l.router_companion.feedback.maoni.MaoniFeedbackHandler.FEEDBACK_API_BASE_URL;
 
 import android.Manifest.permission;
@@ -25,6 +21,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.readystatesoftware.chuck.ChuckInterceptor;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -39,6 +36,7 @@ import org.rm3l.router_companion.api.urlshortener.firebase.dynamiclinks.Firebase
 import org.rm3l.router_companion.api.urlshortener.is_gd.IsGdService;
 import org.rm3l.router_companion.exceptions.DDWRTCompanionException;
 import org.rm3l.router_companion.utils.Utils.OperationCallback;
+import org.rm3l.router_companion.utils.kotlin.ContextUtils;
 import org.rm3l.router_companion.utils.retrofit.RetryCallAdapterFactory;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -49,31 +47,25 @@ public final class NetworkUtils {
 
   public static final String TAG = NetworkUtils.class.getSimpleName();
 
-  private static class ProxyServiceClientsHolder {
-    private static final ProxyService PROXY_SERVICE =
-        NetworkUtils.createApiService(
+  @NonNull
+  public static ProxyService getProxyService(@NonNull Context context) {
+    return NetworkUtils.createApiService(
             null,
-            PROXY_SERVER_BASE_URL,
+            Objects.requireNonNull(ContextUtils.getConfigProperty(context, "PROXY_SERVER_BASE_URL", "")),
             ProxyService.class,
-            new AuthenticationInterceptor(PROXY_SERVER_PASSWORD_AUTH_TOKEN_ENCODED));
+            new AuthenticationInterceptor("Basic " + Objects.requireNonNull(
+                    ContextUtils.getConfigProperty(context, "PROXY_SERVER_BASIC_AUTH_TOKEN_BASE64", ""))));
   }
 
-  public static ProxyService getProxyService() {
-    return ProxyServiceClientsHolder.PROXY_SERVICE;
-  }
-
-  private static class ServiceNamePortNumbersServiceHolder {
-    private static final ServiceNamePortNumbersService SERVICE_NAMES_PORT_NUMBERS_MAPPING_SERVICE =
-        NetworkUtils.createApiService(
+  @NonNull
+  public static ServiceNamePortNumbersService getServiceNamePortNumbersService(@NonNull Context context) {
+    return NetworkUtils.createApiService(
             null,
-            SERVICE_NAMES_PORT_NUMBERS_API_SERVER_BASE_URL,
+            Objects.requireNonNull(ContextUtils.getConfigProperty(context, "SERVICE_NAMES_PORT_NUMBERS_BASE_URL", "")),
             ServiceNamePortNumbersService.class,
             new AuthenticationInterceptor(
-                SERVICE_NAMES_PORT_NUMBERS_API_SERVER_PASSWORD_AUTH_TOKEN_ENCODED));
-  }
-
-  public static ServiceNamePortNumbersService getServiceNamePortNumbersService() {
-    return ServiceNamePortNumbersServiceHolder.SERVICE_NAMES_PORT_NUMBERS_MAPPING_SERVICE;
+                    "Basic " + Objects.requireNonNull(
+                            ContextUtils.getConfigProperty(context, "SERVICE_NAMES_PORT_NUMBERS_BASIC_AUTH_TOKEN_BASE64", ""))));
   }
 
   private static class FirebaseDynamicLinksServiceHolder {

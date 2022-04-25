@@ -112,6 +112,7 @@ import kotlin.jvm.functions.Function1;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
+import org.rm3l.router_companion.RouterCompanionApplication;
 import org.rm3l.router_companion.api.iana.Data;
 import org.rm3l.router_companion.api.iana.Protocol;
 import org.rm3l.router_companion.api.iana.Record;
@@ -234,7 +235,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         boolean skipIndividualIPGeoLocationRequests = false;
         try {
           final Response<List<NetWhoisInfoProxyApiResponse>> response =
-              NetworkUtils.getProxyService()
+              NetworkUtils.getProxyService(activeIPConnectionsDetailActivity)
                   .bulkNetworkGeoLocation(new ArrayList<>(toResolve))
                   .execute();
           NetworkUtils.checkResponseSuccessful(response);
@@ -295,7 +296,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             try {
               final Response<RecordListResponse> response =
                   ServiceNamePortNumbersServiceKt.query(
-                          NetworkUtils.getServiceNamePortNumbersService(),
+                          NetworkUtils.getServiceNamePortNumbersService(activeIPConnectionsDetailActivity),
                           portNumbersToResolve,
                           protocolsToResolve,
                           null)
@@ -1330,20 +1331,12 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
           CacheBuilder.newBuilder()
               .maximumSize(50)
               .removalListener(
-                  new RemovalListener<Pair<Long, Protocol>, Collection<Record>>() {
-                    @Override
-                    public void onRemoval(
-                        @NonNull
-                            RemovalNotification<Pair<Long, Protocol>, Collection<Record>>
-                                notification) {
-                      FirebaseCrashlytics.getInstance()
+                      (RemovalListener<Pair<Long, Protocol>, Collection<Record>>) notification -> FirebaseCrashlytics.getInstance()
                           .log(
                               "onRemoval("
                                   + notification.getKey()
                                   + ") - cause: "
-                                  + notification.getCause());
-                    }
-                  })
+                                  + notification.getCause()))
               .expireAfterAccess(1L, TimeUnit.DAYS)
               .expireAfterWrite(1L, TimeUnit.DAYS)
               .build(
@@ -1365,7 +1358,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                       try {
                         final Response<RecordListResponse> response =
                             ServiceNamePortNumbersServiceKt.query(
-                                    NetworkUtils.getServiceNamePortNumbersService(),
+                                    NetworkUtils.getServiceNamePortNumbersService(RouterCompanionApplication.getCurrentActivity()),
                                     Collections.singleton(portNumber),
                                     Collections.singleton(protocol),
                                     null)
@@ -1383,42 +1376,37 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
       CacheBuilder.newBuilder()
           .maximumSize(50)
           .removalListener(
-              new RemovalListener<String, IPWhoisInfo>() {
-                @Override
-                public void onRemoval(
-                    @NonNull RemovalNotification<String, IPWhoisInfo> notification) {
-                  FirebaseCrashlytics.getInstance()
+                  (RemovalListener<String, IPWhoisInfo>) notification -> FirebaseCrashlytics.getInstance()
                       .log(
                           "onRemoval("
                               + notification.getKey()
                               + ") - cause: "
-                              + notification.getCause());
-                }
-              })
+                              + notification.getCause()))
           .build(
-              new CacheLoader<String, IPWhoisInfo>() {
-                @Override
-                public IPWhoisInfo load(@NonNull String ipAddr) throws Exception {
-                  if (isNullOrEmpty(ipAddr)) {
-                    throw new IllegalArgumentException("IP Addr is invalid");
-                  }
-                  // Get to IP Geo Lookup API (via Proxy)
-                  try {
-                    final ProxyData proxyData =
-                        new ProxyData(
-                            String.format(
-                                "%s/%s.json", IPWhoisInfo.IP_WHOIS_INFO_API_PREFIX, ipAddr),
-                            RequestMethod.GET);
-                    final Response<JsonElement> response =
-                        NetworkUtils.getProxyService().proxy(proxyData).execute();
-                    NetworkUtils.checkResponseSuccessful(response);
-                    return JsonElementUtils.parseAs(response.body(), IPWhoisInfo.class);
-                  } catch (final Exception e) {
-                    e.printStackTrace();
-                    throw new DDWRTCompanionException(e);
-                  }
-                }
-              });
+                  new CacheLoader<>() {
+                    @Override
+                    public IPWhoisInfo load(@NonNull String ipAddr) {
+                      if (isNullOrEmpty(ipAddr)) {
+                        throw new IllegalArgumentException("IP Addr is invalid");
+                      }
+                      // Get to IP Geo Lookup API (via Proxy)
+                      try {
+                        final ProxyData proxyData =
+                                new ProxyData(
+                                        String.format(
+                                                "%s/%s.json", IPWhoisInfo.IP_WHOIS_INFO_API_PREFIX, ipAddr),
+                                        RequestMethod.GET);
+                        final Response<JsonElement> response =
+                                NetworkUtils.getProxyService(RouterCompanionApplication.getCurrentActivity())
+                                        .proxy(proxyData).execute();
+                        NetworkUtils.checkResponseSuccessful(response);
+                        return JsonElementUtils.parseAs(response.body(), IPWhoisInfo.class);
+                      } catch (final Exception e) {
+                        e.printStackTrace();
+                        throw new DDWRTCompanionException(e);
+                      }
+                    }
+                  });
 
   private LinearLayout contentView;
 

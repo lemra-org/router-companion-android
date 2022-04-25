@@ -193,14 +193,14 @@ public class MaoniFeedbackHandler implements Handler {
                 final String longLink =
                     String.format(
                         "https://%s.s3.amazonaws.com/%s/%s.png",
-                            AWSUtils.getS3BucketName(mContext), getAwsS3FeedbackFolder(), feedback.id);
+                        AWSUtils.getS3BucketName(mContext), getAwsS3FeedbackFolder(), feedback.id);
                 try {
                   final ShortLinksDataRequest gooGlData =
                       new ShortLinksDataRequest(new DynamicLinkInfo(longLink));
                   final Response<FirebaseDynamicLinksResponse> response =
-                      NetworkUtils.getFirebaseDynamicLinksService().shortLinks(
-                              FirebaseUtils.getFirebaseApiKey(mContext),
-                              gooGlData).execute();
+                      NetworkUtils.getFirebaseDynamicLinksService()
+                          .shortLinks(FirebaseUtils.getFirebaseApiKey(mContext), gooGlData)
+                          .execute();
                   NetworkUtils.checkResponseSuccessful(response);
                   screenshotCaptureUploadUrl = response.body().getShortLink();
                 } catch (final Exception e) {
@@ -239,10 +239,9 @@ public class MaoniFeedbackHandler implements Handler {
           // Upload to AWS S3
           final TransferObserver uploadObserver =
               transferUtility.upload(
-                      AWSUtils.getS3BucketName(mContext),
+                  AWSUtils.getS3BucketName(mContext),
                   String.format(
-                      "%s/%s/%s.txt",
-                          getAwsS3FeedbackFolder(), getAwsS3LogsFolder(), feedback.id),
+                      "%s/%s/%s.txt", getAwsS3FeedbackFolder(), getAwsS3LogsFolder(), feedback.id),
                   feedback.logsFile);
 
           // Save transfer ID
@@ -280,8 +279,8 @@ public class MaoniFeedbackHandler implements Handler {
                 final String longLink =
                     String.format(
                         "https://%s.s3.amazonaws.com/%s/%s/%s.txt",
-                            AWSUtils.getS3BucketName(mContext),
-                            getAwsS3FeedbackFolder(),
+                        AWSUtils.getS3BucketName(mContext),
+                        getAwsS3FeedbackFolder(),
                         getAwsS3LogsFolder(),
                         feedback.id);
                 try {
@@ -290,8 +289,7 @@ public class MaoniFeedbackHandler implements Handler {
                   final Response<FirebaseDynamicLinksResponse> response =
                       NetworkUtils.getFirebaseDynamicLinksService()
                           .shortLinks(
-                                  FirebaseUtils.getFirebaseApiKey(mContext),
-                                  shortLinksDataRequest)
+                              FirebaseUtils.getFirebaseApiKey(mContext), shortLinksDataRequest)
                           .execute();
                   NetworkUtils.checkResponseSuccessful(response);
                   logsUrl = response.body().getShortLink();
@@ -552,8 +550,10 @@ public class MaoniFeedbackHandler implements Handler {
           TextView.BufferType.EDITABLE);
     }
 
-    mDoorbellAppId = ContextUtils.getConfigProperty(mContext, R.string.MAONI_FEEDBACK_DOORBELL_IO_APP_ID, "");
+    mDoorbellAppId =
+        ContextUtils.getConfigProperty(mContext, R.string.MAONI_FEEDBACK_DOORBELL_IO_APP_ID, "");
     mDoorbellApiKey = \"fake-key\";
+        ContextUtils.getConfigProperty(mContext, R.string.MAONI_FEEDBACK_DOORBELL_IO_API_KEY, "");
   }
 
   @Override
@@ -628,14 +628,14 @@ public class MaoniFeedbackHandler implements Handler {
   @NonNull
   private String getAwsS3FeedbackFolder() {
     return Objects.requireNonNull(
-            ContextUtils.getConfigProperty(mContext, "MAONI_FEEDBACK_DOORBELL_IO_S3_FEEDBACKS_FOLDER",
-                    "feedbacks"));
+        ContextUtils.getConfigProperty(
+            mContext, "MAONI_FEEDBACK_DOORBELL_IO_S3_FEEDBACKS_FOLDER", "feedbacks"));
   }
 
   @NonNull
   private String getAwsS3LogsFolder() {
     return Objects.requireNonNull(
-            ContextUtils.getConfigProperty(mContext, "MAONI_FEEDBACK_DOORBELL_IO_S3_LOGS_FOLDER",
-                    "_logs"));
+        ContextUtils.getConfigProperty(
+            mContext, "MAONI_FEEDBACK_DOORBELL_IO_S3_LOGS_FOLDER", "_logs"));
   }
 }

@@ -48,7 +48,6 @@ import org.rm3l.router_companion.utils.FirebaseUtils
 import org.rm3l.router_companion.utils.NetworkUtils
 import org.rm3l.router_companion.utils.Utils
 import org.rm3l.router_companion.utils.customtabs.CustomTabActivityHelper
-import org.rm3l.router_companion.utils.kotlin.getConfigProperty
 import org.rm3l.router_companion.utils.notifications.NOTIFICATION_GROUP_GENERAL_UPDATES
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils

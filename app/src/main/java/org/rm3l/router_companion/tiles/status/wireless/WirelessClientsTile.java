@@ -118,6 +118,7 @@ import java.util.concurrent.TimeUnit;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
+import org.rm3l.router_companion.RouterCompanionApplication;
 import org.rm3l.router_companion.actions.ActionManager;
 import org.rm3l.router_companion.actions.DisableWANAccessRouterAction;
 import org.rm3l.router_companion.actions.EnableWANAccessRouterAction;
@@ -793,7 +794,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                                 macAddr.replaceAll(":", "-").substring(0, 8)),
                             RequestMethod.GET);
                     final Response<JsonElement> response =
-                        NetworkUtils.getProxyService().proxy(proxyData).execute();
+                        NetworkUtils.getProxyService(RouterCompanionApplication.getCurrentActivity()).proxy(proxyData).execute();
                     NetworkUtils.checkResponseSuccessful(response);
                     return JsonElementUtils.parseAs(response.body(), MACOUIVendor.class);
                   } catch (final Exception e) {
