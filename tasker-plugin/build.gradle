@@ -136,6 +136,12 @@ android {
                 versionName +
                 "\n----------------------------\n")
 
+        rootProject.localProperties.each { key, val ->
+            resValue("string",
+                    key.toUpperCase().replaceAll("\\.", "_").replaceAll("-", "_"),
+                    val.toString())
+        }
+
 //        playConfig = playConfigs.defaultAccountConfig
     }
 
@@ -183,6 +189,11 @@ android {
             proguardFiles 'proguard-rules-r8.pro'
             signingConfig signingConfigs.release
             zipAlignEnabled true
+            rootProject.localProperties.each { key, val ->
+                resValue("string",
+                        key.toUpperCase().replaceAll("\\.", "_").replaceAll("-", "_"),
+                        val.toString())
+            }
         }
         debug {
             // Disable fabric build ID generation for debug builds
@@ -190,6 +201,11 @@ android {
             minifyEnabled true
             proguardFiles 'proguard-rules-r8.pro'
             zipAlignEnabled true
+            rootProject.localProperties.each { key, val ->
+                resValue("string",
+                        key.toUpperCase().replaceAll("\\.", "_").replaceAll("-", "_"),
+                        val.toString())
+            }
         }
     }
 

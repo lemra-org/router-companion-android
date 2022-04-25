@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import needle.UiRelatedProgressTask;
 import okhttp3.ResponseBody;
@@ -45,6 +46,8 @@ import org.rm3l.router_companion.tasker.api.urlshortener.firebase.dynamiclinks.r
 import org.rm3l.router_companion.tasker.api.urlshortener.firebase.dynamiclinks.resources.ShortLinksDataResponse;
 import org.rm3l.router_companion.tasker.multithreading.MultiThreadingManager;
 import org.rm3l.router_companion.tasker.utils.AWSUtils;
+import org.rm3l.router_companion.tasker.utils.ContextUtils;
+import org.rm3l.router_companion.tasker.utils.FirebaseUtils;
 import org.rm3l.router_companion.tasker.utils.NetworkUtils;
 import org.rm3l.router_companion.tasker.utils.Utils;
 import retrofit2.Response;
@@ -148,8 +151,8 @@ public class FeedbackHandler implements Handler {
           // Upload to AWS S3
           final TransferObserver uploadObserver =
               transferUtility.upload(
-                  Constants.AWS_S3_BUCKET_NAME,
-                  String.format("%s/%s.png", Constants.AWS_S3_FEEDBACKS_FOLDER_NAME, feedback.id),
+                  AWSUtils.getS3BucketName(mContext),
+                  String.format("%s/%s.png", getAwsS3FeedbackFolder(), feedback.id),
                   feedback.screenshotFile);
 
           // Save transfer ID
@@ -187,14 +190,14 @@ public class FeedbackHandler implements Handler {
                 screenshotCaptureUploadUrl =
                     String.format(
                         "https://%s.s3.amazonaws.com/%s/%s.png",
-                        Constants.AWS_S3_BUCKET_NAME,
-                        Constants.AWS_S3_FEEDBACKS_FOLDER_NAME,
+                        AWSUtils.getS3BucketName(mContext),
+                        getAwsS3FeedbackFolder(),
                         feedback.id);
                 try {
                   final Response<ShortLinksDataResponse> response =
                       mFirebaseDynamicLinksService
                           .shortLinks(
-                              Constants.FIREBASE_API_KEY,
+                                  FirebaseUtils.getFirebaseApiKey(mContext),
                               new ShortLinksDataRequest()
                                   .setDynamicLinkInfo(
                                       new DynamicLinkInfo().setLink(screenshotCaptureUploadUrl)))
@@ -236,11 +239,11 @@ public class FeedbackHandler implements Handler {
           // Upload to AWS S3
           final TransferObserver uploadObserver =
               transferUtility.upload(
-                  Constants.AWS_S3_BUCKET_NAME,
+                  AWSUtils.getS3BucketName(mContext),
                   String.format(
                       "%s/%s/%s.txt",
-                      Constants.AWS_S3_FEEDBACKS_FOLDER_NAME,
-                      Constants.AWS_S3_LOGS_FOLDER_NAME,
+                      getAwsS3FeedbackFolder(),
+                      getAwsS3LogsFolder(),
                       feedback.id),
                   feedback.logsFile);
 
@@ -279,15 +282,15 @@ public class FeedbackHandler implements Handler {
                 logsUrl =
                     String.format(
                         "https://%s.s3.amazonaws.com/%s/%s/%s.txt",
-                        Constants.AWS_S3_BUCKET_NAME,
-                        Constants.AWS_S3_FEEDBACKS_FOLDER_NAME,
-                        Constants.AWS_S3_LOGS_FOLDER_NAME,
+                        AWSUtils.getS3BucketName(mContext),
+                        getAwsS3FeedbackFolder(),
+                        getAwsS3LogsFolder(),
                         feedback.id);
                 try {
                   final Response<ShortLinksDataResponse> response =
                       mFirebaseDynamicLinksService
                           .shortLinks(
-                              Constants.FIREBASE_API_KEY,
+                                  FirebaseUtils.getFirebaseApiKey(mContext),
                               new ShortLinksDataRequest()
                                   .setDynamicLinkInfo(new DynamicLinkInfo().setLink(logsUrl)))
                           .execute();
@@ -306,9 +309,7 @@ public class FeedbackHandler implements Handler {
         // 2. Open App in Doorbell
         publishProgress(OPENING_APPLICATION);
         final Response<ResponseBody> openResponse =
-            mDoorbellService
-                .openApplication(Constants.DOORBELL_APPID, Constants.DOORBELL_APIKEY)
-                .execute();
+            mDoorbellService.openApplication(mDoorbellAppId, mDoorbellApiKey).execute();
         NetworkUtils.checkResponseSuccessful(openResponse);
 
         if (openResponse.code() != 201) {
@@ -345,8 +346,8 @@ public class FeedbackHandler implements Handler {
         final Response<ResponseBody> response =
             mDoorbellService
                 .submitFeedbackForm(
-                    Constants.DOORBELL_APPID,
-                    Constants.DOORBELL_APIKEY,
+                    mDoorbellAppId,
+                    mDoorbellApiKey,
                     new DoorbellSubmitRequest()
                         .setEmail(emailText)
                         .setMessage(
@@ -457,7 +458,7 @@ public class FeedbackHandler implements Handler {
           } else {
             Toast.makeText(
                     mContext,
-                    "Error" + (responseBody != null ? (": " + responseBody.toString()) : ""),
+                    "Error" + (responseBody != null ? (": " + responseBody) : ""),
                     Toast.LENGTH_SHORT)
                 .show();
           }
@@ -490,9 +491,12 @@ public class FeedbackHandler implements Handler {
 
   private static final GsonBuilder GSON_BUILDER = new GsonBuilder();
 
-  private Activity mContext;
+  private int mDoorbellAppId;
+  private String mDoorbellApiKey;
 
-  private DoorbellService mDoorbellService;
+  private final Activity mContext;
+
+  private final DoorbellService mDoorbellService;
 
   private EditText mEmail;
 
@@ -500,7 +504,7 @@ public class FeedbackHandler implements Handler {
 
   private final SharedPreferences mGlobalPreferences;
 
-  private FirebaseDynamicLinksService mFirebaseDynamicLinksService;
+  private final FirebaseDynamicLinksService mFirebaseDynamicLinksService;
 
   public FeedbackHandler(Activity context) {
     this.mContext = context;
@@ -516,8 +520,8 @@ public class FeedbackHandler implements Handler {
   @Override
   public void onCreate(@NonNull View rootView, Bundle savedInstanceState) {
     mEmailInputLayout =
-        (TextInputLayout) rootView.findViewById(R.id.activity_feedback_email_input_layout);
-    mEmail = (EditText) rootView.findViewById(R.id.activity_feedback_email);
+            rootView.findViewById(R.id.activity_feedback_email_input_layout);
+    mEmail = rootView.findViewById(R.id.activity_feedback_email);
 
     // Load previously used email addr
     String emailAddr = null;
@@ -525,6 +529,14 @@ public class FeedbackHandler implements Handler {
       emailAddr = mGlobalPreferences.getString(MAONI_EMAIL, "");
     }
     mEmail.setText(emailAddr, TextView.BufferType.EDITABLE);
+
+    mDoorbellAppId =
+        Integer.parseInt(
+                Objects.requireNonNull(ContextUtils.getConfigProperty(
+                        mContext, R.string.MAONI_FEEDBACK_DOORBELL_IO_APP_ID, "0")));
+    mDoorbellApiKey = \"fake-key\";
+            Objects.requireNonNull(
+        ContextUtils.getConfigProperty(mContext, R.string.MAONI_FEEDBACK_DOORBELL_IO_API_KEY, ""));
   }
 
   @Override
@@ -582,5 +594,21 @@ public class FeedbackHandler implements Handler {
       }
     }
     return true;
+  }
+
+
+
+  @NonNull
+  private String getAwsS3FeedbackFolder() {
+    return Objects.requireNonNull(
+            ContextUtils.getConfigProperty(
+                    mContext, "MAONI_FEEDBACK_DOORBELL_IO_S3_FEEDBACKS_FOLDER", "feedbacks"));
+  }
+
+  @NonNull
+  private String getAwsS3LogsFolder() {
+    return Objects.requireNonNull(
+            ContextUtils.getConfigProperty(
+                    mContext, "MAONI_FEEDBACK_DOORBELL_IO_S3_LOGS_FOLDER", "_logs"));
   }
 }

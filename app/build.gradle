@@ -140,6 +140,12 @@ android {
                 versionName +
                 "\n----------------------------\n")
 
+        rootProject.localProperties.each { key, val ->
+            resValue("string",
+                    key.toUpperCase().replaceAll("\\.", "_").replaceAll("-", "_"),
+                    val.toString())
+        }
+
         //        testInstrumentationRunner "android.support.multidex.MultiDexTestRunner"
 
 //        playConfig = playConfigs.defaultAccountConfig
