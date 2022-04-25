@@ -10,7 +10,9 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.ContextWrapper
 import android.content.Intent
+import android.content.res.Resources
 import android.os.Handler
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +21,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.IdRes
+import androidx.annotation.StringRes
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY
 import org.rm3l.router_companion.RouterCompanionAppConstants.DEFAULT_THEME
@@ -124,4 +127,24 @@ inline fun <reified T : Activity> Activity.intentFor(intentUpdater: (Intent) -> 
     val intent = Intent(this, T::class.java)
     intentUpdater(intent)
     return intent
+}
+
+fun Context.getConfigProperty(identifier: String, defaultValue: String? = null): String? {
+    val id = this.resources.getIdentifier(identifier, "string", this.packageName)
+    if (id == 0) {
+        return defaultValue
+    }
+    return try {
+        this.resources.getString(id)
+    } catch (rnfe: Resources.NotFoundException) {
+        Log.d(this.javaClass.simpleName, "Resource $identifier of type string not found in package ${this.packageName}", rnfe)
+        defaultValue
+    }
+}
+
+fun Context.getConfigProperty(@StringRes identifier: Int, defaultValue: String? = null) = try {
+    this.resources.getString(identifier)
+} catch (rnfe: Resources.NotFoundException) {
+    Log.d(this.javaClass.simpleName, "Resource $identifier of type string not found in package ${this.packageName}", rnfe)
+    defaultValue
 }

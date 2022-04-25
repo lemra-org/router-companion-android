@@ -231,18 +231,6 @@ public final class RouterCompanionAppConstants {
 
   public static final int MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION = 5;
 
-  // TODO Externalize
-  public static final String AWS_COGNITO_IDENTITY_POOL_ID =
-      "us-east-1:2d76d7a3-17f4-4c78-a5c4-ed3a548fe45b";
-
-  public static final Regions AWS_COGNITO_IDENTITY_POOL_REGION = Regions.US_EAST_1;
-
-  public static final String AWS_S3_BUCKET_NAME = "dd-wrt-companion";
-
-  public static final String AWS_S3_FEEDBACKS_FOLDER_NAME = "feedbacks";
-
-  public static final String AWS_S3_LOGS_FOLDER_NAME = "_logs";
-
   public static final String AWS_S3_FEEDBACK_PENDING_TRANSFER_PREF = "feedbacks_pending_transfer";
 
   public static final String PUBLIC_ROADMAP_WEBSITE = "https://ddwrt-companion.app/roadmap";

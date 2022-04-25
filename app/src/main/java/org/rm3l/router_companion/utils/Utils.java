@@ -98,12 +98,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.maoni.Maoni;
+import org.rm3l.maoni.Maoni.Builder;
+import org.rm3l.maoni.email.MaoniEmailListener;
 import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.RouterCompanionApplication;
 import org.rm3l.router_companion.donate.DonateActivity;
@@ -958,24 +961,33 @@ public final class Utils {
   }
 
   public static void openFeedbackForm(final Activity activity, final Router router) {
-    final MaoniFeedbackHandler handlerForMaoni = new MaoniFeedbackHandler(activity, router);
     final List<String> sharedPreferencesList = new ArrayList<>();
     sharedPreferencesList.add(RouterCompanionAppConstants.DEFAULT_SHARED_PREFERENCES_KEY);
     if (router != null) {
       sharedPreferencesList.add(router.getPreferencesFile());
     }
-    new Maoni.Builder(activity, RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY)
-        .withTheme(
-            ColorUtils.Companion.isThemeLight(activity)
-                ? R.style.AppThemeLight_StatusBarTransparent
-                : R.style.AppThemeDark_StatusBarTransparent)
-        .withSharedPreferences(
-            sharedPreferencesList.toArray(new String[sharedPreferencesList.size()]))
-        .withWindowTitle("Send Feedback")
-        .withExtraLayout(R.layout.activity_feedback_maoni)
-        .withHandler(handlerForMaoni)
-        .build()
-        .start(activity);
+    final Builder maoniBuilder = new Builder(activity, RouterCompanionAppConstants.FILEPROVIDER_AUTHORITY)
+            .withTheme(
+                    ColorUtils.Companion.isThemeLight(activity)
+                            ? R.style.AppThemeLight_StatusBarTransparent
+                            : R.style.AppThemeDark_StatusBarTransparent)
+            .withSharedPreferences(sharedPreferencesList.toArray(new String[0]))
+            .withWindowTitle("Send Feedback")
+            .withExtraLayout(R.layout.activity_feedback_maoni);
+    switch (Objects.requireNonNull(ContextUtils.getConfigProperty(activity, "MAONI_FEEDBACK_PROVIDER", "")).toLowerCase()) {
+      case "doorbell.io":
+        maoniBuilder.withHandler(new MaoniFeedbackHandler(activity, router));
+        break;
+      case "email":
+        final String toAddressesString =  Objects.requireNonNull(ContextUtils.getConfigProperty(activity, "MAONI_FEEDBACK_EMAIL_TO_ADDRESSES", ""));
+        maoniBuilder.withListener(new MaoniEmailListener(activity, toAddressesString.split(",")));
+        break;
+      default:
+        //Any defaults set by Maoni
+        break;
+    }
+
+    maoniBuilder.build().start(activity);
   }
 
   public static void openFeedbackForm(final Activity activity, final String routerUuid) {

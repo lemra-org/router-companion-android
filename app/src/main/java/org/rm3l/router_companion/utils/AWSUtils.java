@@ -21,9 +21,6 @@
  */
 package org.rm3l.router_companion.utils;
 
-import static org.rm3l.router_companion.RouterCompanionAppConstants.AWS_COGNITO_IDENTITY_POOL_ID;
-import static org.rm3l.router_companion.RouterCompanionAppConstants.AWS_COGNITO_IDENTITY_POOL_REGION;
-
 import android.content.Context;
 import androidx.annotation.NonNull;
 import com.amazonaws.auth.AWSCredentialsProvider;
@@ -34,6 +31,8 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import java.util.Objects;
+import org.rm3l.router_companion.utils.kotlin.ContextUtils;
 
 /** Created by rm3l on 01/08/16. */
 public final class AWSUtils {
@@ -49,7 +48,10 @@ public final class AWSUtils {
     if (credsProvider == null) {
       credsProvider =
           new CognitoCachingCredentialsProvider(
-              context, AWS_COGNITO_IDENTITY_POOL_ID, AWS_COGNITO_IDENTITY_POOL_REGION);
+              context,
+                  ContextUtils.getConfigProperty(context, "AWS_COGNITO_IDENTITY_POOL_ID", null),
+                  Regions.fromName(Objects.requireNonNull(
+                          ContextUtils.getConfigProperty(context, "AWS_COGNITO_IDENTITY_POOL_REGION", "us-east-1"))));
     }
     return credsProvider;
   }
@@ -60,7 +62,8 @@ public final class AWSUtils {
       s3Client =
           new AmazonS3Client(
               getAWSCredentialsProvider(context), Region.getRegion(Regions.DEFAULT_REGION));
-      s3Client.setRegion(Region.getRegion(AWS_COGNITO_IDENTITY_POOL_REGION));
+      s3Client.setRegion(Region.getRegion(Objects.requireNonNull(
+              ContextUtils.getConfigProperty(context, "AWS_COGNITO_IDENTITY_POOL_REGION", "us-east-1"))));
     }
     return s3Client;
   }
@@ -73,6 +76,11 @@ public final class AWSUtils {
           TransferUtility.builder().s3Client(getAmazonS3Client(context)).context(context).build();
     }
     return s3TransferUtility;
+  }
+
+  @NonNull
+  public static String getS3BucketName(final Context context) {
+    return Objects.requireNonNull(ContextUtils.getConfigProperty(context, "AWS_S3_BUCKET", "dd-wrt-companion"));
   }
 
   private AWSUtils() {}

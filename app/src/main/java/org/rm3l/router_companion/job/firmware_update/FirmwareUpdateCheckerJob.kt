@@ -44,9 +44,11 @@ import org.rm3l.router_companion.multithreading.MultiThreadingManager
 import org.rm3l.router_companion.resources.conn.NVRAMInfo
 import org.rm3l.router_companion.resources.conn.Router
 import org.rm3l.router_companion.tiles.status.router.StatusRouterStateTile
+import org.rm3l.router_companion.utils.FirebaseUtils
 import org.rm3l.router_companion.utils.NetworkUtils
 import org.rm3l.router_companion.utils.Utils
 import org.rm3l.router_companion.utils.customtabs.CustomTabActivityHelper
+import org.rm3l.router_companion.utils.kotlin.getConfigProperty
 import org.rm3l.router_companion.utils.notifications.NOTIFICATION_GROUP_GENERAL_UPDATES
 import org.rm3l.router_companion.utils.snackbar.SnackbarCallback
 import org.rm3l.router_companion.utils.snackbar.SnackbarUtils
@@ -135,6 +137,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                             dynamicLinkInfo = DynamicLinkInfo(link = newReleaseDLLink)
                                         )
                                         val response = NetworkUtils.getFirebaseDynamicLinksService().shortLinks(
+                                            FirebaseUtils.getFirebaseApiKey(activity),
                                             shortLinksDataRequest
                                         ).execute()
                                         NetworkUtils.checkResponseSuccessful(response)
@@ -262,6 +265,8 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                 return true
             }
 
+            val firebaseApiKey = \"fake-key\";
+
             // Now keep only routers for which the user has accepted notifications
             val forceCheck = params?.extras?.getBoolean(MANUAL_REQUEST, false)
             val releaseAndGooGlLinksMap: MutableMap<String, String?> = mutableMapOf()
@@ -319,6 +324,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                                             dynamicLinkInfo = DynamicLinkInfo(link = newReleaseDLLink)
                                         )
                                         val response = firebaseDynamicLinksService.shortLinks(
+                                            firebaseApiKey,
                                             shortLinksDataRequest
                                         ).execute()
                                         NetworkUtils.checkResponseSuccessful(response)

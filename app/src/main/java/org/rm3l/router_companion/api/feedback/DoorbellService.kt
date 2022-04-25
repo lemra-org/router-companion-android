@@ -18,18 +18,24 @@ interface DoorbellService {
 
     @Headers("Content-Type: application/json")
     @POST("applications/{appId}/open")
-    fun openApplication(@Path("appId") appId: String,
-                        @Query("key") apiKey: String): Call<ResponseBody>
+    fun openApplication(
+        @Path("appId") appId: String,
+        @Query("key") apiKey: String
+    ): Call<ResponseBody>
 
     @Headers("Content-Type: application/json")
     @POST("applications/{appId}/submit")
-    fun submitFeedbackForm(@Path("appId") appId: String,
-                           @Query("key") apiKey: String,
-                           @Body request: DoorbellSubmitRequest): Call<ResponseBody>
+    fun submitFeedbackForm(
+        @Path("appId") appId: String,
+        @Query("key") apiKey: String,
+        @Body request: DoorbellSubmitRequest
+    ): Call<ResponseBody>
 
     @Multipart
     @POST("applications/{appId}/upload")
-    fun upload(@Path("appId") appId: String,
-               @Query("key") apiKey: String,
-               @Part("files[]\"; filename=\"screenshot.png\" ") filename: RequestBody): Call<Array<String>>
+    fun upload(
+        @Path("appId") appId: String,
+        @Query("key") apiKey: String,
+        @Part("files[]\"; filename=\"screenshot.png\" ") filename: RequestBody
+    ): Call<Array<String>>
 }
