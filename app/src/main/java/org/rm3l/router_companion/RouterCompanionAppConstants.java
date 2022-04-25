@@ -55,66 +55,15 @@ public final class RouterCompanionAppConstants {
   public static final Charset CHARSET = Charsets.UTF_8;
 
   // Defaut ato-refresh interval: 5 minutes
-  public static final long TILE_REFRESH_SECONDS = 5 * 60l;
+  public static final long TILE_REFRESH_SECONDS = 5 * 60L;
 
   public static final String AD_FREE_APP_APPLICATION_ID =
       BuildConfig.APPLICATION_ID.replaceAll(".free", "");
-
-  // FIXME JUST FOR TESTS
-  public static final String MOBFOX_INVENTORY_HASH = "";
-
-  public static final String ADMOB_APP_ID = "xxx";
-  public static final String ADMOB_INTERSTITIAL_AD_UNIT_ID_DEBUG =
-      "xxx";
-  public static final String ADMOB_INTERSTITIAL_SPLASH_ACTIVITY_AD_UNIT_ID =
-      "xxx";
-  public static final String ADMOB_BANNER_AD_UNIT_ID_DEBUG =
-      "xxx";
-  public static final String ADMOB_BANNER_ROUTER_COMPANION_ANDROID_AD_UNIT_ID_DEBUG =
-      "xxx";
-
-  //    public static final String MOBFOX_INVENTORY_HASH = "xxx";
-  public static final String MOBFOX_INVENTORY_ID = "xxx";
-
-  public static final String MOBFOX_REQUEST_URL = "http://my.mobfox.com/request.php";
-
-  public static final String AVOCARROT_APIKEY = \"fake-api-key\";
-
-  public static final String AVOCARROT_FEED_PLACEMENT_KEY = \"fake-key\";
-      
-
-  public static final String AVOCARROT_LIST_PLACEMENT_KEY = \"fake-key\";
-      
-
-  public static final String AVOCARROT_INTERSTITIAL_PLACEMENT_KEY = \"fake-key\";
-      
-
-  // This is only used to check feedback submitted by end-users
-  public static final String PUBKEY = \"fake-key\";
-      "s"
-          + "AY5ab5Nbu"
-          + "6fMj7xRnc"
-          + "dGgoNSvYM"
-          + "BT6B42r2p"
-          + "bp/mABgAz"
-          + "8"
-          + "I";
 
   public static final String REMOTE_HELP_WEBSITE = "https://help.ddwrt-companion.app";
 
   public static final String REMOTE_HELP_WEBSITE_CHANGELOG =
       "https://help.ddwrt-companion.app/doc/release-notes.html";
-
-  public static final int DOORBELL_APPID = 0;
-
-  public static final String DOORBELL_APIKEY = \"fake-api-key\";
-      
-
-  public static final String DOORBELL_APIKEY_UPLOAD = \"fake-api-key\";
-      
-
-  // FIXME Update prior to release
-  public static final boolean TEST_MODE = false;
 
   public static final long MAX_PRIVKEY_SIZE_BYTES = 300 * 1024L;
 
@@ -175,9 +124,7 @@ public final class RouterCompanionAppConstants {
 
   public static final String NOTIFICATIONS_CHOICE_PREF = "notifications.choice";
 
-  public static final long DEFAULT_THEME = 30l;
-
-  public static final String ACRA_BACKEND_URL = "https://collector.tracepot.com/75ca4f41";
+  public static final long DEFAULT_THEME = 30L;
 
   public static final String IS_FIRST_LAUNCH_PREF_KEY = \"fake-key\";
 
@@ -186,12 +133,8 @@ public final class RouterCompanionAppConstants {
 
   public static final String OLD_IS_FIRST_LAUNCH_PREF_KEY = \"fake-key\";
 
-  public static final String TRACEPOT_DEVELOP_MODE = "TRACEPOT_DEVELOP_MODE";
-
   public static final String DEFAULT_SHARED_PREFERENCES_KEY = \"fake-key\";
       (BuildConfig.APPLICATION_ID + "___preferences");
-
-  public static final String MAC_OUI_SEARCH_URL = "http://standards.ieee.org/cgi-bin/ouisearch?";
 
   public static final String WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME =
       "wrtbwmon_ddwrtcompanion.sh";
@@ -213,15 +156,9 @@ public final class RouterCompanionAppConstants {
   public static final String FILEPROVIDER_AUTHORITY =
       (BuildConfig.APPLICATION_ID + ".fileprovider");
 
-  // Disabled - no longer needed as it does not seem to be that profitable
-  @Deprecated
-  public static final String ADBUDDIZ_PUBLISHER_KEY = \"fake-key\";
-
   public static final String SUPPORT_WEBSITE = "http://rm3l.org/apps/ddwrt-companion/ddwrt/home";
 
   public static final String ACRA_USER_EMAIL = "acra.user.email";
-
-  public static final String ACRA_DEVICEID_ENABLE = "acra.deviceid.enable";
 
   public static final String ACRA_ENABLE = "acra.enable";
 
@@ -231,8 +168,6 @@ public final class RouterCompanionAppConstants {
 
   public static final int RATING_INITIAL_LAUNCH_COUNT = 7;
 
-  public static final String AD_LAST_INTERSTITIAL_PREF = "ad.lastInterstitial";
-
   public static final String UNKNOWN = "UNKNOWN";
 
   public static final String OK = "OK";
@@ -241,7 +176,7 @@ public final class RouterCompanionAppConstants {
 
   public static final String DEFAULT_HTTP_PORT = "80";
 
-  public static final long[] NO_VIBRATION_PATTERN = new long[] {0l};
+  public static final long[] NO_VIBRATION_PATTERN = new long[] {0L};
 
   public static final String[] CLOUDINARY_OPTS = new String[] {"w_270", "h_150", "e_blur"};
 
@@ -277,9 +212,6 @@ public final class RouterCompanionAppConstants {
 
   public static final String ROUTER_SPEED_TEST_SERVER_RANDOM = "_random_";
 
-  public static final String ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION =
-      "routerSpeedTest.withCurrentConnection";
-
   // TODO Enhancement: allow user to provide their own tile source (along with any creds)
   public static final OnlineTileSourceBase TILE_SOURCE = TileSourceFactory.DEFAULT_TILE_SOURCE;
 
@@ -292,25 +224,14 @@ public final class RouterCompanionAppConstants {
 
   public static final String SPACE = " ";
 
-  public static final String SHARP = "#";
-
-  public static final String TO_REMOVE = "TO_REMOVE";
-
   public static final String DEMO_ROUTER_DNS = BuildConfig.APPLICATION_ID;
-
-  public static final long DELAY_BETWEEN_TWO_CONSECUTIVE_INTERSTITIAL_ADS_MINUTES = 1L;
-
-  public static final String IP_TO_PING_TO_CHECK_INTERNET_CONNECTIVITY = "8.8.8.8";
-
-  public static final long DRAWER_CLOSE_DELAY_MS = 10L;
-
-  public static final String GEO_IP_API_SERVER = "http://api.petabyet.com/geoip/";
 
   public static final String COUNTRY_API_SERVER_FLAG =
       "http://www.geognos.com/api/en/countries/flag";
 
   public static final int MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION = 5;
 
+  // TODO Externalize
   public static final String AWS_COGNITO_IDENTITY_POOL_ID =
       "us-east-1:2d76d7a3-17f4-4c78-a5c4-ed3a548fe45b";
 
@@ -324,22 +245,14 @@ public final class RouterCompanionAppConstants {
 
   public static final String AWS_S3_FEEDBACK_PENDING_TRANSFER_PREF = "feedbacks_pending_transfer";
 
-  public static final String Q_A_WEBSITE = "https://www.codewake.com/p/ddwrt-companion";
-
   public static final String PUBLIC_ROADMAP_WEBSITE = "https://ddwrt-companion.app/roadmap";
-
-  // #528 : goo.gl is now deprecated => use Firebase DynamicLinks instead
-  @Deprecated
-  public static final String URL_SHORTENER_API_BASE_URL =
-      "https://www.googleapis.com/urlshortener/v1/";
-
-  @Deprecated public static final String GOOGLE_API_KEY = \"fake-api-key\";
 
   public static final String FIREBASE_DYNAMIC_LINKS_BASE_URL =
       "https://firebasedynamiclinks.googleapis.com/v1/";
 
   public static final String IS_GD_URL_SHORTENER_BASE_URL = "https://is.gd/";
 
+  // TODO Externalize
   public static final String FIREBASE_API_KEY = \"fake-api-key\";
 
   public static final String UNIT_BYTE = "B";
@@ -355,19 +268,20 @@ public final class RouterCompanionAppConstants {
 
   public static final String DDWRT_RELEASE_URL_FORMAT = (DDWRT_RELEASE_BASE_URL + "/%s/%s");
 
+  // TODO Externalize
   public static final String PROXY_SERVER_BASE_URL = "https://reverse-proxy.services.rm3l.org";
+
+  // TODO Externalize
   public static final String PROXY_SERVER_PASSWORD_AUTH_TOKEN_ENCODED =
       "Basic xxx";
 
+  // TODO Externalize
   public static final String SERVICE_NAMES_PORT_NUMBERS_API_SERVER_BASE_URL =
       "https://service-names-port-numbers.services.rm3l.org";
+
+  // TODO Externalize
   public static final String SERVICE_NAMES_PORT_NUMBERS_API_SERVER_PASSWORD_AUTH_TOKEN_ENCODED =
       "Basic xxx";
-
-  public static final String USER_AGENT =
-      BuildConfig.APPLICATION_ID + " v " + BuildConfig.VERSION_NAME;
-  public static final String USER_AGENT_HTTP_HEADER =
-      "User-Agent: " + BuildConfig.APPLICATION_ID + " v " + BuildConfig.VERSION_NAME;
 
   @NonNull
   public static File getClientsUsageDataFile(

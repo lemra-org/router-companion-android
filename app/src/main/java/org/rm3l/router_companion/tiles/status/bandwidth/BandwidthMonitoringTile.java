@@ -58,7 +58,6 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 import org.rm3l.ddwrt.R;
-import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.exceptions.DDWRTNoDataException;
 import org.rm3l.router_companion.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.router_companion.resources.None;
@@ -239,8 +238,6 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
   public static final int MAX_DATA_POINTS = 100;
 
   // END TESTS ONLY
-  // TODO TESTS ONLY
-  private static final boolean BW_MONIT_TEST = true;
 
   private static final String LOG_TAG = BandwidthMonitoringTile.class.getSimpleName();
 
@@ -257,7 +254,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
 
   public void fillIfaceDataPoint(@NonNull final String iface) {
 
-    if (RouterCompanionAppConstants.TEST_MODE || BW_MONIT_TEST || Utils.isDemoRouter(mRouter)) {
+    if (Utils.isDemoRouter(mRouter)) {
       // FIXME TEST MODE
       final double random = new Random().nextDouble() * 1024;
 

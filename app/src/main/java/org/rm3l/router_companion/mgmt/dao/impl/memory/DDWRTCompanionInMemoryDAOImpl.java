@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import org.rm3l.router_companion.RouterCompanionAppConstants;
 import org.rm3l.router_companion.common.resources.audit.ActionLog;
 import org.rm3l.router_companion.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.router_companion.resources.SpeedTestResult;
@@ -56,9 +55,6 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
   private final Context ctx;
 
   public DDWRTCompanionInMemoryDAOImpl() {
-    if (RouterCompanionAppConstants.TEST_MODE) {
-      populateDB();
-    }
     ctx = null;
   }
 

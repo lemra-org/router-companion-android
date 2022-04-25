@@ -306,7 +306,9 @@ public class MaoniFeedbackHandler implements Handler {
         // 2. Open App in Doorbell
         publishProgress(OPENING_APPLICATION);
         final Response<ResponseBody> openResponse =
-            NetworkUtils.getDoorbellService().openApplication().execute();
+            NetworkUtils.getDoorbellService()
+                .openApplication(mDoorbellAppId, mDoorbellApiKey)
+                .execute();
         NetworkUtils.checkResponseSuccessful(openResponse);
 
         if (openResponse.code() != 201) {
@@ -369,7 +371,9 @@ public class MaoniFeedbackHandler implements Handler {
         doorbellSubmitRequest.setProperties(properties);
 
         final Response<ResponseBody> response =
-            NetworkUtils.getDoorbellService().submitFeedbackForm(doorbellSubmitRequest).execute();
+            NetworkUtils.getDoorbellService()
+                .submitFeedbackForm(mDoorbellAppId, mDoorbellApiKey, doorbellSubmitRequest)
+                .execute();
         NetworkUtils.checkResponseSuccessful(response);
 
         return new AbstractMap.SimpleImmutableEntry<>(response, null);
@@ -456,7 +460,7 @@ public class MaoniFeedbackHandler implements Handler {
           } else {
             Toast.makeText(
                     mContext,
-                    "Error" + (responseBody != null ? (": " + responseBody.toString()) : ""),
+                    "Error" + (responseBody != null ? (": " + responseBody) : ""),
                     Toast.LENGTH_SHORT)
                 .show();
           }
@@ -489,7 +493,10 @@ public class MaoniFeedbackHandler implements Handler {
 
   private static final GsonBuilder GSON_BUILDER = new GsonBuilder();
 
-  private Activity mContext;
+  private String mDoorbellAppId;
+  private String mDoorbellApiKey;
+
+  private final Activity mContext;
 
   private EditText mEmail;
 
@@ -497,7 +504,7 @@ public class MaoniFeedbackHandler implements Handler {
 
   private final SharedPreferences mGlobalPreferences;
 
-  private Router mRouter;
+  private final Router mRouter;
 
   private EditText mRouterInfo;
 
@@ -512,11 +519,11 @@ public class MaoniFeedbackHandler implements Handler {
   @Override
   public void onCreate(@NonNull View rootView, Bundle savedInstanceState) {
     mEmailInputLayout =
-        (TextInputLayout) rootView.findViewById(R.id.activity_feedback_email_input_layout);
-    mEmail = (EditText) rootView.findViewById(R.id.activity_feedback_email);
+            rootView.findViewById(R.id.activity_feedback_email_input_layout);
+    mEmail = rootView.findViewById(R.id.activity_feedback_email);
 
     mRouterInfo =
-        (EditText) rootView.findViewById(R.id.activity_feedback_router_information_content);
+            rootView.findViewById(R.id.activity_feedback_router_information_content);
 
     // Load previously used email addr
     final String emailAddr;
@@ -542,6 +549,9 @@ public class MaoniFeedbackHandler implements Handler {
               routerPrefs.getString(NVRAMInfo.Companion.getCPU_MODEL(), "-")),
           TextView.BufferType.EDITABLE);
     }
+
+    mDoorbellAppId = mContext.getResources().getString(R.string.DOORBELL_APP_ID);
+    mDoorbellApiKey = \"fake-key\";
   }
 
   @Override

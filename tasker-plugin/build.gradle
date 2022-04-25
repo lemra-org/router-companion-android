@@ -153,7 +153,7 @@ android {
      * Flavors: this is because apps uploaded to Play Store will certainly be banned if
      * they contain link to billing platforms other than Google*/
     productFlavors {
-        generic {
+        dev {
             dimension "mode"
             //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
             //            buildConfigField "boolean", "DONATIONS", "false"
@@ -168,15 +168,6 @@ android {
             //            buildConfigField "boolean", "DONATIONS", "false"
             //            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
             //            buildConfigField "boolean", "DONATIONS_GOOGLE", "true"
-            //            buildConfigField "boolean", "WITH_ADS", "false"
-            //            buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
-        }
-        amazon {
-            dimension "mode"
-            //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
-            //            buildConfigField "boolean", "DONATIONS", "false"
-            //            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
-            //            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
             //            buildConfigField "boolean", "WITH_ADS", "false"
             //            buildConfigField "boolean", "WITH_INTERSTITIAL_ADS", "false"
         }

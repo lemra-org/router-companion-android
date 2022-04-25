@@ -58,7 +58,6 @@ buildscript {
     System.properties['com.android.build.gradle.overrideVersionCheck'] = 'true'
     repositories {
         google()
-        //jcenter()
         maven {
             url "https://plugins.gradle.org/m2/"
         }
@@ -91,9 +90,6 @@ allprojects {
                 excludeGroupByRegex "org\\.rm3l.*"
             }
         }
-//        maven {
-//            url "https://plugins.gradle.org/m2/"
-//        }
         flatDir {
             dirs 'libs'
         }
@@ -138,7 +134,6 @@ allprojects {
 subprojects {
     repositories {
         google()
-        //jcenter()
         maven {
             url 'http://clojars.org/repo'
             allowInsecureProtocol = true
