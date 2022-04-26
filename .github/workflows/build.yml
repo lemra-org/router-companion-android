@@ -19,7 +19,7 @@ jobs:
         # TODO Split this job
         run: |
           ./gradlew \
-            :app:assembleGoogleDebug \
-            :tasker-plugin:assembleGoogleDebug \
+            :app:assembleDevDebug \
+            :tasker-plugin:assembleDevDebug \
             testGoogleDebugUnitTest \
             htmlDependencyReport
