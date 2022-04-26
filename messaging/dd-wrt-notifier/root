@@ -1,5 +1,0 @@
-# For testing, run every minute
-# */1	*	*	*	*	/bin/sh -c "/code/ddwrt-notify.sh http://fcm-app-server:4260/"
-
-# In production, we would run every day at 8h
-0	8	*	*	*	/bin/sh -c "/code/ddwrt-notify.sh http://fcm-app-server:4260/"
