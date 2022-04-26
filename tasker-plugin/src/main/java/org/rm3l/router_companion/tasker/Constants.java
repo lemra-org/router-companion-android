@@ -16,9 +16,6 @@ public final class Constants {
   public static final String FIREBASE_DYNAMIC_LINKS_BASE_URL =
       "https://firebasedynamiclinks.googleapis.com/v1/";
 
-  // TODO Externalize
-  public static final String FIREBASE_API_KEY = \"fake-api-key\";
-
   public static final String AWS_S3_FEEDBACK_PENDING_TRANSFER_PREF = "feedbacks_pending_transfer";
 
   public static final String Q_A_WEBSITE = "https://www.codewake.com/p/ddwrt-companion";
