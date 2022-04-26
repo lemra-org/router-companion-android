@@ -551,9 +551,9 @@ public class MaoniFeedbackHandler implements Handler {
     }
 
     mDoorbellAppId =
-        ContextUtils.getConfigProperty(mContext, R.string.MAONI_FEEDBACK_DOORBELL_IO_APP_ID, "");
+        ContextUtils.getConfigProperty(mContext, "MAONI_FEEDBACK_DOORBELL_IO_APP_ID", "");
     mDoorbellApiKey = \"fake-key\";
-        ContextUtils.getConfigProperty(mContext, R.string.MAONI_FEEDBACK_DOORBELL_IO_API_KEY, "");
+        ContextUtils.getConfigProperty(mContext, "MAONI_FEEDBACK_DOORBELL_IO_API_KEY", "");
   }
 
   @Override

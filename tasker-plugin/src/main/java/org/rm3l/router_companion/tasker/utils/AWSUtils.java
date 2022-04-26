@@ -46,13 +46,13 @@ public final class AWSUtils {
   public static AWSCredentialsProvider getAWSCredentialsProvider(final Context context) {
     if (credsProvider == null) {
       credsProvider =
-              new CognitoCachingCredentialsProvider(
-                      context,
-                      ContextUtils.getConfigProperty(context, "AWS_COGNITO_IDENTITY_POOL_ID", null),
-                      Regions.fromName(
-                              Objects.requireNonNull(
-                                      ContextUtils.getConfigProperty(
-                                              context, "AWS_COGNITO_IDENTITY_POOL_REGION", "us-east-1"))));
+          new CognitoCachingCredentialsProvider(
+              context,
+              ContextUtils.getConfigProperty(context, "AWS_COGNITO_IDENTITY_POOL_ID", null),
+              Regions.fromName(
+                  Objects.requireNonNull(
+                      ContextUtils.getConfigProperty(
+                          context, "AWS_COGNITO_IDENTITY_POOL_REGION", "us-east-1"))));
     }
     return credsProvider;
   }
@@ -61,13 +61,13 @@ public final class AWSUtils {
   public static AmazonS3 getAmazonS3Client(final Context context) {
     if (s3Client == null) {
       s3Client =
-              new AmazonS3Client(
-                      getAWSCredentialsProvider(context), Region.getRegion(Regions.DEFAULT_REGION));
+          new AmazonS3Client(
+              getAWSCredentialsProvider(context), Region.getRegion(Regions.DEFAULT_REGION));
       s3Client.setRegion(
-              Region.getRegion(
-                      Objects.requireNonNull(
-                              ContextUtils.getConfigProperty(
-                                      context, "AWS_COGNITO_IDENTITY_POOL_REGION", "us-east-1"))));
+          Region.getRegion(
+              Objects.requireNonNull(
+                  ContextUtils.getConfigProperty(
+                      context, "AWS_COGNITO_IDENTITY_POOL_REGION", "us-east-1"))));
     }
     return s3Client;
   }
@@ -77,7 +77,7 @@ public final class AWSUtils {
     if (s3TransferUtility == null) {
       TransferNetworkLossHandler.getInstance(context);
       s3TransferUtility =
-              TransferUtility.builder().s3Client(getAmazonS3Client(context)).context(context).build();
+          TransferUtility.builder().s3Client(getAmazonS3Client(context)).context(context).build();
     }
     return s3TransferUtility;
   }
@@ -85,7 +85,7 @@ public final class AWSUtils {
   @NonNull
   public static String getS3BucketName(final Context context) {
     return Objects.requireNonNull(
-            ContextUtils.getConfigProperty(context, "AWS_S3_BUCKET", "dd-wrt-companion"));
+        ContextUtils.getConfigProperty(context, "AWS_S3_BUCKET", "dd-wrt-companion"));
   }
 
   private AWSUtils() {}

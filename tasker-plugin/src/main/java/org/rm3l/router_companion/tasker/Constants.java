@@ -1,7 +1,5 @@
 package org.rm3l.router_companion.tasker;
 
-import com.amazonaws.regions.Regions;
-
 /** Created by rm3l on 06/08/16. */
 public final class Constants {
 
@@ -18,7 +16,7 @@ public final class Constants {
   public static final String FIREBASE_DYNAMIC_LINKS_BASE_URL =
       "https://firebasedynamiclinks.googleapis.com/v1/";
 
-  //TODO Externalize
+  // TODO Externalize
   public static final String FIREBASE_API_KEY = \"fake-api-key\";
 
   public static final String AWS_S3_FEEDBACK_PENDING_TRANSFER_PREF = "feedbacks_pending_transfer";
