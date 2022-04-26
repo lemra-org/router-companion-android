@@ -55,3 +55,6 @@ infer-out
 **/BUCK
 
 **/class_files.txt
+
+fabric.properties
+
