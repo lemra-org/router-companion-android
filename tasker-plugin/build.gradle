@@ -230,7 +230,8 @@ android.productFlavors.each {
 
 dependencies {
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    // Intentionally, no Kotlin support to reduce the number of classes in resulting DEX
+//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 //    implementation "androidx.core:core-ktx:$android_ktx_version"
 //    implementation "org.jetbrains.anko:anko-sdk25:$anko_version"
 //    implementation "org.jetbrains.anko:anko-sdk25-listeners:$anko_version"
