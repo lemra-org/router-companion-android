@@ -306,12 +306,11 @@ dependencies {
     releaseImplementation "net.igenius:stetho-no-op:1.1"
     testImplementation "net.igenius:stetho-no-op:1.1"
 
-    implementation 'com.zsoltsafrany:needle:1.0.0'
+//    implementation 'com.zsoltsafrany:needle:1.0.0'
 
     implementation 'com.amazonaws:aws-android-sdk-core:2.19.2'
     implementation 'com.amazonaws:aws-android-sdk-s3:2.19.2'
 
-    //TODO Migrate to >= 1.0.0
     implementation('com.stephentuso:welcome:1.4.1') {
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'preference-v7'
