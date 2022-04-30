@@ -137,12 +137,7 @@ fun Context?.getConfigProperty(identifier: String, defaultValue: String? = null)
     if (id == 0) {
         return defaultValue
     }
-    return try {
-        this.resources.getString(id)
-    } catch (rnfe: Resources.NotFoundException) {
-        Log.d(this.javaClass.simpleName, "Resource $identifier of type string not found in package ${this.packageName}", rnfe)
-        defaultValue
-    }
+    return this.getConfigProperty(id, defaultValue)
 }
 
 fun Context?.getConfigProperty(@StringRes identifier: Int, defaultValue: String? = null) = try {
