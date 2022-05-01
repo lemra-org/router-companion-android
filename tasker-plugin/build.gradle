@@ -270,13 +270,13 @@ dependencies {
 
     implementation 'com.mikepenz:aboutlibraries:6.2.3'
 
-    implementation group: 'net.jcip', name: 'jcip-annotations', version: "1.0"
-    implementation group: 'com.twofortyfouram', name: 'android-annotation', version: "[3.0.0,4.0["
+//    implementation group: 'net.jcip', name: 'jcip-annotations', version: "1.0"
+//    implementation group: 'com.twofortyfouram', name: 'android-annotation', version: "[3.0.0,4.0["
 //    implementation group: 'com.twofortyfouram', name: 'android-assertion', version: "[2.0.0,3.0)"
     implementation group: 'com.twofortyfouram', name: 'android-plugin-api-for-locale', version: "[1.0.2,2.0["
     implementation group: 'com.twofortyfouram', name: 'android-plugin-client-sdk-for-locale', version: "[4.0.3, 5.0["
-    implementation group: 'com.twofortyfouram', name: 'android-spackle', version: "[2.0.0,4.0["
-    androidTestImplementation group:'com.twofortyfouram', name:'android-test', version:'[6.0.1,7.0)'
+//    implementation group: 'com.twofortyfouram', name: 'android-spackle', version: "[2.0.0,4.0["
+//    androidTestImplementation group:'com.twofortyfouram', name:'android-test', version:'[6.0.1,7.0)'
 //    androidTestImplementation group:'com.twofortyfouram', name:'android-assertion', version:'[2.0.0,3.0)'
 
     // Import the BoM for the Firebase platform
