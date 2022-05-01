@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
+import androidx.multidex.MultiDexApplication;
 import com.facebook.stetho.Stetho;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.twofortyfouram.log.Lumberjack;
@@ -16,7 +17,7 @@ import java.lang.ref.WeakReference;
  * This application is non-essential for the plug-in's operation; it simply enables debugging
  * options globally for the app.
  */
-public class RouterCompanionTaskerPluginApplication extends Application
+public class RouterCompanionTaskerPluginApplication extends MultiDexApplication
     implements Application.ActivityLifecycleCallbacks {
 
   private static WeakReference<Activity> mCurrentActivity;
