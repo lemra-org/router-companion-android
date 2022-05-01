@@ -59,8 +59,10 @@
 		android:networkSecurityConfig="@xml/network_security_config"
 		tools:replace="android:theme,android:icon">
 
+		<!-- The Android Backup Service no longer requires a service key, but some 
+			older devices might still check for a key when backing up -->
 		<meta-data android:name="com.google.android.backup.api_key"
-			android:value="AEdPqrEAAAAIGmevcMnL1lX5G78jYtrFp51kI5hW34uIxSxCgQ" />
+			android:value="unused" />
 
 		<provider android:name="androidx.core.content.FileProvider"
 			android:authorities="org.rm3l.ddwrt.tasker.fileprovider"
