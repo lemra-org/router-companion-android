@@ -27,7 +27,6 @@
 		Google In-App Billng -->
 	<!-- &lt;uses-permission android:name="com.android.vending.BILLING" /&gt; -->
 
-
 	<!-- To get DhcpInfo, so as to default forms with the current gateway -->
 	<!-- "Normal Permission" -->
 	<uses-permission
@@ -71,18 +70,12 @@
 	<uses-permission
 		android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
 
-	<!-- &lt;uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/&gt; -->
-
-
 	<!-- Protection level: ??? -->
 	<!-- To write NFC tag (for WiFi networks), or 'Touch to connect' feature -->
 	<uses-permission android:name="android.permission.NFC" />
 	<!-- NFC is an option here. The app still functions if NFC isn't present -->
 	<!-- &lt;uses-feature android:name="android.hardware.nfc" android:required="false" 
 		/&gt; -->
-
-	<!-- <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" 
-		/> -->
 
 	<!-- Since Android Pie 9, ACCESS_COARSE_LOCATION permission is required 
 		to read WiFi SSIDs -->
@@ -126,9 +119,6 @@
 			older devices might still check for a key when backing up -->
 		<meta-data android:name="com.google.android.backup.api_key"
 			android:value="unused" />
-		<meta-data
-			android:name="com.google.android.gms.ads.APPLICATION_ID"
-			android:value="ca-app-pub-3313772302702554~8335617623" />
 		<!-- This meta-data tag is required to use Google Play Services. -->
 		<meta-data android:name="com.google.android.gms.version"
 			android:value="@integer/google_play_services_version" />
@@ -141,16 +131,6 @@
 				android:name="android.support.FILE_PROVIDER_PATHS"
 				android:resource="@xml/file_paths" />
 		</provider>
-
-		<!--&lt;receiver android:name="org.rm3l.router_companion.mgmt.BootReceiver"&gt; -->
-		<!--&lt;intent-filter&gt; -->
-		<!--&lt;action android:name="android.intent.action.BOOT_COMPLETED"/&gt; -->
-		<!--&lt;/intent-filter&gt; -->
-		<!--&lt;/receiver&gt; -->
-
-		<!--&lt;service&gt; -->
-		<!--android:name="org.rm3l.router_companion.service.BackgroundService" -->
-		<!--android:exported="false"/&gt; -->
 
 		<activity
 			android:name="org.rm3l.router_companion.SplashActivity"
@@ -225,11 +205,7 @@
 			android:excludeFromRecents="true" android:label="@string/support_app"
 			android:launchMode="singleInstance"
 			android:windowSoftInputMode="adjustResize" />
-		<!-- &lt;activity -->
-		<!-- android:name="org.acra.CrashReportDialog" -->
-		<!-- android:excludeFromRecents="true" -->
-		<!-- android:finishOnTaskLaunch="true" -->
-		<!-- android:windowSoftInputMode="adjustResize" /&gt; -->
+
 		<activity
 			android:name="org.rm3l.router_companion.tiles.status.wan.WANMonthlyTrafficActivity"
 			android:label="WAN Monthly Traffic"
@@ -247,16 +223,7 @@
 			<meta-data android:name="android.support.PARENT_ACTIVITY"
 				android:value="org.rm3l.router_companion.main.DDWRTMainActivity" />
 		</activity>
-		<!-- Deprecated -->
-		<!-- &lt;activity -->
-		<!-- android:name=".tiles.status.wireless.WirelessIfaceQrCodeActivity" -->
-		<!-- android:label="@string/wifi_qr_code" -->
-		<!-- android:parentActivityName=".main.DDWRTMainActivity" -->
-		<!-- android:windowSoftInputMode="adjustResize" &gt; -->
-		<!-- &lt;meta-data -->
-		<!-- android:name="android.support.PARENT_ACTIVITY" -->
-		<!-- android:value=".main.DDWRTMainActivity" /&gt; -->
-		<!-- &lt;/activity&gt; -->
+
 		<activity
 			android:name="org.rm3l.router_companion.tiles.status.wireless.share.WifiSharingActivity"
 			android:label="@string/wifi_sharing"
@@ -386,45 +353,7 @@
 			android:exported="false"
 			android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-		<!-- TODO Connected Hosts Widget -->
-		<!-- &lt;receiver -->
-		<!-- android:name=".widgets.home.clients.ConnectedHostsWidgetProvider" -->
-		<!-- android:label="DD-WRT: Clients" -->
-		<!-- android:icon="@drawable/wol_widget"&gt; -->
-		<!-- &lt;intent-filter&gt; -->
-		<!-- &lt;action android:name="android.appwidget.action.APPWIDGET_UPDATE" 
-			/&gt; -->
-		<!-- &lt;action android:name="org.rm3l.ddwrt.widgets.home.clients.ACTION_DISABLE_WAN_ACCESS" 
-			/&gt; -->
-		<!-- &lt;action android:name="org.rm3l.ddwrt.widgets.home.clients.ACTION_ENABLE_WAN_ACCESS" 
-			/&gt; -->
-		<!-- &lt;/intent-filter&gt; -->
-
-
-		<!-- &lt;meta-data -->
-		<!-- android:name="android.appwidget.provider" -->
-		<!-- android:resource="@xml/wolwidget_info" /&gt; -->
-		<!-- &lt;/receiver&gt; -->
-		<!-- &lt;activity android:name=".widgets.home.clients.ConnectedHostsWidgetConfigureActivity" 
-			&gt; -->
-		<!-- &lt;intent-filter&gt; -->
-		<!-- &lt;action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" 
-			/&gt; -->
-		<!-- &lt;/intent-filter&gt; -->
-		<!-- &lt;/activity&gt; -->
-		<!-- &lt;!&ndash; The service serving the RemoteViews to the collection 
-			widget &ndash;&gt; -->
-		<!-- &lt;service -->
-		<!-- android:name=".widgets.home.clients.ConnectedHostsWidgetService" -->
-		<!-- android:permission="android.permission.BIND_REMOTEVIEWS" -->
-		<!-- android:exported="false" /&gt; -->
-
-
 		<!-- Include the AdActivity configChanges and theme. -->
-		<activity
-			android:name="com.google.android.gms.ads.AdActivity"
-			android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-			android:theme="@android:style/Theme.Translucent" />
 		<activity
 			android:name="org.rm3l.router_companion.tiles.services.wol.EditWOLDaemonSettingsActivity"
 			android:configChanges="orientation|screenSize"
@@ -564,24 +493,6 @@
 			</intent-filter>
 		</service>
 
-		<!-- Firebase (FCM) -->
-		<!-- &lt;service android:name="org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseMessagingService"&gt; -->
-
-		<!--&lt;!&ndash; message handling beyond receiving notifications on apps 
-			in the background &ndash;&gt; -->
-		<!-- &lt;intent-filter&gt; -->
-		<!-- &lt;action android:name="com.google.firebase.MESSAGING_EVENT"/&gt; -->
-		<!-- &lt;/intent-filter&gt; -->
-		<!-- &lt;/service&gt; -->
-		<!-- &lt;service android:name="org.rm3l.router_companion.service.firebase.DDWRTCompanionFirebaseInstanceIDService"&gt; -->
-
-		<!--&lt;!&ndash; handle the creation, rotation, and updating of registration 
-			tokens &ndash;&gt; -->
-		<!-- &lt;intent-filter&gt; -->
-		<!-- &lt;action android:name="com.google.firebase.INSTANCE_ID_EVENT"/&gt; -->
-		<!-- &lt;/intent-filter&gt; -->
-		<!-- &lt;/service&gt; -->
-
 		<meta-data android:name="preloaded_fonts"
 			android:resource="@array/preloaded_fonts" />
 
@@ -599,9 +510,6 @@
 			android:excludeFromRecents="true" android:label="Firmware Release"
 			android:launchMode="singleInstance"
 			android:windowSoftInputMode="adjustResize" />
-
-		<service android:name="com.mobfox.sdk.services.MobFoxService"
-			android:launchMode="singleTop" />
 
 	</application>
 

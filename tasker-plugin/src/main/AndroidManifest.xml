@@ -96,29 +96,8 @@
 				<data android:scheme="https" />
 				<data android:host="tasker.ddwrt-companion.app" />
 				<data android:pathPrefix="/tasker" />
-
-				<!--<action android:name="android.intent.action.SEARCH" /&gt; -->
 			</intent-filter>
-
-			<!-- &lt;meta-data -->
-			<!--android:name="android.app.searchable" -->
-			<!--android:resource="@xml/searchable" /&gt; -->
-
 		</activity>
-
-		<!-- If this plug-in does not stand alone (e.g. it is only a plug-in for 
-			Locale and does not have a Launcher Activity), including this in the manifest 
-			will help when users try to open the app directly from the app store. -->
-		<!-- &lt;activity -->
-		<!--android:name="com.twofortyfouram.locale.sdk.client.ui.activity.InfoActivity" -->
-		<!--android:exported="true" -->
-		<!--tools:ignore="ExportedActivity"&gt; -->
-		<!-- &lt;intent-filter&gt; -->
-		<!-- &lt;action android:name="android.intent.action.MAIN"/&gt; -->
-
-		<!-- &lt;category android:name="android.intent.category.INFO"/&gt; -->
-		<!-- &lt;/intent-filter&gt; -->
-		<!-- &lt;/activity&gt; -->
 
 		<activity
 			android:name="org.rm3l.router_companion.tasker.ui.activity.action.ActionEditActivity"
@@ -143,19 +122,6 @@
 					android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING" />
 			</intent-filter>
 		</activity-alias>
-		<!-- &lt;activity-alias -->
-		<!--android:name=".ui.activity.PluginActivity2" -->
-		<!--android:exported="true" -->
-		<!--android:icon="@mipmap/ic_launcher" -->
-		<!--android:label="Toast 2 Action" -->
-		<!--android:targetActivity="org.rm3l.ddwrt.tasker.ui.activity.action.ActionEditActivity" -->
-		<!--tools:ignore="ExportedActivity"&gt; -->
-		<!--&lt;!&ndash; this Intent filter allows the plug-in to be discovered 
-			by the host. &ndash;&gt; -->
-		<!-- &lt;intent-filter&gt; -->
-		<!-- &lt;action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING"/&gt; -->
-		<!-- &lt;/intent-filter&gt; -->
-		<!-- &lt;/activity-alias&gt; -->
 
 		<!-- This is the "fire" BroadcastReceiver. Note that the host will reject 
 			plug-in BroadcastReceivers for the following reasons: - The BroadcastReceiver 
