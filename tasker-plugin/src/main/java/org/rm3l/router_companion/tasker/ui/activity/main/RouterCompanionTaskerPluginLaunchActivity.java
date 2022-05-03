@@ -312,7 +312,7 @@ public class RouterCompanionTaskerPluginLaunchActivity extends AppCompatActivity
 
   private RecyclerView mActionHistoryRecyclerView;
 
-  private AtomicBoolean mClearHistory = new AtomicBoolean(false);
+  private final AtomicBoolean mClearHistory = new AtomicBoolean(false);
 
   private TextView mErrorView;
 
@@ -420,7 +420,7 @@ public class RouterCompanionTaskerPluginLaunchActivity extends AppCompatActivity
     //        mActionHistoryRecyclerView.setEmptyView(statsEmptyView);
     //        // specify an adapter (see also next example)
     mHistoryAdapter = new TaskerActionHistoryAdapter();
-    mHistoryAdapter.setActionLogs(Collections.<ActionLog>emptyList());
+    mHistoryAdapter.setActionLogs(Collections.emptyList());
     mHistoryAdapter.setHasStableIds(true);
     mActionHistoryRecyclerView.setAdapter(mHistoryAdapter);
 
@@ -432,13 +432,9 @@ public class RouterCompanionTaskerPluginLaunchActivity extends AppCompatActivity
       if (packageInfo == null
           || (this.ddwrtCompanionAppPackage = packageInfo.packageName) == null) {
         mErrorView.setOnClickListener(
-            new View.OnClickListener() {
-              @Override
-              public void onClick(View view) {
+            view ->
                 ActivityUtils.openPlayStoreForPackage(
-                    RouterCompanionTaskerPluginLaunchActivity.this, "org.rm3l.ddwrt");
-              }
-            });
+                    RouterCompanionTaskerPluginLaunchActivity.this, "org.rm3l.ddwrt"));
         mErrorView.setText("DD-WRT Companion app *not* found !");
         mErrorView.setVisibility(View.VISIBLE);
         // Hide history sliding layout
