@@ -23,6 +23,15 @@
 	package="org.rm3l.router_companion.tasker"
 	android:installLocation="internalOnly">
 
+	<!-- Specific apps this app interact with -->
+	<queries>
+		<!-- Router Companion -->
+		<package android:name="org.rm3l.ddwrt" />
+
+		<!-- Tasker -->
+		<package android:name="net.dinglisch.android.taskerm" />
+	</queries>
+
 	<uses-sdk tools:overrideLibrary="com.readystatesoftware.chuck" />
 
 	<!-- "Normal Permission" -->
