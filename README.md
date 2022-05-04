@@ -20,11 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;armel+router_companion AT rm3l DOT org&gt;
 -->
 
-DD-WRT Companion for android
+DD-WRT Companion for Android
 -------
 
-Build Status: [![pipeline status](https://gitlab.com/lemra/router-companion-android/badges/master/pipeline.svg)](https://gitlab.com/lemra/router-companion-android/commits/master)
+TODO - Update description
 
+[![work in progress](https://img.shields.io/badge/wip-work%20in%20progress-orange)]
+
+<!--Build Status: [![pipeline status](https://gitlab.com/lemra/router-companion-android/badges/master/pipeline.svg)](https://gitlab.com/lemra/router-companion-android/commits/master)-->
 
 Had you ever tried to use the DD-WRT web interface on an Android device, you should have noticed how impractical it is to navigate with.
 
@@ -64,14 +67,18 @@ Below are some screenshots of the overall app look n' feel and behaviour. As thi
         <!--<img width="30%" src="https://rm3l.org/apps/ddwrt-companion/screenshots/11.png" alt="About" title="About"/>-->
 </div>
 
+<!--
 Parent Project
 --------
 See the [parent project](https://github.com/rm3l/ddwrt-companion) for the rationale behing this app.
+-->
 
+<!--
 APKs
 --------
 * Dec 22, 2014: [v1.0.0](https://github.com/rm3l/ddwrt-companion-android/releases/download/1.0.0/ddwrt-companion_fdroid-release-100016.apk)
 * ~~Nov 27, 2014: [v0.1.1-alpha.1f677ad](https://github.com/rm3l/ddwrt-companion/releases/download/0.1.1-alpha.1f677ad/ddwrt-companion-android_20141127-snapshot.apk)~~
+-->
 
 External libs used in this project
 --------
