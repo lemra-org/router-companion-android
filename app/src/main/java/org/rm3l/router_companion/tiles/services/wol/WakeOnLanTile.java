@@ -94,7 +94,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
 
   private static final String LOG_TAG = WakeOnLanTile.class.getSimpleName();
 
-  private static final String wolHostsPrefKey = \"fake-key\";
+  private static final String wolHostsPrefKey =
       DDWRTTile.getFormattedPrefKey(WakeOnLanTile.class, "wolHosts");
 
   private static long mLastSync;

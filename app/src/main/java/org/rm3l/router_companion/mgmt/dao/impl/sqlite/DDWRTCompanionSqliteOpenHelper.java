@@ -60,7 +60,7 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
 
   public static final String ROUTER_PASSWORD = "password";
 
-  public static final String ROUTER_PRIVKEY = \"fake-key\";
+  public static final String ROUTER_PRIVKEY = "privkey";
 
   public static final String ROUTER_PORT = "port";
 

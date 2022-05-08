@@ -48,7 +48,7 @@ import org.rm3l.router_companion.utils.snackbar.SnackbarUtils;
 
 public class AddNVRAMKeyValueDialogFragment extends DialogFragment {
 
-  public static final String KEY = \"fake-key\";
+  public static final String KEY = "key";
 
   public static final String VALUE = "value";
 
@@ -100,7 +100,7 @@ public class AddNVRAMKeyValueDialogFragment extends DialogFragment {
                 public void onClick(View view) {
                   // Validate data
                   final TextView varKeyTV = d.findViewById(R.id.tile_admin_nvram_add_key);
-                  final CharSequence variableKey = \"fake-key\";
+                  final CharSequence variableKey = varKeyTV.getText();
                   if (TextUtils.isEmpty(variableKey)) {
                     // Error
                     Utils.displayMessage(

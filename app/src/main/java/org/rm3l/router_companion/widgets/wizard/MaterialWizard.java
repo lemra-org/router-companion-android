@@ -53,7 +53,7 @@ public abstract class MaterialWizard extends WizardFragment
 
   public static final GsonBuilder GSON_BUILDER = new GsonBuilder();
 
-  public static final String CURRENT_WIZARD_CONTEXT_PREF_KEY = \"fake-key\";
+  public static final String CURRENT_WIZARD_CONTEXT_PREF_KEY = "current_wizard_context";
 
   private static final String LOG_TAG = MaterialWizard.class.getSimpleName();
 

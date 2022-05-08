@@ -468,7 +468,7 @@ public class Router implements Serializable {
 
   public static final int SSHAuthenticationMethod_PASSWORD = 2;
 
-  public static final int SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY = \"fake-key\";
+  public static final int SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY = 3;
 
   public static final int RouterIcon_Auto = 10;
 
@@ -797,7 +797,7 @@ public class Router implements Serializable {
       this.remotePort = router.remotePort;
       this.username = router.username;
       this.password = router.password;
-      this.privKey = \"fake-key\";
+      this.privKey = router.privKey;
       this.strictHostKeyChecking = router.strictHostKeyChecking;
       this.routerFirmware = router.routerFirmware;
       this.iconMethod = router.iconMethod;
@@ -852,7 +852,7 @@ public class Router implements Serializable {
 
                     final String login = key.login;
 
-                    final String privKey = \"fake-key\";
+                    final String privKey = key.router.getPrivKeyPlain();
                     final JSch jsch = new JSch();
 
                     final String passwordPlain = key.router.getPasswordPlain();
@@ -1587,7 +1587,7 @@ public class Router implements Serializable {
    */
   @NonNull
   public Router setPrivKey(@Nullable final String privKey, final boolean encrypt) {
-    this.privKey = \"fake-key\";
+    this.privKey = encrypt ? e(privKey) : privKey;
     return this;
   }
 

@@ -298,7 +298,8 @@ public final class NfcUtils {
           }
           byte[] networkKey = new byte[fieldSize];
           payload.get(networkKey);
-          result.preSharedKey = "fake-key";;
+          result.preSharedKey = "fake-key";
+          ;
           break;
         case AUTH_TYPE_FIELD_ID:
           if (fieldSize != AUTH_TYPE_EXPECTED_SIZE) {

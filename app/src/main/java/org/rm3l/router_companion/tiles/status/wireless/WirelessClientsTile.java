@@ -737,7 +737,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
 
   public static final String RT_GRAPHS = "rt_graphs";
 
-  public static final String EXPANDED_CLIENTS_PREF_KEY = \"fake-key\";
+  public static final String EXPANDED_CLIENTS_PREF_KEY =
       getFormattedPrefKey(WirelessClientsTile.class, "expanded_clients");
 
   // Generate a random string, to use as discriminator for determining dhcp clients
@@ -1404,7 +1404,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
         // final int themeBackgroundColor = getThemeBackgroundColor(mParentFragmentActivity,
         // mRouter.getUuid());
 
-        final String expandedClientsPrefKey = \"fake-key\";
+        final String expandedClientsPrefKey = getFormattedPrefKey("expanded_clients");
 
         Set<String> expandedClients;
 
@@ -1917,7 +1917,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices>
                       // considered later on
                       //                                    continue;
                       //                                }
-                      final String nvramKey = \"fake-key\";
+                      final String nvramKey = wlIface + "_ifname";
                       final NVRAMInfo phyFromNVRAM =
                           SSHUtils.getNVRamInfoFromRouter(
                               mParentFragmentActivity, mRouter, mGlobalPreferences, nvramKey);

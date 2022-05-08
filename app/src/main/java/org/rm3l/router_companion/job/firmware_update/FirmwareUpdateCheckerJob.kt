@@ -264,7 +264,7 @@ class FirmwareUpdateCheckerJob : DailyJob(), RouterCompanionJob {
                 return true
             }
 
-            val firebaseApiKey = \"fake-key\";
+            val firebaseApiKey = FirebaseUtils.getFirebaseApiKey(context)
 
             // Now keep only routers for which the user has accepted notifications
             val forceCheck = params?.extras?.getBoolean(MANUAL_REQUEST, false)

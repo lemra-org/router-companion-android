@@ -48,7 +48,7 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
 
   public static final String POSITION = "position";
 
-  public static final String KEY = \"fake-key\";
+  public static final String KEY = "key";
 
   public static final String VALUE = "value";
 
@@ -105,7 +105,7 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
     //        }
 
     final Bundle arguments = getArguments();
-    this.mKey = \"fake-key\";
+    this.mKey = arguments.getCharSequence(KEY);
     this.mValue = arguments.getCharSequence(VALUE);
     this.mPosition = arguments.getInt(POSITION);
   }
@@ -158,7 +158,7 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
                     return;
                   }
 
-                  final CharSequence variableKey = \"fake-key\";
+                  final CharSequence variableKey =
                       ((TextView) d.findViewById(R.id.tile_admin_nvram_edit_key)).getText();
 
                   final Bundle token = new Bundle();

@@ -20,7 +20,7 @@ public final class Constants {
 
   public static final String Q_A_WEBSITE = "https://www.codewake.com/p/ddwrt-companion";
 
-  public static final String DEFAULT_SHARED_PREFERENCES_KEY = \"fake-key\";
+  public static final String DEFAULT_SHARED_PREFERENCES_KEY = "DDWRTCompanionTaskerGlobalPrefs";
 
   public static final int MAX_ACTION_RUNS_FREE_VERSION = 10;
 

@@ -589,7 +589,7 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
       @NonNull final NVRAMInfo data, final boolean defaultValuesIfNotFound) {
 
     // State
-    String statusKey = \"fake-key\";
+    String statusKey =
         data.getProperty(
             NVRAMInfo.Companion.getPPTPD_ENABLE(),
             defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
@@ -611,7 +611,7 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
     }
 
     // Broadcast Support
-    statusKey = \"fake-key\";
+    statusKey =
         data.getProperty(
             NVRAMInfo.Companion.getPPTPD_BCRELAY(),
             defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
@@ -634,7 +634,7 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
     }
 
     // Force MPPE Encryption
-    statusKey = \"fake-key\";
+    statusKey =
         data.getProperty(
             NVRAMInfo.Companion.getPPTPD_FORCEMPPE(),
             defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
@@ -671,7 +671,7 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
     }
 
     // Radius
-    statusKey = \"fake-key\";
+    statusKey =
         data.getProperty(
             NVRAMInfo.Companion.getPPTPD_RADIUS(),
             defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);

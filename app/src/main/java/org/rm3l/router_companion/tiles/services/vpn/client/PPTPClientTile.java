@@ -693,7 +693,7 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
       @NonNull final NVRAMInfo data, final boolean defaultValuesIfNotFound) {
 
     // State
-    final String statusKey = \"fake-key\";
+    final String statusKey =
         data.getProperty(
             NVRAMInfo.Companion.getPPTPD_CLIENT_ENABLE(),
             defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
@@ -776,7 +776,7 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
     }
 
     // NAT
-    final String natStatusKey = \"fake-key\";
+    final String natStatusKey =
         data.getProperty(
             NVRAMInfo.Companion.getPPTPD_CLIENT_NAT(),
             defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);

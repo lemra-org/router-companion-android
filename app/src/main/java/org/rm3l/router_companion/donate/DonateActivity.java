@@ -44,8 +44,7 @@ import org.rm3l.router_companion.utils.ColorUtils;
 public class DonateActivity extends FragmentActivity {
 
   /** Google */
-  private static final String GOOGLE_PUBKEY = \"fake-key\";
-      "xxx";
+  private static final String GOOGLE_PUBKEY = "fake-key";
 
   private static final String[] GOOGLE_CATALOG =
       new String[] {

@@ -34,10 +34,10 @@ import org.rm3l.router_companion.utils.Utils;
 /** Created by rm3l on 22/04/15. */
 public class WOLWidgetService extends RemoteViewsService {
 
-  public static final String WOL_HOST_PREF_KEY = \"fake-key\";
+  public static final String WOL_HOST_PREF_KEY =
       WOLWidgetService.class.getCanonicalName() + "::wol_hosts";
 
-  public static final String WOL_BCAST_ADDRESSES_PREF_KEY = \"fake-key\";
+  public static final String WOL_BCAST_ADDRESSES_PREF_KEY =
       WOLWidgetService.class.getCanonicalName() + "::bcast_addrs";
 
   @Override

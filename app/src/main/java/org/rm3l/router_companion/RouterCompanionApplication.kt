@@ -284,8 +284,7 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
         @JvmStatic
         fun isDebugResourceInspectorEnabled() = mDebugResourceInspectorEnabled
 
-        @JvmField
-        val DEBUG_RESOURCE_INSPECTOR_PREF_KEY = \"fake-key\";
+        const val DEBUG_RESOURCE_INSPECTOR_PREF_KEY = "DEBUG::ResourceInspector::enabled"
 
         private val TAG = RouterCompanionApplication::class.java.simpleName
 

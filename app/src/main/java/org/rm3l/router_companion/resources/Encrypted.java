@@ -92,7 +92,7 @@ public class Encrypted {
       byte[] byteArrayToDecrypt =
           Arrays.copyOfRange(
               byteArrayToDecryptIV, 0, byteArrayToDecryptIV.length - PRIV_KEY_MIN_LENGTH);
-      byte[] aesKey = \"fake-key\";
+      byte[] aesKey = getEncryptionKey().getBytes(UTF_8);
       byte[] uncipheredtext;
 
       SecretKeySpec secretKeySpec = new SecretKeySpec(aesKey, AES);
@@ -133,7 +133,7 @@ public class Encrypted {
       Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
 
       byte[] iv = new byte[PRIV_KEY_MIN_LENGTH];
-      byte[] aesKey = \"fake-key\";
+      byte[] aesKey = getEncryptionKey().getBytes(UTF_8);
       byte[] ciphertext;
 
       SecureRandom secureRandom = new SecureRandom();

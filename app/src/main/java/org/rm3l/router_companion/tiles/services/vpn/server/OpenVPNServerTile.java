@@ -509,7 +509,7 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
       @NonNull final NVRAMInfo data, final boolean defaultValuesIfNotFound) {
 
     // State
-    String statusKey = \"fake-key\";
+    String statusKey =
         data.getProperty(
             NVRAMInfo.Companion.getOPENVPN_ENABLE(),
             defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);
@@ -532,7 +532,7 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
     }
 
     // Start Type
-    statusKey = \"fake-key\";
+    statusKey =
         data.getProperty(
             NVRAMInfo.Companion.getOPENVPN_ONWAN(),
             defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);

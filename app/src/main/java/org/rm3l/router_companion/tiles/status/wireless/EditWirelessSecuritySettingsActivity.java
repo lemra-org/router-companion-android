@@ -683,7 +683,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
             nvramVarsToUpdate.setProperty(this.mPhyIface + "_crypto", wpaAlgoSelectedItem);
           }
 
-          final String wpaSharedKey = \"fake-key\";
+          final String wpaSharedKey =
               ((EditText) findViewById(R.id.wireless_security_settings_wpa_personal_wpa_shared_key))
                   .getText()
                   .toString();
@@ -761,7 +761,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
             nvramVarsToUpdate.setProperty(this.mPhyIface + "_radius_port", radiusPort);
           }
 
-          final String radiusKey = \"fake-key\";
+          final String radiusKey =
               ((EditText)
                       findViewById(R.id.wireless_security_settings_wpa_enterprise_radius_secret))
                   .getText()
@@ -797,7 +797,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
             nvramVarsToUpdate.setProperty(this.mPhyIface + "_crypto", wpaAlgoSelectedItem);
           }
 
-          final String wpaSharedKey = \"fake-key\";
+          final String wpaSharedKey =
               ((EditText)
                       findViewById(R.id.wireless_security_settings_wpa2_personal_wpa_shared_key))
                   .getText()
@@ -877,7 +877,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
             nvramVarsToUpdate.setProperty(this.mPhyIface + "_radius_port", radiusPort);
           }
 
-          final String radiusKey = \"fake-key\";
+          final String radiusKey =
               ((EditText)
                       findViewById(R.id.wireless_security_settings_wpa2_enterprise_radius_secret))
                   .getText()
@@ -914,7 +914,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
             nvramVarsToUpdate.setProperty(this.mPhyIface + "_crypto", wpaAlgoSelectedItem);
           }
 
-          final String wpaSharedKey = \"fake-key\";
+          final String wpaSharedKey =
               ((EditText)
                       findViewById(
                           R.id.wireless_security_settings_wpa2_personal_mixed_wpa_shared_key))
@@ -1000,7 +1000,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
             nvramVarsToUpdate.setProperty(this.mPhyIface + "_radius_port", radiusPort);
           }
 
-          final String radiusKey = \"fake-key\";
+          final String radiusKey =
               ((EditText)
                       findViewById(
                           R.id.wireless_security_settings_wpa2_enterprise_mixed_radius_secret))
@@ -1050,7 +1050,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
             nvramVarsToUpdate.setProperty(this.mPhyIface + "_radius_port", radiusPort);
           }
 
-          final String radiusKey = \"fake-key\";
+          final String radiusKey =
               ((EditText) findViewById(R.id.wireless_security_settings_radius_secret))
                   .getText()
                   .toString();
@@ -1298,7 +1298,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
     ((Spinner) findViewById(R.id.wireless_security_settings_wpa2_enterprise_mixed_wpa_algorithms))
         .setSelection(position);
 
-    final String wpaSharedKey = \"fake-key\";
+    final String wpaSharedKey = mNvramInfo.getProperty(this.mPhyIface + "_wpa_psk");
     if (!isNullOrEmpty(wpaSharedKey)) {
       ((EditText) findViewById(R.id.wireless_security_settings_wpa_personal_wpa_shared_key))
           .setText(wpaSharedKey, EDITABLE);
@@ -1361,7 +1361,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
           .setText(radiusPort, EDITABLE);
     }
 
-    final String radiusKey = \"fake-key\";
+    final String radiusKey = mNvramInfo.getProperty(this.mPhyIface + "_radius_key");
     if (!isNullOrEmpty(radiusKey)) {
       ((EditText) findViewById(R.id.wireless_security_settings_wpa_enterprise_radius_secret))
           .setText(radiusKey, EDITABLE);
@@ -1397,7 +1397,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
     ((Spinner) findViewById(R.id.wireless_security_settings_radius_mac_format))
         .setSelection(position);
 
-    final String wepTransmitKey = \"fake-key\";
+    final String wepTransmitKey = mNvramInfo.getProperty(this.mPhyIface + "_key");
     if (!isNullOrEmpty(wepTransmitKey)) {
       switch (wepTransmitKey) {
         case "1":

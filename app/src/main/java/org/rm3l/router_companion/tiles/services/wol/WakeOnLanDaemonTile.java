@@ -648,7 +648,7 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
       @NonNull final NVRAMInfo data, final boolean defaultValuesIfNotFound) {
 
     // State
-    final String statusKey = \"fake-key\";
+    final String statusKey =
         data.getProperty(
             NVRAMInfo.Companion.getWOL_ENABLE(), defaultValuesIfNotFound ? EMPTY_STRING : null);
     if (statusKey != null) {

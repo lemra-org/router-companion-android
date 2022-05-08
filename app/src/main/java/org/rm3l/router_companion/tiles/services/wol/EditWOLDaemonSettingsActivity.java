@@ -61,7 +61,7 @@ import org.rm3l.router_companion.utils.Utils;
 
 public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
 
-  public static final String WOL_DAEMON_HOSTNAMES_PREF_KEY = \"fake-key\";
+  public static final String WOL_DAEMON_HOSTNAMES_PREF_KEY = "WOLDaemonHostnames";
 
   private static final String TAG = EditWOLDaemonSettingsActivity.class.getSimpleName();
 

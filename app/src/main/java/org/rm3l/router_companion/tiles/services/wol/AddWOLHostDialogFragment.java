@@ -48,7 +48,7 @@ public class AddWOLHostDialogFragment extends DialogFragment {
 
   public static final String BROADCAST_ADDRESSES = "BROADCAST_ADDRESSES";
 
-  public static final String WOL_PREF_KEY = \"fake-key\";
+  public static final String WOL_PREF_KEY = "WOL_PREF_KEY";
 
   public static final String ADD_OR_EDIT_WOLHOSTS_HOSTNAMES = "AddOrEditWOLHosts.Hostnames";
 
@@ -123,7 +123,7 @@ public class AddWOLHostDialogFragment extends DialogFragment {
 
     bcastAddresses = arguments.getStringArrayList(BROADCAST_ADDRESSES);
 
-    mPreferencesKey = \"fake-key\";
+    mPreferencesKey = arguments.getString(WOL_PREF_KEY);
   }
 
   @Override

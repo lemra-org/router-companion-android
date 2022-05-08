@@ -288,7 +288,7 @@ public class NVRAMDataRecyclerViewAdapter
           ContextCompat.getColor(context, R.color.cardview_dark_background));
     }
 
-    final String nvramKey = \"fake-key\";
+    final String nvramKey = entryAt.getKey().toString();
     holder.key.setText(nvramKey);
     final Object value = entryAt.getValue();
     holder.value.setText(nullToEmpty(value != null ? value.toString() : ""));

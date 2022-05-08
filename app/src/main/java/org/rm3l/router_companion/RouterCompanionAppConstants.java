@@ -90,7 +90,7 @@ public final class RouterCompanionAppConstants {
 
   public static final String EMPTY_STRING = "";
 
-  public static final String ALWAYS_CHECK_CONNECTION_PREF_KEY = \"fake-key\";
+  public static final String ALWAYS_CHECK_CONNECTION_PREF_KEY = "alwaysCheckConnection";
 
   public static final String NOTIFICATIONS_ENABLE = "notifications.enable";
 
@@ -125,14 +125,14 @@ public final class RouterCompanionAppConstants {
 
   public static final long DEFAULT_THEME = 30L;
 
-  public static final String IS_FIRST_LAUNCH_PREF_KEY = \"fake-key\";
+  public static final String IS_FIRST_LAUNCH_PREF_KEY = ("firstLaunch-" + BuildConfig.FLAVOR);
 
-  public static final String FIRST_APP_LAUNCH_PREF_KEY = \"fake-key\";
+  public static final String FIRST_APP_LAUNCH_PREF_KEY =
       ("firstAppLaunch-" + BuildConfig.VERSION_NAME);
 
-  public static final String OLD_IS_FIRST_LAUNCH_PREF_KEY = \"fake-key\";
+  public static final String OLD_IS_FIRST_LAUNCH_PREF_KEY = ("isFirstLaunch-" + BuildConfig.FLAVOR);
 
-  public static final String DEFAULT_SHARED_PREFERENCES_KEY = \"fake-key\";
+  public static final String DEFAULT_SHARED_PREFERENCES_KEY =
       (BuildConfig.APPLICATION_ID + "___preferences");
 
   public static final String WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME =
@@ -143,13 +143,13 @@ public final class RouterCompanionAppConstants {
 
   public static final String DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN = "DDWRTCompWANAccess";
 
-  public static final String OPENED_AT_LEAST_ONCE_PREF_KEY = \"fake-key\";
+  public static final String OPENED_AT_LEAST_ONCE_PREF_KEY = "openedAtLeastOnce";
 
   public static final String EMPTY_VALUE_TO_DISPLAY = "-";
 
   public static final int MAX_ROUTERS_FREE_VERSION = 1;
 
-  public static final String WIDGETS_PREFERENCES_KEY = \"fake-key\";
+  public static final String WIDGETS_PREFERENCES_KEY = (BuildConfig.APPLICATION_ID + "___widget");
 
   public static final String FILEPROVIDER_AUTHORITY =
       (BuildConfig.APPLICATION_ID + ".fileprovider");

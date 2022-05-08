@@ -568,9 +568,9 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo>
           cal2.add(Calendar.MONTH, 1);
           mNextMonth = DDWRT_TRAFF_DATA_SIMPLE_DATE_FORMAT.format(cal2.getTime());
 
-          final String traffForPreviousMonthKey = \"fake-key\";
-          final String traffForCurrentMonthKey = \"fake-key\";
-          final String traffForNextMonthKey = \"fake-key\";
+          final String traffForPreviousMonthKey = (TRAFF_PREFIX + mPrevMonth);
+          final String traffForCurrentMonthKey = (TRAFF_PREFIX + mCurrentMonth);
+          final String traffForNextMonthKey = (TRAFF_PREFIX + mNextMonth);
 
           final MonthlyCycleItem cycleItem = mCycleItem.get();
 

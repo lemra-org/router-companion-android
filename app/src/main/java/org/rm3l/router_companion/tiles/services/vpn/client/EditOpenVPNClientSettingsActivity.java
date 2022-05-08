@@ -337,7 +337,7 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
       nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_CLIENT(), publicClientCert);
     }
 
-    final String privateClientKey = \"fake-key\";
+    final String privateClientKey =
         ((EditText) findViewById(R.id.openvpn_client_settings_private_client_key))
             .getText()
             .toString();
@@ -526,7 +526,7 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
       nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_CONFIG(), additionalConfig);
     }
 
-    final String tlsAuthKey = \"fake-key\";
+    final String tlsAuthKey =
         ((EditText) findViewById(R.id.openvpn_client_settings_advanced_options_tls_auth_key))
             .getText()
             .toString();
@@ -544,7 +544,7 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
       nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_ROUTE(), policyBasedRouting);
     }
 
-    final String pkcs12Key = \"fake-key\";
+    final String pkcs12Key =
         ((EditText) findViewById(R.id.openvpn_client_settings_advanced_options_pkcs12_key))
             .getText()
             .toString();
@@ -552,7 +552,7 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
       nvramVarsToUpdate.setProperty(NVRAMInfo.Companion.getOPENVPNCL_PKCS_12(), pkcs12Key);
     }
 
-    final String staticKey = \"fake-key\";
+    final String staticKey =
         ((EditText) findViewById(R.id.openvpn_client_settings_advanced_options_static_key))
             .getText()
             .toString();

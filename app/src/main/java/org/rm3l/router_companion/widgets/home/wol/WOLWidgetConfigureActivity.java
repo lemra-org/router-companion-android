@@ -61,7 +61,7 @@ public class WOLWidgetConfigureActivity extends AppCompatActivity
 
   private static final String PREFS_NAME = RouterCompanionAppConstants.WIDGETS_PREFERENCES_KEY;
 
-  private static final String PREF_PREFIX_KEY = \"fake-key\";
+  private static final String PREF_PREFIX_KEY = "wolwidget_";
 
   int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 

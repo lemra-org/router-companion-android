@@ -1094,7 +1094,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
       @NonNull final NVRAMInfo data, final boolean defaultValuesIfNotFound) {
 
     // State
-    final String statusKey = \"fake-key\";
+    final String statusKey =
         data.getProperty(
             NVRAMInfo.Companion.getOPENVPNCL_ENABLE(),
             defaultValuesIfNotFound ? RouterCompanionAppConstants.EMPTY_STRING : null);

@@ -529,7 +529,7 @@ public class FeedbackHandler implements Handler {
             Objects.requireNonNull(
                 ContextUtils.getConfigProperty(
                     mContext, "MAONI_FEEDBACK_DOORBELL_IO_APP_ID", "0")));
-    mDoorbellApiKey = \"fake-key\";
+    mDoorbellApiKey =
         Objects.requireNonNull(
             ContextUtils.getConfigProperty(mContext, "MAONI_FEEDBACK_DOORBELL_IO_API_KEY", ""));
   }

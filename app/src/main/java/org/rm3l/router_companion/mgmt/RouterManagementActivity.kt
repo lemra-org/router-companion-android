@@ -441,7 +441,7 @@ class RouterManagementActivity :
             }
             WelcomeHelper.DEFAULT_WELCOME_SCREEN_REQUEST -> {
                 // TODO
-                val welcomeKey = \"fake-key\";
+                val welcomeKey = data?.getStringExtra(WelcomeActivity.WELCOME_SCREEN_KEY)
                 if (resultCode == Activity.RESULT_OK) {
                     // Code here will run if the welcome screen was completed
                     if (BuildConfig.DEBUG) {

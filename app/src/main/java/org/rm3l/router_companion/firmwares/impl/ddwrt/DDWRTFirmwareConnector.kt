@@ -129,9 +129,9 @@ class DDWRTFirmwareConnector : AbstractRouterFirmwareConnector() {
         cal2.add(Calendar.MONTH, 1)
         val mNextMonth = DDWRT_TRAFF_DATA_SIMPLE_DATE_FORMAT.format(cal2.time)
 
-        val traffForPreviousMonthKey = \"fake-key\";
-        val traffForCurrentMonthKey = \"fake-key\";
-        val traffForNextMonthKey = \"fake-key\";
+        val traffForPreviousMonthKey = TRAFF_PREFIX + mPrevMonth
+        val traffForCurrentMonthKey = TRAFF_PREFIX + mCurrentMonth
+        val traffForNextMonthKey = TRAFF_PREFIX + mNextMonth
 
         val nvramInfo = NVRAMInfo()
 

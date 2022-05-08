@@ -220,13 +220,13 @@ open class NVRAMInfo : RouterData<Properties>(), Serializable {
         val OPENVPNCL_STATIC = "openvpncl_static"
         val OPENVPNCL_CA = "openvpncl_ca"
         val OPENVPNCL_CLIENT = "openvpncl_client"
-        val OPENVPNCL_KEY = \"fake-key\";
+        val OPENVPNCL_KEY = "openvpncl_key"
         val OPENVPNCL_ADV = "openvpncl_adv"
-        val SSHD_RSA_HOST_KEY = \"fake-key\";
-        val SSHD_DSS_HOST_KEY = \"fake-key\";
+        val SSHD_RSA_HOST_KEY = "sshd_rsa_host_key"
+        val SSHD_DSS_HOST_KEY = "sshd_dss_host_key"
         val OPENVPN_CA = "openvpn_ca"
         val OPENVPN_CLIENT = "openvpn_client"
-        val OPENVPN_KEY = \"fake-key\";
+        val OPENVPN_KEY = "openvpn_key"
         val OPENVPN_TLSAUTH = "openvpn_tlsauth"
         val OPENVPN_CRT = "openvpn_crt"
         val OPENVPN_CRL = "openvpn_crl"
