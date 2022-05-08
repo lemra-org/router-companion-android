@@ -61,3 +61,7 @@ google-services.json
 
 seeds.txt
 unused.txt
+
+# git filter-repo
+expressions.txt
+
