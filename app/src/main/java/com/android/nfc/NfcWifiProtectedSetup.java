@@ -132,7 +132,7 @@ public final class NfcWifiProtectedSetup {
                       Arrays.copyOfRange(
                           record.getPayload(), ssidByteIndex, ssidByteIndex + ssidSizeBytes));
               int networkKeyByteIndex = networkKeyStringIndex / HEX_CHARS_PER_BYTE;
-              networkKey = \"fake-key\";
+              networkKey =
                   new String(
                       Arrays.copyOfRange(
                           record.getPayload(),
@@ -142,7 +142,7 @@ public final class NfcWifiProtectedSetup {
               return null;
             }
             WifiConfiguration configuration = new WifiConfiguration();
-            configuration.preSharedKey = \"fake-key\";
+            configuration.preSharedKey = '"' + networkKey + '"';
             configuration.SSID = '"' + ssid + '"';
             return configuration;
           }

@@ -51,7 +51,7 @@ public final class NFCHelper {
 
   public static final byte[] NETWORK_IDX = {0x10, 0x26};
 
-  public static final byte[] NETWORK_KEY = \"fake-key\";
+  public static final byte[] NETWORK_KEY = {0x10, 0x27};
 
   public static final byte[] NETWORK_NAME = {0x10, 0x45};
 

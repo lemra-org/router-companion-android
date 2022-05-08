@@ -205,7 +205,7 @@ public final class NfcUtils {
             break;
     }*/
 
-    String networkKey = \"fake-key\";
+    String networkKey = wifiNetwork.getKey();
     short networkKeySize = (short) networkKey.getBytes().length;
 
     byte[] macAddress = new byte[MAX_MAC_ADDRESS_SIZE_BYTES];
@@ -296,9 +296,9 @@ public final class NfcUtils {
           if (fieldSize > MAX_NETWORK_KEY_SIZE_BYTES) {
             return null;
           }
-          byte[] networkKey = \"fake-key\";
+          byte[] networkKey = new byte[fieldSize];
           payload.get(networkKey);
-          result.preSharedKey = \"fake-key\";
+          result.preSharedKey = "fake-key";;
           break;
         case AUTH_TYPE_FIELD_ID:
           if (fieldSize != AUTH_TYPE_EXPECTED_SIZE) {
@@ -315,7 +315,7 @@ public final class NfcUtils {
       }
     }
     if (result.allowedKeyManagement.get(WifiConfiguration.KeyMgmt.NONE)) {
-      result.preSharedKey = \"fake-key\";
+      result.preSharedKey = null;
     }
     return result;
   }
