@@ -21,7 +21,7 @@
       ],
       "api_key": [
         {
-          "current_key\": \"my-key\";
+          "current_key": "my-key"
         }
       ],
       "services": {
@@ -50,7 +50,7 @@
       ],
       "api_key": [
         {
-          "current_key\": \"my-key\";
+          "current_key": "my-key"
         }
       ],
       "services": {
@@ -79,7 +79,7 @@
       ],
       "api_key": [
         {
-          "current_key\": \"my-key\";
+          "current_key": "my-key"
         }
       ],
       "services": {
