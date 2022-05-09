@@ -20,6 +20,12 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
+      - run: |
+          for f in app tasker-plugin; do
+            cp -vr "$f"/google-services.template.json "$f"/google-services.json;
+            cp -vr "$f"/fabric.properties.template "$f"/fabric.properties
+          done
+
       - name: Unit Tests
         uses: gradle/gradle-build-action@v2
         with:
@@ -61,6 +67,10 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '11'
+
+      - run: |
+          cp -vr "${{ matrix.app }}"/google-services.template.json "${{ matrix.app }}"/google-services.json
+          cp -vr "${{ matrix.app }}"/fabric.properties.template "${{ matrix.app }}"/fabric.properties
 
       - name: Assemble ${{ matrix.app }}
         # TODO Split this in different Gradle executions
