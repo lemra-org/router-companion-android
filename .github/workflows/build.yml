@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '11'
 
       - name: Unit Tests
         uses: gradle/gradle-build-action@v2
@@ -37,7 +37,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '11'
 
       - name: Unit Tests
         uses: gradle/gradle-build-action@v2
@@ -60,7 +60,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '11'
 
       - name: Assemble ${{ matrix.app }}
         # TODO Split this in different Gradle executions
