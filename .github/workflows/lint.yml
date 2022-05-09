@@ -1,9 +1,11 @@
-name: Build
+name: Lint
 on:
   pull_request:
     branches: [main]
   push:
     branches: [main]
+  tags:
+  - '*'
 
 jobs:
   build:
@@ -14,5 +16,5 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - name: Assemble
+      - name: Spotless
         run: ./gradlew spotlessCheck
