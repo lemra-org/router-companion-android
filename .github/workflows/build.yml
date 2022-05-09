@@ -9,7 +9,7 @@ on:
       - '*'
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -19,12 +19,54 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - name: Assemble
-        # TODO Split this job
-        run: |
-          ./gradlew \
-            --info \
-            :app:assembleDevDebug \
-            :tasker-plugin:assembleDevDebug \
-            testGoogleDebugUnitTest \
-            htmlDependencyReport
+
+      - name: Unit Tests
+        uses: gradle/gradle-build-action@v2
+        with:
+          # Only write to the cache for builds on the 'main' branch.
+          # Builds on other branches will only read existing entries from the cache.
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+          arguments: --info testGoogleDebugUnitTest
+
+  reports:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Unit Tests
+        uses: gradle/gradle-build-action@v2
+        with:
+          # Only write to the cache for builds on the 'main' branch.
+          # Builds on other branches will only read existing entries from the cache.
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+          arguments: --info htmlDependencyReport
+
+  assemble:
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [ app, tasker-plugin ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Assemble ${{ matrix.app }}
+        # TODO Split this in different Gradle executions
+        uses: gradle/gradle-build-action@v2
+        with:
+          # Only write to the cache for builds on the 'main' branch.
+          # Builds on other branches will only read existing entries from the cache.
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+          arguments: --info :${{ matrix.app }}:assembleDevDebug
