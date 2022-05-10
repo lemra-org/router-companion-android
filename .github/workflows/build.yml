@@ -77,11 +77,10 @@ jobs:
           APP_GOOGLE_SERVICES_JSON: ${{ secrets.APP_GOOGLE_SERVICES_JSON }}
           TASKER_PLUGIN_GOOGLE_SERVICES_JSON: ${{ secrets.TASKER_PLUGIN_GOOGLE_SERVICES_JSON }}
         run: |
-          local envVarValue
           if [[ "${{ matrix.app }}" == "app" ]]; then
-            envVarValue="${APP_GOOGLE_SERVICES_JSON}"
+            export envVarValue="${APP_GOOGLE_SERVICES_JSON}"
           elif [[ "${{ matrix.app }}" == "tasker-plugin" ]]; then
-            envVarValue="${TASKER_PLUGIN_GOOGLE_SERVICES_JSON}"
+            export envVarValue="${TASKER_PLUGIN_GOOGLE_SERVICES_JSON}"
           else
             echo "Unsupported value for 'matrix.app': ${{ matrix.app }}"
             exit 1
