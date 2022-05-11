@@ -20,7 +20,6 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	package="org.rm3l.router_companion.tasker"
 	android:installLocation="internalOnly">
 
 	<!-- Specific apps this app interact with -->

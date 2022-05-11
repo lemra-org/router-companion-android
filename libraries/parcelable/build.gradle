@@ -13,6 +13,12 @@ apply plugin: 'com.android.library'
 //apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
+
+    lint {
+        abortOnError false
+        disable 'TypographyEllipsis'
+    }
+    namespace 'org.rm3l.router_companion.parcelable'
     compileSdkVersion android_sdk
 //    buildToolsVersion buildTools_version
 
@@ -38,16 +44,13 @@ android {
                 versionName +
                 "\n----------------------------\n")
     }
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/LICENSE.txt', 'META-INF/NOTICE.txt']
+        }
+    }
 
     //Those files, from Apache Commons lib cause build errors
-    packagingOptions {
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
-    }
-    lintOptions {
-        abortOnError false
-        disable 'TypographyEllipsis'
-    }
 
 
     buildTypes {

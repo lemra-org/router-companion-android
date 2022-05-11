@@ -144,16 +144,13 @@ android {
 
 //        playConfig = playConfigs.defaultAccountConfig
     }
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/LICENSE.txt', 'META-INF/NOTICE.txt']
+        }
+    }
 
     //Those files, from Apache Commons lib cause build errors
-    packagingOptions {
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
-    }
-    lintOptions {
-        abortOnError false
-        disable 'TypographyEllipsis'
-    }
 
     /**
      * Flavors: this is because apps uploaded to Play Store will certainly be banned if
@@ -225,6 +222,11 @@ android {
     // View binding provides compile-time safety when referencing views in your code.
     // You can now replace findViewById() with the auto-generated binding class reference
     buildFeatures.viewBinding = true
+    lint {
+        abortOnError false
+        disable 'TypographyEllipsis'
+    }
+    namespace 'org.rm3l.router_companion.tasker'
 }
 
 //Automate the way version name is built for each flavor

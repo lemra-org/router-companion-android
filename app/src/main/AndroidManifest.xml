@@ -12,7 +12,7 @@
 	Contact Info: Armel Soro &lt;armel+router_companion AT rm3l DOT org&gt; -->
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools" package="org.rm3l.ddwrt">
+	xmlns:tools="http://schemas.android.com/tools">
 
 	<uses-sdk
 		tools:overrideLibrary="com.readystatesoftware.chuck,com.facebook.stetho,cn.nekocode.resinspector" />

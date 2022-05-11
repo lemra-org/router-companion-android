@@ -150,16 +150,15 @@ android {
 
 //        playConfig = playConfigs.defaultAccountConfig
     }
-    //Those files, from Apache Commons lib cause build errors
     packagingOptions {
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'lib/**/libwizardroid.so'
+        jniLibs {
+            excludes += ['lib/**/libwizardroid.so']
+        }
+        resources {
+            excludes += ['META-INF/LICENSE.txt', 'META-INF/NOTICE.txt']
+        }
     }
-    lintOptions {
-        abortOnError false
-        disable 'TypographyEllipsis'
-    }
+    //Those files, from Apache Commons lib cause build errors
     /**
      * Flavors: this is because apps uploaded to Play Store will certainly be banned if
      * they contain link to billing platforms other than Google*/
@@ -260,6 +259,11 @@ android {
         // Determines whether to support shader AOT compilation.
         shaders = true
     }
+    lint {
+        abortOnError false
+        disable 'TypographyEllipsis'
+    }
+    namespace 'org.rm3l.ddwrt'
 }
 
 //Automate the way version name is built for each flavor
