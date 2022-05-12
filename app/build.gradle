@@ -484,7 +484,7 @@ dependencies {
 //    implementation "android.arch.work:work-runtime:$work_version"
 
     implementation 'com.jakewharton.byteunits:byteunits:0.9.1'
-    implementation 'com.github.florent37:viewtooltip:1.0.8'
+    implementation 'com.github.florent37:viewtooltip:1.2.2'
 
     implementation 'com.github.mrgames13:SplashScreen:1.0.3'
 
