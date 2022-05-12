@@ -3,6 +3,8 @@ name: Build
 on:
   pull_request:
     branches: [main]
+  pull_request_target:
+    branches: [main]
   push:
     branches: [main]
     tags:
@@ -11,6 +13,15 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    # If the PR is coming from a fork (pull_request_target), ensure it's opened by "dependabot[bot]".
+    # Otherwise, clone it normally.
+    # This allows Dependabot PRs to have access to the repository Secrets,
+    # but using the Workflows in the context of the base branch
+    if: |
+      (github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]') ||
+      (github.event_name != 'pull_request_target' && github.actor != 'dependabot[bot]')
+
     steps:
       - uses: actions/checkout@v2
         with:
@@ -20,15 +31,13 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
-      - name: Prerequisites (app)
+      - name: Prerequisites
         env:
-          GOOGLE_SERVICES_JSON: ${{ secrets.APP_GOOGLE_SERVICES_JSON }}
-        run: echo "${GOOGLE_SERVICES_JSON}" > app/google-services.json
-
-      - name: Prerequisites (tasker-plugin)
-        env:
-          GOOGLE_SERVICES_JSON: ${{ secrets.TASKER_PLUGIN_GOOGLE_SERVICES_JSON }}
-        run: echo "${GOOGLE_SERVICES_JSON}" > tasker-plugin/google-services.json
+          APP_GOOGLE_SERVICES_JSON: ${{ secrets.APP_GOOGLE_SERVICES_JSON }}
+          TASKER_PLUGIN_GOOGLE_SERVICES_JSON: ${{ secrets.TASKER_PLUGIN_GOOGLE_SERVICES_JSON }}
+        run: |
+          echo "${APP_GOOGLE_SERVICES_JSON}" > app/google-services.json
+          echo "${TASKER_PLUGIN_GOOGLE_SERVICES_JSON}" > tasker-plugin/google-services.json
 
       - name: Unit Tests
         uses: gradle/gradle-build-action@v2
@@ -36,7 +45,7 @@ jobs:
           # Only write to the cache for builds on the 'main' branch.
           # Builds on other branches will only read existing entries from the cache.
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
-          arguments: --info testDevDebugUnitTest
+          arguments: testDevDebugUnitTest
 
   reports:
     runs-on: ubuntu-latest
@@ -55,7 +64,7 @@ jobs:
           # Only write to the cache for builds on the 'main' branch.
           # Builds on other branches will only read existing entries from the cache.
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
-          arguments: --info htmlDependencyReport
+          arguments: htmlDependencyReport
 
   assemble:
     strategy:
@@ -63,6 +72,15 @@ jobs:
       matrix:
         app: [ app, tasker-plugin ]
     runs-on: ubuntu-latest
+
+    # If the PR is coming from a fork (pull_request_target), ensure it's opened by "dependabot[bot]".
+    # Otherwise, clone it normally.
+    # This allows Dependabot PRs to have access to the repository Secrets,
+    # but using the Workflows in the context of the base branch
+    if: |
+      (github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]') ||
+      (github.event_name != 'pull_request_target' && github.actor != 'dependabot[bot]')
+
     steps:
       - uses: actions/checkout@v2
         with:
@@ -93,4 +111,4 @@ jobs:
           # Only write to the cache for builds on the 'main' branch.
           # Builds on other branches will only read existing entries from the cache.
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
-          arguments: --info :${{ matrix.app }}:assembleDevDebug
+          arguments: :${{ matrix.app }}:assembleDevDebug
