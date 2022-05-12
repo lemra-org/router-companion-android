@@ -24,7 +24,7 @@ jobs:
       - name: Prerequisites
         run: |
           curl -L https://gist.githubusercontent.com/rm3l/290505f786f1a1d3433ed663c649e915/raw/8b21a8b5fbe2544c03d32d2cfcebbeae4c542fdf/mock-google-services.json \
-            -o mock-google-services.json
+            -O mock-google-services.json
           cp mock-google-services.json app/google-services.json
           cp mock-google-services.json tasker-plugin/google-services.json
 
@@ -50,7 +50,7 @@ jobs:
       - name: Prerequisites
         run: |
           curl -L https://gist.githubusercontent.com/rm3l/290505f786f1a1d3433ed663c649e915/raw/8b21a8b5fbe2544c03d32d2cfcebbeae4c542fdf/mock-google-services.json \
-            -o mock-google-services.json
+            -O mock-google-services.json
           cp mock-google-services.json app/google-services.json
           cp mock-google-services.json tasker-plugin/google-services.json
 
@@ -81,7 +81,7 @@ jobs:
       - name: Prerequisites
         run: |
           curl -L https://gist.githubusercontent.com/rm3l/290505f786f1a1d3433ed663c649e915/raw/8b21a8b5fbe2544c03d32d2cfcebbeae4c542fdf/mock-google-services.json \
-            -o ${{ matrix.app }}/google-services.json
+            -O ${{ matrix.app }}/google-services.json
 
       - name: Assemble ${{ matrix.app }}
         uses: gradle/gradle-build-action@v2
