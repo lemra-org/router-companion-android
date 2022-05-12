@@ -50,7 +50,7 @@ buildscript {
 
         leakCanaryVersion = '2.9.1'
 
-        dexter_runtimePermissions_version = '6.2.2'
+        dexter_runtimePermissions_version = '6.2.3'
 
         multidex_version = "2.0.1"
     }
