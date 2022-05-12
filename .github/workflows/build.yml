@@ -3,8 +3,6 @@ name: Build
 on:
   pull_request:
     branches: [main]
-  pull_request_target:
-    branches: [main]
   push:
     branches: [main]
     tags:
@@ -13,14 +11,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    # If the PR is coming from a fork (pull_request_target), ensure it's opened by "dependabot[bot]".
-    # Otherwise, clone it normally.
-    # This allows Dependabot PRs to have access to the repository Secrets,
-    # but using the Workflows in the context of the base branch
-    if: |
-      (github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]') ||
-      (github.event_name != 'pull_request_target' && github.actor != 'dependabot[bot]')
 
     steps:
       - uses: actions/checkout@v2
@@ -32,12 +22,11 @@ jobs:
           java-version: '11'
 
       - name: Prerequisites
-        env:
-          APP_GOOGLE_SERVICES_JSON: ${{ secrets.APP_GOOGLE_SERVICES_JSON }}
-          TASKER_PLUGIN_GOOGLE_SERVICES_JSON: ${{ secrets.TASKER_PLUGIN_GOOGLE_SERVICES_JSON }}
         run: |
-          echo "${APP_GOOGLE_SERVICES_JSON}" > app/google-services.json
-          echo "${TASKER_PLUGIN_GOOGLE_SERVICES_JSON}" > tasker-plugin/google-services.json
+          curl -L https://gist.githubusercontent.com/rm3l/290505f786f1a1d3433ed663c649e915/raw/8b21a8b5fbe2544c03d32d2cfcebbeae4c542fdf/mock-google-services.json \
+            -O mock-google-services.json
+          cp mock-google-services.json app/google-services.json
+          cp mock-google-services.json tasker-plugin/google-services.json
 
       - name: Unit Tests
         uses: gradle/gradle-build-action@v2
@@ -58,6 +47,13 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
+      - name: Prerequisites
+        run: |
+          curl -L https://gist.githubusercontent.com/rm3l/290505f786f1a1d3433ed663c649e915/raw/8b21a8b5fbe2544c03d32d2cfcebbeae4c542fdf/mock-google-services.json \
+            -O mock-google-services.json
+          cp mock-google-services.json app/google-services.json
+          cp mock-google-services.json tasker-plugin/google-services.json
+
       - name: Unit Tests
         uses: gradle/gradle-build-action@v2
         with:
@@ -73,14 +69,6 @@ jobs:
         app: [ app, tasker-plugin ]
     runs-on: ubuntu-latest
 
-    # If the PR is coming from a fork (pull_request_target), ensure it's opened by "dependabot[bot]".
-    # Otherwise, clone it normally.
-    # This allows Dependabot PRs to have access to the repository Secrets,
-    # but using the Workflows in the context of the base branch
-    if: |
-      (github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]') ||
-      (github.event_name != 'pull_request_target' && github.actor != 'dependabot[bot]')
-
     steps:
       - uses: actions/checkout@v2
         with:
@@ -91,19 +79,9 @@ jobs:
           java-version: '11'
 
       - name: Prerequisites
-        env:
-          APP_GOOGLE_SERVICES_JSON: ${{ secrets.APP_GOOGLE_SERVICES_JSON }}
-          TASKER_PLUGIN_GOOGLE_SERVICES_JSON: ${{ secrets.TASKER_PLUGIN_GOOGLE_SERVICES_JSON }}
         run: |
-          if [[ "${{ matrix.app }}" == "app" ]]; then
-            export envVarValue="${APP_GOOGLE_SERVICES_JSON}"
-          elif [[ "${{ matrix.app }}" == "tasker-plugin" ]]; then
-            export envVarValue="${TASKER_PLUGIN_GOOGLE_SERVICES_JSON}"
-          else
-            echo "Unsupported value for 'matrix.app': ${{ matrix.app }}"
-            exit 1
-          fi
-          echo "${envVarValue}" > ${{ matrix.app }}/google-services.json
+          curl -L https://gist.githubusercontent.com/rm3l/290505f786f1a1d3433ed663c649e915/raw/8b21a8b5fbe2544c03d32d2cfcebbeae4c542fdf/mock-google-services.json \
+            -O ${{ matrix.app }}/google-services.json
 
       - name: Assemble ${{ matrix.app }}
         uses: gradle/gradle-build-action@v2
