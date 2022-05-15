@@ -279,7 +279,7 @@ dependencies {
         exclude module: 'unspecified'
     }
 
-    implementation 'com.mikepenz:aboutlibraries:6.2.3'
+    implementation 'com.mikepenz:aboutlibraries:10.2.0'
 
 //    implementation group: 'net.jcip', name: 'jcip-annotations', version: "1.0"
 //    implementation group: 'com.twofortyfouram', name: 'android-annotation', version: "[3.0.0,4.0["
