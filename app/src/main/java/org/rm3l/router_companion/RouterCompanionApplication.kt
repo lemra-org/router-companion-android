@@ -156,22 +156,16 @@ class RouterCompanionApplication : Application(), Application.ActivityLifecycleC
 
         // initialize and create the image loader logic (for MaterialDrawer, used throughout the app)
         DrawerImageLoader.init(object : AbstractDrawerImageLoader() {
-            override fun cancel(imageView: ImageView?) {
-                if (imageView != null) {
-                    Picasso.Builder(imageView.context).build().cancelRequest(imageView)
-                }
+            override fun cancel(imageView: ImageView) {
+                Picasso.Builder(imageView.context).build().cancelRequest(imageView)
             }
 
-            override fun placeholder(ctx: Context?): Drawable? {
-                return if (ctx == null) {
-                    null
-                } else ContextCompat.getDrawable(ctx, R.drawable.router)
+            override fun placeholder(ctx: Context, tag: String?): Drawable {
+                return ContextCompat.getDrawable(ctx, R.drawable.router)!!
             }
 
-            override fun set(imageView: ImageView?, uri: Uri?, placeholder: Drawable?) {
-                if (imageView != null && placeholder != null) {
-                    Picasso.Builder(imageView.context).build().load(uri).placeholder(placeholder).into(imageView)
-                }
+            override fun set(imageView: ImageView, uri: Uri, placeholder: Drawable, tag: String?) {
+                Picasso.Builder(imageView.context).build().load(uri).placeholder(placeholder).into(imageView)
             }
         })
 
