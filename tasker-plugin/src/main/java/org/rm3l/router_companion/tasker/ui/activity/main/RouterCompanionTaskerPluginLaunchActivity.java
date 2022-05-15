@@ -592,8 +592,6 @@ public class RouterCompanionTaskerPluginLaunchActivity extends AppCompatActivity
 
     } else if (i == R.id.exit) {
       finish();
-
-    } else {
     }
     return true;
   }
