@@ -118,7 +118,7 @@ android {
         testApplicationId "org.rm3l.ddwrt.tasker.tests"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        minSdkVersion 19
+        minSdkVersion android_min_sdk
         targetSdkVersion android_sdk
 
         // Enabling multidex support.
@@ -164,7 +164,7 @@ android {
             // (API level 21) or higher—regardless of what you set for
             // minSdkVersion.
             // cf. https://developer.android.com/studio/build/multidex
-            minSdkVersion 21
+            minSdkVersion android_min_sdk
             //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
             //            buildConfigField "boolean", "DONATIONS", "false"
             //            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only

@@ -117,7 +117,7 @@ android {
         applicationId "org.rm3l.ddwrt"
         testApplicationId "org.rm3l.ddwrt.tests"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        minSdkVersion 19
+        minSdkVersion android_min_sdk
         targetSdkVersion android_sdk
 
         // Chooses the 'square' flavor from libraries that specify a 'shape'

@@ -82,6 +82,7 @@
 
 		<activity
 			android:name="org.rm3l.router_companion.tasker.ui.activity.main.RouterCompanionTaskerPluginLaunchActivity"
+			android:exported="true"
 			android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
 			android:launchMode="singleTop"
 			android:windowSoftInputMode="adjustResize">
