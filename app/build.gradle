@@ -331,7 +331,7 @@ dependencies {
 
     implementation "com.mikepenz:aboutlibraries:6.2.3"
 
-    implementation('com.mikepenz:materialdrawer:9.0.0@aar') {
+    implementation('com.mikepenz:materialdrawer:6.1.2@aar') {
         transitive = true
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'design'
