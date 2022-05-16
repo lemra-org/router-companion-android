@@ -426,7 +426,7 @@ dependencies {
     androidTestImplementation "com.squareup.leakcanary:leakcanary-android-instrumentation:${leakCanaryVersion}"
 
     debugImplementation 'com.facebook.stetho:stetho:1.6.0'
-    debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
+    debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.6.0'
     releaseImplementation "net.igenius:stetho-no-op:1.1"
     testImplementation "net.igenius:stetho-no-op:1.1"
 
