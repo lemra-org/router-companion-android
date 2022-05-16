@@ -329,7 +329,7 @@ dependencies {
     implementation fileTree(include: '*.jar', dir: 'libs')
     implementation fileTree(include: '*.aar', dir: 'libs')
 
-    implementation "com.mikepenz:aboutlibraries:6.2.3"
+    implementation "com.mikepenz:aboutlibraries:10.2.0"
 
     implementation('com.mikepenz:materialdrawer:6.1.2@aar') {
         transitive = true
