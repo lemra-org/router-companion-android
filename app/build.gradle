@@ -342,7 +342,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-compat'
     }
 
-    implementation platform('com.google.firebase:firebase-bom:30.0.1')
+    implementation platform('com.google.firebase:firebase-bom:30.0.2')
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-analytics'
 
