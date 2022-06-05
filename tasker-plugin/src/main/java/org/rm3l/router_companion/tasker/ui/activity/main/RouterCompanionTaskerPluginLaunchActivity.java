@@ -51,7 +51,6 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
-import com.mikepenz.aboutlibraries.Libs;
 import com.mikepenz.aboutlibraries.LibsBuilder;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -583,10 +582,10 @@ public class RouterCompanionTaskerPluginLaunchActivity extends AppCompatActivity
 
     } else if (i == R.id.ddwrt_companion_tasker_about) {
       new LibsBuilder()
-          .withFields(R.string.class.getFields())
+          //          .withFields(R.string.class.getFields())
           .withActivityTitle("About")
           // provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
-          .withActivityStyle(Libs.ActivityStyle.LIGHT)
+          //          .withActivityStyle(Libs.ActivityStyle.LIGHT)
           // start the activity
           .start(this);
 

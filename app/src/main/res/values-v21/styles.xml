@@ -12,8 +12,21 @@
 
 <resources>
 
+	<style name="CustomAboutLibrariesStyle" parent="">
+		<!-- AboutLibraries specific values -->
+		<item name="aboutLibrariesCardBackground">?cardBackgroundColor</item>
+		<item name="aboutLibrariesDescriptionTitle">?android:textColorPrimary</item>
+		<item name="aboutLibrariesDescriptionText">?android:textColorSecondary</item>
+		<item name="aboutLibrariesDescriptionDivider">@color/opensource_divider</item>
+		<item name="aboutLibrariesOpenSourceTitle">?android:textColorPrimary</item>
+		<item name="aboutLibrariesOpenSourceText">?android:textColorSecondary</item>
+		<item name="aboutLibrariesSpecialButtonText">?android:textColorPrimary</item>
+		<item name="aboutLibrariesOpenSourceDivider">@color/opensource_divider</item>
+	</style>
+
 	<style name="AppThemeLight"
 		parent="Theme.AppCompat.Light.NoActionBar">
+		<item name="aboutLibrariesStyle">@style/CustomAboutLibrariesStyle</item>
 		<item name="actionModeShareDrawable">@drawable/ic_share_white_24dp</item>
 		<item name="android:fontFamily">@font/open_sans</item>
 		<!--<item name="windowNoTitle">true</item> -->
@@ -70,6 +83,7 @@
 	</style>
 
 	<style name="AppThemeDark" parent="Theme.AppCompat.NoActionBar">
+		<item name="aboutLibrariesStyle">@style/CustomAboutLibrariesStyle</item>
 		<item name="actionModeShareDrawable">@drawable/ic_share_white_24dp</item>
 		<item name="android:fontFamily">@font/open_sans</item>
 		<!--<item name="windowNoTitle">true</item> -->

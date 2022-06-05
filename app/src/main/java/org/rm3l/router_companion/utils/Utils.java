@@ -81,7 +81,6 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
-import com.mikepenz.aboutlibraries.Libs;
 import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Transformation;
@@ -928,11 +927,12 @@ public final class Utils {
 
   public static void launchAboutActivity(@NonNull final Context context) {
     new LibsBuilder()
-        .withFields(R.string.class.getFields())
+        //        .withFields(R.string.class.getFields())
         .withActivityTitle("About")
         // provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
-        .withActivityStyle(
-            ContextUtils.isThemeLight(context) ? Libs.ActivityStyle.LIGHT : Libs.ActivityStyle.DARK)
+        //        .withActivityStyle(
+        //            ContextUtils.isThemeLight(context) ? Libs.ActivityStyle.LIGHT :
+        // Libs.ActivityStyle.DARK)
         // start the activity
         .start(context);
   }

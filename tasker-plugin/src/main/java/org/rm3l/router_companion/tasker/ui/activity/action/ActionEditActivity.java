@@ -55,7 +55,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import com.google.common.base.Throwables;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
-import com.mikepenz.aboutlibraries.Libs;
 import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.twofortyfouram.locale.sdk.client.ui.activity.AbstractAppCompatPluginActivity;
 import com.twofortyfouram.log.Lumberjack;
@@ -610,7 +609,7 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
       toolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
       toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
       toolbar.setSubtitleTextColor(ContextCompat.getColor(this, R.color.white));
-      toolbar.setTitle(callingApplicationLabel != null ? callingApplicationLabel : null);
+      toolbar.setTitle(callingApplicationLabel);
       toolbar.setSubtitle(R.string.plugin_name);
       setSupportActionBar(toolbar);
     }
@@ -830,10 +829,10 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
 
     } else if (i == R.id.ddwrt_companion_tasker_about) {
       new LibsBuilder()
-          .withFields(R.string.class.getFields())
+          //          .withFields(R.string.class.getFields())
           .withActivityTitle("About")
           // provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
-          .withActivityStyle(Libs.ActivityStyle.LIGHT)
+          //          .withActivityStyle(Libs.ActivityStyle.LIGHT)
           // start the activity
           .start(this);
 
@@ -846,8 +845,6 @@ public class ActionEditActivity extends AbstractAppCompatPluginActivity {
     } else if (i == R.id.menu_save_changes) {
       mIsCancelled = false;
       finish();
-
-    } else {
     }
 
     return true;

@@ -22,8 +22,6 @@ import org.rm3l.router_companion.settings.RouterSettingsActivity
 import org.rm3l.router_companion.settings.RouterSpeedTestSettingsActivity
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
-import java.util.Arrays
-import java.util.Collections
 
 /**
  * Created by rm3l on 7/22/17.
@@ -48,54 +46,52 @@ class DeepLinkActivity : Activity() {
 // Make sure to replace these 2 classes when deep links are changed!!!
 class AppDeepLinkModuleLoader : Parser {
 
-    val REGISTRY = Collections.unmodifiableList(
-        Arrays.asList(
-            DeepLinkEntry(
-                "dd-wrt://routers/{routerUuid}/speedtest/settings",
-                CLASS,
-                RouterSpeedTestSettingsActivity::class.java,
-                null
-            ),
-            DeepLinkEntry(
-                "ddwrt://routers/{routerUuid}/speedtest/settings",
-                CLASS,
-                RouterSpeedTestSettingsActivity::class.java,
-                null
-            ),
-            DeepLinkEntry(
-                "dd-wrt://routers/{routerUuidOrRouterName}/actions/{action}",
-                CLASS,
-                RouterActionsDeepLinkActivity::class.java,
-                null
-            ),
-            DeepLinkEntry(
-                "ddwrt://routers/{routerUuidOrRouterName}/actions/{action}",
-                CLASS,
-                RouterActionsDeepLinkActivity::class.java,
-                null
-            ),
-            DeepLinkEntry(
-                "dd-wrt://routers/{routerUuid}/settings",
-                CLASS,
-                RouterSettingsActivity::class.java,
-                null
-            ),
-            DeepLinkEntry(
-                "ddwrt://routers/{routerUuid}/settings",
-                CLASS,
-                RouterSettingsActivity::class.java,
-                null
-            ),
-            DeepLinkEntry("dd-wrt://management", CLASS, RouterManagementActivity::class.java, null),
-            DeepLinkEntry("dd-wrt://settings", CLASS, RouterManagementSettingsActivity::class.java, null),
-            DeepLinkEntry("ddwrt://management", CLASS, RouterManagementActivity::class.java, null),
-            DeepLinkEntry("ddwrt://settings", CLASS, RouterManagementSettingsActivity::class.java, null),
-            DeepLinkEntry("dd-wrt://routers/{routerUuid}", CLASS, DDWRTMainActivity::class.java, null),
-            DeepLinkEntry("ddwrt://routers/{routerUuid}", CLASS, DDWRTMainActivity::class.java, null)
-        )
+    val REGISTRY = listOf(
+        DeepLinkEntry(
+            "dd-wrt://routers/{routerUuid}/speedtest/settings",
+            CLASS,
+            RouterSpeedTestSettingsActivity::class.java,
+            null
+        ),
+        DeepLinkEntry(
+            "ddwrt://routers/{routerUuid}/speedtest/settings",
+            CLASS,
+            RouterSpeedTestSettingsActivity::class.java,
+            null
+        ),
+        DeepLinkEntry(
+            "dd-wrt://routers/{routerUuidOrRouterName}/actions/{action}",
+            CLASS,
+            RouterActionsDeepLinkActivity::class.java,
+            null
+        ),
+        DeepLinkEntry(
+            "ddwrt://routers/{routerUuidOrRouterName}/actions/{action}",
+            CLASS,
+            RouterActionsDeepLinkActivity::class.java,
+            null
+        ),
+        DeepLinkEntry(
+            "dd-wrt://routers/{routerUuid}/settings",
+            CLASS,
+            RouterSettingsActivity::class.java,
+            null
+        ),
+        DeepLinkEntry(
+            "ddwrt://routers/{routerUuid}/settings",
+            CLASS,
+            RouterSettingsActivity::class.java,
+            null
+        ),
+        DeepLinkEntry("dd-wrt://management", CLASS, RouterManagementActivity::class.java, null),
+        DeepLinkEntry("dd-wrt://settings", CLASS, RouterManagementSettingsActivity::class.java, null),
+        DeepLinkEntry("ddwrt://management", CLASS, RouterManagementActivity::class.java, null),
+        DeepLinkEntry("ddwrt://settings", CLASS, RouterManagementSettingsActivity::class.java, null),
+        DeepLinkEntry("dd-wrt://routers/{routerUuid}", CLASS, DDWRTMainActivity::class.java, null),
+        DeepLinkEntry("ddwrt://routers/{routerUuid}", CLASS, DDWRTMainActivity::class.java, null)
     )
 
-    override fun parseUri(uri: String) =
+    override fun parseUri(uri: String?) =
         REGISTRY.firstOrNull { it.matches(uri) }
 }
 
@@ -104,9 +100,7 @@ class DeepLinkDelegate(appDeepLinkModuleLoader: AppDeepLinkModuleLoader) {
     private val loaders: List<Parser>
 
     init {
-        this.loaders = Arrays.asList(
-            appDeepLinkModuleLoader
-        )
+        this.loaders = listOf(appDeepLinkModuleLoader)
     }
 
     private fun findEntry(uriString: String): DeepLinkEntry? {
@@ -147,7 +141,7 @@ class DeepLinkDelegate(appDeepLinkModuleLoader: AppDeepLinkModuleLoader) {
             for (queryParameter in deepLinkUri.queryParameterNames()) {
                 for (queryParameterValue in deepLinkUri.queryParameterValues(queryParameter)) {
                     if (parameterMap.containsKey(queryParameter)) {
-                        Log.w(TAG, "Duplicate parameter name in path and query param: " + queryParameter)
+                        Log.w(TAG, "Duplicate parameter name in path and query param: $queryParameter")
                     }
                     parameterMap[queryParameter] = queryParameterValue
                 }
@@ -239,7 +233,7 @@ class DeepLinkDelegate(appDeepLinkModuleLoader: AppDeepLinkModuleLoader) {
                 activity,
                 false,
                 uri,
-                "No registered entity to handle deep link: " + uri.toString()
+                "No registered entity to handle deep link: $uri"
             )
         }
     }
@@ -258,7 +252,7 @@ class DeepLinkDelegate(appDeepLinkModuleLoader: AppDeepLinkModuleLoader) {
             error: String?
         ): DeepLinkResult {
             notifyListener(context, !successful, uri, error)
-            return DeepLinkResult(successful, uri?.toString(), error)
+            return DeepLinkResult(successful, uri?.toString(), error ?: "")
         }
 
         private fun notifyListener(

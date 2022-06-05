@@ -44,6 +44,7 @@ apply plugin: 'project-report'
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.mikepenz.aboutlibraries.plugin'
 //apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'com.google.firebase.crashlytics'
 
@@ -279,7 +280,8 @@ dependencies {
         exclude module: 'unspecified'
     }
 
-    implementation 'com.mikepenz:aboutlibraries:10.2.0'
+//    implementation 'com.mikepenz:aboutlibraries:10.2.0'
+    implementation "com.mikepenz:aboutlibraries:$aboutLibraries_version"
 
 //    implementation group: 'net.jcip', name: 'jcip-annotations', version: "1.0"
 //    implementation group: 'com.twofortyfouram', name: 'android-annotation', version: "[3.0.0,4.0["

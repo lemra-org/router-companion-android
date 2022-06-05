@@ -225,6 +225,7 @@ class ColorUtils private constructor() {
 
             val useDefaultStyle = routerFirmware == null ||
                 RouterFirmware.AUTO == routerFirmware ||
+                RouterFirmware.DEMO == routerFirmware ||
                 RouterFirmware.UNKNOWN == routerFirmware
             if (useDefaultStyle) {
                 setDefaultTheme(activity, transparentStatusBar)

@@ -17,6 +17,19 @@
 	<!-- Customize your theme here. -->
 	<!--</style> -->
 
+	// define a custom style
+	<style name="CustomAboutLibrariesStyle" parent="">
+		<!-- AboutLibraries specific values -->
+		<item name="aboutLibrariesCardBackground">?cardBackgroundColor</item>
+		<item name="aboutLibrariesDescriptionTitle">?android:textColorPrimary</item>
+		<item name="aboutLibrariesDescriptionText">?android:textColorSecondary</item>
+		<item name="aboutLibrariesDescriptionDivider">@color/opensource_divider</item>
+		<item name="aboutLibrariesOpenSourceTitle">?android:textColorPrimary</item>
+		<item name="aboutLibrariesOpenSourceText">?android:textColorSecondary</item>
+		<item name="aboutLibrariesSpecialButtonText">?android:textColorPrimary</item>
+		<item name="aboutLibrariesOpenSourceDivider">@color/opensource_divider</item>
+	</style>
+
 	<style name="AppTheme" parent="AppTheme.Base" />
 
 	<style name="AppTheme.Base" parent="Theme.AppCompat.NoActionBar">
@@ -29,6 +42,7 @@
 		<item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>
 		<item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
 		<!--<item name="android:fitsSystemWindows">true</item> -->
+		<item name="aboutLibrariesStyle">@style/CustomAboutLibrariesStyle</item>
 	</style>
 
 	<!--<style name="Maoni_AppTheme_Base" parent="Theme.AppCompat.Light.DarkActionBar"> -->
@@ -43,6 +57,7 @@
 
 	<style name="AppThemeLight"
 		parent="Theme.AppCompat.Light.NoActionBar">
+		<item name="aboutLibrariesStyle">@style/CustomAboutLibrariesStyle</item>
 		<item name="android:fontFamily">@font/open_sans</item>
 		<!--<item name="windowNoTitle">true</item> -->
 		<!--<item name="windowActionBar">false</item> -->

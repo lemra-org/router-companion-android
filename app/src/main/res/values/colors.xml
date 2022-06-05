@@ -105,6 +105,7 @@
 	<color name="win8_pink">#E671B8</color>
 	<color name="win8_orange">#F09609</color>
 	<color name="win8_blue">#1BA1E2</color>
+	<color name="light_gray">#D3D3D3</color>
 	<color name="win8_red">#E51400</color>
 	<color name="win8_green">#339933</color>
 
@@ -335,6 +336,8 @@
 	<color name="transparent_full">#00000000</color>
 	<color name="opaque_full">#FF000000</color>
 	<color name="transparent_semi">#80000000</color>
+
+	<color name="list_row_selected">@color/win8_blue</color>
 
 	<color name="blue_background">#1976D2</color>
 	<color name="teal_background">#00796B</color>
