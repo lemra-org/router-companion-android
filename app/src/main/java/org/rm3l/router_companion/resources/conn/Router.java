@@ -326,24 +326,32 @@ public class Router implements Serializable {
       this.defaultPassword = defaultPassword;
     }
 
-    /** @return the channel */
+    /**
+     * @return the channel
+     */
     @NonNull
     public String getChannel() {
       return channel;
     }
 
-    /** @return the defaultPassword */
+    /**
+     * @return the defaultPassword
+     */
     @Nullable
     public String getDefaultPassword() {
       return defaultPassword;
     }
 
-    /** @return the defaultPort */
+    /**
+     * @return the defaultPort
+     */
     public int getDefaultPort() {
       return defaultPort;
     }
 
-    /** @return the defaultUsername */
+    /**
+     * @return the defaultUsername
+     */
     @Nullable
     public String getDefaultUsername() {
       return defaultUsername;
@@ -1218,7 +1226,9 @@ public class Router implements Serializable {
     this.iconPath = iconPath;
   }
 
-  /** @return the internal DB id */
+  /**
+   * @return the internal DB id
+   */
   public int getId() {
     return id;
   }
@@ -1257,7 +1267,9 @@ public class Router implements Serializable {
     return localSSIDLookups;
   }
 
-  /** @return the name */
+  /**
+   * @return the name
+   */
   @Nullable
   public String getName() {
     return name;
@@ -1289,13 +1301,17 @@ public class Router implements Serializable {
     return this;
   }
 
-  /** @return the password */
+  /**
+   * @return the password
+   */
   @Nullable
   public String getPassword() {
     return password;
   }
 
-  /** @return the password */
+  /**
+   * @return the password
+   */
   @Nullable
   public String getPasswordPlain() {
     return password != null ? d(password) : null;
@@ -1306,19 +1322,25 @@ public class Router implements Serializable {
     return getPreferences(this, ctx);
   }
 
-  /** @return the privKey */
+  /**
+   * @return the privKey
+   */
   @Nullable
   public String getPrivKey() {
     return privKey;
   }
 
-  /** @return the decrypted privKey */
+  /**
+   * @return the decrypted privKey
+   */
   @Nullable
   public String getPrivKeyPlain() {
     return privKey != null ? d(privKey) : null;
   }
 
-  /** @return the remoteIpAddress */
+  /**
+   * @return the remoteIpAddress
+   */
   @NonNull
   public String getRemoteIpAddress() {
     return remoteIpAddress;
@@ -1336,7 +1358,9 @@ public class Router implements Serializable {
     return this;
   }
 
-  /** @return the remotePort, if any, or the default port for the routerConnectionProtocol */
+  /**
+   * @return the remotePort, if any, or the default port for the routerConnectionProtocol
+   */
   public int getRemotePort() {
     return remotePort <= 0 ? this.routerConnectionProtocol.getDefaultPort() : remotePort;
   }
@@ -1353,7 +1377,9 @@ public class Router implements Serializable {
     return this;
   }
 
-  /** @return the RouterConnectionProtocol */
+  /**
+   * @return the RouterConnectionProtocol
+   */
   @NonNull
   public RouterConnectionProtocol getRouterConnectionProtocol() {
     return routerConnectionProtocol;
@@ -1442,19 +1468,25 @@ public class Router implements Serializable {
     return templateUuid != null ? templateUuid : uuid;
   }
 
-  /** @return the username */
+  /**
+   * @return the username
+   */
   @NonNull
   public String getUsername() {
     return username;
   }
 
-  /** @return the unencrypted username */
+  /**
+   * @return the unencrypted username
+   */
   @Nullable
   public String getUsernamePlain() {
     return d(username);
   }
 
-  /** @return the uuid */
+  /**
+   * @return the uuid
+   */
   @NonNull
   public String getUuid() {
     return uuid;
@@ -1505,7 +1537,9 @@ public class Router implements Serializable {
     return sharedPreferences.getBoolean(FALLBACK_TO_PRIMARY_ADDR, false);
   }
 
-  /** @return whether the strictHostKeyChecking flag is on or off */
+  /**
+   * @return whether the strictHostKeyChecking flag is on or off
+   */
   public boolean isStrictHostKeyChecking() {
     return strictHostKeyChecking;
   }
@@ -1630,7 +1664,9 @@ public class Router implements Serializable {
         .setDemoRouter(Utils.isDemoRouter(this));
   }
 
-  /** @return the Router string representation */
+  /**
+   * @return the Router string representation
+   */
   @Override
   @NonNull
   public String toString() {
