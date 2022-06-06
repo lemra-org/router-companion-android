@@ -999,7 +999,9 @@ public final class SSHUtils {
     return b;
   }
 
-  /** @throws java.io.IOException */
+  /**
+   * @throws java.io.IOException
+   */
   private static boolean closeChannel(
       @NonNull final Channel channel, @Nullable final OutputStream out) throws IOException {
 

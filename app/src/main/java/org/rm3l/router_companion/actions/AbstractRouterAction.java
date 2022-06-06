@@ -48,7 +48,9 @@ import org.rm3l.router_companion.utils.ReportingUtils;
 public abstract class AbstractRouterAction<T>
     extends UiRelatedTask<AbstractRouterAction.RouterActionResult<T>> {
 
-  /** @param <T> the result type */
+  /**
+   * @param <T> the result type
+   */
   public static class RouterActionResult<T> {
 
     @Nullable private final Exception exception;

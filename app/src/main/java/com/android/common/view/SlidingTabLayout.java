@@ -111,10 +111,14 @@ public class SlidingTabLayout extends HorizontalScrollView {
    */
   public interface TabColorizer {
 
-    /** @return return the color of the divider drawn to the right of {@code position}. */
+    /**
+     * @return return the color of the divider drawn to the right of {@code position}.
+     */
     int getDividerColor(int position);
 
-    /** @return return the color of the indicator used when {@code position} is selected. */
+    /**
+     * @return return the color of the indicator used when {@code position} is selected.
+     */
     int getIndicatorColor(int position);
   }
 

@@ -228,7 +228,9 @@ public class Device implements Comparable<Device> {
     return (activeIpConnections != null ? activeIpConnections.size() : -1);
   }
 
-  /** @return the alias */
+  /**
+   * @return the alias
+   */
   @Nullable
   public String getAlias() {
     return alias;
@@ -270,7 +272,9 @@ public class Device implements Comparable<Device> {
     this.deviceUuidForWol = deviceUuidForWol;
   }
 
-  /** @return the IP */
+  /**
+   * @return the IP
+   */
   @Nullable
   public String getIpAddress() {
     return ipAddress;
@@ -296,7 +300,9 @@ public class Device implements Comparable<Device> {
     this.lastSeen = lastSeen;
   }
 
-  /** @return the MAC */
+  /**
+   * @return the MAC
+   */
   @NonNull
   public String getMacAddress() {
     return macAddress;
@@ -339,7 +345,9 @@ public class Device implements Comparable<Device> {
     this.rxTotal = rxTotal;
   }
 
-  /** @return the system name */
+  /**
+   * @return the system name
+   */
   @Nullable
   public String getSystemName() {
     return systemName;
