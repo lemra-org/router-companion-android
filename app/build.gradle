@@ -336,7 +336,7 @@ dependencies {
         exclude module: 'fastadapter'
     }
 
-    implementation('com.mikepenz:materialdrawer:6.1.2@aar') {
+    implementation('com.mikepenz:materialdrawer:9.0.0@aar') {
         transitive = true
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'design'
@@ -360,7 +360,7 @@ dependencies {
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
     implementation "androidx.cardview:cardview:1.0.0"
     implementation "androidx.recyclerview:recyclerview:1.2.1"
-    implementation "androidx.appcompat:appcompat:1.4.1"
+    implementation "androidx.appcompat:appcompat:1.4.2"
 //  implementation "androidx.palette:palette:1.0.0"
     implementation "androidx.browser:browser:1.4.0"
     implementation "androidx.preference:preference:1.2.0"
@@ -386,7 +386,7 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     //    implementation 'com.github.halysongoncalves:pugnotification:1.8.1'
 
-    implementation 'org.osmdroid:osmdroid-android:6.1.11@aar'
+    implementation 'org.osmdroid:osmdroid-android:6.1.13@aar'
 
     implementation 'com.github.lzyzsd:circleprogress:1.2.1@aar'
 
