@@ -491,7 +491,7 @@ dependencies {
     implementation 'com.jakewharton.byteunits:byteunits:0.9.1'
     implementation 'com.github.florent37:viewtooltip:1.2.2'
 
-    implementation 'com.github.mrgames13:SplashScreen:1.0.3'
+    implementation 'com.github.mrgames13:SplashScreen:1.1.7'
 
     implementation "com.karumi:dexter:${dexter_runtimePermissions_version}"
 
