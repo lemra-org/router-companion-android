@@ -39,7 +39,7 @@ buildscript {
         playServices_version = '20.1.0'
 //        firebase_core_version = '17.2.3'
         firebase_appindexing_version = '20.0.0'
-        robolectric_version = '4.8.1'
+        robolectric_version = '4.9'
         junit_version = '4.13.2'
         mockito_version = '4.6.1'
 //        avocarrot_glispa_mobfox_version = '3.6.9'
