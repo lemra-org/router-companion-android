@@ -366,7 +366,7 @@ dependencies {
     implementation "androidx.preference:preference:1.2.0"
 //    implementation "androidx.constraintlayout:constraintlayout:1.1.2"
 //  implementation 'com.cocosw:undobar:1.8.1@aar'
-    implementation 'com.google.zxing:core:3.5.0'
+    implementation 'com.google.zxing:core:3.5.1'
     implementation 'com.github.curioustechizen.android-ago:library:1.4.0'
     //    implementation 'com.github.danielemaddaluno.androidupdatechecker:library:1.0.2'
 //  implementation 'com.google.android.gms:play-services-ads:11.4.0'
