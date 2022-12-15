@@ -55,7 +55,7 @@ buildscript {
 
         multidex_version = "2.0.1"
 
-        aboutLibraries_version = "10.3.0"
+        aboutLibraries_version = "10.5.2"
     }
 
     //Workaround to have the 'com.android.application' plugin with any version of Gradle (other than the expected one)
