@@ -321,7 +321,7 @@ dependencies {
 
     testImplementation "junit:junit:$junit_version"
     testImplementation "org.robolectric:robolectric:$robolectric_version"
-    androidTestImplementation "androidx.annotation:annotation:1.3.0"
+    androidTestImplementation "androidx.annotation:annotation:1.6.0"
     testImplementation "org.mockito:mockito-core:$mockito_version"
 
     implementation project(":libraries:parcelable")
