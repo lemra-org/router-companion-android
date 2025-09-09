@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: router-companion-android
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: lemra-org/router-companion-android
+spec:
+  type: website
+  lifecycle: production
+  owner: user:default/user
